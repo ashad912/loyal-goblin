@@ -37,7 +37,7 @@ class ShipBoard extends Component {
         const svgRawObject = this.refs.boardsvg
         const doc = svgRawObject.contentDocument
 
-        let fields=[]
+        let fields = []
 
         for(let i=0; i < serverFields.length; i++){
             const field = doc.getElementById(`${i}`) //assuming id as in serverFields array
