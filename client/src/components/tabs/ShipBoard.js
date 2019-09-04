@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import boardsvg from '../assets/statki.svg'
+import boardsvg from '../../assets/statki.svg'
 
 class ShipBoard extends Component {
     
