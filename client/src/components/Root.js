@@ -8,6 +8,7 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import ShipBoard from './tabs/ShipBoard'
+import Events from './tabs/Events'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -85,7 +86,7 @@ export default function FullWidthTabs() {
           Profile
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-          Events
+          <Events />
         </TabPanel>
         <TabPanel value={value} index={2} dir={theme.direction}>
           <ShipBoard />
