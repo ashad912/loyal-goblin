@@ -10,6 +10,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
+import { sizing } from '@material-ui/system';
 
 
 
@@ -111,13 +112,14 @@ export default function Events() {
     const missionListData = createTempList() //returned from backend
 
     //for better perfomance uses VisibilitySensor to load only visible (or partly visible) elements
+    //to work need fixed listem item size (which is ok, i believe)
     const missionList = missionListData ? (
         missionListData.map(mission => {
             return(
                 <VisibilitySensor partialVisibility key={mission.id}>
                 {({isVisible}) =>
                     <div>{isVisible ? ( /*inVisible defined only inside div with is fucking kurwa crazy */
-                        <ListItem alignItems="flex-start" >
+                        <ListItem style={{height: 200}} alignItems="flex-start">
                             <ListItemAvatar>
                                 <Avatar alt="avatar" src={mission.avatar.avatarTemp} />
                             </ListItemAvatar>
@@ -133,7 +135,6 @@ export default function Events() {
                                         {mission.title}
                                     </Typography>
                                     <Typography
-                                        alignRight
                                         component="span"
                                         variant="body2"
                                         className={classes.inline}
@@ -158,7 +159,7 @@ export default function Events() {
                                 }
                             />
                         </ListItem>   
-                    ) : ('Loading...')   /*null makes all list invisible... */
+                    ) : (<div className='mock-item'>"Loading ..."</div>)   /*null makes all list invisible... */
                     }
                     </div>
                 }   

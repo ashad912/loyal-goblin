@@ -1,0 +1,74 @@
+ const missionList = missionListData ? (
+        missionListData.map(mission => {
+            return(
+                <VisibilitySensor key={mission.id}>
+                {({isVisible}) =>
+                    {return isVisible && 
+                        <ListItem alignItems="flex-start" >
+                            <ListItemAvatar>
+                                <Avatar alt="avatar" src={mission.avatar} />
+                            </ListItemAvatar>
+                            <ListItemText
+                                primary={mission.title}
+                                secondary={
+                                    <React.Fragment>
+                                    <Typography
+                                        component="span"
+                                        variant="body2"
+                                        className={classes.inline}
+                                        color="textPrimary"
+                                    >
+                                        {mission.description}
+                                    </Typography>
+                                    {mission.amutets ? (mission.amulets.map(amulet => `${amulet.name} `)):(null)}
+                                    </React.Fragment>
+                                }
+                            />
+                        </ListItem>       
+                    }
+                }   
+                </VisibilitySensor>
+            )
+        })
+    ) : ( null )
+
+
+
+
+
+
+
+
+
+
+    const missionList =  missionListData ? (
+            missionListData.map(mission => {
+                console.log(mission)
+                return (  
+                <React.Fragment>  
+                    <ListItem alignItems="flex-start" >
+                        <ListItemAvatar>
+                            <Avatar alt="avatar" src={mission.avatar.avatarTemp} />
+                        </ListItemAvatar>
+                        <ListItemText
+                            primary={mission.title}
+                            secondary={
+                                <React.Fragment>
+                                <Typography
+                                    component="span"
+                                    variant="body2"
+                                    className={classes.inline}
+                                    color="textPrimary"
+                                >
+                                    {mission.description}
+                                </Typography>
+                                {mission.amutets ? (mission.amulets.map(amulet => `${amulet.name} `)):(null)}
+                                </React.Fragment>
+                            }
+                        />
+                    </ListItem>
+                    <Divider variant="inset" component="li" />       
+                </React.Fragment>       
+                )
+        })
+    ) : ( null )

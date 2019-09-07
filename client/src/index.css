@@ -17,3 +17,7 @@ code {
   background-image: url(assets/statki.svg);
   background-repeat: no-repeat;
 }
+
+.mock-item {
+  height: 200px;
+}
