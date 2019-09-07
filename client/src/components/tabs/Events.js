@@ -109,8 +109,9 @@ export default function Events() {
     const classes = useStyles();
 
 
-    const missionListData = createTempList() //returned from backend
+    const itemLabelHeight = 200 //REFACTOR: need to changed to 'dimensionLabel'
 
+    const missionListData = createTempList() //returned from backend
     //for better perfomance uses VisibilitySensor to load only visible (or partly visible) elements
     //to work need fixed listem item size (which is ok, i believe)
     const missionList = missionListData ? (
@@ -119,7 +120,7 @@ export default function Events() {
                 <VisibilitySensor partialVisibility key={mission.id}>
                 {({isVisible}) =>
                     <div>{isVisible ? ( /*inVisible defined only inside div with is fucking kurwa crazy */
-                        <ListItem style={{height: 200}} alignItems="flex-start">
+                        <ListItem style={{height: itemLabelHeight}} alignItems="flex-start"> 
                             <ListItemAvatar>
                                 <Avatar alt="avatar" src={mission.avatar.avatarTemp} />
                             </ListItemAvatar>
@@ -128,7 +129,7 @@ export default function Events() {
                                     <React.Fragment>
                                     <Typography
                                         component="span"
-                                        variant="body"
+                                        variant="body1"
                                         className={classes.inline}
                                         color="textPrimary"
                                     >
@@ -140,7 +141,7 @@ export default function Events() {
                                         className={classes.inline}
                                         color="textPrimary"
                                     >
-                                        {`  Players required: ${mission.requiredPlayers}`}
+                                        {`  Players required: ${mission.requiredPlayers}`/*REFACTOR: need to provide style 'alignRight' for this stuff*/}
                                     </Typography>
                                     </React.Fragment>
                                 }
@@ -159,7 +160,7 @@ export default function Events() {
                                 }
                             />
                         </ListItem>   
-                    ) : (<div className='mock-item'>"Loading ..."</div>)   /*null makes all list invisible... */
+                    ) : (<div style={{height: itemLabelHeight}}>"Loading ..."</div>)   /*null makes all list invisible... */
                     }
                     </div>
                 }   
