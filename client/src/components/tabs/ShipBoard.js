@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
-import boardsvg from '../../assets/statki.svg'
+import boardsvg from '../../assets/board/statki.svg'
+import Loading from '../layout/Loading';
 
 class ShipBoard extends Component {
     
+    state = {
+        loading: true
+    }
     //open console
     //have to add 'id' props in .svg for each key object
+
 
     handleLoad = () => {
         
@@ -54,6 +59,10 @@ class ShipBoard extends Component {
             fields = [...fields, field]
         }
         console.log(fields)
+
+        this.setState({
+            loading: false
+        })
     }
 
     handleClick = (e) => {
@@ -70,9 +79,13 @@ class ShipBoard extends Component {
     }
 
     render() { 
+        
         return ( 
-            <object data={boardsvg} onLoad={this.handleLoad} type="image/svg+xml"
-            id="boardsvg" ref='boardsvg' width="100%" height="100%"></object>       
+            <React.Fragment>
+                {this.state.loading && <Loading/>}
+                <object data={boardsvg} onLoad={this.handleLoad} type="image/svg+xml"
+                id="boardsvg" ref='boardsvg' width="100%" height="100%">Board</object> 
+            </React.Fragment>      
         );
     }
 }

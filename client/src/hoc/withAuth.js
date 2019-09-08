@@ -1,8 +1,11 @@
+
+
 // import React from 'react'
 // import { compose } from 'redux'
 // import { Redirect } from 'react-router-dom'
 // import { connect } from 'react-redux';
 // import {authCheck} from '../store/actions/authActions'
+// import Loading from '../layout/Loading';
 
 // const withAuth = (WrappedComponent) => {
 
@@ -19,7 +22,7 @@
 
 //         render () {
 //             if(this.state.loading) {
-//                 return null
+//                 return <Loading/>
 //             }
             
 //             if(!this.props.auth.uid) {

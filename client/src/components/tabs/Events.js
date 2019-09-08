@@ -1,17 +1,26 @@
 import React  from 'react'
 import VisibilitySensor from 'react-visibility-sensor'
-import avatarTemp from '../../assets/statki.svg'
+import avatarTemp from '../../assets/board/statki.svg'
 
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import Divider from '@material-ui/core/Divider';
+//import Divider from '@material-ui/core/Divider';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
-import { sizing } from '@material-ui/system';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import Button from '@material-ui/core/Button';
 
+import moment from 'moment'
+
+
+const pathToIcons = '../../assets/icons/'
+const itemLabelHeight = 200 //REFACTOR: need to be changed to 'dimensionLabel'
 
 
 const createTempList = () => {
@@ -19,76 +28,252 @@ const createTempList = () => {
         {
             id: 0,
             title: 'Mission1',
-            avatar: {avatarTemp},
+            avatarSrc: {avatarTemp},
             requiredPlayers: 4,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
-                {name: 'diamond', img: 'altImg'},
-                {name: 'pearl', img: 'altImg'},
+                {
+                    quantity: 2,
+                    itemModel: {
+                        id: 101,
+                        type: {
+                            id: 201,
+                            type: 'amulet'
+                        },
+                        name: 'diamond',
+                        imgSrc: 'diamond-amulet.png'
+                    }
+                },
+                {
+                    quantity: 1,
+                    itemModel: {
+                        id: 102,
+                        type: {
+                            id: 201,
+                            type: 'amulet'
+                        },
+                        name: 'pearl',
+                        imgSrc: 'pearl-amulet.png'
+                    }
+                },
             ]
         },
         {
             id: 1,
             title: 'Mission2',
-            avatar: {avatarTemp},
+            avatarSrc: {avatarTemp},
             requiredPlayers: 3,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
-                {name: 'sapphire', img: 'altImg'},
-                {name: 'diamond', img: 'altImg'},
-                {name: 'pearl', img: 'altImg'},
+                {
+                    quantity: 2,
+                    itemModel: {
+                        id: 103,
+                        type: {
+                            id: 201,
+                            type: 'amulet'
+                        },
+                        name: 'sapphire',
+                        imgSrc: 'sapphire-amulet.png'
+                    }
+                },
+                {
+                    quantity: 1,
+                    itemModel: {
+                        id: 101,
+                        type: {
+                            id: 201,
+                            type: 'amulet'
+                        },
+                        name: 'diamond',
+                        imgSrc: 'diamond-amulet.png'
+                    }
+                },
+                {
+                    quantity: 2,
+                    itemModel: {
+                        id: 102,
+                        type: {
+                            id: 201,
+                            type: 'amulet'
+                        },
+                        name: 'pearl',
+                        imgSrc: 'pearl-amulet.png'
+                    }
+                },
             ]
         },
         {
             id: 2,
             title: 'Mission3',
-            avatar: {avatarTemp},
+            avatarSrc: {avatarTemp},
             requiredPlayers: 4,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
-                {name: 'diamond', img: 'altImg'},
-                {name: 'pearl', img: 'altImg'},
+                {
+                    quantity: 2,
+                    itemModel: {
+                        id: 101,
+                        type: {
+                            id: 201,
+                            type: 'amulet'
+                        },
+                        name: 'diamond',
+                        imgSrc: 'diamond-amulet.png'
+                    }
+                },
+                {
+                    quantity: 1,
+                    itemModel: {
+                        id: 102,
+                        type: {
+                            id: 201,
+                            type: 'amulet'
+                        },
+                        name: 'pearl',
+                        imgSrc: 'pearl-amulet.png'
+                    }
+                },
             ]
         },
         {
             id: 3,
             title: 'Mission4',
-            avatar: {avatarTemp},
+            avatarSrc: {avatarTemp},
             requiredPlayers: 3,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
-                {name: 'sapphire', img: 'altImg'},
-                {name: 'diamond', img: 'altImg'},
-                {name: 'pearl', img: 'altImg'},
+                {
+                    quantity: 2,
+                    itemModel: {
+                        id: 103,
+                        type: {
+                            id: 201,
+                            type: 'amulet'
+                        },
+                        name: 'sapphire',
+                        imgSrc: 'sapphire-amulet.png'
+                    }
+                },
+                {
+                    quantity: 1,
+                    itemModel: {
+                        id: 101,
+                        type: {
+                            id: 201,
+                            type: 'amulet'
+                        },
+                        name: 'diamond',
+                        imgSrc: 'diamond-amulet.png'
+                    }
+                },
+                {
+                    quantity: 2,
+                    itemModel: {
+                        id: 102,
+                        type: {
+                            id: 201,
+                            type: 'amulet'
+                        },
+                        name: 'pearl',
+                        imgSrc: 'pearl-amulet.png'
+                    }
+                },
             ]
         },
         {
             id: 4,
             title: 'Mission5',
-            avatar: {avatarTemp},
+            avatarSrc: {avatarTemp},
             requiredPlayers: 4,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
-                {name: 'diamond', img: 'altImg'},
-                {name: 'pearl', img: 'altImg'},
+                {
+                    quantity: 2,
+                    itemModel: {
+                        id: 101,
+                        type: {
+                            id: 201,
+                            type: 'amulet'
+                        },
+                        name: 'diamond',
+                        imgSrc: 'diamond-amulet.png'
+                    }
+                },
+                {
+                    quantity: 1,
+                    itemModel: {
+                        id: 102,
+                        type: {
+                            id: 201,
+                            type: 'amulet'
+                        },
+                        name: 'pearl',
+                        imgSrc: 'pearl-amulet.png'
+                    }
+                },
             ]
         },
         {
             id: 5,
             title: 'Mission6',
-            avatar: {avatarTemp},
+            avatarSrc: {avatarTemp},
             requiredPlayers: 3,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
-                {name: 'sapphire', img: 'altImg'},
-                {name: 'diamond', img: 'altImg'},
-                {name: 'pearl', img: 'altImg'},
+                {
+                    quantity: 2,
+                    itemModel: {
+                        id: 103,
+                        type: {
+                            id: 201,
+                            type: 'amulet'
+                        },
+                        name: 'sapphire',
+                        imgSrc: 'sapphire-amulet.png'
+                    }
+                },
+                {
+                    quantity: 1,
+                    itemModel: {
+                        id: 101,
+                        type: {
+                            id: 201,
+                            type: 'amulet'
+                        },
+                        name: 'diamond',
+                        imgSrc: 'diamond-amulet.png'
+                    }
+                },
+                {
+                    quantity: 2,
+                    itemModel: {
+                        id: 102,
+                        type: {
+                            id: 201,
+                            type: 'amulet'
+                        },
+                        name: 'pearl',
+                        imgSrc: 'pearl-amulet.png'
+                    }
+                },
             ]
         },
 
     ]
 }
 
+const createTempRally = () => {
+    return {
+        id: 0,
+        title: 'OMG!Rally',
+        avatarSrc: avatarTemp,
+        date: moment().add(1, 'days').calendar(),
+        requiredPlayers: 20,
+        description: 'Super important rally. It is only one rally on board! You need to cooperate with ppl, u introvert scum xd',
+        
+    }
+}
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -102,16 +287,53 @@ const useStyles = makeStyles(theme => ({
     inline: {
       display: 'inline',
     },
+    card: {
+        minWidth: 275,
+    },
+    bullet: {
+        display: 'inline-block',
+        margin: '0 2px',
+        transform: 'scale(0.8)',
+    },
+    titleCard: {
+        fontSize: 14,
+    },
+    pos: {
+        marginBottom: 12,
+    },
   }));
 
 
+const handleRallyClick = () => {
+    console.log('clicked rally')
+}
+
+const handleMissionClick = (id) => {
+    console.log('clicked',  id) //shot to backend - verify party quantity (amulets verifed inside the mission), redirect to mission
+}
+
 export default function Events() {
+    const isMissionActive = (players) => {
+        return currentPlayersInParty === players
+    } 
+
+
     const classes = useStyles();
+    const bull = <span className={classes.bullet}>•</span>;
 
 
-    const itemLabelHeight = 200 //REFACTOR: need to changed to 'dimensionLabel'
 
+
+    
+
+    const currentPlayersInParty = 3; //returned from backend (read from user profile -> user.party.members.length + 1 [1 for leader] EXPERIMENTAL)
+
+    
+    const rally = createTempRally() //returned from backend
     const missionListData = createTempList() //returned from backend
+    //one shot to events can be separated (rally, missions) on back/front
+    
+
     //for better perfomance uses VisibilitySensor to load only visible (or partly visible) elements
     //to work need fixed listem item size (which is ok, i believe)
     const missionList = missionListData ? (
@@ -119,10 +341,11 @@ export default function Events() {
             return(
                 <VisibilitySensor partialVisibility key={mission.id}>
                 {({isVisible}) =>
-                    <div>{isVisible ? ( /*inVisible defined only inside div with is fucking kurwa crazy */
+                    <div>{isVisible ? ( /*inVisible defined only inside div witch is fucking kurwa crazy */
+                        <React.Fragment>
                         <ListItem style={{height: itemLabelHeight}} alignItems="flex-start"> 
                             <ListItemAvatar>
-                                <Avatar alt="avatar" src={mission.avatar.avatarTemp} />
+                                <Avatar alt="avatar" src={mission.avatarSrc.avatarTemp} />
                             </ListItemAvatar>
                             <ListItemText
                                 primary={
@@ -139,9 +362,9 @@ export default function Events() {
                                         component="span"
                                         variant="body2"
                                         className={classes.inline}
-                                        color="textPrimary"
+                                        color={isMissionActive(mission.requiredPlayers) ? 'textPrimary' : 'error'}
                                     >
-                                        {`  Players required: ${mission.requiredPlayers}`/*REFACTOR: need to provide style 'alignRight' for this stuff*/}
+                                        {`  Players: ${mission.requiredPlayers}/${currentPlayersInParty}`/*TODO: need to provide style 'alignRight' for this stuff*/}
                                     </Typography>
                                     </React.Fragment>
                                 }
@@ -155,12 +378,36 @@ export default function Events() {
                                     >
                                         {mission.description}
                                     </Typography>
-                                    {mission.amulets ? (mission.amulets.map(amulet => `${amulet.name} `)):(null)}
+                                    {mission.amulets ? (
+                                        mission.amulets.map(amulet => {
+                                            //TODO: Fix problem with webpack.
+                                            //console.log(`../../assets/icons/${amulet.itemModel.imgSrc}`) //this works
+                                            //console.log(`${pathToIcons}${amulet.itemModel.imgSrc}`) // does not works
+                                            //console.log(pathToIcons + amulet.itemModel.imgSrc) //does not work
+                                            
+                                            return(
+                                                <React.Fragment key={amulet.itemModel.id}>
+                                                    {`${amulet.quantity}x`}
+                                                    {<img style={{height: 20, width:20}} src={require(`../../assets/icons/${amulet.itemModel.imgSrc}`)} alt='icon'/>}
+                                                    {` `}
+                                                </React.Fragment>
+                                                )
+                                            })
+                                        ):(null)
+                                    }
                                     </React.Fragment>
-                                }
+                                }  
                             />
-                        </ListItem>   
-                    ) : (<div style={{height: itemLabelHeight}}>"Loading ..."</div>)   /*null makes all list invisible... */
+                            <ListItemSecondaryAction>
+                                <Button size="small" onClick={() => handleMissionClick(mission.id)} disabled={!isMissionActive(mission.requiredPlayers)}>Go in!</Button>
+                            </ListItemSecondaryAction>
+                            
+                            
+                        </ListItem>
+                        
+                        </React.Fragment>
+                           
+                    ) : (<div style={{height: itemLabelHeight}}></div>)   /*empty div with the same height - IMPORTANT */
                     }
                     </div>
                 }   
@@ -173,10 +420,42 @@ export default function Events() {
     return (
 
         <React.Fragment>
-        <List className={classes.root}>
-            {missionList}
-        </List>
-    
+            <Typography variant="h6" className={classes.title}>
+                Rally
+            </Typography>
+            <Card className={classes.card}>
+                <CardContent>
+                    <Typography className={classes.titleCard} color="textSecondary" gutterBottom>
+                        Ladies and Gentelmen!
+                    </Typography>
+                    <Typography variant="h5" component="h2">
+                        oo
+                    {bull}
+                        {rally.title}
+                    {bull}
+                        oo
+                    </Typography>
+                    <Typography className={classes.pos} color="textSecondary">
+                        {rally.date}
+                    </Typography>
+                    <Typography variant="body2" component="p">
+                        {rally.description}
+                    <br />
+                    {'"Treasurrrre!"'}
+                    </Typography>
+                </CardContent>
+                <CardActions style={{justifyContent: 'flex-end'}}>
+                    <Button onClick={handleRallyClick} size="small">Go in!</Button>
+                </CardActions>
+            </Card>
+            <List className={classes.root}>
+                
+                <Typography variant="h6" className={classes.title}>
+                    Missions
+                </Typography>
+                {missionList}
+            </List>
+        
         </React.Fragment>
       
     )

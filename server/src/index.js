@@ -1,5 +1,6 @@
 import express from 'express'
-import {router} from './routes/routes'
+import {userRouter} from './routes/user'
+import {eventRouter} from './routes/event'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import path from 'path'
@@ -21,7 +22,8 @@ app.use(bodyParser.json()) //going to have access to json mssg
 app.use(cookieParser())
 
 
-app.use(router) //export required to use routes from api.js
+app.use('/users', userRouter)
+app.use('/events', eventRouter)
 
 
 app.use((err, req, res, next)=>{ 

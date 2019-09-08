@@ -12,8 +12,3 @@ code {
     monospace;
 }
 
-
-.board {
-  background-image: url(assets/statki.svg);
-  background-repeat: no-repeat;
-}
