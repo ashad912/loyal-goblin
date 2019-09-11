@@ -4,7 +4,77 @@ import Box from './Box';
 import './DragThingsToBoxesDemo.css';
 
 
+const createTempItemListUser = () => {
+  return [
+      {
+        _id: 1,
+        model: {
+          id: 101,
+          type: {
+              id: 201,
+              type: 'amulet'
+          },
+          name: 'diamond',
+          imgSrc: 'diamond-amulet.png'
+        },
+        owner: '35resf23'
+      },
+      {
+        _id: 2,
+        model: {
+          id: 102,
+          type: {
+              id: 201,
+              type: 'amulet'
+          },
+          name: 'pearl',
+          imgSrc: 'pearl-amulet.png'
+      },
+        owner: '35resf23'
+      },
+      {
+        _id: 3,
+        model: {
+          id: 101,
+          type: {
+              id: 201,
+              type: 'amulet'
+          },
+          name: 'diamond',
+          imgSrc: 'diamond-amulet.png'
+        },
+        owner: '35resf23'
+      },
+      
+
+  ]
+}
+
+const createTempItemListMission = () => {
+  return [
+    
+      {
+        _id: 4,
+        model: {
+          id: 103,
+          type: {
+              id: 201,
+              type: 'amulet'
+          },
+          name: 'sapphire',
+          imgSrc: 'sapphire-amulet.png'
+      },
+        owner: '35resf23'
+      },
+
+  ]
+}
+
 export default class DragThingsToBoxesDemo extends React.Component {
+
+
+
+  
   render() {
     return (
       <div className="drag_things_to_boxes">
@@ -19,8 +89,8 @@ export default class DragThingsToBoxesDemo extends React.Component {
           <Boxable targetKey="box" label="puppy" image="img/puppy.png"/>
         </div>
         <div className="boxes">
-          <Box targetKey="box"/>
-          <Box targetKey="box"/>
+          <Box targetKey="box" initList={createTempItemListUser} myid='firstbox'/>
+          <Box targetKey="box" initList={createTempItemListMission} myid='secondbox'/>
         </div>
         <div style={{clear: 'both'}}>&nbsp;</div>
 

@@ -22,6 +22,10 @@ export default class BoxItem extends React.Component {
       this.props.kill(this.props.uid);
     };
   
+    handleDrag = () => {
+      console.log('dragged item', this.props.myid)
+    }
+
     render() {
       /*
         Notice how these are wrapped in a DragDropContainer (so you can drag them) AND
@@ -34,12 +38,14 @@ export default class BoxItem extends React.Component {
           <DragDropContainer
               targetKey="boxItem"
               dragData={{label: this.props.children, index: this.props.index}}
+              customDragElement={this.props.customDragElement}
               onDrop={this.deleteMe}
+              onDrag={this.handleDrag}
               disappearDraggedElement={true}
-              dragHandleClassName="grabber"
+              //dragHandleClassName="grabber" //dont work on mobile
             >
               <DropTarget
-                onHit={this.handleDrop}
+                onHit={this.deleteMe}
                 targetKey="boxItem"
               >
                 <div className="outer">
@@ -50,6 +56,7 @@ export default class BoxItem extends React.Component {
                 </div>
             </DropTarget>
           </DragDropContainer>
+        
         </div>
       );
     }
