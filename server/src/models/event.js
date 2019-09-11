@@ -51,6 +51,12 @@ const EventSchema = new mongoose.Schema({
             ref: 'user' //name of model!!
         }
     }]
+    //nagrody - pointy,  
+    //wymagania - atrybuty
+    //Statki jak dokładnie
+    //Misja jak graczowo
+    //Misja nagrody jak dzielone
+    //Atrybuty - cztery
 
 },
 {

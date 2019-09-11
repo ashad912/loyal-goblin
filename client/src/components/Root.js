@@ -7,8 +7,8 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import ShipBoard from './tabs/ShipBoard'
-import Events from './tabs/Events'
+import ShipBoard from './screens/ShipBoard'
+import Events from './screens/Events'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;

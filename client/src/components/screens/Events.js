@@ -382,8 +382,10 @@ export default function Events() {
                                         mission.amulets.map(amulet => {
                                             //TODO: Fix problem with webpack.
                                             //console.log(`../../assets/icons/${amulet.itemModel.imgSrc}`) //this works
-                                            //console.log(`${pathToIcons}${amulet.itemModel.imgSrc}`) // does not works
+                                            //console.log(`${pathToIcons}${amulet.itemModel.imgSrc}`) // does not work
                                             //console.log(pathToIcons + amulet.itemModel.imgSrc) //does not work
+
+                                            
                                             
                                             return(
                                                 <React.Fragment key={amulet.itemModel.id}>

@@ -6,6 +6,7 @@ import Footer from './components/layout/Footer'
 import Root from './components/Root'
 import SignIn from './components/auth/SignIn'
 import Admin from './components/Admin'
+import DragThingsToBoxesDemo from './components/screens/events/DragThingsToBoxes/DragThingsToBoxesDemo'
 
 
 
@@ -23,6 +24,7 @@ class App extends React.Component {
           <Navbar />
             <Switch>
               <Route exact path = '/' component={Root}/>
+              <Route exact path = '/mission' component={DragThingsToBoxesDemo}/>
               <Route exact path = '/signin' component={SignIn}/>
               <Route exact path = '/console' component={Admin}/>
             </Switch>
