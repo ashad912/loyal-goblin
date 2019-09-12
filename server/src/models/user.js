@@ -1,5 +1,7 @@
 import mongoose from 'mongoose'
 
+const userClasses = ['warrior', 'mage', 'rogue', 'cleric']
+
 const UserSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -38,6 +40,10 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    class: { //userClasses
+        type: String,
+        required: true
+    },
     avatar: {
         type: Buffer
     },
@@ -49,51 +55,69 @@ const UserSchema = new mongoose.Schema({
     eq: [{ //i've thought about virtualization items
         item: {
             type: mongoose.Schema.Types.ObjectId, 
-            ref: 'item'
+            ref: 'item',
+            unique: true
         }
     }],
     armor: { //i assumed that eq !== armor -> easier to handle perks issues, i guess
         head: { 
             type: mongoose.Schema.Types.ObjectId, 
-            ref: 'item'
+            ref: 'item',
+            unique: true
         },
         breast: { 
             type: mongoose.Schema.Types.ObjectId, 
-            ref: 'item'
+            ref: 'item',
+            unique: true
         },
         leftHand: {
             type: mongoose.Schema.Types.ObjectId, 
-            ref: 'item'
+            ref: 'item',
+            unique: true
         },
         rightHand: {
             type: mongoose.Schema.Types.ObjectId, 
-            ref: 'item'
+            ref: 'item',
+            unique: true
         },
         legs: {
             type: mongoose.Schema.Types.ObjectId, 
-            ref: 'item'
+            ref: 'item',
+            unique: true
         },
         feets: {
             type: mongoose.Schema.Types.ObjectId, 
-            ref: 'item'
+            ref: 'item',
+            unique: true
         }
     },
-    //ships: {}, //need to know, precised ships logic (separate ships with fields vs. group of fields)
+    loyal: { //is it appropriate structure?
+        type: [{
+            pressed: {
+                type: Boolean, 
+                required: true,
+            }
+        }],
+        required: true
+    },
     friends: [{
         friend : {
             type: mongoose.Schema.Types.ObjectId, 
-            ref: 'user'
+            ref: 'user',
+            unique: true
         }
     }],
     party: { //suggested struct - EXPERIMENTAL
         leader: {
             type: mongoose.Schema.Types.ObjectId, 
-            ref: 'user'
+            ref: 'user',
+            unique: true
         },
         members: [{
             member: {
                 type: mongoose.Schema.Types.ObjectId, 
-                ref: 'user'
+                ref: 'user',
+                unique: true
             }
         }]
         
@@ -110,6 +134,13 @@ UserSchema.virtual('events', { //events can be reached by relations, BI RELATION
     localField: '_id', //relation from user side (we are in user schema!)
     foreignField: 'users.user' //relation from event side
 })
+
+UserSchema.virtual('activeEvent', { //events can be reached by relations, BI RELATION!!
+    ref: 'eventInstance',
+    localField: '_id', //relation from user side (we are in user schema!)
+    foreignField: 'party.user' //relation from event side
+})
+
 
 UserSchema.methods.generateAuthToken = async function () { //on instances
     const user = this

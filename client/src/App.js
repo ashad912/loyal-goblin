@@ -6,7 +6,7 @@ import Footer from './components/layout/Footer'
 import Root from './components/Root'
 import SignIn from './components/auth/SignIn'
 import Admin from './components/Admin'
-import DragThingsToBoxesDemo from './components/screens/events/DragThingsToBoxes/DragThingsToBoxesDemo'
+import DragThingsToBoxesDemo from './components/screens/events/DragThingsToBoxesDemo'
 
 
 

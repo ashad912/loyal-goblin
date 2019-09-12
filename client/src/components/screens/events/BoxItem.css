@@ -16,9 +16,10 @@
 .box_item_component .item {
     color: white;
     border-radius: 5px;
-    padding: 10px;
+    border: 2px solid black;
+    padding-top: 4px;
     margin: 3px;
-    background-color: #005577;
+    
 }
 
 .box_item_component .grabber {

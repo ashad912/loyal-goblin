@@ -14,12 +14,12 @@ const ItemModelSchema = new mongoose.Schema({ //class of Item
         type: String,
         required: true, 
     },
-    //perks
+    //perks - to specify what kind of perks we have
     //requiredLvl
     //description
     imgSrc: {
         type: String,
-        unique: true
+        required: true,
     }
 })
 

@@ -27,10 +27,15 @@ const EventSchema = new mongoose.Schema({
         type: Date
     },
     avatarSrc: String,
-    requiredPlayers: {
+    minPlayers: {
         type: Number,
         required: true,
     },
+    maxPlayers: {
+        type: Number,
+        required: true,
+    },
+    level: Number,
     description: {
         type: String,
         required: true,
@@ -48,15 +53,27 @@ const EventSchema = new mongoose.Schema({
     users: [{ //user whoes have finished the events - to query available events for specific user -> for users statistics used virtualization by user side
         user: {
             type: mongoose.Schema.Types.ObjectId, //id in mongo - user id
-            ref: 'user' //name of model!!
+            ref: 'user',
+            unique: true
+        }
+    }],
+    awards: [{
+        award: {
+            class: String,
+            itemModel: {
+                type: mongoose.Schema.Types.ObjectId, 
+                ref: 'itemModel'
+            }
         }
     }]
-    //nagrody - pointy,  
-    //wymagania - atrybuty
-    //Statki jak dokładnie
-    //Misja jak graczowo
-    //Misja nagrody jak dzielone
-    //Atrybuty - cztery
+    //nagrody - exp i przedmioty
+    //wymagania - atrybuty - siła, magia, zręczność, wytrzymałość - 4
+    //klasy - wojownik, mag, łotrzyk, kleryk? - 4
+    //Statki jak dokładnie - najprościej
+    //Misja jak graczowo - zakres, minimalny lvl
+    //Misja nagrody jak dzielone - nagroda pod klasę, 
+
+    //odświeżanie misji - klonowanie to samo z nowym id
 
 },
 {

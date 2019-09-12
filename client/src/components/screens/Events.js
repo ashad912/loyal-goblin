@@ -1,7 +1,6 @@
 import React  from 'react'
 import VisibilitySensor from 'react-visibility-sensor'
 import avatarTemp from '../../assets/board/statki.svg'
-
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -15,6 +14,7 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
+import DragThingsToBoxesDemo from './events/DragThingsToBoxesDemo'
 
 import moment from 'moment'
 
@@ -29,7 +29,8 @@ const createTempList = () => {
             id: 0,
             title: 'Mission1',
             avatarSrc: {avatarTemp},
-            requiredPlayers: 4,
+            minPlayers: 3,
+            maxPlayers: 4,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
                 {
@@ -62,7 +63,8 @@ const createTempList = () => {
             id: 1,
             title: 'Mission2',
             avatarSrc: {avatarTemp},
-            requiredPlayers: 3,
+            minPlayers: 3,
+            maxPlayers: 3,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
                 {
@@ -107,7 +109,8 @@ const createTempList = () => {
             id: 2,
             title: 'Mission3',
             avatarSrc: {avatarTemp},
-            requiredPlayers: 4,
+            minPlayers: 3,
+            maxPlayers: 4,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
                 {
@@ -140,7 +143,8 @@ const createTempList = () => {
             id: 3,
             title: 'Mission4',
             avatarSrc: {avatarTemp},
-            requiredPlayers: 3,
+            minPlayers: 3,
+            maxPlayers: 3,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
                 {
@@ -185,7 +189,8 @@ const createTempList = () => {
             id: 4,
             title: 'Mission5',
             avatarSrc: {avatarTemp},
-            requiredPlayers: 4,
+            minPlayers: 3,
+            maxPlayers: 4,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
                 {
@@ -218,7 +223,8 @@ const createTempList = () => {
             id: 5,
             title: 'Mission6',
             avatarSrc: {avatarTemp},
-            requiredPlayers: 3,
+            minPlayers: 3,
+            maxPlayers: 3,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
                 {
@@ -309,14 +315,21 @@ const handleRallyClick = () => {
 }
 
 const handleMissionClick = (id) => {
-    console.log('clicked',  id) //shot to backend - verify party quantity (amulets verifed inside the mission), redirect to mission
+    console.log('clicked',  id) //shot to backend - verify party quantity and leader status (amulets verifed inside the mission), redirect to mission
 }
 
 export default function Events() {
-    const isMissionActive = (players) => {
-        return currentPlayersInParty === players
+    const isMissionActive = (minPlayers, maxPlayers) => {
+        return (currentPlayersInParty >= minPlayers && currentPlayersInParty <= maxPlayers)
     } 
+    const players = (minPlayers, maxPlayers) => {
+        if(minPlayers === maxPlayers){
+            return minPlayers
+        }else {
+            return `${minPlayers}-${maxPlayers}`
+        }
 
+    }
 
     const classes = useStyles();
     const bull = <span className={classes.bullet}>•</span>;
@@ -326,18 +339,20 @@ export default function Events() {
 
     
 
-    const currentPlayersInParty = 3; //returned from backend (read from user profile -> user.party.members.length + 1 [1 for leader] EXPERIMENTAL)
-
+    const currentPlayersInParty = 4; //returned from backend (read from user profile -> user.party.members.length + 1 [1 for leader] EXPERIMENTAL)
+    const leader = true //only leader can enter mission - from backend as above
     
     const rally = createTempRally() //returned from backend
     const missionListData = createTempList() //returned from backend
     //one shot to events can be separated (rally, missions) on back/front
+    
     
 
     //for better perfomance uses VisibilitySensor to load only visible (or partly visible) elements
     //to work need fixed listem item size (which is ok, i believe)
     const missionList = missionListData ? (
         missionListData.map(mission => {
+            const missionActive = isMissionActive(mission.minPlayers, mission.maxPlayers)
             return(
                 <VisibilitySensor partialVisibility key={mission.id}>
                 {({isVisible}) =>
@@ -362,9 +377,9 @@ export default function Events() {
                                         component="span"
                                         variant="body2"
                                         className={classes.inline}
-                                        color={isMissionActive(mission.requiredPlayers) ? 'textPrimary' : 'error'}
+                                        color={missionActive ? 'textPrimary' : 'error'}
                                     >
-                                        {`  Players: ${mission.requiredPlayers}/${currentPlayersInParty}`/*TODO: need to provide style 'alignRight' for this stuff*/}
+                                        {`  Players: ${players(mission.minPlayers, mission.maxPlayers)}`/*TODO: need to provide style 'alignRight' for this stuff*/}
                                     </Typography>
                                     </React.Fragment>
                                 }
@@ -401,7 +416,7 @@ export default function Events() {
                                 }  
                             />
                             <ListItemSecondaryAction>
-                                <Button size="small" onClick={() => handleMissionClick(mission.id)} disabled={!isMissionActive(mission.requiredPlayers)}>Go in!</Button>
+                                <Button size="small" onClick={() => handleMissionClick(mission.id)} disabled={!missionActive || !leader}>{leader ? ('Go in!') : ('You are not the leader!')}</Button>
                             </ListItemSecondaryAction>
                             
                             
