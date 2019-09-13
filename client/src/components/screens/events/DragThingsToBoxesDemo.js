@@ -69,17 +69,43 @@ const createTempItemListMission = () => {
   ]
 }
 
+const backToEvents = (history) => {
+  history.push({
+    pathname: '/',
+    state: {indexRedirect: 1}
+  }) 
+}
+
 export default class DragThingsToBoxesDemo extends React.Component {
 
+ 
+  componentDidMount() {
+    if(this.props.location.state && this.props.location.state.id != null){
+      const id = this.props.location.state.id
+      console.log(id)
+      //this.props.history.replace('', null);
+    } else {
+      backToEvents(this.props.history)
+      //redirection in props.history
+    }
+  }
 
+  handleBack = () => {
+    backToEvents(this.props.history)
+  }
 
-  
   render() {
+    console.log(this.props)
     return (
-      <div className="drag_things_to_boxes">
-          <Box targetKey="box" initList={createTempItemListUser} boxname='user'/>
-          <Box targetKey="box" initList={createTempItemListMission} boxname='mission'/>
-      </div>
+      <React.Fragment>
+        <div onClick={this.handleBack}>
+          <p>Back</p>
+        </div>
+        <div className="drag_things_to_boxes">
+            <Box targetKey="box" initList={createTempItemListUser} boxname='user'/>
+            <Box targetKey="box" initList={createTempItemListMission} boxname='mission'/>
+        </div>
+      </React.Fragment>
     )
   }
 }

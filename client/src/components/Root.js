@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -47,7 +47,17 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FullWidthTabs() {
+export default function FullWidthTabs(props) {
+
+  useEffect(() => { //change tab, when returing from specific event
+    if(props.location.state && props.location.state.indexRedirect !== null){
+      const redirectToIndex = props.location.state.indexRedirect
+      props.history.replace('', null);
+      setValue(redirectToIndex)
+    }
+  }, [])
+
+
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -59,6 +69,7 @@ export default function FullWidthTabs() {
   function handleChangeIndex(index) {
     setValue(index);
   }
+
 
   return (
     <div className={classes.root}>

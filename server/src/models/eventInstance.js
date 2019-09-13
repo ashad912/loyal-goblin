@@ -1,15 +1,15 @@
 import mongoose from 'mongoose'
-import {Event} from './event'
-import {User} from './user'
+import {EventSchema} from './event'
+import {UserSchema} from './user'
 
 const EventInstanceSchema = new mongoose.Schema({ //instance of ItemModel
 
     //event instance is existing through small period - easier to keep full objects?
-    event: Event,
+    event: EventSchema,
     party: {
         type: [{
             user: {
-                type: User,
+                type: UserSchema,
                 unique: true
             }
         }],

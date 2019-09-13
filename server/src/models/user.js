@@ -1,8 +1,18 @@
 import mongoose from 'mongoose'
+import validator from 'validator'
+import bcrypt from 'bcryptjs'
+import jwt from "jsonwebtoken"
 
 const userClasses = ['warrior', 'mage', 'rogue', 'cleric']
 
-const UserSchema = new mongoose.Schema({
+const LoyalSchema = new mongoose.Schema({  
+    pressed: {
+        type: Boolean, 
+        required: true,
+    }   
+})
+
+export const UserSchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, 'Name field is required']
@@ -92,12 +102,7 @@ const UserSchema = new mongoose.Schema({
         }
     },
     loyal: { //is it appropriate structure?
-        type: [{
-            pressed: {
-                type: Boolean, 
-                required: true,
-            }
-        }],
+        type: [LoyalSchema],
         required: true
     },
     friends: [{
@@ -114,11 +119,9 @@ const UserSchema = new mongoose.Schema({
             unique: true
         },
         members: [{
-            member: {
-                type: mongoose.Schema.Types.ObjectId, 
-                ref: 'user',
-                unique: true
-            }
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'user',
+            unique: true
         }]
         
     }

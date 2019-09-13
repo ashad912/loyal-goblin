@@ -8,7 +8,7 @@ import SignIn from './components/auth/SignIn'
 import Admin from './components/Admin'
 import DragThingsToBoxesDemo from './components/screens/events/DragThingsToBoxesDemo'
 
-
+import withAuth from './hoc/withAuth'
 
 class App extends React.Component {
 
@@ -23,8 +23,8 @@ class App extends React.Component {
         <div className="App">
           <Navbar />
             <Switch>
-              <Route exact path = '/' component={Root}/>
-              <Route exact path = '/mission' component={DragThingsToBoxesDemo}/>
+              <Route exact path = '/' component={withAuth(Root)}/>
+              <Route exact path = '/mission' component={withAuth(DragThingsToBoxesDemo)}/>
               <Route exact path = '/signin' component={SignIn}/>
               <Route exact path = '/console' component={Admin}/>
             </Switch>

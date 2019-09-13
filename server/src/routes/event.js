@@ -3,14 +3,30 @@ import bcrypt from 'bcryptjs'
 import { Event } from '../models/event';
 import { auth } from '../middleware/auth';
 import { EventInstance } from '../models/eventInstance';
+import { ItemModel } from '../models/itemModel'
 
 
 const router = new express.Router
 
+//TEST
+router.post('/create', auth, async (req, res) =>{
+
+    const event = new Event(req.body)
+    
+
+    try {
+        await event.save() //this method holds updated user!
+        res.status(201).send(event)
+    } catch (e) {
+        console.log(e)
+        res.status(400).send(e)
+    }
+})
+
 //CHECK:
-// - working
-// - no amulets
-// - no party
+// - no amulets DONE
+// - no party DONE
+// - party
 //assumed, when user finishes the mission, mission saves his id in array
 router.get('/events', auth, async (req, res) => { //get active events which are available for specific user AND for all user's party!!
     
@@ -18,24 +34,40 @@ router.get('/events', auth, async (req, res) => { //get active events which are 
 
     let partyIds = []
 
-    if(user.party) {
+
+    if(user.party.members.length) {
         partyIds = [user.party.leader, ...user.party.members]
     }
 
+    console.log(partyIds)
+    
     
     try {
-        const events = await Event.find({status: 'active', users: {$elemMatch: {$nin: partyIds}}}).populate({ //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
-            path: 'amulets.amulet.itemModel',
-            options: {}
-        }).execPopulate() //get active events which are available for specific user AND for all user's party with populating idreferences to required amulets
+        //CONSIDER: move populate to middleware Event.post('find', ...)
+        const events = await Event.find({status: 'active', users: {$not: {$elemMatch: {$nin: partyIds}}}})
+            .populate({ //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
+                path: 'amulets.itemModel',
+                options: {}
+            })
+        
+        //IMPORTANT: .execPopulate() does not work on array!!!!!! lost 1,5 hour on this xd
+        /*events.forEach( async (event) => {
+            console.log(event)
+            await event.populate({ 
+                path: 'amulets.itemModel'
+            }).execPopulate()
+        })*/
+
+        console.log(events)
         
         res.send(events)
     } catch (e) {
-        res.status(500).send()
+        console.log(e)
+        res.status(500).send(e)
     }
 })
 
-
+//CHECK:
 router.get('/enterInstance/:id', auth, async (req, res) => { //event id passed from front
     const user = req.user
     
@@ -63,8 +95,14 @@ router.get('/enterInstance/:id', auth, async (req, res) => { //event id passed f
 
         console.log('got members ids')
 
+        if(memberIds.length > event.maxPlayers || membersIds.length < event.minPlayers){
+            throw new Error()
+        }
+
+        console.log('appropriate party size')
+
         let party = [user]
-        foreach(membersIds, (memberId) => {
+        foreach(membersIds, async (memberId) => {
             const member = await User.findById(memberId)
 
             console.log('got member', member._id)
@@ -74,7 +112,7 @@ router.get('/enterInstance/:id', auth, async (req, res) => { //event id passed f
 
         console.log('got all party')
 
-        foreach(party, (member) => {
+        foreach(party, async (member) => {
             await member.populate({ //looking for user's id in event instances 
                 path: 'activeEvent'
             }).execPopulate()

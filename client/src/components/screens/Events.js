@@ -1,4 +1,5 @@
-import React  from 'react'
+import React, {useState}  from 'react'
+import { Redirect, Link } from 'react-router-dom'
 import VisibilitySensor from 'react-visibility-sensor'
 import avatarTemp from '../../assets/board/statki.svg'
 import { makeStyles } from '@material-ui/core/styles';
@@ -314,11 +315,20 @@ const handleRallyClick = () => {
     console.log('clicked rally')
 }
 
-const handleMissionClick = (id) => {
-    console.log('clicked',  id) //shot to backend - verify party quantity and leader status (amulets verifed inside the mission), redirect to mission
-}
 
-export default function Events() {
+
+
+
+const Events = () => {
+
+    const [missionId, setMissionId] = useState(null);
+    
+
+    const handleMissionClick = (id) => {
+        console.log('clicked',  id) //shot to backend - verify party quantity and leader status (amulets verifed inside the mission), redirect to mission
+        setMissionId(id)
+    }
+
     const isMissionActive = (minPlayers, maxPlayers) => {
         return (currentPlayersInParty >= minPlayers && currentPlayersInParty <= maxPlayers)
     } 
@@ -416,7 +426,9 @@ export default function Events() {
                                 }  
                             />
                             <ListItemSecondaryAction>
+                                
                                 <Button size="small" onClick={() => handleMissionClick(mission.id)} disabled={!missionActive || !leader}>{leader ? ('Go in!') : ('You are not the leader!')}</Button>
+                            
                             </ListItemSecondaryAction>
                             
                             
@@ -433,10 +445,16 @@ export default function Events() {
         })
     ) : ( null )
 
-    
+    console.log(missionId)
     return (
-
+        
         <React.Fragment>
+            {missionId != null ?
+             <Redirect to={{
+                  pathname: '/mission',
+                  state: { id: missionId}                                      
+            }} /> : null}
+
             <Typography variant="h6" className={classes.title}>
                 Rally
             </Typography>
@@ -477,3 +495,5 @@ export default function Events() {
       
     )
 }
+
+export default Events

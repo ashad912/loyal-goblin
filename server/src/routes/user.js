@@ -8,7 +8,7 @@ import { auth } from '../middleware/auth';
 const router = express.Router()
 
 router.post('/create', async (req, res) => { //registerKey used in biometrica, hwvr we may allow registration for ppl with key from qrcode - i left it
-
+    
     if(!req.body.registerKey){
         res.status(400).send()
     }
@@ -21,11 +21,13 @@ router.post('/create', async (req, res) => { //registerKey used in biometrica, h
 
     delete req.body.registerKey
     const user = new User(req.body)
+    
 
     try {
         await user.save() //this method holds updated user!
         res.status(201).send({user})
     } catch (e) {
+        console.log(e)
         res.status(400).send(e)
     }
 })

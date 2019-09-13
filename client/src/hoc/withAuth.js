@@ -1,61 +1,59 @@
+import React from 'react'
+import { compose } from 'redux'
+import { Redirect } from 'react-router-dom'
+import { connect } from 'react-redux';
+import {authCheck} from '../store/actions/authActions'
+import Loading from '../components/layout/Loading';
 
+const withAuth = (WrappedComponent) => {
 
-// import React from 'react'
-// import { compose } from 'redux'
-// import { Redirect } from 'react-router-dom'
-// import { connect } from 'react-redux';
-// import {authCheck} from '../store/actions/authActions'
-// import Loading from '../layout/Loading';
+    return class extends React.Component {
+        state = {
+            loading: true
+        }
 
-// const withAuth = (WrappedComponent) => {
-
-//     return class extends React.Component {
-//         state = {
-//             loading: true
-//         }
-
-//         async componentWillMount(){
+        async componentWillMount(){
             
-//             await this.props.authCheck()
-//             this.setState({loading: false})
-//         }
+            await this.props.authCheck()
+            this.setState({loading: false})
+        }
 
-//         render () {
-//             if(this.state.loading) {
-//                 return <Loading/>
-//             }
+        render () {
+            if(this.state.loading) {
+                return <Loading/>
+            }
             
-//             if(!this.props.auth.uid) {
-//                 return (
-//                     <Redirect to = '/signin' />
-//                 )
-//             }
+            if(!this.props.auth.uid) {
+                return (
+                    <Redirect to = '/signin' />
+                )
+            }
             
-//             return (
-//                 <React.Fragment>
-//                     <WrappedComponent />
-//                 </React.Fragment>
-//             );
-//         }
-//     }
+            return (
+                <React.Fragment>
+                    <WrappedComponent {...this.props}/>
+                </React.Fragment>
+            );
+        }
+    }
 
       
-// }
-// const mapStateToProps = (state) => {
-//     return {
-//         auth: state.auth,
-//     }
-// }
-// const mapDispatchToProps = (dispatch) => {
-//     return {
-//         authCheck: () => dispatch(authCheck()),
-//     }
-// }
+}
+const mapStateToProps = (state) => {
+    return {
+        auth: state.auth,
+    }
+}
+const mapDispatchToProps = (dispatch) => {
+    return {
+        authCheck: () => dispatch(authCheck()),
+    }
+}
 
 
-// const composedWithAuth = compose(
-//     connect(mapStateToProps, mapDispatchToProps),
-//     withAuth
-// )
+const composedWithAuth = compose(
+    connect(mapStateToProps, mapDispatchToProps),
+    withAuth
+)
 
-// export default composedWithAuth
+export default composedWithAuth
