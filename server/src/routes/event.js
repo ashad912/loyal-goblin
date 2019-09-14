@@ -143,11 +143,12 @@ router.get('/enterInstance/:id', auth, async (req, res) => { //event id passed f
     
 })
 
-router.post('/sendItem/mission', auth, async (req, res) => {
+//CHECK:
+router.patch('/sendItem/mission', auth, async (req, res) => {
     const user = req.user
     try{
         await user.populate({
-            path: 'items',
+            path: 'eq',
             path: 'party.leader',
             path: 'party.members',
             path: 'activeEvent'
@@ -156,7 +157,53 @@ router.post('/sendItem/mission', auth, async (req, res) => {
         const party = [user.party.leader, ...user.party.members]
     
         const eventInstance =  await EventInstance.findOne({_id: user.activeEvent, party: party})
-        //...
+
+        console.log('instance is existing')
+        
+        const itemId = req.body.id
+
+        if(user.eq.includes(itemId)){
+            throw Error()
+        }
+
+        console.log('item in user eq')
+
+        const item = await Item.findById(itemId).populate({
+            path: 'model',
+            path: 'owner'
+        }).execPopulate()
+
+        console.log('item is existing')
+
+
+        if(item.model.type !== 'amulet'){
+            throw Error()
+        }
+
+        console.log('item is amulet')
+
+        if(item.owner !== user._id){
+            throw Error()
+        }
+
+        console.log('item belongs to specific user')
+
+        eventInstance.items = [...eventInstance.items, itemId]
+
+        await eventInstance.save()
+        
+        console.log('item added to mission')
+        
+    
+        user.eq = user.eq.filter((item) => {
+            return item !== itemId
+        })
+
+        await user.save()
+
+        console.log('item deleted from user eq - item still has owner prop')
+
+        res.status(200).send({user, eventInstance})
     } catch (e) {
         res.status(400).send(e)
     }
@@ -164,7 +211,7 @@ router.post('/sendItem/mission', auth, async (req, res) => {
 
 })
 
-router.get('/sendItem/:id/user', auth, async (req, res) => {
+router.get('/sendItem/user', auth, async (req, res) => {
 
 })
 

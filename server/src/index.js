@@ -8,6 +8,8 @@ import path from 'path'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 
+//TO-START: npm run-script dev
+
 mongoose.Promise = global.Promise
 
 mongoose.connect(process.env.MONGODB_URL, {useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false})
@@ -19,7 +21,7 @@ const port = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.static(path.join(__dirname, '../client/build')));
 
-app.use(bodyParser.json()) //going to have access to json mssg
+app.use(bodyParser.json())
 app.use(cookieParser())
 
 

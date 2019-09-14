@@ -1,0 +1,477 @@
+{
+	"info": {
+		"_postman_id": "82879e58-ce57-4745-a132-9de90be32742",
+		"name": "LoyalGoblin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "41f09ce0-4d4d-4bb1-8d4f-9319033ab3a7",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"name\": \"admin\",\r\n\t\"email\": \"admin@admin.com\",\r\n\t\"password\": \"adminadmin\",\r\n\t\"active\": true,\r\n\t\"expPoints\": 0,\r\n\t\"class\": \"warrior\",\r\n\t\"registerKey\": \"ad!QAZmin@WSX\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/user/create",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0e82b13c-1190-47e3-a874-0a62d8de57f8",
+						"type": "text/javascript",
+						"exec": [
+							"if(pm.response.code === 200) {",
+							"    pm.environment.set('authToken', pm.cookies.get('token'))",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"admin@admin.com\",\n\t\"password\": \"adminadmin\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/user/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check auth",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZDUzZTljNGFmOWQyMTUxMjQ5MDJmOTUiLCJpYXQiOjE1NjU3ODI4NTZ9.Suq33SEUPQekyvxRkswdIf4KLo6mEVE7GhrkbJw09q4"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"name\": \"mario3\",\r\n\t\"rank\": \"belt3\",\r\n\t\"email\": \"mario3@ninja.com\",\r\n\t\"password\": \"1234ninja3\",\r\n\t\"available\": true,\r\n\t\"geometry\": {\r\n\t\t\"type\": \"Point\",\r\n\t\t\"coordinates\": [-80.345, 25.291]\r\n\t}\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/user/me",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create event",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"type": "text/javascript",
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"type\": \"mission\",\r\n\t\"title\": \"MissionTest1\",\r\n\t\"status\": \"active\",\r\n\t\"minPlayers\": 3,\r\n\t\"maxPlayers\": 5,\r\n\t\"level\": 3,\r\n\t\"description\": \"Super important mission. You need have things and attributes, as always loool xd\",\r\n\t\"amulets\": [\r\n\t\t{\r\n\t\t\t\"quantity\": 2,\r\n\t\t\t\"itemModel\": \"5d7c037e7459ac65c4f05019\"\r\n\t\t}\r\n\t]\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/event/create",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"event",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create itemModel",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"type": "text/javascript",
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"type\": \"amulet\",\r\n\t\"name\": \"saphhire\",\r\n\t\"imgSrc\": \"sapphire-amulet.png\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/item/createModel",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"item",
+						"createModel"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get available events",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cf2e17d8-12ce-4199-92a8-f0019be4b8e6",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"description\": \"Kill the very bad ninjas!\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/event/events",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"event",
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create item",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						],
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"model\": \"5d7c037e7459ac65c4f05019\",\r\n\t\"owner\": \"5d7c03737459ac65c4f05017\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/item/create",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"item",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout user",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "4af44b38-98cb-413e-9059-a47f20e978df",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "8477f164-456a-48eb-9206-207985983ab8",
+						"type": "text/javascript",
+						"exec": [
+							"if(pm.response.code === 200) {",
+							"    pm.environment.unset('authToken')",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"name\": \"mario3\",\r\n\t\"rank\": \"belt3\",\r\n\t\"email\": \"mario3@ninja.com\",\r\n\t\"password\": \"1234ninja3\",\r\n\t\"available\": true,\r\n\t\"geometry\": {\r\n\t\t\"type\": \"Point\",\r\n\t\t\"coordinates\": [-80.345, 25.291]\r\n\t}\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/user/logout",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout user from all sessions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0fd2697c-c38e-4e23-8dc2-6b46d4c97560",
+						"type": "text/javascript",
+						"exec": [
+							"if(pm.response.code === 200) {",
+							"    pm.environment.unset('authToken')",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"name\": \"mario3\",\r\n\t\"rank\": \"belt3\",\r\n\t\"email\": \"mario3@ninja.com\",\r\n\t\"password\": \"1234ninja3\",\r\n\t\"available\": true,\r\n\t\"geometry\": {\r\n\t\t\"type\": \"Point\",\r\n\t\t\"coordinates\": [-80.345, 25.291]\r\n\t}\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/user/logoutAll",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"logoutAll"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{authToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "53b03896-32c9-4800-b8e3-9d5e1525f5e8",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "a5516c34-c7b3-4918-bb76-f92b43bf7c69",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

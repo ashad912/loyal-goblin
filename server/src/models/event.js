@@ -41,14 +41,12 @@ export const EventSchema = new mongoose.Schema({
         required: true,
     },
     unique: Boolean, //active only once
-    amulets: [{
-        
+    amulets: [{   
         quantity: Number,
         itemModel: { //for fixation: https://stackoverflow.com/questions/48501410/mongoose-how-to-get-an-object-instead-of-an-object-reference-in-a-getter
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'itemModel'
-        }
-        
+        }  
     }],
     users: [{ //user whoes have finished the events - to query available events for specific user -> for users statistics used virtualization by user side
         user: {
