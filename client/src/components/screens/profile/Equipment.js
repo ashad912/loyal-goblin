@@ -7,26 +7,28 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Collapse from "@material-ui/core/Collapse";
 import Paper from "@material-ui/core/Paper";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import EquipmentListItem from "./EquipmentItem";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
 
 const useStyles = makeStyles(theme => ({
   root: {
     width: "100%",
-  },
-  listItem: {
-    borderTop: "1px solid grey",
-    borderBottom: "1px solid grey",
-    marginBottom: "0.2rem"
-  },
-  inline: {
-    display: "inline"
   }
 }));
 
 const Equipment = props => {
   const [openList, setOpenList] = React.useState("");
+  const [deleteDialog, setDeleteDialog] = React.useState(false)
+  const [itemToDelete, setItemToDelete] = React.useState({id: '', name: '', category: ''})
 
   const classes = useStyles();
 
@@ -37,6 +39,22 @@ const Equipment = props => {
       setOpenList(event.currentTarget.dataset.value);
     }
   };
+
+  const handleShowDeleteDialog = (id, name, category) => {
+    setItemToDelete({id, name, category})
+    setDeleteDialog(true)
+
+  }
+
+  const handleDeleteDialogClose = () => {
+    setDeleteDialog(false)
+  }
+
+  const handleItemDelete = () => {
+    props.handleItemDelete(itemToDelete.id, itemToDelete.category)
+    handleDeleteDialogClose()
+  }
+
 
   const items = props.items;
 
@@ -56,29 +74,32 @@ const Equipment = props => {
             >
               <List component="div" disablePadding>
                 {items[itemCategory].map(item => (
-                  <ListItem
-                    key={item.itemModel.id}
-                    alignItems="flex-start"
-                    className={classes.listItem}
-                  >
-                    <ListItemAvatar>
-                      <img
-                        style={{ width: "32px", height: "32px" }}
-                        alt={item.itemModel.name}
-                        src={require(`../../../assets/icons/items/${item.itemModel.imgSrc}`)}
-                      />
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={item.itemModel.name}
-                      secondary={<span>{item.itemModel.fluff}</span>}
-                    />
-                  </ListItem>
+                  <EquipmentListItem item={item} handleItemToggle={props.handleItemToggle} itemCategory={itemCategory} handleItemDelete={handleShowDeleteDialog}/>
                 ))}
               </List>
             </Collapse>
           </React.Fragment>
         ))}
       </List>
+      <Dialog
+        open={deleteDialog}
+        onClose={handleDeleteDialogClose}
+      >
+        <DialogTitle >Wyrzucanie przedmiotu</DialogTitle>
+        <DialogContent>
+          <DialogContentText >
+                  Czy na pewno chcesz wyrzucić przedmiot {itemToDelete.name}?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteDialogClose} color="primary">
+            Anuluj
+          </Button>
+          <Button onClick={handleItemDelete} color="primary" autoFocus>
+            Potwierdź
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 };

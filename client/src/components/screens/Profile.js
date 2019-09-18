@@ -4,9 +4,13 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
+import ColorizeIcon from "@material-ui/icons/Colorize";
+
 
 import Attribute from "./profile/Attribute";
 import Equipment from "./profile/Equipment";
+import NewLevelDialog from "./profile/NewLevelDialog";
 import maleBody from "../../assets/avatar/male-body.png";
 
 const useStyles = makeStyles(theme => ({
@@ -17,20 +21,20 @@ const useStyles = makeStyles(theme => ({
     flex: 0.9,
     alignSelf: "stretch",
     marginBottom: "1rem",
-    display: 'grid',
-    grid: '100% 100% '
+    display: "grid",
+    grid: "100% 100% "
   },
-  avatarImage: { 
-      width: "100%",
-      gridColumn: 1,
-      gridRow: 1
-     },
+  avatarImage: {
+    width: "100%",
+    gridColumn: 1,
+    gridRow: 1
+  },
   expBar: {
     width: "100%",
     marginBottom: "1rem"
   },
   eqHeading: {
-      marginBottom: '1rem'
+    marginBottom: "1rem"
   }
 }));
 
@@ -38,16 +42,18 @@ const createTempPlayer = (attributes, equipment) => {
   return {
     firstName: "Mirosław",
     lastName: "Szczepaniak",
+    level: 8,
     ...attributes,
     equipment,
     currentExp: 1300,
+    currentExpBasis: 2100,
     nextLevelAtExp: 3400
   };
 };
 
 const createTempEquipment = () => {
   return {
-    amulets: [
+    amulet: [
       {
         quantity: 2,
         itemModel: {
@@ -58,7 +64,8 @@ const createTempEquipment = () => {
           },
           name: "Diament",
           fluff: "Najlepszy przyjaciel dziewyczyny",
-          imgSrc: "diamond-amulet.png"
+          imgSrc: "diamond-amulet.png",
+          equipped: false
         }
       },
       {
@@ -71,11 +78,12 @@ const createTempEquipment = () => {
           },
           name: "Perła",
           fluff: "Perła prosto z lodówki, znaczy z małży",
-          imgSrc: "pearl-amulet.png"
+          imgSrc: "pearl-amulet.png",
+          equipped: false
         }
       }
     ],
-    weapons: [
+    weapon: [
       {
         quantity: 1,
         itemModel: {
@@ -86,11 +94,12 @@ const createTempEquipment = () => {
           },
           name: "Krótki miecz",
           fluff: "Przynajmniej nie masz kompleksów",
-          imgSrc: "short-sword.png"
+          imgSrc: "short-sword.png",
+          equipped: false
         }
       }
     ],
-    chests: [
+    chest: [
       {
         quantity: 1,
         itemModel: {
@@ -101,7 +110,8 @@ const createTempEquipment = () => {
           },
           name: "Skórzana kurta",
           fluff: "Lale za takimi szaleją",
-          imgSrc: "leather-jerkin.png"
+          imgSrc: "leather-jerkin.png",
+          equipped: true
         }
       }
     ],
@@ -116,7 +126,8 @@ const createTempEquipment = () => {
           },
           name: "Lniane spodnie",
           fluff: "Zwykłe spodnie, czego jeszcze chcesz?",
-          imgSrc: "linen-trousers.png"
+          imgSrc: "linen-trousers.png",
+          equipped: true
         }
       }
     ],
@@ -131,11 +142,12 @@ const createTempEquipment = () => {
           },
           name: "Wysokie buty",
           fluff: "Skórzane, wypastowane, lśniące",
-          imgSrc: "high-boots.png"
+          imgSrc: "high-boots.png",
+          equipped: true
         }
       }
     ],
-    heads: [
+    head: [
       {
         quantity: 1,
         itemModel: {
@@ -146,7 +158,8 @@ const createTempEquipment = () => {
           },
           name: "Czapka z piórkiem",
           fluff: "Wesoła kompaniaaaa",
-          imgSrc: "feathered-hat.png"
+          imgSrc: "feathered-hat.png",
+          equipped: true
         }
       },
       {
@@ -159,11 +172,12 @@ const createTempEquipment = () => {
           },
           name: "Kaptur czarodzieja",
           fluff: "Kiedyś nosił go czarodziej. Już nie nosi.",
-          imgSrc: "wizard-coul.png"
+          imgSrc: "wizard-coul.png",
+          equipped: false
         }
       }
     ],
-    rings: [
+    ring: [
       {
         quantity: 1,
         itemModel: {
@@ -174,7 +188,8 @@ const createTempEquipment = () => {
           },
           name: "Pierścień siły",
           fluff: "Całuj mój sygnet potęgi",
-          imgSrc: "strength-ring.png"
+          imgSrc: "strength-ring.png",
+          equipped: false
         }
       }
     ]
@@ -184,10 +199,126 @@ const createTempEquipment = () => {
 const Profile = () => {
   const classes = useStyles();
 
-  const player = createTempPlayer(
-    { str: 4, dex: 2, mag: 1, cha: 5 },
-    createTempEquipment()
+  const [player, setPlayer] = React.useState(
+    createTempPlayer({ str: 4, dex: 2, mag: 1, end: 5 }, createTempEquipment())
   ); //Returned from backend
+
+  const [goExp, setGoExp] = React.useState(false)
+
+  const [newLevelDialogOpen, setNewLevelDialogOpen] = React.useState(false);
+
+  const [equippedItems, setEquippedItems] = React.useState({
+    amulet: "",
+    head: "",
+    chest: "",
+    hands: "",
+    legs: "",
+    feet: "",
+    weapon: "",
+    ring: ""
+  });
+  //TODO: Main-hand and off-hand weapon
+  //TODO: Multiple items of same type
+
+  React.useEffect(() => {
+    updateEquippedItems();
+  }, []);
+
+  const updateEquippedItems = () => {
+    const equipment = {
+      amulet: "",
+      head: "",
+      chest: "",
+      hands: "",
+      legs: "",
+      feet: "",
+      weapon: "",
+      ring: ""
+    };
+
+    Object.keys(player.equipment).forEach(category => {
+      const loadedEquippedItem = player.equipment[category].find(
+        item => item.itemModel.equipped
+      );
+      if (loadedEquippedItem) {
+        equipment[category] = loadedEquippedItem.itemModel.imgSrc;
+      }
+    });
+    console.log(equipment);
+    setEquippedItems({ ...equipment });
+  };
+
+  const handleItemToggle = (id, isEquipped, category) => {
+    //TODO: Each item needs own ID
+    const tempPlayer = { ...player };
+    const modifyItemArrayIndex = tempPlayer.equipment[category].findIndex(
+      item => {
+        return item.itemModel.id === id;
+      }
+    );
+
+    //TODO: Handle 2 weapons and rings
+    tempPlayer.equipment[category].forEach(
+      item => (item.itemModel.equipped = false)
+    );
+    tempPlayer.equipment[category][
+      modifyItemArrayIndex
+    ].itemModel.equipped = !isEquipped;
+    setPlayer({ ...tempPlayer });
+    updateEquippedItems();
+    //TODO: Call to backend
+  };
+
+  const handleItemDelete = (id, category) => {
+    const tempPlayer = { ...player };
+    const modifyItemArrayIndex = tempPlayer.equipment[category].findIndex(
+      item => {
+        return item.itemModel.id === id;
+      }
+    );
+
+
+    tempPlayer.equipment[category].splice(modifyItemArrayIndex, 1)
+    setPlayer({ ...tempPlayer });
+    updateEquippedItems();
+
+    //TODO: Call to backend
+  }
+
+  const handleAddExperience = newExp => {
+    const tempPlayer = { ...player };
+    if (tempPlayer.currentExp + newExp >= tempPlayer.nextLevelAtExp) {
+      setPlayer({ ...handleNewLevel(tempPlayer) });
+      setNewLevelDialogOpen(true);
+    } else {
+      tempPlayer.currentExp += newExp;
+      setPlayer({ ...tempPlayer });
+    }
+  };
+
+  const handleNewLevel = player => {
+    player.level++;
+    player.currentExp = player.nextLevelAtExp - player.currentExp;
+    const tempCurrentExpBasis = player.nextLevelAtExp;
+    player.nextLevelAtExp = player.currentExpBasis + player.nextLevelAtExp;
+    player.currentExpBasis = tempCurrentExpBasis;
+
+    //TODO: call back end
+
+    return player;
+  };
+
+  const handleNewLevelDialogClose = attribute => {
+    setNewLevelDialogOpen(false);
+    const tempPlayer = { ...player };
+    tempPlayer[attribute]++;
+    setPlayer({ ...tempPlayer });
+  };
+
+  const handleGoExp = () => {
+    console.log(goExp)
+    setGoExp(prev => !prev)
+  }
 
   return (
     <Grid
@@ -198,6 +329,7 @@ const Profile = () => {
       className={classes.wrapper}
       spacing={2}
     >
+      <Typography variant="h5">Poziom: {player.level}</Typography>
       <Typography variant="subtitle2">
         Doświadczenie: {player.currentExp + " / " + player.nextLevelAtExp}
       </Typography>
@@ -215,24 +347,43 @@ const Profile = () => {
         alignItems="flex-start"
       >
         <Paper xs={8} className={classes.avatarCard}>
-          {/* {body} */}
+          {/* body */}
           <img src={maleBody} alt="male-body" className={classes.avatarImage} />
-          {/* {legs} */}
-          <img className={classes.avatarImage}
-            src={require(`../../assets/avatar/items/${"linen-trousers.png"}`)}
-          />
-          {/* {feet} */}
-          <img className={classes.avatarImage}
-            src={require(`../../assets/avatar/items/${"high-boots.png"}`)}
-          />
-          {/* {chest} */}
-          <img className={classes.avatarImage}
-            src={require(`../../assets/avatar/items/${"leather-jerkin.png"}`)}
-          />
-          {/* {head} */}
-          <img className={classes.avatarImage}
-            src={require(`../../assets/avatar/items/${"feathered-hat.png"}`)}
-          />
+          {/* legs */}
+          {equippedItems.legs && (
+            <img
+              className={classes.avatarImage}
+              src={require(`../../assets/avatar/items/${equippedItems.legs}`)}
+            />
+          )}
+          {/* feet */}
+          {equippedItems.feet && (
+            <img
+              className={classes.avatarImage}
+              src={require(`../../assets/avatar/items/${equippedItems.feet}`)}
+            />
+          )}
+          {/* chest */}
+          {equippedItems.chest && (
+            <img
+              className={classes.avatarImage}
+              src={require(`../../assets/avatar/items/${equippedItems.chest}`)}
+            />
+          )}
+          {/* head */}
+          {equippedItems.head && (
+            <img
+              className={classes.avatarImage}
+              src={require(`../../assets/avatar/items/${equippedItems.head}`)}
+            />
+          )}
+          {/* Main-hand weapon */}
+          {equippedItems.weapon && (
+            <img
+              className={classes.avatarImage}
+              src={require(`../../assets/avatar/items/${equippedItems.weapon}`)}
+            />
+          )}
         </Paper>
         <Grid
           container
@@ -241,16 +392,30 @@ const Profile = () => {
           direction="column"
           justify="flex-start"
           alignItems="center"
-          
         >
           <Attribute attributeName="Siła" attributeValue={player.str} />
           <Attribute attributeName="Zręczność" attributeValue={player.dex} />
           <Attribute attributeName="Magia" attributeValue={player.mag} />
-          <Attribute attributeName="Charyzma" attributeValue={player.cha} />
+          <Attribute attributeName="Wytrzymałość" attributeValue={player.end} />
+          <Button onClick={() => handleAddExperience(500)}>Dodaj expa</Button>
+          <Button>Dodaj amulet</Button>
+          <Button onClick={handleGoExp} variant="contained" color="primary">
+            Idziemy expić!
+            
+              <ColorizeIcon style={{fontSize: '2rem', transition: 'transform 500ms ease-out', transform: goExp ? 'rotate(540deg)' : 'rotate(180deg)' }} />
+           
+          </Button>
         </Grid>
       </Grid>
-      <Typography variant="h5" className={classes.eqHeading}>Ekwipunek:</Typography>
-      <Equipment items={player.equipment} />
+      <Typography variant="h5" className={classes.eqHeading}>
+        Ekwipunek:
+      </Typography>
+      <Equipment items={player.equipment} handleItemToggle={handleItemToggle} handleItemDelete={handleItemDelete}/>
+
+      <NewLevelDialog
+        open={newLevelDialogOpen}
+        handleAddAndClose={handleNewLevelDialogClose}
+      />
     </Grid>
   );
 };
