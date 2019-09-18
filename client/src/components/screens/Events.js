@@ -20,7 +20,7 @@ import DragThingsToBoxesDemo from './events/DragThingsToBoxesDemo'
 import moment from 'moment'
 
 
-const pathToIcons = '../../assets/icons/'
+const pathToIcons = '../../assets/icons/items'
 const itemLabelHeight = 200 //REFACTOR: need to be changed to 'dimensionLabel'
 
 
@@ -415,7 +415,7 @@ const Events = () => {
                                             return(
                                                 <React.Fragment key={amulet.itemModel.id}>
                                                     {`${amulet.quantity}x`}
-                                                    {<img style={{height: 20, width:20}} src={require(`../../assets/icons/${amulet.itemModel.imgSrc}`)} alt='icon'/>}
+                                                    {<img style={{height: 20, width:20}} src={require(`../../assets/icons/items/${amulet.itemModel.imgSrc}`)} alt='icon'/>}
                                                     {` `}
                                                 </React.Fragment>
                                                 )

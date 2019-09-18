@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 
-export const itemModelTypes = ['amulet', 'weapon', 'breastplate', 'leggins', 'shoes', 'helmet']
+export const itemModelTypes = ['amulet', 'weapon', 'weapon', 'chest', 'legs', 'feet', 'head', 'ring']
 
 
 const ItemModelSchema = new mongoose.Schema({ //class of Item

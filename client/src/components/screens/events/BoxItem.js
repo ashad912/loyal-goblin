@@ -46,7 +46,7 @@ export default class BoxItem extends React.Component {
             >
                 <div className="outer">
                   <div className="item">
-                    <img style={{height: 40, width:40}} src={require(`../../../assets/icons/${this.props.children}`)} alt='icon'/>
+                    <img style={{height: 40, width:40}} src={require(`../../../assets/icons/items/${this.props.children}`)} alt='icon'/>
                   </div>
                 </div>
           </DragDropContainer>
