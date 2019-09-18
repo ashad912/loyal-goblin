@@ -47,6 +47,7 @@ const Equipment = props => {
   }
 
   const handleDeleteDialogClose = () => {
+
     setDeleteDialog(false)
   }
 
