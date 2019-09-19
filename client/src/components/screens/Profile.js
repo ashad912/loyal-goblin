@@ -272,6 +272,7 @@ const Profile = () => {
   };
 
   const handleItemToggle = (id, isEquipped, category) => {
+    console.log(id)
     //TODO: Each item needs own ID
     const tempPlayer = { ...player };
     const modifyItemArrayIndex = tempPlayer.equipment[category].findIndex(

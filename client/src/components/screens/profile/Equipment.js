@@ -58,6 +58,7 @@ const Equipment = props => {
 
 
   const items = props.items;
+  console.log(items)
 
   return (
     <Paper className={classes.root}>
