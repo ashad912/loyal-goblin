@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 
-export const itemModelTypes = ['amulet', 'weapon', 'weapon', 'chest', 'legs', 'feet', 'head', 'ring']
+export const itemModelTypes = ['amulet', 'weapon', 'chest', 'legs', 'hands', 'feet', 'head', 'ring']
 
 
 const ItemModelSchema = new mongoose.Schema({ //class of Item
@@ -14,9 +14,38 @@ const ItemModelSchema = new mongoose.Schema({ //class of Item
         type: String,
         required: true, 
     },
-    //perks - to specify what kind of perks we have
-    //requiredLvl
-    //description
+    requiredLevel: {
+        type: Number,
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    perks: {
+        attributes: {
+            strength: {
+                type: Number
+            },
+            dexterity: {
+                type: Number
+            },
+            magic: {
+                type: Number
+            },
+            endurance: {
+                type: Number
+            }
+        },
+        special: {
+            experienceMultiplier: {
+              type: Number  
+            },
+            discount: {
+                type: Number
+            }
+        }
+        //Potrzeba więcej perków - zapytać Krystiana
+    },
     imgSrc: {
         type: String,
         required: true,

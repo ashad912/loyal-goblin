@@ -7,7 +7,6 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import ColorizeIcon from "@material-ui/icons/Colorize";
 
-
 import Attribute from "./profile/Attribute";
 import Equipment from "./profile/Equipment";
 import NewLevelDialog from "./profile/NewLevelDialog";
@@ -55,7 +54,9 @@ const createTempEquipment = () => {
   return {
     amulet: [
       {
-        quantity: 2,
+        id: 1,
+        owner: 11111,
+        equipped: false,
         itemModel: {
           id: 101,
           type: {
@@ -64,12 +65,28 @@ const createTempEquipment = () => {
           },
           name: "Diament",
           fluff: "Najlepszy przyjaciel dziewyczyny",
-          imgSrc: "diamond-amulet.png",
-          equipped: false
+          imgSrc: "diamond-amulet.png"
         }
       },
       {
-        quantity: 1,
+        id: 2,
+        owner: 11111,
+        equipped: false,
+        itemModel: {
+          id: 101,
+          type: {
+            id: 1,
+            type: "amulet"
+          },
+          name: "Diament",
+          fluff: "Najlepszy przyjaciel dziewyczyny",
+          imgSrc: "diamond-amulet.png"
+        }
+      },
+      {
+        id: 3,
+        owner: 11111,
+        equipped: false,
         itemModel: {
           id: 102,
           type: {
@@ -79,13 +96,14 @@ const createTempEquipment = () => {
           name: "Perła",
           fluff: "Perła prosto z lodówki, znaczy z małży",
           imgSrc: "pearl-amulet.png",
-          equipped: false
         }
       }
     ],
     weapon: [
       {
-        quantity: 1,
+        id: 4,
+        owner: 11111,
+        equipped: false,
         itemModel: {
           id: 201,
           type: {
@@ -95,13 +113,14 @@ const createTempEquipment = () => {
           name: "Krótki miecz",
           fluff: "Przynajmniej nie masz kompleksów",
           imgSrc: "short-sword.png",
-          equipped: false
         }
       }
     ],
     chest: [
       {
-        quantity: 1,
+        id: 5,
+        owner: 11111,
+        equipped: true,
         itemModel: {
           id: 301,
           type: {
@@ -111,13 +130,14 @@ const createTempEquipment = () => {
           name: "Skórzana kurta",
           fluff: "Lale za takimi szaleją",
           imgSrc: "leather-jerkin.png",
-          equipped: true
         }
       }
     ],
     legs: [
       {
-        quantity: 1,
+        id: 6,
+        owner: 11111,
+        equipped: true,
         itemModel: {
           id: 401,
           type: {
@@ -127,13 +147,14 @@ const createTempEquipment = () => {
           name: "Lniane spodnie",
           fluff: "Zwykłe spodnie, czego jeszcze chcesz?",
           imgSrc: "linen-trousers.png",
-          equipped: true
         }
       }
     ],
     feet: [
       {
-        quantity: 1,
+        id: 7,
+        owner: 11111,
+        equipped: true,
         itemModel: {
           id: 501,
           type: {
@@ -143,13 +164,14 @@ const createTempEquipment = () => {
           name: "Wysokie buty",
           fluff: "Skórzane, wypastowane, lśniące",
           imgSrc: "high-boots.png",
-          equipped: true
         }
       }
     ],
     head: [
       {
-        quantity: 1,
+        id: 8,
+        owner: 11111,
+        equipped: true,
         itemModel: {
           id: 601,
           type: {
@@ -159,11 +181,12 @@ const createTempEquipment = () => {
           name: "Czapka z piórkiem",
           fluff: "Wesoła kompaniaaaa",
           imgSrc: "feathered-hat.png",
-          equipped: true
         }
       },
       {
-        quantity: 1,
+        id: 9,
+        owner: 11111,
+        equipped: false,
         itemModel: {
           id: 602,
           type: {
@@ -173,13 +196,14 @@ const createTempEquipment = () => {
           name: "Kaptur czarodzieja",
           fluff: "Kiedyś nosił go czarodziej. Już nie nosi.",
           imgSrc: "wizard-coul.png",
-          equipped: false
         }
       }
     ],
     ring: [
       {
-        quantity: 1,
+        id: 10,
+        owner: 11111,
+        equipped: false,
         itemModel: {
           id: 701,
           type: {
@@ -189,7 +213,6 @@ const createTempEquipment = () => {
           name: "Pierścień siły",
           fluff: "Całuj mój sygnet potęgi",
           imgSrc: "strength-ring.png",
-          equipped: false
         }
       }
     ]
@@ -203,7 +226,7 @@ const Profile = () => {
     createTempPlayer({ str: 4, dex: 2, mag: 1, end: 5 }, createTempEquipment())
   ); //Returned from backend
 
-  const [goExp, setGoExp] = React.useState(false)
+  const [goExp, setGoExp] = React.useState(false);
 
   const [newLevelDialogOpen, setNewLevelDialogOpen] = React.useState(false);
 
@@ -277,13 +300,12 @@ const Profile = () => {
       }
     );
 
-
-    tempPlayer.equipment[category].splice(modifyItemArrayIndex, 1)
+    tempPlayer.equipment[category].splice(modifyItemArrayIndex, 1);
     setPlayer({ ...tempPlayer });
     updateEquippedItems();
 
     //TODO: Call to backend
-  }
+  };
 
   const handleAddExperience = newExp => {
     const tempPlayer = { ...player };
@@ -316,9 +338,9 @@ const Profile = () => {
   };
 
   const handleGoExp = () => {
-    console.log(goExp)
-    setGoExp(prev => !prev)
-  }
+    console.log(goExp);
+    setGoExp(prev => !prev);
+  };
 
   return (
     <Grid
@@ -401,16 +423,24 @@ const Profile = () => {
           <Button>Dodaj amulet</Button>
           <Button onClick={handleGoExp} variant="contained" color="primary">
             Idziemy expić!
-            
-              <ColorizeIcon style={{fontSize: '2rem', transition: 'transform 500ms ease-out', transform: goExp ? 'rotate(540deg)' : 'rotate(180deg)' }} />
-           
+            <ColorizeIcon
+              style={{
+                fontSize: "2rem",
+                transition: "transform 500ms ease-out",
+                transform: goExp ? "rotate(540deg)" : "rotate(180deg)"
+              }}
+            />
           </Button>
         </Grid>
       </Grid>
       <Typography variant="h5" className={classes.eqHeading}>
         Ekwipunek:
       </Typography>
-      <Equipment items={player.equipment} handleItemToggle={handleItemToggle} handleItemDelete={handleItemDelete}/>
+      <Equipment
+        items={player.equipment}
+        handleItemToggle={handleItemToggle}
+        handleItemDelete={handleItemDelete}
+      />
 
       <NewLevelDialog
         open={newLevelDialogOpen}

@@ -146,6 +146,7 @@ router.get('/enterInstance/:id', auth, async (req, res) => { //event id passed f
 //CHECK:
 router.patch('/sendItem/mission', auth, async (req, res) => {
     const user = req.user
+    //Zmienić eq na bag
     try{
         await user.populate({
             path: 'eq',
@@ -162,6 +163,8 @@ router.patch('/sendItem/mission', auth, async (req, res) => {
         
         const itemId = req.body.id
 
+
+        //To jest czy nie jest w eq usera? Bo tu jest test, czy jest, i jak jest to Error
         if(user.eq.includes(itemId)){
             throw Error()
         }
