@@ -70,7 +70,7 @@ const EquipmentListItem = props => {
 
   const handleDelete = event => {
     event.stopPropagation();
-    props.handleItemDelete(item.itemModel.id, item.itemModel.name, props.itemCategory)  
+    props.handleItemDelete(item.id, item.itemModel.name, props.itemCategory)  
     setAnchorEl(null);
   }
 
@@ -81,12 +81,12 @@ const EquipmentListItem = props => {
       key={item.itemModel.id}
       alignItems="flex-start"
       className={classes.listItem}
-      style={{ background: item.itemModel.equipped ? "#e6dc8d" : "" }}
-      equipped={item.itemModel.equipped ? 1 : 0}
+      style={{ background: item.equipped ? "#e6dc8d" : "" }}
+      equipped={item.equipped ? 1 : 0}
       onClick={() =>
         props.handleItemToggle(
-          item.itemModel.id,
-          item.itemModel.equipped,
+          item.id,
+          item.equipped,
           props.itemCategory
         )
       }
@@ -100,7 +100,7 @@ const EquipmentListItem = props => {
       </ListItemAvatar>
       <ListItemText
         primary={item.itemModel.name}
-        secondary={<span>{item.itemModel.fluff}</span>}
+        secondary={<span>{item.itemModel.description}</span>}
       />
       <ListItemIcon onClick={handleClick}>
         <Button >

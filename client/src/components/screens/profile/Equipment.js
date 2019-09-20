@@ -76,7 +76,7 @@ const Equipment = props => {
             >
               <List component="div" disablePadding>
                 {items[itemCategory].map(item => (
-                  <EquipmentListItem item={item} handleItemToggle={props.handleItemToggle} itemCategory={itemCategory} handleItemDelete={handleShowDeleteDialog}/>
+                  <EquipmentListItem key={item.id} item={item} handleItemToggle={props.handleItemToggle} itemCategory={itemCategory} handleItemDelete={handleShowDeleteDialog}/>
                 ))}
               </List>
             </Collapse>

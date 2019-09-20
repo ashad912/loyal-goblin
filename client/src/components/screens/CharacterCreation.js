@@ -22,8 +22,10 @@ const useStyles = makeStyles(theme => ({
     alignItems: "center"
   },
   paper: {
-    width: "80%",
-    height: "60%",
+    width: "90%",
+    height: "70%",
+    padding: "0.5rem",
+    boxSizing: "border-box",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-around",
@@ -36,13 +38,62 @@ const CharacterCreation = props => {
   const [activeStep, setActiveStep] = React.useState(0);
   const [nextDisabled, setNextDisabled] = React.useState(true);
   const [name, setName] = React.useState("");
-
+  const [gender, setGender] = React.useState("");
+  const [characterClass, setCharacterClass] = React.useState('')
+  const [attributePool, setAttributePool] = React.useState(3);
+  const [attributes, setAttributes] = React.useState({
+    str: 1,
+    dex: 1,
+    mag: 1,
+    end: 1
+  });
 
   const handleNameChange = event => {
-    setName(event.target.value.trim());
+    if (/^([a-zA-Z]+)$/.test(event.target.value)) {
+      setName(event.target.value.trim());
+    }
   };
 
-  const steps = [<Step1 handleChange={handleNameChange} value={name}/>, <Step2 />, <Step3 />, <Step4 />, <Step5 />];
+  const handleGenderChange = event => {
+    setGender(event.target.value);
+  };
+
+
+
+  const handleCharacterClassChange = (event) => {
+    setCharacterClass(event.target.value)
+  }
+
+
+  const handleAttributeChange = (event, attributeName, value) => {
+    const tempAttributes = { ...attributes };
+    if (value > 0 && attributePool <= 0) {
+      return;
+    }
+    if (tempAttributes[attributeName] + value <= 0) {
+      return;
+    }
+    tempAttributes[attributeName] += value;
+    setAttributes(tempAttributes);
+    setAttributePool(prev => prev - value)
+  };
+
+  const steps = [
+    <Step1 handleChange={handleNameChange} value={name} />,
+    <Step2 handleChange={handleGenderChange} value={gender} />,
+    <Step3 handleChange={handleCharacterClassChange} value={characterClass}/>,
+    <Step4
+      handleChange={handleAttributeChange}
+      values={attributes}
+      attributePool={attributePool}
+    />,
+    <Step5 
+    name={name}
+    gender={gender}
+    characterClass={characterClass}
+    attributes={attributes}
+    />
+  ];
 
   const maxSteps = steps.length;
 
@@ -50,6 +101,7 @@ const CharacterCreation = props => {
     if (activeStep === maxSteps - 1) {
       props.onFinish();
     }
+   
     setActiveStep(prevActiveStep => prevActiveStep + 1);
   };
 
@@ -57,15 +109,23 @@ const CharacterCreation = props => {
     setActiveStep(prevActiveStep => prevActiveStep - 1);
   };
 
-
   React.useEffect(() => {
-      let buttonDisabled = true
-    if(name.length > 1){
-        buttonDisabled = false
+    let buttonDisabled = true;
+    if (name.length > 1 && activeStep===0) {
+      buttonDisabled = false;
     }
-    setNextDisabled(buttonDisabled)
-  }, [name])
-
+    if(gender !== "" && activeStep ===1){
+      buttonDisabled = false
+    }
+    if(characterClass !== "" && activeStep === 2){
+      buttonDisabled = false
+    }
+    if(activeStep === 3 || activeStep === 4){
+      buttonDisabled = false
+    }
+    
+    setNextDisabled(buttonDisabled);
+  }, [activeStep, name, gender, characterClass]);
 
   return (
     <div className={classes.root}>
@@ -78,13 +138,14 @@ const CharacterCreation = props => {
         variant="dots"
         activeStep={activeStep}
         nextButton={
-          <Button size="small" onClick={handleNext} disabled={nextDisabled}>
+          <Button size="small" onClick={handleNext} disabled={nextDisabled} variant="contained" color="primary">
             {activeStep === maxSteps - 1 ? "Stwórz postać" : "Dalej"}
           </Button>
         }
         backButton={
           <Button
             size="small"
+            
             onClick={handleBack}
             disabled={activeStep === 0}
             style={{ opacity: activeStep === 0 ? "0" : "1" }}
