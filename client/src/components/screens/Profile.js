@@ -64,7 +64,7 @@ const createTempEquipment = () => {
             type: "amulet"
           },
           name: "Diament",
-          description: "Najlepszy przyjaciel dziewyczyny",
+          fluff: "Najlepszy przyjaciel dziewyczyny",
           imgSrc: "diamond-amulet.png"
         }
       },
@@ -79,7 +79,7 @@ const createTempEquipment = () => {
             type: "amulet"
           },
           name: "Diament",
-          description: "Najlepszy przyjaciel dziewyczyny",
+          fluff: "Najlepszy przyjaciel dziewyczyny",
           imgSrc: "diamond-amulet.png"
         }
       },
@@ -94,7 +94,7 @@ const createTempEquipment = () => {
             type: "amulet"
           },
           name: "Perła",
-          description: "Perła prosto z lodówki, znaczy z małży",
+          fluff: "Perła prosto z lodówki, znaczy z małży",
           imgSrc: "pearl-amulet.png",
         }
       }
@@ -111,7 +111,7 @@ const createTempEquipment = () => {
             type: "weapon"
           },
           name: "Krótki miecz",
-          description: "Przynajmniej nie masz kompleksów",
+          fluff: "Przynajmniej nie masz kompleksów",
           imgSrc: "short-sword.png",
         }
       }
@@ -128,7 +128,7 @@ const createTempEquipment = () => {
             type: "chest"
           },
           name: "Skórzana kurta",
-          description: "Lale za takimi szaleją",
+          fluff: "Lale za takimi szaleją",
           imgSrc: "leather-jerkin.png",
         }
       }
@@ -145,7 +145,7 @@ const createTempEquipment = () => {
             type: "legs"
           },
           name: "Lniane spodnie",
-          description: "Zwykłe spodnie, czego jeszcze chcesz?",
+          fluff: "Zwykłe spodnie, czego jeszcze chcesz?",
           imgSrc: "linen-trousers.png",
         }
       }
@@ -162,7 +162,7 @@ const createTempEquipment = () => {
             type: "feet"
           },
           name: "Wysokie buty",
-          description: "Skórzane, wypastowane, lśniące",
+          fluff: "Skórzane, wypastowane, lśniące",
           imgSrc: "high-boots.png",
         }
       }
@@ -179,7 +179,7 @@ const createTempEquipment = () => {
             type: "head"
           },
           name: "Czapka z piórkiem",
-          description: "Wesoła kompaniaaaa",
+          fluff: "Wesoła kompaniaaaa",
           imgSrc: "feathered-hat.png",
         }
       },
@@ -194,7 +194,7 @@ const createTempEquipment = () => {
             type: "head"
           },
           name: "Kaptur czarodzieja",
-          description: "Kiedyś nosił go czarodziej. Już nie nosi.",
+          fluff: "Kiedyś nosił go czarodziej. Już nie nosi.",
           imgSrc: "wizard-coul.png",
         }
       }
@@ -211,7 +211,7 @@ const createTempEquipment = () => {
             type: "ring"
           },
           name: "Pierścień siły",
-          description: "Całuj mój sygnet potęgi",
+          fluff: "Całuj mój sygnet potęgi",
           imgSrc: "strength-ring.png",
         }
       }
@@ -247,8 +247,6 @@ const Profile = () => {
     updateEquippedItems();
   }, []);
 
-
-  //TODO-PILNE: Czy trzeba przejść przez cały obiekt bag (z db), ustawiając equipped według obiektu equipped (z db)?
   const updateEquippedItems = () => {
     const equipment = {
       amulet: "",
@@ -263,7 +261,7 @@ const Profile = () => {
 
     Object.keys(player.equipment).forEach(category => {
       const loadedEquippedItem = player.equipment[category].find(
-        item => item.equipped
+        item => item.itemModel.equipped
       );
       if (loadedEquippedItem) {
         equipment[category] = loadedEquippedItem.itemModel.imgSrc;
@@ -275,20 +273,21 @@ const Profile = () => {
 
   const handleItemToggle = (id, isEquipped, category) => {
     console.log(id)
+    //TODO: Each item needs own ID
     const tempPlayer = { ...player };
     const modifyItemArrayIndex = tempPlayer.equipment[category].findIndex(
       item => {
-        return item.id === id;
+        return item.itemModel.id === id;
       }
     );
 
     //TODO: Handle 2 weapons and rings
     tempPlayer.equipment[category].forEach(
-      item => (item.equipped = false)
+      item => (item.itemModel.equipped = false)
     );
     tempPlayer.equipment[category][
       modifyItemArrayIndex
-    ].equipped = !isEquipped;
+    ].itemModel.equipped = !isEquipped;
     setPlayer({ ...tempPlayer });
     updateEquippedItems();
     //TODO: Call to backend
@@ -296,13 +295,14 @@ const Profile = () => {
 
   const handleItemDelete = (id, category) => {
     const tempPlayer = { ...player };
-
-    tempPlayer.equipment[category] = tempPlayer.equipment[category].filter(
+    const modifyItemArrayIndex = tempPlayer.equipment[category].findIndex(
       item => {
-        return item.id !== id;
+        return item.itemModel.id === id;
       }
-    )
-    setPlayer(  tempPlayer  );
+    );
+
+    tempPlayer.equipment[category].splice(modifyItemArrayIndex, 1);
+    setPlayer({ ...tempPlayer });
     updateEquippedItems();
 
     //TODO: Call to backend
@@ -311,7 +311,6 @@ const Profile = () => {
   const handleAddExperience = newExp => {
     const tempPlayer = { ...player };
     if (tempPlayer.currentExp + newExp >= tempPlayer.nextLevelAtExp) {
-      tempPlayer.currentExp += newExp;
       setPlayer({ ...handleNewLevel(tempPlayer) });
       setNewLevelDialogOpen(true);
     } else {
@@ -321,9 +320,8 @@ const Profile = () => {
   };
 
   const handleNewLevel = player => {
-    console.log()
     player.level++;
-    player.currentExp = player.currentExp - player.nextLevelAtExp;
+    player.currentExp = player.nextLevelAtExp - player.currentExp;
     const tempCurrentExpBasis = player.nextLevelAtExp;
     player.nextLevelAtExp = player.currentExpBasis + player.nextLevelAtExp;
     player.currentExpBasis = tempCurrentExpBasis;
