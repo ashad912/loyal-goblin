@@ -1,6 +1,5 @@
 import React from 'react';
 import { DragDropContainer, DropTarget } from 'react-drag-drop-container';
-import './BoxItem.css';
 
 /*
     BoxItem - a thing that appears in a box, after you drag something into the box
@@ -17,10 +16,6 @@ export default class BoxItem extends React.Component {
       this.props.kill(this.props.item._id);
     };
   
-    handleDrag = (e) => {
-      console.log('dragged item from', this.props.boxname)
-    }
-
     render() {
       /*
         Notice how these are wrapped in a DragDropContainer (so you can drag them) AND
@@ -36,7 +31,6 @@ export default class BoxItem extends React.Component {
               dragData={this.props.item}
               customDragElement={this.props.customDragElement}
               onDrop={this.deleteMe}
-              onDrag={this.handleDrag}
               disappearDraggedElement={true}
               //dragHandleClassName="grabber" //doesnt work on mobile
 

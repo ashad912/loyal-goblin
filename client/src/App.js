@@ -6,7 +6,7 @@ import Footer from './components/layout/Footer'
 import Root from './components/Root'
 import SignIn from './components/auth/SignIn'
 import Admin from './components/Admin'
-import DragThingsToBoxesDemo from './components/screens/events/DragThingsToBoxesDemo'
+import Mission from './components/screens/events/Mission'
 
 import withAuth from './hoc/withAuth'
 
@@ -24,7 +24,7 @@ class App extends React.Component {
           <Navbar />
             <Switch>
               <Route exact path = '/' component={withAuth(Root)}/>
-              <Route exact path = '/mission' component={withAuth(DragThingsToBoxesDemo)}/>
+              <Route exact path = '/mission' component={withAuth(Mission)}/>
               <Route exact path = '/signin' component={SignIn}/>
               <Route exact path = '/console' component={Admin}/>
             </Switch>

@@ -24,7 +24,9 @@
     "react-visibility-sensor": "^5.1.1",
     "redux-thunk": "^2.3.0",
     "shortid": "^2.2.15",
-    "styled-components": "^4.3.2"
+    "socket.io-client": "^2.3.0",
+    "styled-components": "^4.3.2",
+    "uuid": "^3.3.3"
   },
   "scripts": {
     "start": "react-scripts start",

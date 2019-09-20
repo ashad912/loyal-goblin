@@ -62,9 +62,15 @@ export const UserSchema = new mongoose.Schema({
         default: 0,
         required: true
     },
-    bag: {
+    bag: [{ 
+        item: {
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'item',
+            unique: true
+        }
+    }],
         //Nie wiem jak z typami itemów w samym obiekcie item
-        amulet: [{
+        /*amulet: [{
             item: {
                         type: mongoose.Schema.Types.ObjectId, 
                         ref: 'item',
@@ -119,80 +125,63 @@ export const UserSchema = new mongoose.Schema({
                         ref: 'item',
                         unique: true
                     }}
-        ],
-    },
+        ],*/
     equipped: {
         //Nie wiem jak z typami itemów w samym obiekcie item
         amulet: {
-            item: {
-                        type: mongoose.Schema.Types.ObjectId, 
-                        ref: 'item',
-                        unique: true
-                    }}
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'item',
+            unique: true
+        }
         ,
         weaponRight: {
-            item: {
-                        type: mongoose.Schema.Types.ObjectId, 
-                        ref: 'item',
-                        unique: true
-                    }}
-        ,
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'item',
+            unique: true
+        },
         weaponLeft: {
-            item: {
-                        type: mongoose.Schema.Types.ObjectId, 
-                        ref: 'item',
-                        unique: true
-                    }}
-        ,
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'item',
+            unique: true
+        },
         chest: {
-            item: {
-                        type: mongoose.Schema.Types.ObjectId, 
-                        ref: 'item',
-                        unique: true
-                    }}
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'item',
+            unique: true
+        }
         ,
         legs: {
-            item: {
-                        type: mongoose.Schema.Types.ObjectId, 
-                        ref: 'item',
-                        unique: true
-                    }}
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'item',
+            unique: true
+        }
         ,
         hands: {
-            item: {
-                        type: mongoose.Schema.Types.ObjectId, 
-                        ref: 'item',
-                        unique: true
-                    }}
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'item',
+            unique: true
+        }
         ,
         feet: {
-            item: {
-                        type: mongoose.Schema.Types.ObjectId, 
-                        ref: 'item',
-                        unique: true
-                    }}
-        ,
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'item',
+            unique: true
+        },
         head: {
-            item: {
-                        type: mongoose.Schema.Types.ObjectId, 
-                        ref: 'item',
-                        unique: true
-                    }}
-        ,
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'item',
+            unique: true
+        },
         ringRight: {
-            item: {
-                        type: mongoose.Schema.Types.ObjectId, 
-                        ref: 'item',
-                        unique: true
-                    }}
-        ,
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'item',
+            unique: true
+        },
         ringLeft: {
-            item: {
-                        type: mongoose.Schema.Types.ObjectId, 
-                        ref: 'item',
-                        unique: true
-                    }}
-        ,
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'item',
+            unique: true
+        },
     },
     // eq: [{ //i've thought about virtualization items
     //     item: {
@@ -254,8 +243,7 @@ export const UserSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'user',
             unique: true
-        }]
-        
+        }]       
     }
     
 }, {

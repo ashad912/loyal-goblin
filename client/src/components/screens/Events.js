@@ -15,7 +15,7 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
-import DragThingsToBoxesDemo from './events/DragThingsToBoxesDemo'
+import Mission from './events/Mission'
 
 import moment from 'moment'
 
@@ -27,7 +27,7 @@ const itemLabelHeight = 200 //REFACTOR: need to be changed to 'dimensionLabel'
 const createTempList = () => {
     return [
         {
-            id: 0,
+            id: 1,
             title: 'Mission1',
             avatarSrc: {avatarTemp},
             minPlayers: 3,
@@ -61,7 +61,7 @@ const createTempList = () => {
             ]
         },
         {
-            id: 1,
+            id: 2,
             title: 'Mission2',
             avatarSrc: {avatarTemp},
             minPlayers: 3,
@@ -107,7 +107,7 @@ const createTempList = () => {
             ]
         },
         {
-            id: 2,
+            id: 3,
             title: 'Mission3',
             avatarSrc: {avatarTemp},
             minPlayers: 3,
@@ -141,7 +141,7 @@ const createTempList = () => {
             ]
         },
         {
-            id: 3,
+            id: 4,
             title: 'Mission4',
             avatarSrc: {avatarTemp},
             minPlayers: 3,
@@ -187,7 +187,7 @@ const createTempList = () => {
             ]
         },
         {
-            id: 4,
+            id: 5,
             title: 'Mission5',
             avatarSrc: {avatarTemp},
             minPlayers: 3,
@@ -221,7 +221,7 @@ const createTempList = () => {
             ]
         },
         {
-            id: 5,
+            id: 6,
             title: 'Mission6',
             avatarSrc: {avatarTemp},
             minPlayers: 3,
@@ -272,7 +272,7 @@ const createTempList = () => {
 
 const createTempRally = () => {
     return {
-        id: 0,
+        id: 1,
         title: 'OMG!Rally',
         avatarSrc: avatarTemp,
         date: moment().add(1, 'days').calendar(),

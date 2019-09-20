@@ -7,6 +7,7 @@ import mongoose from 'mongoose'
 import path from 'path'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
+import socket from 'socket.io'
 
 //TO-START: npm run-script dev
 
@@ -34,6 +35,36 @@ app.use((err, req, res, next)=>{
     res.status(422).send({error: err.message}) 
 })
 
-app.listen(port, ()=>{
+const server = app.listen(port, ()=>{
     console.log(`Listening at ${port}`)
 })
+
+//cant refactor socket methods to separate file :<< but it worked on another computer, maybe clean and rebuild?
+
+var io = socket(server) //param is a server, defined upper
+
+
+io.of('/mission').on('connection', (socket) => { 
+    console.log('New client connected', socket.id)
+
+    socket.on('joinRoom', (roomId) => {
+        socket.join(roomId, () => {
+            io.of('mission').to(roomId).emit('joinRoom', roomId)
+        })
+    })
+
+    socket.on('addItem', (data) => {
+        io.of('mission').to(data.roomId).emit('addItem', data.item)
+    })
+
+    socket.on('deleteItem', (data) => {
+        io.of('mission').to(data.roomId).emit('deleteItem', data.id)
+    })
+
+    socket.on("disconnect", () => console.log("Client disconnected"));
+})
+
+//api -> create event instance
+//-> promise -> authMiddleware + authEventMiddleware -> load component with id of instance (!!!) -> socket emit connection
+//==io.use -> query being in party by token->user->party //additional eventToken
+//-> joining room refs by instance id
