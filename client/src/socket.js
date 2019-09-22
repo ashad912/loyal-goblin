@@ -1,35 +1,34 @@
-import io from 'socket.io-client'
 
-const socket =  io('http://localhost:4000/mission')
 
-export const addItemSubscribe = (item) => {
+export const addItemSubscribe = (socket, item) => {
     socket.on('addItem', item, () => {
         return item
     })
 }
 
-export const deleteItemSubscribe = (id) => {
+export const deleteItemSubscribe = (socket, id) => {
+    
     socket.on('deleteItem', id, () => {
         return id
     })
 }
 
-export const joinRoomSubscribe = (roomId) => {
+export const joinRoomSubscribe = (socket, roomId) => {
     socket.on('joinRoom', roomId, () => {
         return roomId
     })
 }
 
-export const addItemEmit = (item, roomId) => {
+export const addItemEmit = (socket, item, roomId) => {
     const data = {item: item, roomId: roomId}
     socket.emit('addItem', data)
 }
 
-export const deleteItemEmit = (id, roomId) => {
+export const deleteItemEmit = (socket, id, roomId) => {
     const data = {id: id, roomId: roomId}
     socket.emit('deleteItem', data)
 }
 
-export const joinRoomEmit = (roomId) => {
+export const joinRoomEmit = (socket, roomId) => {
     socket.emit('joinRoom', roomId)
 }

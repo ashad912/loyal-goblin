@@ -8,6 +8,7 @@ const EventInstanceSchema = new mongoose.Schema({ //instance of ItemModel
     event: EventSchema,
     party: {
         type: [{
+            inRoom: Boolean,
             user: {
                 type: UserSchema,
                 unique: true

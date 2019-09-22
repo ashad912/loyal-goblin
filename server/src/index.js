@@ -43,12 +43,14 @@ const server = app.listen(port, ()=>{
 
 var io = socket(server) //param is a server, defined upper
 
+const mission = io.of('/mission')
 
-io.of('/mission').on('connection', (socket) => { 
+mission.on('connection', (socket) => { 
     console.log('New client connected', socket.id)
 
     socket.on('joinRoom', (roomId) => {
         socket.join(roomId, () => {
+            console.log(socket.id, "joined the room", roomId)
             io.of('mission').to(roomId).emit('joinRoom', roomId)
         })
     })
@@ -61,7 +63,7 @@ io.of('/mission').on('connection', (socket) => {
         io.of('mission').to(data.roomId).emit('deleteItem', data.id)
     })
 
-    socket.on("disconnect", () => console.log("Client disconnected"));
+    socket.on("disconnect", () => console.log("Client disconnected", socket.id));
 })
 
 //api -> create event instance
