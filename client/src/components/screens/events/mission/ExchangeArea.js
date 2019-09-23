@@ -8,7 +8,7 @@ import uuid from 'uuid/v1'
 import Loading from '../../../layout/Loading';
 import Grid from '@material-ui/core/Grid';
 import * as socketFuncs from '../../../../socket'
-
+import styled from 'styled-components'
 
 
 
@@ -182,6 +182,7 @@ export default class ExchangeArea extends React.Component {
     })
   }
 
+  
   render() {
 
     if(!this.state.roomId){
@@ -199,11 +200,27 @@ export default class ExchangeArea extends React.Component {
           alignItems="center"
           spacing={2}
         >
-        
-          <UserTypeBox targetKey={userItemsName} items={this.state.userItems} addItem={this.addItemToState} deleteItem={this.deleteItemFromState} boxname='user'/>
-          <div className="test">
+            <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+                
+            >  
+                <UserTypeBox targetKey={userItemsName} items={this.state.userItems} addItem={this.addItemToState} deleteItem={this.deleteItemFromState} boxname='user'/>
+            </Grid>
+            <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+                
+            >  
+                <UserTypeBox targetKey={missionItemsName} items={this.state.missionItems} addItem={this.addMissionItem} deleteItem={this.deleteMissionItem} boxname='mission'/>
+            </Grid>  
+          {/*<div className="test">
           <Box targetKey={missionItemsName} items={this.state.missionItems} addItem={this.addMissionItem} deleteItem={this.deleteMissionItem} boxname='mission' />
-          </div>
+          </div>*/}
         
         </Grid>
       </React.Fragment>

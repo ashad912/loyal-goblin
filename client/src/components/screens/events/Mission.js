@@ -60,6 +60,7 @@ export default class Mission extends React.Component {
                 </div>
                 <ExchangeArea locationId={this.props.location.state.id} setConnection={this.handleConnection} instanceItems={this.updateInstanceItems}/>
                 {this.state.roomConnected ? (
+                    
                     <PartyList instanceItems={this.state.instanceItems}/>
                     ) : (
                     null

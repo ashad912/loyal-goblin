@@ -3,6 +3,7 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import avatarTemp from '../../../../assets/board/statki.svg'
+import Typography from "@material-ui/core/Typography";
 
 const createTempPartyList = () => {
     return [
@@ -52,12 +53,32 @@ const createTempPartyList = () => {
 const useStyles = makeStyles(theme => ({
     root: {
       flexGrow: 1,
-      margin: 10
+      marginRight: 28,
+      marginLeft: 28,
+      marginTop: 10,
+      marginBottom: 10,
     },
     paper: {
-      padding: theme.spacing(2),
+      padding: theme.spacing(1),
       textAlign: 'center',
       color: theme.palette.text.secondary,
+    },
+    avatarPaper: {
+        marginTop: 10,
+        marginBottom: 10,
+        minHeight: 30,
+        paddingTop: theme.spacing(1),
+        paddingBottom: theme.spacing(1),
+        textAlign: 'center',
+        color: theme.palette.text.secondary,
+    },
+    userPaper: {
+        marginTop: 10,
+        marginBottom: 10,
+        minHeight: 30,
+        padding: theme.spacing(1),
+        textAlign: 'center',
+        color: theme.palette.text.secondary,
     },
   }));
 
@@ -73,7 +94,7 @@ const PartyList = (props) => {
 
     const altAvatar = (user) => {
         if(user.avatar){
-            return <img style={{height: 40, width:40}} src={user.avatar} alt='avatar'/>
+            return <img style={{height: 30, width:30}} src={user.avatar} alt='avatar'/>
         }
         return user.name
     }
@@ -91,7 +112,9 @@ const PartyList = (props) => {
 
     return (
         <div className={classes.root}>
+            <Typography variant="h5">Ziomeczky</Typography>
             <Grid
+                
                 container
                 direction="column"
                 justify="center"
@@ -102,6 +125,7 @@ const PartyList = (props) => {
             {party.map((user) => {
                 return(
                     <Grid
+                        key={user.user._id}
                         container
                         direction="row"
                         justify="center"
@@ -112,36 +136,36 @@ const PartyList = (props) => {
                     {user.inRoom ? (
                         <React.Fragment>
                             <Grid item xs={3}>
-                            <Paper className={classes.paper}>{altAvatar(user.user)}</Paper>
+                                <Paper className={classes.avatarPaper} >{altAvatar(user.user)}</Paper>
                             </Grid>
                             <Grid item xs={9}>
-                            <Paper className={classes.paper}>
-                                <Grid
-                                    container
-                                    direction="row"
-                                    justify="flex-start"
-                                    alignItems="flex-start"
-                                    className={classes.wrapper}
-                                    spacing={1}
-                                >
-                                {instanceItems.map((item) => {
-                                    
-                                    return(
-                                        <React.Fragment>
-                                            {item.owner === user.user._id ? (
-                                                <Paper className={classes.paper}><img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/></Paper>
-                                            ) : (
-                                                null
-                                            )}
-                                        </React.Fragment>
-                                    )
-                                    
+                                <Paper className={classes.userPaper}>
+                                    <Grid
+                                        container
+                                        direction="row"
+                                        justify="flex-start"
+                                        alignItems="flex-start"
+                                        className={classes.wrapper}
+                                        spacing={1}
+                                    >
+                                    {instanceItems.map((item) => {
                                         
-                                        /*<img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>*/
-                                    
-                                })}
-                                </Grid>
-                            </Paper>
+                                        return(
+                                            <React.Fragment key={item.id}>
+                                                {item.owner === user.user._id ? (
+                                                    <img style={{height: 30, width:30}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>
+                                                ) : (
+                                                    null
+                                                )}
+                                            </React.Fragment>
+                                        )
+                                        
+                                            
+                                            /*<img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>*/
+                                        
+                                    })}
+                                    </Grid>
+                                </Paper>
                             </Grid>
                         </React.Fragment>
                     ) : (

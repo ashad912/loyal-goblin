@@ -11,15 +11,14 @@ const StyledBoxItemComponent = styled.div`
 
 const StyledBoxItemOuter = styled(StyledBoxItemComponent)`
   border-top: none;
-  min-width: 60px;
-  max-width: 60px;
+  min-width: 55px;
+  max-width: 55px;
   overflow: hidden;
 `;
 
 const StyledBoxItemInside = styled(StyledBoxItemComponent)`
   color: black;
-  border-radius: 5px;
-  border: 2px solid black;
+  border: 1px solid black;
   padding: 2px;
   margin: 2px;
 `;
@@ -27,8 +26,7 @@ const StyledBoxItemInside = styled(StyledBoxItemComponent)`
 const TypeBoxItem = (props) => {
     
   
-    const deleteMe = (e) => {
-      console.log('kill')
+    const deleteMe = () => {
       props.kill(props.item._id);
     };
   
@@ -44,9 +42,9 @@ const TypeBoxItem = (props) => {
           <DragDropContainer
               targetKey="boxItem"
               dragData={props.item}
-              customDragElement={props.customDragElement}
+              /*customDragElement={props.customDragElement}*/
               onDrop={deleteMe}
-              disappearDraggedElement={true}
+              disappearDraggedElement={false}
               dragClone={true}
               //dragHandleClassName="grabber" //doesnt work on mobile
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { DropTarget } from 'react-drag-drop-container';
+import './Highlighted.css'
 
 import BoxItem from './BoxItem'; 
 
@@ -34,7 +35,6 @@ const Box = (props) => {
               <div className="box">
               <Grid
                 container
-                xs={12}
                 direction="row"
                 justify="center"
                 alignItems="flex-start"
