@@ -4,6 +4,7 @@ import './App.css';
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
 import Root from './components/Root'
+import Shop from './components/screens/Shop'
 import SignIn from './components/auth/SignIn'
 import Admin from './components/Admin'
 import Mission from './components/screens/events/Mission'
@@ -24,6 +25,7 @@ class App extends React.Component {
           <Navbar />
             <Switch>
               <Route exact path = '/' component={withAuth(Root)}/>
+              <Route exact path= '/shop' component={withAuth(Shop)}/>
               <Route exact path = '/mission' component={withAuth(Mission)}/>
               <Route exact path = '/signin' component={SignIn}/>
               <Route exact path = '/console' component={Admin}/>

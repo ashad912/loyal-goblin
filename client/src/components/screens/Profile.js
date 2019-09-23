@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -95,7 +96,7 @@ const createTempEquipment = () => {
           },
           name: "Perła",
           description: "Perła prosto z lodówki, znaczy z małży",
-          imgSrc: "pearl-amulet.png",
+          imgSrc: "pearl-amulet.png"
         }
       }
     ],
@@ -112,7 +113,7 @@ const createTempEquipment = () => {
           },
           name: "Krótki miecz",
           description: "Przynajmniej nie masz kompleksów",
-          imgSrc: "short-sword.png",
+          imgSrc: "short-sword.png"
         }
       }
     ],
@@ -129,7 +130,7 @@ const createTempEquipment = () => {
           },
           name: "Skórzana kurta",
           description: "Lale za takimi szaleją",
-          imgSrc: "leather-jerkin.png",
+          imgSrc: "leather-jerkin.png"
         }
       }
     ],
@@ -146,7 +147,7 @@ const createTempEquipment = () => {
           },
           name: "Lniane spodnie",
           description: "Zwykłe spodnie, czego jeszcze chcesz?",
-          imgSrc: "linen-trousers.png",
+          imgSrc: "linen-trousers.png"
         }
       }
     ],
@@ -163,7 +164,7 @@ const createTempEquipment = () => {
           },
           name: "Wysokie buty",
           description: "Skórzane, wypastowane, lśniące",
-          imgSrc: "high-boots.png",
+          imgSrc: "high-boots.png"
         }
       }
     ],
@@ -180,7 +181,7 @@ const createTempEquipment = () => {
           },
           name: "Czapka z piórkiem",
           description: "Wesoła kompaniaaaa",
-          imgSrc: "feathered-hat.png",
+          imgSrc: "feathered-hat.png"
         }
       },
       {
@@ -195,7 +196,7 @@ const createTempEquipment = () => {
           },
           name: "Kaptur czarodzieja",
           description: "Kiedyś nosił go czarodziej. Już nie nosi.",
-          imgSrc: "wizard-coul.png",
+          imgSrc: "wizard-coul.png"
         }
       }
     ],
@@ -212,14 +213,14 @@ const createTempEquipment = () => {
           },
           name: "Pierścień siły",
           description: "Całuj mój sygnet potęgi",
-          imgSrc: "strength-ring.png",
+          imgSrc: "strength-ring.png"
         }
       }
     ]
   };
 };
 
-const Profile = () => {
+const Profile = props => {
   const classes = useStyles();
 
   const [player, setPlayer] = React.useState(
@@ -247,7 +248,6 @@ const Profile = () => {
     updateEquippedItems();
   }, []);
 
-
   //TODO-PILNE: Czy trzeba przejść przez cały obiekt bag (z db), ustawiając equipped według obiektu equipped (z db)?
   const updateEquippedItems = () => {
     const equipment = {
@@ -274,7 +274,7 @@ const Profile = () => {
   };
 
   const handleItemToggle = (id, isEquipped, category) => {
-    console.log(id)
+    console.log(id);
     const tempPlayer = { ...player };
     const modifyItemArrayIndex = tempPlayer.equipment[category].findIndex(
       item => {
@@ -283,12 +283,8 @@ const Profile = () => {
     );
 
     //TODO: Handle 2 weapons and rings
-    tempPlayer.equipment[category].forEach(
-      item => (item.equipped = false)
-    );
-    tempPlayer.equipment[category][
-      modifyItemArrayIndex
-    ].equipped = !isEquipped;
+    tempPlayer.equipment[category].forEach(item => (item.equipped = false));
+    tempPlayer.equipment[category][modifyItemArrayIndex].equipped = !isEquipped;
     setPlayer({ ...tempPlayer });
     updateEquippedItems();
     //TODO: Call to backend
@@ -301,8 +297,8 @@ const Profile = () => {
       item => {
         return item.id !== id;
       }
-    )
-    setPlayer(  tempPlayer  );
+    );
+    setPlayer(tempPlayer);
     updateEquippedItems();
 
     //TODO: Call to backend
@@ -321,7 +317,7 @@ const Profile = () => {
   };
 
   const handleNewLevel = player => {
-    console.log()
+    console.log();
     player.level++;
     player.currentExp = player.currentExp - player.nextLevelAtExp;
     const tempCurrentExpBasis = player.nextLevelAtExp;
@@ -340,10 +336,10 @@ const Profile = () => {
     setPlayer({ ...tempPlayer });
   };
 
-  const handleGoExp = () => {
-    console.log(goExp);
-    setGoExp(prev => !prev);
-  };
+  // const handleGoExp = () => {
+  //   console.log(props.location.push('shop'));
+  //   setGoExp(prev => !prev);
+  // };
 
   return (
     <Grid
@@ -424,16 +420,18 @@ const Profile = () => {
           <Attribute attributeName="Wytrzymałość" attributeValue={player.end} />
           <Button onClick={() => handleAddExperience(500)}>Dodaj expa</Button>
           <Button>Dodaj amulet</Button>
-          <Button onClick={handleGoExp} variant="contained" color="primary">
-            Idziemy expić!
-            <ColorizeIcon
-              style={{
-                fontSize: "2rem",
-                transition: "transform 500ms ease-out",
-                transform: goExp ? "rotate(540deg)" : "rotate(180deg)"
-              }}
-            />
-          </Button>
+          <Link to="/shop">
+            <Button  variant="contained" color="primary">
+              Idziemy expić!
+              <ColorizeIcon
+                style={{
+                  fontSize: "2rem",
+                  transition: "transform 500ms ease-out",
+                  transform: goExp ? "rotate(540deg)" : "rotate(180deg)"
+                }}
+              />
+            </Button>
+          </Link>
         </Grid>
       </Grid>
       <Typography variant="h5" className={classes.eqHeading}>
