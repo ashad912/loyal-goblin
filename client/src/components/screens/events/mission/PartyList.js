@@ -103,9 +103,10 @@ const PartyList = (props) => {
     const instanceItems = props.instanceItems
 
 
-    const userAuth = 2; //TODO: taken from auth.uid (redux)
+    const userAuth = props.userId; //TODO: taken from auth.uid (redux)
     //const partyList from props.partyList from socket.io methods
 
+    //show only rest of the party
     const party = partyList.filter((user) => {
         return user.user._id !== userAuth
     })
@@ -151,7 +152,7 @@ const PartyList = (props) => {
                                     {instanceItems.map((item) => {
                                         
                                         return(
-                                            <React.Fragment key={item.id}>
+                                            <React.Fragment key={item._id}>
                                                 {item.owner === user.user._id ? (
                                                     <img style={{height: 30, width:30}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>
                                                 ) : (

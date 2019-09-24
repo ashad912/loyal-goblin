@@ -7,7 +7,6 @@ import uuid from 'uuid/v1'
 import Loading from '../../../layout/Loading';
 import Grid from '@material-ui/core/Grid';
 import * as socketFuncs from '../../../../socket'
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components'
 
 
@@ -228,25 +227,6 @@ export default class ExchangeArea extends React.Component {
     })
   }
 
-  onDragEnd = (result) => {
-    console.log(result)
-    const { source, destination } = result;
-    const id = result.draggableId
-    console.log(id)
- 
-    if (source.droppableId !== destination.droppableId) {
-      if(source.droppableId === userItemsName){
-        this.addMissionItem(id, destination.droppableId)
-        this.deleteItemFromState(id, source.droppableId)
-      }else if(source.droppableId === missionItemsName){
-        this.addUserItem(id, destination.droppableId)
-        this.deleteMissionItem(id, source.droppableId)
-      }
-      
-    }
-
-    
-  };
   
   render() {
 
@@ -262,7 +242,6 @@ export default class ExchangeArea extends React.Component {
         
         <p>SocketIO-RoomId (temporary missionId): {this.state.roomId}</p>
         <p>RandomUserId (1-5, can be duplicated -> refresh): {this.props.userId}</p>
-        <DragDropContext onDragEnd={this.onDragEnd}>
         <Grid
           container
           direction="column"
@@ -278,12 +257,11 @@ export default class ExchangeArea extends React.Component {
                 
             >  
                 <Box 
-                    addTargetKey={userItemsName} 
-                    deleteTargetKey={missionItemsName}
+                    targetKey={userItemsName} 
                     items={this.state.userItems} 
                     addItem={this.addUserItem} 
                     deleteItem={this.deleteItemFromState} 
-                    boxname={userItemsName}/>
+                    boxname='user'/>
             </Grid>
             <Grid
                 container
@@ -293,21 +271,19 @@ export default class ExchangeArea extends React.Component {
                 
             >  
                 <Box 
-                    addTargetKey={missionItemsName}
-                    deleteTargetKey={userItemsName}  
+                    targetKey={missionItemsName} 
                     //this.state.missionItems has all items in box from socket point of view - for missionBox there are all clients items
                     //this.socketShare() -> want to show only specific client items in box (for userBox clientItems === props.items)
                     items={this.socketShare(this.state.missionItems)} 
                     addItem={this.addMissionItem} 
                     deleteItem={this.deleteMissionItem} 
-                    boxname={missionItemsName}/>
+                    boxname='mission'/>
             </Grid>  
           {/*<div className="test">
           <Box targetKey={missionItemsName} items={this.state.missionItems} addItem={this.addMissionItem} deleteItem={this.deleteMissionItem} boxname='mission' />
           </div>*/}
         
         </Grid>
-        </DragDropContext>
       </React.Fragment>
     )
   }

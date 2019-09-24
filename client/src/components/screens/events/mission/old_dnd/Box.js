@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import { DropTarget } from 'react-drag-drop-container';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import BoxItem from './BoxItem'; 
 import Grid from '@material-ui/core/Grid';
 import styled from 'styled-components'
@@ -73,44 +72,40 @@ const convertToStack = (itemsToConvert, tK) => {
   return itemObjects
 }
 
-
-const grid = 8;
-
-const getItemStyle = (isDragging, draggableStyle) => ({
-    // some basic styles to make the items look a bit nicer
-    userSelect: 'none',
-    padding: grid * 2,
-    margin: `0 0 ${grid}px 0`,
-
-    // change background colour if dragging
-    background: isDragging ? 'lightgreen' : 'grey',
-
-    // styles we need to apply on draggables
-    ...draggableStyle
-});
-
-const getListStyle = isDraggingOver => ({
-    background: isDraggingOver ? 'lightblue' : 'lightgrey',
-    padding: grid,
-    width: 250,
-    minHeight: 200
-});
-
-
 const Box = (props) => {
 
+    //const [highlighted, setHighlighted] = useState(false)
   
 
-  
+    const handleDrop = (e) => {
+      //console.log(e)
+      //props.setHighlighted(false)
+      //const item = e.dragData
+      const id = e.dragData
+      console.log(id)
+      props.addItem(id, props.targetKey)
+    };
+
+    const kill = (id) => {
+      props.deleteItem(id, props.targetKey)
+    };
+
 
     
     //convert client items to stack view
-    const items = convertToStack(props.items, props.addTargetKey) //from backend
+    const items = convertToStack(props.items, props.targetKey) //from backend
 
     const classes = useStyles();
     return (
           <RootDiv >
-            <Grid
+          
+          <DropTarget
+            onHit={handleDrop}
+            /*onDragEnter={() => props.setHighlighted(true)}*/
+            /*onDragLeave={() => props.setHighlighted(false)}*/
+            targetKey="boxItem"
+          >
+          <Grid
               
               container
               direction="row"
@@ -124,12 +119,6 @@ const Box = (props) => {
               {props.boxname}
             </StyledPaper>
           </Grid>
-
-          
-          <Droppable droppableId={props.boxname}>
-              {(provided, snapshot) => (
-                  
-            
           <Grid item xs={9} className='highlightOn'>
                 <Paper className={classes.paper} >
                 <Grid
@@ -140,40 +129,25 @@ const Box = (props) => {
                     className={classes.wrapper}
                     spacing={1}
                 >
-                  <div
-                      ref={provided.innerRef}
-                      style={getListStyle(snapshot.isDraggingOver)}>
-                    {items.map((item, index) => (
-                      <Draggable
-                        key={item.instances[0]._id}
-                        draggableId={item.instances[0]._id}
-                        index={index}>
-                        {(provided, snapshot) => (
-                            <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                style={getItemStyle(
-                                    snapshot.isDragging,
-                                    provided.draggableProps.style
-                                )}>
-                                <img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>
-                                <span>{item.instances.length}</span>
-                            </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                  
+                  {items.map((item, index) => {
+                    const imgSrc = item.model.imgSrc
+                    const quantity = item.instances.length;
+                    const imgData = {imgSrc, quantity}
+                    return (
+                      
+                      <BoxItem key={item.instances[0]._id} kill={kill} boxname={props.boxname} itemId={item.instances[0]._id}>
+                        {imgData}
+                      </BoxItem>
+                      
+                    )
+                })}
                 </Grid>
                 </Paper>
           </Grid>
-          
-          )}          
-          </Droppable>
-
           </Grid>
+            
+          </DropTarget>
+          
           </RootDiv>
         
         

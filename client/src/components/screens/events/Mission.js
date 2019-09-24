@@ -2,7 +2,14 @@ import React from 'react'
 import ExchangeArea from './mission/ExchangeArea'
 import PartyList from './mission/PartyList'
 import Loading from '../../layout/Loading';
-import { throws } from 'assert';
+
+const getRandomInt = (min, max) => {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  
+const randomUserId = getRandomInt(1, 5)
 
 export default class Mission extends React.Component {
     
@@ -58,10 +65,10 @@ export default class Mission extends React.Component {
                 <div onClick={this.handleBack}>
                     <p>Back</p> 
                 </div>
-                <ExchangeArea locationId={this.props.location.state.id} setConnection={this.handleConnection} instanceItems={this.updateInstanceItems}/>
+                <ExchangeArea userId={randomUserId} locationId={this.props.location.state.id} setConnection={this.handleConnection} instanceItems={this.updateInstanceItems}/>
                 {this.state.roomConnected ? (
                     
-                    <PartyList instanceItems={this.state.instanceItems}/>
+                    <PartyList userId={randomUserId} instanceItems={this.state.instanceItems}/>
                     ) : (
                     null
                 )}

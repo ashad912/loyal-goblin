@@ -54,7 +54,8 @@ const BoxItem = (props) => {
             >
                 <StyledBoxItemOuter>
                   <StyledBoxItemInside>
-                    
+                    <img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${props.children.imgSrc}`)} alt='icon'/>
+                    <span>{props.children.quantity}</span>
                   </StyledBoxItemInside>
                 </StyledBoxItemOuter>
           </DragDropContainer>
