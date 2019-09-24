@@ -1,23 +1,35 @@
 import React from 'react';
 import { DragDropContainer, DropTarget } from 'react-drag-drop-container';
-
+import styled from 'styled-components'
 
 /*
     BoxItem - a thing that appears in a box, after you drag something into the box
 */
 
-export default class BoxItem extends React.Component {
-    // the things that appear in the boxes
-    constructor(props) {
-      super(props);
-    }
+const StyledBoxItemComponent = styled.div`
+`;
+
+const StyledBoxItemOuter = styled(StyledBoxItemComponent)`
+  border-top: none;
+  min-width: 55px;
+  max-width: 55px;
+  overflow: hidden;
+`;
+
+const StyledBoxItemInside = styled(StyledBoxItemComponent)`
+  color: black;
+  border: 1px solid black;
+  padding: 2px;
+  margin: 2px;
+`;
+
+const TypeBoxItem = (props) => {
+    
   
-    deleteMe = (e) => {
-      console.log(e)
-      this.props.kill(this.props.item._id);
+    const deleteMe = () => {
+      props.kill(props.item._id);
     };
   
-    render() {
       /*
         Notice how these are wrapped in a DragDropContainer (so you can drag them) AND
         in a DropTarget (enabling you to rearrange items in the box by dragging them on
@@ -26,13 +38,13 @@ export default class BoxItem extends React.Component {
       
 
       return (
-        <div className="box_item_component">
+        <StyledBoxItemComponent>
           <DragDropContainer
               targetKey="boxItem"
-              dragData={this.props.item}
-              customDragElement={this.props.customDragElement}
-              onDrop={this.deleteMe}
-              disappearDraggedElement={true}
+              dragData={props.item}
+              /*customDragElement={props.customDragElement}*/
+              onDrop={deleteMe}
+              disappearDraggedElement={false}
               dragClone={true}
               //dragHandleClassName="grabber" //doesnt work on mobile
 
@@ -40,14 +52,17 @@ export default class BoxItem extends React.Component {
               //disappearDraggedElement - makes the elements in the boxes disappear when you drag them, so they no longer take up any space.
               
             >
-                <div className="outer">
-                  <div className="item">
-                    <img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${this.props.children}`)} alt='icon'/>
-                  </div>
-                </div>
+                <StyledBoxItemOuter>
+                  <StyledBoxItemInside>
+                    <img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${props.children.imgSrc}`)} alt='icon'/>
+                    <span>{props.children.quantity}</span>
+                  </StyledBoxItemInside>
+                </StyledBoxItemOuter>
           </DragDropContainer>
         
-        </div>
+        </StyledBoxItemComponent>
       );
-    }
+    
   }
+
+  export default TypeBoxItem

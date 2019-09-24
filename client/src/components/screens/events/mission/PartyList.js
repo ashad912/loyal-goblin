@@ -112,7 +112,7 @@ const PartyList = (props) => {
 
     return (
         <div className={classes.root}>
-            <Typography variant="h5">Ziomeczky</Typography>
+            <Typography variant="h5">Drużyna:</Typography>
             <Grid
                 
                 container

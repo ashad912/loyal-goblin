@@ -1,7 +1,6 @@
 
 
 import React from 'react';
-import UserTypeBox from './UserTypeBox';
 import Box from './Box';
 import io from 'socket.io-client'
 import uuid from 'uuid/v1'
@@ -21,7 +20,7 @@ const createTempItemListUser = () => {
       {
         _id: uuid(),
         model: {
-          id: 101,
+          _id: 101,
           type: {
               id: 201,
               type: 'amulet'
@@ -34,33 +33,33 @@ const createTempItemListUser = () => {
       {
         _id: uuid(),
         model: {
-          id: 102,
+          _id: 102,
           type: {
               id: 201,
               type: 'amulet'
           },
           name: 'pearl',
           imgSrc: 'pearl-amulet.png'
-      },
+        },
         owner: 2
       },
       {
         _id: uuid(),
         model: {
-          id: 103,
+          _id: 103,
           type: {
               id: 201,
               type: 'amulet'
           },
           name: 'sapphire',
           imgSrc: 'sapphire-amulet.png'
-      },
+        },
         owner: 3
       },
       {
         _id: uuid(),
         model: {
-          id: 101,
+          _id: 101,
           type: {
               id: 201,
               type: 'amulet'
@@ -70,6 +69,20 @@ const createTempItemListUser = () => {
         },
         owner: 4
       },
+      {
+        _id: uuid(),
+        model: {
+          _id: 103,
+          type: {
+              id: 201,
+              type: 'amulet'
+          },
+          name: 'sapphire',
+          imgSrc: 'sapphire-amulet.png'
+        },
+        owner: 5
+      },
+      
       
 
   ]
@@ -188,6 +201,9 @@ export default class ExchangeArea extends React.Component {
     if(!this.state.roomId){
       return <Loading/>
     }
+    
+
+
 
     return (
       <React.Fragment>
@@ -207,7 +223,7 @@ export default class ExchangeArea extends React.Component {
                 alignItems="center"
                 
             >  
-                <UserTypeBox targetKey={userItemsName} items={this.state.userItems} addItem={this.addItemToState} deleteItem={this.deleteItemFromState} boxname='user'/>
+                <Box targetKey={userItemsName} items={this.state.userItems} addItem={this.addItemToState} deleteItem={this.deleteItemFromState} boxname='user'/>
             </Grid>
             <Grid
                 container
@@ -216,7 +232,7 @@ export default class ExchangeArea extends React.Component {
                 alignItems="center"
                 
             >  
-                <UserTypeBox targetKey={missionItemsName} items={this.state.missionItems} addItem={this.addMissionItem} deleteItem={this.deleteMissionItem} boxname='mission'/>
+                <Box targetKey={missionItemsName} items={this.state.missionItems} addItem={this.addMissionItem} deleteItem={this.deleteMissionItem} boxname='mission'/>
             </Grid>  
           {/*<div className="test">
           <Box targetKey={missionItemsName} items={this.state.missionItems} addItem={this.addMissionItem} deleteItem={this.deleteMissionItem} boxname='mission' />
