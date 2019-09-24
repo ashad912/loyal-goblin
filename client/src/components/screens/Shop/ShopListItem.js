@@ -4,6 +4,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 
 const AddIcon = styled(AddCircleIcon)`
@@ -30,7 +31,7 @@ const ShopListItem = props => {
         <ListItemText secondary={description} />
       </Grid>
       <ListItemIcon>
-        <span>{price + " ZŁ"}</span>
+        <Typography variant="body1" style={{marginRight: '2rem'}}>{price + " ZŁ"}</Typography>
       </ListItemIcon>
       <AddIcon onClick={e => props.handleAddItem(e, props.id)} />
     </ListItem>
