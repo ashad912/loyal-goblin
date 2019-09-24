@@ -10,9 +10,13 @@ import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import Badge from "@material-ui/core/Badge";
 import Snackbar from "@material-ui/core/Snackbar";
+
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import MenuItem from "./Shop/MenuItem";
 import ShopListItem from "./Shop/ShopListItem";
+import ShopList from "./Shop/ShopList";
+import PlayerShopButtons from "./Shop/PlayerShopButtons";
+import BasketDrawer from "./Shop/BasketDrawer";
 
 const Menu = styled(Paper)`
   flex-grow: 1;
@@ -57,92 +61,226 @@ const FloatingCartIcon = styled(ShoppingCartIcon)`
 
 const mockShop = {
   shots: [
-    { id: 1, title: "Wóda", description: "nie mam weny", price: "7", icon: "" },
-    { id: 2, title: "Zryje", description: "na opisy", price: "7", icon: "" },
-    { id: 3, title: "Banie", description: "szotów", price: "7", icon: "" },
+    {
+      id: 1,
+      title: "Wóda",
+      description: "nie mam weny",
+      price: "7.00",
+      icon: "drink.png"
+    },
+    {
+      id: 2,
+      title: "Zryje",
+      description: "na opisy",
+      price: "7.00",
+      icon: "drink.png"
+    },
+    {
+      id: 3,
+      title: "Banie",
+      description: "szotów",
+      price: "7.00",
+      icon: "drink.png"
+    },
     {
       id: 4,
       title: "BWóda",
       description: "nie mam weny",
-      price: "7",
-      icon: ""
+      price: "7.00",
+      icon: "drink.png"
     },
-    { id: 5, title: "BZryje", description: "na opisy", price: "7", icon: "" },
-    { id: 6, title: "BBanie", description: "szotów", price: "7", icon: "" }
+    {
+      id: 5,
+      title: "BZryje",
+      description: "na opisy",
+      price: "7.00",
+      icon: "drink.png"
+    },
+    {
+      id: 6,
+      title: "BBanie",
+      description: "szotów",
+      price: "7.00",
+      icon: "drink.png"
+    }
   ],
   drinks: [
     {
       id: 7,
       title: "Modżajto",
       description: "dla mojej świni",
-      price: "13",
-      icon: ""
+      price: "13.50",
+      icon: "drink.png"
     },
     {
       id: 8,
       title: "Cosmo",
       description: "lubisz, ale się nie przyznasz przed kolegami",
-      price: "27",
-      icon: ""
+      price: "27.99",
+      icon: "drink.png"
     },
     {
       id: 9,
       title: "Eau d'penis",
       description: "wyciąg z fiuta Twoim drinkiem",
-      price: "120",
-      icon: ""
+      price: "120.03",
+      icon: "drink.png"
     },
     {
       id: 10,
       title: "BModżajto",
       description: "dla mojej świni",
-      price: "13",
-      icon: ""
+      price: "13.50",
+      icon: "drink.png"
     },
     {
       id: 11,
       title: "BCosmo",
       description: "lubisz, ale się nie przyznasz przed kolegami",
-      price: "27",
-      icon: ""
+      price: "27.99",
+      icon: "drink.png"
     },
     {
       id: 12,
       title: "BEau d'penis",
       description: "wyciąg z fiuta Twoim drinkiem",
-      price: "120",
-      icon: ""
+      price: "120.03",
+      icon: "drink.png"
     }
   ],
   noAlcohol: [
-    { id: 13, title: "Soczek", description: "szluga?", price: "8", icon: "" },
-    { id: 14, title: "Piwo zero", description: ":(", price: "11", icon: "" },
-    { id: 15, title: "Herba", description: "srogi czaj", price: "7", icon: "" },
-    { id: 16, title: "BSoczek", description: "szluga?", price: "8", icon: "" },
-    { id: 17, title: "BPiwo zero", description: ":(", price: "11", icon: "" },
-    { id: 18, title: "BHerba", description: "srogi czaj", price: "7", icon: "" }
+    {
+      id: 13,
+      title: "Soczek",
+      description: "szluga?",
+      price: "8.00",
+      icon: "drink.png"
+    },
+    {
+      id: 14,
+      title: "Piwo zero",
+      description: ":(",
+      price: "11.00",
+      icon: "drink.png"
+    },
+    {
+      id: 15,
+      title: "Herba",
+      description: "srogi czaj",
+      price: "7.00",
+      icon: "drink.png"
+    },
+    {
+      id: 16,
+      title: "BSoczek",
+      description: "szluga?",
+      price: "8.00",
+      icon: "drink.png"
+    },
+    {
+      id: 17,
+      title: "BPiwo zero",
+      description: ":(",
+      price: "11.00",
+      icon: "drink.png"
+    },
+    {
+      id: 18,
+      title: "BHerba",
+      description: "srogi czaj",
+      price: "7.00",
+      icon: "drink.png"
+    }
   ],
   food: [
-    { id: 19, title: "Tosty", description: "z serem", price: "10", icon: "" },
-    { id: 20, title: "Orzeszki", description: "ziemne", price: "6", icon: "" },
+    {
+      id: 19,
+      title: "Tosty",
+      description: "z serem",
+      price: "10.00",
+      icon: "drink.png"
+    },
+    {
+      id: 20,
+      title: "Orzeszki",
+      description: "ziemne",
+      price: "6.00",
+      icon: "drink.png"
+    },
     {
       id: 21,
       title: "Naczosy hehe",
       description: "xddxdx",
-      price: "25",
-      icon: ""
+      price: "25.00",
+      icon: "drink.png"
     },
-    { id: 22, title: "BTosty", description: "z serem", price: "10", icon: "" },
-    { id: 23, title: "BOrzeszki", description: "ziemne", price: "6", icon: "" },
+    {
+      id: 22,
+      title: "BTosty",
+      description: "z serem",
+      price: "10.00",
+      icon: "drink.png"
+    },
+    {
+      id: 23,
+      title: "BOrzeszki",
+      description: "ziemne",
+      price: "6.00",
+      icon: "drink.png"
+    },
     {
       id: 24,
       title: "BNaczosy hehe",
       description: "xddxdx",
-      price: "25",
-      icon: ""
+      price: "25.00",
+      icon: "drink.png"
     }
   ]
 };
+
+//get avatar from db
+const mockUsers = [
+  {
+    id: 1,
+    name: "Ancymon Bobrzyn",
+    avatar: "avatar.png"
+  },
+  {
+    id: 2,
+    name: "Cecylia Dedoles",
+    avatar: "avatar.png"
+  },
+  {
+    id: 3,
+    name: "Ewelina",
+    avatar: ""
+  },
+  {
+    id: 4,
+    name: "Fristajler",
+    avatar: "avatar.png"
+  },
+  {
+    id: 5,
+    name: "Grzegorz Herbatnik",
+    avatar: ""
+  },
+  {
+    id: 6,
+    name: "I",
+    avatar: "avatar.png"
+  },
+  {
+    id: 7,
+    name: "Justyna Kowalczyk",
+    avatar: "avatar.png"
+  },
+  {
+    id: 8,
+    name: "Lol Łoś",
+    avatar: "avatar.png"
+  }
+];
 
 class Shop extends React.Component {
   constructor(props) {
@@ -150,8 +288,10 @@ class Shop extends React.Component {
     this.state = {
       menuTopOffset: 0,
       menuSticky: false,
-      basket: [],
-      snackbarOpen: false
+      baskets: {},
+      snackbarOpen: false,
+      activeUser: 1,
+      basketDrawerOpen: false
     };
     this.menuRef = React.createRef();
   }
@@ -161,6 +301,15 @@ class Shop extends React.Component {
     this.setState({ menuTopOffset }, () => {
       window.addEventListener("scroll", this.handleScrollPosition);
     });
+
+    //backend call for players in party
+    const baskets = {};
+    mockUsers.forEach(player => {
+      baskets[player.id] = [];
+    });
+    console.log(baskets);
+    this.setState({ baskets });
+
     return () => {
       window.removeEventListener("scroll", this.handleScrollPosition);
     };
@@ -175,19 +324,38 @@ class Shop extends React.Component {
   };
 
   handleAddItemToCart = (e, id) => {
-    const basket = [...this.state.basket];
-    basket.push(id);
-    this.setState({ basket, snackbarOpen: true });
+    const baskets = { ...this.state.baskets };
+    baskets[this.state.activeUser].push(
+      Object.values(mockShop).reduce((a, b) => a.concat(b)).find(mockItem => {
+        return mockItem.id === id;
+      })
+    );
+    this.setState({ baskets, snackbarOpen: true });
   };
 
   handleSnackbarClose = () => {
     this.setState({ snackbarOpen: false });
   };
 
+  handleChangeactiveUser = (e, id) => {
+    this.setState({ activeUser: id });
+  };
+
+  handleToggleBasketDrawer = () => {
+    this.setState(prevState => {
+      return { basketDrawerOpen: !prevState.basketDrawerOpen };
+    });
+  };
+
   render() {
     return (
       <ScrollingProvider>
-        <Menu square sticky={this.state.menuSticky} ref={this.menuRef}>
+        <PlayerShopButtons
+          users={mockUsers}
+          activeUser={this.state.activeUser}
+          handleChipClick={this.handleChangeactiveUser}
+        />
+        <Menu square sticky={this.state.menuSticky ? 1 : 0} ref={this.menuRef}>
           <Grid
             container
             direction="row"
@@ -209,105 +377,85 @@ class Shop extends React.Component {
             </Grid>
           </Grid>
         </Menu>
-        <ListContainer sticky={this.state.menuSticky}>
+        <ListContainer sticky={this.state.menuSticky ? 1 : 0}>
           <StyledSection id="shots">
-            <List>
-              <ListItem>
-                <Typography variant="h5">Szoty</Typography>
-              </ListItem>
-              {mockShop.shots.map(item => {
-                return (
-                  <ShopListItem
-                    title={item.title}
-                    description={item.description}
-                    price={item.price}
-                    icon={item.icon}
-                    id={item.id}
-                    handleAddItem={this.handleAddItemToCart}
-                  />
-                );
-              })}
-            </List>
+            <ShopList
+              title="Szoty"
+              list={mockShop.shots}
+              handleAddItem={this.handleAddItemToCart}
+            />
           </StyledSection>
           <Divider />
           <StyledSection id="drinks">
-            <List>
-              <ListItem>
-                <Typography variant="h5">Driny</Typography>
-              </ListItem>
-              {mockShop.drinks.map(item => {
-                return (
-                  <ShopListItem
-                    title={item.title}
-                    description={item.description}
-                    price={item.price}
-                    icon={item.icon}
-                    id={item.id}
-                    handleAddItem={this.handleAddItemToCart}
-                  />
-                );
-              })}
-            </List>
+            <ShopList
+              title="Driny"
+              list={mockShop.drinks}
+              handleAddItem={this.handleAddItemToCart}
+            />
           </StyledSection>
           <Divider />
           <StyledSection id="alco-free">
-            <List>
-              <ListItem>
-                <Typography variant="h5">Bez promili</Typography>
-              </ListItem>
-              {mockShop.noAlcohol.map(item => {
-                return (
-                  <ShopListItem
-                    title={item.title}
-                    description={item.description}
-                    price={item.price}
-                    icon={item.icon}
-                    id={item.id}
-                    handleAddItem={this.handleAddItemToCart}
-                  />
-                );
-              })}
-            </List>
+            <ShopList
+              title="Bez promili"
+              list={mockShop.noAlcohol}
+              handleAddItem={this.handleAddItemToCart}
+            />
           </StyledSection>
           <Divider />
           <StyledSection id="food">
-            <List>
-              <ListItem>
-                <Typography variant="h5">Jedzenie</Typography>
-              </ListItem>
-              {mockShop.food.map(item => {
-                return (
-                  <ShopListItem
-                    title={item.title}
-                    description={item.description}
-                    price={item.price}
-                    icon={item.icon}
-                    id={item.id}
-                    handleAddItem={this.handleAddItemToCart}
-                  />
-                );
-              })}
-            </List>
+            <ShopList
+              title="Jedzenie"
+              list={mockShop.food}
+              handleAddItem={this.handleAddItemToCart}
+            />
           </StyledSection>
           <Divider />
         </ListContainer>
+        {this.state.baskets[this.state.activeUser] && this.state.baskets[this.state.activeUser].length > 0 && (
+          <React.Fragment>
+            <FloatingCart variant="contained" color="primary" onClick={this.handleToggleBasketDrawer}>
+              <Badge
+                
+                color="secondary"
+                badgeContent={
+                  this.state.baskets[this.state.activeUser].length
+                }
+              >
+                <FloatingCartIcon />
+              </Badge>
+            </FloatingCart>
 
-        <FloatingCart variant="contained" color="primary">
-          <Badge color="secondary" badgeContent={this.state.basket.length}>
-            <FloatingCartIcon />
-          </Badge>
-        </FloatingCart>
 
-        <Snackbar
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left"
-          }}
-          open={this.state.snackbarOpen}
-          onClose={this.handleSnackbarClose}
-          autoHideDuration={2000}
-          message={<span>Dodano #{this.state.basket[this.state.basket.length-1]} do koszyka</span>}
-        />
+            <Snackbar
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left"
+              }}
+              open={this.state.snackbarOpen}
+              onClose={this.handleSnackbarClose}
+              autoHideDuration={1000}
+              message={
+                <span>
+                  Dodano{" "}
+                  {
+                    this.state.baskets[this.state.activeUser][
+                      this.state.baskets[this.state.activeUser].length - 1
+                    ].title
+                  }
+                  {" "}do koszyka {
+                    mockUsers.find(mockUser => mockUser.id === this.state.activeUser).name
+                  }
+                </span>
+              }
+            />
+            <BasketDrawer
+              open={this.state.basketDrawerOpen}
+              toggle={this.handleToggleBasketDrawer}
+              baskets={this.state.baskets}
+              mockUsers={mockUsers}
+            />
+          </React.Fragment>
+        )}
       </ScrollingProvider>
     );
   }
