@@ -14,10 +14,10 @@ const ShopList = ({title, list, handleAddItem}) => {
         return (
           <ShopListItem
             key={item.id}
-            title={item.title}
+            name={item.name}
             description={item.description}
             price={item.price}
-            icon={item.icon}
+            imgSrc={item.imgSrc}
             id={item.id}
             handleAddItem={handleAddItem}
           />

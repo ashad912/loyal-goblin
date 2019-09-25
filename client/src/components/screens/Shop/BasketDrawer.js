@@ -12,19 +12,25 @@ const DrawerContents = styled.div`
 `;
 
 const TotalPriceText = styled(Typography)`
-margin-top: 2rem;
-font-weight: bolder;
-`
+  margin-top: 2rem;
+  font-weight: bolder;
+`;
 
 const FinalizeButton = styled(Button)`
-width: 100%;
-margin-top: 2rem;
+  width: 100%;
+  margin-top: 2rem;
+`;
 
-`
+const BasketDrawer = ({ open, toggle, baskets, mockUsers, activeUser, handleRemoveItem, finalizeOrder }) => {
+ 
+  let totalPrice = 0.0;
+  const allBaskets = Object.values(baskets)
+  let disableFinalize = true
+  if(allBaskets.length > 0){
+    disableFinalize = Object.values(baskets).reduce((a,b)=>a.concat(b)).length <= 0
+  }
 
 
-const BasketDrawer = ({ open, toggle, baskets, mockUsers }) => {
-let totalPrice = 0.0
   return (
     <Drawer open={open} onClose={toggle}>
       <DrawerContents>
@@ -36,30 +42,37 @@ let totalPrice = 0.0
               mockUser => mockUser.id === Number(user)
             ).name;
             let summedPrice = 0.0;
-            if (baskets[user].length === 1) {
-              summedPrice = parseFloat(baskets[user][0].price);
-              totalPrice += summedPrice
-            } else if (baskets[user].length > 1) {
+
+            if (baskets[user].length > 0) {
               summedPrice = baskets[user]
-                .map(product => parseFloat(product.price))
+                .map(product => product.price * product.quantity)
                 .reduce((a, b) => a + b);
-                totalPrice += summedPrice
+              totalPrice += summedPrice;
             }
 
             const userBasket = baskets[user];
-            return (
-              <BasketListItem
-                key={user}
-                name={userName}
-                summedPrice={summedPrice.toFixed(2)}
-                basket={userBasket}
-              />
-            );
+            if (baskets[user].length > 0) {
+              
+              return (
+                <BasketListItem
+                  activeUsersBasket = {Number(user) === activeUser}
+                  key={user}
+                  name={userName}
+                  summedPrice={summedPrice.toFixed(2)}
+                  basket={userBasket}
+                  handleRemoveItem = {handleRemoveItem}
+                />
+              );
+            }
           })}
         </List>
         <Divider />
-        <TotalPriceText variant="body1" >Całkowity koszt zamówienia: {totalPrice.toFixed(2) + " ZŁ"}</TotalPriceText>
-        <FinalizeButton variant="contained" color="primary" >Zrealizuj</FinalizeButton>
+        <TotalPriceText variant="body1">
+          Całkowity koszt zamówienia: {totalPrice.toFixed(2) + " ZŁ"}
+        </TotalPriceText>
+        <FinalizeButton variant="contained" color="primary" disabled={disableFinalize} onClick={finalizeOrder}>
+          Zrealizuj
+        </FinalizeButton>
       </DrawerContents>
     </Drawer>
   );

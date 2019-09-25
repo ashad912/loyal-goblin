@@ -18,20 +18,20 @@ const AddIcon = styled(AddCircleIcon)`
 
 const ShopListItem = props => {
   const price = props.price;
-  const title = props.title;
+  const name = props.name;
   const description = props.description;
-  const icon = props.icon;
+  const imgSrc = props.imgSrc;
   return (
     <ListItem>
       <ListItemIcon>
-        <img src={require("../../../assets/shop/"+icon)} style={{width: '2rem'}}/>
+        <img src={require("../../../assets/shop/"+imgSrc)} style={{width: '2rem'}}/>
       </ListItemIcon>
       <Grid container direction="column">
-        <ListItemText primary={title} />
+        <ListItemText primary={name} />
         <ListItemText secondary={description} />
       </Grid>
       <ListItemIcon>
-        <Typography variant="body1" style={{marginRight: '2rem'}}>{price + " ZŁ"}</Typography>
+        <Typography variant="body1" style={{marginRight: '2rem'}}>{price.toFixed(2) + " ZŁ"}</Typography>
       </ListItemIcon>
       <AddIcon onClick={e => props.handleAddItem(e, props.id)} />
     </ListItem>
