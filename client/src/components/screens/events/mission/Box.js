@@ -1,54 +1,59 @@
-import React, {useState} from 'react';
-import { DropTarget } from 'react-drag-drop-container';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import BoxItem from './BoxItem'; 
+import React from 'react';
+import { Droppable, Draggable } from 'react-beautiful-dnd'; 
 import Grid from '@material-ui/core/Grid';
 import styled from 'styled-components'
-import './Highlighted.css'
 import { Paper } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 
-const StyledBox = styled.div`
-  border: 1px solid black;
-	width: 300px;
-  height: 78px;
-	margin: 0px 0px 0 0;
-  position: relative;
-  box-shadow: ${props => {
-       return props.highlighted ? 'inset 0 0 4px #00f' : 'none'
-  }}
-  
-`;
 
 const RootDiv = styled.div`
     flex-grow: 1;
-    margin-left: 28px;
-    margin-right: 28px;
-    margin-top: 5px;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
 `
+
+
+
+
+const Item = styled.div`
+
+  user-select: none;
+  padding: 0.5rem;
+  margin: 0 0 0 0;
+  line-height: 1.5;
+  border-radius: 3px;
+  border: 1px ${props => (props.isDragging ? 'dashed #000' : 'solid #ddd')};
+  background: ${(props) => props.isDragging ? 'rgb(230, 220, 141)' : 'white'}
+`
+
+const Clone = styled(Item)`
+  ~ div {
+    transform: none!important;
+  }
+`
+
 const StyledPaper = styled(Paper)`
-    min-height: 80px;
-    text-align: 'center';
+    min-height: 75px;
+    text-align: center;
     color: rgba(0, 0, 0, 0.54);
 `
-const converted = { ".highlighted  .box": { boxShadow: "inset 0 0 4px #00f" } };
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-    marginLeft: 28,
-    marginRight: 28,
-    marginTop: 5
+const BoxList = styled.div`
+  background: ${(props) => props.isDraggingOver ? 'rgb(230, 220, 141)' : 'white'};
+  padding: grid;
+  min-height: 4rem;
+  
+  width: 96%;
+  height: 96%;
+  display: flex;
+  align-text: flex-start;
+  justify-content: flex-start;
+  margin: 0.5rem 
 
-    
-  },
-  paper: {
-    minHeight: 80,
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  },
-}));
+`
 
 const convertToStack = (itemsToConvert, tK) => {
   let itemModels = []
@@ -74,29 +79,6 @@ const convertToStack = (itemsToConvert, tK) => {
 }
 
 
-const grid = 8;
-
-const getItemStyle = (isDragging, draggableStyle) => ({
-    // some basic styles to make the items look a bit nicer
-    userSelect: 'none',
-    padding: grid * 2,
-    margin: `0 0 ${grid}px 0`,
-
-    // change background colour if dragging
-    background: isDragging ? 'lightgreen' : 'grey',
-
-    // styles we need to apply on draggables
-    ...draggableStyle
-});
-
-const getListStyle = isDraggingOver => ({
-    background: isDraggingOver ? 'lightblue' : 'lightgrey',
-    padding: grid,
-    width: 250,
-    minHeight: 200
-});
-
-
 const Box = (props) => {
 
   
@@ -105,79 +87,85 @@ const Box = (props) => {
 
     
     //convert client items to stack view
-    const items = convertToStack(props.items, props.addTargetKey) //from backend
+    const items = convertToStack(props.items, props.targetKey) //from backend
 
-    const classes = useStyles();
     return (
-          <RootDiv >
-            <Grid
-              
-              container
-              direction="row"
-              justify="center"
-              alignItems="center"
-              className={classes.wrapper}
-              spacing={1}
-          >
+      <RootDiv >
+        <Grid
+          container
+          direction="row"
+          justify="center"
+          alignItems="center"
+          spacing={1}
+        >
           <Grid item xs={3}>
             <StyledPaper>
               {props.boxname}
             </StyledPaper>
           </Grid>
 
-          
-          <Droppable droppableId={props.boxname}>
-              {(provided, snapshot) => (
-                  
-            
-          <Grid item xs={9} className='highlightOn'>
-                <Paper className={classes.paper} >
-                <Grid
-                    container
-                    direction="row"
-                    justify="center"
-                    alignItems="center"
-                    className={classes.wrapper}
-                    spacing={1}
-                >
-                  <div
+          <Grid item xs={9}>
+            <StyledPaper>
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+                spacing={1}
+              >
+                <Droppable direction="horizontal" droppableId={props.boxname} isDropDisabled={props.draggableProperty === props.boxname ? true : false} >
+                  {(provided, snapshot) => (
+                    <BoxList
                       ref={provided.innerRef}
-                      style={getListStyle(snapshot.isDraggingOver)}>
-                    {items.map((item, index) => (
-                      <Draggable
-                        key={item.instances[0]._id}
-                        draggableId={item.instances[0]._id}
-                        index={index}>
-                        {(provided, snapshot) => (
-                            <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                style={getItemStyle(
-                                    snapshot.isDragging,
-                                    provided.draggableProps.style
-                                )}>
-                                <img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>
-                                <span>{item.instances.length}</span>
-                            </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                  
-                </Grid>
-                </Paper>
-          </Grid>
-          
-          )}          
-          </Droppable>
+                      isDraggingOver={snapshot.isDraggingOver}
+                    >
+                      {items.length ? (items.map((item, index) => {
+                        //https://codesandbox.io/s/q3717y1jq4
+                        return(
+                          <Draggable
+                            key={item.model._id}
+                            draggableId={item.instances[0]._id}
+                            index={index}>
+                            {(provided, snapshot) => (
+                                <React.Fragment>
+                              
+                                  <Item
+                                      ref={provided.innerRef}
+                                      {...provided.draggableProps}
+                                      {...provided.dragHandleProps}
+                                      style={
+                                        provided.draggableProps.style
+                                      }
+                                      isDragging = {snapshot.isDragging}
+                                    >
+                                    
+                                    <img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>
+                                    {!snapshot.isDragging && (<span>{item.instances.length}</span>)}
 
+                                  </Item>
+
+                                  {snapshot.isDragging && (
+                                    <Clone>
+                                      <img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>
+                                      <span>{item.instances.length - 1}</span>
+                                    </Clone>
+                                  )}
+                                  
+                                </React.Fragment>
+                            )}
+                          </Draggable>
+                      )})):(<span style={{justifyContent: 'center'}}>Przeciągnij tutaj!</span>)}
+                      
+                    </BoxList>
+                    
+                  )}          
+                </Droppable>
+              </Grid>
+            </StyledPaper>
           </Grid>
-          </RootDiv>
-        
-        
-      );
-    }
+        </Grid>
+      </RootDiv> 
+    );
+  }
 
   export default Box

@@ -22,7 +22,8 @@ export default class Mission extends React.Component {
         
 
     componentDidMount() {
-        if(!this.props.location.state.id){
+
+        if(!this.props.location.state || !this.props.location.state.id){
             this.backToEvents(this.props.history)
         }
 
@@ -61,7 +62,7 @@ export default class Mission extends React.Component {
             return <Loading />
         }
         return(
-            <React.Fragment>
+            <div style={{fontFamily: 'Roboto'}}>
                 <div onClick={this.handleBack}>
                     <p>Back</p> 
                 </div>
@@ -73,7 +74,7 @@ export default class Mission extends React.Component {
                     null
                 )}
                 
-            </React.Fragment>
+            </div>
         )
     }
   

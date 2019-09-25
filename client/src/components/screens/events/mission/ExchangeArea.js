@@ -231,6 +231,10 @@ export default class ExchangeArea extends React.Component {
   onDragEnd = (result) => {
     console.log(result)
     const { source, destination } = result;
+
+    if(!destination) {
+      return
+    }
     const id = result.draggableId
     console.log(id)
  
@@ -247,6 +251,15 @@ export default class ExchangeArea extends React.Component {
 
     
   };
+
+  setDraggableProperty = (draggable) => {
+    const {source} = draggable
+
+    this.setState({
+      draggableProperty: source.droppableId
+    })
+
+  }
   
   render() {
 
@@ -262,7 +275,7 @@ export default class ExchangeArea extends React.Component {
         
         <p>SocketIO-RoomId (temporary missionId): {this.state.roomId}</p>
         <p>RandomUserId (1-5, can be duplicated -> refresh): {this.props.userId}</p>
-        <DragDropContext onDragEnd={this.onDragEnd}>
+        <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.setDraggableProperty}>
         <Grid
           container
           direction="column"
@@ -278,11 +291,9 @@ export default class ExchangeArea extends React.Component {
                 
             >  
                 <Box 
-                    addTargetKey={userItemsName} 
-                    deleteTargetKey={missionItemsName}
+                    targetKey={userItemsName} 
                     items={this.state.userItems} 
-                    addItem={this.addUserItem} 
-                    deleteItem={this.deleteItemFromState} 
+                    draggableProperty={this.state.draggableProperty}
                     boxname={userItemsName}/>
             </Grid>
             <Grid
@@ -293,13 +304,11 @@ export default class ExchangeArea extends React.Component {
                 
             >  
                 <Box 
-                    addTargetKey={missionItemsName}
-                    deleteTargetKey={userItemsName}  
+                    targetKey={missionItemsName}
                     //this.state.missionItems has all items in box from socket point of view - for missionBox there are all clients items
                     //this.socketShare() -> want to show only specific client items in box (for userBox clientItems === props.items)
                     items={this.socketShare(this.state.missionItems)} 
-                    addItem={this.addMissionItem} 
-                    deleteItem={this.deleteMissionItem} 
+                    draggableProperty={this.state.draggableProperty}
                     boxname={missionItemsName}/>
             </Grid>  
           {/*<div className="test">
