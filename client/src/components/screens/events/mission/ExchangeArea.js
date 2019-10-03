@@ -276,8 +276,8 @@ export default class ExchangeArea extends React.Component {
     return (
       <React.Fragment>
         
-        <p>SocketIO-RoomId (temporary missionId): {this.state.roomId}</p>
-        <p>RandomUserId (1-5, can be duplicated -> refresh): {this.props.userId}</p>
+        <span style={{fontSize: 8}}>SocketIO-RoomId (temporary missionId): {this.state.roomId} ||| </span>
+        <span style={{fontSize: 8}}>RandomUserId (1-5, can be duplicated -> refresh): {this.props.userId}</span>
         <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.setDraggableProperty}>
         <Grid
           container

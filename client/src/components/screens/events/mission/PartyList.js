@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
-import Paper from '@material-ui/core/Paper';
+
 import Grid from '@material-ui/core/Grid';
-import { makeStyles } from '@material-ui/core/styles';
+
 import avatarTemp from '../../../../assets/avatar/moose.png'
 import Typography from "@material-ui/core/Typography";
 import styled from 'styled-components'
@@ -45,7 +45,7 @@ const createTempPartyList = () => {
             }
         },
         {
-            inRoom: true,
+            inRoom: false,
             user: {
                 _id: 2,
                 name: 'user2',
@@ -79,37 +79,6 @@ const createTempPartyList = () => {
     ]
 }
 
-const useStyles = makeStyles(theme => ({
-    root: {
-      flexGrow: 1,
-      marginRight: 20,
-      marginLeft: 20,
-      marginTop: 10,
-      marginBottom: 10,
-    },
-    paper: {
-      padding: theme.spacing(1),
-      textAlign: 'center',
-      color: theme.palette.text.secondary,
-    },
-    avatarPaper: {
-        marginTop: 10,
-        marginBottom: 10,
-        minHeight: 30,
-        paddingTop: theme.spacing(1),
-        paddingBottom: theme.spacing(1),
-        textAlign: 'center',
-        color: theme.palette.text.secondary,
-    },
-    userPaper: {
-        marginTop: 10,
-        marginBottom: 10,
-        minHeight: 30,
-        padding: theme.spacing(1),
-        textAlign: 'center',
-        color: theme.palette.text.secondary,
-    },
-  }));
 
 
 const PartyList = (props) => {
@@ -128,7 +97,7 @@ const PartyList = (props) => {
         return user.name
     }
 
-    const classes = useStyles();
+    
     const instanceItems = props.instanceItems
 
 
@@ -160,7 +129,6 @@ const PartyList = (props) => {
                         key={user.user._id}
                         container
                         direction="row"
-                        className={classes.wrapper}
                         spacing={2}
                         
                     > 
@@ -177,7 +145,6 @@ const PartyList = (props) => {
                                         direction="row"
                                         justify="flex-start"
                                         alignItems="flex-start"
-                                        className={classes.wrapper}
                                         spacing={1}
                                     >
                                     {instanceItems.map((item) => {
@@ -199,17 +166,12 @@ const PartyList = (props) => {
                                     </Grid>
                                 
                             </Grid>
-                            <Divider />
+                            
                         </React.Fragment>
                     ) : (
                         <React.Fragment>
-                            <Grid item xs={3}>
-                            <Paper className={classes.paper}>...</Paper>
-                            </Grid>
-                            <Grid item xs={9}>
-                            <Paper className={classes.paper}>...</Paper>
-                            </Grid>
-                            <Divider />
+                            <Grid item xs={3}>...</Grid>
+                            <Grid item xs={9}></Grid>
                         </React.Fragment>
                     )}   
                     

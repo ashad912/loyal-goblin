@@ -1,7 +1,7 @@
 import React, {useState}  from 'react'
 import { Redirect, Link } from 'react-router-dom'
 import VisibilitySensor from 'react-visibility-sensor'
-import avatarTemp from '../../assets/avatar/moose.png'
+import missionIconTemp from '../../assets/avatar/mission.png'
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -29,7 +29,7 @@ const createTempList = () => {
         {
             id: 1,
             title: 'Mission1',
-            avatarSrc: {avatarTemp},
+            avatarSrc: {avatarTemp: missionIconTemp},
             minPlayers: 3,
             maxPlayers: 4,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
@@ -63,7 +63,7 @@ const createTempList = () => {
         {
             id: 2,
             title: 'Mission2',
-            avatarSrc: {avatarTemp},
+            avatarSrc: {avatarTemp: missionIconTemp},
             minPlayers: 3,
             maxPlayers: 3,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
@@ -109,7 +109,7 @@ const createTempList = () => {
         {
             id: 3,
             title: 'Mission3',
-            avatarSrc: {avatarTemp},
+            avatarSrc: {avatarTemp: missionIconTemp},
             minPlayers: 3,
             maxPlayers: 4,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
@@ -143,7 +143,7 @@ const createTempList = () => {
         {
             id: 4,
             title: 'Mission4',
-            avatarSrc: {avatarTemp},
+            avatarSrc: {avatarTemp: missionIconTemp},
             minPlayers: 3,
             maxPlayers: 3,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
@@ -189,7 +189,7 @@ const createTempList = () => {
         {
             id: 5,
             title: 'Mission5',
-            avatarSrc: {avatarTemp},
+            avatarSrc: {avatarTemp: missionIconTemp},
             minPlayers: 3,
             maxPlayers: 4,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
@@ -223,7 +223,7 @@ const createTempList = () => {
         {
             id: 6,
             title: 'Mission6',
-            avatarSrc: {avatarTemp},
+            avatarSrc: {avatarTemp: missionIconTemp},
             minPlayers: 3,
             maxPlayers: 3,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
@@ -274,7 +274,7 @@ const createTempRally = () => {
     return {
         id: 1,
         title: 'OMG!Rally',
-        avatarSrc: avatarTemp,
+        avatarSrc: missionIconTemp,
         date: moment().add(1, 'days').calendar(),
         requiredPlayers: 20,
         description: 'Super important rally. It is only one rally on board! You need to cooperate with ppl, u introvert scum xd',

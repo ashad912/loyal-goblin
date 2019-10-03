@@ -4,7 +4,6 @@ import Grid from '@material-ui/core/Grid';
 import styled from 'styled-components'
 import { Paper } from '@material-ui/core';
 
-import { makeStyles } from '@material-ui/core/styles';
 
 
 
@@ -15,8 +14,6 @@ const RootDiv = styled.div`
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
 `
-
-
 
 
 const Item = styled.div`
@@ -67,13 +64,13 @@ const convertToStack = (itemsToConvert, tK) => {
 
   let itemObjects = []
   itemModels.forEach((itemModel) => {
-    let instanceItems = []
+    let instanceItemsIds = []
     itemsToConvert.forEach((itemToConvert) => {
       if(itemModel.name === itemToConvert.model.name){
-        instanceItems = [...instanceItems, itemToConvert]
+        instanceItemsIds = [...instanceItemsIds, itemToConvert._id]
       }
     })
-    const itemObject = {model: itemModel, instances: instanceItems}
+    const itemObject = {model: itemModel, instancesIds: instanceItemsIds}
     itemObjects = [...itemObjects, itemObject]
   })
   return itemObjects
@@ -123,7 +120,7 @@ const Box = (props) => {
                         return(
                           <Draggable
                             key={item.model._id}
-                            draggableId={item.instances[0]._id}
+                            draggableId={item.instancesIds[0]}
                             index={index}>
                             {(provided, snapshot) => (
                                 <React.Fragment>
@@ -139,14 +136,14 @@ const Box = (props) => {
                                     >
                                     
                                     <img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>
-                                    {!snapshot.isDragging && (<span>{item.instances.length}</span>)}
+                                    {!snapshot.isDragging && (<span>{item.instancesIds.length}</span>)}
 
                                   </Item>
 
                                   {snapshot.isDragging && (
                                     <Clone>
                                       <img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>
-                                      <span>{item.instances.length - 1}</span>
+                                      <span>{item.instancesIds.length - 1}</span>
                                     </Clone>
                                   )}
                                   
