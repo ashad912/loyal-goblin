@@ -2,8 +2,37 @@ import React, {useEffect, useState} from 'react'
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
-import avatarTemp from '../../../../assets/board/statki.svg'
+import avatarTemp from '../../../../assets/avatar/moose.png'
 import Typography from "@material-ui/core/Typography";
+import styled from 'styled-components'
+import Divider from '@material-ui/core/Divider';
+import Box from '@material-ui/core/Box';
+
+const StyledContainer = styled(Grid)`
+    min-height: 30px;
+    margin-top: 0.5rem; 
+    margin-bottom: 0.5rem;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+    width: 100%;
+    border: 1px solid #ddd;
+    flex-grow: 1;
+    flex-direction: 1;
+`
+
+const StyledImage = styled.img`
+    height: 30px;
+    width: 30px;
+    margin: 0 0.2rem 0 0;
+`
+
+const RootDiv = styled.div`
+    flex-grow: 1;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+`
 
 const createTempPartyList = () => {
     return [
@@ -53,8 +82,8 @@ const createTempPartyList = () => {
 const useStyles = makeStyles(theme => ({
     root: {
       flexGrow: 1,
-      marginRight: 28,
-      marginLeft: 28,
+      marginRight: 20,
+      marginLeft: 20,
       marginTop: 10,
       marginBottom: 10,
     },
@@ -112,7 +141,7 @@ const PartyList = (props) => {
     })
 
     return (
-        <div className={classes.root}>
+        <RootDiv>
             <Typography variant="h5">Drużyna:</Typography>
             <Grid
                 
@@ -120,27 +149,29 @@ const PartyList = (props) => {
                 direction="column"
                 justify="center"
                 alignItems="center"
-                className={classes.wrapper}
+                
                 spacing={2}
             > 
             {party.map((user) => {
                 return(
+                    <StyledContainer>
+                    
                     <Grid
                         key={user.user._id}
                         container
                         direction="row"
-                        justify="center"
-                        alignItems="center"
                         className={classes.wrapper}
                         spacing={2}
+                        
                     > 
+                    
                     {user.inRoom ? (
                         <React.Fragment>
                             <Grid item xs={3}>
-                                <Paper className={classes.avatarPaper} >{altAvatar(user.user)}</Paper>
+                                {altAvatar(user.user)}
                             </Grid>
                             <Grid item xs={9}>
-                                <Paper className={classes.userPaper}>
+                                
                                     <Grid
                                         container
                                         direction="row"
@@ -154,7 +185,7 @@ const PartyList = (props) => {
                                         return(
                                             <React.Fragment key={item._id}>
                                                 {item.owner === user.user._id ? (
-                                                    <img style={{height: 30, width:30}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>
+                                                    <StyledImage  src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>
                                                 ) : (
                                                     null
                                                 )}
@@ -166,8 +197,9 @@ const PartyList = (props) => {
                                         
                                     })}
                                     </Grid>
-                                </Paper>
+                                
                             </Grid>
+                            <Divider />
                         </React.Fragment>
                     ) : (
                         <React.Fragment>
@@ -177,15 +209,19 @@ const PartyList = (props) => {
                             <Grid item xs={9}>
                             <Paper className={classes.paper}>...</Paper>
                             </Grid>
+                            <Divider />
                         </React.Fragment>
                     )}   
+                    
+                    
                     </Grid>
+                    </StyledContainer>
                 )
             })}
             </Grid>
                 
             
-        </div>
+        </RootDiv>
     )
 }
 

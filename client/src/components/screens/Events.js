@@ -1,7 +1,7 @@
 import React, {useState}  from 'react'
 import { Redirect, Link } from 'react-router-dom'
 import VisibilitySensor from 'react-visibility-sensor'
-import avatarTemp from '../../assets/board/statki.svg'
+import avatarTemp from '../../assets/avatar/moose.png'
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';

@@ -72,3 +72,74 @@
                 )
         })
     ) : ( null )
+
+
+    <Grid
+                
+                container
+                direction="column"
+                justify="center"
+                alignItems="center"
+                className={classes.wrapper}
+                spacing={2}
+            > 
+            {party.map((user) => {
+                return(
+                    <Grid
+                        key={user.user._id}
+                        container
+                        direction="row"
+                        justify="center"
+                        alignItems="center"
+                        className={classes.wrapper}
+                        spacing={2}
+                    > 
+                    {user.inRoom ? (
+                        <React.Fragment>
+                            <Grid item xs={3}>
+                                <Paper className={classes.avatarPaper} >{altAvatar(user.user)}</Paper>
+                            </Grid>
+                            <Grid item xs={9}>
+                                <Paper className={classes.userPaper}>
+                                    <Grid
+                                        container
+                                        direction="row"
+                                        justify="flex-start"
+                                        alignItems="flex-start"
+                                        className={classes.wrapper}
+                                        spacing={1}
+                                    >
+                                    {instanceItems.map((item) => {
+                                        
+                                        return(
+                                            <React.Fragment key={item._id}>
+                                                {item.owner === user.user._id ? (
+                                                    <img style={{height: 30, width:30}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>
+                                                ) : (
+                                                    null
+                                                )}
+                                            </React.Fragment>
+                                        )
+                                        
+                                            
+                                            /*<img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>*/
+                                        
+                                    })}
+                                    </Grid>
+                                </Paper>
+                            </Grid>
+                        </React.Fragment>
+                    ) : (
+                        <React.Fragment>
+                            <Grid item xs={3}>
+                            <Paper className={classes.paper}>...</Paper>
+                            </Grid>
+                            <Grid item xs={9}>
+                            <Paper className={classes.paper}>...</Paper>
+                            </Grid>
+                        </React.Fragment>
+                    )}   
+                    </Grid>
+                )
+            })}
+            </Grid>

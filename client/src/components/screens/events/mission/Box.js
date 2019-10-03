@@ -3,6 +3,7 @@ import { Droppable, Draggable } from 'react-beautiful-dnd';
 import Grid from '@material-ui/core/Grid';
 import styled from 'styled-components'
 import { Paper } from '@material-ui/core';
+
 import { makeStyles } from '@material-ui/core/styles';
 
 
@@ -22,9 +23,9 @@ const Item = styled.div`
 
   user-select: none;
   padding: 0.5rem;
-  margin: 0 0 0 0;
+  margin: 0 0.2rem 0 0;
   line-height: 1.5;
-  border-radius: 3px;
+  border-radius: 1px;
   border: 1px ${props => (props.isDragging ? 'dashed #000' : 'solid #ddd')};
   background: ${(props) => props.isDragging ? 'rgb(230, 220, 141)' : 'white'}
 `
@@ -99,9 +100,7 @@ const Box = (props) => {
           spacing={1}
         >
           <Grid item xs={3}>
-            <StyledPaper>
-              {props.boxname}
-            </StyledPaper>
+            <img style={{height: 70, width: 70}} src={props.boxIcon}/>
           </Grid>
 
           <Grid item xs={9}>

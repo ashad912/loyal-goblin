@@ -9,6 +9,9 @@ import Grid from '@material-ui/core/Grid';
 import * as socketFuncs from '../../../../socket'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components'
+import avatarTemp from '../../../../assets/avatar/moose.png'
+import bagImg from '../../../../assets/avatar/bag.png'
+
 
 
 
@@ -294,7 +297,8 @@ export default class ExchangeArea extends React.Component {
                     targetKey={userItemsName} 
                     items={this.state.userItems} 
                     draggableProperty={this.state.draggableProperty}
-                    boxname={userItemsName}/>
+                    boxname={userItemsName}
+                    boxIcon={avatarTemp}/>
             </Grid>
             <Grid
                 container
@@ -309,7 +313,8 @@ export default class ExchangeArea extends React.Component {
                     //this.socketShare() -> want to show only specific client items in box (for userBox clientItems === props.items)
                     items={this.socketShare(this.state.missionItems)} 
                     draggableProperty={this.state.draggableProperty}
-                    boxname={missionItemsName}/>
+                    boxname={missionItemsName}
+                    boxIcon={bagImg}/>
             </Grid>  
           {/*<div className="test">
           <Box targetKey={missionItemsName} items={this.state.missionItems} addItem={this.addMissionItem} deleteItem={this.deleteMissionItem} boxname='mission' />
