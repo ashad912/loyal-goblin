@@ -19,6 +19,10 @@ import bagImg from '../../../../assets/avatar/bag.png'
 const userItemsName = 'userItems'
 const missionItemsName = 'missionItems'
 
+const StyledP = styled.p`
+  color: ${props => props.userRegistered ? 'green' : 'black'} 
+`
+
 
 
 const createTempItemListUser = (userId) => {
@@ -120,16 +124,18 @@ const createTempItemListMission = (userId) => {
 export default class ExchangeArea extends React.Component {
 
   state = {
+    roomId: null,
+    userRegistered: false,
+    connectedUsers: [/*from backend*/],
     [userItemsName]: createTempItemListUser(this.props.userId),
     [missionItemsName]: createTempItemListMission(this.props.userId),
     //all possible items in communication
     
   }
   
-  componentWillUnmount() {
-    const {socket} = this.state
-    socket.disconnect()
-  }
+  
+
+  
  
   componentDidMount() {
 
@@ -138,8 +144,6 @@ export default class ExchangeArea extends React.Component {
     })
    
     const socket =  io('/mission')
-
-    
 
     //await from backend generating roomId -> roomId = eventInstanceId
     
@@ -151,9 +155,11 @@ export default class ExchangeArea extends React.Component {
       socketFuncs.joinRoomSubscribe(socket, (roomId) => {
         this.setState({
           socket: socket,
-          roomId: roomId
+          roomId: roomId,
         }, () => {
             this.props.setConnection()
+
+            
         })
       })
     }
@@ -166,14 +172,88 @@ export default class ExchangeArea extends React.Component {
       this.deleteItemFromState(id, missionItemsName)
     })
 
+    socketFuncs.registerUserSubscribe(socket, (user) => {
+
+      const users = [...this.state.connectedUsers, user]
+
+      this.setState({
+        connectedUsers: users
+      }, () => {
+        this.props.instanceUsers(this.state.connectedUsers) 
+      })
+    })
+
+    socketFuncs.unregisterUserSubscribe(socket, (id) => {
+
+      const users = this.state.connectedUsers.filter((user) => {
+        return user._id !== id
+      })
+
+      this.setState({
+        connectedUsers: users
+      }, () => {
+        this.props.instanceUsers(this.state.connectedUsers)
+      })
+    })
+
+    socketFuncs.modifyUserStatusSubscribe(socket, (user) => {
+      
+
+      const users = [...this.state.connectedUsers];
+  
+      const modifyUserArrayIndex = users.findIndex(
+        specificUser => {
+          return specificUser._id === user._id;
+        }
+      );
+      
+      users[modifyUserArrayIndex].readyStatus = user.readyStatus;
+
+      this.setState({
+        connectedUsers: users
+      }, () => {
+        this.props.instanceUsers(this.state.connectedUsers) 
+      })
+    })
+
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.state.roomId && (prevProps.userReadyStatus !== this.props.userReadyStatus)) {
+      const {socket} = this.state
+      const user = {_id: this.props.userId, readyStatus: this.props.userReadyStatus}
+      socketFuncs.modifyUserStatusEmit(socket, user, this.state.roomId)
+    }
+  } 
+
+  componentWillUnmount() {
+    const {socket} = this.state
+    socketFuncs.unregisterUserEmit(socket, this.props.userId, this.state.roomId)
+    socket.disconnect()
+  }
+
+  handleRegister = () => {
+    if(!this.state.userRegistered){
+      this.setState({
+        userRegistered: true
+      }, () => {
+        const {socket} = this.state
+
+
+
+
+        const user = {_id: this.props.userId, readyStatus: false}
+        socketFuncs.registerUserEmit(socket, user, this.state.roomId)
+      })
+    }
+    
+    
   }
 
   findItemById = (id) => {
-    //console.log(id)
-    //console.log(this.state.allItems)
     return this.state.allItems.find((item) => {
       return item._id === id
-    })
+  })
     
 
   }
@@ -264,13 +344,14 @@ export default class ExchangeArea extends React.Component {
 
   }
   
+  
   render() {
 
     if(!this.state.roomId){
       return <Loading/>
     }
     
-
+    const registerLabel = this.state.userRegistered ? ('User registered!') : ('Register user in SocketIO!')
 
 
     return (
@@ -278,6 +359,7 @@ export default class ExchangeArea extends React.Component {
         
         <span style={{fontSize: 8}}>SocketIO-RoomId (temporary missionId): {this.state.roomId} ||| </span>
         <span style={{fontSize: 8}}>RandomUserId (1-5, can be duplicated -> refresh): {this.props.userId}</span>
+        <StyledP onClick={this.handleRegister} userRegistered={this.state.userRegistered}>{registerLabel}</StyledP>
         <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.setDraggableProperty}>
         <Grid
           container

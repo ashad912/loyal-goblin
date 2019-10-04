@@ -6,6 +6,9 @@ import styled from 'styled-components'
 import Button from "@material-ui/core/Button";
 import KeyboardArrowLeftIcon from "@material-ui/icons/KeyboardArrowLeft";
 import ColorizeIcon from "@material-ui/icons/Colorize";
+import CheckIcon from "@material-ui/icons/Check";
+import ClearIcon from "@material-ui/icons/Clear";
+import VerificationPage from './mission/VerificationPage'
 
 const getRandomInt = (min, max) => {
     min = Math.ceil(min);
@@ -96,7 +99,7 @@ export default class Mission extends React.Component {
 
     componentDidMount() {
 
-        if(!this.props.location.state || !this.props.location.state.id){
+        if(!this.props.location.state || (this.props.location.state.id === undefined)){
             this.backToEvents(this.props.history)
         }
 
@@ -131,18 +134,34 @@ export default class Mission extends React.Component {
             instanceItems: items
         })
     }
+
+    updateInstanceUsers = (users) => {
+        
+        this.setState({
+            instanceUsers: users
+        })
+    }
+
+    updatePartyCondition = (condition) => {
+        this.setState({
+            partyCondition: condition
+        })
+    }
    
 
     handleReadyButton = () => {
-        console.log(this.state.instanceItems);
-    };
-
-    checkConditions = () => {
-
-        if(!this.state.leader){
-            return false
+        if(this.state.leader) {
+            this.setState({ showVerificationPage: true });
+        }else{
+            this.setState({
+                userReadyStatus: !this.state.userReadyStatus
+            })
         }
         
+    };
+
+    checkItemsCondition = () => {
+
         const amulets = this.state.missionObject.amulets 
 
         for(let index = 0; index < amulets.length; index++) {
@@ -154,12 +173,15 @@ export default class Mission extends React.Component {
             console.log(specificAmuletInstances)
 
             if(specificAmuletInstances.length !== amulets[index].quantity){
-                return true
+                return false
             }
         }
 
-        
-        return false
+        return true
+    }
+
+    checkPartyCondition = () => {
+        return true//this.state.partyCondition
     }
 
     render(){
@@ -173,8 +195,40 @@ export default class Mission extends React.Component {
         const requiredMissionItems = this.state.missionObject.amulets
 
         const buttonReadyLabel = leader ? (`Wyrusz`) : (`Gotów`)
+
+        const statusIcon = (condition) => condition ? (
+            <CheckIcon
+                style={{
+                    color: "green",
+                    fontSize: "2rem",
+                    transition: "transform 500ms ease-out",
+                    
+                }}
+            />
+        ) : (
+            <ClearIcon
+                style={{
+                    color: "red",
+                    fontSize: "2rem",
+                    transition: "transform 500ms ease-out",
+                    
+                }}
+            />
+        )
+
+
+        
+        const isRequiredItemsCollected = this.checkItemsCondition()
+        const isAllPartyReady = this.checkPartyCondition()
+
+
+        
         return(
             <div >
+            {this.state.showVerificationPage ? (
+                <VerificationPage />
+            ) : (
+                <React.Fragment>
                 <MissionBar>
                     <span>Mission {this.state.missionId}</span>
                     <StyledImg src={require(`../../../assets/avatar/${this.state.missionObject.avatarSrc}`)}/>
@@ -187,12 +241,13 @@ export default class Mission extends React.Component {
                             </React.Fragment>
                         )
                     })}
+                {statusIcon(isRequiredItemsCollected)}
                 </MissionBar>
                 
-                <ExchangeArea userId={randomUserId} locationId={this.props.location.state.id} setConnection={this.handleConnection} instanceItems={this.updateInstanceItems}/>
+                <ExchangeArea userId={randomUserId} locationId={this.props.location.state.id} setConnection={this.handleConnection} instanceUsers={this.updateInstanceUsers} instanceItems={this.updateInstanceItems} userReadyStatus={this.state.userReadyStatus}/>
                 {this.state.roomConnected ? (
                     
-                    <PartyList userId={randomUserId} instanceItems={this.state.instanceItems}/>
+                    <PartyList userId={randomUserId} instanceUsers={this.state.instanceUsers} instanceItems={this.state.instanceItems} userReadyStatus={this.state.userReadyStatus} partyCondition={this.updatePartyCondition}/>
                     ) : (
                     null
                 )}
@@ -208,7 +263,7 @@ export default class Mission extends React.Component {
                         Wyjdź
                         
                     </Button>
-                    <Button onClick={this.handleReadyButton} disabled={this.checkConditions()} variant="contained" color="primary">
+                    <Button onClick={this.handleReadyButton} disabled={this.state.leader && (!isRequiredItemsCollected || !isAllPartyReady)} variant="contained" color="primary">
                         {buttonReadyLabel}
                         <ColorizeIcon
                         style={{
@@ -218,8 +273,10 @@ export default class Mission extends React.Component {
                         }}
                         />
                     </Button>
-                
+                    {statusIcon(this.state.userReadyStatus)}
                 </ButtonBar>
+                </React.Fragment>
+                )}
             </div>
         )
     }

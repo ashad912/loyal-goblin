@@ -5,8 +5,8 @@ import Grid from '@material-ui/core/Grid';
 import avatarTemp from '../../../../assets/avatar/moose.png'
 import Typography from "@material-ui/core/Typography";
 import styled from 'styled-components'
-import Divider from '@material-ui/core/Divider';
-import Box from '@material-ui/core/Box';
+import CheckIcon from "@material-ui/icons/Check";
+import ClearIcon from "@material-ui/icons/Clear";
 
 const StyledContainer = styled(Grid)`
     min-height: 30px;
@@ -18,6 +18,12 @@ const StyledContainer = styled(Grid)`
     border: 1px solid #ddd;
     flex-grow: 1;
     flex-direction: 1;
+`
+
+const StyledGrid = styled(Grid)`
+    maxWidth: 360,
+    overflow: 'auto',
+    maxHeight: 300,
 `
 
 const StyledImage = styled.img`
@@ -37,7 +43,8 @@ const RootDiv = styled.div`
 const createTempPartyList = () => {
     return [
         {
-            inRoom: true,
+            inRoom: false,
+            readyStatus: false,
             user: {
                 _id: 1,
                 name: 'user1',
@@ -46,6 +53,7 @@ const createTempPartyList = () => {
         },
         {
             inRoom: false,
+            readyStatus: false,
             user: {
                 _id: 2,
                 name: 'user2',
@@ -53,7 +61,8 @@ const createTempPartyList = () => {
             }
         },
         {
-            inRoom: true,
+            inRoom: false,
+            readyStatus: false,
             user: {
                 _id: 3,
                 name: 'user3',
@@ -61,7 +70,8 @@ const createTempPartyList = () => {
             }
         },
         {
-            inRoom: true,
+            inRoom: false,
+            readyStatus: false,
             user: {
                 _id: 4,
                 name: 'user4',
@@ -69,7 +79,8 @@ const createTempPartyList = () => {
             }
         },
         {
-            inRoom: true,
+            inRoom: false,
+            readyStatus: false,
             user: {
                 _id: 5,
                 name: 'user5',
@@ -86,9 +97,44 @@ const PartyList = (props) => {
     const [partyList, setPartyList] = useState([])
 
     useEffect(() => {
-        setPartyList(createTempPartyList())
+        const tempParty = createTempPartyList()
+        setPartyList(tempParty)
+        
+        
     }, []) 
 
+    useEffect(() => {
+        if(partyList.length > 0){
+            console.log(partyList)
+            const party = [...partyList]
+            console.log(party)
+            let partyCondition = true
+            party.forEach((member) => {
+                const userFound = props.instanceUsers.find((user)=>{
+                    return user._id === member.user._id
+                })
+
+                if(userFound) {
+                    member.inRoom = true
+                    member.readyStatus = userFound.readyStatus  
+                }else{
+                    member.inRoom = false
+                    member.readyStatus = false 
+                }
+                //check party readyCondition -> important for leader - MODIFY: optimize - count only for leader
+                if((member.user._id !== props.userId) && !member.readyStatus){
+                    partyCondition = false
+                }
+            })
+
+            setPartyList(party)
+            props.partyCondition(partyCondition)
+            
+        }
+        
+
+
+    }, [props.instanceUsers])
 
     const altAvatar = (user) => {
         if(user.avatar){
@@ -97,6 +143,27 @@ const PartyList = (props) => {
         return user.name
     }
 
+    const statusIcon = (readyStatus) => readyStatus ? (
+        <CheckIcon
+            style={{
+                color: "green",
+                fontSize: "2rem",
+                transition: "transform 500ms ease-out",
+                
+            }}
+        />
+    ) : (
+        <ClearIcon
+            style={{
+                color: "red",
+                fontSize: "2rem",
+                transition: "transform 500ms ease-out",
+                
+            }}
+        />
+    )
+
+    
     
     const instanceItems = props.instanceItems
 
@@ -112,7 +179,7 @@ const PartyList = (props) => {
     return (
         <RootDiv>
             <Typography variant="h5">Drużyna:</Typography>
-            <Grid
+            <StyledGrid
                 
                 container
                 direction="column"
@@ -138,7 +205,7 @@ const PartyList = (props) => {
                             <Grid item xs={3}>
                                 {altAvatar(user.user)}
                             </Grid>
-                            <Grid item xs={9}>
+                            <Grid item xs={8}>
                                 
                                     <Grid
                                         container
@@ -166,12 +233,18 @@ const PartyList = (props) => {
                                     </Grid>
                                 
                             </Grid>
-                            
+                            <Grid item xs={1}>
+                                    {statusIcon(user.readyStatus)}
+                            </Grid>
                         </React.Fragment>
+                        
                     ) : (
                         <React.Fragment>
                             <Grid item xs={3}>...</Grid>
-                            <Grid item xs={9}></Grid>
+                            <Grid item xs={8}></Grid>
+                            <Grid item xs={1}>
+                                {statusIcon(user.readyStatus)}
+                            </Grid>
                         </React.Fragment>
                     )}   
                     
@@ -180,7 +253,7 @@ const PartyList = (props) => {
                     </StyledContainer>
                 )
             })}
-            </Grid>
+            </StyledGrid>
                 
             
         </RootDiv>

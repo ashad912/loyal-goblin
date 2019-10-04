@@ -63,6 +63,19 @@ mission.on('connection', (socket) => {
         io.of('mission').to(data.roomId).emit('deleteItem', data.id)
     })
 
+    socket.on('registerUser', (data) => {
+        io.of('mission').to(data.roomId).emit('registerUser', data.user)
+    })
+
+    socket.on('unregisterUser', (data) => {
+        io.of('mission').to(data.roomId).emit('unregisterUser', data.id)
+    })
+
+    socket.on('modifyUserStatus', (data) => {
+        io.of('mission').to(data.roomId).emit('modifyUserStatus', data.user)
+    })
+
+
     socket.on("disconnect", () => console.log("Client disconnected", socket.id));
 })
 

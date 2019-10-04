@@ -1,14 +1,18 @@
 import React, { Component } from 'react';
 import boardsvg from '../../assets/board/statki.svg'
 import Loading from '../layout/Loading';
+import VerificationDialog from './loyal/VerificationDialog'
 
-class ShipBoard extends Component {
+class Loyal extends Component {
     
     state = {
-        loading: true
+        loading: true,
+        dialogOpen: false
+
     }
     //open console
     //have to add 'id' props in .svg for each key object
+
 
 
     handleLoad = () => {
@@ -72,10 +76,20 @@ class ShipBoard extends Component {
         const pressed_value = field.dataset.pressed === 'true' ? true : false
         if(pressed_value === false){
             //shot to backend: verify false value, next generate QR
+            //socket for auto-effect when qr scan is confirmed
             //verification failed: this.handleLoad() to reload styles -> protecting 'data-pressed' value manipulation
-            
+            this.setState({
+                dialogOpen: true
+            })
+
             field.style.fill = 'red'
         }
+    }
+
+    handleDialogClose = () => {
+        this.setState({
+            dialogOpen: false
+        })
     }
 
     render() { 
@@ -85,9 +99,13 @@ class ShipBoard extends Component {
                 {this.state.loading && <Loading/>}
                 <object data={boardsvg} onLoad={this.handleLoad} type="image/svg+xml"
                 id="boardsvg" ref='boardsvg' width="100%" height="100%">Board</object> 
+                <VerificationDialog
+                    open={this.state.dialogOpen}
+                    handleClose={this.handleDialogClose}
+                />
             </React.Fragment>      
         );
     }
 }
  
-export default ShipBoard;
+export default Loyal;
