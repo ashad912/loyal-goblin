@@ -43,7 +43,7 @@ const BoxList = styled.div`
   background: ${(props) => props.isDraggingOver ? 'rgb(230, 220, 141)' : 'white'};
   padding: grid;
   min-height: 4rem;
-  
+  align-items: center;
   width: 96%;
   height: 96%;
   display: flex;
@@ -53,6 +53,11 @@ const BoxList = styled.div`
 
 `
 
+const PlaceholderText = styled.div`
+  justify-content: center;
+  width: 100%;
+  height: auto;
+`
 const convertToStack = (itemsToConvert, tK) => {
   let itemModels = []
   itemsToConvert.forEach((itemToConvert) => {
@@ -150,7 +155,11 @@ const Box = (props) => {
                                 </React.Fragment>
                             )}
                           </Draggable>
-                      )})):(<span style={{justifyContent: 'center'}}>Przeciągnij tutaj!</span>)}
+                      )})):(
+                        <PlaceholderText>
+                          Przeciągnij tutaj!
+                        </PlaceholderText>
+                      )}
                       
                     </BoxList>
                     

@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react'
+import Box from '@material-ui/core/Box';
 
 import Grid from '@material-ui/core/Grid';
 
@@ -7,39 +8,66 @@ import Typography from "@material-ui/core/Typography";
 import styled from 'styled-components'
 import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
+import { ListItemIcon } from '@material-ui/core';
+import { Paper } from '@material-ui/core';
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 
-const StyledContainer = styled(Grid)`
-    min-height: 30px;
-    margin-top: 0.5rem; 
-    margin-bottom: 0.5rem;
-    padding-top: 0.2rem;
-    padding-bottom: 0.2rem;
-    width: 100%;
-    border: 1px solid #ddd;
-    flex-grow: 1;
-    flex-direction: 1;
-`
+import Badge from '@material-ui/core/Badge';
+import Avatar from '@material-ui/core/Avatar';
+import bagImg from '../../../../assets/avatar/bag.png'
+
 
 const StyledGrid = styled(Grid)`
-    maxWidth: 360,
-    overflow: 'auto',
-    maxHeight: 300,
+    &&{
+        margin: 0 0 0 1rem;
+    }
+    
 `
-
 const StyledImage = styled.img`
-    height: 30px;
-    width: 30px;
+    height: 25px;
+    width: 25px;
     margin: 0 0.2rem 0 0;
 `
 
-const RootDiv = styled.div`
-    flex-grow: 1;
-    margin-left: 2rem;
-    margin-right: 2rem;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+const StyledRoot = styled.div`
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 `
 
+const StyledList = styled(List)`
+    max-height: 9rem;
+    
+    width: 100%;
+    overflow: auto;
+    
+`
+
+const StyledTypo = styled(Typography)`
+   
+`
+
+const StyledBox = styled(Box)`
+    margin: 0.5rem 0.5rem 0.5rem 0.5rem;
+
+`
+
+const SmallAvatar = styled(Avatar)`
+
+&&{
+    width: 17px;
+    height: 17px;
+    background: white;
+    border: 1px solid black;
+}
+`
+//&& to overwrite root material ui styles!!
+// && {
+//     margin: 0.5rem 2rem 0.5rem 2rem;
+// }
 const createTempPartyList = () => {
     return [
         {
@@ -65,8 +93,8 @@ const createTempPartyList = () => {
             readyStatus: false,
             user: {
                 _id: 3,
-                name: 'user3',
-                avatar: avatarTemp,
+                name: 'user3 halo',
+                avatar: undefined,
             }
         },
         {
@@ -74,7 +102,7 @@ const createTempPartyList = () => {
             readyStatus: false,
             user: {
                 _id: 4,
-                name: 'user4',
+                name: 'user4 halo',
                 avatar: undefined,
             }
         },
@@ -137,10 +165,33 @@ const PartyList = (props) => {
     }, [props.instanceUsers])
 
     const altAvatar = (user) => {
-        if(user.avatar){
-            return <img style={{height: 30, width:30}} src={user.avatar} alt='avatar'/>
+
+        const createAvatarPlaceholder = () => {
+            const initials = user.name.split(" ").map(word => {
+                return word.charAt(0)
+            }).join('').toUpperCase()
+
+            return initials
         }
-        return user.name
+        
+
+        
+        return(
+            <Badge
+                style={{height: 30, width:30, }}
+                overlap="circle"
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                }}
+                badgeContent={<SmallAvatar alt="bag avatar" src={bagImg} />}
+            >
+                {user.avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={user.avatar} /> : <Avatar style={{height: 30, width:30, backgroundColor: '#3f51b5'}}>{createAvatarPlaceholder()}</Avatar>}
+            </Badge>
+        )
+        //return <img style={{height: 30, width:30}} src={user.avatar} alt='avatar'/>
+        
+        
     }
 
     const statusIcon = (readyStatus) => readyStatus ? (
@@ -177,86 +228,79 @@ const PartyList = (props) => {
     })
 
     return (
-        <RootDiv>
-            <Typography variant="h5">Drużyna:</Typography>
-            <StyledGrid
-                
-                container
-                direction="column"
-                justify="center"
-                alignItems="center"
-                
-                spacing={2}
-            > 
+        <StyledRoot>
+            <Paper>
+            <StyledTypo variant="h5">Drużyna</StyledTypo>
+            
+            <StyledList >
             {party.map((user) => {
                 return(
-                    <StyledContainer>
-                    
-                    <Grid
-                        key={user.user._id}
-                        container
-                        direction="row"
-                        spacing={2}
-                        
-                    > 
-                    
+                   
+                    <StyledBox border={1} borderColor="primary.main">
                     {user.inRoom ? (
-                        <React.Fragment>
-                            <Grid item xs={3}>
+                        
+                        <ListItem>
+                            <ListItemAvatar style={{minWidth: 32}}>
                                 {altAvatar(user.user)}
-                            </Grid>
-                            <Grid item xs={8}>
-                                
-                                    <Grid
-                                        container
-                                        direction="row"
-                                        justify="flex-start"
-                                        alignItems="flex-start"
-                                        spacing={1}
-                                    >
-                                    {instanceItems.map((item) => {
-                                        
-                                        return(
-                                            <React.Fragment key={item._id}>
-                                                {item.owner === user.user._id ? (
-                                                    <StyledImage  src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>
-                                                ) : (
-                                                    null
-                                                )}
-                                            </React.Fragment>
-                                        )
-                                        
+                            </ListItemAvatar>
+                            
+
+                            
+                                <Grid item xs={10}>
+                                    
+                                        <StyledGrid
+                                            container
+                                            direction="row"
+                                            justify="flex-start"
+                                            alignItems="flex-start"
+                                            spacing={1}
+                                        >
+                                        {instanceItems.map((item) => {
                                             
-                                            /*<img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>*/
-                                        
-                                    })}
-                                    </Grid>
-                                
-                            </Grid>
-                            <Grid item xs={1}>
+                                            return(
+                                                <React.Fragment key={item._id}>
+                                                    {item.owner === user.user._id ? (
+                                                        <StyledImage  src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>
+                                                    ) : (
+                                                        null
+                                                    )}
+                                                </React.Fragment>
+                                            )
+                                            
+                                                
+                                                /*<img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>*/
+                                            
+                                        })}
+                                        </StyledGrid>
+                                    
+                                </Grid>
+                            
+                            <ListItemIcon style={{minWidth: 32}}>
                                     {statusIcon(user.readyStatus)}
-                            </Grid>
-                        </React.Fragment>
+                            </ListItemIcon>
+                            </ListItem>
+                        
                         
                     ) : (
-                        <React.Fragment>
-                            <Grid item xs={3}>...</Grid>
-                            <Grid item xs={8}></Grid>
-                            <Grid item xs={1}>
-                                {statusIcon(user.readyStatus)}
-                            </Grid>
-                        </React.Fragment>
+                        <ListItem>
+                            <ListItemAvatar style={{minWidth: 32}}>
+                                    ...
+                            </ListItemAvatar>
+                            <Grid item xs={10}></Grid>
+                            <ListItemIcon style={{minWidth: 32}}>
+                                    {statusIcon(user.readyStatus)}
+                            </ListItemIcon>
+                        </ListItem>
                     )}   
                     
-                    
-                    </Grid>
-                    </StyledContainer>
+                    </StyledBox>
                 )
             })}
-            </StyledGrid>
-                
+            </StyledList>
             
-        </RootDiv>
+                
+            </Paper>
+            </StyledRoot>
     )
 }
 

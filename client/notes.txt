@@ -143,3 +143,87 @@
                 )
             })}
             </Grid>
+
+
+//mission
+
+            <RootDiv>
+            <Typography variant="h5">Drużyna:</Typography>
+            <StyledGrid
+                
+                container
+                direction="column"
+                justify="center"
+                alignItems="center"
+                
+                spacing={2}
+            > 
+            {party.map((user) => {
+                return(
+                    <StyledContainer>
+                    
+                    <Grid
+                        key={user.user._id}
+                        container
+                        direction="row"
+                        spacing={2}
+                        
+                    > 
+                    
+                    {user.inRoom ? (
+                        <React.Fragment>
+                            <Grid item xs={3}>
+                                {altAvatar(user.user)}
+                            </Grid>
+                            <Grid item xs={8}>
+                                
+                                    <Grid
+                                        container
+                                        direction="row"
+                                        justify="flex-start"
+                                        alignItems="flex-start"
+                                        spacing={1}
+                                    >
+                                    {instanceItems.map((item) => {
+                                        
+                                        return(
+                                            <React.Fragment key={item._id}>
+                                                {item.owner === user.user._id ? (
+                                                    <StyledImage  src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>
+                                                ) : (
+                                                    null
+                                                )}
+                                            </React.Fragment>
+                                        )
+                                        
+                                            
+                                            /*<img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>*/
+                                        
+                                    })}
+                                    </Grid>
+                                
+                            </Grid>
+                            <Grid item xs={1}>
+                                    {statusIcon(user.readyStatus)}
+                            </Grid>
+                        </React.Fragment>
+                        
+                    ) : (
+                        <React.Fragment>
+                            <Grid item xs={3}>...</Grid>
+                            <Grid item xs={8}></Grid>
+                            <Grid item xs={1}>
+                                {statusIcon(user.readyStatus)}
+                            </Grid>
+                        </React.Fragment>
+                    )}   
+                    
+                    
+                    </Grid>
+                    </StyledContainer>
+                )
+            })}
+            </StyledGrid>
+                
+            
+        </RootDiv>

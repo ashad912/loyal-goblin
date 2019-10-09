@@ -20,7 +20,10 @@ const userItemsName = 'userItems'
 const missionItemsName = 'missionItems'
 
 const StyledP = styled.p`
-  color: ${props => props.userRegistered ? 'green' : 'black'} 
+    font-size: 8px;
+    margin-block-start: 0.25em;
+    margin-block-end: 0.25em;
+    color: ${props => props.userRegistered ? 'green' : 'black'} 
 `
 
 
@@ -157,9 +160,7 @@ export default class ExchangeArea extends React.Component {
           socket: socket,
           roomId: roomId,
         }, () => {
-            this.props.setConnection()
-
-            
+            this.props.setConnection(roomId)  
         })
       })
     }
@@ -198,7 +199,6 @@ export default class ExchangeArea extends React.Component {
 
     socketFuncs.modifyUserStatusSubscribe(socket, (user) => {
       
-
       const users = [...this.state.connectedUsers];
   
       const modifyUserArrayIndex = users.findIndex(
@@ -238,16 +238,10 @@ export default class ExchangeArea extends React.Component {
         userRegistered: true
       }, () => {
         const {socket} = this.state
-
-
-
-
         const user = {_id: this.props.userId, readyStatus: false}
         socketFuncs.registerUserEmit(socket, user, this.state.roomId)
       })
-    }
-    
-    
+    }  
   }
 
   findItemById = (id) => {
@@ -355,40 +349,21 @@ export default class ExchangeArea extends React.Component {
 
 
     return (
-      <React.Fragment>
+      <div>
         
-        <span style={{fontSize: 8}}>SocketIO-RoomId (temporary missionId): {this.state.roomId} ||| </span>
-        <span style={{fontSize: 8}}>RandomUserId (1-5, can be duplicated -> refresh): {this.props.userId}</span>
-        <StyledP onClick={this.handleRegister} userRegistered={this.state.userRegistered}>{registerLabel}</StyledP>
+        
+        
         <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.setDraggableProperty}>
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignItems="center"
-          spacing={2}
-        >
-            <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-                
-            >  
+        
+             
                 <Box 
                     targetKey={userItemsName} 
                     items={this.state.userItems} 
                     draggableProperty={this.state.draggableProperty}
                     boxname={userItemsName}
                     boxIcon={avatarTemp}/>
-            </Grid>
-            <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-                
-            >  
+            
+             
                 <Box 
                     targetKey={missionItemsName}
                     //this.state.missionItems has all items in box from socket point of view - for missionBox there are all clients items
@@ -397,14 +372,15 @@ export default class ExchangeArea extends React.Component {
                     draggableProperty={this.state.draggableProperty}
                     boxname={missionItemsName}
                     boxIcon={bagImg}/>
-            </Grid>  
+              
           {/*<div className="test">
           <Box targetKey={missionItemsName} items={this.state.missionItems} addItem={this.addMissionItem} deleteItem={this.deleteMissionItem} boxname='mission' />
           </div>*/}
         
-        </Grid>
+        
         </DragDropContext>
-      </React.Fragment>
+        <StyledP onClick={this.handleRegister} userRegistered={this.state.userRegistered}>{registerLabel}</StyledP>
+      </div>
     )
   }
 }

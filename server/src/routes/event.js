@@ -79,27 +79,21 @@ router.get('/enterInstance/:id', auth, async (req, res) => { //event id passed f
             throw new Error('There is no such event!')
         }
 
-        if(!user.party){
-            throw new Error('')
+        if(!(Object.entries(user.party).length === 0 && user.party.constructor === Object)){
+            throw new Error('No party!')
         }
-
-        console.log('user is in party')
 
         if(user.party.leader !== user._id){
-            throw new Error()
+            throw new Error('User is not the leader!')
         }
-
-        console.log('user is leader')
 
         const membersIds = [...user.party.members]
 
         console.log('got members ids')
 
         if(memberIds.length > event.maxPlayers || membersIds.length < event.minPlayers){
-            throw new Error()
+            throw new Error('Unappropriate party size!')
         }
-
-        console.log('appropriate party size')
 
         let party = [user]
         foreach(membersIds, async (memberId) => {
@@ -120,10 +114,9 @@ router.get('/enterInstance/:id', auth, async (req, res) => { //event id passed f
             console.log('got activeEvent field for ', member._id)
 
             if(member.activeEvent) {
-                throw new Error()
+                throw new Error(`Member (${member._id}) is in another event!`)
             }
 
-            console.log('not in event already', member._id)
         })
 
         console.log('party is available')
@@ -138,7 +131,8 @@ router.get('/enterInstance/:id', auth, async (req, res) => { //event id passed f
         res.status(200).send(eventInstance)
   
     } catch (e) {
-        res.status(400).send(e)
+        console.log(e.message)
+        res.status(400).send()
     }
     
 })

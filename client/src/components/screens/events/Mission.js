@@ -9,6 +9,7 @@ import ColorizeIcon from "@material-ui/icons/Colorize";
 import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
 import VerificationPage from './mission/VerificationPage'
+import { Typography } from '@material-ui/core';
 
 const getRandomInt = (min, max) => {
     min = Math.ceil(min);
@@ -18,21 +19,36 @@ const getRandomInt = (min, max) => {
   
 const randomUserId = getRandomInt(1, 5)
 
-const MissionBar = styled.div`
-  flex-grow: 1;
+const TitleBar = styled.div`
+  display: flex;
   flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 1.5rem 1rem 1.5rem;
 `
 
 const StyledImg = styled.img`
-  height: 20px;
-  width: 20px;
+  margin: 0 0.5rem 0 0
+  height: 32px;
+  width: 32px;
 `
 
-const ButtonBar = styled.div`
-  flex-grow: 1;
-  width: 100%;
+const MissionBar = styled.div`
+  display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
+  margin: 0 1.5rem 1rem 1.5rem;
+`
+
+
+const ButtonBar = styled.div`
+  display: flex;
+  flex-direction: row;
+  text-align: left;
+  align-items: center;
+  justify-content: space-between
+  margin: 0.5rem 1.5rem 0.5rem 1.5rem;
 `
 
 const createTempMission = () => {
@@ -90,10 +106,10 @@ export default class Mission extends React.Component {
     state = {
         instanceItems: [],
         loading: true,
-        roomConnected: false,
+        roomId: null,
         missionId: null,
         missionObject: createTempMission(),
-        leader: true,
+        leader: false,
     }
         
 
@@ -122,11 +138,12 @@ export default class Mission extends React.Component {
         this.backToEvents(this.props.history)
     }
 
-    handleConnection = () => {
+    handleConnection = (roomId) => {
         this.setState({
-            roomConnected: true
+            roomId: roomId
         })
     }
+
 
     updateInstanceItems = (items) => {
         
@@ -184,6 +201,9 @@ export default class Mission extends React.Component {
         return true//this.state.partyCondition
     }
 
+
+
+
     render(){
         if(this.state.loading){
             return <Loading />
@@ -224,15 +244,18 @@ export default class Mission extends React.Component {
 
         
         return(
-            <div >
+            <div style={{fontFamily: '"Roboto", sans-serif'}}>
             {this.state.showVerificationPage ? (
                 <VerificationPage />
             ) : (
-                <React.Fragment>
-                <MissionBar>
-                    <span>Mission {this.state.missionId}</span>
+                <div>
+                <TitleBar>
                     <StyledImg src={require(`../../../assets/avatar/${this.state.missionObject.avatarSrc}`)}/>
-                    {`   `}
+                    <Typography style={{display: 'inline'}} variant="h6">Mission {this.state.missionId}</Typography>
+                    
+                </TitleBar>   
+                <MissionBar>
+                    
                     {requiredMissionItems.map((amulet) => {
                         return (
                             <React.Fragment key={amulet.itemModel.id}>
@@ -245,37 +268,48 @@ export default class Mission extends React.Component {
                 </MissionBar>
                 
                 <ExchangeArea userId={randomUserId} locationId={this.props.location.state.id} setConnection={this.handleConnection} instanceUsers={this.updateInstanceUsers} instanceItems={this.updateInstanceItems} userReadyStatus={this.state.userReadyStatus}/>
-                {this.state.roomConnected ? (
+                {this.state.roomId ? (
                     
                     <PartyList userId={randomUserId} instanceUsers={this.state.instanceUsers} instanceItems={this.state.instanceItems} userReadyStatus={this.state.userReadyStatus} partyCondition={this.updatePartyCondition}/>
                     ) : (
                     null
                 )}
                 <ButtonBar>
-                    <Button onClick={this.handleBack} variant="contained" color="primary">
-                        <KeyboardArrowLeftIcon
-                        style={{
-                            fontSize: "2rem",
-                            transition: "transform 500ms ease-out",
-                            
-                        }}
+                    <Button 
+                        style={{width: '36%', marginRight: '0.5rem'}} 
+                        onClick={this.handleBack} 
+                        variant="contained" 
+                        color="primary" >
+                            <KeyboardArrowLeftIcon
+                            style={{
+                                fontSize: "2rem",
+                                transition: "transform 500ms ease-out",
+                                transform: this.state.backButtonMouseOver ? "rotate(540deg)" : "rotate(0deg)"
+                            }}
                         />
                         Wyjdź
                         
                     </Button>
-                    <Button onClick={this.handleReadyButton} disabled={this.state.leader && (!isRequiredItemsCollected || !isAllPartyReady)} variant="contained" color="primary">
+                    <Button style={{width: '52%'}} onClick={this.handleReadyButton} disabled={this.state.leader && (!isRequiredItemsCollected || !isAllPartyReady)} variant="contained" color="primary">
                         {buttonReadyLabel}
                         <ColorizeIcon
                         style={{
+                            margin: '0 0 0 0.2rem',
                             fontSize: "2rem",
                             transition: "transform 500ms ease-out",
+                            transform: this.state.userReadyStatus ? "rotate(540deg)" : "rotate(0deg)"
                             
                         }}
                         />
                     </Button>
+                    
                     {statusIcon(this.state.userReadyStatus)}
+                    
+                    
                 </ButtonBar>
-                </React.Fragment>
+                    <span style={{fontSize: 8}}>SocketIO-RoomId (temporary missionId): {this.state.roomId} ||| </span>
+                    <span style={{fontSize: 8}}>RandomUserId (1-5, can be duplicated -> refresh): {randomUserId}</span>
+                </div>
                 )}
             </div>
         )
