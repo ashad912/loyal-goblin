@@ -159,6 +159,7 @@ router.patch('/sendItem/mission', auth, async (req, res) => {
 
 
         //To jest czy nie jest w eq usera? Bo tu jest test, czy jest, i jak jest to Error
+        //odp.: na razie jest w eq - to jest sprawdzenie przed wysłaniem
         if(user.eq.includes(itemId)){
             throw Error()
         }
