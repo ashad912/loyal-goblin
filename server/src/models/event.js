@@ -49,10 +49,8 @@ export const EventSchema = new mongoose.Schema({
         }  
     }],
     users: [{ //user whoes have finished the events - to query available events for specific user -> for users statistics used virtualization by user side
-        user: {
-            type: mongoose.Schema.Types.ObjectId, //id in mongo - user id
-            ref: 'user',
-        }
+        type: mongoose.Schema.Types.ObjectId, //id in mongo - user id
+        ref: 'user',
     }],
     awards: [{
         class: String,

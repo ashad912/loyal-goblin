@@ -62,72 +62,12 @@ export const UserSchema = new mongoose.Schema({
         default: 0,
         required: true
     },
-    bag: [{ 
-        item: {
-            type: mongoose.Schema.Types.ObjectId, 
-            ref: 'item',
-            unique: true
-        }
+    bag: [{   
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'item',
+        unique: true
     }],
-        //Nie wiem jak z typami itemów w samym obiekcie item
-        /*amulet: [{
-            item: {
-                        type: mongoose.Schema.Types.ObjectId, 
-                        ref: 'item',
-                        unique: true
-                    }}
-        ],
-        weapon: [{
-            item: {
-                        type: mongoose.Schema.Types.ObjectId, 
-                        ref: 'item',
-                        unique: true
-                    }}
-        ],
-        chest: [{
-            item: {
-                        type: mongoose.Schema.Types.ObjectId, 
-                        ref: 'item',
-                        unique: true
-                    }}
-        ],
-        legs: [{
-            item: {
-                        type: mongoose.Schema.Types.ObjectId, 
-                        ref: 'item',
-                        unique: true
-                    }}
-        ],
-        hands: [{
-            item: {
-                        type: mongoose.Schema.Types.ObjectId, 
-                        ref: 'item',
-                        unique: true
-                    }}
-        ],
-        feet: [{
-            item: {
-                        type: mongoose.Schema.Types.ObjectId, 
-                        ref: 'item',
-                        unique: true
-                    }}
-        ],
-        head: [{
-            item: {
-                        type: mongoose.Schema.Types.ObjectId, 
-                        ref: 'item',
-                        unique: true
-                    }}
-        ],
-        ring: [{
-            item: {
-                        type: mongoose.Schema.Types.ObjectId, 
-                        ref: 'item',
-                        unique: true
-                    }}
-        ],*/
     equipped: {
-        //Nie wiem jak z typami itemów w samym obiekcie item
         amulet: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
@@ -183,55 +123,14 @@ export const UserSchema = new mongoose.Schema({
             unique: true
         },
     },
-    // eq: [{ //i've thought about virtualization items
-    //     item: {
-    //         type: mongoose.Schema.Types.ObjectId, 
-    //         ref: 'item',
-    //         unique: true
-    //     }
-    // }],
-    // armor: { //i assumed that eq !== armor -> easier to handle perks issues, i guess
-    //     head: { 
-    //         type: mongoose.Schema.Types.ObjectId, 
-    //         ref: 'item',
-    //         unique: true
-    //     },
-    //     breast: { 
-    //         type: mongoose.Schema.Types.ObjectId, 
-    //         ref: 'item',
-    //         unique: true
-    //     },
-    //     leftHand: {
-    //         type: mongoose.Schema.Types.ObjectId, 
-    //         ref: 'item',
-    //         unique: true
-    //     },
-    //     rightHand: {
-    //         type: mongoose.Schema.Types.ObjectId, 
-    //         ref: 'item',
-    //         unique: true
-    //     },
-    //     legs: {
-    //         type: mongoose.Schema.Types.ObjectId, 
-    //         ref: 'item',
-    //         unique: true
-    //     },
-    //     feets: {
-    //         type: mongoose.Schema.Types.ObjectId, 
-    //         ref: 'item',
-    //         unique: true
-    //     }
-    // },
     loyal: { //is it appropriate structure?
         type: [LoyalSchema],
         required: true
     },
     friends: [{
-        friend : {
-            type: mongoose.Schema.Types.ObjectId, 
-            ref: 'user',
-            unique: true
-        }
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'user',
+        unique: true
     }],
     party: { //suggested struct - EXPERIMENTAL
         leader: {
@@ -258,6 +157,7 @@ UserSchema.virtual('events', { //events can be reached by relations, BI RELATION
     foreignField: 'users.user' //relation from event side
 })
 
+//it is recognized as an array
 UserSchema.virtual('activeEvent', { //events can be reached by relations, BI RELATION!!
     ref: 'eventInstance',
     localField: '_id', //relation from user side (we are in user schema!)
