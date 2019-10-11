@@ -13,10 +13,7 @@ const LoyalSchema = new mongoose.Schema({
 })
 
 export const UserSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: [true, 'Name field is required']
-    }, // field options
+    
     email: {
         type: String,
         unique: true,
@@ -50,12 +47,36 @@ export const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    avatar: {
+        type: Buffer
+    },
+    name: {
+        type: String,
+    },
+    sex : {
+        type: String,
+    },
     class: { //userClasses
         type: String,
         required: true
     },
-    avatar: {
-        type: Buffer
+    attributes: {
+        strength: {
+            type: Number,
+            default: 0,
+        },
+        dexternity: {
+            type: Number,
+            default: 0,
+        }, 
+        magic: {
+            type: Number,
+            default: 0,
+        },
+        endurance: {
+            type: Number,
+            default: 0,
+        },
     },
     expPoints: {
         type: Number,
@@ -72,8 +93,7 @@ export const UserSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
             unique: true
-        }
-        ,
+        },
         weaponRight: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
@@ -127,11 +147,6 @@ export const UserSchema = new mongoose.Schema({
         type: [LoyalSchema],
         required: true
     },
-    friends: [{
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'user',
-        unique: true
-    }],
     party: { //suggested struct - EXPERIMENTAL
         leader: {
             type: mongoose.Schema.Types.ObjectId, 
