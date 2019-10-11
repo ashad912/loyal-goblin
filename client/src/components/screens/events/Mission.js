@@ -130,7 +130,7 @@ export default class Mission extends React.Component {
         roomId: null,
         missionId: null,
         missionObject: createTempMission(),
-        leader: false,
+        leader: randomUserId === 1,
     }
         
 
@@ -303,7 +303,7 @@ export default class Mission extends React.Component {
                 <ExchangeArea userId={randomUserId} locationId={this.props.location.state.id} setConnection={this.handleConnection} instanceUsers={this.updateInstanceUsers} instanceItems={this.updateInstanceItems} userReadyStatus={this.state.userReadyStatus}/>
                 {this.state.roomId ? (
                     
-                    <PartyList userId={randomUserId} instanceUsers={this.state.instanceUsers} instanceItems={this.state.instanceItems} userReadyStatus={this.state.userReadyStatus} partyCondition={this.updatePartyCondition}/>
+                    <PartyList userId={randomUserId} instanceUsers={this.state.instanceUsers} instanceItems={this.state.instanceItems} isUserLeader={this.state.leader} userReadyStatus={this.state.userReadyStatus} partyCondition={this.updatePartyCondition}/>
                     ) : (
                     null
                 )}

@@ -2,6 +2,10 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { signIn } from '../../store/actions/authActions'
 import { Redirect } from 'react-router-dom'
+import Container from '@material-ui/core/Container';
+import { Typography } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 
 //import {labels} from '../strings/labels'
 
@@ -17,7 +21,8 @@ class SignIn extends Component {
         })
     }
 
-    handleSumbit = (e) => {
+    handleSubmit = (e) => {
+        console.log(this.state)
         e.preventDefault();
         this.props.signIn(this.state)
     }
@@ -29,25 +34,49 @@ class SignIn extends Component {
         const { authError } = this.props
         
         return (
-        <div className="container">
-            <form onSubmit={this.handleSumbit} className="white">
-                <h5 className="grey-text text-darken-3">Login</h5>
-                <div className="input-field"> {/*materialize gives here space*/}
-                    <label htmlFor="email">Email</label>
-                    <input type="email" id="email" onChange={this.handleChange}/>
-                </div>
-                <div className="input-field"> {/*materialize gives here space*/}
-                    <label htmlFor="password">Password</label>
-                    <input type="password" id="password" onChange={this.handleChange}/>
-                </div>
-                <div className="input-field">
-                    <button className="btn red darken-4 z-depth-0">Log in</button>
+            <Container style={{flexDirection: 'column'}} maxWidth="sm">
+                <form onSubmit={this.handleSumbit} className="white">
+                    <Typography className="grey-text text-darken-3">Login</Typography>
+                    <TextField
+                        id="email"
+                        type="email"
+                        label="Email"
+                        style={{ margin: 8 }}
+                        margin="normal"
+                        
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        onChange={this.handleChange}
+                    />
+                    <TextField
+                        id="password"
+                        type="password"
+                        label="Password"
+                        style={{ margin: 8 }}
+                        margin="normal"
+                        
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        onChange={this.handleChange}
+                    />
+                    
+                    <Button 
+                        style={{display: 'flex', justifyContent: 'center'}}
+                        onClick={this.handleSubmit} 
+                        variant="contained" 
+                        color="primary" 
+                        >
+                        Zaloguj
+                        
+                    </Button> 
                     <div className="red-text center">
                         { authError ? <p>{authError}</p> : null}
                     </div>
-                </div>
-            </form>
-        </div>
+                    
+                </form>
+            </Container>
         )
     }
 }

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import Box from '@material-ui/core/Box';
-
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 
 import avatarTemp from '../../../../assets/avatar/moose.png'
@@ -77,6 +77,11 @@ const createTempPartyList = () => {
                 _id: 1,
                 name: 'user1',
                 avatar: avatarTemp,
+                party: {
+                    leader: {
+                        _id: 1
+                    }
+                }
             }
         },
         {
@@ -86,6 +91,11 @@ const createTempPartyList = () => {
                 _id: 2,
                 name: 'user2',
                 avatar: avatarTemp,
+                party: {
+                    leader: {
+                        _id: 1
+                    }
+                }
             }
         },
         {
@@ -95,6 +105,11 @@ const createTempPartyList = () => {
                 _id: 3,
                 name: 'user3 halo',
                 avatar: undefined,
+                party: {
+                    leader: {
+                        _id: 1
+                    }
+                }
             }
         },
         {
@@ -104,6 +119,11 @@ const createTempPartyList = () => {
                 _id: 4,
                 name: 'user4 halo',
                 avatar: undefined,
+                party: {
+                    leader: {
+                        _id: 1
+                    }
+                }
             }
         },
         {
@@ -113,6 +133,11 @@ const createTempPartyList = () => {
                 _id: 5,
                 name: 'user5',
                 avatar: avatarTemp,
+                party: {
+                    leader: {
+                        _id: 1
+                    }
+                }
             }
         },
     ]
@@ -133,11 +158,11 @@ const PartyList = (props) => {
 
     useEffect(() => {
         if(partyList.length > 0){
+
+            console.log(props.instanceUsers)
             console.log(partyList)
-            const party = [...partyList]
-            console.log(party)
             let partyCondition = true
-            party.forEach((member) => {
+            partyList.forEach((member) => {
                 const userFound = props.instanceUsers.find((user)=>{
                     return user._id === member.user._id
                 })
@@ -149,8 +174,8 @@ const PartyList = (props) => {
                     member.inRoom = false
                     member.readyStatus = false 
                 }
-                //check party readyCondition -> important for leader - MODIFY: optimize - count only for leader
-                if((member.user._id !== props.userId) && !member.readyStatus){
+                //check party readyCondition -> important for leader - optimize - count only for leader
+                if((member.user.party.leader._id === props.userId) && (member.user._id !== props.userId) && !member.readyStatus){
                     partyCondition = false
                 }
             })
@@ -227,21 +252,37 @@ const PartyList = (props) => {
         return user.user._id !== userAuth
     })
 
+    const leaderIcon = () => {
+
+        return (
+            <Badge
+                style={{height: 30, width:30, }}
+                overlap="circle"
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                }}
+            >
+                 <Avatar style={{height: 30, width:30, backgroundColor: '#3f51b5'}}>L</Avatar>
+            </Badge>
+        )
+    }
+
     return (
         <StyledRoot>
             <Paper>
             <StyledTypo variant="h5">Drużyna</StyledTypo>
             
             <StyledList >
-            {party.map((user) => {
+            {party.map((member) => {
                 return(
                    
                     <StyledBox border={1} borderColor="primary.main">
-                    {user.inRoom ? (
+                    {member.inRoom ? (
                         
                         <ListItem>
                             <ListItemAvatar style={{minWidth: 32}}>
-                                {altAvatar(user.user)}
+                                {altAvatar(member.user)}
                             </ListItemAvatar>
                             
 
@@ -259,7 +300,7 @@ const PartyList = (props) => {
                                             
                                             return(
                                                 <React.Fragment key={item._id}>
-                                                    {item.owner === user.user._id ? (
+                                                    {item.owner === member.user._id ? (
                                                         <StyledImage  src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>
                                                     ) : (
                                                         null
@@ -276,7 +317,7 @@ const PartyList = (props) => {
                                 </Grid>
                             
                             <ListItemIcon style={{minWidth: 32}}>
-                                    {statusIcon(user.readyStatus)}
+                                    {member.user._id === member.user.party.leader._id ? (leaderIcon()) : (statusIcon(member.readyStatus))}
                             </ListItemIcon>
                             </ListItem>
                         
@@ -284,11 +325,11 @@ const PartyList = (props) => {
                     ) : (
                         <ListItem>
                             <ListItemAvatar style={{minWidth: 32}}>
-                                    ...
+                                    <CircularProgress style={{height: 30, width:30}}/>
                             </ListItemAvatar>
                             <Grid item xs={10}></Grid>
                             <ListItemIcon style={{minWidth: 32}}>
-                                    {statusIcon(user.readyStatus)}
+                                {member.user._id === member.user.party.leader._id ? (leaderIcon()) : (statusIcon(member.readyStatus))}
                             </ListItemIcon>
                         </ListItem>
                     )}   
