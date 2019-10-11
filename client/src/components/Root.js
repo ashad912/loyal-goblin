@@ -62,8 +62,8 @@ export default function FullWidthTabs(props) {
 
   //TODO: Verify if user has a character from db object, not local storage
   const [
-    shwoCharacterCreationModal,
-    setShwoCharacterCreationModal
+    showCharacterCreationModal,
+    setShowCharacterCreationModal
   ] = React.useState(!Boolean(localStorage.getItem("characterCreated")));
 
   const classes = useStyles();
@@ -79,16 +79,17 @@ export default function FullWidthTabs(props) {
   };
 
   const handleCharacterCreationFinish = () => {
-    setShwoCharacterCreationModal(false);
+    setShowCharacterCreationModal(false);
     localStorage.setItem("characterCreated", 1)
+    //TODO: call to backend
   };
 
   return (
     <div className={classes.root}>
-      {shwoCharacterCreationModal ? (
+      {showCharacterCreationModal ? (
         <Dialog
           fullScreen
-          open={shwoCharacterCreationModal}
+          open={showCharacterCreationModal}
           onClose={handleCharacterCreationFinish}
         >
           <CharacterCreation onFinish={handleCharacterCreationFinish} />

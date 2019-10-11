@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -64,7 +65,7 @@ const createTempEquipment = () => {
             type: "amulet"
           },
           name: "Diament",
-          fluff: "Najlepszy przyjaciel dziewyczyny",
+          description: "Najlepszy przyjaciel dziewyczyny",
           imgSrc: "diamond-amulet.png"
         }
       },
@@ -79,7 +80,7 @@ const createTempEquipment = () => {
             type: "amulet"
           },
           name: "Diament",
-          fluff: "Najlepszy przyjaciel dziewyczyny",
+          description: "Najlepszy przyjaciel dziewyczyny",
           imgSrc: "diamond-amulet.png"
         }
       },
@@ -94,8 +95,8 @@ const createTempEquipment = () => {
             type: "amulet"
           },
           name: "Perła",
-          fluff: "Perła prosto z lodówki, znaczy z małży",
-          imgSrc: "pearl-amulet.png",
+          description: "Perła prosto z lodówki, znaczy z małży",
+          imgSrc: "pearl-amulet.png"
         }
       }
     ],
@@ -111,8 +112,8 @@ const createTempEquipment = () => {
             type: "weapon"
           },
           name: "Krótki miecz",
-          fluff: "Przynajmniej nie masz kompleksów",
-          imgSrc: "short-sword.png",
+          description: "Przynajmniej nie masz kompleksów",
+          imgSrc: "short-sword.png"
         }
       }
     ],
@@ -128,8 +129,8 @@ const createTempEquipment = () => {
             type: "chest"
           },
           name: "Skórzana kurta",
-          fluff: "Lale za takimi szaleją",
-          imgSrc: "leather-jerkin.png",
+          description: "Lale za takimi szaleją",
+          imgSrc: "leather-jerkin.png"
         }
       }
     ],
@@ -145,8 +146,8 @@ const createTempEquipment = () => {
             type: "legs"
           },
           name: "Lniane spodnie",
-          fluff: "Zwykłe spodnie, czego jeszcze chcesz?",
-          imgSrc: "linen-trousers.png",
+          description: "Zwykłe spodnie, czego jeszcze chcesz?",
+          imgSrc: "linen-trousers.png"
         }
       }
     ],
@@ -162,8 +163,8 @@ const createTempEquipment = () => {
             type: "feet"
           },
           name: "Wysokie buty",
-          fluff: "Skórzane, wypastowane, lśniące",
-          imgSrc: "high-boots.png",
+          description: "Skórzane, wypastowane, lśniące",
+          imgSrc: "high-boots.png"
         }
       }
     ],
@@ -179,8 +180,8 @@ const createTempEquipment = () => {
             type: "head"
           },
           name: "Czapka z piórkiem",
-          fluff: "Wesoła kompaniaaaa",
-          imgSrc: "feathered-hat.png",
+          description: "Wesoła kompaniaaaa",
+          imgSrc: "feathered-hat.png"
         }
       },
       {
@@ -194,8 +195,8 @@ const createTempEquipment = () => {
             type: "head"
           },
           name: "Kaptur czarodzieja",
-          fluff: "Kiedyś nosił go czarodziej. Już nie nosi.",
-          imgSrc: "wizard-coul.png",
+          description: "Kiedyś nosił go czarodziej. Już nie nosi.",
+          imgSrc: "wizard-coul.png"
         }
       }
     ],
@@ -211,15 +212,15 @@ const createTempEquipment = () => {
             type: "ring"
           },
           name: "Pierścień siły",
-          fluff: "Całuj mój sygnet potęgi",
-          imgSrc: "strength-ring.png",
+          description: "Całuj mój sygnet potęgi",
+          imgSrc: "strength-ring.png"
         }
       }
     ]
   };
 };
 
-const Profile = () => {
+const Profile = props => {
   const classes = useStyles();
 
   const [player, setPlayer] = React.useState(
@@ -247,6 +248,7 @@ const Profile = () => {
     updateEquippedItems();
   }, []);
 
+  //TODO-PILNE: Czy trzeba przejść przez cały obiekt bag (z db), ustawiając equipped według obiektu equipped (z db)?
   const updateEquippedItems = () => {
     const equipment = {
       amulet: "",
@@ -261,7 +263,7 @@ const Profile = () => {
 
     Object.keys(player.equipment).forEach(category => {
       const loadedEquippedItem = player.equipment[category].find(
-        item => item.itemModel.equipped
+        item => item.equipped
       );
       if (loadedEquippedItem) {
         equipment[category] = loadedEquippedItem.itemModel.imgSrc;
@@ -272,22 +274,17 @@ const Profile = () => {
   };
 
   const handleItemToggle = (id, isEquipped, category) => {
-    console.log(id)
-    //TODO: Each item needs own ID
+    console.log(id);
     const tempPlayer = { ...player };
     const modifyItemArrayIndex = tempPlayer.equipment[category].findIndex(
       item => {
-        return item.itemModel.id === id;
+        return item.id === id;
       }
     );
 
     //TODO: Handle 2 weapons and rings
-    tempPlayer.equipment[category].forEach(
-      item => (item.itemModel.equipped = false)
-    );
-    tempPlayer.equipment[category][
-      modifyItemArrayIndex
-    ].itemModel.equipped = !isEquipped;
+    tempPlayer.equipment[category].forEach(item => (item.equipped = false));
+    tempPlayer.equipment[category][modifyItemArrayIndex].equipped = !isEquipped;
     setPlayer({ ...tempPlayer });
     updateEquippedItems();
     //TODO: Call to backend
@@ -295,14 +292,13 @@ const Profile = () => {
 
   const handleItemDelete = (id, category) => {
     const tempPlayer = { ...player };
-    const modifyItemArrayIndex = tempPlayer.equipment[category].findIndex(
+
+    tempPlayer.equipment[category] = tempPlayer.equipment[category].filter(
       item => {
-        return item.itemModel.id === id;
+        return item.id !== id;
       }
     );
-
-    tempPlayer.equipment[category].splice(modifyItemArrayIndex, 1);
-    setPlayer({ ...tempPlayer });
+    setPlayer(tempPlayer);
     updateEquippedItems();
 
     //TODO: Call to backend
@@ -311,6 +307,7 @@ const Profile = () => {
   const handleAddExperience = newExp => {
     const tempPlayer = { ...player };
     if (tempPlayer.currentExp + newExp >= tempPlayer.nextLevelAtExp) {
+      tempPlayer.currentExp += newExp;
       setPlayer({ ...handleNewLevel(tempPlayer) });
       setNewLevelDialogOpen(true);
     } else {
@@ -320,8 +317,9 @@ const Profile = () => {
   };
 
   const handleNewLevel = player => {
+    console.log();
     player.level++;
-    player.currentExp = player.nextLevelAtExp - player.currentExp;
+    player.currentExp = player.currentExp - player.nextLevelAtExp;
     const tempCurrentExpBasis = player.nextLevelAtExp;
     player.nextLevelAtExp = player.currentExpBasis + player.nextLevelAtExp;
     player.currentExpBasis = tempCurrentExpBasis;
@@ -338,10 +336,10 @@ const Profile = () => {
     setPlayer({ ...tempPlayer });
   };
 
-  const handleGoExp = () => {
-    console.log(goExp);
-    setGoExp(prev => !prev);
-  };
+  // const handleGoExp = () => {
+  //   console.log(props.location.push('shop'));
+  //   setGoExp(prev => !prev);
+  // };
 
   return (
     <Grid
@@ -422,16 +420,18 @@ const Profile = () => {
           <Attribute attributeName="Wytrzymałość" attributeValue={player.end} />
           <Button onClick={() => handleAddExperience(500)}>Dodaj expa</Button>
           <Button>Dodaj amulet</Button>
-          <Button onClick={handleGoExp} variant="contained" color="primary">
-            Idziemy expić!
-            <ColorizeIcon
-              style={{
-                fontSize: "2rem",
-                transition: "transform 500ms ease-out",
-                transform: goExp ? "rotate(540deg)" : "rotate(180deg)"
-              }}
-            />
-          </Button>
+          <Link to="/shop">
+            <Button  variant="contained" color="primary">
+              Idziemy expić!
+              <ColorizeIcon
+                style={{
+                  fontSize: "2rem",
+                  transition: "transform 500ms ease-out",
+                  transform: goExp ? "rotate(540deg)" : "rotate(180deg)"
+                }}
+              />
+            </Button>
+          </Link>
         </Grid>
       </Grid>
       <Typography variant="h5" className={classes.eqHeading}>

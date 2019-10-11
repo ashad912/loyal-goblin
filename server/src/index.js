@@ -2,6 +2,7 @@ import express from 'express'
 import {userRouter} from './routes/user'
 import {eventRouter} from './routes/event'
 import {itemRouter} from './routes/item'
+import {productRouter} from './routes/product'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import path from 'path'
@@ -29,7 +30,7 @@ app.use(cookieParser())
 app.use('/user', userRouter)
 app.use('/event', eventRouter)
 app.use('/item', itemRouter)
-
+app.use('/product', productRouter)
 
 app.use((err, req, res, next)=>{ 
     res.status(422).send({error: err.message}) 

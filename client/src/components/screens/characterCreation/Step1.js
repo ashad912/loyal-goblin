@@ -5,8 +5,9 @@ import Typography from "@material-ui/core/Typography";
 const Step1 = props => {
   return (
     <React.Fragment>
-      <Typography variant="h5">Podaj imię swojej postaci</Typography>
+      <Typography variant="h6">Podaj imię swojej postaci</Typography>
       <TextField
+      type=""
         label="Na przykład Janusz"
         value={props.value}
         onChange={props.handleChange}
