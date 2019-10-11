@@ -7,7 +7,7 @@ import Footer from "./components/layout/Footer";
 import Root from "./components/Root";
 import Shop from "./components/screens/Shop";
 import SignIn from "./components/auth/SignIn";
-import Admin from "./components/Admin/Admin";
+import Admin from "./components/admin/Admin";
 import Mission from "./components/screens/events/Mission";
 
 import withAuth from "./hoc/withAuth";
