@@ -442,6 +442,9 @@ const Profile = props => {
         handleItemToggle={handleItemToggle}
         handleItemDelete={handleItemDelete}
       />
+      <Typography variant="h5" className={classes.eqHeading}>
+        Statystyki:
+      </Typography>
 
       <NewLevelDialog
         open={newLevelDialogOpen}

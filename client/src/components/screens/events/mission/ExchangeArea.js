@@ -95,6 +95,19 @@ const createTempItemListUser = (userId) => {
         },
         owner: userId
       },
+      // {
+      //   _id: uuid(),
+      //   model: {
+      //     _id: 104,
+      //     type: {
+      //         id: 204,
+      //         type: 'amulet'
+      //     },
+      //     name: 'emerald',
+      //     imgSrc: 'emerald-amulet.png'
+      //   },
+      //   owner: userId
+      // },
       
       
 

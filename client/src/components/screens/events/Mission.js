@@ -33,9 +33,30 @@ const StyledImg = styled.img`
   width: 32px;
 `
 
+const StyledItemIcon = styled.img`
+  margin: 0 0.1rem 0 0.5rem
+  height: 32px;
+  width: 32px;
+`
+const StyledItemsIndicator = styled.span`
+  font-size: 10px
+  color: ${(props) => { 
+      const green = props.inBox === props.required
+      const red = props.inBox > props.required
+      if(red){
+        return('red')
+      }else if(green){
+        return ('green')
+      }else{
+        return('black')
+      }}
+    }
+`
+
 const MissionBar = styled.div`
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   margin: 0 1.5rem 1rem 1.5rem;
@@ -181,6 +202,7 @@ export default class Mission extends React.Component {
 
         const amulets = this.state.missionObject.amulets 
 
+        let overallReadyStatus = true
         for(let index = 0; index < amulets.length; index++) {
             const specificAmuletInstances = this.state.instanceItems.filter((item) => {
                 return item.model._id === amulets[index].itemModel._id
@@ -189,9 +211,18 @@ export default class Mission extends React.Component {
             console.log(amulets[index].itemModel.name, amulets[index].quantity)
             console.log(specificAmuletInstances)
 
+            amulets[index].inBox = specificAmuletInstances.length
+
             if(specificAmuletInstances.length !== amulets[index].quantity){
-                return false
+                overallReadyStatus = false
+                amulets[index].readyStatus = false
+            }else{
+                amulets[index].readyStatus = true
             }
+        }
+
+        if(!overallReadyStatus){
+            return false
         }
 
         return true
@@ -252,19 +283,21 @@ export default class Mission extends React.Component {
                 <TitleBar>
                     <StyledImg src={require(`../../../assets/avatar/${this.state.missionObject.avatarSrc}`)}/>
                     <Typography style={{display: 'inline'}} variant="h6">Mission {this.state.missionId}</Typography>
-                    
+                    {statusIcon(isRequiredItemsCollected)}
                 </TitleBar>   
                 <MissionBar>
                     
                     {requiredMissionItems.map((amulet) => {
                         return (
                             <React.Fragment key={amulet.itemModel.id}>
-                                {` ${amulet.quantity}x`}
-                                <StyledImg src={require(`../../../assets/icons/items/${amulet.itemModel.imgSrc}`)}/>
+                                
+                                <StyledItemIcon src={require(`../../../assets/icons/items/${amulet.itemModel.imgSrc}`)}/>
+                                <StyledItemsIndicator required={amulet.quantity} inBox={amulet.inBox}>{` ${amulet.inBox}/${amulet.quantity}`}</StyledItemsIndicator>
+                                {statusIcon(amulet.readyStatus)}
                             </React.Fragment>
                         )
                     })}
-                {statusIcon(isRequiredItemsCollected)}
+                
                 </MissionBar>
                 
                 <ExchangeArea userId={randomUserId} locationId={this.props.location.state.id} setConnection={this.handleConnection} instanceUsers={this.updateInstanceUsers} instanceItems={this.updateInstanceItems} userReadyStatus={this.state.userReadyStatus}/>

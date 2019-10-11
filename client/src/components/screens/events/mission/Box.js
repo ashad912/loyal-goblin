@@ -20,7 +20,7 @@ const Item = styled.div`
 
   user-select: none;
   padding: 0.5rem;
-  margin: 0 0.2rem 0 0;
+  margin: 0.2rem 0.2rem 0rem 0rem;
   line-height: 1.5;
   border-radius: 1px;
   border: 1px ${props => (props.isDragging ? 'dashed #000' : 'solid #ddd')};
@@ -41,13 +41,13 @@ const StyledPaper = styled(Paper)`
 
 const BoxList = styled.div`
   background: ${(props) => props.isDraggingOver ? 'rgb(230, 220, 141)' : 'white'};
-  padding: grid;
   min-height: 4rem;
   align-items: center;
   width: 96%;
   height: 96%;
   display: flex;
   align-text: flex-start;
+  flex-wrap: wrap;
   justify-content: flex-start;
   margin: 0.5rem 
 

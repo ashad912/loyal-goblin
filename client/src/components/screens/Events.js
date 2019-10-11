@@ -19,6 +19,7 @@ import Box from '@material-ui/core/Box';
 import styled from 'styled-components'
 import moment from 'moment'
 import playersIcon from '../../assets/avatar/players.png'
+import levelIcon from '../../assets/avatar/level.png'
 
 
 const pathToIcons = '../../assets/icons/items'
@@ -66,6 +67,7 @@ const createTempList = () => {
             avatarSrc: {avatarTemp: missionIconTemp},
             minPlayers: 3,
             maxPlayers: 4,
+            level: 1,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
                 {
@@ -100,6 +102,7 @@ const createTempList = () => {
             avatarSrc: {avatarTemp: missionIconTemp},
             minPlayers: 3,
             maxPlayers: 3,
+            level: 3,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
                 {
@@ -146,6 +149,7 @@ const createTempList = () => {
             avatarSrc: {avatarTemp: missionIconTemp},
             minPlayers: 3,
             maxPlayers: 4,
+            level: 1,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
                 {
@@ -180,6 +184,7 @@ const createTempList = () => {
             avatarSrc: {avatarTemp: missionIconTemp},
             minPlayers: 3,
             maxPlayers: 3,
+            level: 3,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
                 {
@@ -226,6 +231,7 @@ const createTempList = () => {
             avatarSrc: {avatarTemp: missionIconTemp},
             minPlayers: 3,
             maxPlayers: 4,
+            level: 1,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
                 {
@@ -260,6 +266,7 @@ const createTempList = () => {
             avatarSrc: {avatarTemp: missionIconTemp},
             minPlayers: 3,
             maxPlayers: 3,
+            level: 3,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
                 {
@@ -334,19 +341,21 @@ const Events = () => {
         setMissionId(id)
     }
 
-    const isMissionActive = (minPlayers, maxPlayers) => {
+    const isAppropriatePlayers = (minPlayers, maxPlayers) => {
         return (currentPlayersInParty >= minPlayers && currentPlayersInParty <= maxPlayers)
     } 
+
+
     const players = (minPlayers, maxPlayers) => {
         if(minPlayers === maxPlayers){
             return minPlayers
         }else {
             return `${minPlayers}-${maxPlayers}`
         }
-
     }
 
-
+   
+    const userLevel = 2;
     const currentPlayersInParty = 4; //returned from backend (read from user profile -> user.party.members.length + 1 [1 for leader] EXPERIMENTAL)
     const leader = true //only leader can enter mission - from backend as above
     
@@ -360,7 +369,10 @@ const Events = () => {
     //to work need fixed listem item size (which is ok, i believe)
     const missionList = missionListData ? (
         missionListData.map(mission => {
-            const missionActive = isMissionActive(mission.minPlayers, mission.maxPlayers)
+            const appropriatePlayers = isAppropriatePlayers(mission.minPlayers, mission.maxPlayers)
+            const appropriateLevel = userLevel >= mission.level;
+
+            const isMissionActive = appropriatePlayers && appropriateLevel
             return(
                 <VisibilitySensor partialVisibility key={mission.id}>
                 {({isVisible}) =>
@@ -384,7 +396,16 @@ const Events = () => {
                                         component="span"
                                         style={{display: 'inline-flex'}}
                                         variant="body2"
-                                        color={missionActive ? 'textPrimary' : 'error'}
+                                        color={appropriateLevel ? 'textPrimary' : 'error'}
+                                    >
+                                        <img style= {{height: 15, width: 15}} src={levelIcon}/>
+                                        {`: ${mission.level}`}
+                                    </Typography>
+                                    <Typography
+                                        component="span"
+                                        style={{display: 'inline-flex'}}
+                                        variant="body2"
+                                        color={appropriatePlayers ? 'textPrimary' : 'error'}
                                     >
                                         <img style= {{height: 20, width: 20}} src={playersIcon}/>
                                         {`: ${players(mission.minPlayers, mission.maxPlayers)}`}
@@ -429,7 +450,7 @@ const Events = () => {
                          
                             
                             <ListItemSecondaryAction style={{transform: 'translateY(50%)'}}>
-                                <Button size="small" onClick={() => handleMissionClick(mission.id)} disabled={!missionActive || !leader}>{leader ? ('Go in!') : ('You are not the leader!')}</Button>
+                                <Button size="small" onClick={() => handleMissionClick(mission.id)} disabled={!isMissionActive || !leader}>{leader ? ('Go in!') : ('You are not the leader!')}</Button>
                             </ListItemSecondaryAction>
                             
                             

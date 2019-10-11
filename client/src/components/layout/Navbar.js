@@ -52,7 +52,6 @@ const Navbar = (props) => {
                 <Typography variant="h6" style={{flexGrow: 1, textAlign: 'left'}}>
                     {props.auth.profile.name}
                 </Typography>
-                <Button color="inherit">Statistics</Button>
                 <Button color="inherit">Logout</Button>
             </React.Fragment>
         ) : (
