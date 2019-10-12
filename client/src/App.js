@@ -7,6 +7,8 @@ import Footer from "./components/layout/Footer";
 import Root from "./components/Root";
 import Shop from "./components/screens/Shop";
 import SignIn from "./components/auth/SignIn";
+import SignUp from "./components/auth/SignUp";
+import ForgotPassword from "./components/auth/ForgotPassword";
 import Admin from "./components/admin/Admin";
 import Mission from "./components/screens/events/Mission";
 
@@ -41,6 +43,8 @@ class App extends React.Component {
                 <Route exact path="/shop" component={withAuth(Shop)} />
                 <Route exact path="/mission" component={withAuth(Mission)} />
                 <Route exact path="/signin" component={SignIn} />
+                <Route exact path="/signup" component={SignUp} />
+                <Route exact path="/lost-password" component={ForgotPassword} />
                 <Route exact path="/admin" component={Admin} />
               </Switch>
               <Footer />

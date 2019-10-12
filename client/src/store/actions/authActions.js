@@ -18,6 +18,10 @@ export const signIn = (credentials) => {
 
 }
 
+export const signUp = (credentials) => {
+    return null
+}
+
 /* req with using fetch instead axios - u have stringify data
 const res = await fetch('/api/ninjas/login', {
                 method: 'POST',

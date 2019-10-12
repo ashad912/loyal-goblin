@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { signIn } from '../../store/actions/authActions'
+import { signUp } from '../../store/actions/authActions'
 import { Redirect } from 'react-router-dom'
 import Container from '@material-ui/core/Container';
 import { Typography } from '@material-ui/core';
@@ -43,46 +43,27 @@ const ErrorPaper = styled(Paper)`
 
 const ActionBar = styled.div`
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
 `
 
-class SignIn extends Component {
+class SignUp extends Component {
     state = {
         email: "",
         password: "",
+        confirmPassword: "",
         formError: {
             email: '',
-            password: ''
+            password: '',
+            confirmPassword: "",
         },
         error: {
             email: false,
             password: false,
+            confirmPassword: false,
         }
     }
 
-    // componentDidUpdate(prevProps, prevState){
-    //     const targets = ['email', 'password']
-        
-    //     targets.forEach((target) => {
-    //         if((prevState[target].length === 1) && (this.state[target].length === 0)){
-    //             this.setState({
-    //                 error: {
-    //                     ...this.state.error,
-    //                     [target]: true,
-    //                 }
-    //             })
-    //         }
-            
-    //         if((prevState[target].length === 0) && (this.state[target].length === 1)){
-    //             this.setState({
-    //                 error: {
-    //                     ...this.state.error,
-    //                     [target]: false,
-    //                 }
-    //             })
-    //         }
-    //     } )
-    //}
+   
 
     handleChange = (e) => {
         const id = e.target.id
@@ -144,10 +125,60 @@ class SignIn extends Component {
                     ...this.state.error,
                     password: !passwordValid
                 }
+            }, () => {
+                if(this.state.confirmPassword.length) {
+                    if(this.state.password !== this.state.confirmPassword){
+                        this.setState({
+                            formError: {
+                                ...this.state.formError,
+                                confirmPassword: 'Hasła nie są takie same!'
+                            },
+                            error : {
+                                ...this.state.error,
+                                confirmPassword: true
+                            }
+                        });
+                    }else{
+                        this.setState({
+                            formError: {
+                                ...this.state.formError,
+                                confirmPassword: ''
+                            },
+                            error : {
+                                ...this.state.error,
+                                confirmPassword: false
+                            }
+                        })
+                    }
+                    
+                }
             });
 
             break;
-
+            case 'confirmPassword':
+                    let confirmValid = true
+                    let confirmError = ''
+                    if(value.length){
+                        confirmValid = value === this.state.password;
+                        confirmError = confirmValid ? '': 'Hasła nie są takie same!';
+                    }else{
+                        confirmValid = false;
+                        confirmError = 'Pole wymagane!'
+                    }      
+                    
+                   
+                    this.setState({
+                        formError: {
+                            ...this.state.formError,
+                            confirmPassword: confirmError
+                        },
+                        error : {
+                            ...this.state.error,
+                            confirmPassword: !confirmValid
+                        }
+                    });
+        
+                    break;
           default:
             break;
         }
@@ -159,7 +190,7 @@ class SignIn extends Component {
         console.log(this.state)
         e.preventDefault();
 
-        const targets = ['email', 'password']
+        const targets = ['email', 'password', 'confirmPassword']
         await asyncForEach(targets, async (target) => {
             console.log(this.state.error)
             console.log(this.state.error[target])
@@ -177,8 +208,8 @@ class SignIn extends Component {
             }
         })
 
-        if(!this.state.error.email && !this.state.error.password){
-            this.props.signIn(this.state)
+        if(!this.state.error.email && !this.state.error.password && !this.state.error.confirmPassword){
+            console.log('sign up')
         }
         
     }
@@ -195,18 +226,23 @@ class SignIn extends Component {
                 <FormContainer  maxWidth="xs">
                     <form onSubmit={this.handleSubmit} className="white">
                     
-                        <Typography variant="h5" style={{textAlign: 'left', marginBottom: '1rem'}}>Zaloguj</Typography>
+                        <Typography variant="h5" style={{textAlign: 'left', marginBottom: '1rem'}}>Stwórz konto</Typography>
                             <StyledPaper elevation={0}>
                                 <FormControl fullWidth style={{marginTop: '1rem', marginBottom: "0.5rem"}}>
                                     <InputLabel htmlFor="input-email" error={this.state.error.email}>Email *</InputLabel>
                                     <Input id="email" aria-describedby="email" required error={this.state.error.email} onChange={this.handleChange}/>
-                                    {this.state.error.email ? (<FormHelperText error id="my-helper-text">{this.state.formError.email}</FormHelperText>) : (null)}
+                                    {this.state.error.email ? (<FormHelperText error id="my-helper-text">{this.state.formError.email}</FormHelperText>) : (<FormHelperText id="my-helper-text">Nigdy nie udostępniamy Twoich danych.</FormHelperText>)}
                                     
                                 </FormControl>
                                 <FormControl fullWidth style={{marginTop: '1rem', marginBottom: "0.5rem"}}>
                                     <InputLabel htmlFor="input-password" error={this.state.error.password}>Password *</InputLabel>
                                     <Input id="password" aria-describedby="password" type="password" required error={this.state.error.password} onChange={this.handleChange}/>
                                     {this.state.error.password ? (<FormHelperText error id="my-helper-text">{this.state.formError.password}</FormHelperText>) : (null)}
+                                </FormControl>
+                                <FormControl fullWidth style={{marginTop: '1rem', marginBottom: "0.5rem"}}>
+                                    <InputLabel htmlFor="input-password" error={this.state.error.confirmPassword}>Confirm password *</InputLabel>
+                                    <Input id="confirmPassword" aria-describedby="confirm-password" type="password" required error={this.state.error.confirmPassword} onChange={this.handleChange}/>
+                                    {this.state.error.confirmPassword ? (<FormHelperText error id="my-helper-text">{this.state.formError.confirmPassword}</FormHelperText>) : (null)}
                                 </FormControl>
                                 
                                 { authError ? (
@@ -229,17 +265,16 @@ class SignIn extends Component {
                                 <Divider style={{marginTop: '1.5rem', marginBottom: '1rem'}}/>
                                 <ActionBar>
                                     <Typography>
-                                        <Link href='/lost-password' to='/lost-password' >
-                                            Zapomniałaś/eś hasła?
-                                        </Link>
-                                    </Typography>
-                                    <Typography>
-                                        <Link href='/signup' to='/signup' >
-                                            Nie masz konta? Zarejestruj się!
+                                        <Link href='/signin' to='/signin'>
+                                            Masz już konto? Zaloguj się!
                                         </Link>
                                     </Typography>
                                 </ActionBar>
-                            </StyledPaper>                 
+                            </StyledPaper>
+                            
+                            
+                    
+                        
                     </form>
                 </FormContainer>
             </div>
@@ -249,15 +284,15 @@ class SignIn extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        authError: state.auth.authError, // auth in rootReducer, authError in authReducer, state global Redux store
+        authError: state.auth.authError, 
         auth: state.auth,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        signIn: (creds) => dispatch(signIn(creds)),
+        signUp: (creds) => dispatch(signUp(creds)),
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignIn)
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp)

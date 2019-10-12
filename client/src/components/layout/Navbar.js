@@ -8,8 +8,7 @@ import Avatar from '@material-ui/core/Avatar';
 import { Badge } from '@material-ui/core';
 import tempUserAvatar from '../../assets/avatar/moose.png'
 import { connect } from 'react-redux';
-import { textAlign } from '@material-ui/system';
-
+import { Link } from '@material-ui/core';
 const StyledAppBar = styled(AppBar)`
     
     
@@ -52,14 +51,29 @@ const Navbar = (props) => {
                 <Typography variant="h6" style={{flexGrow: 1, textAlign: 'left'}}>
                     {props.auth.profile.name}
                 </Typography>
-                <Button color="inherit">Logout</Button>
+                <Typography>
+                    <Link href='/signin' to='/signin' underline='none' style={{color: 'white'}}>
+                        Wyloguj  
+                    </Link>
+                </Typography>
             </React.Fragment>
         ) : (
             <React.Fragment>
-                <Typography variant="h6" style={{flexGrow: 1, textAlign: 'left'}}>
-                        LoyalGoblin
+                <Typography variant="h6" style={{flexGrow: 1, textAlign: 'left'}} >
+                    <Link href='/' to='/' underline='none' style={{color: 'white'}}>
+                        Loyal Goblin
+                    </Link>
                 </Typography>
-                <Button color="inherit">Login</Button>
+                <Typography>
+                    <Link href='/signin' to='/signin'  nderline='none' style={{color: 'white', marginRight: '1rem'}}>
+                        Zaloguj
+                    </Link>
+                </Typography>
+                <Typography>
+                    <Link href='/signup' to='/signup' underline='none' style={{color: 'white'}}>
+                        Dołącz
+                    </Link>
+                </Typography>
             </React.Fragment>
         )}
         </Toolbar>
