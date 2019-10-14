@@ -120,11 +120,7 @@ const upload = multer({
   }
 });
 
-router.post(
-  "/me/avatar",
-  auth,
-  upload.single("avatar"),
-  async (req, res) => {
+router.post("/me/avatar", auth, upload.single("avatar"), async (req, res) => {
     //to have access to file here, we have to delete 'dest' prop from multer
     //req.ninja.avatar = req.file.buffer //saved in binary data- base64 - it's possible to render img from binary
     const buffer = await sharp(req.file.buffer)
@@ -140,6 +136,40 @@ router.post(
     res.status(400).send({ error: err.message }); //before app.use middleware with 422
   }
 );
+
+router.patch('/addUserItem', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.body.user)
+        
+        user.bag = [...user.bag, req.body.item]
+
+        await user.save()
+        res.send()
+    } catch (e) {
+        console.log(e.message)
+        res.status(400).send();
+    }
+    
+
+})
+
+router.patch('/deleteUserItem', auth, async (req, res) => {
+
+    try {
+      const user = await User.findById(req.body.user)
+
+      user.bag = user.bag.filter((item) => {
+        return item.toString() !== req.body.item
+      })
+
+      await user.save()
+      res.send()
+    } catch (e) {
+        console.log(e.message)
+        res.status(400).send();
+    }
+
+})
 
 //WIP
 //Nie wiem kiedy i jak i czy są tu te populejty

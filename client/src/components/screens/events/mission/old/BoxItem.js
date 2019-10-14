@@ -1,6 +1,7 @@
 import React from 'react';
 import { DragDropContainer, DropTarget } from 'react-drag-drop-container';
 
+
 /*
     BoxItem - a thing that appears in a box, after you drag something into the box
 */
@@ -32,6 +33,7 @@ export default class BoxItem extends React.Component {
               customDragElement={this.props.customDragElement}
               onDrop={this.deleteMe}
               disappearDraggedElement={true}
+              dragClone={true}
               //dragHandleClassName="grabber" //doesnt work on mobile
 
               //dragHandleClassName - specify that you can only drag a box by grabbing the 'x'.
@@ -40,7 +42,7 @@ export default class BoxItem extends React.Component {
             >
                 <div className="outer">
                   <div className="item">
-                    <img style={{height: 40, width:40}} src={require(`../../../assets/icons/items/${this.props.children}`)} alt='icon'/>
+                    <img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${this.props.children}`)} alt='icon'/>
                   </div>
                 </div>
           </DragDropContainer>

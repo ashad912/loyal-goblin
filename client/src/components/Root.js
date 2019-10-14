@@ -10,7 +10,7 @@ import Box from "@material-ui/core/Box";
 import Dialog from "@material-ui/core/Dialog";
 import Profile from "./screens/Profile";
 import Events from "./screens/Events";
-import ShipBoard from "./screens/ShipBoard";
+import Loyal from "./screens/Loyal";
 import CharacterCreation from "./screens/CharacterCreation";
 
 function TabPanel(props) {
@@ -122,7 +122,7 @@ export default function FullWidthTabs(props) {
               <Events />
             </TabPanel>
             <TabPanel value={value} index={2} dir={theme.direction}>
-              <ShipBoard />
+              <Loyal />
             </TabPanel>
             <TabPanel value={value} index={3} dir={theme.direction}>
               Booking

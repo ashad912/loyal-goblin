@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -219,7 +220,7 @@ const createTempEquipment = () => {
   };
 };
 
-const Profile = () => {
+const Profile = props => {
   const classes = useStyles();
 
   const [player, setPlayer] = React.useState(
@@ -338,10 +339,10 @@ const Profile = () => {
     setPlayer({ ...tempPlayer });
   };
 
-  const handleGoExp = () => {
-    console.log(goExp);
-    setGoExp(prev => !prev);
-  };
+  // const handleGoExp = () => {
+  //   console.log(props.location.push('shop'));
+  //   setGoExp(prev => !prev);
+  // };
 
   return (
     <Grid
@@ -422,16 +423,18 @@ const Profile = () => {
           <Attribute attributeName="Wytrzymałość" attributeValue={player.end} />
           <Button onClick={() => handleAddExperience(500)}>Dodaj expa</Button>
           <Button>Dodaj amulet</Button>
-          <Button onClick={handleGoExp} variant="contained" color="primary">
-            Idziemy expić!
-            <ColorizeIcon
-              style={{
-                fontSize: "2rem",
-                transition: "transform 500ms ease-out",
-                transform: goExp ? "rotate(540deg)" : "rotate(180deg)"
-              }}
-            />
-          </Button>
+          <Link to="/shop">
+            <Button  variant="contained" color="primary">
+              Idziemy expić!
+              <ColorizeIcon
+                style={{
+                  fontSize: "2rem",
+                  transition: "transform 500ms ease-out",
+                  transform: goExp ? "rotate(540deg)" : "rotate(180deg)"
+                }}
+              />
+            </Button>
+          </Link>
         </Grid>
       </Grid>
       <Typography variant="h5" className={classes.eqHeading}>
@@ -442,6 +445,9 @@ const Profile = () => {
         handleItemToggle={handleItemToggle}
         handleItemDelete={handleItemDelete}
       />
+      <Typography variant="h5" className={classes.eqHeading}>
+        Statystyki:
+      </Typography>
 
       <NewLevelDialog
         open={newLevelDialogOpen}

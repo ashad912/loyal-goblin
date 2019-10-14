@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-
+import validator from 'validator'
 
 export const eventTypes = ['rally', 'mission']
 
@@ -23,10 +23,12 @@ export const EventSchema = new mongoose.Schema({
     activationDate: {
         type: Date
     },
-    expiryDate: {
+    expiryDate: { //counted from time length (days, hours, minutes, seconds) passed by admin?
         type: Date
     },
-    avatarSrc: String,
+    imgSrc: {
+        type: String
+    },
     minPlayers: {
         type: Number,
         required: true,
@@ -35,10 +37,21 @@ export const EventSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    level: Number,
+    level: {
+        type: Number,
+        min: 1,
+        validate(value) {
+            if (!validator.isInteger(value)) {
+                throw new Error(`${value} is not an integer value!`)
+            }
+        }
+    },
     description: {
         type: String,
         required: true,
+    },
+    challenge: {
+        type: String,
     },
     unique: Boolean, //active only once
     amulets: [{   
@@ -49,13 +62,11 @@ export const EventSchema = new mongoose.Schema({
         }  
     }],
     users: [{ //user whoes have finished the events - to query available events for specific user -> for users statistics used virtualization by user side
-        user: {
-            type: mongoose.Schema.Types.ObjectId, //id in mongo - user id
-            ref: 'user',
-        }
+        type: mongoose.Schema.Types.ObjectId, //id in mongo - user id
+        ref: 'user',
     }],
     awards: [{
-        class: String,
+        class: String, //if undefined -> award is overall
         itemModel: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'itemModel'

@@ -1,12 +1,17 @@
 import express from 'express'
 import bcrypt from 'bcryptjs'
+import { User } from '../models/user';
 import { Event } from '../models/event';
 import { auth } from '../middleware/auth';
 import { EventInstance } from '../models/eventInstance';
-import { ItemModel } from '../models/itemModel'
+import { Item } from '../models/item'
+import { asyncForEach } from '../reducer'
 
+import isEqual from 'lodash/isEqual'
 
 const router = new express.Router
+
+
 
 //TEST
 router.post('/create', auth, async (req, res) =>{
@@ -73,36 +78,32 @@ router.get('/enterInstance/:id', auth, async (req, res) => { //event id passed f
     
     try{
 
-        const event = await Event.find({_id: req.params.id, status: 'active'})
+        const event = await Event.findOne({_id: req.params.id, status: 'active'})
 
         if(!event){
             throw new Error('There is no such event!')
         }
 
-        if(!user.party){
-            throw new Error('')
+    
+        if(Object.entries(user.party).length === 0 && user.party.constructor === Object){
+            throw new Error('No party!')
         }
 
-        console.log('user is in party')
 
-        if(user.party.leader !== user._id){
-            throw new Error()
+        if(user.party.leader.toString() !== user._id.toString()){ //here are objectIDs - need to be string
+            throw new Error('User is not the leader!')
         }
-
-        console.log('user is leader')
 
         const membersIds = [...user.party.members]
 
-        console.log('got members ids')
+        console.log('got members ids', membersIds)
 
-        if(memberIds.length > event.maxPlayers || membersIds.length < event.minPlayers){
-            throw new Error()
+        if(membersIds.length + 1 > event.maxPlayers || membersIds.length + 1 < event.minPlayers){ //+1 - for leader
+            throw new Error('Unappropriate party size!')
         }
 
-        console.log('appropriate party size')
-
         let party = [user]
-        foreach(membersIds, async (memberId) => {
+        await asyncForEach(membersIds, async (memberId) => {
             const member = await User.findById(memberId)
 
             console.log('got member', member._id)
@@ -110,35 +111,45 @@ router.get('/enterInstance/:id', auth, async (req, res) => { //event id passed f
             party = [...party, member]
         })
 
-        console.log('got all party')
+        console.log('got all party', party)
 
-        foreach(party, async (member) => {
+        await asyncForEach(party, async (member) => {
             await member.populate({ //looking for user's id in event instances 
                 path: 'activeEvent'
             }).execPopulate()
 
-            console.log('got activeEvent field for ', member._id)
+            //activeEvent is recognized as an array due to virtualization
 
-            if(member.activeEvent) {
-                throw new Error()
+            console.log('got activeEvent field for ', member._id, member.activeEvent)
+
+            if(member.activeEvent.length) {
+                throw new Error(`Member (${member._id}) is in another event!`)
             }
 
-            console.log('not in event already', member._id)
         })
 
         console.log('party is available')
 
+        let partyIds = [user._id, ...membersIds]
 
-        const eventInstanceObject = {event: event, party: party, items: []}
+        let partyObject = []
+        await asyncForEach(partyIds, async (memberId) => {
+                const memberObject = {inRoom: false, readyStatus: false, user: memberId}
+                partyObject = [...partyObject, memberObject]
+        })
+        
+        const eventInstanceObject = {event: event._id, party: partyObject, items: []}
 
+        console.log(eventInstanceObject)
         const eventInstance = new EventInstance(eventInstanceObject)
-
+        console.log(eventInstance)
         await eventInstance.save()
 
         res.status(200).send(eventInstance)
   
     } catch (e) {
-        res.status(400).send(e)
+        console.log(e.message)
+        res.status(400).send()
     }
     
 })
@@ -146,60 +157,67 @@ router.get('/enterInstance/:id', auth, async (req, res) => { //event id passed f
 //CHECK:
 router.patch('/sendItem/mission', auth, async (req, res) => {
     const user = req.user
-    //Zmienić eq na bag
+   
     try{
         await user.populate({
-            path: 'eq',
-            path: 'party.leader',
-            path: 'party.members',
             path: 'activeEvent'
         }).execPopulate()
     
-        const party = [user.party.leader, ...user.party.members]
-    
-        const eventInstance =  await EventInstance.findOne({_id: user.activeEvent, party: party})
+       
+        const eventInstance =  await EventInstance.findOne({_id: user.activeEvent})
 
-        console.log('instance is existing')
-        
-        const itemId = req.body.id
-
-
-        //To jest czy nie jest w eq usera? Bo tu jest test, czy jest, i jak jest to Error
-        if(user.eq.includes(itemId)){
-            throw Error()
+        if(!eventInstance){
+            throw Error('There is no such event instance!')
         }
 
-        console.log('item in user eq')
+        const party = [user.party.leader, ...user.party.members]
 
-        const item = await Item.findById(itemId).populate({
+        let eventParty = [] 
+        await asyncForEach(eventInstance.party, async (memberObject) => {
+            const memberId = memberObject.user
+            eventParty = [...eventParty, memberId]
+        })
+
+        if(!isEqual(eventParty, party)) {
+            throw Error('Invalid party!')
+        }
+
+        const itemId = req.body.item
+
+        //To jest czy nie jest w eq usera? Bo tu jest test, czy jest, i jak jest to Error
+        //odp.: tak, zjebałem
+        if(!user.bag.includes(itemId)){
+            throw Error('No such item in eq!')
+        }
+
+
+        const item = await Item.findOne({_id: itemId}).populate({
             path: 'model',
+        }).populate({
             path: 'owner'
-        }).execPopulate()
+        })
 
         console.log('item is existing')
 
 
         if(item.model.type !== 'amulet'){
-            throw Error()
+            throw Error('Item has not amulet type!')
         }
 
-        console.log('item is amulet')
-
-        if(item.owner !== user._id){
-            throw Error()
+        if(item.owner._id.toString() !== user._id.toString()){
+            throw Error('Item has invalid owner prop!')
         }
 
-        console.log('item belongs to specific user')
 
         eventInstance.items = [...eventInstance.items, itemId]
 
         await eventInstance.save()
         
         console.log('item added to mission')
-        
+
     
-        user.eq = user.eq.filter((item) => {
-            return item !== itemId
+        user.bag = user.bag.filter((item) => {
+            return item.toString() !== itemId
         })
 
         await user.save()
@@ -208,7 +226,8 @@ router.patch('/sendItem/mission', auth, async (req, res) => {
 
         res.status(200).send({user, eventInstance})
     } catch (e) {
-        res.status(400).send(e)
+        console.log(e.message)
+        res.status(400).send()
     }
     
 
