@@ -1,22 +1,22 @@
 import React from "react";
 import styled from "styled-components";
 
-import { ScrollingProvider, SectionLink, Section } from "react-scroll-section";
+import { ScrollingProvider, Section } from "react-scroll-section";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 
-import Typography from "@material-ui/core/Typography";
+
 import Divider from "@material-ui/core/Divider";
 import Badge from "@material-ui/core/Badge";
 import Snackbar from "@material-ui/core/Snackbar";
 
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
-import MenuItem from "./shop/MenuItem";
-import ShopListItem from "./shop/ShopListItem";
-import ShopList from "./shop/ShopList";
-import PlayerShopButtons from "./shop/PlayerShopButtons";
-import BasketDrawer from "./shop/BasketDrawer";
-import VerificationPage from "./shop/VerificationPage";
+import MenuItem from "./Shop/MenuItem";
+
+import ShopList from "./Shop/ShopList";
+import PlayerShopButtons from "./Shop/PlayerShopButtons";
+import BasketDrawer from "./Shop/BasketDrawer";
+import VerificationPage from "./Shop/VerificationPage";
 
 const Menu = styled(Paper)`
   flex-grow: 1;
