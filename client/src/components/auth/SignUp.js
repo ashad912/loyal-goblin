@@ -259,7 +259,7 @@ class SignUp extends Component {
                                     variant="contained" 
                                     color="primary" 
                                     >
-                                    Zaloguj
+                                    Zarejestruj
                                     
                                 </Button> 
                                 <Divider style={{marginTop: '1.5rem', marginBottom: '1rem'}}/>

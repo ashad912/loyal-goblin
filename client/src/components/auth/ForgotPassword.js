@@ -165,7 +165,7 @@ class SignIn extends Component {
                                     <SentPaper>
                                             <Typography>Email został wysłany.</Typography>
                                     </SentPaper>
-                                    <Typography style={{textAlign: 'left'}}>Jego dostarczenie może chwilę potrwać. Zanim powtórzysz odzyskiwanie hasła, poczekaj do dzięsieciu minut</Typography>
+                                    <Typography style={{textAlign: 'left'}}>Jego dostarczenie może chwilę potrwać. Zanim powtórzysz reset hasła, poczekaj do dzięsieciu minut.</Typography>
                                     </React.Fragment>
                                 ) : (
                                 <React.Fragment>
