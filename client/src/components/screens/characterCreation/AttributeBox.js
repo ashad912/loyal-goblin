@@ -21,15 +21,12 @@ const AttributeBox = props => {
       <Grid item xs={1}>
         <Typography variant="h6">{props.values[props.attribute]}</Typography>
       </Grid>
-      <Button item xs={3}>
+      <Grid item xs={3}>
         <Button
           variant="contained"
           color="primary"
-          onClick={e => props.handleChange(e, props.attribute, +1)}
-        >
-          +
-        </Button>
-      </Button>
+          onClick={e => props.handleChange(e, props.attribute, +1)}>+</Button>
+      </Grid>
     </Grid>
   );
 };

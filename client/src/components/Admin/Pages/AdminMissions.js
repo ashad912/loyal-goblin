@@ -1,23 +1,36 @@
-import React from 'react'
+import React from "react";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import NewEventModal from '../components/NewEventModal';
+import NewEventCreator from "../components/NewEventCreator";
 
 const AdminMissions = () => {
+  const [showNewEventCreator, setShowNewEventCreator] = React.useState(true);
 
-  const [showNewEventModal, setShowNewEventModal] = React.useState(false)
-
-  const toggleEventModal = (e) => {
-    setShowNewEventModal(prev => !prev)
-  }
+  const toggleEventCreator = e => {
+    setShowNewEventCreator(prev => !prev);
+  };
 
   return (
     <div>
-      <Button variant="contained" color="primary" onClick={toggleEventModal}>Stwórz nowe wydarzenie</Button>
-      <Typography>Lista wydarzeń</Typography>
-      <NewEventModal open={showNewEventModal} handleClose={toggleEventModal}/>
+      {showNewEventCreator ? (
+        <NewEventCreator
+          open={showNewEventCreator}
+          handleClose={toggleEventCreator}
+        />
+      ) : (
+        <div>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={toggleEventCreator}
+          >
+            Stwórz nowe wydarzenie
+          </Button>
+          <Typography>Lista wydarzeń</Typography>
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default AdminMissions
+export default AdminMissions;
