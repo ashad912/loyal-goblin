@@ -50,10 +50,10 @@ const AmuletsModal = props => {
         maxWidth="md"
       >
         <DialogTitle>Dodaj amulety misji</DialogTitle>
-        <DialogContent>
-          <Grid container>
-            <Grid item xs={4} style={{ borderRight: "1px solid grey" }}>
-              <List dense>
+ <div style={{display: 'flex', overflow: 'hidden'}}>
+          
+            <div style={{ borderRight: "1px solid grey", flexBasis: '40%', overflow: 'auto'}}>
+              <List dense >
                 {props.amuletList.map(amulet => {
                   return (
                     <ListItem key={amulet.itemModel.id}>
@@ -80,8 +80,8 @@ const AmuletsModal = props => {
                   );
                 })}
               </List>
-            </Grid>
-            <Grid item xs={8}>
+            </div>
+            <div style={{ flexBasis: '60%', overflow: 'auto'}} >
               <List dense>
                 {props.eventAmuletsList
                   .filter(amulet => amulet.quantity > 0)
@@ -89,11 +89,11 @@ const AmuletsModal = props => {
                     return (
                       <ListItem key={amulet.itemModel.id}>
                         <Grid
-                          item
                           container
                           direction="row"
                           justify="space-between"
                           alignItems="center"
+                          wrap="nowrap"
                           spacing={2}
                         >
                           <Grid item >
@@ -144,9 +144,9 @@ const AmuletsModal = props => {
                     );
                   })}
               </List>
-            </Grid>
-          </Grid>
-        </DialogContent>
+            </div>
+          </div>
+
         <DialogActions>
           <Button onClick={props.handleClose} color="primary">
             Zamknij

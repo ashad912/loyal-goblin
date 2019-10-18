@@ -12,7 +12,7 @@ import Slider from "@material-ui/core/Slider";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
+import Divider from "@material-ui/core/Divider";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 
@@ -131,7 +131,6 @@ const mockAmulets = [
 const mockItems = {
   amulet: [
     {
-      
       itemModel: {
         id: 101,
         type: {
@@ -141,11 +140,10 @@ const mockItems = {
         name: "Diament",
         fluff: "Najlepszy przyjaciel dziewyczyny",
         imgSrc: "diamond-amulet.png",
-        class: 'any'
+        class: "any"
       }
     },
     {
-     
       itemModel: {
         id: 102,
         type: {
@@ -155,13 +153,12 @@ const mockItems = {
         name: "Perła",
         fluff: "Perła prosto z lodówki, znaczy z małży",
         imgSrc: "pearl-amulet.png",
-        class: 'any'
+        class: "any"
       }
     }
   ],
   weapon: [
     {
-     
       itemModel: {
         id: 201,
         type: {
@@ -171,11 +168,10 @@ const mockItems = {
         name: "Krótki miecz",
         fluff: "Przynajmniej nie masz kompleksów",
         imgSrc: "short-sword.png",
-        class: 'any'
+        class: "any"
       }
     },
     {
-     
       itemModel: {
         id: 202,
         type: {
@@ -185,11 +181,10 @@ const mockItems = {
         name: "Wielki miecz",
         fluff: "Zdecydowanie masz kompleksy",
         imgSrc: "short-sword.png",
-        class: 'warrior'
+        class: "warrior"
       }
     },
     {
-     
       itemModel: {
         id: 203,
         type: {
@@ -199,11 +194,10 @@ const mockItems = {
         name: "Kostur twojej starej",
         fluff: "Niektórzy mówią, że to tylko miotła",
         imgSrc: "short-sword.png",
-        class: 'mage'
+        class: "mage"
       }
     },
     {
-     
       itemModel: {
         id: 204,
         type: {
@@ -213,11 +207,10 @@ const mockItems = {
         name: "Nusz",
         fluff: "(ja)nusz",
         imgSrc: "short-sword.png",
-        class: 'rogue'
+        class: "rogue"
       }
     },
     {
-     
       itemModel: {
         id: 205,
         type: {
@@ -227,13 +220,12 @@ const mockItems = {
         name: "Morgensztern",
         fluff: "Adam Małysz, jeszcze cię pokonam",
         imgSrc: "short-sword.png",
-        class: 'cleric'
+        class: "cleric"
       }
     }
   ],
   chest: [
     {
-      
       itemModel: {
         id: 301,
         type: {
@@ -243,11 +235,10 @@ const mockItems = {
         name: "Skórzana kurta",
         fluff: "Lale za takimi szaleją",
         imgSrc: "leather-jerkin.png",
-        class: 'any'
+        class: "any"
       }
     },
     {
-      
       itemModel: {
         id: 302,
         type: {
@@ -257,13 +248,12 @@ const mockItems = {
         name: "Sutanna bojowa",
         fluff: "Wiadomo, kto jest kierownikiem tej plebanii",
         imgSrc: "leather-jerkin.png",
-        class: 'cleric'
+        class: "cleric"
       }
     }
   ],
   legs: [
     {
-      
       itemModel: {
         id: 401,
         type: {
@@ -273,11 +263,10 @@ const mockItems = {
         name: "Lniane spodnie",
         fluff: "Zwykłe spodnie, czego jeszcze chcesz?",
         imgSrc: "linen-trousers.png",
-        class: 'any'
+        class: "any"
       }
     },
     {
-      
       itemModel: {
         id: 402,
         type: {
@@ -287,11 +276,10 @@ const mockItems = {
         name: "Nogawice płytowe",
         fluff: "Nie da się w nich klękać do miecza",
         imgSrc: "linen-trousers.png",
-        class: 'warrior'
+        class: "warrior"
       }
     },
     {
-      
       itemModel: {
         id: 403,
         type: {
@@ -301,13 +289,12 @@ const mockItems = {
         name: "Ledżinsy",
         fluff: "Obcisłe jak lubisz",
         imgSrc: "linen-trousers.png",
-        class: 'rogue'
+        class: "rogue"
       }
     }
   ],
   feet: [
     {
-      
       itemModel: {
         id: 501,
         type: {
@@ -317,11 +304,10 @@ const mockItems = {
         name: "Wysokie buty",
         fluff: "Skórzane, wypastowane, lśniące",
         imgSrc: "high-boots.png",
-        class: 'any'
+        class: "any"
       }
     },
     {
-      
       itemModel: {
         id: 502,
         type: {
@@ -331,13 +317,12 @@ const mockItems = {
         name: "Kapcie cichobiegi",
         fluff: "+10 do testów skradania na linoleum",
         imgSrc: "high-boots.png",
-        class: 'rogue'
+        class: "rogue"
       }
     }
   ],
   head: [
     {
-     
       itemModel: {
         id: 601,
         type: {
@@ -347,11 +332,10 @@ const mockItems = {
         name: "Czapka z piórkiem",
         fluff: "Wesoła kompaniaaaa",
         imgSrc: "feathered-hat.png",
-        class: 'any'
+        class: "any"
       }
     },
     {
-     
       itemModel: {
         id: 602,
         type: {
@@ -361,13 +345,12 @@ const mockItems = {
         name: "Kaptur czarodzieja",
         fluff: "Kiedyś nosił go czarodziej. Już nie nosi.",
         imgSrc: "wizard-coul.png",
-        class: 'mage'
+        class: "mage"
       }
     }
   ],
   ring: [
     {
-      
       itemModel: {
         id: 701,
         type: {
@@ -377,11 +360,11 @@ const mockItems = {
         name: "Pierścień siły",
         fluff: "Całuj mój sygnet potęgi",
         imgSrc: "strength-ring.png",
-        class: 'any'
+        class: "any"
       }
     }
   ]
-}
+};
 
 const FileInputWrapper = styled.div`
   position: relative;
@@ -397,7 +380,7 @@ const HiddenFileInput = styled(Input)`
   left: 0;
   opacity: 0;
   height: 2.5rem;
-  width: 10rem;
+  width: 14rem;
   user-select: none;
 `;
 
@@ -406,7 +389,7 @@ const FileInputButton = styled(Button)`
   top: 0;
   left: 0;
   height: 2.5rem;
-  width: 10rem;
+  width: 14rem;
 `;
 
 const AmuletIcon = styled.img`
@@ -414,11 +397,11 @@ const AmuletIcon = styled.img`
 `;
 
 const AmuletList = styled(List)`
-max-height: 30vh;
-max-width: 30vw;
-overflow-y: auto;
-border: 1px solid grey;
-`
+  max-height: 30vh;
+  max-width: 30vw;
+  overflow-y: auto;
+  border: 1px solid grey;
+`;
 
 class NewEventCreator extends Component {
   state = {
@@ -427,7 +410,12 @@ class NewEventCreator extends Component {
     showAmuletsModal: false,
     amulets: [...mockAmulets],
     partySize: [1, 5],
-    activationDate: new Date(Date.now()),
+    isInstant: false,
+    activationDate: moment().format("YYYY-MM-DDTHH:mm"),
+    endDate: moment()
+      .add(1, "d")
+      .format("YYYY-MM-DDTHH:mm"),
+    isPermanent: false,
     isUnique: false
   };
 
@@ -437,8 +425,24 @@ class NewEventCreator extends Component {
     });
   };
 
-  handleActivationDateChange = date => {
-    this.setState({ activationDate: date });
+  handleEndDateChange = e => {
+    this.setState({ endDate: e.target.value });
+  };
+
+  handleActivationDateChange = e => {
+    this.setState({ activationDate: e.target.value });
+  };
+
+  handlePermanentChange = () => {
+    this.setState(prevState => {
+      return { isPermanent: !prevState.isPermanent };
+    });
+  };
+
+  handleInstantChange = () => {
+    this.setState(prevState => {
+      return { isInstant: !prevState.isInstant };
+    });
   };
 
   handlePartySizeSliderChange = (event, newValue) => {
@@ -493,7 +497,9 @@ class NewEventCreator extends Component {
   };
 
   handleIconChange = e => {
-    this.setState({ icon: URL.createObjectURL(e.target.files[0]) });
+    if (e.target.files.length > 0) {
+      this.setState({ icon: URL.createObjectURL(e.target.files[0]) });
+    }
   };
 
   handleToggleRaid = e => {
@@ -508,7 +514,8 @@ class NewEventCreator extends Component {
   };
 
   render() {
-    let amuletListEmpty = this.state.amulets.filter(amulet => amulet.quantity > 0).length == 0
+    let amuletListEmpty =
+      this.state.amulets.filter(amulet => amulet.quantity > 0).length == 0;
     return (
       <MuiPickersUtilsProvider utils={MomentUtils}>
         <Button>{"< Powrót do panelu misji"}</Button>
@@ -523,15 +530,39 @@ class NewEventCreator extends Component {
                 />
               </Grid>
               <Grid item>Rajd</Grid>
+              <Grid item>
+                <FormControlLabel
+                  style={{ marginLeft: "4rem" }}
+                  control={
+                    <Checkbox
+                      checked={this.state.isUnique}
+                      onChange={this.handleUniqueChange}
+                    />
+                  }
+                  label="Wydarzenie unikalne"
+                />
+              </Grid>
             </Grid>
           </Typography>
-          <TextField
-            autoFocus
-            margin="dense"
-            label={`Nazwa ${this.state.isRaid ? "rajdu" : "misji"}`}
-            type="text"
-            fullWidth
-          />
+          <Grid container spacing={2}>
+            <Grid item xs={8}>
+              <TextField
+                autoFocus
+                margin="dense"
+                label={`Nazwa ${this.state.isRaid ? "rajdu" : "misji"}`}
+                type="text"
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <TextField
+                margin="dense"
+                label="Minimalny poziom"
+                type="number"
+                inputProps={{ min: "1" }}
+              />
+            </Grid>
+          </Grid>
           <TextField
             margin="dense"
             label={`Opis ${this.state.isRaid ? "rajdu" : "misji"}`}
@@ -545,7 +576,8 @@ class NewEventCreator extends Component {
             <Grid item>
               <FileInputWrapper>
                 <FileInputButton variant="contained" color="primary">
-                  {this.state.icon ? "Zmień ikonę" : "Dodaj ikonę"}
+                  {this.state.icon ? "Zmień ikonę" : "Dodaj ikonę"}{" "}
+                  {this.state.isRaid ? " rajdu" : " misji"}
                 </FileInputButton>
                 <HiddenFileInput
                   type="file"
@@ -565,14 +597,28 @@ class NewEventCreator extends Component {
               <img src={this.state.icon} style={{ width: "64px" }} />
             </Grid>
           </Grid>
+          <Typography style={{ marginBottom: "3rem", textAlign: "left" }}>
+            Wielkość drużyny:
+          </Typography>
+          <Slider
+            value={this.state.partySize}
+            onChange={this.handlePartySizeSliderChange}
+            valueLabelDisplay="on"
+            max={20}
+            min={1}
+          />
+          <Divider style={{ marginTop: "2rem", marginBottom: "1rem" }} />
           <Grid container spacing={2}>
             <Grid item>
               <Button
                 variant="contained"
                 color="primary"
                 onClick={this.handleToggleAmuletsModal}
+                style={{ marginBottom: "1rem" }}
               >
-                {amuletListEmpty ? 'Dodaj amulety' : 'Edytuj amulety'}
+                {amuletListEmpty
+                  ? "Dodaj wymagane amulety"
+                  : "Edytuj wymagane amulety"}
               </Button>
             </Grid>
           </Grid>
@@ -586,84 +632,111 @@ class NewEventCreator extends Component {
             handleDeleteAmulet={this.handleDeleteAmulet}
             handleChangeAmuletQuantity={this.handleChangeAmuletQuantity}
           />
-          {(!amuletListEmpty > 0 && !this.state.showAmuletsModal) &&
-          <AmuletList dense>
-            {this.state.amulets
-              .filter(amulet => amulet.quantity > 0)
-              .map(amulet => {
-                return (
-                  <ListItem key={amulet.itemModel.id}>
-                    <ListItemAvatar>
-                      <img
-                        src={require("../../../assets/icons/items/" +
-                          amulet.itemModel.imgSrc)}
-                        width="64px"
+          {!amuletListEmpty > 0 && !this.state.showAmuletsModal && (
+            <Grid
+              spacing={2}
+              style={{ width: "100%" }}
+              direction="row"
+              container
+              alignItems="flex-end"
+            >
+              {this.state.amulets
+                .filter(amulet => amulet.quantity > 0)
+                .map(amulet => {
+                  return (
+                    <Grid item key={amulet.itemModel.id}>
+                      <ListItemAvatar>
+                        <img
+                          src={require("../../../assets/icons/items/" +
+                            amulet.itemModel.imgSrc)}
+                          width="64px"
+                        />
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={amulet.itemModel.name}
+                        secondary={"x" + amulet.quantity}
+                        style={{ marginLeft: "1rem" }}
                       />
-                    </ListItemAvatar>
-                    <ListItemText primary={amulet.itemModel.name} secondary={'x'+amulet.quantity}/>
-                  </ListItem>
-                );
-              })}
-          </AmuletList>
-          
-          }
-
-          <Typography>Wielkość drużyny:</Typography>
-          <Slider
-            value={this.state.partySize}
-            onChange={this.handlePartySizeSliderChange}
-            valueLabelDisplay="on"
-            max={20}
-            min={1}
-          />
-          <TextField
-            margin="dense"
-            label="Minimalny poziom"
-            type="number"
-            fullWidth
-          />
-
-          <Typography>Wybierz datę aktywacji wydarzenia:</Typography>
-          <DatePicker
-            autoOk
-            orientation="landscape"
-            variant="static"
-            openTo="date"
-            label="Data aktywacji"
-            value={this.state.activationDate}
-            onChange={this.handleActivationDateChange}
-          />
-          <Typography>Określ czas trwania wydarzenia:</Typography>
-          <Grid container>
+                    </Grid>
+                  );
+                })}
+            </Grid>
+          )}
+          <Divider style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+          <Typography style={{ textAlign: "left" }}>Nagrody:</Typography>
+          <Grid
+            container
+            direction="column"
+            spacing={2}
+            alignItems="flex-start"
+          >
             <Grid item>
-              <TextField margin="dense" label="Dni" type="number" />
+              <TextField
+                margin="dense"
+                label="Punkty doświadczenia"
+                type="number"
+                inputProps={{ min: "0" }}
+              />
             </Grid>
             <Grid item>
-              <TextField margin="dense" label="Godziny" type="number" />
-            </Grid>
-            <Grid item>
-              <TextField margin="dense" label="Minuty" type="number" />
-            </Grid>
-            <Grid item>
-              <TextField margin="dense" label="Sekundy" type="number" />
+              <Button variant="contained" color="primary">
+                Dodaj przedmioty
+              </Button>
             </Grid>
           </Grid>
-
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={this.state.isUnique}
-                onChange={this.handleUniqueChange}
+          <Divider style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+          <Grid
+            container
+            justify="space-around"
+            direction="column"
+            alignItems="flex-start"
+            spacing={2}
+          >
+            <Grid item style={{ textAlign: "left" }}>
+              {!this.state.isInstant && (
+                <React.Fragment>
+                  <Typography>Czas publikacji wydarzenia: </Typography>
+                  <TextField
+                    type="datetime-local"
+                    value={this.state.activationDate}
+                    onChange={this.handleActivationDateChange}
+                  />
+                </React.Fragment>
+              )}
+              <FormControlLabel
+                style={{ marginLeft: "2rem" }}
+                control={
+                  <Checkbox
+                    checked={this.state.isInstant}
+                    onChange={this.handleInstantChange}
+                  />
+                }
+                label="Publikuj natychmiast"
               />
-            }
-            label="Wydarzenie unikalne"
-          />
-          <Typography>Nagrody:</Typography>
-          <TextField
-            margin="dense"
-            label="Punkty doświadczenia"
-            type="number"
-          />
+            </Grid>
+            <Grid item style={{ textAlign: "left" }}>
+              {!this.state.isPermanent && (
+                <React.Fragment>
+                  <Typography>Czas zakończenia wydarzenia: </Typography>
+                  <TextField
+                    type="datetime-local"
+                    value={this.state.endDate}
+                    onChange={this.handleEndDateChange}
+                  />
+                </React.Fragment>
+              )}
+              <FormControlLabel
+                style={{ marginLeft: "2rem" }}
+                control={
+                  <Checkbox
+                    checked={this.state.isPermanent}
+                    onChange={this.handlePermanentChange}
+                  />
+                }
+                label="Wydarzenie bezterminowe"
+              />
+            </Grid>
+          </Grid>
         </Container>
       </MuiPickersUtilsProvider>
     );

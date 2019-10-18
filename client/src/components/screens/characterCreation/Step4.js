@@ -18,6 +18,7 @@ const Step4 = props => {
         justify="center"
         alignItems="center"
         spacing={2}
+        wrap="nowrap"
       >
         <AttributeBox
           handleChange={props.handleChange}
