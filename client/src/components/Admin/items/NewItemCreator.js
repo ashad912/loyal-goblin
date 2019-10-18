@@ -15,383 +15,33 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Checkbox from "@material-ui/core/Checkbox";
 import List from "@material-ui/core/List";
+import Box from "@material-ui/core/Box";
+import Paper from "@material-ui/core/Paper";
 import ListItem from "@material-ui/core/ListItem";
+import AddCircleIcon from "@material-ui/icons/AddCircle";
+import DeleteIcon from '@material-ui/icons/Delete';
+import CreateIcon from '@material-ui/icons/Create';
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import MomentUtils from "@date-io/moment";
 
-import NewPerkModal from "./NewPerkModal";
+import PerkModal from "./PerkModal";
 
-import diamondAmulet from "../../../assets/icons/items/diamond-amulet.png";
-import sapphireAmulet from "../../../assets/icons/items/sapphire-amulet.png";
-import pearlAmulet from "../../../assets/icons/items/pearl-amulet.png";
-import emeraldAmulet from "../../../assets/icons/items/emerald-amulet.png";
 
-import "moment/locale/pl";
-moment.locale("pl");
+const StyledPaper = styled(Paper)`
+    padding: 0.5rem
+    border: 1px solid #eeeeee
+`
 
-const mockAmulets = [
-  {
-    itemModel: {
-      id: 101,
-      type: {
-        id: 201,
-        type: "amulet"
-      },
-      name: "Diament",
-      imgSrc: "diamond-amulet.png"
-    },
-    quantity: 0
-  },
-  {
-    itemModel: {
-      id: 102,
-      type: {
-        id: 201,
-        type: "amulet"
-      },
-      name: "Perła",
-      imgSrc: "pearl-amulet.png"
-    },
-    quantity: 0
-  },
-  {
-    itemModel: {
-      id: 103,
-      type: {
-        id: 201,
-        type: "amulet"
-      },
-      name: "Szmaragd",
-      imgSrc: "emerald-amulet.png"
-    },
-    quantity: 0
-  },
-  {
-    itemModel: {
-      id: 104,
-      type: {
-        id: 201,
-        type: "amulet"
-      },
-      name: "Szafir",
-      imgSrc: "sapphire-amulet.png"
-    },
-    quantity: 0
-  },
-  {
-    itemModel: {
-      id: 105,
-      type: {
-        id: 201,
-        type: "amulet"
-      },
-      name: "Diament2",
-      imgSrc: "diamond-amulet.png"
-    },
-    quantity: 0
-  },
-  {
-    itemModel: {
-      id: 106,
-      type: {
-        id: 201,
-        type: "amulet"
-      },
-      name: "Perła2",
-      imgSrc: "pearl-amulet.png"
-    },
-    quantity: 0
-  },
-  {
-    itemModel: {
-      id: 107,
-      type: {
-        id: 201,
-        type: "amulet"
-      },
-      name: "Szmaragd2",
-      imgSrc: "emerald-amulet.png"
-    },
-    quantity: 0
-  },
-  {
-    itemModel: {
-      id: 108,
-      type: {
-        id: 201,
-        type: "amulet"
-      },
-      name: "Szafir2",
-      imgSrc: "sapphire-amulet.png"
-    },
-    quantity: 0
-  }
-];
-
-const mockItems = {
-  amulet: [
-    {
-      
-      itemModel: {
-        id: 101,
-        type: {
-          id: 1,
-          type: "amulet"
-        },
-        name: "Diament",
-        fluff: "Najlepszy przyjaciel dziewyczyny",
-        imgSrc: "diamond-amulet.png",
-        class: 'any'
-      }
-    },
-    {
-     
-      itemModel: {
-        id: 102,
-        type: {
-          id: 1,
-          type: "amulet"
-        },
-        name: "Perła",
-        fluff: "Perła prosto z lodówki, znaczy z małży",
-        imgSrc: "pearl-amulet.png",
-        class: 'any'
-      }
-    }
-  ],
-  weapon: [
-    {
-     
-      itemModel: {
-        id: 201,
-        type: {
-          id: 2,
-          type: "weapon"
-        },
-        name: "Krótki miecz",
-        fluff: "Przynajmniej nie masz kompleksów",
-        imgSrc: "short-sword.png",
-        class: 'any'
-      }
-    },
-    {
-     
-      itemModel: {
-        id: 202,
-        type: {
-          id: 2,
-          type: "weapon"
-        },
-        name: "Wielki miecz",
-        fluff: "Zdecydowanie masz kompleksy",
-        imgSrc: "short-sword.png",
-        class: 'warrior'
-      }
-    },
-    {
-     
-      itemModel: {
-        id: 203,
-        type: {
-          id: 2,
-          type: "weapon"
-        },
-        name: "Kostur twojej starej",
-        fluff: "Niektórzy mówią, że to tylko miotła",
-        imgSrc: "short-sword.png",
-        class: 'mage'
-      }
-    },
-    {
-     
-      itemModel: {
-        id: 204,
-        type: {
-          id: 2,
-          type: "weapon"
-        },
-        name: "Nusz",
-        fluff: "(ja)nusz",
-        imgSrc: "short-sword.png",
-        class: 'rogue'
-      }
-    },
-    {
-     
-      itemModel: {
-        id: 205,
-        type: {
-          id: 2,
-          type: "weapon"
-        },
-        name: "Morgensztern",
-        fluff: "Adam Małysz, jeszcze cię pokonam",
-        imgSrc: "short-sword.png",
-        class: 'cleric'
-      }
-    }
-  ],
-  chest: [
-    {
-      
-      itemModel: {
-        id: 301,
-        type: {
-          id: 3,
-          type: "chest"
-        },
-        name: "Skórzana kurta",
-        fluff: "Lale za takimi szaleją",
-        imgSrc: "leather-jerkin.png",
-        class: 'any'
-      }
-    },
-    {
-      
-      itemModel: {
-        id: 302,
-        type: {
-          id: 3,
-          type: "chest"
-        },
-        name: "Sutanna bojowa",
-        fluff: "Wiadomo, kto jest kierownikiem tej plebanii",
-        imgSrc: "leather-jerkin.png",
-        class: 'cleric'
-      }
-    }
-  ],
-  legs: [
-    {
-      
-      itemModel: {
-        id: 401,
-        type: {
-          id: 4,
-          type: "legs"
-        },
-        name: "Lniane spodnie",
-        fluff: "Zwykłe spodnie, czego jeszcze chcesz?",
-        imgSrc: "linen-trousers.png",
-        class: 'any'
-      }
-    },
-    {
-      
-      itemModel: {
-        id: 402,
-        type: {
-          id: 4,
-          type: "legs"
-        },
-        name: "Nogawice płytowe",
-        fluff: "Nie da się w nich klękać do miecza",
-        imgSrc: "linen-trousers.png",
-        class: 'warrior'
-      }
-    },
-    {
-      
-      itemModel: {
-        id: 403,
-        type: {
-          id: 4,
-          type: "legs"
-        },
-        name: "Ledżinsy",
-        fluff: "Obcisłe jak lubisz",
-        imgSrc: "linen-trousers.png",
-        class: 'rogue'
-      }
-    }
-  ],
-  feet: [
-    {
-      
-      itemModel: {
-        id: 501,
-        type: {
-          id: 5,
-          type: "feet"
-        },
-        name: "Wysokie buty",
-        fluff: "Skórzane, wypastowane, lśniące",
-        imgSrc: "high-boots.png",
-        class: 'any'
-      }
-    },
-    {
-      
-      itemModel: {
-        id: 502,
-        type: {
-          id: 5,
-          type: "feet"
-        },
-        name: "Kapcie cichobiegi",
-        fluff: "+10 do testów skradania na linoleum",
-        imgSrc: "high-boots.png",
-        class: 'rogue'
-      }
-    }
-  ],
-  head: [
-    {
-     
-      itemModel: {
-        id: 601,
-        type: {
-          id: 6,
-          type: "head"
-        },
-        name: "Czapka z piórkiem",
-        fluff: "Wesoła kompaniaaaa",
-        imgSrc: "feathered-hat.png",
-        class: 'any'
-      }
-    },
-    {
-     
-      itemModel: {
-        id: 602,
-        type: {
-          id: 6,
-          type: "head"
-        },
-        name: "Kaptur czarodzieja",
-        fluff: "Kiedyś nosił go czarodziej. Już nie nosi.",
-        imgSrc: "wizard-coul.png",
-        class: 'mage'
-      }
-    }
-  ],
-  ring: [
-    {
-      
-      itemModel: {
-        id: 701,
-        type: {
-          id: 7,
-          type: "ring"
-        },
-        name: "Pierścień siły",
-        fluff: "Całuj mój sygnet potęgi",
-        imgSrc: "strength-ring.png",
-        class: 'any'
-      }
-    }
-  ]
-}
 
 const FileInputWrapper = styled.div`
   position: relative;
   background: red;
   height: 2.5rem;
   width: 10rem;
-  margin: 2rem 0;
+  margin: 1rem 0 1.3rem 0;
 `;
 
 const HiddenFileInput = styled(Input)`
@@ -412,6 +62,27 @@ const FileInputButton = styled(Button)`
   width: 10rem;
 `;
 
+const AddIcon = styled(AddCircleIcon)`
+  color: #3f51b5
+  width: 1.5rem;
+  transition: transform 0.2s ease-in-out;
+  transform: scale(1.8);
+  &:active {
+    transform: scale(1.5);
+  }
+`;
+
+const StyledBox = styled(Box)`
+    margin: 0.5rem 0.5rem 0.5rem 0.5rem;
+    text-align: center;
+
+`
+const HeadersContainer = styled.div`
+    margin: 0.5rem 0.5rem 0.5rem 0.5rem;
+    padding: 0.25rem 1rem 0.25rem 1rem;
+    
+    
+`
 const AmuletIcon = styled.img`
   width: 32px;
 `;
@@ -424,71 +95,58 @@ border: 1px solid grey;
 `
 
 const itemClasses = ['Wojownik', 'Mag', 'Łotrzyk', 'Kleryk']
+const days = [null, 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela']
 
-class NewEventCreator extends Component {
+class NewItemCreator extends Component {
   state = {
     name: '',
     description: '',
     icon: "",
     class: undefined,
-    showNewPerkModal: false,
+    modifyingIndex: null,
+    showPerkModal: false,
     perks: []
   };
 
+  handleAddPerk = () => {
+    this.setState({
+      perkToModal: {
+        perkType: undefined,
+        value: undefined,
+        target: undefined,
+        time: [/*hoursFlag, day, startHour, lengthInHours*/],
+      }
+    }, () => {
+      this.handleTogglePerkModal()
+    })
+  }
 
+  handleModifyPerk = (index) => {
+    console.log(this.state.perks[index])
+    this.setState({
+      perkToModal: this.state.perks[index],
+      modifyingIndex: index
+    }, () => {
+      this.handleTogglePerkModal()
+    })
 
-  handleActivationDateChange = date => {
-    this.setState({ activationDate: date });
-  };
+  }
 
-  handlePartySizeSliderChange = (event, newValue) => {
-    this.setState({ partySize: newValue });
-  };
-
-  handleChangeAmuletQuantity = (e, id) => {
-    const amulets = [...this.state.amulets];
-    const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel.id === id);
-    if (idOfAmulet !== -1) {
-      amulets[idOfAmulet].quantity = parseInt(e.target.value);
-      this.setState({ amulets });
-    }
-  };
-
-  handleSubtractAmulet = id => {
-    const amulets = [...this.state.amulets];
-    const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel.id === id);
-    if (idOfAmulet !== -1) {
-      amulets[idOfAmulet].quantity -= 1;
-
-      this.setState({ amulets });
-    }
-  };
-
-  handleDeleteAmulet = id => {
-    const amulets = [...this.state.amulets];
-    const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel.id === id);
-    if (idOfAmulet !== -1) {
-      amulets[idOfAmulet].quantity = 0;
-
-      this.setState({ amulets });
-    }
-  };
-
-  handleAddAmulet = id => {
-    const amulets = [...this.state.amulets];
-    const idOfAmuletAlreadyAdded = amulets.findIndex(
-      amulet => amulet.itemModel.id === id
-    );
-    if (idOfAmuletAlreadyAdded !== -1) {
-      amulets[idOfAmuletAlreadyAdded].quantity += 1;
-    }
-
-    this.setState({ amulets });
-  };
-
-  handleToggleNewPerkModal = e => {
+  handleDeletePerk = (index) => {
+    const perks = this.state.perks.filter((perk, perkIndex) => {
+      return perkIndex !== index
+    })
+    this.setState({
+      perks: perks
+    })
+    
+  }
+  handleTogglePerkModal = e => {
     this.setState(prevState => {
-      return { showNewPerkModal: !prevState.showNewPerkModal };
+      return { 
+        showPerkModal: !prevState.showPerkModal,
+        modifyingIndex: prevState.showPerkModal ? null : prevState.modifyingIndex
+       };
     });
   };
 
@@ -518,37 +176,116 @@ class NewEventCreator extends Component {
     this.props.handleClose();
   };
 
+  updatePerks = (perk) => {
+    
+    if(this.state.modifyingIndex != null){
+      const perks = this.state.perks
+
+      perks[this.state.modifyingIndex] = perk
+
+   
+      this.setState({
+        perks: perks,
+      }, () => {
+        console.log(this.state.perks)
+        this.handleTogglePerkModal()
+      })
+    }else{
+      this.setState({
+        perks: [...this.state.perks, perk]
+      }, () => {
+        this.handleTogglePerkModal()
+      })
+    }
+    
+  }
+
   componentDidUpdate(){
-      console.log(this.state.class)
+      //console.log(this.state.class)
   }
 
   render() {
-    //let amuletListEmpty = this.state.amulets.filter(amulet => amulet.quantity > 0).length == 0
+    const getEndHour = (startHour, length) => {
+      return (startHour + length) % 24
+    }
+    const convertToPerkLabel = (perkType) => {
+      const perkObjects = [
+        {
+          perk: 'attr-strength',
+          label: 'Atrybut: Siła'
+        },
+        {
+          perk: 'attr-dexterity',
+          label: 'Atrybut: Zręczność',
+        },
+        {
+          perk: 'attr-magic',
+          label: 'Atrybut: Magia'
+        },
+        {
+          perk: 'attr-endurance',
+          label: 'Atrybut: Wytrzymałość'
+        },
+        {
+          perk: 'experience',
+          label: 'Doświadczenie',
+        },
+        {
+          perk: 'disc-product',
+          label: 'Zniżka: Produkt',
+        },
+        {
+          perk: 'disc-category',
+          label: 'Zniżka: Kategoria produktów'
+        },
+        {
+          perk: 'disc-rent',
+          label: 'Zniżka: Rezerwacja pokoi'
+        },
+        {
+          perk: 'custom',
+          label: 'Własny'
+        }
+      ]
+    
+      const index = perkObjects.findIndex((perkObject) => {return perkObject.perk === perkType})
+    
+      if(index !== -1){
+        return perkObjects[index].label
+      }
+      return null
+    }
+
     return (
       <MuiPickersUtilsProvider utils={MomentUtils}>
         <Button>{"< Powrót do panelu przedmiotów"}</Button>
         <Container>
-          
-          <TextField
-            autoFocus
-            name="name"
-            margin="dense"
-            label={`Nazwa przedmiotu`}
-            type="text"
-            fullWidth
-            onChange={this.handleChangeNameValue}
-          />
-          <TextField
-            name="description"
-            margin="dense"
-            label={`Opis przedmiotu`}
-            type="text"
-            fullWidth
-            multiline
-            rows={2}
-            rowsMax={5}
-            onChange={this.handleChangeNameValue}
-          />
+          <Grid container spacing={5}>
+          <Grid item xs={6} >
+            <TextField
+              autoFocus
+              name="name"
+              margin="dense"
+              label={`Nazwa przedmiotu`}
+              type="text"
+              fullWidth
+              onChange={this.handleChangeNameValue}
+            />
+            <TextField
+              name="description"
+              margin="dense"
+              label={`Opis przedmiotu`}
+              type="text"
+              fullWidth
+              multiline
+              rows={2}
+              rowsMax={5}
+              onChange={this.handleChangeNameValue}
+            />
+          </Grid>
+          <Grid item xs={1} >
+          </Grid>
+          <Grid item xs={5} >
           <Grid container spacing={2}>
             <Grid item>
               <FileInputWrapper>
@@ -573,109 +310,176 @@ class NewEventCreator extends Component {
               <img src={this.state.icon} style={{ width: "64px" }} />
             </Grid>
           </Grid>
-          <Typography style={{textAlign: 'left'}}>Przeznaczenie:</Typography>
-          <Grid container spacing={2}>
-            <Typography component="div">
-                <Grid component="label" container alignItems="center" spacing={1}>
+          
+          <div style={{display: 'flex'}}>
+            <Typography component="div" style={{width: 'auto'}}>
+            <Typography style={{textAlign: 'left', color: 'rgba(0, 0, 0, 0.54)', marginTop: '0.5rem', fontSize: '0.75rem'}}>Przeznaczenie</Typography>
+            
+                <Grid component="label" container alignItems="center" spacing={1} >
                 <Grid item>Ogólne</Grid>
                 <Grid item>
+                <FormControl >
                     <Switch
                         checked={this.state.classItem}
                         onChange={this.handleToggleClassItem}
                     />
+                    </FormControl>
                 </Grid>
                 <Grid item>Klasowe</Grid>
+                
                 </Grid>
+                
+             
+                
             </Typography>
-            </Grid>
-            <Grid container spacing={2}>
+            
             {this.state.classItem ? (
-                <FormControl >
-                    <InputLabel htmlFor="class">Klasa</InputLabel>
-                    <Select
-                        value={this.state.class}
-                        onChange={this.handleChangeNameValue}
-                        inputProps={{
-                            name: 'class',
-                            id: 'class',
-                        }}
-                    >
-                        {itemClasses.map((itemClass) => {
-                            return (
-                                <MenuItem value={itemClass}>{itemClass}</MenuItem>
-                            )
-                        })}
-                    </Select>
-              </FormControl>
-            ) : (
-                null
-            )}
+                    <FormControl style={{ marginTop: '0.5rem', marginLeft: '2rem'}}>
+                        <InputLabel  htmlFor="class">Klasa</InputLabel>
+                        <Select
+                            style={{marginTop: '1.3rem'}}
+                            value={this.state.class}
+                            onChange={this.handleChangeNameValue}
+                            inputProps={{
+                                name: 'class',
+                                id: 'class',
+                            }}
+                        >
+                            {itemClasses.map((itemClass) => {
+                                return (
+                                    <MenuItem value={itemClass}>{itemClass}</MenuItem>
+                                )
+                            })}
+                        </Select>
+                  </FormControl>
+                ) : (
+                    null
+                )}
+            
+          </div>
           </Grid>
+          </Grid>
+          <Grid container spacing={2} style={{marginTop: '2rem'}}>
+           <Grid item xs={12} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
           
+            <Typography variant="h6">Efekty przedmiotu</Typography>
+            <AddIcon
+                style={{marginRight: '0.5rem'}}
+                onClick={this.handleAddPerk}
+            />
+            </Grid>
+            
           {this.state.perks.length ? (
-              <Grid container spacing={2}>
-                <List dense>
-                    {this.state.perks.map((perk) => {
-                        return(
-                            <ListItem>{perk.name}</ListItem>
-                        )
-                    })}
-                </List>
-                </Grid>
+            
+              <Grid item xs={12}>
+              <StyledPaper elevation={0}>
+                  <List dense>
+                    <HeadersContainer>
+                      <Typography style={{width: '100%', color: 'rgba(0, 0, 0, 0.54)', fontSize: '0.8rem'}}>
+                      <Grid container>
+                        <Grid item xs={3}>
+                          Typ efektu
+                        </Grid>
+                        <Grid item xs={2}>
+                          Efekt
+                        </Grid>
+                        <Grid item xs={1}>
+                          Zakres zniżki
+                        </Grid>
+                        <Grid item xs={3}>
+                          {'Czas(y) działania efektu'}
+                        </Grid>
+                        <Grid item xs={1}>
+                        </Grid>
+                        <Grid item xs={2}>
+                        </Grid>
+                      </Grid>
+                      </Typography>
+                  </HeadersContainer>
+                      {this.state.perks.map((perk, index) => {
+                          console.log(perk)
+                          return(
+                            <StyledBox border={1} borderColor="primary.main">
+                              <ListItem>
+                                <Typography style={{width: '100%', fontSize: '0.8rem', textAlign: 'center'}} >
+                                <Grid container>
+                                  <Grid item xs={3}>
+                                    {convertToPerkLabel(perk.perkType)}
+                                  </Grid>
+                                  <Grid item xs={2}>
+                                    {perk.value}
+                                  </Grid>
+                                  <Grid item xs={1}>
+                                    {perk.target ? (perk.target.name ? (perk.target.name) : (perk.target)) : (null)}
+                                  </Grid>
+                                  <Grid item xs={3}>
+                                    {perk.time.map((period)=>(
+                                      <Grid container style={{justifyContent: 'center'}}>
+                                        <Grid item>
+                                          {`${days[period.startDay]}`}
+                                        </Grid>
+                                        {period.hoursFlag ? (
+                                          <Grid item>
+                                            {`, ${period.startHour}:00 - ${getEndHour(period.startHour, period.lengthInHours)}:00`}
+                                          </Grid>
+                                        ) : (
+                                          null
+                                        )}
+                                      </Grid>
+                                    ))}
+                                  </Grid>
+                                
+                                
+                                  <Grid item xs={1}>
+                                    
+                                  </Grid>
+                                  <Grid item xs={2} style={{display: 'flex', justifyContent: 'flex-end'}}>
+                                    <Button
+                                        style={{marginRight: '0.5rem'}}
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => this.handleModifyPerk(index)}>
+                                          <CreateIcon />
+                                    </Button>
+                                    <Button
+                                      variant="contained"
+                                      color="primary"
+                                      onClick={() => this.handleDeletePerk(index)}>
+                                          <DeleteIcon />
+                                    </Button>
+                                  </Grid>
+                                </Grid>
+                                </Typography>
+                              </ListItem>
+                              
+                              
+                              </StyledBox>
+                          )
+                      })}
+                  </List>
+                  </StyledPaper>
+                  </Grid>
+                
+                
             ):(
                 null
             )
           }
-          <Grid container spacing={2}>
-            <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={this.handleToggleNewPerkModal}
-              >
-                {this.state.perks.length ? 'Dodaj kolejny efekt przedmiotu' : 'Dodaj efekt przedmiotu'}
-              </Button>
-            </Grid>
           </Grid>
-          <NewPerkModal
-            open={this.state.showNewPerkModal}
-            handleClose={this.handleToggleNewPerkModal}
-            amuletList={mockAmulets}
-            eventAmuletsList={this.state.amulets}
-            handleAddAmulet={this.handleAddAmulet}
-            handleSubtractAmulet={this.handleSubtractAmulet}
-            handleDeleteAmulet={this.handleDeleteAmulet}
-            handleChangeAmuletQuantity={this.handleChangeAmuletQuantity}
+          
+        
+          <PerkModal
+            open={this.state.showPerkModal}
+            handleClose={this.handleTogglePerkModal}
+            updatePerks={this.updatePerks}
+            trigger={this.state.showPerkModal}
+            perkToModal={this.state.perkToModal}
           />
-          {/*(!amuletListEmpty > 0 && !this.state.showNewPerkModal) &&
-          <AmuletList dense>
-            {this.state.amulets
-              .filter(amulet => amulet.quantity > 0)
-              .map(amulet => {
-                return (
-                  <ListItem key={amulet.itemModel.id}>
-                    <ListItemAvatar>
-                      <img
-                        src={require("../../../assets/icons/items/" +
-                          amulet.itemModel.imgSrc)}
-                        width="64px"
-                      />
-                    </ListItemAvatar>
-                    <ListItemText primary={amulet.itemModel.name} secondary={'x'+amulet.quantity}/>
-                  </ListItem>
-                );
-              })}
-          </AmuletList>
-          
-            */}
-
-          
-
-          
+      
         </Container>
       </MuiPickersUtilsProvider>
     );
   }
 }
 
-export default NewEventCreator;
+export default NewItemCreator;

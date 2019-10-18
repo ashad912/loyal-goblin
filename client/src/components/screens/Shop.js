@@ -11,12 +11,12 @@ import Badge from "@material-ui/core/Badge";
 import Snackbar from "@material-ui/core/Snackbar";
 
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
-import MenuItem from "./Shop/MenuItem";
+import MenuItem from "./shop/MenuItem";
 
-import ShopList from "./Shop/ShopList";
-import PlayerShopButtons from "./Shop/PlayerShopButtons";
-import BasketDrawer from "./Shop/BasketDrawer";
-import VerificationPage from "./Shop/VerificationPage";
+import ShopList from "./shop/ShopList";
+import PlayerShopButtons from "./shop/PlayerShopButtons";
+import BasketDrawer from "./shop/BasketDrawer";
+import VerificationPage from "./shop/VerificationPage";
 
 const Menu = styled(Paper)`
   flex-grow: 1;
