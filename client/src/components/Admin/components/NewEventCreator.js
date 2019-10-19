@@ -13,9 +13,10 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import List from "@material-ui/core/List";
 import Divider from "@material-ui/core/Divider";
+import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-
+import Box from "@material-ui/core/Box";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import MomentUtils from "@date-io/moment";
 
@@ -25,6 +26,8 @@ import diamondAmulet from "../../../assets/icons/items/diamond-amulet.png";
 import sapphireAmulet from "../../../assets/icons/items/sapphire-amulet.png";
 import pearlAmulet from "../../../assets/icons/items/pearl-amulet.png";
 import emeraldAmulet from "../../../assets/icons/items/emerald-amulet.png";
+
+import characterClasses from "../../../assets/categories/characterClasses";
 
 import "moment/locale/pl";
 import ItemsModal from "./ItemsModal";
@@ -182,7 +185,15 @@ const mockItems = {
         name: "Wielki miecz",
         fluff: "Zdecydowanie masz kompleksy",
         imgSrc: "short-sword.png",
-        class: "warrior"
+        class: "warrior",
+        perks: [
+          {
+            perkType: "attr-strength",
+            target: undefined,
+            time: [],
+            value: "+1"
+          }
+        ]
       }
     },
     {
@@ -346,7 +357,22 @@ const mockItems = {
         name: "Kaptur czarodzieja",
         fluff: "Kiedyś nosił go czarodziej. Już nie nosi.",
         imgSrc: "wizard-coul.png",
-        class: "mage"
+        class: "mage",
+        perks: [
+          {
+            perkType: "experience",
+            target: undefined,
+            time: [
+              {
+                hoursFlag: false,
+                lengthInHours: 24,
+                startDay: 5,
+                startHour: 12
+              }
+            ],
+            value: "+10%"
+          }
+        ]
       }
     }
   ],
@@ -358,10 +384,20 @@ const mockItems = {
           id: 7,
           type: "ring"
         },
-        name: "Pierścień siły",
+        name: "Pierścień wódy",
         fluff: "Całuj mój sygnet potęgi",
         imgSrc: "strength-ring.png",
-        class: "any"
+        class: "any",
+        perks: [
+          {
+            perkType: "disc-product",
+            target: { name: "Wóda" },
+            time: [
+              { hoursFlag: true, lengthInHours: 2, startDay: 1, startHour: 18 }
+            ],
+            value: "-10%"
+          }
+        ]
       }
     }
   ]
@@ -393,26 +429,62 @@ const FileInputButton = styled(Button)`
   width: 14rem;
 `;
 
-
-
-
 class NewEventCreator extends Component {
   state = {
     isRaid: false,
+    isUnique: false,
+    name: "",
+    description: "",
+    minLevel: "",
     icon: "",
+    partySize: [1, 5],
     showAmuletsModal: false,
     amulets: [...mockAmulets],
-    partySize: [1, 5],
-    isInstant: false,
+    showItemsModal: false,
+    experience: 0,
+    items: { any: [], warrior: [], mage: [], rogue: [], cleric: [] },
     activationDate: moment().format("YYYY-MM-DDTHH:mm"),
+    isInstant: false,
     endDate: moment()
       .add(1, "d")
       .format("YYYY-MM-DDTHH:mm"),
-    isPermanent: false,
-    isUnique: false,
-    showItemsModal: false,
-    items: {any: [], warrior: [], mage: [], rogue: [], cleric: []}
+    isPermanent: false
   };
+
+  componentDidMount() {
+    if (this.props.isEdit) {
+      const event = { ...this.props.eventToEdit };
+      const amulets = mockAmulets.map(amulet => {
+        return {
+          ...amulet,
+          quantity:
+            event.amulets.find(
+              eventAmulet => eventAmulet.itemModel.id === amulet.itemModel.id
+            ) !== undefined
+              ? event.amulets.find(
+                  eventAmulet =>
+                    eventAmulet.itemModel.id === amulet.itemModel.id
+                ).quantity
+              : 0
+        };
+      });
+      this.setState({
+        isRaid: event.isRaid,
+        isUnique: event.isUnique,
+        name: event.name,
+        description: event.description,
+        minLevel: event.minLevel,
+        icon: event.icon,
+        partySize: event.partySize,
+        amulets: amulets,
+        experience: event.experience,
+        items: { any: [], warrior: [], mage: [], rogue: [], cleric: [],...event.items },
+        activationDate: moment(event.activationDate.split("T")[0] + " " + event.activationDate.split("T")[1]).format("YYYY-MM-DDTHH:mm"),
+        endDate:  moment(event.endDate.split("T")[0] + " " + event.endDate.split("T")[1]).format("YYYY-MM-DDTHH:mm"),
+        isPermanent: event.isPermanent
+      });
+    }
+  }
 
   handleUniqueChange = () => {
     this.setState(prevState => {
@@ -444,49 +516,52 @@ class NewEventCreator extends Component {
     this.setState({ partySize: newValue });
   };
 
-  handleChangeItemQuantity = (id, quantity) => {
-    const amulets = [...this.state.amulets];
-    const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel.id === id);
-    if (idOfAmulet !== -1) {
-      amulets[idOfAmulet].quantity = parseInt(quantity);
-      this.setState({ amulets });
-    }
+  handleChangeItemQuantity = (currentItem, quantity, characterClass) => {
+    const allItems = { ...this.state.items };
+    const classItems = [...allItems[characterClass]];
+    const idOfItem = classItems.findIndex(
+      item => item.itemModel.id === currentItem.itemModel.id
+    );
+
+    classItems[idOfItem].quantity = parseInt(quantity);
+
+    allItems[characterClass] = classItems;
+    this.setState({ items: allItems });
   };
 
-  handleSubtractItem = (id) => {
-    const amulets = [...this.state.amulets];
-    const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel.id === id);
-    if (idOfAmulet !== -1) {
-      amulets[idOfAmulet].quantity -= 1;
+  handleSubtractItem = (currentItem, characterClass) => {
+    const allItems = { ...this.state.items };
+    let classItems = [...allItems[characterClass]];
+    const idOfItem = classItems.findIndex(
+      item => item.itemModel.id === currentItem.itemModel.id
+    );
 
-      this.setState({ amulets });
+    classItems[idOfItem].quantity -= 1;
+    if (classItems[idOfItem].quantity === 0) {
+      classItems.splice(idOfItem, 1);
     }
-  };
-
-  handleDeleteItem = (id) => {
-    const amulets = [...this.state.amulets];
-    const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel.id === id);
-    if (idOfAmulet !== -1) {
-      amulets[idOfAmulet].quantity = 0;
-
-      this.setState({ amulets });
-    }
+    allItems[characterClass] = classItems;
+    this.setState({ items: allItems });
   };
 
   handleAddItem = (currentItem, characterClass) => {
-    const allItems = {...this.state.items};
-    const classItems = [...allItems[characterClass]]
+    const allItems = { ...this.state.items };
+    const classItems = [...allItems[characterClass]];
     const idOfItemAlreadyAdded = classItems.findIndex(
       item => item.itemModel.id === currentItem.itemModel.id
     );
     if (idOfItemAlreadyAdded === -1) {
-      classItems.push({...currentItem, quantity: 1})
-    }else{
-      classItems[idOfItemAlreadyAdded].quantity += 1
+      classItems.push({ ...currentItem, quantity: 1 });
+    } else {
+      classItems[idOfItemAlreadyAdded].quantity += 1;
     }
-    allItems[characterClass] = classItems
+    allItems[characterClass] = classItems;
     this.setState({ items: allItems });
   };
+
+  handleChangeExperience = (e) => {
+    this.setState({experience: e.target.value})
+  }
 
   handleChangeAmuletQuantity = (id, quantity) => {
     const amulets = [...this.state.amulets];
@@ -497,7 +572,7 @@ class NewEventCreator extends Component {
     }
   };
 
-  handleSubtractAmulet = (id) => {
+  handleSubtractAmulet = id => {
     const amulets = [...this.state.amulets];
     const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel.id === id);
     if (idOfAmulet !== -1) {
@@ -507,7 +582,7 @@ class NewEventCreator extends Component {
     }
   };
 
-  handleDeleteAmulet = (id) => {
+  handleDeleteAmulet = id => {
     const amulets = [...this.state.amulets];
     const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel.id === id);
     if (idOfAmulet !== -1) {
@@ -517,7 +592,7 @@ class NewEventCreator extends Component {
     }
   };
 
-  handleAddAmulet = (id) => {
+  handleAddAmulet = id => {
     const amulets = [...this.state.amulets];
     const idOfAmuletAlreadyAdded = amulets.findIndex(
       amulet => amulet.itemModel.id === id
@@ -547,6 +622,18 @@ class NewEventCreator extends Component {
     }
   };
 
+  handleDescriptionChange = e => {
+    this.setState({ description: e.target.value.trim() });
+  };
+
+  handleMinLevelChange = e => {
+    this.setState({ minLevel: e.target.value.trim() });
+  };
+
+  handleNameChange = e => {
+    this.setState({ name: e.target.value.trim() });
+  };
+
   handleToggleRaid = e => {
     this.setState(prevState => {
       return { isRaid: !prevState.isRaid };
@@ -560,10 +647,12 @@ class NewEventCreator extends Component {
 
   render() {
     let amuletListEmpty =
-      this.state.amulets.filter(amulet => amulet.quantity > 0).length == 0;
+      this.state.amulets.filter(amulet => amulet.quantity > 0).length === 0;
     return (
       <MuiPickersUtilsProvider utils={MomentUtils}>
-        <Button>{"< Powrót do panelu misji"}</Button>
+        <Button onClick={this.props.handleClose}>
+          {"< Powrót do panelu misji"}
+        </Button>
         <Container>
           <Typography component="div">
             <Grid component="label" container alignItems="center" spacing={1}>
@@ -592,6 +681,8 @@ class NewEventCreator extends Component {
           <Grid container spacing={2}>
             <Grid item xs={8}>
               <TextField
+                value={this.state.name}
+                onChange={this.handleNameChange}
                 autoFocus
                 margin="dense"
                 label={`Nazwa ${this.state.isRaid ? "rajdu" : "misji"}`}
@@ -601,6 +692,8 @@ class NewEventCreator extends Component {
             </Grid>
             <Grid item xs={4}>
               <TextField
+                value={this.state.minLevel}
+                onChange={this.handleMinLevelChange}
                 margin="dense"
                 label="Minimalny poziom"
                 type="number"
@@ -609,6 +702,8 @@ class NewEventCreator extends Component {
             </Grid>
           </Grid>
           <TextField
+            value={this.state.description}
+            onChange={this.handleDescriptionChange}
             margin="dense"
             label={`Opis ${this.state.isRaid ? "rajdu" : "misji"}`}
             type="text"
@@ -639,7 +734,17 @@ class NewEventCreator extends Component {
                 alignItems: "center"
               }}
             >
-              <img src={this.state.icon} style={{ width: "64px" }} />
+              {this.state.icon && (
+                <img
+                  src={
+                    this.state.icon.startsWith("blob")
+                      ? this.state.icon
+                      : require("../../../assets/icons/events/" +
+                          this.state.icon)
+                  }
+                  style={{ width: "64px" }}
+                />
+              )}
             </Grid>
           </Grid>
           <Typography style={{ marginBottom: "3rem", textAlign: "left" }}>
@@ -670,7 +775,7 @@ class NewEventCreator extends Component {
           <AmuletsModal
             open={this.state.showAmuletsModal}
             handleClose={this.handleToggleAmuletsModal}
-            amuletList={mockAmulets}
+            amuletList={this.props.isEdit ? this.state.amulets : mockAmulets}
             eventAmuletsList={this.state.amulets}
             handleAddAmulet={this.handleAddAmulet}
             handleSubtractAmulet={this.handleSubtractAmulet}
@@ -717,26 +822,113 @@ class NewEventCreator extends Component {
           >
             <Grid item>
               <TextField
+              value={this.state.experience}
+              onChange={this.handleChangeExperience}
                 margin="dense"
                 label="Punkty doświadczenia"
                 type="number"
-                inputProps={{ min: "0" }}
+                inputProps={{ min: "0", step: "50" }}
               />
             </Grid>
             <Grid item>
-              <Button variant="contained" color="primary" onClick={this.handleToggleItemsModal}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.handleToggleItemsModal}
+              >
                 Dodaj przedmioty
               </Button>
             </Grid>
           </Grid>
-          <ItemsModal open={this.state.showItemsModal}
-          handleClose = {this.handleToggleItemsModal}
-          itemsList = {mockItems}
-          eventItemsList = {this.state.items}
-          handleAddItem={this.handleAddItem}
-          handleSubtractItem={this.handleSubtractItem}
-          handleDeleteItem={this.handleDeleteItem}
-          handleChangeItemQuantity={this.handleChangeItemQuantity}
+          {!this.state.showItemsModal && (
+            <div
+              style={{
+                maxHeight: "30vh",
+                display: "flex",
+                justifyContent: "space-around",
+                overflow: "hidden",
+                width: "70%",
+                marginTop: "1rem"
+              }}
+            >
+              {this.state.items.any.length > 0 && (
+                <div
+                  style={{
+                    overflow: "auto",
+                    borderRight: "1px solid grey",
+                    flexBasis: "50%"
+                  }}
+                >
+                  <Typography style={{ fontWeight: "bolder" }}>
+                    Wszystkie klasy
+                  </Typography>
+                  <List dense>
+                    {this.state.items.any.map(item => {
+                      return (
+                        <ListItem>
+                          <ListItemAvatar>
+                            <img
+                              src={require("../../../assets/icons/items/" +
+                                item.itemModel.imgSrc)}
+                              style={{ width: "32px", height: "32px" }}
+                            />
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={item.itemModel.name}
+                            secondary={"x" + item.quantity}
+                          />
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                </div>
+              )}
+              <div style={{ overflow: "auto", flexBasis: "50%" }}>
+                <List dense>
+                  {Object.keys(this.state.items)
+                    .filter(
+                      characterClass =>
+                        characterClass !== "any" &&
+                        this.state.items[characterClass].length > 0
+                    )
+                    .map(characterClass => {
+                      return (
+                        <React.Fragment>
+                          <Typography style={{ fontWeight: "bolder" }}>
+                            {characterClasses[characterClass]}
+                          </Typography>
+                          {this.state.items[characterClass].map(item => {
+                            return (
+                              <ListItem>
+                                <ListItemAvatar>
+                                  <img
+                                    src={require("../../../assets/icons/items/" +
+                                      item.itemModel.imgSrc)}
+                                    style={{ width: "32px", height: "32px" }}
+                                  />
+                                </ListItemAvatar>
+                                <ListItemText
+                                  primary={item.itemModel.name}
+                                  secondary={"x" + item.quantity}
+                                />
+                              </ListItem>
+                            );
+                          })}
+                        </React.Fragment>
+                      );
+                    })}
+                </List>
+              </div>
+            </div>
+          )}
+          <ItemsModal
+            open={this.state.showItemsModal}
+            handleClose={this.handleToggleItemsModal}
+            itemsList={mockItems}
+            eventItemsList={this.state.items}
+            handleAddItem={this.handleAddItem}
+            handleSubtractItem={this.handleSubtractItem}
+            handleChangeItemQuantity={this.handleChangeItemQuantity}
           />
           <Divider style={{ marginTop: "1rem", marginBottom: "1rem" }} />
           <Grid
@@ -789,6 +981,27 @@ class NewEventCreator extends Component {
                 }
                 label="Wydarzenie bezterminowe"
               />
+            </Grid>
+          </Grid>
+          <Grid
+            container
+            justify="center"
+            spacing={5}
+            style={{ marginTop: "2rem" }}
+          >
+            <Grid item>
+              <Button onClick={this.props.handleClose} color="secondary">
+                Anuluj
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                onClick={this.props.handleClose}
+                color="primary"
+                variant="contained"
+              >
+                {this.props.isEdit ? "Zatwierdź edycję wydarzenia" : "Dodaj wydarzenie"}
+              </Button>
             </Grid>
           </Grid>
         </Container>

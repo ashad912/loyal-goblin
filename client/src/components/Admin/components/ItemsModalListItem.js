@@ -1,6 +1,7 @@
 import React from "react";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import Grid from "@material-ui/core/Grid";
+import List from "@material-ui/core/List";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -8,8 +9,10 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import Divider from "@material-ui/core/Divider";
 
 import classThemes from "../../../assets/themes/classThemes";
+import ItemsModalListItemPerks from "./ItemsModalListItemPerks";
 
 const ItemsModalListItem = props => {
   const [chosenClass, setChosenClass] = React.useState("any");
@@ -21,8 +24,11 @@ const ItemsModalListItem = props => {
   };
 
   const handleAdd = () => {
-      props.handleAdd(item, item.itemModel.class !== 'any' ? item.itemModel.class : chosenClass)
-  }
+    props.handleAdd(
+      item,
+      item.itemModel.class !== "any" ? item.itemModel.class : chosenClass
+    );
+  };
 
   return (
     <ListItem
@@ -33,19 +39,52 @@ const ItemsModalListItem = props => {
             : "none"
       }}
     >
-      <ListItemAvatar>
-        <img
-          style={{ width: "32px", height: "32px" }}
-          src={require(`../../../assets/icons/items/${item.itemModel.imgSrc}`)}
-        />
-      </ListItemAvatar>
-      <ListItemText
-        style={{ flexBasis: "40%" }}
-        primary={item.itemModel.name}
-        secondary={<span>{item.itemModel.fluff}</span>}
-      />
-      {item.itemModel.class === "any" && (
-        <FormControl style={{ margin: "0 1rem" }}>
+      <Grid container direction="column" style={{ maxWidth: "70%" }}>
+        <Grid item container>
+          <Grid item>
+          <ListItemAvatar>
+            <img
+              style={{ width: "32px", height: "32px" }}
+              src={require(`../../../assets/icons/items/${item.itemModel.imgSrc}`)}
+            />
+          </ListItemAvatar>
+          </Grid>
+          <Grid item>
+
+          <ListItemText
+            primary={item.itemModel.name}
+            secondary={
+              <span style={{ fontStyle: "italic" }}>
+                {item.itemModel.fluff}
+              </span>
+            }
+          />
+          </Grid>
+        </Grid>
+        {item.itemModel.hasOwnProperty("perks") &&
+          item.itemModel.perks.length > 0 && (
+            <Grid item style={{ border: "1px solid grey" }}>
+              <Divider />
+              <List dense>
+                {item.itemModel.perks.map(perk => {
+                  //TODO: ustalić dokładnie co pobierane jest z perków
+                  return (
+                    <ItemsModalListItemPerks
+                    
+                      perk={perk}
+                      key={perk.perkType + perk.value + perk.target}
+                    />
+                  );
+                })}
+              </List>
+            </Grid>
+          )}
+      </Grid>
+
+      {item.itemModel.class === "any" ? (
+        <FormControl
+          style={{ margin: "0 1rem", boxSizing: "border-box", width: "10rem", alignSelf: 'flex-start' }}
+        >
           <InputLabel htmlFor="class-choice">Klasa</InputLabel>
           <Select
             value={chosenClass}
@@ -62,8 +101,12 @@ const ItemsModalListItem = props => {
             <MenuItem value={"cleric"}>Kleryk</MenuItem>
           </Select>
         </FormControl>
+      ) : (
+        <div style={{ width: "10rem" }} />
       )}
-      <Button variant="contained" onClick={handleAdd}>Dodaj</Button>
+      <Button variant="contained" onClick={handleAdd} style={{alignSelf: 'flex-start', marginTop: '0.8rem'}}>
+        Dodaj
+      </Button>
     </ListItem>
   );
 };

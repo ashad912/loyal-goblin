@@ -9,7 +9,7 @@ import Shop from "./components/screens/Shop";
 import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
 import ForgotPassword from "./components/auth/ForgotPassword";
-import Admin from "./components/Admin/Admin";
+import Admin from "./components/admin/Admin";
 import Mission from "./components/screens/events/Mission";
 
 import withAuth from "./hoc/withAuth";

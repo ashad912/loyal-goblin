@@ -1,5 +1,5 @@
 const characterClasses = {
-    any: "Każda",
+    any: "Wszystkie klasy",
     warrior: "Wojownik",
     mage: "Mag",
     rogue: "Łotrzyk",
