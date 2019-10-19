@@ -2,7 +2,7 @@ import React from "react";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
+import Box from "@material-ui/core/Box";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Grid from "@material-ui/core/Grid";
 import List from "@material-ui/core/List";
@@ -13,34 +13,35 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Typography from "@material-ui/core/Typography";
 import Input from "@material-ui/core/Input";
 import Checkbox from "@material-ui/core/Checkbox";
+import ItemsModalListItem from "./ItemsModalListItem";
+
+import itemCategories from '../../../assets/categories/items'
+import characterClasses from '../../../assets/categories/characterClasses'
 
 //TODO: pole szukaj, filtry (klasa, poziom, kategoria, perki)
-
+//TODO: taby (wszyscy|klasowe)
 
 const ItemsModal = props => {
   const handleAdd = id => () => {
-    props.handleAddAmulet(id);
+    props.handleAddItem(id);
   };
 
   const handleSubtract = id => () => {
-    props.handleSubtractAmulet(id);
+    props.handleSubtractItem(id);
   };
 
   const handleDelete = id => () => {
-    props.handleDeleteAmulet(id);
+    props.handleDeleteItem(id);
   };
 
   const handleChangeQuantity = (e, id) => {
-    props.handleChangeAmuletQuantity(e, id);
+    props.handleChangeItemQuantity(id, e.target.value);
   };
 
-  const handleCheckbox = (id, quantity) => () => {
-    if (quantity > 0) {
-      props.handleDeleteAmulet(id);
-    } else {
-      props.handleAddAmulet(id);
-    }
+  const handleFirstAdd = (item, characterClass) => {
+    props.handleAddItem(item, characterClass);
   };
+
   return (
     <div>
       <Dialog
@@ -54,100 +55,52 @@ const ItemsModal = props => {
           <div
             style={{
               borderRight: "1px solid grey",
-              flexBasis: "40%",
+              flexBasis: "60%",
               overflow: "auto"
             }}
           >
-            <List dense>
-              {props.amuletList.map(amulet => {
+            <List dense style={{ padding: "1rem" }}>
+              {Object.keys(props.itemsList).map(itemCategory => {
                 return (
-                  <ListItem key={amulet.itemModel.id}>
-                    <ListItemAvatar>
-                      <img
-                        src={require("../../../assets/icons/items/" +
-                          amulet.itemModel.imgSrc)}
-                        width="64px"
-                      />
-                    </ListItemAvatar>
-                    <ListItemText primary={amulet.itemModel.name} />
-
-                    <ListItemSecondaryAction>
-                      <Checkbox
-                        edge="end"
-                        onChange={handleCheckbox(
-                          amulet.itemModel.id,
-                          amulet.quantity
-                        )}
-                        checked={amulet.quantity > 0}
-                      />
-                    </ListItemSecondaryAction>
-                  </ListItem>
+                  <React.Fragment key={itemCategory}>
+                    <Typography variant="caption">{itemCategories[itemCategory]}</Typography>
+                    <List>
+                      {props.itemsList[itemCategory].map(item => {
+                        return (
+                          <ItemsModalListItem
+                            item={item}
+                            key={item.itemModel.id}
+                            handleAdd={handleFirstAdd}
+                          />
+                        );
+                      })}
+                    </List>
+                  </React.Fragment>
                 );
               })}
             </List>
           </div>
-          <div style={{ flexBasis: "60%", overflow: "auto" }}>
-            <List dense>
-              {props.eventAmuletsList
-                .filter(amulet => amulet.quantity > 0)
-                .map(amulet => {
-                  return (
-                    <ListItem key={amulet.itemModel.id}>
-                      <Grid
-                        container
-                        direction="row"
-                        justify="space-between"
-                        alignItems="center"
-                        wrap="nowrap"
-                        spacing={2}
-                      >
-                        <Grid item>
-                          <ListItemAvatar>
-                            <img
-                              src={require("../../../assets/icons/items/" +
-                                amulet.itemModel.imgSrc)}
-                              width="64px"
-                            />
-                          </ListItemAvatar>
-                        </Grid>
-                        <Grid item style={{ flexBasis: "40%" }}>
-                          <Typography variant="h6">
-                            {amulet.itemModel.name}
-                          </Typography>
-                        </Grid>
-                        <Grid item>
-                          <Button
-                            variant="contained"
-                            color="secondary"
-                            onClick={handleSubtract(amulet.itemModel.id)}
-                          >
-                            -
-                          </Button>
-                        </Grid>
-                        <Grid item>
-                          <Input
-                            style={{ width: "3rem" }}
-                            type="tel"
-                            value={amulet.quantity}
-                            onChange={e =>
-                              handleChangeQuantity(e, amulet.itemModel.id)
-                            }
-                            inputProps={{ style: { textAlign: "center" } }}
-                          />
-                        </Grid>
-                        <Grid item>
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={handleAdd(amulet.itemModel.id)}
-                          >
-                            +
-                          </Button>
-                        </Grid>
-                      </Grid>
-                    </ListItem>
-                  );
-                })}
+          <div style={{ flexBasis: "40%", overflow: "auto" }}>
+            <List dense style={{ padding: "1rem" }}>
+              {Object.keys(props.eventItemsList).map(characterClass => {
+                return (
+                  props.eventItemsList[characterClass].length > 0 &&
+                (<React.Fragment key={characterClass}>
+                  <Typography style={{fontWeight: 'bolder'}}>{characterClasses[characterClass]}</Typography>
+                  <List>
+                    {props.eventItemsList[characterClass].map(item => {
+                      return (
+                        <ListItem key={item.itemModel.id}>
+                          <Box display="flex" justifyContent="flex-start" style={{width: '100%'}}>
+                          <Typography style={{flexBasis: '80%'}}>{item.itemModel.name}</Typography>
+                          <Typography style={{flexBasis: '20%'}}>x{item.quantity}</Typography>
+                          </Box>
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                </React.Fragment>))
+              })}
             </List>
           </div>
         </div>

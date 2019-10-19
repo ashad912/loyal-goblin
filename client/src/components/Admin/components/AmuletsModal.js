@@ -31,7 +31,7 @@ const AmuletsModal = props => {
   };
 
   const handleChangeQuantity = (e, id) => {
-    props.handleChangeAmuletQuantity(e, id);
+    props.handleChangeAmuletQuantity(id, e.target.value);
   };
 
   const handleCheckbox = (id, quantity) => () => {

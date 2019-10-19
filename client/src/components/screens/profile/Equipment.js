@@ -19,6 +19,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 
+import itemCategories from '../../../assets/categories/items'
+
 const useStyles = makeStyles(theme => ({
   root: {
     width: "100%",
@@ -66,7 +68,7 @@ const Equipment = props => {
         {Object.keys(items).map(itemCategory => (
           <React.Fragment key={itemCategory}>
             <ListItem onClick={handleOpenList} data-value={itemCategory}>
-              <ListItemText primary={itemCategory} />
+              <ListItemText primary={itemCategories[itemCategory]} />
               {openList === itemCategory ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
             <Collapse

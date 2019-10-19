@@ -27,6 +27,7 @@ import pearlAmulet from "../../../assets/icons/items/pearl-amulet.png";
 import emeraldAmulet from "../../../assets/icons/items/emerald-amulet.png";
 
 import "moment/locale/pl";
+import ItemsModal from "./ItemsModal";
 moment.locale("pl");
 
 const mockAmulets = [
@@ -370,7 +371,7 @@ const FileInputWrapper = styled.div`
   position: relative;
   background: red;
   height: 2.5rem;
-  width: 10rem;
+  width: 14rem;
   margin: 2rem 0;
 `;
 
@@ -392,16 +393,8 @@ const FileInputButton = styled(Button)`
   width: 14rem;
 `;
 
-const AmuletIcon = styled.img`
-  width: 32px;
-`;
 
-const AmuletList = styled(List)`
-  max-height: 30vh;
-  max-width: 30vw;
-  overflow-y: auto;
-  border: 1px solid grey;
-`;
+
 
 class NewEventCreator extends Component {
   state = {
@@ -416,7 +409,9 @@ class NewEventCreator extends Component {
       .add(1, "d")
       .format("YYYY-MM-DDTHH:mm"),
     isPermanent: false,
-    isUnique: false
+    isUnique: false,
+    showItemsModal: false,
+    items: {any: [], warrior: [], mage: [], rogue: [], cleric: []}
   };
 
   handleUniqueChange = () => {
@@ -449,16 +444,16 @@ class NewEventCreator extends Component {
     this.setState({ partySize: newValue });
   };
 
-  handleChangeAmuletQuantity = (e, id) => {
+  handleChangeItemQuantity = (id, quantity) => {
     const amulets = [...this.state.amulets];
     const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel.id === id);
     if (idOfAmulet !== -1) {
-      amulets[idOfAmulet].quantity = parseInt(e.target.value);
+      amulets[idOfAmulet].quantity = parseInt(quantity);
       this.setState({ amulets });
     }
   };
 
-  handleSubtractAmulet = id => {
+  handleSubtractItem = (id) => {
     const amulets = [...this.state.amulets];
     const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel.id === id);
     if (idOfAmulet !== -1) {
@@ -468,7 +463,7 @@ class NewEventCreator extends Component {
     }
   };
 
-  handleDeleteAmulet = id => {
+  handleDeleteItem = (id) => {
     const amulets = [...this.state.amulets];
     const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel.id === id);
     if (idOfAmulet !== -1) {
@@ -478,7 +473,51 @@ class NewEventCreator extends Component {
     }
   };
 
-  handleAddAmulet = id => {
+  handleAddItem = (currentItem, characterClass) => {
+    const allItems = {...this.state.items};
+    const classItems = [...allItems[characterClass]]
+    const idOfItemAlreadyAdded = classItems.findIndex(
+      item => item.itemModel.id === currentItem.itemModel.id
+    );
+    if (idOfItemAlreadyAdded === -1) {
+      classItems.push({...currentItem, quantity: 1})
+    }else{
+      classItems[idOfItemAlreadyAdded].quantity += 1
+    }
+    allItems[characterClass] = classItems
+    this.setState({ items: allItems });
+  };
+
+  handleChangeAmuletQuantity = (id, quantity) => {
+    const amulets = [...this.state.amulets];
+    const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel.id === id);
+    if (idOfAmulet !== -1) {
+      amulets[idOfAmulet].quantity = parseInt(quantity);
+      this.setState({ amulets });
+    }
+  };
+
+  handleSubtractAmulet = (id) => {
+    const amulets = [...this.state.amulets];
+    const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel.id === id);
+    if (idOfAmulet !== -1) {
+      amulets[idOfAmulet].quantity -= 1;
+
+      this.setState({ amulets });
+    }
+  };
+
+  handleDeleteAmulet = (id) => {
+    const amulets = [...this.state.amulets];
+    const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel.id === id);
+    if (idOfAmulet !== -1) {
+      amulets[idOfAmulet].quantity = 0;
+
+      this.setState({ amulets });
+    }
+  };
+
+  handleAddAmulet = (id) => {
     const amulets = [...this.state.amulets];
     const idOfAmuletAlreadyAdded = amulets.findIndex(
       amulet => amulet.itemModel.id === id
@@ -488,6 +527,12 @@ class NewEventCreator extends Component {
     }
 
     this.setState({ amulets });
+  };
+
+  handleToggleItemsModal = e => {
+    this.setState(prevState => {
+      return { showItemsModal: !prevState.showItemsModal };
+    });
   };
 
   handleToggleAmuletsModal = e => {
@@ -679,11 +724,20 @@ class NewEventCreator extends Component {
               />
             </Grid>
             <Grid item>
-              <Button variant="contained" color="primary">
+              <Button variant="contained" color="primary" onClick={this.handleToggleItemsModal}>
                 Dodaj przedmioty
               </Button>
             </Grid>
           </Grid>
+          <ItemsModal open={this.state.showItemsModal}
+          handleClose = {this.handleToggleItemsModal}
+          itemsList = {mockItems}
+          eventItemsList = {this.state.items}
+          handleAddItem={this.handleAddItem}
+          handleSubtractItem={this.handleSubtractItem}
+          handleDeleteItem={this.handleDeleteItem}
+          handleChangeItemQuantity={this.handleChangeItemQuantity}
+          />
           <Divider style={{ marginTop: "1rem", marginBottom: "1rem" }} />
           <Grid
             container
