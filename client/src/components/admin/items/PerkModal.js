@@ -294,6 +294,9 @@ class PerkModal extends React.Component {
       if(time[index].hoursFlag){
         time[index].startHour = 12
         time[index].lengthInHours = 24
+      }else{
+        time[index].startHour = 16
+        time[index].lengthInHours = 3
       }
 
       time[index].hoursFlag = !time[index].hoursFlag
@@ -482,15 +485,18 @@ const createDiscTarget = (perkType) => {
       break
   }
 }
+const getEndHour = (startHour, length) => {
+  return (startHour + length) % 24
+}
 
-const createNumberList = (startNum, endNum, isWeekDay, isHour) => {
+const createNumberList = (startNum, endNum, isWeekDay, isHour, startHour) => {
   let numArray=[];
   for(let i=startNum; i < endNum+1; i++) {
     numArray=[...numArray, i]
   }
   return numArray.map((num)=>{
     return(
-      <MenuItem value={num}>{isWeekDay ? (days[num]): (isHour ? (`${num}:00`) : (num))}</MenuItem>
+      <MenuItem value={num}>{isWeekDay ? (days[num]): (isHour ? (`${num}:00`) : (`${num} (${getEndHour(startHour, num)}:00)`))}</MenuItem>
     )
   })
   
@@ -606,6 +612,7 @@ const convertToPerkLabel = (perkType) => {
               {this.state.perk.perkType === 'custom' ? (
                 <TextField
                   style={{margin: '0.1rem 0 0 0'}}
+                  value={this.state.perk.value}
                   fullWidth
                   name="value"
                   margin="dense"
@@ -715,7 +722,7 @@ const convertToPerkLabel = (perkType) => {
                                 id: 'lengthInHours',
                             }}
                         >
-                        {createNumberList(1, 24)}
+                        {createNumberList(1, 24, false, false, period.startHour)}
                         </Select>
                   </FormControl>
                   </Grid>

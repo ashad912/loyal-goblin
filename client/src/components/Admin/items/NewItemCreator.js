@@ -413,20 +413,27 @@ class NewItemCreator extends Component {
                                     {perk.target ? (perk.target.name ? (perk.target.name) : (perk.target)) : (null)}
                                   </Grid>
                                   <Grid item xs={3}>
-                                    {perk.time.map((period)=>(
-                                      <Grid container style={{justifyContent: 'center'}}>
-                                        <Grid item>
-                                          {`${days[period.startDay]}`}
-                                        </Grid>
-                                        {period.hoursFlag ? (
+                                    {perk.time.length ? (
+                                      <React.Fragment>
+                                        {perk.time.map((period)=>(
+                                        <Grid container style={{justifyContent: 'center'}}>
                                           <Grid item>
-                                            {`, ${period.startHour}:00 - ${getEndHour(period.startHour, period.lengthInHours)}:00`}
+                                            {`${days[period.startDay]}`}
                                           </Grid>
-                                        ) : (
-                                          null
-                                        )}
-                                      </Grid>
-                                    ))}
+                                          {period.hoursFlag ? (
+                                            <Grid item>
+                                              {`, ${period.startHour}:00 - ${getEndHour(period.startHour, period.lengthInHours)}:00`}
+                                            </Grid>
+                                          ) : (
+                                            null
+                                          )}
+                                        </Grid>
+                                        ))}
+                                      </React.Fragment>
+                                    ) : (
+                                      <span>Stały</span>
+                                    )}
+                                    
                                   </Grid>
                                 
                                 
@@ -435,13 +442,14 @@ class NewItemCreator extends Component {
                                   </Grid>
                                   <Grid item xs={2} style={{display: 'flex', justifyContent: 'flex-end'}}>
                                     <Button
-                                        style={{marginRight: '0.5rem'}}
+                                        style={{marginRight: '0.5rem', height: '2.5rem'}}
                                         variant="contained"
                                         color="primary"
                                         onClick={() => this.handleModifyPerk(index)}>
                                           <CreateIcon />
                                     </Button>
                                     <Button
+                                      style={{height: '2.5rem'}}
                                       variant="contained"
                                       color="primary"
                                       onClick={() => this.handleDeletePerk(index)}>
