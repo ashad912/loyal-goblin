@@ -6,7 +6,9 @@ import Paper from "@material-ui/core/Paper";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import Fab from "@material-ui/core/Fab";
 import ColorizeIcon from "@material-ui/icons/Colorize";
+import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
 
 import Attribute from "./profile/Attribute";
 import Equipment from "./profile/Equipment";
@@ -15,7 +17,8 @@ import maleBody from "../../assets/avatar/male-body.png";
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
-    flexGrow: 1
+    flexGrow: 1,
+    position: "relative"
   },
   avatarCard: {
     flex: 0.9,
@@ -34,7 +37,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: "1rem"
   },
   eqHeading: {
-    marginBottom: "1rem"
+    margin: "1rem 0"
   }
 }));
 
@@ -96,7 +99,7 @@ const createTempEquipment = () => {
           },
           name: "Perła",
           fluff: "Perła prosto z lodówki, znaczy z małży",
-          imgSrc: "pearl-amulet.png",
+          imgSrc: "pearl-amulet.png"
         }
       }
     ],
@@ -113,7 +116,7 @@ const createTempEquipment = () => {
           },
           name: "Krótki miecz",
           fluff: "Przynajmniej nie masz kompleksów",
-          imgSrc: "short-sword.png",
+          imgSrc: "short-sword.png"
         }
       }
     ],
@@ -130,7 +133,7 @@ const createTempEquipment = () => {
           },
           name: "Skórzana kurta",
           fluff: "Lale za takimi szaleją",
-          imgSrc: "leather-jerkin.png",
+          imgSrc: "leather-jerkin.png"
         }
       }
     ],
@@ -147,7 +150,7 @@ const createTempEquipment = () => {
           },
           name: "Lniane spodnie",
           fluff: "Zwykłe spodnie, czego jeszcze chcesz?",
-          imgSrc: "linen-trousers.png",
+          imgSrc: "linen-trousers.png"
         }
       }
     ],
@@ -164,7 +167,7 @@ const createTempEquipment = () => {
           },
           name: "Wysokie buty",
           fluff: "Skórzane, wypastowane, lśniące",
-          imgSrc: "high-boots.png",
+          imgSrc: "high-boots.png"
         }
       }
     ],
@@ -181,7 +184,7 @@ const createTempEquipment = () => {
           },
           name: "Czapka z piórkiem",
           fluff: "Wesoła kompaniaaaa",
-          imgSrc: "feathered-hat.png",
+          imgSrc: "feathered-hat.png"
         }
       },
       {
@@ -196,7 +199,7 @@ const createTempEquipment = () => {
           },
           name: "Kaptur czarodzieja",
           fluff: "Kiedyś nosił go czarodziej. Już nie nosi.",
-          imgSrc: "wizard-coul.png",
+          imgSrc: "wizard-coul.png"
         }
       }
     ],
@@ -213,7 +216,7 @@ const createTempEquipment = () => {
           },
           name: "Pierścień siły",
           fluff: "Całuj mój sygnet potęgi",
-          imgSrc: "strength-ring.png",
+          imgSrc: "strength-ring.png"
         }
       }
     ]
@@ -273,7 +276,7 @@ const Profile = props => {
   };
 
   const handleItemToggle = (id, isEquipped, category) => {
-    console.log(id)
+    console.log(id);
     //TODO: Each item needs own ID
     const tempPlayer = { ...player };
     const modifyItemArrayIndex = tempPlayer.equipment[category].findIndex(
@@ -424,7 +427,7 @@ const Profile = props => {
           <Button onClick={() => handleAddExperience(500)}>Dodaj expa</Button>
           <Button>Dodaj amulet</Button>
           <Link to="/shop">
-            <Button  variant="contained" color="primary">
+            <Button variant="contained" color="primary">
               Idziemy expić!
               <ColorizeIcon
                 style={{
@@ -445,6 +448,12 @@ const Profile = props => {
         handleItemToggle={handleItemToggle}
         handleItemDelete={handleItemDelete}
       />
+      <Typography variant="h5" className={classes.eqHeading}>
+        Znajomi i drużyna:
+      </Typography>
+      <Fab color="primary">
+        <PeopleAltIcon />
+      </Fab>
       <Typography variant="h5" className={classes.eqHeading}>
         Statystyki:
       </Typography>

@@ -72,6 +72,7 @@ const EventListItem = ({
                 event.partySize[0]
               } - ${event.partySize[1]}`}</Typography>{" "}
               <PeopleIcon />
+              <Typography  style={{ marginLeft: "1rem" }}>Poziom {event.minLevel} +</Typography>
             </Box>
           </Grid>
         </Grid>
@@ -79,7 +80,7 @@ const EventListItem = ({
           <Grid item xs={2}>
             <img
               src={require("../../../assets/icons/events/" + event.icon)}
-              width={64}
+              width={128}
             />
           </Grid>
           <Grid item container direction="column" xs={6}>

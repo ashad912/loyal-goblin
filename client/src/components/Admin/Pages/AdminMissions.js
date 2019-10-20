@@ -279,7 +279,7 @@ const AdminMissions = () => {
       );
       setEvents(tempEventsList)
     }else{
-      let tempEventsList = applyStatusFilter(statusFilter);
+      
       setEvents(tempEventsList);
     }
   }, [nameFilter]);
@@ -289,10 +289,10 @@ const AdminMissions = () => {
   };
 
   const applyStatusFilter = status => {
-    let tempEvents = [...events];
+    let tempEvents = [...mockEvents];
     switch (status) {
       case "all":
-        tempEvents = [...mockEvents];
+        //tempEvents = [...mockEvents];
         break;
       case "active":
         //TODO: change to event.status where possible
@@ -383,12 +383,12 @@ const AdminMissions = () => {
               alignItems="center"
             >
               <FormControl style={{ alignSelf: "flex-start" }}>
-                <InputLabel htmlFor="state-filter">Status</InputLabel>
+                <InputLabel htmlFor="status-filter">Status</InputLabel>
                 <Select
                   value={statusFilter}
                   onChange={handleChangeStatusFilter}
                   inputProps={{
-                    id: "state-filter"
+                    id: "status-filter"
                   }}
                 >
                   <MenuItem value={"all"}>Wszystkie</MenuItem>

@@ -7,6 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import EventIcon from "@material-ui/icons/Event";
 import CreateIcon from "@material-ui/icons/Create";
 import PeopleIcon from "@material-ui/icons/People";
+import LocalBarIcon from '@material-ui/icons/LocalBar';
 import EventSeatIcon from "@material-ui/icons/EventSeat";
 import CropFreeIcon from "@material-ui/icons/CropFree";
 
@@ -14,6 +15,7 @@ import MenuDrawer from "./MenuDrawer";
 import AdminMissions from "./Pages/AdminMissions";
 import AdminItems from "./Pages/AdminItems";
 import AdminUsers from "./Pages/AdminUsers";
+import AdminBarmans from './Pages/AdminBarmans'
 import AdminReservations from "./Pages/AdminReservations";
 import AdminQR from "./Pages/AdminQR";
 const drawerWidth = 240;
@@ -39,6 +41,7 @@ const menuItems = [
   { title: "Misje", icon: <EventIcon /> },
   { title: "Przedmioty", icon: <CreateIcon /> },
   { title: "Użytkownicy", icon: <PeopleIcon /> },
+  { title: "Barmani", icon: <LocalBarIcon /> },
   { title: "Rezerwacje", icon: <EventSeatIcon /> },
   { title: "QR", icon: <CropFreeIcon /> }
 ];
@@ -46,7 +49,7 @@ const menuItems = [
 const Admin = () => {
   const classes = useStyles();
 
-  const [currentPage, setCurrentPage] = React.useState("Misje");
+  const [currentPage, setCurrentPage] = React.useState("Barmani");
 
   //LEGACY CHECK SERVER STATUS
   // const handleClick = async () => {
@@ -74,6 +77,9 @@ const Admin = () => {
     case "Użytkownicy":
       page = <AdminUsers />;
       break;
+      case "Barmani":
+        page = <AdminBarmans />;
+        break;
     case "Rezerwacje":
       page = <AdminReservations />;
       break;
