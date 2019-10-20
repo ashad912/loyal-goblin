@@ -51,7 +51,7 @@ const ItemModelSchema = new mongoose.Schema({
     {
       perkType: String, //perkTypes - easier to search -> u know key words -> perks.map(perk => if(perk.perkType = 'disc-product' && perk.name === product.name) -> give discount
       value: String, //value  '100' or '15%' - interpreted by discountCounting method (finding percent sign -> converting)
-      name: String, // field necessary for disc-product or disc-category
+      target: String, // field necessary for disc-product/disc-category/disc-rent
       time: [
         {
           //u can specify many time periods for perk - ex: day: 5, startHour: 16, lengthInHours: 11 -> Friday, 16:00 - 03:00 [03:00 is at Saturday]
@@ -79,7 +79,7 @@ const ItemModelSchema = new mongoose.Schema({
           lengthInHours: {
             type: Number,
             min: 1,
-            max: 23,
+            max: 24,
             validate(value) {
               if (!validator.isInteger(value)) {
                 throw new Error(`${value} is not an integer value!`);

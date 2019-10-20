@@ -1,20 +1,20 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import NewItemCreator from "../items/NewItemCreator";
+import NewProductCreator from "../products/NewProductCreator";
 
-const AdminItems = () => {
-  const [showNewItemCreator, setShowNewItemCreator] = React.useState(true);
+const AdminProducts = () => {
+  const [showNewProductCreator, setShowNewProductCreator] = React.useState(true);
 
   const toggleItemCreator = e => {
-    setShowNewItemCreator(prev => !prev);
+    setShowNewProductCreator(prev => !prev);
   };
 
   return (
     <div>
-      {showNewItemCreator ? (
-        <NewItemCreator
-          open={showNewItemCreator}
+      {showNewProductCreator ? (
+        <NewProductCreator
+          open={showNewProductCreator}
           handleClose={toggleItemCreator}
         />
       ) : (
@@ -24,13 +24,13 @@ const AdminItems = () => {
             color="primary"
             onClick={toggleItemCreator}
           >
-            Stwórz przedmiot
+            Nowy produkt
           </Button>
-          <Typography>Lista przedmiotów</Typography>
+          <Typography>Lista produktów</Typography>
         </div>
       )}
     </div>
   );
 };
 
-export default AdminItems;
+export default AdminProducts;

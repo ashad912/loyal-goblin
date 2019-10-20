@@ -10,15 +10,17 @@ import PeopleIcon from "@material-ui/icons/People";
 import LocalBarIcon from '@material-ui/icons/LocalBar';
 import EventSeatIcon from "@material-ui/icons/EventSeat";
 import CropFreeIcon from "@material-ui/icons/CropFree";
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
 import MenuDrawer from "./MenuDrawer";
 import AdminMissions from "./Pages/AdminMissions";
 import AdminItems from "./Pages/AdminItems";
+import AdminProducts from "./Pages/AdminProducts";
 import AdminUsers from "./Pages/AdminUsers";
 import AdminBarmans from './Pages/AdminBarmans'
 import AdminReservations from "./Pages/AdminReservations";
 import AdminQR from "./Pages/AdminQR";
-const drawerWidth = 240;
+const drawerWidth = 180;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,7 +41,8 @@ const Content = styled.div`
 
 const menuItems = [
   { title: "Misje", icon: <EventIcon /> },
-  { title: "Przedmioty", icon: <CreateIcon /> },
+  { title: "Przedmioty", icon: <CreateIcon />},
+  { title: "Produkty", icon: <ShoppingCartIcon />},
   { title: "Użytkownicy", icon: <PeopleIcon /> },
   { title: "Barmani", icon: <LocalBarIcon /> },
   { title: "Rezerwacje", icon: <EventSeatIcon /> },
@@ -73,6 +76,9 @@ const Admin = () => {
       break;
     case "Przedmioty":
       page = <AdminItems />;
+      break;
+    case "Produkty":
+      page = <AdminProducts />
       break;
     case "Użytkownicy":
       page = <AdminUsers />;

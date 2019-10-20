@@ -227,3 +227,640 @@
                 
             
         </RootDiv>
+
+
+        //backup newperk
+
+        import React from "react";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import TextField from "@material-ui/core/TextField";
+import Grid from "@material-ui/core/Grid";
+import Switch from "@material-ui/core/Switch";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import Typography from "@material-ui/core/Typography";
+import Input from "@material-ui/core/Input";
+import Checkbox from "@material-ui/core/Checkbox";
+import uuid from 'uuid/v1'
+
+
+const perkTypes = [
+  "attr-strength",
+  "attr-dexterity",
+  "attr-magic",
+  "attr-endurance",
+  "experience",
+  "disc-product",
+  "disc-category",
+  "disc-rent"
+];
+
+const createTempProducts = () => {
+  return [{
+    _id: 1,
+    category: "shot",
+    name: "Wóda",
+    description: "nie mam weny",
+    price: 7.0,
+    imgSrc: "drink.png"
+  },
+  {
+    _id: 2,
+    category: "shot",
+    name: "Zryje",
+    description: "na opisy",
+    price: 7.0,
+    imgSrc: "drink.png"
+  },
+  {
+    _id: 3,
+    category: "shot",
+    name: "Banie",
+    description: "szotów",
+    price: 7.0,
+    imgSrc: "drink.png"
+  },
+  {
+    _id: 4,
+    category: "shot",
+    name: "BWóda",
+    description: "nie mam weny",
+    price: 7.0,
+    imgSrc: "drink.png"
+  },
+  {
+    _id: 5,
+    category: "shot",
+    name: "BZryje",
+    description: "na opisy",
+    price: 7.0,
+    imgSrc: "drink.png"
+  }]
+}
+
+const productCategories = ['shots', 'drinks', 'beer', 'food', 'alco-free']
+
+const rentRooms = ['medieval', 'post-apo', 'sci-fi']
+
+const days = [null, 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela']
+
+class NewPerkModal extends React.Component {
+
+  state = {
+    perk:{
+      perkType: undefined,
+      value: undefined,
+      target: undefined,
+      time: [/*_id, day, startHour, lengthInHours*/],
+    },
+    formError: {
+      value: undefined
+    },
+    time: {
+      active: false,
+      hours: [],
+    },
+    products: createTempProducts(),
+    categories: productCategories,
+    rentRooms: rentRooms
+    
+  }
+
+  componentDidMount = () => {
+    console.log('init')
+  }
+
+  handleAdd = id => () => {
+    this.props.handleAddAmulet(id);
+  };
+
+  handleSubtract = id => () => {
+    this.props.handleSubtractAmulet(id);
+  };
+
+  handleDelete = id => () => {
+    this.props.handleDeleteAmulet(id);
+  };
+
+  handleChangeQuantity = (e, id) => {
+    this.props.handleChangeAmuletQuantity(e, id);
+  };
+
+  handleCheckbox = (id, quantity) => () => {
+    if (quantity > 0) {
+        this.props.handleDeleteAmulet(id);
+    } else {
+        this.props.handleAddAmulet(id);
+    }
+  };
+
+  handleChangePerkNameValue = (e) => {
+    const name = e.target.name
+    const value = e.target.value 
+
+    
+    this.setState({
+      perk:{
+        ...this.state.perk,
+        [name]: value
+      }     
+    }, () => {
+      this.callbacksAndValidation(name, value)
+    })
+  };
+
+  handleChangePerkTimeNameValue = (e, index) => {
+    const name = e.target.name
+    const value = e.target.value 
+
+    const time = this.state.perk.time;
+    time[index][name] = value
+
+    this.setState({
+      perk:{
+        ...this.state.perk,
+        time: time   
+      }     
+    }, () => {
+      this.callbacksAndValidation(name, value, index)
+    })
+  };
+
+  callbacksAndValidation = (fieldName, fieldValue, index, periodId) => {
+    
+    switch(fieldName) {
+      case 'perkType':
+        this.setState({
+          perk: {
+            ...this.state.perk,
+            target: undefined,
+          }
+        })
+        break
+      case 'value':
+        let valueValid = true
+        let valueError = ''
+
+        if(fieldValue.length > 0){
+          valueValid = fieldValue.trim().match(/^[-+]?[0-9]*%?$/);
+          valueError = valueValid ? undefined : 'Niepoprawna wartość!'
+        }else{
+          valueValid = true
+          valueError = undefined
+        }
+        this.setState({
+          formError: {
+              ...this.state.formError,
+              value: valueError
+          },
+          
+        });
+        break
+      case 'startDay':
+        const time = this.state.perk.time
+        if(index !== -1 && time[index].startHour === undefined){
+          time[index].startHour = 12;
+          time[index].lengthInHours = 24;
+        }
+
+        this.setState({
+          perk: {
+              ...this.state.perk,
+              time: time
+          },
+          
+        });
+      case 'flag':
+        const gotTime = this.state.perk.time
+        const gotIndex = this.state.perk.time.findIndex(period => period._id === periodId)
+        if(gotIndex !== -1 && fieldValue === true){
+          gotTime[gotIndex].startHour = 12;
+          gotTime[gotIndex].lengthInHours = 24;
+        }
+
+        this.setState({
+          perk: {
+              ...this.state.perk,
+              time: gotTime
+          },
+          
+        });
+      default:
+        break
+    }
+
+
+  }
+
+  handleClose = () => {
+    this.setState({
+      // perk:{
+      //   perkType: undefined,
+      //   value: undefined,
+      //   target: undefined,
+      //   time: [/*day, startHour, lengthInHours*/],
+      // }
+    }, () => {
+      this.props.handleClose()
+    })
+  }
+
+  handleTogglePerkTimeSetting = (e) => {
+    const name = e.target.name
+
+    const newId = uuid()
+    this.setState(prevState => {
+      return { 
+        time: {
+          active: !prevState.time.active,
+          hours: !prevState.time.active && !prevState.perk.time.length ? [{_id: newId, flag: false}] : prevState.time.hours
+        },
+        perk: {
+          ...this.state.perk,
+          time: !prevState.time.active && !prevState.perk.time.length ? [{_id: newId, startDay: 1, startHour: 12, lengthInHours: 24}] : prevState.perk.time
+        }
+      };
+    });
+  }
+
+  handleTogglePerkTimeHoursForPeriod = (index, periodId) => {
+
+    const flagToPass = this.state.time.hours[index].flag
+
+    this.setState(prevState => {
+      const hours = prevState.time.hours
+
+      hours[index].flag = !hours[index].flag
+
+      return {
+        time: {
+          ...this.state.time,
+          hours: hours
+        },
+        
+      }
+    }, () => {
+      this.callbacksAndValidation('flag', flagToPass, null, periodId)
+    })
+  }
+
+  handleAddTimePeriod = () => {
+    const newId = uuid()
+    const newPeriod = {_id: newId, startDay: 1, startHour: 12, lengthInHours: 24}
+    const newTimeFlag = {_id: newId, flag: false}
+    this.setState({
+      perk: {
+        ...this.state.perk,
+        time: [...this.state.perk.time, newPeriod]
+      },
+      time:{
+        ...this.state.time,
+        hours: [...this.state.time.hours, newTimeFlag]
+      } 
+
+    })
+  }
+
+  handleDeleteTimePeriod = (id) => {
+    console.log(id)
+    const time = this.state.perk.time.filter((period)=> {
+      return period._id !== id
+    })
+    console.log(time)
+    const hours = this.state.time.hours.filter((hour) => {
+      return hour._id !== id
+    })
+    console.log(hours)
+    this.setState({
+      perk: {
+        ...this.state.perk,
+        time: time
+      },
+      time:{
+        ...this.state.time,
+        hours: hours
+      }
+
+    })
+
+  }
+  render(){
+/*
+    const createMakeList = (perkType) => {
+      console.log('createHalo')
+      switch(perkType){
+        case 'disc-product':
+          const products = this.state.products
+          console.log(this.state.products)
+          products.map((product) => {
+            return(
+              <MenuItem value={product.name}>{product.name}</MenuItem>
+            )
+          })
+        break
+        case 'disc-category':
+          const categories = this.state.categories
+          categories.map((category) => {
+            return(
+              <MenuItem value={category}>{category}</MenuItem>
+            )
+          })
+        case 'disc-rent':
+          const rentRooms = this.state.rentRooms
+          rentRooms.map((room) => {
+            return(
+              <MenuItem value={room}>{room}</MenuItem>
+            )
+          })
+        default:
+          break
+      }
+    }
+*/
+
+const createMakeList = (perkType) => {
+  console.log('createHalo')
+  switch(perkType){
+    case 'disc-product':
+      return(
+      <FormControl >
+            <InputLabel htmlFor="target">Zakres zniżki</InputLabel>
+            <Select
+                value={this.state.perk.target}
+                onChange={this.handleChangePerkNameValue}
+                inputProps={{
+                    name: 'target',
+                    id: 'target',
+                }}
+            >
+            {this.state.products.map((product) => {
+              return(
+                <MenuItem value={product.name}>{product.name}</MenuItem>
+              )
+            })}
+            </Select>
+      </FormControl>
+      )
+    break
+    case 'disc-category':
+      return(
+        <FormControl >
+          <InputLabel htmlFor="target">Zakres zniżki</InputLabel>
+          <Select
+              value={this.state.perk.target}
+              onChange={this.handleChangePerkNameValue}
+              inputProps={{
+                  name: 'target',
+                  id: 'target',
+              }}
+          >
+          {this.state.categories.map((category) => {
+            return(
+              <MenuItem value={category}>{category}</MenuItem>
+            )
+          })}
+          </Select>
+        </FormControl>
+      )
+    case 'disc-rent':
+      return(
+        <FormControl >
+          <InputLabel htmlFor="target">Zakres zniżki</InputLabel>
+          <Select
+              value={this.state.perk.target}
+              onChange={this.handleChangePerkNameValue}
+              inputProps={{
+                  name: 'target',
+                  id: 'target',
+              }}
+          >
+          {this.state.rentRooms.map((room) => {
+            return(
+              <MenuItem value={room}>{room}</MenuItem>
+            )
+          })}
+          </Select>
+        </FormControl>
+      )
+    default:
+      break
+  }
+}
+
+const createNumberList = (startNum, endNum, isWeekDay, isHour) => {
+  let numArray=[];
+  for(let i=startNum; i < endNum+1; i++) {
+    numArray=[...numArray, i]
+  }
+  return numArray.map((num)=>{
+    return(
+      <MenuItem value={num}>{isWeekDay ? (days[num]): (isHour ? (`${num}:00`) : (num))}</MenuItem>
+    )
+  })
+  
+}
+
+
+    {/* <FormControl >
+                    <InputLabel htmlFor="target">Zakres zniżki</InputLabel>
+                    <Select
+                        value={this.state.perk.target}
+                        onChange={this.handleChangeNameValue}
+                        inputProps={{
+                            name: 'target',
+                            id: 'target',
+                        }}
+                    >
+                    {createMakeList(this.state.perk.perkType)} 
+                    </Select>
+              </FormControl> */}
+
+  return (
+    <div>
+    
+      <Dialog
+        open={this.props.open}
+        onClose={this.handleClose}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>Efekt przedmiotu</DialogTitle>
+        <DialogContent>
+          <Grid container>
+          <FormControl >
+            <InputLabel htmlFor="perkType">Typ</InputLabel>
+            <Select
+              autoFocus
+                value={this.state.perk.perkType}
+                onChange={this.handleChangePerkNameValue}
+                inputProps={{
+                    name: 'perkType',
+                    id: 'perkType',
+                }}
+            >
+                {perkTypes.map((perkType) => {
+                    return (
+                        <MenuItem value={perkType}>{perkType}</MenuItem>
+                    )
+                })}
+            </Select>
+          </FormControl>
+          {this.state.perk.perkType ? (
+            <React.Fragment>
+            <TextField
+              value={this.state.perk.value}
+              error={this.state.formError.value}
+              name="value"
+              margin="dense"
+              label={`Modyfikator efektu`}
+              type="text"
+              helperText={this.state.formError.value ? (this.state.formError.value) : ("Procenty lub wartości bezwzględne (całkowite): 10%, -5%, +1, -50")}
+              onChange={this.handleChangePerkNameValue}
+            />
+            {this.state.perk.perkType.includes("disc") ? ( 
+              createMakeList(this.state.perk.perkType)
+            ) : (null)}
+            </React.Fragment>
+          ) : (
+            null
+          )}
+
+          </Grid>
+          <Grid container justify="space-around">
+            <Grid component="label" container alignItems="center" spacing={1}>
+              <Grid item>Efekt stały</Grid>
+              <Grid item>
+                  <Switch
+                      name='active'
+                      checked={this.state.time.active}
+                      onChange={this.handleTogglePerkTimeSetting}
+                  />
+              </Grid>
+              <Grid item>Efekt czasowy</Grid>
+            </Grid>
+          {this.state.time.active ? ( 
+            <React.Fragment>
+              {this.state.perk.time.map((period, index) => {
+
+                const timeIndex = this.state.time.hours.findIndex(hour => hour._id === period._id)
+
+                return(
+                <Grid container style={{margin: '1rem 0 1rem 0'}}>
+                <Grid item>
+                <FormControl style={{width: '70%'}}>
+                      <InputLabel htmlFor="target">Dzień cyklicznej aktywacji efektu</InputLabel>
+                      <Select
+                          
+                          value={period.startDay}
+                          onChange={(e) => this.handleChangePerkTimeNameValue(e, index)}
+                          inputProps={{
+                              name: 'startDay',
+                              id: 'startDay',
+                          }}
+                      >
+                      {createNumberList(1, 7, true)}
+                      </Select>
+                </FormControl>
+                <FormControlLabel
+                    control={
+                      <Checkbox
+                        name='hours'
+                        checked={this.state.time.hours[timeIndex].flag}
+                        onChange={() => this.handleTogglePerkTimeHoursForPeriod(timeIndex, period._id)}
+                      />
+                    }
+                    label="Precyzuj godziny działania"
+                />
+
+                </Grid>
+                {this.state.time.hours[timeIndex].flag ? ( 
+                  <React.Fragment >
+                  <Grid item style={{width: '70%'}}>
+                  <FormControl style={{width: '70%'}}>
+                        <InputLabel htmlFor="target">Godzina cyklicznej aktywacji efektu</InputLabel>
+                        <Select
+                            value={period.startHour}
+                            onChange={(e) => this.handleChangePerkTimeNameValue(e, index)}
+                            inputProps={{
+                                name: 'startHour',
+                                id: 'startHour',
+                            }}
+                        >
+                        {createNumberList(0, 23, false, true)}
+                        </Select>
+                  </FormControl>
+                  </Grid>
+                  
+                  <Grid item style={{width: '70%'}}>
+                  <FormControl style={{width: '70%'}}>
+                        <InputLabel htmlFor="target">Długość cyklicznego trwania efektu [h]</InputLabel>
+                        <Select
+                            value={period.lengthInHours}
+                            onChange={(e) => this.handleChangePerkTimeNameValue(e, index)}
+                            inputProps={{
+                                name: 'lengthInHours',
+                                id: 'lengthInHours',
+                            }}
+                        >
+                        {createNumberList(1, 24)}
+                        </Select>
+                  </FormControl>
+                  </Grid>
+                  </React.Fragment>
+                ) : (null)}
+                {this.state.perk.time.length > 1 ? (
+                  <Grid item>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => this.handleDeleteTimePeriod(period._id)}
+                    >
+                      Usuń
+                    </Button>
+                </Grid>
+                ) : (null)}
+                
+                </Grid>
+              )})}
+            </React.Fragment>
+          ):(null)}
+          <Grid container spacing={2}>
+            <Grid item>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.handleAddTimePeriod}
+              >
+                Dodaj efekt przedmiotu
+              </Button>
+            </Grid>
+          </Grid>
+          </Grid>
+            
+          
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={this.handleClose} color="primary">
+            Zamknij
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
+    </div>
+  );
+};
+}
+
+export default NewPerkModal;
