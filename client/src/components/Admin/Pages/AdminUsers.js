@@ -122,7 +122,7 @@ const AdminUsers = () => {
               value={nameFilter}
               onChange={handleChangeNameFilter}
               margin="dense"
-              label="Szukaj nazwy wydarzenia"
+              label="Szukaj nazwy użytkownika"
               type="search"
               InputProps={{
                 startAdornment: (
