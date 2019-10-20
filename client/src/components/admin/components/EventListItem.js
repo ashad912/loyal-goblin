@@ -85,7 +85,7 @@ const EventListItem = ({
           </Grid>
           <Grid item container direction="column" xs={6}>
             <Grid item>
-              <Typography variant="h5">{event.name}</Typography>
+              <Typography variant="h5" style={{fontSize: '1.2rem', fontWeight: 'bolder'}}>{event.name}</Typography>
             </Grid>
             <Grid item>
               <Typography>{`Czas publikacji: ${
