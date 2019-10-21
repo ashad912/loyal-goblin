@@ -23,7 +23,7 @@ import levelIcon from '../../assets/avatar/level.png'
 
 
 const pathToIcons = '../../assets/icons/items'
-const itemLabelHeight = 170 //REFACTOR: need to be changed to 'dimensionLabel'
+const itemLabelHeight = 210 //REFACTOR: need to be changed to 'dimensionLabel'
 
 
 const StyledCard = styled(Card)`
@@ -59,6 +59,11 @@ const TitleMissionContainer = styled.div`
     align-items: flex-start;
     justify-content: space-between;
 `
+
+const RequiredAttribute = styled.span`
+    margin: 0 0.5rem 0 0
+    color: ${props => props.attr ? 'green' : 'red' } 
+`
 const createTempList = () => {
     return [
         {
@@ -68,6 +73,10 @@ const createTempList = () => {
             minPlayers: 3,
             maxPlayers: 4,
             level: 1,
+            strength: 1,
+            dexternity: 2,
+            magic: 3,
+            endurance: 4,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
                 {
@@ -103,6 +112,10 @@ const createTempList = () => {
             minPlayers: 3,
             maxPlayers: 3,
             level: 3,
+            strength: 5,
+            dexternity: 3,
+            magic: 2,
+            endurance: 1,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
                 {
@@ -150,6 +163,10 @@ const createTempList = () => {
             minPlayers: 3,
             maxPlayers: 4,
             level: 1,
+            strength: 1,
+            dexternity: 2,
+            magic: 3,
+            endurance: 4,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
                 {
@@ -185,6 +202,10 @@ const createTempList = () => {
             minPlayers: 3,
             maxPlayers: 3,
             level: 3,
+            strength: 5,
+            dexternity: 3,
+            magic: 2,
+            endurance: 1,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
                 {
@@ -232,6 +253,10 @@ const createTempList = () => {
             minPlayers: 3,
             maxPlayers: 4,
             level: 1,
+            strength: 1,
+            dexternity: 2,
+            magic: 3,
+            endurance: 4,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
                 {
@@ -267,6 +292,10 @@ const createTempList = () => {
             minPlayers: 3,
             maxPlayers: 3,
             level: 3,
+            strength: 5,
+            dexternity: 3,
+            magic: 2,
+            endurance: 1,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
             amulets: [
                 {
@@ -363,7 +392,12 @@ const Events = () => {
     const missionListData = createTempList() //returned from backend
     //one shot to events can be separated (rally, missions) on back/front
     
+    //party.map -> sum = sum + user.strength -> totalStrength
     
+    const totalStrength = 4
+    const totalDexternity = 4
+    const totalMagic = 4
+    const totalEndurance = 4
 
     //for better perfomance uses VisibilitySensor to load only visible (or partly visible) elements
     //to work need fixed listem item size (which is ok, i believe)
@@ -371,8 +405,13 @@ const Events = () => {
         missionListData.map(mission => {
             const appropriatePlayers = isAppropriatePlayers(mission.minPlayers, mission.maxPlayers)
             const appropriateLevel = userLevel >= mission.level;
+            const appropriateStrength = totalStrength >= mission.strength
+            const appropriateDexternity = totalDexternity >= mission.dexternity
+            const appropriateMagic = totalMagic >= mission.magic
+            const appropriateEndurance = totalEndurance >= mission.endurance
+            const appropriateAttributes = appropriateStrength && appropriateDexternity && appropriateMagic && appropriateEndurance
 
-            const isMissionActive = appropriatePlayers && appropriateLevel
+            const isMissionActive = appropriatePlayers && appropriateLevel && appropriateAttributes
             return(
                 <VisibilitySensor partialVisibility key={mission.id}>
                 {({isVisible}) =>
@@ -423,6 +462,9 @@ const Events = () => {
                                         {mission.description}
                                     </Typography>
                                     <br />
+                                    
+                                    
+                                    {`A: `}
                                     {mission.amulets ? (
                                         mission.amulets.map(amulet => {
                                             //TODO: Fix problem with webpack.
@@ -442,7 +484,12 @@ const Events = () => {
                                             })
                                         ):(null)
                                     }
-                                    
+                                    <br />
+                                    <RequiredAttribute attr={appropriateStrength} >{`S: ${totalStrength}/${mission.strength}`}</RequiredAttribute>
+                                    <RequiredAttribute attr={appropriateDexternity} >{`Z: ${totalDexternity}/${mission.dexternity}`}</RequiredAttribute>
+                                    <br />
+                                    <RequiredAttribute attr={appropriateMagic} >{`M: ${totalMagic}/${mission.magic}`}</RequiredAttribute> 
+                                    <RequiredAttribute attr={appropriateEndurance} >{`W: ${totalEndurance}/${mission.endurance}`}</RequiredAttribute>
                                     </React.Fragment>
                                 }  
                             />
