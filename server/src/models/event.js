@@ -37,6 +37,22 @@ export const EventSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    strength: {
+        type: Number,
+        required: true,
+    },
+    dexternity: {
+        type: Number,
+        required: true,
+    },
+    magic: {
+        type: Number,
+        required: true,
+    },
+    endurance: {
+        type: Number,
+        required: true,
+    },
     level: {
         type: Number,
         min: 1,
