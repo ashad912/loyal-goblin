@@ -2,13 +2,63 @@ import React, { Component } from 'react';
 import boardsvg from '../../assets/board/statki.svg'
 import Loading from '../layout/Loading';
 import VerificationDialog from './loyal/VerificationDialog'
+import TorpedoList from './loyal/TorpedoList'
+
+
+const createTempTorpedos = () => {
+
+    return [
+        {
+            _id: 120,
+            owner: 11111,
+            itemModel: {
+              _id: 600,
+              type: {
+                _id: 6,
+                type: "torpedo"
+              },
+              name: "D1",
+              fluff: "Ostrzelaj pole D1!",
+              imgSrc: "torpedo.png"
+            }
+        },
+        {
+            _id: 121,
+            owner: 11111,
+            itemModel: {
+              _id: 601,
+              type: {
+                _id: 6,
+                type: "torpedo"
+              },
+              name: "E3",
+              fluff: "Ostrzelaj pole E3!",
+              imgSrc: "torpedo.png"
+            }
+        },
+        {
+            _id: 122,
+            owner: 11111,
+            itemModel: {
+              _id: 602,
+              type: {
+                _id: 6,
+                type: "torpedo"
+              },
+              name: "I3",
+              fluff: "Ostrzelaj pole I3!",
+              imgSrc: "torpedo.png"
+            }
+        },
+    ]
+}
+
 
 class Loyal extends Component {
     
     state = {
         loading: true,
-        dialogOpen: false
-
+        dialogOpen: false,
     }
     //open console
     //have to add 'id' props in .svg for each key object
@@ -19,28 +69,29 @@ class Loyal extends Component {
         
         //shot to backend - returned: field array
         let serverFields = [
-            {id: 0, pressed: true},
-            {id: 1, pressed: false},
-            {id: 2, pressed: true},
-            {id: 3, pressed: true},
-            {id: 4, pressed: false},
-            {id: 5, pressed: true},
-            {id: 6, pressed: true},
-            {id: 7, pressed: false},
-            {id: 8, pressed: true},
-            {id: 9, pressed: true},
-            {id: 10, pressed: false},
-            {id: 11, pressed: true},
-            {id: 12, pressed: true},
-            {id: 13, pressed: false},
-            {id: 14, pressed: true},
-            {id: 15, pressed: false},
-            {id: 16, pressed: false},
-            {id: 17, pressed: false},
-            {id: 18, pressed: false},
-            {id: 19, pressed: false},
+            {id: 1, name: 'D1', pressed: true},
+            {id: 2, name: 'E3', pressed: false},
+            {id: 3, name: 'I1', pressed: true},
+            {id: 4, name: 'I2', pressed: true},
+            {id: 5, name: 'I3', pressed: false},
+            {id: 6, name: 'I4', pressed: true},
+            {id: 7, name: 'E4', pressed: true},
+            {id: 8, name: 'E5', pressed: false},
+            {id: 9, name: 'G7', pressed: true},
+            {id: 10, name: 'H7', pressed: true},
+            {id: 11, name: 'C1', pressed: false},
+            {id: 12, name: 'B9', pressed: true},
+            {id: 13, name: 'C9', pressed: true},
+            {id: 14, name: 'D9', pressed: false},
+            {id: 15, name: 'E9', pressed: true},
+            {id: 16, name: 'F9', pressed: false},
+            {id: 17, name: 'B4', pressed: false},
+            {id: 18, name: 'B5', pressed: false},
+            {id: 19, name: 'B6', pressed: false},
+            {id: 20, name: 'B7', pressed: false},
         ]
         //
+
         console.log(serverFields)
 
         const svgRawObject = this.refs.boardsvg
@@ -48,7 +99,7 @@ class Loyal extends Component {
 
         let fields = []
 
-        for(let i=0; i < serverFields.length; i++){
+        for(let i=1; i < serverFields.length +1; i++){
             const field = doc.getElementById(`${i}`) //assuming id as in serverFields array
             console.log(field)
             const fieldServerData = serverFields.find(field => {
@@ -92,13 +143,22 @@ class Loyal extends Component {
         })
     }
 
+    
+
+    handleTorpedoToggle = () => {
+
+    }
+
     render() { 
+        const userTorpedos = createTempTorpedos()
         
         return ( 
             <React.Fragment>
                 {this.state.loading && <Loading/>}
+                
                 <object data={boardsvg} onLoad={this.handleLoad} type="image/svg+xml"
                 id="boardsvg" ref='boardsvg' width="100%" height="100%">Board</object> 
+                <TorpedoList userTorpedos={userTorpedos} loadedTorpedoId={121} handleTorpedoToggle={this.handleTorpedoToggle}/>
                 <VerificationDialog
                     open={this.state.dialogOpen}
                     handleClose={this.handleDialogClose}

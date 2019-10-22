@@ -52,26 +52,26 @@
 <text transform="matrix(1 0 0 1 604.3672 52.1152)" class="st1 st2">H</text>
 <text transform="matrix(1 0 0 1 683.3672 52.1152)" class="st1 st2">I</text>
 <text transform="matrix(1 0 0 1 749.3672 52.1152)" class="st1 st2">J</text>
-<circle id="0" class="st3" cx="326.5" cy="108.5" r="36.5"/>
-<circle id="1" class="st3" cx="399" cy="254" r="36"/>
-<circle id="2" class="st3" cx="690.5" cy="108.5" r="36.5"/>
-<circle id="3" class="st3" cx="690.5" cy="181.5" r="36.5"/>
-<circle id="4" class="st3" cx="691" cy="254" r="36"/>
-<circle id="5" class="st3" cx="691" cy="327" r="36"/>
-<circle id="6" class="st3" cx="400" cy="327" r="36"/>
-<circle id="7" class="st3" cx="400" cy="400" r="36"/>
-<circle id="8" class="st3" cx="545" cy="545" r="36"/>
-<circle id="9" class="st3" cx="618" cy="545" r="36"/>
-<circle id="10" class="st3" cx="254.5" cy="108.5" r="36.5"/>
-<circle id="11" class="st3" cx="181.5" cy="690.5" r="36.5"/>
-<circle id="12" class="st3" cx="254.5" cy="690.5" r="36.5"/>
-<circle id="13" class="st3" cx="327" cy="691" r="36"/>
-<circle id="14" class="st3" cx="400" cy="691" r="36"/>
-<circle id="15" class="st3" cx="473" cy="691" r="36"/>
-<circle id="16" class="st3" cx="181" cy="327" r="36"/>
-<circle id="17" class="st3" cx="181" cy="400" r="36"/>
-<circle id="18" class="st3" cx="181.5" cy="472.5" r="36.5"/>
-<circle id="19" class="st3" cx="181" cy="545" r="36"/>
+<circle id="1" name="D1" class="st3" cx="326.5" cy="108.5" r="36.5"/>
+<circle id="2" name="E3" class="st3" cx="399" cy="254" r="36"/>
+<circle id="3" name="I1" class="st3" cx="690.5" cy="108.5" r="36.5"/>
+<circle id="4" name="I2" class="st3" cx="690.5" cy="181.5" r="36.5"/>
+<circle id="5" name="I3" class="st3" cx="691" cy="254" r="36"/>
+<circle id="6" name="I4" class="st3" cx="691" cy="327" r="36"/>
+<circle id="7" name="E4" class="st3" cx="400" cy="327" r="36"/>
+<circle id="8" name="E5" class="st3" cx="400" cy="400" r="36"/>
+<circle id="9" name="G7" class="st3" cx="545" cy="545" r="36"/>
+<circle id="10" name="H7" class="st3" cx="618" cy="545" r="36"/>
+<circle id="11" name="C1" class="st3" cx="254.5" cy="108.5" r="36.5"/>
+<circle id="12" name="B9" class="st3" cx="181.5" cy="690.5" r="36.5"/>
+<circle id="13" name="C9" class="st3" cx="254.5" cy="690.5" r="36.5"/>
+<circle id="14" name="D9" class="st3" cx="327" cy="691" r="36"/>
+<circle id="15" name="E9" class="st3" cx="400" cy="691" r="36"/>
+<circle id="16" name="F9" class="st3" cx="473" cy="691" r="36"/>
+<circle id="17" name="B4" class="st3" cx="181" cy="327" r="36"/>
+<circle id="18" name="B5" class="st3" cx="181" cy="400" r="36"/>
+<circle id="19" name="B6" class="st3" cx="181.5" cy="472.5" r="36.5"/>
+<circle id="20" name="B7" class="st3" cx="181" cy="545" r="36"/>
 <line class="st4" x1="72" y1="-1" x2="72" y2="799"/>
 <line class="st4" x1="0" y1="69" x2="800" y2="69"/>
 </svg>
