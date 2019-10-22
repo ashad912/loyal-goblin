@@ -51,6 +51,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function FullWidthTabs(props) {
+  //TODO: Verify if user has a character from db object, not local storage
+  const [
+    showCharacterCreationModal,
+    setShowCharacterCreationModal
+  ] = React.useState(!Boolean(localStorage.getItem("characterCreated")));
+  const [fullHeightCorrection, setFullHeightCorrection] = React.useState(0);
   useEffect(() => {
     //change tab, when returing from specific event
     if (props.location.state && props.location.state.indexRedirect !== null) {
@@ -60,11 +66,16 @@ export default function FullWidthTabs(props) {
     }
   }, []);
 
-  //TODO: Verify if user has a character from db object, not local storage
-  const [
-    shwoCharacterCreationModal,
-    setShwoCharacterCreationModal
-  ] = React.useState(!Boolean(localStorage.getItem("characterCreated")));
+  useEffect(() => {
+    if (!showCharacterCreationModal) {
+      if (!showCharacterCreationModal) {
+        const appBar = document.getElementById("app-bar").offsetHeight;
+        const navbar = document.getElementById("navbar").offsetHeight;
+        const footer = document.getElementById("footer").offsetHeight;
+        setFullHeightCorrection(appBar + navbar + footer);
+      }
+    }
+  }, [showCharacterCreationModal]);
 
   const classes = useStyles();
   const theme = useTheme();
@@ -79,23 +90,23 @@ export default function FullWidthTabs(props) {
   };
 
   const handleCharacterCreationFinish = () => {
-    setShwoCharacterCreationModal(false);
-    localStorage.setItem("characterCreated", 1)
+    setShowCharacterCreationModal(false);
+    localStorage.setItem("characterCreated", 1);
   };
 
   return (
     <div className={classes.root}>
-      {shwoCharacterCreationModal ? (
+      {showCharacterCreationModal ? (
         <Dialog
           fullScreen
-          open={shwoCharacterCreationModal}
+          open={showCharacterCreationModal}
           onClose={handleCharacterCreationFinish}
         >
           <CharacterCreation onFinish={handleCharacterCreationFinish} />
         </Dialog>
       ) : (
         <React.Fragment>
-          <AppBar position="static" color="default">
+          <AppBar position="static" color="default" id="app-bar">
             <Tabs
               value={value}
               onChange={handleChange}
@@ -114,6 +125,7 @@ export default function FullWidthTabs(props) {
             axis={theme.direction === "rtl" ? "x-reverse" : "x"}
             index={value}
             onChangeIndex={handleChangeIndex}
+            style={{ minHeight: `calc(100vh - ${fullHeightCorrection}px)` }}
           >
             <TabPanel value={value} index={0} dir={theme.direction}>
               <Profile />

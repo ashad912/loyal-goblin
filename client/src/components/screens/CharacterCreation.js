@@ -17,7 +17,6 @@ const useStyles = makeStyles(theme => ({
   },
   container: {
     display: "flex",
-    height: "80vh",
     justifyContent: "center",
     alignItems: "center"
   },
@@ -35,11 +34,12 @@ const useStyles = makeStyles(theme => ({
 
 const CharacterCreation = props => {
   const classes = useStyles();
+  const [stepperHeight, setStepperHeight] = React.useState(0)
   const [activeStep, setActiveStep] = React.useState(0);
   const [nextDisabled, setNextDisabled] = React.useState(true);
   const [name, setName] = React.useState("");
   const [gender, setGender] = React.useState("");
-  const [characterClass, setCharacterClass] = React.useState('')
+  const [characterClass, setCharacterClass] = React.useState("");
   const [attributePool, setAttributePool] = React.useState(3);
   const [attributes, setAttributes] = React.useState({
     str: 1,
@@ -58,12 +58,9 @@ const CharacterCreation = props => {
     setGender(event.target.value);
   };
 
-
-
-  const handleCharacterClassChange = (event) => {
-    setCharacterClass(event.target.value)
-  }
-
+  const handleCharacterClassChange = event => {
+    setCharacterClass(event.target.value);
+  };
 
   const handleAttributeChange = (event, attributeName, value) => {
     const tempAttributes = { ...attributes };
@@ -75,23 +72,23 @@ const CharacterCreation = props => {
     }
     tempAttributes[attributeName] += value;
     setAttributes(tempAttributes);
-    setAttributePool(prev => prev - value)
+    setAttributePool(prev => prev - value);
   };
 
   const steps = [
     <Step1 handleChange={handleNameChange} value={name} />,
     <Step2 handleChange={handleGenderChange} value={gender} />,
-    <Step3 handleChange={handleCharacterClassChange} value={characterClass}/>,
+    <Step3 handleChange={handleCharacterClassChange} value={characterClass} />,
     <Step4
       handleChange={handleAttributeChange}
       values={attributes}
       attributePool={attributePool}
     />,
-    <Step5 
-    name={name}
-    gender={gender}
-    characterClass={characterClass}
-    attributes={attributes}
+    <Step5
+      name={name}
+      gender={gender}
+      characterClass={characterClass}
+      attributes={attributes}
     />
   ];
 
@@ -101,7 +98,7 @@ const CharacterCreation = props => {
     if (activeStep === maxSteps - 1) {
       props.onFinish();
     }
-   
+
     setActiveStep(prevActiveStep => prevActiveStep + 1);
   };
 
@@ -111,41 +108,56 @@ const CharacterCreation = props => {
 
   React.useEffect(() => {
     let buttonDisabled = true;
-    if (name.length > 1 && activeStep===0) {
+    if (name.length > 1 && activeStep === 0) {
       buttonDisabled = false;
     }
-    if(gender !== "" && activeStep ===1){
-      buttonDisabled = false
+    if (gender !== "" && activeStep === 1) {
+      buttonDisabled = false;
     }
-    if(characterClass !== "" && activeStep === 2){
-      buttonDisabled = false
+    if (characterClass !== "" && activeStep === 2) {
+      buttonDisabled = false;
     }
-    if(activeStep === 3 || activeStep === 4){
-      buttonDisabled = false
+    if (activeStep === 3 || activeStep === 4) {
+      buttonDisabled = false;
     }
-    
+
     setNextDisabled(buttonDisabled);
   }, [activeStep, name, gender, characterClass]);
 
+  React.useEffect(() => {
+setStepperHeight( document.getElementById("stepper").offsetHeight)
+  }, [])
+
   return (
     <div className={classes.root}>
-      <Container className={classes.container}>
+      <Container
+        className={classes.container}
+        style={{
+          minHeight: `calc(100vh - ${stepperHeight}px)`
+        }}
+      >
         <Paper className={classes.paper}>{steps[activeStep]}</Paper>
       </Container>
       <MobileStepper
+        id="stepper"
         steps={maxSteps}
         position="static"
         variant="dots"
         activeStep={activeStep}
         nextButton={
-          <Button size="small" onClick={handleNext} disabled={nextDisabled} variant="contained" color="primary">
+          <Button
+            size="small"
+            onClick={handleNext}
+            disabled={nextDisabled}
+            variant="contained"
+            color="primary"
+          >
             {activeStep === maxSteps - 1 ? "Stwórz postać" : "Dalej"}
           </Button>
         }
         backButton={
           <Button
             size="small"
-            
             onClick={handleBack}
             disabled={activeStep === 0}
             style={{ opacity: activeStep === 0 ? "0" : "1" }}

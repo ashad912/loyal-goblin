@@ -53,7 +53,7 @@ const perkTypes = [
 
 const StyledBox = styled(Box)`
     padding: 0.5rem 0.5rem 0.5rem 0.5rem;
-    margin: 0.5rem 0 0.5rem 0
+    margin: 0.5rem 0 0.5rem 0;
 `
 
 const createTempProducts = () => {

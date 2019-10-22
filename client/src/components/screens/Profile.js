@@ -13,6 +13,7 @@ import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
 import Attribute from "./profile/Attribute";
 import Equipment from "./profile/Equipment";
 import NewLevelDialog from "./profile/NewLevelDialog";
+import PerkBox from "./profile/PerkBox";
 import maleBody from "../../assets/avatar/male-body.png";
 
 const useStyles = makeStyles(theme => ({
@@ -118,13 +119,38 @@ const createTempEquipment = () => {
           fluff: "Przynajmniej nie masz kompleksów",
           imgSrc: "short-sword.png"
         }
+      },
+      {
+        id: 14,
+        owner: 11111,
+        equipped: false,
+        itemModel: {
+          id: 202,
+          type: {
+            id: 2,
+            type: "weapon"
+          },
+          name: "Wielki miecz",
+          fluff: "Zdecydowanie masz kompleksy",
+          imgSrc: "short-sword.png",
+          class: "warrior",
+          perks: [
+            {
+              id: 1,
+              perkType: "attr-strength",
+              target: undefined,
+              time: [],
+              value: "+1"
+            }
+          ]
+        }
       }
     ],
     chest: [
       {
         id: 5,
         owner: 11111,
-        equipped: true,
+        equipped: false,
         itemModel: {
           id: 301,
           type: {
@@ -141,7 +167,7 @@ const createTempEquipment = () => {
       {
         id: 6,
         owner: 11111,
-        equipped: true,
+        equipped: false,
         itemModel: {
           id: 401,
           type: {
@@ -158,7 +184,7 @@ const createTempEquipment = () => {
       {
         id: 7,
         owner: 11111,
-        equipped: true,
+        equipped: false,
         itemModel: {
           id: 501,
           type: {
@@ -175,7 +201,7 @@ const createTempEquipment = () => {
       {
         id: 8,
         owner: 11111,
-        equipped: true,
+        equipped: false,
         itemModel: {
           id: 601,
           type: {
@@ -190,7 +216,7 @@ const createTempEquipment = () => {
       {
         id: 9,
         owner: 11111,
-        equipped: false,
+        equipped: true,
         itemModel: {
           id: 602,
           type: {
@@ -199,7 +225,37 @@ const createTempEquipment = () => {
           },
           name: "Kaptur czarodzieja",
           fluff: "Kiedyś nosił go czarodziej. Już nie nosi.",
-          imgSrc: "wizard-coul.png"
+          imgSrc: "wizard-coul.png",
+          perks: [
+            {
+              perkType: "experience",
+              target: undefined,
+              time: [
+                {
+                  id: 1,
+                  hoursFlag: false,
+                  lengthInHours: 24,
+                  startDay: 5,
+                  startHour: 12
+                }
+              ],
+              value: "+10%"
+            },
+            {
+              perkType: "experience",
+              target: undefined,
+              time: [
+                {
+                  id: 2,
+                  hoursFlag: false,
+                  lengthInHours: 24,
+                  startDay: 6,
+                  startHour: 12
+                }
+              ],
+              value: "+20%"
+            }
+          ]
         }
       }
     ],
@@ -207,7 +263,7 @@ const createTempEquipment = () => {
       {
         id: 10,
         owner: 11111,
-        equipped: false,
+        equipped: true,
         itemModel: {
           id: 701,
           type: {
@@ -216,7 +272,24 @@ const createTempEquipment = () => {
           },
           name: "Pierścień siły",
           fluff: "Całuj mój sygnet potęgi",
-          imgSrc: "strength-ring.png"
+          imgSrc: "strength-ring.png",
+          perks: [
+            {
+              id: 1,
+              perkType: "disc-product",
+              target: { name: "Wóda2" },
+              time: [
+                {
+                  hoursFlag: true,
+                  lengthInHours: 2,
+                  startDay: 1,
+                  startHour: 18
+                },
+                { hoursFlag: true, lengthInHours: 5, startDay: 3, startHour: 7 }
+              ],
+              value: "-15%"
+            }
+          ]
         }
       }
     ]
@@ -265,18 +338,17 @@ const Profile = props => {
 
     Object.keys(player.equipment).forEach(category => {
       const loadedEquippedItem = player.equipment[category].find(
-        item => item.itemModel.equipped
+        item => item.equipped
       );
       if (loadedEquippedItem) {
         equipment[category] = loadedEquippedItem.itemModel.imgSrc;
       }
     });
-    console.log(equipment);
+
     setEquippedItems({ ...equipment });
   };
 
   const handleItemToggle = (id, isEquipped, category) => {
-    console.log(id);
     //TODO: Each item needs own ID
     const tempPlayer = { ...player };
     const modifyItemArrayIndex = tempPlayer.equipment[category].findIndex(
@@ -286,12 +358,8 @@ const Profile = props => {
     );
 
     //TODO: Handle 2 weapons and rings
-    tempPlayer.equipment[category].forEach(
-      item => (item.itemModel.equipped = false)
-    );
-    tempPlayer.equipment[category][
-      modifyItemArrayIndex
-    ].itemModel.equipped = !isEquipped;
+    tempPlayer.equipment[category].forEach(item => (item.equipped = false));
+    tempPlayer.equipment[category][modifyItemArrayIndex].equipped = !isEquipped;
     setPlayer({ ...tempPlayer });
     updateEquippedItems();
     //TODO: Call to backend
@@ -346,6 +414,10 @@ const Profile = props => {
   //   console.log(props.location.push('shop'));
   //   setGoExp(prev => !prev);
   // };
+
+  const playerEquippedItemModels = Object.values(player.equipment)
+    .reduce((a, b) => a.concat(b))
+    .filter(item => item.equipped);
 
   return (
     <Grid
@@ -440,6 +512,14 @@ const Profile = props => {
           </Link>
         </Grid>
       </Grid>
+      {playerEquippedItemModels.length > 0 && (
+        <React.Fragment>
+          <Typography variant="h5" className={classes.eqHeading}>
+            Aktualne efekty:
+          </Typography>
+          <PerkBox items={playerEquippedItemModels} />
+        </React.Fragment>
+      )}
       <Typography variant="h5" className={classes.eqHeading}>
         Ekwipunek:
       </Typography>

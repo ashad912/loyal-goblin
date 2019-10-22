@@ -34,7 +34,7 @@ const Navbar = (props) => {
     console.log(props.auth)
 
     return(
-        <StyledAppBar  position="static">
+        <StyledAppBar  position="static" id="navbar">
             <Toolbar>
         {props.auth.uid ? (
             <React.Fragment>

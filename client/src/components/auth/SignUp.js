@@ -27,8 +27,8 @@ const FormContainer = styled(Container)`
 `;
 
 const StyledPaper = styled(Paper)`
-    padding: 1rem
-    border: 1px solid #eeeeee
+    padding: 1rem;
+    border: 1px solid #eeeeee;
 `;
 
 const ErrorPaper = styled(Paper)`
@@ -58,8 +58,15 @@ class SignUp extends Component {
       email: false,
       password: false,
       confirmPassword: false
-    }
+    },
+    fullHeightCorrection: 0
   };
+
+  componentDidMount() {
+    const navbar = document.getElementById("navbar").offsetHeight;
+    const footer = document.getElementById("footer").offsetHeight;
+    this.setState({fullHeightCorrection: navbar+footer})
+}
 
   handleChange = e => {
     const id = e.target.id;
@@ -218,7 +225,7 @@ class SignUp extends Component {
     const { authError } = this.props;
 
     return (
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div style={{ display: "flex", justifyContent: "center", minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)` }}>
         <FormContainer maxWidth="xs">
           <form onSubmit={this.handleSubmit} className="white">
             <Typography

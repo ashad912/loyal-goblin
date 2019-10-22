@@ -31,8 +31,8 @@ import PerkModal from "./PerkModal";
 
 
 const StyledPaper = styled(Paper)`
-    padding: 0.5rem
-    border: 1px solid #eeeeee
+    padding: 0.5rem;
+    border: 1px solid #eeeeee;
 `
 
 

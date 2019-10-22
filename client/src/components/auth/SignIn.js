@@ -25,12 +25,12 @@ const FormContainer = styled(Container)`
     display: flex;
     justify-content: center;
     flex-direction: column;
-    margin: 3rem 0 3rem 0
+    margin: 3rem 0 3rem 0;
 `
 
 const StyledPaper = styled(Paper)`
-    padding: 1rem
-    border: 1px solid #eeeeee
+    padding: 1rem;
+    border: 1px solid #eeeeee;
 `
 
 const ErrorPaper = styled(Paper)`
@@ -57,8 +57,16 @@ class SignIn extends Component {
         error: {
             email: false,
             password: false,
-        }
+        },
+        fullHeightCorrection: 0
     }
+
+    componentDidMount() {
+        const navbar = document.getElementById("navbar").offsetHeight;
+        const footer = document.getElementById("footer").offsetHeight;
+        this.setState({fullHeightCorrection: navbar+footer})
+    }
+    
 
     // componentDidUpdate(prevProps, prevState){
     //     const targets = ['email', 'password']
@@ -191,7 +199,7 @@ class SignIn extends Component {
         const { authError } = this.props
         
         return (
-            <div style={{display: 'flex', justifyContent: 'center'}}>
+            <div style={{display: 'flex', justifyContent: 'center', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`}}>
                 <FormContainer  maxWidth="xs">
                     <form onSubmit={this.handleSubmit} className="white">
                     
