@@ -58,7 +58,7 @@ const EventListItem = ({
     <StyledListItem active={active ? 1: 0}>
       <Grid container direction="column" spacing={2}>
         <Grid item container>
-          <Grid item xs={6}>
+          <Grid item xs={3}>
             <Typography style={{ textAlign: "center" }}>
               {event.isRaid ? "* Rajd *" : "- Misja -"}
             </Typography>
@@ -66,13 +66,13 @@ const EventListItem = ({
           <Grid item xs={3}>
             <Typography>{active ? "Aktywna" : "Nieaktywna"}</Typography>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={6}>
             <Box display="flex">
               <Typography style={{ marginRight: "1rem" }}>{`${
                 event.partySize[0]
               } - ${event.partySize[1]}`}</Typography>{" "}
               <PeopleIcon />
-              <Typography  style={{ marginLeft: "1rem" }}>Poziom {event.minLevel} +</Typography>
+              <Typography  style={{ marginLeft: "1rem" }}>Poziom {event.minLevel} + | {`S: ${event.attributes.str} / Z: ${event.attributes.dex} / M: ${event.attributes.mag} / W: ${event.attributes.end}`}</Typography>
             </Box>
           </Grid>
         </Grid>

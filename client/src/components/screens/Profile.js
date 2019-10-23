@@ -303,6 +303,15 @@ const Profile = props => {
     createTempPlayer({ str: 4, dex: 2, mag: 1, end: 5 }, createTempEquipment())
   ); //Returned from backend
 
+  const [activePerks, setActivePerks] = React.useState([]);
+
+  const [attributeModifiers, setAttributeModifiers] = React.useState({
+    str: 0,
+    dex: 0,
+    mag: 0,
+    end: 0
+  });
+
   const [goExp, setGoExp] = React.useState(false);
 
   const [newLevelDialogOpen, setNewLevelDialogOpen] = React.useState(false);
@@ -324,6 +333,8 @@ const Profile = props => {
     updateEquippedItems();
   }, []);
 
+
+
   const updateEquippedItems = () => {
     const equipment = {
       amulet: "",
@@ -335,6 +346,7 @@ const Profile = props => {
       weapon: "",
       ring: ""
     };
+    const perks = [];
 
     Object.keys(player.equipment).forEach(category => {
       const loadedEquippedItem = player.equipment[category].find(
@@ -342,10 +354,44 @@ const Profile = props => {
       );
       if (loadedEquippedItem) {
         equipment[category] = loadedEquippedItem.itemModel.imgSrc;
+        if (
+          loadedEquippedItem.itemModel.hasOwnProperty("perks") &&
+          loadedEquippedItem.itemModel.perks.length > 0
+        ) {
+          loadedEquippedItem.itemModel.perks.forEach(perk => {
+            perks.push(perk);
+          });
+        }
       }
     });
 
     setEquippedItems({ ...equipment });
+    setActivePerks([...perks]);
+
+    const attrMods = { str: 0, dex: 0, mag: 0, end: 0 };
+    perks.forEach(perk => {
+      if (perk.perkType.startsWith("attr")) {
+        //TODO: handle percentage change
+        switch (perk.perkType) {
+          case "attr-strength":
+            attrMods.str += parseInt(perk.value);
+            break;
+          case "attr-dexterity":
+            attrMods.dex += parseInt(perk.value);
+            break;
+          case "attr-magic":
+            attrMods.mag += parseInt(perk.value);
+            break;
+          case "attr-endurance":
+            attrMods.end += parseInt(perk.value);
+            break;
+
+          default:
+            break;
+        }
+      }
+      setAttributeModifiers({...attrMods})
+    });
   };
 
   const handleItemToggle = (id, isEquipped, category) => {
@@ -414,21 +460,6 @@ const Profile = props => {
   //   console.log(props.location.push('shop'));
   //   setGoExp(prev => !prev);
   // };
-
-  const playerEquippedItemModels = Object.values(player.equipment)
-    .reduce((a, b) => a.concat(b))
-    .filter(item => item.equipped);
-
-  const checkIfAnyEquippedItemHasPerk = (items) => {
-    
-    for(let i=0; i<items.length; i++){
-      console.log(items[i])
-      if(items[i].itemModel.hasOwnProperty("perks") && items[i].itemModel.perks.length > 0){
-        return true
-      }
-    }
-    return false
-  }
 
   return (
     <Grid
@@ -503,10 +534,10 @@ const Profile = props => {
           justify="flex-start"
           alignItems="center"
         >
-          <Attribute attributeName="Siła" attributeValue={player.str} />
-          <Attribute attributeName="Zręczność" attributeValue={player.dex} />
-          <Attribute attributeName="Magia" attributeValue={player.mag} />
-          <Attribute attributeName="Wytrzymałość" attributeValue={player.end} />
+          <Attribute attributeName="Siła" attributeValue={player.str} attributeModifier={attributeModifiers.str}/>
+          <Attribute attributeName="Zręczność" attributeValue={player.dex } attributeModifier={attributeModifiers.dex}/>
+          <Attribute attributeName="Magia" attributeValue={player.mag } attributeModifier={attributeModifiers.mag}/>
+          <Attribute attributeName="Wytrzymałość" attributeValue={player.end } attributeModifier={attributeModifiers.end}/>
           <Button onClick={() => handleAddExperience(500)}>Dodaj expa</Button>
           <Button>Dodaj amulet</Button>
           <Link to="/shop">
@@ -523,12 +554,12 @@ const Profile = props => {
           </Link>
         </Grid>
       </Grid>
-      {playerEquippedItemModels.length > 0 && checkIfAnyEquippedItemHasPerk(playerEquippedItemModels) && (
+      {activePerks.length > 0 && (
         <React.Fragment>
           <Typography variant="h5" className={classes.eqHeading}>
             Aktualne efekty:
           </Typography>
-          <PerkBox items={playerEquippedItemModels} />
+          <PerkBox perks={activePerks} />
         </React.Fragment>
       )}
       <Typography variant="h5" className={classes.eqHeading}>

@@ -20,6 +20,7 @@ const ShopList = ({title, list, handleAddItem}) => {
             imgSrc={item.imgSrc}
             id={item.id}
             handleAddItem={handleAddItem}
+            prizes={item.hasOwnProperty('prizes') && item.prizes}
           />
         );
       })}

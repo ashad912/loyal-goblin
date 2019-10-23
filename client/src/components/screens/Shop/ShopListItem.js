@@ -28,10 +28,18 @@ const ShopListItem = props => {
       </ListItemIcon>
       <Grid container direction="column">
         <ListItemText primary={name} />
+        {props.prizes &&
+        props.prizes.map(prize => {
+          return <ListItemText secondary={<span>{prize.itemModel.name} <img width={16} src={require('../../../assets/icons/items/'+prize.itemModel.imgSrc)}/></span>}/>
+
+        })}
         <ListItemText secondary={description} />
       </Grid>
       <ListItemIcon>
+      <Grid container direction="column">
         <Typography variant="body1" style={{marginRight: '2rem'}}>{price.toFixed(2) + " ZŁ"}</Typography>
+        <Typography variant="body2" style={{marginRight: '2rem'}}>+ {parseInt(price*10) + " PD"}</Typography>
+      </Grid>
       </ListItemIcon>
       <AddIcon onClick={e => props.handleAddItem(e, props.id)} />
     </ListItem>

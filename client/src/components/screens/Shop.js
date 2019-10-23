@@ -5,7 +5,6 @@ import { ScrollingProvider, Section } from "react-scroll-section";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 
-
 import Divider from "@material-ui/core/Divider";
 import Badge from "@material-ui/core/Badge";
 import Snackbar from "@material-ui/core/Snackbar";
@@ -124,7 +123,21 @@ const mockShop = [
     category: "drink",
     description: "lubisz, ale się nie przyznasz przed kolegami",
     price: 27.99,
-    imgSrc: "drink.png"
+    imgSrc: "drink.png",
+    prizes: [
+      {
+        itemModel: {
+          id: 101,
+          type: {
+            id: 1,
+            type: "amulet"
+          },
+          name: "Diament",
+          fluff: "Najlepszy przyjaciel dziewyczyny",
+          imgSrc: "diamond-amulet.png"
+        }
+      }
+    ]
   },
   {
     id: 9,
@@ -132,7 +145,33 @@ const mockShop = [
     category: "drink",
     description: "wyciąg z fiuta Twoim drinkiem",
     price: 120.03,
-    imgSrc: "drink.png"
+    imgSrc: "drink.png",
+    prizes: [
+      {
+        itemModel: {
+          id: 102,
+          type: {
+            id: 1,
+            type: "amulet"
+          },
+          name: "Perła",
+          fluff: "Perła prosto z lodówki, znaczy z małży",
+          imgSrc: "pearl-amulet.png"
+        }
+      },
+      {
+        itemModel: {
+          id: 102,
+          type: {
+            id: 1,
+            type: "amulet"
+          },
+          name: "Perła",
+          fluff: "Perła prosto z lodówki, znaczy z małży",
+          imgSrc: "pearl-amulet.png"
+        }
+      }
+    ]
   },
   {
     id: 10,
@@ -253,7 +292,87 @@ const mockShop = [
     description: "xddxdx",
     price: 25.0,
     imgSrc: "drink.png"
-  }
+  },
+  {
+    id: 25,
+    category: "beer",
+    name: "Kasztelan",
+    description: "Pan na zamku",
+    price: 12.0,
+    imgSrc: "drink.png",
+    prizes: [      {
+      itemModel: {
+        _id: 600,
+        type: {
+          _id: 6,
+          type: "torpedo"
+        },
+        name: "D1",
+        fluff: "Ostrzelaj pole D1!",
+        imgSrc: "torpedo.png"
+      }
+    }]
+  },
+  {
+    id: 26,
+    category: "beer",
+    name: "Kormoran",
+    description: "Pianka jakby ptak nasrał",
+    price: 16.0,
+    imgSrc: "drink.png",
+    prizes: [      {
+      itemModel: {
+        _id: 600,
+        type: {
+          _id: 6,
+          type: "torpedo"
+        },
+        name: "D1",
+        fluff: "Ostrzelaj pole D1!",
+        imgSrc: "torpedo.png"
+      }
+    }]
+  },
+  {
+    id: 27,
+    category: "beer",
+    name: "Koczkodan",
+    description: "O to piwo proszą, jak zapomną o kormoranie",
+    price: 11.0,
+    imgSrc: "drink.png",
+    prizes: [      {
+      itemModel: {
+        _id: 600,
+        type: {
+          _id: 6,
+          type: "torpedo"
+        },
+        name: "D1",
+        fluff: "Ostrzelaj pole D1!",
+        imgSrc: "torpedo.png"
+      }
+    }]
+  },
+  {
+    id: 28,
+    category: "beer",
+    name: "c Ipa",
+    description: "Jesteś tym co pijesz",
+    price: 15.0,
+    imgSrc: "drink.png",
+    prizes: [      {
+      itemModel: {
+        _id: 600,
+        type: {
+          _id: 6,
+          type: "torpedo"
+        },
+        name: "D1",
+        fluff: "Ostrzelaj pole D1!",
+        imgSrc: "torpedo.png"
+      }
+    }]
+  },
 ];
 
 //get avatar from db
@@ -400,6 +519,10 @@ class Shop extends React.Component {
       return product.category === "drink";
     });
 
+    const beerList = mockShop.filter(product => {
+      return product.category === "beer";
+    });
+
     const alcoholFreeList = mockShop.filter(product => {
       return product.category === "alcoholFree";
     });
@@ -427,20 +550,23 @@ class Shop extends React.Component {
               <Grid
                 container
                 direction="row"
-                justify="center"
+                justify="space-around"
                 alignItems="center"
                 spacing={2}
               >
-                <Grid item xs={3}>
+                <Grid item >
                   <MenuItem section="shots">Szoty</MenuItem>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item >
                   <MenuItem section="drinks">Driny</MenuItem>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item >
+                  <MenuItem section="beers">Piwa</MenuItem>
+                </Grid>
+                <Grid item >
                   <MenuItem section="alco-free">Bez promili</MenuItem>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item >
                   <MenuItem section="food">Jedzenie</MenuItem>
                 </Grid>
               </Grid>
@@ -458,6 +584,14 @@ class Shop extends React.Component {
                 <ShopList
                   title="Driny"
                   list={drinkList}
+                  handleAddItem={this.handleAddItemToCart}
+                />
+              </StyledSection>
+              <Divider />
+              <StyledSection id="beers">
+                <ShopList
+                  title="Piwa"
+                  list={beerList}
                   handleAddItem={this.handleAddItemToCart}
                 />
               </StyledSection>

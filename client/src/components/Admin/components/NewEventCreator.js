@@ -16,10 +16,11 @@ import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import Box from "@material-ui/core/Box";
+
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import MomentUtils from "@date-io/moment";
 
+import AttributeBox from './AttributeBox'
 import AmuletsModal from "./AmuletsModal";
 
 import diamondAmulet from "../../../assets/icons/items/diamond-amulet.png";
@@ -438,10 +439,12 @@ class NewEventCreator extends Component {
     minLevel: "",
     icon: "",
     partySize: [1, 5],
+    attributePool: {str: 1, dex: 1, mag: 1, end: 1},
     showAmuletsModal: false,
     amulets: [...mockAmulets],
     showItemsModal: false,
     experience: 0,
+    prizesAreSecret: false,
     items: { any: [], warrior: [], mage: [], rogue: [], cleric: [] },
     activationDate: moment().format("YYYY-MM-DDTHH:mm"),
     isInstant: false,
@@ -616,6 +619,18 @@ class NewEventCreator extends Component {
     });
   };
 
+  handleChangeAttributeValue = (e, attr, n) => {
+    const attributes = {...this.state.attributePool}
+    if(n){
+      attributes[attr] += n
+    }else{
+      if(/^\d+$/.test(e.target.value)){
+        attributes[attr] = parseInt(e.target.value)
+      }
+    }
+    this.setState({attributePool: attributes})
+  }
+
   handleIconChange = e => {
     if (e.target.files.length > 0) {
       this.setState({ icon: URL.createObjectURL(e.target.files[0]) });
@@ -754,9 +769,18 @@ class NewEventCreator extends Component {
             value={this.state.partySize}
             onChange={this.handlePartySizeSliderChange}
             valueLabelDisplay="on"
-            max={20}
             min={1}
+            max={8}
           />
+          <Divider style={{ marginTop: "2rem", marginBottom: "1rem" }} />
+          <div>
+            <Typography style={{width: 'fit-content', margin: '1rem 0'}}>Wymagane wartości atrybutów:</Typography>
+          <AttributeBox value={this.state.attributePool.str} attrType="str" attrTypeText="Siła" changeValue={this.handleChangeAttributeValue}/>
+          <AttributeBox value={this.state.attributePool.dex} attrType="dex" attrTypeText="Zręczność" changeValue={this.handleChangeAttributeValue}/>
+          <AttributeBox value={this.state.attributePool.mag} attrType="mag" attrTypeText="Magia" changeValue={this.handleChangeAttributeValue}/>
+          <AttributeBox value={this.state.attributePool.end} attrType="end" attrTypeText="Wytrzymałość" changeValue={this.handleChangeAttributeValue}/>
+
+          </div>
           <Divider style={{ marginTop: "2rem", marginBottom: "1rem" }} />
           <Grid container spacing={2}>
             <Grid item>
@@ -772,6 +796,8 @@ class NewEventCreator extends Component {
               </Button>
             </Grid>
           </Grid>
+
+
           <AmuletsModal
             open={this.state.showAmuletsModal}
             handleClose={this.handleToggleAmuletsModal}
@@ -812,6 +838,7 @@ class NewEventCreator extends Component {
                 })}
             </Grid>
           )}
+                   
           <Divider style={{ marginTop: "1rem", marginBottom: "1rem" }} />
           <Typography style={{ textAlign: "left" }}>Nagrody:</Typography>
           <Grid

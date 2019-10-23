@@ -75,7 +75,7 @@ const TorpedoList = props => {
                 >
                 <List component="div" disablePadding>
                     {props.userTorpedos.map(item => (
-                        <TorpedoListItem item={item} loadedTorpedoId={props.loadedTorpedoId} handleTorpedoToggle={props.handleTorpedoToggle} handleItemDelete={handleShowDeleteDialog}/>
+                        <TorpedoListItem key={item.itemModel._id} item={item} loadedTorpedoId={props.loadedTorpedoId} handleTorpedoToggle={props.handleTorpedoToggle} handleItemDelete={handleShowDeleteDialog}/>
                     ))}
                 </List>
                 </Collapse>

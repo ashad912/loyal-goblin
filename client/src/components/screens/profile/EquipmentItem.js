@@ -78,7 +78,6 @@ const EquipmentListItem = props => {
   return (
     <ListItem
       button
-      key={item.itemModel.id}
       alignItems="flex-start"
       className={classes.listItem}
       style={{ background: item.equipped ? "#e6dc8d" : "" }}

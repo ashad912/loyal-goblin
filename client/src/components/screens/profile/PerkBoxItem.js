@@ -29,7 +29,7 @@ const PerkBoxItem = ({ perk }) => {
               ((time.startHour + time.lengthInHours) % 24) +
               ":00";
           }
-          return <p style={{margin: 0}} key={time.day+time.startHour+time.lengthInHours}>{timeString}</p>
+          return <p style={{margin: 0}} key={perk.perkType+perk.value+time.day+time.startHour+time.lengthInHours}>{timeString}</p>
         }
         )}
       </div>

@@ -36,6 +36,7 @@ const mockEvents = [
     description: "Dalej dalej po minerał fiutaa",
     icon: "mission-icon.png",
     partySize: [2, 6],
+    attributes: {str: 4, dex: 10, mag: 3, end: 5},
     amulets: [
       {
         itemModel: {
@@ -117,7 +118,8 @@ const mockEvents = [
     minLevel: 15,
     description: "Echo echo echo...",
     icon: "mission-icon.png",
-    partySize: [4, 10],
+    partySize: [4, 8],
+    attributes: {str: 10, dex: 0, mag: 0, end: 21},
     amulets: [
       {
         itemModel: {
