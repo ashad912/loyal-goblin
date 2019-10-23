@@ -23,6 +23,7 @@ import itemCategories from '../../../assets/categories/items'
 const useStyles = makeStyles(theme => ({
   root: {
     width: "100%",
+    marginTop: '1rem'
   }
 }));
 
@@ -41,8 +42,8 @@ const TorpedoList = props => {
     }
   };
 
-  const handleShowDeleteDialog = (id, name, category) => {
-    setItemToDelete({id, name, category})
+  const handleShowDeleteDialog = (id, name) => {
+    setItemToDelete({id, name})
     setDeleteDialog(true)
 
   }
@@ -52,14 +53,11 @@ const TorpedoList = props => {
     setDeleteDialog(false)
   }
 
-  const handleItemDelete = () => {
-    props.handleItemDelete(itemToDelete.id, itemToDelete.category)
+  const handleTorpedoDelete = () => {
+    props.handleTorpedoDelete(itemToDelete.id)
     handleDeleteDialogClose()
   }
 
-
-  const items = props.items;
-  console.log(items)
 
   return (
     <Paper className={classes.root}>
@@ -98,7 +96,7 @@ const TorpedoList = props => {
             <Button onClick={handleDeleteDialogClose} color="primary">
                 Anuluj
             </Button>
-            <Button onClick={handleItemDelete} color="primary" autoFocus>
+            <Button onClick={handleTorpedoDelete} color="primary" autoFocus>
                 Potwierdź
             </Button>
             </DialogActions>

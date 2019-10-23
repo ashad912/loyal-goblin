@@ -419,6 +419,17 @@ const Profile = props => {
     .reduce((a, b) => a.concat(b))
     .filter(item => item.equipped);
 
+  const checkIfAnyEquippedItemHasPerk = (items) => {
+    
+    for(let i=0; i<items.length; i++){
+      console.log(items[i])
+      if(items[i].itemModel.hasOwnProperty("perks") && items[i].itemModel.perks.length > 0){
+        return true
+      }
+    }
+    return false
+  }
+
   return (
     <Grid
       container
@@ -512,7 +523,7 @@ const Profile = props => {
           </Link>
         </Grid>
       </Grid>
-      {playerEquippedItemModels.length > 0 && (
+      {playerEquippedItemModels.length > 0 && checkIfAnyEquippedItemHasPerk(playerEquippedItemModels) && (
         <React.Fragment>
           <Typography variant="h5" className={classes.eqHeading}>
             Aktualne efekty:

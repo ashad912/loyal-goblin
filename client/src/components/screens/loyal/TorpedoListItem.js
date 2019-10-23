@@ -70,7 +70,7 @@ const TorpedoListItem = props => {
 
   const handleDelete = event => {
     event.stopPropagation();
-    props.handleItemDelete(item.itemModel.id, item.itemModel.name, props.itemCategory)  
+    props.handleItemDelete(item._id, item.itemModel.name)  
     setAnchorEl(null);
   }
 

@@ -3,7 +3,18 @@ import boardsvg from '../../assets/board/statki.svg'
 import Loading from '../layout/Loading';
 import VerificationDialog from './loyal/VerificationDialog'
 import TorpedoList from './loyal/TorpedoList'
+import LoadedTorpedo from './loyal/LoadedTorpedo'
+import { Typography } from '@material-ui/core';
+import styled from 'styled-components'
 
+
+const LoadedTorpedoContainer = styled.div`
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin-bottom: 1rem;
+    min-height: 74px;
+`
 
 const createTempTorpedos = () => {
 
@@ -55,15 +66,27 @@ const createTempTorpedos = () => {
 
 
 class Loyal extends Component {
+
+    constructor() {
+        super();
+        this.timer = 0;
+    }
     
     state = {
+        seconds: 0,
         loading: true,
         dialogOpen: false,
+        userTorpedos: createTempTorpedos(),
+        loadedTorpedo: undefined,
     }
     //open console
     //have to add 'id' props in .svg for each key object
 
-
+    componentWillUnmount(){
+        if(this.state.seconds !== 0){
+            clearInterval(this.timer);
+        }
+    }
 
     handleLoad = () => {
         
@@ -120,22 +143,22 @@ class Loyal extends Component {
         })
     }
 
-    handleClick = (e) => {
-        const field = e.target
-        console.log(field)
+    // handleClick = (e) => {
+    //     const field = e.target
+    //     console.log(field)
 
-        const pressed_value = field.dataset.pressed === 'true' ? true : false
-        if(pressed_value === false){
-            //shot to backend: verify false value, next generate QR
-            //socket for auto-effect when qr scan is confirmed
-            //verification failed: this.handleLoad() to reload styles -> protecting 'data-pressed' value manipulation
-            this.setState({
-                dialogOpen: true
-            })
+    //     const pressed_value = field.dataset.pressed === 'true' ? true : false
+    //     if(pressed_value === false){
+    //         //shot to backend: verify false value, next generate QR
+    //         //socket for auto-effect when qr scan is confirmed
+    //         //verification failed: this.handleLoad() to reload styles -> protecting 'data-pressed' value manipulation
+    //         this.setState({
+    //             dialogOpen: true
+    //         })
 
-            field.style.fill = 'red'
-        }
-    }
+    //         field.style.fill = 'red'
+    //     }
+    // }
 
     handleDialogClose = () => {
         this.setState({
@@ -143,22 +166,100 @@ class Loyal extends Component {
         })
     }
 
+    handleTorpedoDelete = (id) => {
+        const torpedos = this.state.userTorpedos.filter((torpedo) => {
+            return torpedo._id !== id
+        })
+
+
+        let loadedTorpedo = this.state.loadedTorpedo
+        if(loadedTorpedo._id === id){
+            loadedTorpedo = undefined
+        }
+        
+        this.setState({
+            userTorpedos: torpedos,
+            loadedTorpedo: loadedTorpedo
+        })
     
+    
+        //TODO: Call to backend
+      };
 
-    handleTorpedoToggle = () => {
+    handleTorpedoToggle = (id) => {
+        const torpedo = this.state.userTorpedos.find((torpedo) => {
+            return torpedo._id === id
+        })
+        this.setState({
+            loadedTorpedo: torpedo
+        })
+    }
 
+    handleShoot = () => {
+        if(this.state.seconds === 0){
+            const svgRawObject = this.refs.boardsvg
+            const doc = svgRawObject.contentDocument
+            const field = doc.getElementsByName(this.state.loadedTorpedo.itemModel.name)[0] //assuming id as in serverFields array
+    
+    
+            const pressed_value = field.dataset.pressed === 'true' ? true : false
+            if(pressed_value === false){
+                //shot to backend: verify false value, next generate QR
+                //socket for auto-effect when qr scan is confirmed
+                //verification failed: this.handleLoad() to reload styles -> protecting 'data-pressed' value manipulation
+    
+                field.style.fill = 'orange'
+                this.startAnimation()
+       
+            }
+        }
+        
+
+    }
+    startAnimation = () => {
+        this.timer = setInterval(this.countDown, 1000);
+        this.setState({
+            seconds: 5,
+        });
+    }
+
+    countDown = () => {
+        let seconds = this.state.seconds - 1;
+        this.setState({
+          seconds: seconds,
+        });
+    
+        if (seconds == 0) { 
+          clearInterval(this.timer);
+          this.endAnimation()
+        }
+    
+    }
+
+    endAnimation = () => {
+        const svgRawObject = this.refs.boardsvg
+        const doc = svgRawObject.contentDocument
+        const field = doc.getElementsByName(this.state.loadedTorpedo.itemModel.name)[0] //assuming id as in serverFields array
+        field.style.fill = 'red'
+        this.handleTorpedoDelete(this.state.loadedTorpedo._id)
     }
 
     render() { 
-        const userTorpedos = createTempTorpedos()
-        
+        const userTorpedos = this.state.userTorpedos
+        console.log(this.state.seconds)
         return ( 
             <React.Fragment>
                 {this.state.loading && <Loading/>}
-                
+                <LoadedTorpedoContainer>
+                    {this.state.loadedTorpedo ? (
+                        <LoadedTorpedo torpedo={this.state.loadedTorpedo} handleShoot={this.handleShoot} inProgress={this.state.seconds > 0}/>
+                    ): (
+                        <Typography variant='h5' >Wybierz i załaduj torpedę!</Typography>
+                    )}
+                </LoadedTorpedoContainer>
                 <object data={boardsvg} onLoad={this.handleLoad} type="image/svg+xml"
                 id="boardsvg" ref='boardsvg' width="100%" height="100%">Board</object> 
-                <TorpedoList userTorpedos={userTorpedos} loadedTorpedoId={121} handleTorpedoToggle={this.handleTorpedoToggle}/>
+                {this.state.seconds === 0 && (<TorpedoList userTorpedos={userTorpedos} loadedTorpedoId={this.state.loadedTorpedo ? this.state.loadedTorpedo._id : undefined} handleTorpedoToggle={this.handleTorpedoToggle} handleTorpedoDelete={this.handleTorpedoDelete}/>)}
                 <VerificationDialog
                     open={this.state.dialogOpen}
                     handleClose={this.handleDialogClose}

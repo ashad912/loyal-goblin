@@ -44,7 +44,6 @@ const PerkBoxItem = ({ perk }) => {
         {secondaryText}
       
     </ListItem>
-  );
-};
+  )};
 
 export default PerkBoxItem;
