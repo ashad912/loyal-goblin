@@ -120,8 +120,7 @@ export const UserSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
             unique: true
-        }
-        ,
+        },
         feet: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',

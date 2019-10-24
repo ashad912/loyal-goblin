@@ -56,7 +56,7 @@ const ItemModelSchema = new mongoose.Schema({
         {
           //u can specify many time periods for perk - ex: day: 5, startHour: 16, lengthInHours: 11 -> Friday, 16:00 - 03:00 [03:00 is at Saturday]
           //NO NEED TO CARE ABOUT DAY CHANGE (midnight)
-          day: {
+          startDay: {
             type: Number,
             min: 1,
             max: 7,

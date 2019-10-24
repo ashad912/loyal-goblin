@@ -4,6 +4,7 @@ import Loading from '../layout/Loading';
 import VerificationDialog from './loyal/VerificationDialog'
 import TorpedoList from './loyal/TorpedoList'
 import LoadedTorpedo from './loyal/LoadedTorpedo'
+import Button from "@material-ui/core/Button";
 import { Typography } from '@material-ui/core';
 import styled from 'styled-components'
 
@@ -78,6 +79,7 @@ class Loyal extends Component {
         dialogOpen: false,
         userTorpedos: createTempTorpedos(),
         loadedTorpedo: undefined,
+        showTorpedosModal: false
     }
     //open console
     //have to add 'id' props in .svg for each key object
@@ -173,7 +175,7 @@ class Loyal extends Component {
 
 
         let loadedTorpedo = this.state.loadedTorpedo
-        if(loadedTorpedo._id === id){
+        if(loadedTorpedo && loadedTorpedo._id === id){
             loadedTorpedo = undefined
         }
         
@@ -244,6 +246,15 @@ class Loyal extends Component {
         this.handleTorpedoDelete(this.state.loadedTorpedo._id)
     }
 
+    handleToggleTorpedosModal = e => {
+        this.setState(prevState => {
+          return { 
+            showTorpedosModal: !prevState.showTorpedosModal,
+           };
+        });
+        
+      };
+
     render() { 
         const userTorpedos = this.state.userTorpedos
         console.log(this.state.seconds)
@@ -259,7 +270,21 @@ class Loyal extends Component {
                 </LoadedTorpedoContainer>
                 <object data={boardsvg} onLoad={this.handleLoad} type="image/svg+xml"
                 id="boardsvg" ref='boardsvg' width="100%" height="100%">Board</object> 
-                {this.state.seconds === 0 && (<TorpedoList userTorpedos={userTorpedos} loadedTorpedoId={this.state.loadedTorpedo ? this.state.loadedTorpedo._id : undefined} handleTorpedoToggle={this.handleTorpedoToggle} handleTorpedoDelete={this.handleTorpedoDelete}/>)}
+                
+                {this.state.seconds === 0 && (
+                    <React.Fragment>
+                        <Button variant="outlined" color="primary" onClick={this.handleToggleTorpedosModal} style={{marginTop: '1.1rem'}}>
+                            Moje torpedy
+                        </Button>
+                        <TorpedoList 
+                            handleOpen={this.state.showTorpedosModal}
+                            handleClose={this.handleToggleTorpedosModal}
+                            userTorpedos={userTorpedos}
+                            loadedTorpedoId={this.state.loadedTorpedo ? this.state.loadedTorpedo._id : undefined}
+                            handleTorpedoToggle={this.handleTorpedoToggle}
+                            handleTorpedoDelete={this.handleTorpedoDelete}
+                        />
+                    </React.Fragment>)}
                 <VerificationDialog
                     open={this.state.dialogOpen}
                     handleClose={this.handleDialogClose}

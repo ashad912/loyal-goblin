@@ -12,6 +12,7 @@ import Profile from "./screens/Profile";
 import Events from "./screens/Events";
 import Loyal from "./screens/Loyal";
 import CharacterCreation from "./screens/CharacterCreation";
+import Booking from "./screens/Booking";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -79,7 +80,7 @@ export default function FullWidthTabs(props) {
 
   const classes = useStyles();
   const theme = useTheme();
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState(3);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -137,7 +138,7 @@ export default function FullWidthTabs(props) {
               <Loyal />
             </TabPanel>
             <TabPanel value={value} index={3} dir={theme.direction}>
-              Booking
+              <Booking/>
             </TabPanel>
           </SwipeableViews>
         </React.Fragment>

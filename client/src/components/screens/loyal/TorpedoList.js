@@ -8,6 +8,7 @@ import Collapse from "@material-ui/core/Collapse";
 import Paper from "@material-ui/core/Paper";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
@@ -23,7 +24,7 @@ import itemCategories from '../../../assets/categories/items'
 const useStyles = makeStyles(theme => ({
   root: {
     width: "100%",
-    marginTop: '1rem'
+    
   }
 }));
 
@@ -31,8 +32,11 @@ const TorpedoList = props => {
   const [openList, setOpenList] = React.useState("");
   const [deleteDialog, setDeleteDialog] = React.useState(false)
   const [itemToDelete, setItemToDelete] = React.useState({id: '', name: '', category: ''})
+  const [activeTorpedo, setActiveTorpedo] = React.useState(undefined)
 
   const classes = useStyles();
+  
+  const parentDialog = React.createRef()
 
   const handleOpenList = event => {
     if (event.currentTarget.dataset.value === openList) {
@@ -43,6 +47,7 @@ const TorpedoList = props => {
   };
 
   const handleShowDeleteDialog = (id, name) => {
+    console.log(parentDialog)
     setItemToDelete({id, name})
     setDeleteDialog(true)
 
@@ -58,30 +63,75 @@ const TorpedoList = props => {
     handleDeleteDialogClose()
   }
 
+  const handleTorpedoToggle = (id) => {
+    // const torpedo = this.state.userTorpedos.find((torpedo) => {
+    //   return torpedo._id === id
+    // })
+    // this.setState({
+    //     loadedTorpedo: torpedo
+    // })
+    if(activeTorpedo !== id){
+      setActiveTorpedo(id)
+    }else{
+      setActiveTorpedo(undefined)
+    }
+    
+  }
+
+  const handleClose = () => {
+    props.handleClose()
+  }
+
+  const handleSave = () => {
+    props.handleTorpedoToggle(activeTorpedo)
+    handleClose()
+  }
 
   return (
+    <Dialog
+        open={props.handleOpen}
+        onClose={handleClose}
+        fullWidth
+        maxWidth="lg"
+      >
     <Paper className={classes.root}>
+      {props.userTorpedos.length ? (
         <List component="nav" className={classes.root}>
             
             <React.Fragment >
                 <ListItem onClick={handleOpenList} data-value={"Torpedy"}>
                 <ListItemText primary={'Torpedy'} />
-                {openList === 'Torpedy' ? <ExpandLess /> : <ExpandMore />}
+                <ExpandMore />
                 </ListItem>
-                <Collapse
-                    in={openList === 'Torpedy'}
-                    timeout="auto"
-                    unmountOnExit
-                >
-                <List component="div" disablePadding>
+                
+                <List component="div" disablePadding style={{maxHeight: '264px'}}>
                     {props.userTorpedos.map(item => (
-                        <TorpedoListItem key={item.itemModel._id} item={item} loadedTorpedoId={props.loadedTorpedoId} handleTorpedoToggle={props.handleTorpedoToggle} handleItemDelete={handleShowDeleteDialog}/>
+                        <TorpedoListItem key={item.itemModel._id} item={item} loadedTorpedoId={activeTorpedo} handleTorpedoToggle={handleTorpedoToggle} handleItemDelete={handleShowDeleteDialog}/>
                     ))}
                 </List>
-                </Collapse>
+                
             </React.Fragment>
             
         </List>
+      ) : (
+        <ListItem onClick={handleOpenList} data-value={"Torpedy"}>
+                <ListItemText primary={`Brak torped! Kup piwo :)`} />
+              
+                </ListItem>
+        
+      )}
+        
+        <DialogActions>
+          {(props.userTorpedos.length > 0) && (
+            <Button onClick={handleSave} color="primary">
+              Wybierz
+            </Button>
+          )}
+          
+          <Button onClick={handleClose} color="primary" autoFocus>
+              Powrót
+          </Button>
+        </DialogActions>
         <Dialog
             open={deleteDialog}
             onClose={handleDeleteDialogClose}
@@ -93,15 +143,17 @@ const TorpedoList = props => {
             </DialogContentText>
             </DialogContent>
             <DialogActions>
-            <Button onClick={handleDeleteDialogClose} color="primary">
-                Anuluj
-            </Button>
-            <Button onClick={handleTorpedoDelete} color="primary" autoFocus>
-                Potwierdź
-            </Button>
+              <Button onClick={handleDeleteDialogClose} color="primary">
+                  Anuluj
+              </Button>
+              <Button onClick={handleTorpedoDelete} color="primary" autoFocus>
+                  Potwierdź
+              </Button>
             </DialogActions>
         </Dialog>
+        
     </Paper>
+    </Dialog>
   );
 };
 

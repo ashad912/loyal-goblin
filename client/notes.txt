@@ -864,3 +864,22 @@ const createNumberList = (startNum, endNum, isWeekDay, isHour) => {
 }
 
 export default NewPerkModal;
+
+//stare torpedy
+<React.Fragment >
+                <ListItem onClick={handleOpenList} data-value={"Torpedy"}>
+                <ListItemText primary={'Torpedy'} />
+                {openList === 'Torpedy' ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
+                <Collapse
+                    in={openList === 'Torpedy'}
+                    timeout="auto"
+                    unmountOnExit
+                >
+                <List component="div" disablePadding>
+                    {props.userTorpedos.map(item => (
+                        <TorpedoListItem key={item.itemModel._id} item={item} loadedTorpedoId={activeTorpedo} handleTorpedoToggle={handleTorpedoToggle} handleItemDelete={handleShowDeleteDialog}/>
+                    ))}
+                </List>
+                </Collapse>
+            </React.Fragment>
