@@ -2,15 +2,18 @@ import React from 'react'
 import uuid from 'uuid/v1'
 import moment from 'moment'
 
+const commonUuid1 = uuid()
+const commonUuid2 = uuid()
+
 const createTempEquippedItems = () => {
     return{
         amulet: {
-            __id: uuid(),
+            _id: uuid(),
             owner: 11111,
             itemModel: {
-                __id: uuid(),
+                _id: uuid(),
                 type: {
-                __id: 1,
+                _id: 1,
                 type: "amulet"
                 },
                 name: "Diament",
@@ -20,12 +23,12 @@ const createTempEquippedItems = () => {
         },
         weaponRight: {
             
-                __id: uuid(),
+                _id: uuid(),
                 owner: 11111,
                 itemModel: {
-                __id: uuid(),
+                _id: uuid(),
                 type: {
-                    __id: 2,
+                    _id: 2,
                     type: "weapon"
                 },
                 name: "Krótki miecz",
@@ -36,13 +39,13 @@ const createTempEquippedItems = () => {
         },
         weaponLeft: {
             
-                __id: uuid(),
+                _id: uuid(),
                 owner: 11111,
                 equipped: false,
                 itemModel: {
-                __id: uuid(),
+                _id: uuid(),
                 type: {
-                    __id: 2,
+                    _id: 2,
                     type: "weapon"
                 },
                 name: "Wielki miecz",
@@ -51,38 +54,60 @@ const createTempEquippedItems = () => {
                 class: "warrior",
                 perks: [
                     {
-                    __id: 1,
+                    _id: 1,
                     perkType: "attr-strength",
                     target: undefined,
                     time: [
                         {
-                            __id: 1,
+                            _id: 1,
                             hoursFlag: false,
-                            lengthInHours: 24,
-                            startDay: 3,
+                            lengthInHours: 5,
+                            startDay: 4,
                             startHour: 19
                         },
                         {
-                            __id: 1,
+                            _id: 1,
                             hoursFlag: true,
                             lengthInHours: 1,
                             startDay: 3,
                             startHour: 18
                         },
                     ],
-                    value: "+1"
-                    }
+                        value: "+3"
+                    },
+                    {
+                        _id: 13213,
+                        perkType: "attr-dexternity",
+                        target: undefined,
+                        time: [
+                            {
+                                _id: 1,
+                                hoursFlag: false,
+                                lengthInHours: 5,
+                                startDay: 4,
+                                startHour: 19
+                            },
+                            {
+                                _id: 1,
+                                hoursFlag: true,
+                                lengthInHours: 1,
+                                startDay: 3,
+                                startHour: 18
+                            },
+                        ],
+                            value: "-1"
+                        }
                 ]
                 
             }
         },
         chest: {
-            __id: uuid(),
+            _id: uuid(),
             owner: 11111,
             itemModel: {
-            __id: uuid(),
+            _id: uuid(),
             type: {
-                __id: 3,
+                _id: 3,
                 type: "chest"
             },
             name: "Skórzana kurta",
@@ -92,13 +117,13 @@ const createTempEquippedItems = () => {
         },
         legs: {
             
-                __id: uuid(),
+                _id: uuid(),
                 owner: 11111,
                 equipped: false,
                 itemModel: {
-                __id: uuid(),
+                _id: uuid(),
                 type: {
-                    __id: 4,
+                    _id: 4,
                     type: "legs"
                 },
                 name: "Lniane spodnie",
@@ -111,29 +136,47 @@ const createTempEquippedItems = () => {
         hands: {},
         feet: {
             
-                __id: uuid(),
+                _id: uuid(),
                 owner: 11111,
                 equipped: false,
                 itemModel: {
-                __id: uuid(),
-                type: {
-                    __id: 5,
-                    type: "feet"
-                },
+                    _id: uuid(),
+                    type: {
+                        _id: 5,
+                        type: "feet"
+                    },
                 name: "Wysokie buty",
                 fluff: "Skórzane, wypastowane, lśniące",
-                imgSrc: "high-boots.png"
-                }
+                imgSrc: "high-boots.png",
+                perks: [
+                    {
+                    _id: 1,
+                    perkType: "disc-category",
+                    target: 'food',
+                    time: [
+                    {
+                        hoursFlag: true,
+                        lengthInHours: 24,
+                        startDay: 4,
+                        startHour: 18
+                    },
+                    { hoursFlag: true, lengthInHours: 5, startDay: 3, startHour: 7 }
+                    ],
+                    value: "-10%"
+                    }
+                ]
+                },
+                
             
         },
         head: {
-            __id: uuid(),
+            _id: uuid(),
             owner: 11111,
             equipped: true,
             itemModel: {
-            __id: uuid(),
+            _id: uuid(),
             type: {
-                __id: 6,
+                _id: 6,
                 type: "head"
             },
             name: "Kaptur czarodzieja",
@@ -145,24 +188,38 @@ const createTempEquippedItems = () => {
                 target: undefined,
                 time: [
                     {
-                    __id: 1,
+                    _id: 1,
                     hoursFlag: false,
                     lengthInHours: 24,
-                    startDay: 5,
+                    startDay: 4,
                     startHour: 12
                     }
                 ],
                 value: "+10%"
                 },
                 {
+                    perkType: "experience",
+                    target: undefined,
+                    time: [
+                        {
+                        _id: 1,
+                        hoursFlag: false,
+                        lengthInHours: 24,
+                        startDay: 4,
+                        startHour: 12
+                        }
+                    ],
+                    value: "+10"
+                    },
+                {
                 perkType: "experience",
                 target: undefined,
                 time: [
                     {
-                    __id: 2,
+                    _id: 2,
                     hoursFlag: false,
                     lengthInHours: 24,
-                    startDay: 6,
+                    startDay: 4,
                     startHour: 12
                     }
                 ],
@@ -172,13 +229,13 @@ const createTempEquippedItems = () => {
             }
         },
         ringRight: {
-            __id: uuid(),
+            _id: uuid(),
             owner: 11111,
             equipped: true,
             itemModel: {
-                __id: uuid(),
+                _id: uuid(),
                 type: {
-                    __id: 7,
+                    _id: 7,
                     type: "ring"
                 },
                 name: "Pierścień siły",
@@ -186,15 +243,15 @@ const createTempEquippedItems = () => {
                 imgSrc: "strength-ring.png",
                 perks: [
                 {
-                    __id: 1,
+                    _id: 1,
                     perkType: "disc-product",
-                    target: { name: "Wóda2" },
+                    target: commonUuid1,
                     time: [
                     {
                         hoursFlag: true,
-                        lengthInHours: 2,
-                        startDay: 1,
-                        startHour: 18
+                        lengthInHours: 12,
+                        startDay: 4,
+                        startHour: 20,
                     },
                     { hoursFlag: true, lengthInHours: 5, startDay: 3, startHour: 7 }
                     ],
@@ -207,17 +264,16 @@ const createTempEquippedItems = () => {
     }
 };
   
-const userProfile = () => {
-    return {
+const userProfile = {
+    
         strength: 5,
         dexternity: 4,
         magic: 3,
         endurance: 6
-    }
+    
 }
 
-const products = () => {
-    return [
+const products = [
         {
             _id: uuid(),
             category: "shot",
@@ -265,7 +321,7 @@ const products = () => {
             imgSrc: "drink.png"
           },
           {
-            _id: uuid(),
+            _id: commonUuid1,
             category: "food",
             name: "BNaczosy hehe",
             description: "xddxdx",
@@ -293,7 +349,7 @@ const products = () => {
             }]
           },
     ]
-}
+
 
 
 const Booking = () => {
@@ -309,7 +365,11 @@ const Booking = () => {
             attrDexternity: 0,
             attrMagic: 0,
             attrEndurance: 0,
-            finalDiscount: []
+            rawExperience: {
+                absolute: '0',
+                percent: '0%'
+            },
+            products: [],
         }
 
         const isTime = (timeArray) => {
@@ -323,7 +383,7 @@ const Booking = () => {
                 const time = timeArray[i];
                 let startTime = moment(`${time.startHour}:00`, 'HH:mm')
                 let endTime = moment(startTime).clone().add(time.lengthInHours, 'hours')
-                //console.log(startTime.hour(), endTime.hour())
+                console.log(startTime.hour(), endTime.hour())
                 //console.log(startTime, endTime)
                 if(time.startDay === nowDay){
                     if(startTime.isBefore(endTime)){
@@ -357,30 +417,51 @@ const Booking = () => {
             return (Math.trunc(100 * value)/100)
         }
 
-        const countValue = (base, perk, source, isCurrency) => {
-            let temp = '-5.5324345435'
-            let tempBase = 10
+        const countValue = (source, perkValue, isCurrency) => {
             
-            if(temp.includes('%')){
-                const tempDiscount = (parseFloat(temp)/100)
+            let result = 0
+
+            if(perkValue.includes('%')){
+                const tempDiscount = (parseFloat(perkValue)/100)
                 if(isCurrency){
-                    const discount = truncCurrency(tempDiscount*tempBase)
-                    tempBase = tempBase + discount
+                    const discount = truncCurrency(tempDiscount*source)
+                    result = discount
                 }else{
-                    const mod = Math.trunc(tempDiscount*tempBase)
-                    tempBase = tempBase + mod
+                    const mod = Math.trunc(tempDiscount*source)
+                    result = mod
                 }
                 
-                console.log(tempBase)
+                console.log(result)
             }else{
-                temp = parseFloat(temp)
+                perkValue = parseFloat(perkValue)
                 if(isCurrency){
-                    tempBase = truncCurrency(temp + tempBase)
+                    perkValue = truncCurrency(perkValue)
                 }else{
-                    tempBase = Math.trunc(temp + tempBase)
+                    perkValue = Math.trunc(perkValue)
                 }
-                console.log(tempBase)
+
+                result = perkValue
+                console.log(result)
             }
+
+            return result
+        }
+
+        const countRawExperience = (exp, perkValue) => {
+            
+            if(perkValue.includes('%')){
+                perkValue = truncCurrency(parseFloat(perkValue))
+                exp.percent = `${parseFloat(exp.percent) + perkValue}%`
+                
+                
+                console.log(exp.percent)
+            }else{
+                perkValue = truncCurrency(parseFloat(perkValue))
+                exp.absolute = `${parseFloat(exp.absolute) + perkValue}`
+                
+            }
+
+            return exp
         }
         
         Object.keys(equippedItems).forEach((itemKey) => {
@@ -389,37 +470,92 @@ const Booking = () => {
                 console.log(perks)
                 perks.forEach((perk) => {
                     console.log(perk.perkType)
-                    switch(perk.perkType){
-                        case 'attr-strength':
-                            const isPerkActive = isTime(perk.time)
-                            if(isPerkActive){
-                                countValue(userProfile.strength, perk.value, modelPerks.attrStrength, true)
-                            }
-                            
-                            break
-                        case 'attr-dexternity':
+                    if(isTime(perk.time)){
+                        switch(perk.perkType){
+                            case 'attr-strength':
+                                modelPerks.attrStrength = modelPerks.attrStrength + countValue(userProfile.strength, perk.value, false)
+                                break
+                            case 'attr-dexternity':
+                                modelPerks.attrDexternity = modelPerks.attrDexternity + countValue(userProfile.dexternity, perk.value, false)
+                                break
+                            case 'attr-magic':
+                                modelPerks.attrMagic = modelPerks.attrMagic + countValue(userProfile.magic, perk.value, false)
+                                break
+                            case 'attr-endurance':
+                                modelPerks.attrEndurance = modelPerks.attrEndurance + countValue(userProfile.endurance, perk.value, false)
+                                break
+                            case 'experience':
 
-                            break
-                        case 'attr-magic':
+                                modelPerks.rawExperience = countRawExperience(modelPerks.rawExperience, perk.value)
+                                console.log(modelPerks)
+                                break
+                            case 'disc-product':
 
-                            break
-                        case 'attr-endurance':
+                                const product = products.find((product) => {
+                                    return product._id === perk.target
+                                })
 
-                            break
-                        case 'experience':
-                            break
-                        case 'disc-product':
+                                if(product){
+                                    const priceMod = countValue(product.price, perk.value, true)
+                                    if(!modelPerks.products.hasOwnProperty(product._id)){
+                                        modelPerks.products[product._id] = {priceMod: priceMod}
+                                    }else if(!modelPerks.products[product._id].hasOwnProperty('priceMod')){
+                                        modelPerks.products[product._id]['priceMod'] = priceMod
+                                    }else{
+                                        modelPerks.products[product._id]['priceMod'] += priceMod
+                                    }
+                                }
+    
+                                break
+                            case 'disc-category':
+                                console.log('haleczko')
+                                const productsInCategory = products.filter((product) => {
+                                    return product.category === perk.target
+                                })
 
-                            break
-                        case 'disc-category':
+                                for(let i=0; i<productsInCategory.length; i++){
+                                    
+                                    const product = productsInCategory[i]
+                                    const priceMod = countValue(product.price, perk.value, true)
+                                    if(!modelPerks.products.hasOwnProperty(product._id)){
+                                        modelPerks.products[product._id] = {priceMod: priceMod}
+                                    }else if(!modelPerks.products[product._id].hasOwnProperty('priceMod')){
+                                        modelPerks.products[product._id]['priceMod'] = priceMod
+                                    }else{
+                                        modelPerks.products[product._id]['priceMod'] += priceMod
+                                    }
+                                    
 
-                            break
-                        default:
-                            break 
+                                }
+
+                                break
+                            default:
+                                break 
+                        }
                     }
+                    
                 })
             }
         })
+
+        for(let i=0; i<products.length; i++){
+                                    
+            const product = products[i]
+            const experienceModFromAbsolute = countValue(product.price * 10, modelPerks.rawExperience.absolute, false)
+            const experienceModFromPercent = countValue(product.price * 10, modelPerks.rawExperience.percent, false)
+            const experienceMod = experienceModFromAbsolute + experienceModFromPercent
+            if(!modelPerks.products.hasOwnProperty(product._id)){
+                modelPerks.products[product._id] = {experienceMod: experienceMod}
+            }else if(!modelPerks.products[product._id].hasOwnProperty('experienceMod')){
+                modelPerks.products[product._id]['experienceMod'] = experienceMod
+            }else{
+                modelPerks.products[product._id]['experienceMod'] += experienceMod
+            }
+            
+
+        }
+
+        console.log(modelPerks)
     }
 
     return(
