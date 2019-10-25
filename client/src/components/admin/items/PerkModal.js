@@ -109,13 +109,13 @@ class PerkModal extends React.Component {
 
   state = {
     perk:{
-      perkType: undefined,
-      value: undefined,
-      target: undefined,
+      perkType: null,
+      value: null,
+      target: null,
       time: [/* hoursFlag, day, startHour, lengthInHours*/],
     },
     formError: {
-      value: undefined
+      value: null
     },
     timeActive: false,
     products: createTempProducts(),
@@ -137,7 +137,7 @@ class PerkModal extends React.Component {
       }else{
         timeActive = false
       }
-      if(perk.perkType === undefined){
+      if(perk.perkType === null){
         perk.perkType = perkTypes[0]
       }
       console.log(this.props.perkToModal)
@@ -192,7 +192,7 @@ class PerkModal extends React.Component {
         const targetPerks = ['disc-product', 'disc-category', 'disc-rent']
         if(targetPerks.includes(fieldValue)){
           
-          let newTargetValue = undefined
+          let newTargetValue
           switch(fieldValue) {
             case targetPerks[0]:
               newTargetValue = this.state.products[0]
@@ -215,19 +215,19 @@ class PerkModal extends React.Component {
             },
             formError: {
               ...this.state.formError,
-              value: clearValue ? undefined : this.state.formError.value
+              value: clearValue ? null : this.state.formError.value
             },
           })
         }else{
           this.setState({
             perk: {
               ...this.state.perk,
-              target: undefined,
+              target: null,
               value: clearValue ? '' : this.state.perk.value
             },
             formError: {
               ...this.state.formError,
-              value: clearValue ? undefined : this.state.formError.value
+              value: clearValue ? null : this.state.formError.value
             },
           })
         }
@@ -238,10 +238,10 @@ class PerkModal extends React.Component {
 
         if(fieldValue.length > 0 && this.state.perk.perkType !== 'custom'){
           valueValid = fieldValue.trim().match(/^[-+]?[0-9]*%?$/);
-          valueError = valueValid ? undefined : 'Niepoprawna wartość!'
+          valueError = valueValid ? null : 'Niepoprawna wartość!'
         }else{
           valueValid = true
-          valueError = undefined
+          valueError = null
         }
         this.setState({
           formError: {
@@ -261,9 +261,9 @@ class PerkModal extends React.Component {
   handleClose = () => {
     this.setState({
       perk:{
-        perkType: undefined,
-        value: undefined,
-        target: undefined,
+        perkType: null,
+        value: null,
+        target: null,
         time: [/*day, startHour, lengthInHours*/],
       }
     }, () => {
@@ -357,9 +357,9 @@ class PerkModal extends React.Component {
     
     this.setState({
       // perk:{
-      //   perkType: undefined,
-      //   value: undefined,
-      //   target: undefined,
+      //   perkType: null,
+      //   value: null,
+      //   target: null,
       //   time: [/*day, startHour, lengthInHours*/],
       // }
     }, () => {

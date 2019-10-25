@@ -9,7 +9,10 @@ export const itemModelTypes = [
   "hands",
   "feet",
   "head",
-  "ring"
+  "ring",
+  "scroll",
+  "mixture",
+  "torpedo"
 ];
 
 export const perkTypes = [

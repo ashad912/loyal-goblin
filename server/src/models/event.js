@@ -3,7 +3,7 @@ import validator from 'validator'
 
 export const eventTypes = ['rally', 'mission']
 
-export const eventStatuses = ['ready', 'active', 'archive']
+export const eventStatuses = ['ready', 'active', 'archive', 'ended']
 
 
 export const EventSchema = new mongoose.Schema({

@@ -9,11 +9,10 @@ import Switch from "@material-ui/core/Switch";
 import Grid from "@material-ui/core/Grid";
 import Input from "@material-ui/core/Input";
 import Slider from "@material-ui/core/Slider";
-import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import Checkbox from "@material-ui/core/Checkbox";
+import FormControl from "@material-ui/core/FormControl";
 import List from "@material-ui/core/List";
 import Box from "@material-ui/core/Box";
 import Paper from "@material-ui/core/Paper";
@@ -97,23 +96,52 @@ border: 1px solid grey;
 const itemClasses = ['Wojownik', 'Mag', 'Łotrzyk', 'Kleryk']
 const days = [null, 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela']
 
+const itemTypesLabels = {
+  amulet: 'Amulet',
+  feet: 'Buty',
+  hands: 'Dłonie',
+  head: 'Głowa',
+  chest: 'Korpus',
+  mixture: 'Mikstura',
+  legs: 'Nogi',
+  ring: 'Pierścień',
+  torpedo: 'Torpeda',
+  scroll: 'Zwój',
+}
+
 class NewItemCreator extends Component {
   state = {
     name: '',
     description: '',
     icon: "",
-    class: undefined,
+    class: null,
     modifyingIndex: null,
     showPerkModal: false,
     perks: []
   };
 
+  componentDidMount = () => {
+      const item = this.props.item
+      
+      console.log(item)
+      this.setState({
+        _id: item._id,
+        name: item.name,
+        description: item.description,
+        type: item.type,
+        class: item.class,
+        perks: item.perks,
+        icon: (item.imgSrc.includes('blob') || item.imgSrc.includes('data:image')) ? (item.imgSrc) : (require("../../../assets/icons/items/" + item.imgSrc))
+      })
+  }
+
+ 
   handleAddPerk = () => {
     this.setState({
       perkToModal: {
-        perkType: undefined,
-        value: undefined,
-        target: undefined,
+        perkType: null,
+        value: null,
+        target: null,
         time: [/*hoursFlag, day, startHour, lengthInHours*/],
       }
     }, () => {
@@ -158,14 +186,16 @@ class NewItemCreator extends Component {
     
     this.setState(prevState => {
       return { classItem: !prevState.classItem,
-                class: prevState.class ? undefined : itemClasses[0]
+                class: prevState.class ? null : itemClasses[0]
              };
     });
   };
 
   handleChangeNameValue = (e) => {
+    
     const name = e.target.name
     const value = e.target.value 
+    console.log(name, value)
     this.setState({
         [name]: value
     })
@@ -176,6 +206,7 @@ class NewItemCreator extends Component {
     this.props.handleClose();
   };
 
+ 
   updatePerks = (perk) => {
     
     if(this.state.modifyingIndex != null){
@@ -198,6 +229,20 @@ class NewItemCreator extends Component {
       })
     }
     
+  }
+
+  saveItem = () => {
+      const item = {
+        _id: this.state._id,
+        name: this.state.name,
+        description: this.state.description,
+        type: this.state.type,
+        class: this.state.class,
+        perks: this.state.perks,
+        imgSrc: this.state.icon
+      }
+
+      this.props.updateItems(item)
   }
 
   componentDidUpdate(){
@@ -258,12 +303,32 @@ class NewItemCreator extends Component {
 
     return (
       <MuiPickersUtilsProvider utils={MomentUtils}>
-        <Button>{"< Powrót do panelu przedmiotów"}</Button>
+        <Button onClick={this.props.handleClose}>{"< Powrót do panelu przedmiotów"}</Button>
         <Container>
           <Grid container spacing={5}>
+          <Grid item xs={12} style={{textAlign: 'left'}}>
+            <FormControl style={{minWidth: '10rem'}}>
+                <InputLabel shrink={true} htmlFor="type">Typ przedmiotu</InputLabel>
+                <Select
+                    autoFocus
+                    value={this.state.type}
+                    onChange={this.handleChangeNameValue}
+                    inputProps={{
+                        name: 'type',
+                        id: 'type',
+                    }}
+                >
+                    {Object.keys(itemTypesLabels).map((itemTypeKey) => {
+                        return(
+                            <MenuItem value={itemTypeKey}>{itemTypesLabels[itemTypeKey]}</MenuItem>
+                        )
+                    })}
+                </Select>
+            </FormControl>
+            </Grid>
           <Grid item xs={6} >
             <TextField
-              autoFocus
+              value={this.state.name}
               name="name"
               margin="dense"
               label={`Nazwa przedmiotu`}
@@ -272,6 +337,7 @@ class NewItemCreator extends Component {
               onChange={this.handleChangeNameValue}
             />
             <TextField
+              value={this.state.description}
               name="description"
               margin="dense"
               label={`Opis przedmiotu`}
@@ -359,7 +425,7 @@ class NewItemCreator extends Component {
           </div>
           </Grid>
           </Grid>
-          <Grid container spacing={2} style={{marginTop: '2rem'}}>
+          <Grid container spacing={2} style={{marginTop: '1.5rem'}}>
            <Grid item xs={12} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
           
             <Typography variant="h6">Efekty przedmiotu</Typography>
@@ -373,8 +439,7 @@ class NewItemCreator extends Component {
             
               <Grid item xs={12}>
               <StyledPaper elevation={0}>
-                  <List dense>
-                    <HeadersContainer>
+                  <HeadersContainer>
                       <Typography style={{width: '100%', color: 'rgba(0, 0, 0, 0.54)', fontSize: '0.8rem'}}>
                       <Grid container>
                         <Grid item xs={3}>
@@ -396,6 +461,8 @@ class NewItemCreator extends Component {
                       </Grid>
                       </Typography>
                   </HeadersContainer>
+                  <List dense style={{maxHeight: '8rem', overflow: 'auto', width: '100%'}}>
+                    
                       {this.state.perks.map((perk, index) => {
                           console.log(perk)
                           return(
@@ -420,7 +487,7 @@ class NewItemCreator extends Component {
                                           <Grid item>
                                             {`${days[period.startDay]}`}
                                           </Grid>
-                                          {period.hoursFlag ? (
+                                          {(period.startHour === 12 && period.lengthInHours === 24) ? (
                                             <Grid item>
                                               {`, ${period.startHour}:00 - ${getEndHour(period.startHour, period.lengthInHours)}:00`}
                                             </Grid>
@@ -473,6 +540,27 @@ class NewItemCreator extends Component {
                 null
             )
           }
+          </Grid>
+          <Grid
+            container
+            justify="center"
+            spacing={5}
+            style={{ marginTop: "1rem" }}
+          >
+            <Grid item>
+              <Button onClick={this.props.handleClose} color="secondary">
+                Anuluj
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                onClick={this.saveItem}
+                color="primary"
+                variant="contained"
+              >
+                Zatwierdź
+              </Button>
+            </Grid>
           </Grid>
           
         
