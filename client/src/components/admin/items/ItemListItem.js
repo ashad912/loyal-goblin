@@ -7,9 +7,20 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
+import List from "@material-ui/core/List";
 import ListItemText from "@material-ui/core/ListItemText";
 import PeopleIcon from "@material-ui/icons/People";
 import classThemes from "../../../assets/themes/classThemes";
+
+
+
+import Collapse from "@material-ui/core/Collapse";
+import Paper from "@material-ui/core/Paper";
+
+
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
+
 
 const pulse = keyframes`
   0% {
@@ -29,6 +40,31 @@ const StyledListItem = styled(ListItem)`
 animation:${pulse} ${props => props.active ? '5s ease-in-out infinite' : 'none'};
 `
 
+const StyledPaper = styled(Paper)`
+    padding: 0.5rem;
+    border: 1px solid #eeeeee;
+`
+const StyledBox = styled(Box)`
+    margin: 0.5rem 0.5rem 0.5rem 0.5rem;
+    text-align: center;
+
+`
+
+const itemTypesLabels = {
+    amulet: 'Amulet',
+    weapon: 'Broń',
+    feet: 'Buty',
+    hands: 'Dłonie',
+    head: 'Głowa',
+    chest: 'Korpus',
+    mixture: 'Mikstura',
+    legs: 'Nogi',
+    ring: 'Pierścień',
+    torpedo: 'Torpeda',
+    scroll: 'Zwój',
+  }
+  const days = [null, 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela']
+
 const ItemListItem = ({
     key,
     index,
@@ -39,6 +75,20 @@ const ItemListItem = ({
 }) => {
   const [amuletPopover, setAmuletPopover] = React.useState(null);
   const [itemPopover, setItemPopover] = React.useState(null);
+
+  const [openEffect, setOpenEffect] = React.useState("");
+  const [deleteDialog, setDeleteDialog] = React.useState(false)
+  const [itemToDelete, setItemToDelete] = React.useState({id: '', name: '', category: ''})
+
+ 
+
+  const handleOpenEffect = event => {
+    if (event.currentTarget.dataset.value === openEffect) {
+      setOpenEffect("");
+    } else {
+      setOpenEffect(event.currentTarget.dataset.value);
+    }
+  };
 
   const handleAmuletPopover = event => {
     setAmuletPopover(event.currentTarget);
@@ -51,6 +101,11 @@ const ItemListItem = ({
     setAmuletPopover(null);
     setItemPopover(null);
   };
+
+  const getEndHour = (startHour, length) => {
+    return (startHour + length) % 24
+  }
+  
   return (
     <React.Fragment>
 
@@ -58,8 +113,8 @@ const ItemListItem = ({
       <Grid container direction="column" spacing={2}>
         <Grid item container>
           <Grid item xs={3}>
-            <Typography style={{ textAlign: "center" }}>
-              
+            <Typography >
+                {itemTypesLabels[item.type]}
             </Typography>
           </Grid>
           <Grid item xs={3}>
@@ -83,7 +138,7 @@ const ItemListItem = ({
               <Typography variant="h5" style={{fontSize: '1.2rem', fontWeight: 'bolder'}}>{item.name}</Typography>
             </Grid>
             <Grid item>
-              
+                <Typography >{item.description}</Typography>
             </Grid>
             <Grid item>
               
@@ -98,7 +153,7 @@ const ItemListItem = ({
             xs={2}
             spacing={2}
           >
-            <Grid item>
+            {/* <Grid item>
               <Button
                 variant="contained"
                 color="secondary"
@@ -182,18 +237,16 @@ const ItemListItem = ({
                           />
                         </Grid>
                       );
-                    })} */}
+                    })}
                 </Grid>
               </Popover>
-            </Grid>
+            </Grid> */}
           </Grid>
           <Grid item container direction="column" xs={2} spacing={2}>
             <Grid item>
               <Button color="primary" onClick={e => editItem(item._id)}>Edytuj</Button>
             </Grid>
-            <Grid item>
-              
-            </Grid>
+            
             <Grid item>
               <Button onClick={e => deleteItem(item._id)} color="secondary">
                 Usuń
@@ -201,7 +254,94 @@ const ItemListItem = ({
             </Grid>
           </Grid>
         </Grid>
+        {item.perks.length > 0 && (
+        <List component="nav" style={{width: '100%', borderTop: '1px black'}}>
+            
+            
+            <ListItem onClick={handleOpenEffect} data-value={item._id}>
+              <ListItemText primary={'Efekty'} />
+              {openEffect === item._id ? <ExpandLess /> : <ExpandMore />}
+            </ListItem>
+            <Collapse
+              in={openEffect === item._id}
+              timeout="auto"
+              unmountOnExit
+            >
+             
+                    <Grid item xs={12}>
+                    <StyledPaper elevation={0}>
+                  
+                  <List dense style={{maxHeight: '8rem', overflow: 'auto', width: '100%'}}>
+                    
+                      {item.perks.map((perk, index) => {
+                          console.log(perk)
+                          return(
+                            <StyledBox border={1} borderColor="primary.main">
+                              <ListItem>
+                                <Typography style={{width: '100%', fontSize: '0.8rem', textAlign: 'center'}} >
+                                <Grid container>
+                                  <Grid item xs={4}>
+                                    {perk.perkType}
+                                  </Grid>
+                                  <Grid item xs={2}>
+                                    {perk.value}
+                                  </Grid>
+                                  <Grid item xs={1}>
+                                    {perk.target ? (perk.target.name ? (perk.target.name) : (perk.target)) : (null)}
+                                  </Grid>
+                                  <Grid item xs={5}>
+                                    {perk.time.length ? (
+                                      <React.Fragment>
+                                        {perk.time.map((period)=>(
+                                        <Grid container style={{justifyContent: 'center'}}>
+                                          <Grid item>
+                                            {`${days[period.startDay]}`}
+                                          </Grid>
+                                          {!(period.startHour === 12 && period.lengthInHours === 24) ? (
+                                            <Grid item>
+                                              {`, ${period.startHour}:00 - ${getEndHour(period.startHour, period.lengthInHours)}:00`}
+                                            </Grid>
+                                          ) : (
+                                            null
+                                          )}
+                                        </Grid>
+                                        ))}
+                                      </React.Fragment>
+                                    ) : (
+                                      <span>Stały</span>
+                                    )}
+                                    
+                                  </Grid>
+                                
+                                
+                                 
+                                  
+                                </Grid>
+                                </Typography>
+                              </ListItem>
+                              
+                              
+                              </StyledBox>
+                          )
+                      })}
+                  </List>
+                  </StyledPaper>
+                  </Grid>
+                  </Collapse>
+                  </List>
+                )}
       </Grid>
+      
+             
+            
+                
+            
+            
+        
+      
+
+
+     
     </StyledListItem>
     {!isLast && <Divider />}
     </React.Fragment>

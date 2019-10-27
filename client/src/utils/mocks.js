@@ -261,7 +261,7 @@ import uuid from 'uuid/v1'
 //             maxPlayers: 4,
 //             level: 1,
 //             strength: 1,
-//             dexternity: 2,
+//             dexterity: 2,
 //             magic: 3,
 //             endurance: 4,
 //             description: 'Super important mission. You need have things and attributes, as always loool xd',
@@ -300,7 +300,7 @@ import uuid from 'uuid/v1'
 //             maxPlayers: 3,
 //             level: 3,
 //             strength: 5,
-//             dexternity: 3,
+//             dexterity: 3,
 //             magic: 2,
 //             endurance: 1,
 //             description: 'Super important mission. You need have things and attributes, as always loool xd',
@@ -351,7 +351,7 @@ import uuid from 'uuid/v1'
 //             maxPlayers: 4,
 //             level: 1,
 //             strength: 1,
-//             dexternity: 2,
+//             dexterity: 2,
 //             magic: 3,
 //             endurance: 4,
 //             description: 'Super important mission. You need have things and attributes, as always loool xd',
@@ -390,7 +390,7 @@ import uuid from 'uuid/v1'
 //             maxPlayers: 3,
 //             level: 3,
 //             strength: 5,
-//             dexternity: 3,
+//             dexterity: 3,
 //             magic: 2,
 //             endurance: 1,
 //             description: 'Super important mission. You need have things and attributes, as always loool xd',
@@ -441,7 +441,7 @@ import uuid from 'uuid/v1'
 //             maxPlayers: 4,
 //             level: 1,
 //             strength: 1,
-//             dexternity: 2,
+//             dexterity: 2,
 //             magic: 3,
 //             endurance: 4,
 //             description: 'Super important mission. You need have things and attributes, as always loool xd',
@@ -480,7 +480,7 @@ import uuid from 'uuid/v1'
 //             maxPlayers: 3,
 //             level: 3,
 //             strength: 5,
-//             dexternity: 3,
+//             dexterity: 3,
 //             magic: 2,
 //             endurance: 1,
 //             description: 'Super important mission. You need have things and attributes, as always loool xd',
@@ -864,7 +864,7 @@ import uuid from 'uuid/v1'
 //                     },
 //                     {
 //                         _id: 13213,
-//                         perkType: "attr-dexternity",
+//                         perkType: "attr-dexterity",
 //                         target: undefined,
 //                         time: [
 //                             {
@@ -1112,7 +1112,7 @@ export const mockItems = [
                 },
                 {
                     _id: 13213,
-                    perkType: "attr-dexternity",
+                    perkType: "attr-dexterity",
                     target: undefined,
                     time: [
                         {
@@ -1329,7 +1329,7 @@ export const mockItemModels = [
             },
             {
                 _id: 13213,
-                perkType: "attr-dexternity",
+                perkType: "attr-dexterity",
                 target: undefined,
                 time: [
                     {

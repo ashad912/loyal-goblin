@@ -49,6 +49,34 @@ const createTempTorpedos = () => {
             }
         },
         {
+            _id: 23121,
+            owner: 11111,
+            itemModel: {
+              _id: 601,
+              type: {
+                _id: 6,
+                type: "torpedo"
+              },
+              name: "E3",
+              fluff: "Ostrzelaj pole E3!",
+              imgSrc: "torpedo.png"
+            }
+        },
+        {
+            _id: 23122,
+            owner: 11111,
+            itemModel: {
+              _id: 601,
+              type: {
+                _id: 6,
+                type: "torpedo"
+              },
+              name: "E3",
+              fluff: "Ostrzelaj pole E3!",
+              imgSrc: "torpedo.png"
+            }
+        },
+        {
             _id: 122,
             owner: 11111,
             itemModel: {

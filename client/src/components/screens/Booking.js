@@ -77,7 +77,7 @@ const createTempEquippedItems = () => {
                     },
                     {
                         _id: 13213,
-                        perkType: "attr-dexternity",
+                        perkType: "attr-dexterity",
                         target: undefined,
                         time: [
                             {
@@ -267,7 +267,7 @@ const createTempEquippedItems = () => {
 const userProfile = {
     
         strength: 5,
-        dexternity: 4,
+        dexterity: 4,
         magic: 3,
         endurance: 6
     
@@ -362,7 +362,7 @@ const Booking = () => {
 
         const modelPerks = {
             attrStrength: 0,
-            attrDexternity: 0,
+            attrDexterity: 0,
             attrMagic: 0,
             attrEndurance: 0,
             rawExperience: {
@@ -475,8 +475,8 @@ const Booking = () => {
                             case 'attr-strength':
                                 modelPerks.attrStrength = modelPerks.attrStrength + countValue(userProfile.strength, perk.value, false)
                                 break
-                            case 'attr-dexternity':
-                                modelPerks.attrDexternity = modelPerks.attrDexternity + countValue(userProfile.dexternity, perk.value, false)
+                            case 'attr-dexterity':
+                                modelPerks.attrDexterity = modelPerks.attrDexterity + countValue(userProfile.dexterity, perk.value, false)
                                 break
                             case 'attr-magic':
                                 modelPerks.attrMagic = modelPerks.attrMagic + countValue(userProfile.magic, perk.value, false)

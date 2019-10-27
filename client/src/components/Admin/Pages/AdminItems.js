@@ -19,6 +19,7 @@ import {mockItemModels} from "../../../utils/mocks"
   const itemTypesLabels = {
     all: 'Wszystkie',
     amulet: 'Amulety',
+    weapon: 'Bronie',
     feet: 'Buty',
     hands: 'Dłonie',
     head: 'Głowa',
@@ -39,7 +40,7 @@ const AdminItems = () => {
   const [filteredItems, setFilteredItems] = React.useState(items);
   const [modifyingIndex, setModifyingIndex] = React.useState(null)
 
-
+ 
 
   const [itemToPass, setItemToPass] = React.useState({   
       _id: null,
@@ -104,9 +105,9 @@ const AdminItems = () => {
     setItemToPass({   
       _id: null,
       type: null,
-      name: null,
+      name: '',
       class: null,
-      description: null,
+      description: '',
       imgSrc: null,
       perks: [],
     })
@@ -133,7 +134,7 @@ const AdminItems = () => {
       toggleItemCreator()
       
     }else{
-      setItems(...items, item)
+      setItems([...items, item])
       toggleItemCreator()
     }
     
@@ -232,7 +233,7 @@ const AdminItems = () => {
                   <ItemListItem
                     key={item._id}
                     index={index}
-                    isLast={items.length - 1 === index}
+                    isLast={filteredItems.length - 1 === index}
                     item={item}
                     //activateNow={handleShowActivateNowDialog}
                     editItem={handleEditItemCreator}

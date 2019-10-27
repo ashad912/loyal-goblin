@@ -58,10 +58,10 @@ const PlaceholderText = styled.div`
   width: 100%;
   height: auto;
 `
-const convertToStack = (itemsToConvert, tK) => {
+const convertToStack = (itemsToConvert) => {
   let itemModels = []
   itemsToConvert.forEach((itemToConvert) => {
-    //NOTE: filter returns new array - if for itemModels get zero length, it is new name
+    //NOTE: filter returns new array - if for itemModels gets zero length, it is new name
     if(itemModels.filter(itemModel => itemModel.name === itemToConvert.model.name).length === 0){
       itemModels = [...itemModels, itemToConvert.model]
     }

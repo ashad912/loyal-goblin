@@ -70,7 +70,7 @@ const TorpedoListItem = props => {
 
   const handleDelete = event => {
     event.stopPropagation();
-    props.handleItemDelete(item._id, item.itemModel.name)  
+    props.handleItemDelete(item.instancesIds[0], item.itemModel.name)  
     setAnchorEl(null);
   }
 
@@ -81,11 +81,11 @@ const TorpedoListItem = props => {
       key={item._id}
       alignItems="flex-start"
       className={classes.listItem}
-      style={{ background: props.loadedTorpedoId === item._id ? "#e6dc8d" : "" }}
-      loaded={props.loadedTorpedoId === item._id ? (true) : (false)}
+      style={{ background: props.loadedTorpedoId === item.instancesIds[0] ? "#e6dc8d" : "" }}
+      loaded={props.loadedTorpedoId === item.instancesIds[0] ? (true) : (false)}
       onClick={() =>
         props.handleTorpedoToggle(
-          item._id,
+          item.instancesIds[0],
         )
       }
     >
@@ -97,7 +97,7 @@ const TorpedoListItem = props => {
         />
       </ListItemAvatar>
       <ListItemText
-        primary={item.itemModel.name}
+        primary={item.instancesIds.length < 2 ? (item.itemModel.name) : (`${item.itemModel.name} x${item.instancesIds.length}`)}
         secondary={<span>{item.itemModel.fluff}</span>}
       />
       <ListItemIcon onClick={handleClick}>

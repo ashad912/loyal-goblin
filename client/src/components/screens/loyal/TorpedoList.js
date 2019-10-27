@@ -86,7 +86,32 @@ const TorpedoList = props => {
     props.handleTorpedoToggle(activeTorpedo)
     handleClose()
   }
+  const convertToStack = (itemsToConvert) => {
+    let itemModels = []
+    itemsToConvert.forEach((itemToConvert) => {
+      //NOTE: filter returns new array - if for itemModels gets zero length, it is new name
+      if(itemModels.filter(itemModel => itemModel.name === itemToConvert.itemModel.name).length === 0){
+        itemModels = [...itemModels, itemToConvert.itemModel]
+      }
+      console.log(itemModels)
+    })
+  
+    let itemObjects = []
+    itemModels.forEach((itemModel) => {
+      let instanceItemsIds = []
+      itemsToConvert.forEach((itemToConvert) => {
+        if(itemModel.name === itemToConvert.itemModel.name){
+          instanceItemsIds = [...instanceItemsIds, itemToConvert._id]
+        }
+      })
+      const itemObject = {itemModel: itemModel, instancesIds: instanceItemsIds}
+      itemObjects = [...itemObjects, itemObject]
+    })
+    return itemObjects
+  }
 
+  const userTorpedos = convertToStack(props.userTorpedos)
+  console.log(userTorpedos)
   return (
     <Dialog
         open={props.handleOpen}
@@ -95,7 +120,7 @@ const TorpedoList = props => {
         maxWidth="lg"
       >
     <Paper className={classes.root}>
-      {props.userTorpedos.length ? (
+      {userTorpedos.length ? (
         <List component="nav" className={classes.root}>
             
             <React.Fragment >
@@ -105,7 +130,7 @@ const TorpedoList = props => {
                 </ListItem>
                 
                 <List component="div" disablePadding style={{maxHeight: '264px'}}>
-                    {props.userTorpedos.map(item => (
+                    {userTorpedos.map(item => (
                         <TorpedoListItem key={item.itemModel._id} item={item} loadedTorpedoId={activeTorpedo} handleTorpedoToggle={handleTorpedoToggle} handleItemDelete={handleShowDeleteDialog}/>
                     ))}
                 </List>

@@ -27,11 +27,17 @@ import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import MomentUtils from "@date-io/moment";
 
 import PerkModal from "./PerkModal";
+import {asyncForEach} from '../../../methods'
 
 
 const StyledPaper = styled(Paper)`
     padding: 0.5rem;
     border: 1px solid #eeeeee;
+`
+const StyledBox = styled(Box)`
+    margin: 0.5rem 0.5rem 0.5rem 0.5rem;
+    text-align: center;
+
 `
 
 
@@ -71,11 +77,6 @@ const AddIcon = styled(AddCircleIcon)`
   }
 `;
 
-const StyledBox = styled(Box)`
-    margin: 0.5rem 0.5rem 0.5rem 0.5rem;
-    text-align: center;
-
-`
 const HeadersContainer = styled.div`
     margin: 0.5rem 0.5rem 0.5rem 0.5rem;
     padding: 0.25rem 1rem 0.25rem 1rem;
@@ -98,6 +99,7 @@ const days = [null, 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 
 
 const itemTypesLabels = {
   amulet: 'Amulet',
+  weapon: 'Broń',
   feet: 'Buty',
   hands: 'Dłonie',
   head: 'Głowa',
@@ -109,6 +111,10 @@ const itemTypesLabels = {
   scroll: 'Zwój',
 }
 
+const validatedFields = ['type', 'name', 'description', 'icon']
+
+const torpedoFields = ['B4', 'B5', 'B6', 'B7', 'B9', 'C1', 'C9', 'D1', 'D9', 'E3', 'E4', 'E5', 'E9', 'F9', 'G7', 'H7', 'I1', 'I2', 'I3', 'I4']
+            
 class NewItemCreator extends Component {
   state = {
     name: '',
@@ -117,7 +123,12 @@ class NewItemCreator extends Component {
     class: null,
     modifyingIndex: null,
     showPerkModal: false,
-    perks: []
+    perks: [],
+    formError: {
+      name: null,
+      description: null,
+      icon: null
+    }
   };
 
   componentDidMount = () => {
@@ -128,13 +139,28 @@ class NewItemCreator extends Component {
         _id: item._id,
         name: item.name,
         description: item.description,
-        type: item.type,
+        type: item.type ? (item.type) : (Object.keys(itemTypesLabels)[0]),
         class: item.class,
         perks: item.perks,
-        icon: (item.imgSrc.includes('blob') || item.imgSrc.includes('data:image')) ? (item.imgSrc) : (require("../../../assets/icons/items/" + item.imgSrc))
+        icon: item.imgSrc ? (item.imgSrc.includes('blob') || item.imgSrc.includes('data:image')) ? (item.imgSrc) : (require("../../../assets/icons/items/" + item.imgSrc)) : (null)
       })
   }
 
+  componentDidUpdate = (prevProps, prevState) => {
+      let torpedo = 'torpedo'
+      if((prevState.type === torpedo && this.state.type !== torpedo)){
+        this.setState({
+          name: '',
+          class: null
+        })
+      }
+      if((prevState.type !== torpedo && this.state.type === torpedo)){
+        this.setState({
+          name: torpedoFields[0],
+          class: null
+        })
+      }
+  }
  
   handleAddPerk = () => {
     this.setState({
@@ -179,7 +205,8 @@ class NewItemCreator extends Component {
   };
 
   handleIconChange = e => {
-    this.setState({ icon: URL.createObjectURL(e.target.files[0]) });
+    const url = URL.createObjectURL(e.target.files[0])
+    this.setState({ icon: url}, () => this.callbacksAndValidation('icon', url));
   };
 
   handleToggleClassItem = e => {
@@ -195,9 +222,13 @@ class NewItemCreator extends Component {
     
     const name = e.target.name
     const value = e.target.value 
-    console.log(name, value)
+    
     this.setState({
         [name]: value
+    }, () => {
+      
+        this.callbacksAndValidation(name, value)
+      
     })
   };
 
@@ -231,7 +262,47 @@ class NewItemCreator extends Component {
     
   }
 
-  saveItem = () => {
+  callbacksAndValidation = (fieldName, fieldValue, prevFieldValue) => {
+    
+    if(validatedFields.includes(fieldName)){
+      let error = ''
+
+        if(fieldValue.length === 0){
+          error = fieldName === 'icon' ? ('Ikona wymagana!') : ('Pole wymagane!')
+        }
+
+        this.setState({
+          formError: {
+              ...this.state.formError,
+              [fieldName]: error
+          },
+          
+        });
+    }
+        
+  }
+
+  saveItem = async () => {
+      let breakFlag = false
+
+      await asyncForEach(validatedFields, (fieldName) => {
+        if(!this.state[fieldName] || !this.state[fieldName].length){
+          console.log('halo', fieldName)
+          breakFlag = true;
+          this.setState({
+            formError: {
+                ...this.state.formError,
+                [fieldName]: fieldName === 'icon' ? ('Ikona wymagana!') : ('Pole wymagane!')
+            },
+            
+          });
+        }
+      })
+
+      if(breakFlag){
+        return
+      }
+
       const item = {
         _id: this.state._id,
         name: this.state.name,
@@ -245,9 +316,7 @@ class NewItemCreator extends Component {
       this.props.updateItems(item)
   }
 
-  componentDidUpdate(){
-      //console.log(this.state.class)
-  }
+ 
 
   render() {
     const getEndHour = (startHour, length) => {
@@ -327,15 +396,39 @@ class NewItemCreator extends Component {
             </FormControl>
             </Grid>
           <Grid item xs={6} >
-            <TextField
-              value={this.state.name}
-              name="name"
-              margin="dense"
-              label={`Nazwa przedmiotu`}
-              type="text"
-              fullWidth
-              onChange={this.handleChangeNameValue}
-            />
+            {this.state.type !== 'torpedo' ? (
+              <TextField
+                value={this.state.name}
+                name="name"
+                margin="dense"
+                label={`Nazwa przedmiotu`}
+                type="text"
+                fullWidth
+                onChange={this.handleChangeNameValue}
+                error={this.state.formError.name ? true : false}
+                helperText={this.state.formError.name ? (this.state.formError.name) : (null)}
+               />
+            ) : (
+              <FormControl style={{width: '100%', textAlign: 'left'}}>
+                <InputLabel shrink={true} htmlFor="type">Nazwa przedmiotu</InputLabel>
+                <Select
+                    autoFocus
+                    value={this.state.name}
+                    onChange={this.handleChangeNameValue}
+                    inputProps={{
+                        name: 'name',
+                        id: 'name',
+                    }}
+                >
+                    {torpedoFields.map((torpedo) => {
+                        return(
+                            <MenuItem value={torpedo}>{torpedo}</MenuItem>
+                        )
+                    })}
+                </Select>
+              </FormControl>
+            )}
+            
             <TextField
               value={this.state.description}
               name="description"
@@ -347,6 +440,8 @@ class NewItemCreator extends Component {
               rows={2}
               rowsMax={5}
               onChange={this.handleChangeNameValue}
+              error={this.state.formError.description ? true : false}
+              helperText={this.state.formError.description ? (this.state.formError.description) : (null)}
             />
           </Grid>
           <Grid item xs={1} >
@@ -363,7 +458,9 @@ class NewItemCreator extends Component {
                   accept="image/*"
                   onChange={this.handleIconChange}
                 />
+                
               </FileInputWrapper>
+              {this.state.formError.icon && <Typography style={{color: 'red', fontSize: '0.8rem'}}>{this.state.formError.icon}</Typography>}
             </Grid>
             <Grid
               item
@@ -377,7 +474,7 @@ class NewItemCreator extends Component {
             </Grid>
           </Grid>
           
-          <div style={{display: 'flex'}}>
+          {this.state.type !== 'torpedo' && <div style={{display: 'flex'}}>
             <Typography component="div" style={{width: 'auto'}}>
             <Typography style={{textAlign: 'left', color: 'rgba(0, 0, 0, 0.54)', marginTop: '0.5rem', fontSize: '0.75rem'}}>Przeznaczenie</Typography>
             
@@ -422,7 +519,7 @@ class NewItemCreator extends Component {
                     null
                 )}
             
-          </div>
+          </div>}
           </Grid>
           </Grid>
           <Grid container spacing={2} style={{marginTop: '1.5rem'}}>
@@ -487,7 +584,7 @@ class NewItemCreator extends Component {
                                           <Grid item>
                                             {`${days[period.startDay]}`}
                                           </Grid>
-                                          {(period.startHour === 12 && period.lengthInHours === 24) ? (
+                                          {!(period.startHour === 12 && period.lengthInHours === 24) ? (
                                             <Grid item>
                                               {`, ${period.startHour}:00 - ${getEndHour(period.startHour, period.lengthInHours)}:00`}
                                             </Grid>
