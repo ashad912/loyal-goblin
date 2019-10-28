@@ -1292,6 +1292,7 @@ export const mockItemModels = [
         type: "weapon",
         name: "Krótki miecz",
         class: null,
+        twoHanded: false,
         description: "Przynajmniej nie masz kompleksów",
         imgSrc: "short-sword.png",
         perks: [],
@@ -1304,6 +1305,7 @@ export const mockItemModels = [
         description: "Zdecydowanie masz kompleksy",
         imgSrc: "short-sword.png",
         class: "warrior",
+        twoHanded: true,
         perks: [
             {
                 _id: 1,

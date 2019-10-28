@@ -22,23 +22,17 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import CreateIcon from '@material-ui/icons/Create';
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import PerkListBox from './PerkListBox'
 
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import MomentUtils from "@date-io/moment";
 
 import PerkModal from "./PerkModal";
-import {asyncForEach} from '../../../methods'
+import {asyncForEach} from '../../../utils/methods'
+import {classLabels, itemTypesLabels} from '../../../utils/labels'
+import {torpedoFields, userClasses, itemModelTypes} from '../../../utils/modelArrays'
 
 
-const StyledPaper = styled(Paper)`
-    padding: 0.5rem;
-    border: 1px solid #eeeeee;
-`
-const StyledBox = styled(Box)`
-    margin: 0.5rem 0.5rem 0.5rem 0.5rem;
-    text-align: center;
-
-`
 
 
 const FileInputWrapper = styled.div`
@@ -77,43 +71,10 @@ const AddIcon = styled(AddCircleIcon)`
   }
 `;
 
-const HeadersContainer = styled.div`
-    margin: 0.5rem 0.5rem 0.5rem 0.5rem;
-    padding: 0.25rem 1rem 0.25rem 1rem;
-    
-    
-`
-const AmuletIcon = styled.img`
-  width: 32px;
-`;
-
-const AmuletList = styled(List)`
-max-height: 30vh;
-max-width: 30vw;
-overflow-y: auto;
-border: 1px solid grey;
-`
-
-const itemClasses = ['Wojownik', 'Mag', 'Łotrzyk', 'Kleryk']
-const days = [null, 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela']
-
-const itemTypesLabels = {
-  amulet: 'Amulet',
-  weapon: 'Broń',
-  feet: 'Buty',
-  hands: 'Dłonie',
-  head: 'Głowa',
-  chest: 'Korpus',
-  mixture: 'Mikstura',
-  legs: 'Nogi',
-  ring: 'Pierścień',
-  torpedo: 'Torpeda',
-  scroll: 'Zwój',
-}
 
 const validatedFields = ['type', 'name', 'description', 'icon']
 
-const torpedoFields = ['B4', 'B5', 'B6', 'B7', 'B9', 'C1', 'C9', 'D1', 'D9', 'E3', 'E4', 'E5', 'E9', 'F9', 'G7', 'H7', 'I1', 'I2', 'I3', 'I4']
+
             
 class NewItemCreator extends Component {
   state = {
@@ -142,11 +103,17 @@ class NewItemCreator extends Component {
         type: item.type ? (item.type) : (Object.keys(itemTypesLabels)[0]),
         class: item.class,
         perks: item.perks,
-        icon: item.imgSrc ? (item.imgSrc.includes('blob') || item.imgSrc.includes('data:image')) ? (item.imgSrc) : (require("../../../assets/icons/items/" + item.imgSrc)) : (null)
+        icon: item.imgSrc ? ((item.imgSrc.includes('blob') || item.imgSrc.includes('data:image')) ? (item.imgSrc) : (require("../../../assets/icons/items/" + item.imgSrc))) : (null),
+        twoHanded: item.twoHanded
+      }, () => {
+        this.setState({
+          componentMounted: true
+        })
       })
   }
 
   componentDidUpdate = (prevProps, prevState) => {
+    if(this.state.componentMounted){
       let torpedo = 'torpedo'
       if((prevState.type === torpedo && this.state.type !== torpedo)){
         this.setState({
@@ -160,6 +127,19 @@ class NewItemCreator extends Component {
           class: null
         })
       }
+
+      let weapon = 'weapon'
+      if((prevState.type === weapon && this.state.type !== weapon)){
+        this.setState({
+          twoHanded: undefined
+        })
+      }
+      if((prevState.type !== weapon && this.state.type === weapon)){
+        this.setState({
+          twoHanded: false
+        })
+      }
+    }
   }
  
   handleAddPerk = () => {
@@ -213,7 +193,15 @@ class NewItemCreator extends Component {
     
     this.setState(prevState => {
       return { classItem: !prevState.classItem,
-                class: prevState.class ? null : itemClasses[0]
+                class: prevState.class ? null : userClasses[0]
+             };
+    });
+  };
+
+  handleToggleWeaponHanded = e => {
+    
+    this.setState(prevState => {
+      return { twoHanded: prevState.twoHanded ? false : true
              };
     });
   };
@@ -310,7 +298,11 @@ class NewItemCreator extends Component {
         type: this.state.type,
         class: this.state.class,
         perks: this.state.perks,
-        imgSrc: this.state.icon
+        imgSrc: this.state.icon,
+        twoHanded: this.state.twoHanded
+      }
+      if(item.twoHanded === undefined){
+        delete item.twoHanded
       }
 
       this.props.updateItems(item)
@@ -319,63 +311,13 @@ class NewItemCreator extends Component {
  
 
   render() {
-    const getEndHour = (startHour, length) => {
-      return (startHour + length) % 24
-    }
-    const convertToPerkLabel = (perkType) => {
-      const perkObjects = [
-        {
-          perk: 'attr-strength',
-          label: 'Atrybut: Siła'
-        },
-        {
-          perk: 'attr-dexterity',
-          label: 'Atrybut: Zręczność',
-        },
-        {
-          perk: 'attr-magic',
-          label: 'Atrybut: Magia'
-        },
-        {
-          perk: 'attr-endurance',
-          label: 'Atrybut: Wytrzymałość'
-        },
-        {
-          perk: 'experience',
-          label: 'Doświadczenie',
-        },
-        {
-          perk: 'disc-product',
-          label: 'Zniżka: Produkt',
-        },
-        {
-          perk: 'disc-category',
-          label: 'Zniżka: Kategoria produktów'
-        },
-        {
-          perk: 'disc-rent',
-          label: 'Zniżka: Rezerwacja pokoi'
-        },
-        {
-          perk: 'custom',
-          label: 'Własny'
-        }
-      ]
-    
-      const index = perkObjects.findIndex((perkObject) => {return perkObject.perk === perkType})
-    
-      if(index !== -1){
-        return perkObjects[index].label
-      }
-      return null
-    }
 
     return (
       <MuiPickersUtilsProvider utils={MomentUtils}>
         <Button onClick={this.props.handleClose}>{"< Powrót do panelu przedmiotów"}</Button>
         <Container>
-          <Grid container spacing={5}>
-          <Grid item xs={12} style={{textAlign: 'left'}}>
+          <Grid container spacing={5} style={{marginTop: '1rem'}}>
+          <Grid item xs={6} style={{textAlign: 'left'}}>
             <FormControl style={{minWidth: '10rem'}}>
                 <InputLabel shrink={true} htmlFor="type">Typ przedmiotu</InputLabel>
                 <Select
@@ -394,6 +336,34 @@ class NewItemCreator extends Component {
                     })}
                 </Select>
             </FormControl>
+            </Grid>
+            <Grid item xs={1}>
+            </Grid>
+            <Grid item xs={5} style={{textAlign: 'left'}}>
+            {this.state.type === 'weapon' && 
+              <div style={{display: 'flex'}}>
+                <Typography component="div" style={{width: 'auto'}}>
+                <Typography style={{textAlign: 'left', color: 'rgba(0, 0, 0, 0.54)', fontSize: '0.75rem'}}>Rodzaj broni</Typography>
+                
+                    <Grid component="label" container alignItems="center" spacing={1} >
+                    <Grid item>Jednoręczna</Grid>
+                    <Grid item>
+                    <FormControl >
+                        <Switch
+                            checked={this.state.twoHanded}
+                            onChange={this.handleToggleWeaponHanded}
+                        />
+                        </FormControl>
+                    </Grid>
+                    <Grid item>Dwuręczna</Grid>
+                    
+                    </Grid>
+                    
+                
+                    
+                </Typography>
+                
+              </div>}
             </Grid>
           <Grid item xs={6} >
             {this.state.type !== 'torpedo' ? (
@@ -474,7 +444,8 @@ class NewItemCreator extends Component {
             </Grid>
           </Grid>
           
-          {this.state.type !== 'torpedo' && <div style={{display: 'flex'}}>
+          {this.state.type !== 'torpedo' && 
+          <div style={{display: 'flex'}}>
             <Typography component="div" style={{width: 'auto'}}>
             <Typography style={{textAlign: 'left', color: 'rgba(0, 0, 0, 0.54)', marginTop: '0.5rem', fontSize: '0.75rem'}}>Przeznaczenie</Typography>
             
@@ -508,9 +479,9 @@ class NewItemCreator extends Component {
                                 id: 'class',
                             }}
                         >
-                            {itemClasses.map((itemClass) => {
+                            {userClasses.map((userClass) => {
                                 return (
-                                    <MenuItem value={itemClass}>{itemClass}</MenuItem>
+                                    <MenuItem value={userClass}>{classLabels[userClass]}</MenuItem>
                                 )
                             })}
                         </Select>
@@ -533,104 +504,20 @@ class NewItemCreator extends Component {
             </Grid>
             
           {this.state.perks.length ? (
-            
-              <Grid item xs={12}>
-              <StyledPaper elevation={0}>
-                  <HeadersContainer>
-                      <Typography style={{width: '100%', color: 'rgba(0, 0, 0, 0.54)', fontSize: '0.8rem'}}>
-                      <Grid container>
-                        <Grid item xs={3}>
-                          Typ efektu
-                        </Grid>
-                        <Grid item xs={2}>
-                          Efekt
-                        </Grid>
-                        <Grid item xs={1}>
-                          Zakres zniżki
-                        </Grid>
-                        <Grid item xs={3}>
-                          {'Czas(y) działania efektu'}
-                        </Grid>
-                        <Grid item xs={1}>
-                        </Grid>
-                        <Grid item xs={2}>
-                        </Grid>
-                      </Grid>
-                      </Typography>
-                  </HeadersContainer>
-                  <List dense style={{maxHeight: '8rem', overflow: 'auto', width: '100%'}}>
-                    
-                      {this.state.perks.map((perk, index) => {
-                          console.log(perk)
-                          return(
-                            <StyledBox border={1} borderColor="primary.main">
-                              <ListItem>
-                                <Typography style={{width: '100%', fontSize: '0.8rem', textAlign: 'center'}} >
-                                <Grid container>
-                                  <Grid item xs={3}>
-                                    {convertToPerkLabel(perk.perkType)}
-                                  </Grid>
-                                  <Grid item xs={2}>
-                                    {perk.value}
-                                  </Grid>
-                                  <Grid item xs={1}>
-                                    {perk.target ? (perk.target.name ? (perk.target.name) : (perk.target)) : (null)}
-                                  </Grid>
-                                  <Grid item xs={3}>
-                                    {perk.time.length ? (
-                                      <React.Fragment>
-                                        {perk.time.map((period)=>(
-                                        <Grid container style={{justifyContent: 'center'}}>
-                                          <Grid item>
-                                            {`${days[period.startDay]}`}
-                                          </Grid>
-                                          {!(period.startHour === 12 && period.lengthInHours === 24) ? (
-                                            <Grid item>
-                                              {`, ${period.startHour}:00 - ${getEndHour(period.startHour, period.lengthInHours)}:00`}
-                                            </Grid>
-                                          ) : (
-                                            null
-                                          )}
-                                        </Grid>
-                                        ))}
-                                      </React.Fragment>
-                                    ) : (
-                                      <span>Stały</span>
-                                    )}
-                                    
-                                  </Grid>
-                                
-                                
-                                  <Grid item xs={1}>
-                                    
-                                  </Grid>
-                                  <Grid item xs={2} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                    <Button
-                                        style={{marginRight: '0.5rem', height: '2.5rem'}}
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={() => this.handleModifyPerk(index)}>
-                                          <CreateIcon />
-                                    </Button>
-                                    <Button
-                                      style={{height: '2.5rem'}}
-                                      variant="contained"
-                                      color="primary"
-                                      onClick={() => this.handleDeletePerk(index)}>
-                                          <DeleteIcon />
-                                    </Button>
-                                  </Grid>
-                                </Grid>
-                                </Typography>
-                              </ListItem>
-                              
-                              
-                              </StyledBox>
-                          )
-                      })}
-                  </List>
-                  </StyledPaper>
-                  </Grid>
+              <PerkListBox
+                perks={this.state.perks}
+                headers={true}
+                typeWidth={3}
+                valueWidth={2}
+                targetWidth={1}
+                timeWidth={3}
+                breakWidth={1}
+                actions={true}
+                buttonsWidth={2}
+                handleDeletePerk={this.handleDeletePerk}
+                handleModifyPerk={this.handleModifyPerk}
+              />
+              
                 
                 
             ):(

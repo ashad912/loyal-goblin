@@ -23,7 +23,8 @@ export const perkTypes = [
   "experience",
   "disc-product",
   "disc-category",
-  "disc-rent"
+  "disc-rent",
+  "custom"
 ];
 
 const ItemModelSchema = new mongoose.Schema({

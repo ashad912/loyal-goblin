@@ -14,22 +14,8 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import List from "@material-ui/core/List";
 import ItemListItem from '../items/ItemListItem'
 import {mockItemModels} from "../../../utils/mocks"
+import {itemTypesLabelsPlural} from '../../../utils/labels'
 
-
-  const itemTypesLabels = {
-    all: 'Wszystkie',
-    amulet: 'Amulety',
-    weapon: 'Bronie',
-    feet: 'Buty',
-    hands: 'Dłonie',
-    head: 'Głowa',
-    chest: 'Korpus',
-    mixture: 'Mikstury',
-    legs: 'Nogi',
-    ring: 'Pierścienie',
-    torpedo: 'Torpedy',
-    scroll: 'Zwoje',
-  }
 
 
 const AdminItems = () => {
@@ -171,7 +157,9 @@ const AdminItems = () => {
           >
             Nowy przedmiot
           </Button>
-          <Typography>Lista przedmiotów</Typography>
+          <Typography variant="h5" style={{ marginTop: "2rem" }}>
+            Lista przedmiotów
+          </Typography>
 
           <Paper
             style={{
@@ -197,8 +185,8 @@ const AdminItems = () => {
                     id: "status-filter"
                   }}
                 >
-                {Object.keys(itemTypesLabels).map((itemTypeKey) => {
-                  return <MenuItem value={itemTypeKey}>{itemTypesLabels[itemTypeKey]}</MenuItem>
+                {Object.keys(itemTypesLabelsPlural).map((itemTypeKey) => {
+                  return <MenuItem value={itemTypeKey}>{itemTypesLabelsPlural[itemTypeKey]}</MenuItem>
                 })}
 
                 </Select>

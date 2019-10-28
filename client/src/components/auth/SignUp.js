@@ -15,7 +15,7 @@ import { InputLabel } from "@material-ui/core";
 import { Divider } from "@material-ui/core";
 import { Link } from "@material-ui/core";
 import ErrorIcon from "@material-ui/icons/Error";
-import { asyncForEach } from "../../methods";
+import {asyncForEach} from '../../utils/methods'
 
 //import {labels} from '../strings/labels'
 

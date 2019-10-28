@@ -12,18 +12,14 @@ import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Switch from "@material-ui/core/Switch";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Checkbox from "@material-ui/core/Checkbox";
 import styled from 'styled-components'
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 import DeleteIcon from '@material-ui/icons/Delete';
-
+import {perkLabels, dayLabels, categoryLabels, roomLabels} from '../../../utils/labels'
+import {rentRooms, productCategories, perkTypes} from '../../../utils/modelArrays'
 
 const AddIcon = styled(AddCircleIcon)`
   color: #3f51b5
@@ -39,17 +35,7 @@ const StyledFormControl = styled(FormControl)`
   min-width: 10rem;
 `
 
-const perkTypes = [
-  "attr-strength",
-  "attr-dexterity",
-  "attr-magic",
-  "attr-endurance",
-  "experience",
-  "disc-product",
-  "disc-category",
-  "disc-rent",
-  "custom"
-];
+
 
 const StyledBox = styled(Box)`
     padding: 0.5rem 0.5rem 0.5rem 0.5rem;
@@ -99,11 +85,8 @@ const createTempProducts = () => {
   }]
 }
 
-const productCategories = ['shots', 'drinks', 'beer', 'food', 'alco-free']
 
-const rentRooms = ['medieval', 'post-apo', 'sci-fi']
 
-const days = [null, 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela']
 
 class PerkModal extends React.Component {
 
@@ -273,8 +256,6 @@ class PerkModal extends React.Component {
 
   handleTogglePerkTimeSetting = (e) => {
     
-
-
     this.setState(prevState => {
       return { 
         timeActive: !prevState.timeActive,
@@ -369,52 +350,8 @@ class PerkModal extends React.Component {
   }
 
 
-  render(){
-/*
-    const createMakeList = (perkType) => {
-      console.log('createHalo')
-      switch(perkType){
-        case 'disc-product':
-          const products = this.state.products
-          console.log(this.state.products)
-          products.map((product) => {
-            return(
-              <MenuItem value={product.name}>{product.name}</MenuItem>
-            )
-          })
-        break
-        case 'disc-category':
-          const categories = this.state.categories
-          categories.map((category) => {
-            return(
-              <MenuItem value={category}>{category}</MenuItem>
-            )
-          })
-        case 'disc-rent':
-          const rentRooms = this.state.rentRooms
-          rentRooms.map((room) => {
-            return(
-              <MenuItem value={room}>{room}</MenuItem>
-            )
-          })
-        default:
-          break
-      }
-    }
-     <FormControl >
-                    <InputLabel htmlFor="target">Zakres zniżki</InputLabel>
-                    <Select
-                        value={this.state.perk.target}
-                        onChange={this.handleChangeNameValue}
-                        inputProps={{
-                            name: 'target',
-                            id: 'target',
-                        }}
-                    >
-                    {createMakeList(this.state.perk.perkType)} 
-                    </Select>
-              </FormControl> 
-*/
+render(){
+
 
 const createDiscTarget = (perkType) => {
   switch(perkType){
@@ -454,7 +391,7 @@ const createDiscTarget = (perkType) => {
           >
           {this.state.categories.map((category) => {
             return(
-              <MenuItem value={category}>{category}</MenuItem>
+              <MenuItem value={category}>{categoryLabels[category]}</MenuItem>
             )
           })}
           </Select>
@@ -475,7 +412,7 @@ const createDiscTarget = (perkType) => {
           >
           {this.state.rentRooms.map((room) => {
             return(
-              <MenuItem value={room}>{room}</MenuItem>
+              <MenuItem value={room}>{roomLabels[room]}</MenuItem>
             )
           })}
           </Select>
@@ -485,9 +422,7 @@ const createDiscTarget = (perkType) => {
       break
   }
 }
-const getEndHour = (startHour, length) => {
-  return (startHour + length) % 24
-}
+
 
 const createNumberList = (startNum, endNum, isWeekDay, isHour, startHour) => {
   let numArray=[];
@@ -496,59 +431,12 @@ const createNumberList = (startNum, endNum, isWeekDay, isHour, startHour) => {
   }
   return numArray.map((num)=>{
     return(
-      <MenuItem value={num}>{isWeekDay ? (days[num]): (isHour ? (`${num}:00`) : (`${num} (${getEndHour(startHour, num)}:00)`))}</MenuItem>
+      <MenuItem value={num}>{isWeekDay ? (dayLabels[num]): (isHour ? (`${num}:00`) : (`${num} (${(startHour + num) % 24}:00)`))}</MenuItem>
     )
   })
   
 }
 
-const convertToPerkLabel = (perkType) => {
-  const perkObjects = [
-    {
-      perk: 'attr-strength',
-      label: 'Atrybut: Siła'
-    },
-    {
-      perk: 'attr-dexterity',
-      label: 'Atrybut: Zręczność',
-    },
-    {
-      perk: 'attr-magic',
-      label: 'Atrybut: Magia'
-    },
-    {
-      perk: 'attr-endurance',
-      label: 'Atrybut: Wytrzymałość'
-    },
-    {
-      perk: 'experience',
-      label: 'Doświadczenie',
-    },
-    {
-      perk: 'disc-product',
-      label: 'Zniżka: Produkt',
-    },
-    {
-      perk: 'disc-category',
-      label: 'Zniżka: Kategoria produktów'
-    },
-    {
-      perk: 'disc-rent',
-      label: 'Zniżka: Rezerwacja pokoi'
-    },
-    {
-      perk: 'custom',
-      label: 'Własny'
-    }
-  ]
-
-  const index = perkObjects.findIndex((perkObject) => {return perkObject.perk === perkType})
-
-  if(index !== -1){
-    return perkObjects[index].label
-  }
-  return null
-}
 
   return (
     <div>
@@ -577,7 +465,7 @@ const convertToPerkLabel = (perkType) => {
               >
                   {perkTypes.map((perkType) => {
                       return (
-                          <MenuItem value={perkType}>{convertToPerkLabel(perkType)}</MenuItem>
+                          <MenuItem value={perkType}>{perkLabels[perkType]}</MenuItem>
                       )
                   })}
               </Select>

@@ -883,3 +883,216 @@ export default NewPerkModal;
                 </List>
                 </Collapse>
             </React.Fragment>
+
+
+
+
+
+            {/* <Grid item xs={12}>
+              <StyledPaper elevation={0}>
+                  <HeadersContainer>
+                      <Typography style={{width: '100%', color: 'rgba(0, 0, 0, 0.54)', fontSize: '0.8rem'}}>
+                      <Grid container>
+                        <Grid item xs={3}>
+                          Typ efektu
+                        </Grid>
+                        <Grid item xs={2}>
+                          Efekt
+                        </Grid>
+                        <Grid item xs={1}>
+                          Zakres zniżki
+                        </Grid>
+                        <Grid item xs={3}>
+                          {'Czas(y) działania efektu'}
+                        </Grid>
+                        <Grid item xs={1}>
+                        </Grid>
+                        <Grid item xs={2}>
+                        </Grid>
+                      </Grid>
+                      </Typography>
+                  </HeadersContainer>
+                  <List dense style={{maxHeight: '8rem', overflow: 'auto', width: '100%'}}>
+                    
+                      {this.state.perks.map((perk, index) => {
+                          console.log(perk)
+                          return(
+                            <StyledBox border={1} borderColor="primary.main">
+                              <ListItem>
+                                <Typography style={{width: '100%', fontSize: '0.8rem', textAlign: 'center'}} >
+                                <Grid container>
+                                  <Grid item xs={3}>
+                                    {convertToPerkLabel(perk.perkType)}
+                                  </Grid>
+                                  <Grid item xs={2}>
+                                    {perk.value}
+                                  </Grid>
+                                  <Grid item xs={1}>
+                                    {perk.target ? (perk.target.name ? (perk.target.name) : (perk.target)) : (null)}
+                                  </Grid>
+                                  <Grid item xs={3}>
+                                    {perk.time.length ? (
+                                      <React.Fragment>
+                                        {perk.time.slice().reverse().map((period)=>(
+                                        <Grid container style={{justifyContent: 'center'}}>
+                                          <Grid item>
+                                            {`${days[period.startDay]}`}
+                                          </Grid>
+                                          {!(period.startHour === 12 && period.lengthInHours === 24) ? (
+                                            <Grid item>
+                                              {`, ${period.startHour}:00 - ${getEndHour(period.startHour, period.lengthInHours)}:00`}
+                                            </Grid>
+                                          ) : (
+                                            null
+                                          )}
+                                        </Grid>
+                                        ))}
+                                      </React.Fragment>
+                                    ) : (
+                                      <span>Stały</span>
+                                    )}
+                                    
+                                  </Grid>
+                                
+                                
+                                  <Grid item xs={1}>
+                                    
+                                  </Grid>
+                                  <Grid item xs={2} style={{display: 'flex', justifyContent: 'flex-end'}}>
+                                    <Button
+                                        style={{marginRight: '0.5rem', height: '2.5rem'}}
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => this.handleModifyPerk(index)}>
+                                          <CreateIcon />
+                                    </Button>
+                                    <Button
+                                      style={{height: '2.5rem'}}
+                                      variant="contained"
+                                      color="primary"
+                                      onClick={() => this.handleDeletePerk(index)}>
+                                          <DeleteIcon />
+                                    </Button>
+                                  </Grid>
+                                </Grid>
+                                </Typography>
+                              </ListItem>
+                              
+                              
+                              </StyledBox>
+                          )
+                      })}
+                  </List>
+                  </StyledPaper>
+                  </Grid> */}
+
+
+
+
+                  {/* <Grid item xs={12}>
+                    <StyledPaper elevation={0}>
+                  
+                  <List dense style={{maxHeight: '8rem', overflow: 'auto', width: '100%'}}>
+                    
+                      {item.perks.map((perk, index) => {
+                          console.log(perk)
+                          return(
+                            <StyledBox border={1} borderColor="primary.main">
+                              <ListItem >
+                                <Typography style={{width: '100%', fontSize: '0.8rem', textAlign: 'center'}} >
+                                <Grid container>
+                                  <Grid item xs={4}>
+                                    {perk.perkType}
+                                  </Grid>
+                                  <Grid item xs={2}>
+                                    {perk.value}
+                                  </Grid>
+                                  <Grid item xs={1}>
+                                    {perk.target ? (perk.target.name ? (perk.target.name) : (perk.target)) : (null)}
+                                  </Grid>
+                                  <Grid item xs={5}>
+                                    {perk.time.length ? (
+                                      <React.Fragment>
+                                        {perk.time.map((period)=>(
+                                        <Grid container style={{justifyContent: 'center'}}>
+                                          <Grid item>
+                                            {`${days[period.startDay]}`}
+                                          </Grid>
+                                          {!(period.startHour === 12 && period.lengthInHours === 24) ? (
+                                            <Grid item>
+                                              {`, ${period.startHour}:00 - ${getEndHour(period.startHour, period.lengthInHours)}:00`}
+                                            </Grid>
+                                          ) : (
+                                            null
+                                          )}
+                                        </Grid>
+                                        ))}
+                                      </React.Fragment>
+                                    ) : (
+                                      <span>Stały</span>
+                                    )}
+                                    
+                                  </Grid>
+                                
+                                
+                                 
+                                  
+                                </Grid>
+                                </Typography>
+                              </ListItem>
+                              
+                              
+                              </StyledBox>
+                          )
+                      })}
+                  </List>
+                  </StyledPaper>
+                  </Grid> */}
+
+
+
+                  /*
+    const createMakeList = (perkType) => {
+      console.log('createHalo')
+      switch(perkType){
+        case 'disc-product':
+          const products = this.state.products
+          console.log(this.state.products)
+          products.map((product) => {
+            return(
+              <MenuItem value={product.name}>{product.name}</MenuItem>
+            )
+          })
+        break
+        case 'disc-category':
+          const categories = this.state.categories
+          categories.map((category) => {
+            return(
+              <MenuItem value={category}>{category}</MenuItem>
+            )
+          })
+        case 'disc-rent':
+          const rentRooms = this.state.rentRooms
+          rentRooms.map((room) => {
+            return(
+              <MenuItem value={room}>{room}</MenuItem>
+            )
+          })
+        default:
+          break
+      }
+    }
+     <FormControl >
+                    <InputLabel htmlFor="target">Zakres zniżki</InputLabel>
+                    <Select
+                        value={this.state.perk.target}
+                        onChange={this.handleChangeNameValue}
+                        inputProps={{
+                            name: 'target',
+                            id: 'target',
+                        }}
+                    >
+                    {createMakeList(this.state.perk.perkType)} 
+                    </Select>
+              </FormControl> 
+*/

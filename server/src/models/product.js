@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-export const productsCategory = ['shots', 'drinks', 'beer', 'food', 'alco-free']
+export const productCategories = ['shots', 'drinks', 'beers', 'food', 'alco-free']
 
 const ProductSchema = new mongoose.Schema({ //instance of ItemModel
 
