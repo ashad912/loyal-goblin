@@ -1,5 +1,5 @@
 import express from 'express'
-import { ProductModel } from '../models/productModel';
+import { Product } from '../models/product';
 import { auth } from '../middleware/auth';
 
 const router = new express.Router
@@ -7,11 +7,11 @@ const router = new express.Router
 
 router.post('/createProduct', auth, async (req, res) =>{
 
-    const productModel = new ProductModel(req.body)
+    const product = new Product(req.body)
 
     try {
-        await productModel.save() //this method holds updated user!
-        res.status(201).send(productModel)
+        await product.save() //this method holds updated user!
+        res.status(201).send(product)
     } catch (e) {
         res.status(400).send(e)
     }

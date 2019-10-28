@@ -2,35 +2,281 @@ import React from "react";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import NewProductCreator from "../products/NewProductCreator";
+import Paper from "@material-ui/core/Paper";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import Box from "@material-ui/core/Box";
+import SearchIcon from "@material-ui/icons/Search";
+import TextField from "@material-ui/core/TextField";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import List from "@material-ui/core/List";
+import ProductListItem from '../products/ProductListItem'
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import {mockProducts} from "../../../utils/mocks"
+import {categoryLabels} from '../../../utils/labels'
 
 const AdminProducts = () => {
-  const [showNewProductCreator, setShowNewProductCreator] = React.useState(true);
+  const [showNewProductCreator, setShowNewProductCreator] = React.useState(false);
+  const [statusFilter, setStatusFilter] = React.useState("all");
+  const [nameFilter, setNameFilter] = React.useState("");
+  const [products, setProducts] = React.useState(mockProducts);
+  const [filteredProducts, setFilteredProducts] = React.useState(products);
+  const [modifyingIndex, setModifyingIndex] = React.useState(null)
+
+  const [deleteDialog, setDeleteDialog] = React.useState(false)
+  const [productToDelete, setProductToDelete] = React.useState({_id: '', name: ''})
+
+ 
+
+  const [productToPass, setProductToPass] = React.useState({   
+      _id: null,
+      category: null,
+      name: null,
+      description: null,
+      price: null,
+      imgSrc: null,
+      awards: [],
+  })
 
   const toggleItemCreator = e => {
+    if(showNewProductCreator){
+      setModifyingIndex(null)
+      applyStatusFilter(statusFilter);
+    }
     setShowNewProductCreator(prev => !prev);
   };
 
+  React.useEffect(() => {
+    let tempItemsList = applyStatusFilter(statusFilter);
+    if (nameFilter.trim().length > 0) {
+      tempItemsList = tempItemsList.filter(
+        item => item.name.search(nameFilter) !== -1
+      );
+      setFilteredProducts(tempItemsList)
+    }else{
+      
+      setFilteredProducts(tempItemsList);
+    }
+  }, [nameFilter]);
+
+  React.useEffect(() => {
+    applyStatusFilter(statusFilter);
+  }, [products]);
+
+  const handleChangeNameFilter = e => {
+    setNameFilter(e.target.value.trim());
+  };
+
+  const applyStatusFilter = status => {
+    let tempItems = [...products];
+    switch (status) {
+      case "all":
+        break;
+      default:
+        tempItems = tempItems.filter(product => product.category === status);
+        break;
+    }
+
+    setFilteredProducts(tempItems);
+    return tempItems
+  };
+
+  const handleChangeStatusFilter = e => {
+    const status = e.target.value;
+    setStatusFilter(status);
+    applyStatusFilter(status);
+  };
+
+  const handleAddItemCreator = (index) => {
+    setProductToPass({   
+      _id: null,
+      type: null,
+      name: '',
+      class: null,
+      description: '',
+      imgSrc: null,
+      perks: [],
+    })
+    toggleItemCreator()  
+  }
+
+  const handleEditItemCreator = (id) => {
+    console.log(id)
+    const index = products.findIndex((item) => {return item._id === id})
+    setProductToPass(products[index])
+    setModifyingIndex(index)
+    toggleItemCreator()
+    
+  }
+
+  const updateProducts = (product) => {
+    console.log(product)
+    if(modifyingIndex != null){
+      const tempProducts = [...products]
+
+      tempProducts[modifyingIndex] = product
+
+      setProducts(tempProducts)
+      toggleItemCreator()
+      
+    }else{
+      setProducts([...products, product])
+      toggleItemCreator()
+    }
+    
+  }
+
+  const handleDeleteDialogOpen = (id, name) => {
+   
+    setProductToDelete({_id: id, name: name})
+    setDeleteDialog(true)
+  }
+
+  const handleDeleteDialogClose = () => {
+   
+    setProductToDelete({_id: '', name: ''})
+    setDeleteDialog(false)
+  }
+
+  const handleProductDelete = () => {
+   
+    const tempItems = [...products]
+    const newItems = tempItems.filter((item, itemIndex) => {
+      return item._id !== productToDelete._id
+    })
+
+    setProducts(newItems)
+    handleDeleteDialogClose()
+  }
+
+  const handleClose = () => {
+    toggleItemCreator()
+  }
   return (
     <div>
       {showNewProductCreator ? (
         <NewProductCreator
           open={showNewProductCreator}
           handleClose={toggleItemCreator}
+          product={productToPass}
+          updateProducts={updateProducts}
         />
       ) : (
         <div>
           <Button
             variant="contained"
             color="primary"
-            onClick={toggleItemCreator}
+            onClick={handleAddItemCreator}
           >
-            Nowy produkt
+            Nowy przedmiot
           </Button>
-          <Typography>Lista produktów</Typography>
+          <Typography variant="h5" style={{ marginTop: "2rem" }}>
+            Lista przedmiotów
+          </Typography>
+
+          <Paper
+            style={{
+              width: "70%",
+              margin: "1rem auto",
+              padding: "1rem",
+              boxSizing: "border-box"
+            }}
+          >
+            <Typography>Filtruj</Typography>
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="space-around"
+              alignItems="center"
+            >
+              <FormControl style={{ alignSelf: "flex-start" }}>
+                <InputLabel htmlFor="status-filter">Status</InputLabel>
+                <Select
+                  value={statusFilter}
+                  onChange={handleChangeStatusFilter}
+                  inputProps={{
+                    id: "status-filter"
+                  }}
+                >
+                {Object.keys(categoryLabels).map((categoryKey) => {
+                  return <MenuItem value={categoryKey}>{categoryLabels[categoryKey]}</MenuItem>
+                })}
+
+                </Select>
+              </FormControl>
+              <TextField
+                value={nameFilter}
+                onChange={handleChangeNameFilter}
+                margin="dense"
+                label="Szukaj nazwy przedmiotu"
+                type="search"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  )
+                }}
+              />
+            </Box>
+            </Paper>
+            {filteredProducts.length > 0 && (
+              <List
+                style={{
+                  width: "70%",
+                  border: "1px solid grey",
+                  margin: "0 auto"
+                }}
+              >
+              {filteredProducts.map((product, index) => {
+                return (
+                  <React.Fragment>
+                  <ProductListItem
+                    key={product._id}
+                    index={index}
+                    isLast={filteredProducts.length - 1 === index}
+                    product={product}
+                    //activateNow={handleShowActivateNowDialog}
+                    editItem={handleEditItemCreator}
+                    deleteItem={handleDeleteDialogOpen}
+                  /> 
+                  </React.Fragment>
+
+                );
+              })}
+            </List>
+          )}
+          <Dialog
+            open={deleteDialog}
+            onClose={handleDeleteDialogClose}
+          >
+            <DialogTitle >Usuwanie produktu</DialogTitle>
+            <DialogContent>
+              <DialogContentText >
+                      <span>Czy na pewno chcesz usunąć produkt {productToDelete.name}?</span>< br/>
+                      Produkt zostanie usunięty ze sklepu.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleDeleteDialogClose} color="secondary">
+                Anuluj
+              </Button>
+              <Button onClick={handleProductDelete} color="primary" autoFocus>
+                Potwierdź
+              </Button>
+            </DialogActions>
+          </Dialog>
         </div>
+        
       )}
     </div>
-  );
+  )
 };
 
 export default AdminProducts;

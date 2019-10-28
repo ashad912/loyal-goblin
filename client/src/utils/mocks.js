@@ -1481,3 +1481,80 @@ export const mockItemModels = [
         
     },
 ]
+
+export const mockProducts = [
+    {
+        _id: uuid(),
+        category: "shots",
+        name: "BBanie",
+        description: "szotów",
+        price: 7.0,
+        imgSrc: "drink.png"
+      },
+      {
+        _id: uuid(),
+        category: "drinks",
+        name: "Modżajto",
+        description: "dla mojej świni",
+        price: 13.5,
+        imgSrc: "drink.png"
+      },
+      {
+        _id: uuid(),
+        name: "Cosmo",
+        category: "drinks",
+        description: "lubisz, ale się nie przyznasz przed kolegami",
+        price: 27.99,
+        imgSrc: "drink.png",
+        prizes: [
+          {
+            itemModel: {
+              _id: uuid(),
+              type: {
+                _id: 1,
+                type: "amulet"
+              },
+              name: "Diament",
+              fluff: "Najlepszy przyjaciel dziewyczyny",
+              imgSrc: "diamond-amulet.png"
+            }
+          }
+        ]
+      },
+      {
+        _id: uuid(),
+        category: "food",
+        name: "BOrzeszki",
+        description: "ziemne",
+        price: 6.0,
+        imgSrc: "drink.png"
+      },
+      {
+        _id: uuid(),
+        category: "food",
+        name: "BNaczosy hehe",
+        description: "xddxdx",
+        price: 25.0,
+        imgSrc: "drink.png"
+      },
+      {
+        _id: uuid(),
+        category: "beers",
+        name: "Kasztelan",
+        description: "Pan na zamku",
+        price: 12.0,
+        imgSrc: "drink.png",
+        prizes: [      {
+          itemModel: {
+            _id: 600,
+            type: {
+              _id: 6,
+              type: "torpedo"
+            },
+            name: "D1",
+            fluff: "Ostrzelaj pole D1!",
+            imgSrc: "torpedo.png"
+          }
+        }]
+      },
+]

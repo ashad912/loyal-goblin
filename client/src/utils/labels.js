@@ -20,12 +20,15 @@ export const classLabels = {
 }
 
 export const categoryLabels = {
+    all: 'Wszystkie',
     shots: 'Szoty',
     drinks: 'Drinki',
     'alco-free': 'Bezalkoholowe',
     beers: 'Piwa',
     food: 'Jedzenie'
 }
+
+
 
 export const roomLabels = {
     medieval: 'Pokój średniowieczny',
@@ -34,7 +37,7 @@ export const roomLabels = {
 }
 
 
-export const itemTypesLabelsPlural = {
+export const itemTypeLabelsPlural = {
     all: 'Wszystkie',
     amulet: 'Amulety',
     weapon: 'Bronie',
@@ -48,7 +51,7 @@ export const itemTypesLabelsPlural = {
     scroll: 'Zwoje',
   }
 
-  export const itemTypesLabels = {
+  export const itemTypeLabels = {
     amulet: 'Amulet',
     weapon: 'Broń',
     feet: 'Buty',

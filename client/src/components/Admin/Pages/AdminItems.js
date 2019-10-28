@@ -13,8 +13,13 @@ import InputLabel from "@material-ui/core/InputLabel";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import List from "@material-ui/core/List";
 import ItemListItem from '../items/ItemListItem'
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import {mockItemModels} from "../../../utils/mocks"
-import {itemTypesLabelsPlural} from '../../../utils/labels'
+import {itemTypeLabelsPlural} from '../../../utils/labels'
 
 
 
@@ -25,6 +30,9 @@ const AdminItems = () => {
   const [items, setItems] = React.useState(mockItemModels);
   const [filteredItems, setFilteredItems] = React.useState(items);
   const [modifyingIndex, setModifyingIndex] = React.useState(null)
+
+  const [deleteDialog, setDeleteDialog] = React.useState(false)
+  const [itemToDelete, setItemToDelete] = React.useState({_id: '', name: ''})
 
  
 
@@ -126,14 +134,27 @@ const AdminItems = () => {
     
   }
 
-  const handleDeleteItem = (id) => {
+  const handleDeleteDialogOpen = (id, name) => {
+   
+    setItemToDelete({_id: id, name: name})
+    setDeleteDialog(true)
+  }
+
+  const handleDeleteDialogClose = () => {
+   
+    setItemToDelete({_id: '', name: ''})
+    setDeleteDialog(false)
+  }
+
+  const handleItemDelete = () => {
    
     const tempItems = [...items]
     const newItems = tempItems.filter((item, itemIndex) => {
-      return item._id !== id
+      return item._id !== itemToDelete._id
     })
 
     setItems(newItems)
+    handleDeleteDialogClose()
   }
 
   const handleClose = () => {
@@ -185,8 +206,8 @@ const AdminItems = () => {
                     id: "status-filter"
                   }}
                 >
-                {Object.keys(itemTypesLabelsPlural).map((itemTypeKey) => {
-                  return <MenuItem value={itemTypeKey}>{itemTypesLabelsPlural[itemTypeKey]}</MenuItem>
+                {Object.keys(itemTypeLabelsPlural).map((itemTypeKey) => {
+                  return <MenuItem value={itemTypeKey}>{itemTypeLabelsPlural[itemTypeKey]}</MenuItem>
                 })}
 
                 </Select>
@@ -225,7 +246,7 @@ const AdminItems = () => {
                     item={item}
                     //activateNow={handleShowActivateNowDialog}
                     editItem={handleEditItemCreator}
-                    deleteItem={handleDeleteItem}
+                    deleteItem={handleDeleteDialogOpen}
                   /> 
                   </React.Fragment>
 
@@ -233,7 +254,28 @@ const AdminItems = () => {
               })}
             </List>
           )}
+          <Dialog
+            open={deleteDialog}
+            onClose={handleDeleteDialogClose}
+          >
+            <DialogTitle >Usuwanie przedmiotu</DialogTitle>
+            <DialogContent>
+              <DialogContentText >
+                      <span>Czy na pewno chcesz usunąć przedmiot {itemToDelete.name}?</span>< br/>
+                      Przedmiot zostanie usunięty z ekwipunku wszystkich użytkowników.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleDeleteDialogClose} color="secondary">
+                Anuluj
+              </Button>
+              <Button onClick={handleItemDelete} color="primary" autoFocus>
+                Potwierdź
+              </Button>
+            </DialogActions>
+          </Dialog>
         </div>
+        
       )}
     </div>
   );

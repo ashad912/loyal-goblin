@@ -149,7 +149,7 @@ const TorpedoList = props => {
         <DialogActions>
           {(props.userTorpedos.length > 0) && (
             <Button onClick={handleSave} color="primary">
-              Wybierz
+              Zatwierdź
             </Button>
           )}
           
@@ -168,7 +168,7 @@ const TorpedoList = props => {
             </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleDeleteDialogClose} color="primary">
+              <Button onClick={handleDeleteDialogClose} color="secondary">
                   Anuluj
               </Button>
               <Button onClick={handleTorpedoDelete} color="primary" autoFocus>

@@ -29,7 +29,7 @@ import MomentUtils from "@date-io/moment";
 
 import PerkModal from "./PerkModal";
 import {asyncForEach} from '../../../utils/methods'
-import {classLabels, itemTypesLabels} from '../../../utils/labels'
+import {classLabels, itemTypeLabels} from '../../../utils/labels'
 import {torpedoFields, userClasses, itemModelTypes} from '../../../utils/modelArrays'
 
 
@@ -100,7 +100,7 @@ class NewItemCreator extends Component {
         _id: item._id,
         name: item.name,
         description: item.description,
-        type: item.type ? (item.type) : (Object.keys(itemTypesLabels)[0]),
+        type: item.type ? (item.type) : (Object.keys(itemTypeLabels)[0]),
         class: item.class,
         perks: item.perks,
         icon: item.imgSrc ? ((item.imgSrc.includes('blob') || item.imgSrc.includes('data:image')) ? (item.imgSrc) : (require("../../../assets/icons/items/" + item.imgSrc))) : (null),
@@ -329,9 +329,9 @@ class NewItemCreator extends Component {
                         id: 'type',
                     }}
                 >
-                    {Object.keys(itemTypesLabels).map((itemTypeKey) => {
+                    {Object.keys(itemTypeLabels).map((itemTypeKey) => {
                         return(
-                            <MenuItem value={itemTypeKey}>{itemTypesLabels[itemTypeKey]}</MenuItem>
+                            <MenuItem value={itemTypeKey}>{itemTypeLabels[itemTypeKey]}</MenuItem>
                         )
                     })}
                 </Select>
