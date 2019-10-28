@@ -36,9 +36,23 @@ const ItemsModal = props => {
   const [itemsList, setItemsList] = useState(props.itemsList);
   const [classFilter, setClassFilter] = useState("any");
   const categories = {};
-  Object.keys(props.itemsList).forEach(
-    category => (categories[category] = true)
-  );
+
+  if(!props.onlyAmuletsChoice){
+    Object.keys(props.itemsList).forEach(
+      category => 
+      (categories[category] = true)
+    );
+  }else{
+    Object.keys(props.itemsList).forEach(category => {
+      if(category === 'amulet'){
+        categories[category] = true
+      }else{
+        categories[category] = false
+      }
+    }
+    );
+  }
+  
   const [categoryFilter, setCategoryFilter] = useState(categories);
   const [perksFilter, setPerksFilter] = useState(false);
 
@@ -127,7 +141,7 @@ const ItemsModal = props => {
       fullWidth
       maxWidth="lg"
     >
-      <DialogTitle>Dodaj nagrody misji</DialogTitle>
+      <DialogTitle>{props.title}</DialogTitle>
       <div style={{ display: "flex", overflow: "hidden", height: "70vh" }}>
         <div
           style={{
@@ -223,7 +237,7 @@ const ItemsModal = props => {
                             onChange={handlePerksFilterChange}
                           />
                         }
-                        label="Przedmiot posiada bonusy"
+                        label="Przedmiot posiada efekty"
                       />
                     </Grid>
                   </Grid>

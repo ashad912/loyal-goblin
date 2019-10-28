@@ -956,6 +956,7 @@ class NewEventCreator extends Component {
             handleAddItem={this.handleAddItem}
             handleSubtractItem={this.handleSubtractItem}
             handleChangeItemQuantity={this.handleChangeItemQuantity}
+            title={'Dodaj nagrody misji'}
           />
           <Divider style={{ marginTop: "1rem", marginBottom: "1rem" }} />
           <Grid
