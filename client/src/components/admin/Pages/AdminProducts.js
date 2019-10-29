@@ -108,7 +108,7 @@ const AdminProducts = () => {
 
   const handleEditItemCreator = (id) => {
     console.log(id)
-    const index = products.findIndex((item) => {return item._id === id})
+    const index = products.findIndex((product) => {return product._id === id})
     setProductToPass(products[index])
     setModifyingIndex(index)
     toggleItemCreator()
@@ -243,8 +243,8 @@ const AdminProducts = () => {
                     isLast={filteredProducts.length - 1 === index}
                     product={product}
                     //activateNow={handleShowActivateNowDialog}
-                    editItem={handleEditItemCreator}
-                    deleteItem={handleDeleteDialogOpen}
+                    editProduct={handleEditItemCreator}
+                    deleteProduct={handleDeleteDialogOpen}
                   /> 
                   </React.Fragment>
 

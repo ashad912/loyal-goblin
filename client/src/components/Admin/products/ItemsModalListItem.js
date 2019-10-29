@@ -12,12 +12,12 @@ import Select from "@material-ui/core/Select";
 import Divider from "@material-ui/core/Divider";
 
 import classThemes from "../../../assets/themes/classThemes";
-import ItemsModalListItemPerks from "./ItemsModalListItemPerks";
+import ItemsModalListItemPerks from "../components/ItemsModalListItemPerks";
 
 const ItemsModalListItem = props => {
   const [chosenClass, setChosenClass] = React.useState("any");
 
-  const item = props.item;
+  const itemModel = props.item;
 
   const handleSelectChange = e => {
     setChosenClass(e.target.value);
@@ -25,8 +25,8 @@ const ItemsModalListItem = props => {
 
   const handleAdd = () => {
     props.handleAdd(
-      item,
-      item.itemModel.class !== "any" ? item.itemModel.class : chosenClass
+      itemModel,
+      itemModel.class !== "any" ? itemModel.class : chosenClass
     );
   };
 
@@ -34,8 +34,8 @@ const ItemsModalListItem = props => {
     <ListItem
       style={{
         background:
-          item.itemModel.class !== "any"
-            ? `${classThemes[item.itemModel.class]}`
+          itemModel.class !== "any"
+            ? `${classThemes[itemModel.class]}`
             : "none"
       }}
     >
@@ -45,28 +45,28 @@ const ItemsModalListItem = props => {
           <ListItemAvatar>
             <img
               style={{ width: "32px", height: "32px" }}
-              src={require(`../../../assets/icons/items/${item.itemModel.imgSrc}`)}
+              src={require(`../../../assets/icons/items/${itemModel.imgSrc}`)}
             />
           </ListItemAvatar>
           </Grid>
           <Grid item>
 
           <ListItemText
-            primary={item.itemModel.name}
+            primary={itemModel.name}
             secondary={
               <span style={{ fontStyle: "italic" }}>
-                {item.itemModel.fluff}
+                {itemModel.fluff}
               </span>
             }
           />
           </Grid>
         </Grid>
-        {item.itemModel.hasOwnProperty("perks") &&
-          item.itemModel.perks.length > 0 && (
+        {itemModel.hasOwnProperty("perks") &&
+          itemModel.perks.length > 0 && (
             <Grid item style={{ border: "1px solid grey" }}>
               <Divider />
               <List dense>
-                {item.itemModel.perks.map(perk => {
+                {itemModel.perks.map(perk => {
                   //TODO: ustalić dokładnie co pobierane jest z perków
                   return (
                     <ItemsModalListItemPerks
@@ -81,7 +81,7 @@ const ItemsModalListItem = props => {
           )}
       </Grid>
 
-      {!props.onlyAllClassItems && item.itemModel.class === "any" ? (
+      {!props.onlyAllClassItems && itemModel.class === "any" ? (
         <FormControl
           style={{ margin: "0 1rem", boxSizing: "border-box", width: "10rem", alignSelf: 'flex-start' }}
         >

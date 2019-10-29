@@ -19,14 +19,7 @@ export const classLabels = {
     cleric: 'Kleryk'
 }
 
-export const categoryLabels = {
-    all: 'Wszystkie',
-    shots: 'Szoty',
-    drinks: 'Drinki',
-    'alco-free': 'Bezalkoholowe',
-    beers: 'Piwa',
-    food: 'Jedzenie'
-}
+
 
 
 
@@ -63,3 +56,12 @@ export const itemTypeLabelsPlural = {
     torpedo: 'Torpeda',
     scroll: 'Zwój',
   }
+
+  export const categoryLabels = {
+    all: 'Wszystkie',
+    shots: 'Szoty',
+    drinks: 'Drinki',
+    'alco-free': 'Bezalkoholowe',
+    beers: 'Piwa',
+    food: 'Jedzenie'
+}

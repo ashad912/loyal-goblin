@@ -28,64 +28,60 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Grid from "@material-ui/core/Grid";
 import Checkbox from "@material-ui/core/Checkbox";
 
-import itemCategories from "../../../assets/categories/items";
-import characterClasses from "../../../assets/categories/characterClasses";
+
+import {itemTypeLabelsPlural} from '../../../utils/labels'
 
 const ItemsModal = props => {
   const [searchValue, setSearchValue] = useState("");
   const [itemsList, setItemsList] = useState(props.itemsList);
-  const [classFilter, setClassFilter] = useState("any");
   const categories = {};
 
-  Object.keys(props.itemsList).forEach(
-    category => 
-    (categories[category] = true)
-  );
- 
+  
+  Object.keys(itemTypeLabelsPlural).forEach(categoryKey => {
+    if(categoryKey !== 'all'){
+      if(categoryKey === 'amulet'){
+        categories[categoryKey] = true
+      }else{
+        categories[categoryKey] = false
+      }
+    }
+    
+  });
+  
+  
   const [categoryFilter, setCategoryFilter] = useState(categories);
   const [perksFilter, setPerksFilter] = useState(false);
 
-  useEffect(() => {
-    if (searchValue.trim().length > 0) {
-      const tempItemsList = { ...itemsList };
-      for (let category in tempItemsList) {
-        tempItemsList[category] = tempItemsList[category].filter(item =>
-          item.itemModel.name.search(searchValue) !== -1
-        );
-      }
-      setItemsList(tempItemsList);
-    } else {
-      setItemsList(props.itemsList);
-    }
-  }, [searchValue]);
 
   useEffect(() => {
-    if (classFilter !== "any") {
-      const tempItemsList = { ...itemsList };
-      for (let category in tempItemsList) {
-        tempItemsList[category] = tempItemsList[category].filter(
-          item => item.itemModel.class === classFilter
-        );
+      if (searchValue.trim().length > 0) {
+        let tempItemsList = [ ...itemsList ];
+        
+        tempItemsList = tempItemsList.filter(itemModel =>
+          itemModel.name.search(searchValue) !== -1
+        )
+        
+        setItemsList(tempItemsList);
+      } else {
+        setItemsList(itemsList);
       }
-      setItemsList(tempItemsList);
-    } else {
-      setItemsList(props.itemsList);
-    }
-  }, [classFilter]);
+  }, [searchValue]);
+    
+
 
   useEffect(() => {
     if (perksFilter) {
-      const tempItemsList = { ...itemsList };
-      for (let category in tempItemsList) {
-        tempItemsList[category] = tempItemsList[category].filter(
-          item =>
-            item.itemModel.hasOwnProperty("perks") &&
-            item.itemModel.perks.length > 0
-        );
-      }
+      let tempItemsList = [ ...itemsList ];
+      
+      tempItemsList = tempItemsList.filter(
+        itemModel =>
+          itemModel.hasOwnProperty("perks") &&
+          itemModel.perks.length > 0
+      );
+      
       setItemsList(tempItemsList);
     } else {
-      setItemsList(props.itemsList);
+      setItemsList(itemsList);
     }
   }, [perksFilter]);
 
@@ -101,26 +97,22 @@ const ItemsModal = props => {
     });
   };
 
-  const handleClassFilterChange = e => {
-    setClassFilter(e.target.value);
-  };
-
   const handleSeachChange = e => {
     setSearchValue(e.target.value.trim());
   };
 
 
 
-  const handleSubtract = (item, characterClass) => {
-    props.handleSubtractItem(item, characterClass);
+  const handleSubtract = (item) => {
+    props.handleSubtractItem(item);
   };
 
-  const handleChangeQuantity = (item, e, characterClass) => {
-    props.handleChangeItemQuantity(item, e.target.value, characterClass);
+  const handleChangeQuantity = (item, e) => {
+    props.handleChangeItemQuantity(item, e.target.value);
   };
 
-  const handleAdd = (item, characterClass) =>  {
-    props.handleAddItem(item, characterClass);
+  const handleAdd = (item) =>  {
+    props.handleAddItem(item);
   };
 
   return (
@@ -177,7 +169,7 @@ const ItemsModal = props => {
                                   value={category}
                                 />
                               }
-                              label={itemCategories[category]}
+                              label={itemTypeLabelsPlural[category]}
                             />
                           );
                         })}
@@ -194,29 +186,6 @@ const ItemsModal = props => {
                     alignItems="flex-start"
                   >
                     <Grid item>
-                      <FormControl
-                        style={{
-                          boxSizing: "border-box",
-                          width: "10rem",
-                          alignSelf: "flex-start"
-                        }}
-                      >
-                        <InputLabel htmlFor="class-choice">Klasa</InputLabel>
-                        <Select
-                          value={classFilter}
-                          onChange={handleClassFilterChange}
-                          inputProps={{
-                            name: "class",
-                            id: "class-filter"
-                          }}
-                        >
-                          <MenuItem value={"any"}>Każda</MenuItem>
-                          <MenuItem value={"warrior"}>Wojownik</MenuItem>
-                          <MenuItem value={"mage"}>Mag</MenuItem>
-                          <MenuItem value={"rogue"}>Łotrzyk</MenuItem>
-                          <MenuItem value={"cleric"}>Kleryk</MenuItem>
-                        </Select>
-                      </FormControl>
                     </Grid>
                     <Grid item>
                       <FormControlLabel
@@ -236,47 +205,42 @@ const ItemsModal = props => {
           </ExpansionPanel>
 
           <List dense style={{ padding: "1rem" }}>
-            {Object.keys(itemsList)
-              .filter(
-                category =>
-                  itemsList[category].length > 0 && categoryFilter[category]
-              )
+            {Object.keys(itemTypeLabelsPlural)
               .map(itemCategory => {
-                return (
+                const categoryItems = itemsList.filter((item) => { return item.type === itemCategory})
+                return categoryItems.length > 0 && categoryFilter[itemCategory] && (
                   <React.Fragment key={itemCategory}>
                     <Divider />
                     <Typography variant="caption">
-                      {itemCategories[itemCategory]}
+                      {itemTypeLabelsPlural[itemCategory]}
                     </Typography>
                     <List>
-                      {itemsList[itemCategory].map(item => {
+                      {categoryItems.map(itemModel => {
                         return (
                           <ItemsModalListItem
-                            item={item}
-                            key={item.itemModel.id}
+                            item={itemModel}
+                            key={itemModel._id}
                             handleAdd={handleAdd}
+                            onlyAllClassItems={true}
                           />
                         );
                       })}
                     </List>
                   </React.Fragment>
-                );
-              })}
+                );}
+              )}
           </List>
         </div>
         <div style={{ flexBasis: "40%", overflow: "auto" }}>
           <List dense style={{ padding: "1rem" }}>
-            {Object.keys(props.eventItemsList).map(characterClass => {
+            {props.productAwards.length > 0 && props.productAwards.map(award => {
               return (
-                props.eventItemsList[characterClass].length > 0 && (
-                  <React.Fragment key={characterClass}>
-                    <Typography style={{ fontWeight: "bolder" }}>
-                      {characterClasses[characterClass]}
-                    </Typography>
+                  <React.Fragment key={award}>
+                    
                     <List>
-                      {props.eventItemsList[characterClass].map(item => {
-                        return (
-                          <ListItem key={item.itemModel.id}>
+                      
+                       
+                          <ListItem key={award.itemModel._id}>
                             <Grid
                               container
                               direction="row"
@@ -287,14 +251,14 @@ const ItemsModal = props => {
                             >
                               <Grid item style={{ flexBasis: "40%" }}>
                                 <Typography >
-                                  {item.itemModel.name}
+                                  {award.itemModel.name}
                                 </Typography>
                               </Grid>
                               <Grid item>
                                 <Button
                                   variant="contained"
                                   color="secondary"
-                                  onClick={e => handleSubtract(item, characterClass)}
+                                  onClick={e => handleSubtract(award.itemModel)}
                                 >
                                   -
                                 </Button>
@@ -303,9 +267,9 @@ const ItemsModal = props => {
                                 <Input
                                   style={{ width: "3rem" }}
                                   type="tel"
-                                  value={item.quantity}
+                                  value={award.quantity}
                                   onChange={
-                                    e => handleChangeQuantity(item, e, characterClass)
+                                    e => handleChangeQuantity(award.itemModel, e)
                                   }
                                   inputProps={{
                                     style: { textAlign: "center" }
@@ -316,19 +280,18 @@ const ItemsModal = props => {
                                 <Button
                                   variant="contained"
                                   color="primary"
-                                  onClick={e => handleAdd(item, characterClass)}
+                                  onClick={e => handleAdd(award.itemModel)}
                                 >
                                   +
                                 </Button>
                               </Grid>
                             </Grid>
                           </ListItem>
-                        );
-                      })}
+                        
+                     
                     </List>
                   </React.Fragment>
                 )
-              );
             })}
           </List>
         </div>
