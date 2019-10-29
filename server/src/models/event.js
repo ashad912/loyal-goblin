@@ -41,7 +41,7 @@ export const EventSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    dexternity: {
+    dexterity: {
         type: Number,
         required: true,
     },

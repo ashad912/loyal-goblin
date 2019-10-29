@@ -89,11 +89,6 @@ export const UserSchema = new mongoose.Schema({
         unique: true
     }],
     equipped: {
-        amulet: {
-            type: mongoose.Schema.Types.ObjectId, 
-            ref: 'item',
-            unique: true
-        },
         weaponRight: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',

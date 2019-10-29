@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
 const Equipment = props => {
   const [openList, setOpenList] = React.useState("");
   const [deleteDialog, setDeleteDialog] = React.useState(false)
-  const [itemToDelete, setItemToDelete] = React.useState({id: '', name: '', category: ''})
+  const [itemToDelete, setItemToDelete] = React.useState({_id: '', name: '', category: ''})
 
   const classes = useStyles();
 
@@ -43,7 +43,7 @@ const Equipment = props => {
   };
 
   const handleShowDeleteDialog = (id, name, category) => {
-    setItemToDelete({id, name, category})
+    setItemToDelete({_id:id, name, category})
     setDeleteDialog(true)
 
   }
@@ -54,7 +54,7 @@ const Equipment = props => {
   }
 
   const handleItemDelete = () => {
-    props.handleItemDelete(itemToDelete.id, itemToDelete.category)
+    props.handleItemDelete(itemToDelete._id, itemToDelete.category)
     handleDeleteDialogClose()
   }
 
@@ -78,7 +78,7 @@ const Equipment = props => {
             >
               <List component="div" disablePadding>
                 {items[itemCategory].map(item => (
-                  <EquipmentListItem key={item.itemModel.id} item={item} handleItemToggle={props.handleItemToggle} itemCategory={itemCategory} handleItemDelete={handleShowDeleteDialog}/>
+                  <EquipmentListItem key={item._id} equipped={Object.values(props.equipped).find(id => id === item._id) } item={item} handleItemToggle={props.handleItemToggle} itemCategory={itemCategory} handleItemDelete={handleShowDeleteDialog}/>
                 ))}
               </List>
             </Collapse>
