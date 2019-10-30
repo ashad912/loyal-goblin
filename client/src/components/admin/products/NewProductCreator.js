@@ -22,13 +22,13 @@ import AddCircleIcon from "@material-ui/icons/AddCircle";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 
+
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import MomentUtils from "@date-io/moment";
 import ItemsModal from './ItemsModal'
 
-
-import characterClasses from "../../../assets/categories/characterClasses";
-import {categoryLabels} from '../../../utils/labels'
+import {asyncForEach} from '../../../utils/methods'
+import {categoryLabelsSpecifed} from '../../../utils/labels'
 
 
 const FileInputWrapper = styled.div`
@@ -60,6 +60,17 @@ const FileInputButton = styled(Button)`
 const StyledFormControl = styled(FormControl)`
   min-width: 10rem;
 `
+
+const AddIcon = styled(AddCircleIcon)`
+  color: #3f51b5
+  width: 1.5rem;
+  transition: transform 0.2s ease-in-out;
+  transform: scale(1.8);
+  &:active {
+    transform: scale(1.5);
+  }
+`;
+
 const mockItems = [
     {
       
@@ -253,8 +264,8 @@ const mockItems = [
     },
   ]
 
+const validatedFields = ['category', 'name', 'description', 'icon', 'price']
 
-const productCategories = ['shots', 'drinks', 'beer', 'food', 'alco-free']
 
 class NewProductCreator extends Component {
   state = {
@@ -262,18 +273,39 @@ class NewProductCreator extends Component {
     description: '',
     icon: "",
     price: "",
-    category: productCategories[0],  
+    category: null,
     formError: {
-        price: undefined,
+        price: null,
+        name: null,
+        description: null,
+        icon: null,
     },
     showItemsModal: false,
     awards: [],
   };
 
-
+  componentDidMount = () => {
+    const product = this.props.product
+    
+    console.log(product)
+    this.setState({
+      _id: product._id,
+      name: product.name,
+      description: product.description,
+      category: product.category ? (product.category) : (Object.keys(categoryLabelsSpecifed)[0]),
+      price: product.price,
+      awards: product.awards,
+      icon: product.imgSrc ? ((product.imgSrc.includes('blob') || product.imgSrc.includes('data:image') || product.imgSrc.includes('static')) ? (product.imgSrc) : (require("../../../assets/shop/" + product.imgSrc))) : (null),
+    }, () => {
+      this.setState({
+        componentMounted: true
+      })
+    })
+}
 
   handleIconChange = e => {
-    this.setState({ icon: URL.createObjectURL(e.target.files[0]) });
+    const url = URL.createObjectURL(e.target.files[0])
+    this.setState({ icon: url}, () => this.callbacksAndValidation('icon', url));
   };
 
 
@@ -289,32 +321,47 @@ class NewProductCreator extends Component {
   };
 
 
-    callbacksAndValidation = (fieldName, fieldValue, prevFieldValue) => {
-    
-    switch(fieldName) {
-      case 'price':
-        let valueValid = true
-        let valueError = ''
+  callbacksAndValidation = (fieldName, fieldValue) => {
 
-        if(fieldValue.length > 0){
-          valueValid = fieldValue.trim().match(/^\d+(\.\d{1,2})?$/);
-          valueError = valueValid ? undefined : 'Niepoprawna wartość!'
-        }else{
-          valueValid = true
-          valueError = 'Pole wymagane!'
+    if(validatedFields.includes(fieldName)){
+      let error = ''
+
+      if(fieldValue.length === 0){
+        error = fieldName === 'icon' ? ('Ikona wymagana!') : ('Pole wymagane!')
+      }
+
+      this.setState({
+        formError: {
+            ...this.state.formError,
+            [fieldName]: error
+        },
+        
+      }, () => {
+        switch(fieldName) {
+          case 'price':
+              let valueValid = true
+              let valueError = ''
+      
+              if(fieldValue.length > 0){
+                valueValid = fieldValue.trim().match(/^\d+(\.\d{1,2})?$/);
+                valueError = valueValid ? undefined : 'Niepoprawna wartość!'
+              }else{
+                valueValid = true
+                valueError = 'Pole wymagane!'
+              }
+              this.setState({
+                formError: {
+                    ...this.state.formError,
+                    price: valueError
+                },
+                
+              });
+          default:
+            break
         }
-        this.setState({
-          formError: {
-              ...this.state.formError,
-              price: valueError
-          },
-          
-        });
-        break
-      default:
-        break
+      });
     }
-
+  
 
   }
 
@@ -373,19 +420,60 @@ class NewProductCreator extends Component {
   };
  
 
-  componentDidUpdate(){
-      //console.log(this.state.class)
-  }
+  saveProduct = async () => {
+    
+
+    await asyncForEach(validatedFields, (fieldName) => {
+      if(!this.state[fieldName]){
+        console.log('halo', fieldName)
+        
+        this.setState({
+          formError: {
+              ...this.state.formError,
+              [fieldName]: fieldName === 'icon' ? ('Ikona wymagana!') : ('Pole wymagane!')
+          },
+          
+        });
+      }
+    })
+
+    let breakFlag = false
+    Object.keys(this.state.formError).forEach((targetKey)=>{
+      if(this.state.formError[targetKey]){
+        breakFlag = true
+        return
+      }
+    })
+
+    if(breakFlag){
+      return
+    }
+
+
+    const product = {
+      _id: this.state._id,
+      name: this.state.name,
+      description: this.state.description,
+      price: this.state.price,
+      category: this.state.category,
+      awards: this.state.awards,
+      imgSrc: this.state.icon,
+    }
+    
+
+    this.props.updateProducts(product)
+}
+
 
   render() {
     
 
     return (
       <MuiPickersUtilsProvider utils={MomentUtils}>
-        <Button>{"< Powrót do panelu produktów"}</Button>
+        <Button onClick={this.props.handleClose}>{"< Powrót do panelu produktów"}</Button>
         <Container style={{margin: '1rem 0 0 0'}}>
         <Grid container spacing={5} style={{minHeight: '80px'}}>
-            
+            <Grid item xs={2}></Grid>
             <Grid item xs={4} style={{textAlign: 'left'}}>
                 <StyledFormControl >
                     <InputLabel shrink={true} htmlFor="category">Kategoria</InputLabel>
@@ -398,9 +486,9 @@ class NewProductCreator extends Component {
                             id: 'category',
                         }}
                     >
-                        {productCategories.map((category) => {
+                        {Object.keys(categoryLabelsSpecifed).map((category) => {
                             return(
-                                <MenuItem value={category}>{categoryLabels[category]}</MenuItem>
+                                <MenuItem value={category}>{categoryLabelsSpecifed[category]}</MenuItem>
                             )
                         })}
                     </Select>
@@ -419,6 +507,7 @@ class NewProductCreator extends Component {
                         onChange={this.handleIconChange}
                         />
                     </FileInputWrapper>
+                    {this.state.formError.icon && <Typography style={{color: 'red', fontSize: '0.8rem'}}>{this.state.formError.icon}</Typography>}
                     </Grid>
                     <Grid
                         item
@@ -434,7 +523,7 @@ class NewProductCreator extends Component {
             </Grid>
           </Grid>
           <Grid container spacing={5}>
-          
+          <Grid item xs={2}></Grid>
           <Grid item xs={8} style={{textAlign: 'left'}}>
             <TextField
               name="name"
@@ -444,6 +533,8 @@ class NewProductCreator extends Component {
               type="text"
               fullWidth
               onChange={this.handleChangeNameValue}
+              error={this.state.formError.name ? true : false}
+              helperText={this.state.formError.name ? (this.state.formError.name) : (null)}
             />
             <TextField
               name="description"
@@ -456,6 +547,8 @@ class NewProductCreator extends Component {
               rows={2}
               rowsMax={5}
               onChange={this.handleChangeNameValue}
+              error={this.state.formError.description ? true : false}
+              helperText={this.state.formError.description ? (this.state.formError.description) : (null)}
             />
             <TextField
               style={{width: '30%'}}
@@ -471,44 +564,42 @@ class NewProductCreator extends Component {
             
           </Grid>
          </Grid>
-         <Grid
-            container
-            direction="column"
-            spacing={2}
-            alignItems="flex-start"
-          >
-            <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
+         <Grid container spacing={2} style={{marginTop: '1.5rem'}}>
+            <Grid item xs={2}></Grid>
+           <Grid item xs={8} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+          
+            <Typography variant="h6">Nagrody produktu</Typography>
+            <AddIcon
+                style={{marginRight: '0.5rem'}}
                 onClick={this.handleToggleItemsModal}
-              >
-                Dodaj nagrody
-              </Button>
+            />
             </Grid>
-          </Grid>
-          {!this.state.showItemsModal && (
+            </Grid> 
+            <Grid container spacing={5}>
+            <Grid item xs={2}></Grid>
+            <Grid item xs={8}>
+            {!this.state.showItemsModal && (
+            
             <div
               style={{
                 maxHeight: "30vh",
                 display: "flex",
-                justifyContent: "space-around",
+                justifyContent: "flex-start",
                 overflow: "hidden",
-                width: "70%",
+                width: "100%",
                 marginTop: "1rem"
               }}
             >
-              {this.state.awards.length > 0 && (
+              {this.state.awards && this.state.awards.length > 0 && (
                 <div
                   style={{
                     overflow: "auto",
-                    flexBasis: "50%"
                   }}
                 >
                   <List dense>
                     {this.state.awards.map(award => {
                       return (
-                        <ListItem>
+                        <ListItem style={{paddingLeft: '0px'}}>
                           <ListItemAvatar>
                             <img
                               src={require("../../../assets/icons/items/" +
@@ -526,44 +617,10 @@ class NewProductCreator extends Component {
                   </List>
                 </div>
               )}
-              {/* <div style={{ overflow: "auto", flexBasis: "50%" }}>
-                <List dense>
-                  {Object.keys(this.state.awards)
-                    .filter(
-                      characterClass =>
-                        characterClass !== "any" &&
-                        this.state.awards[characterClass].length > 0
-                    )
-                    .map(characterClass => {
-                      return (
-                        <React.Fragment>
-                          <Typography style={{ fontWeight: "bolder" }}>
-                            {characterClasses[characterClass]}
-                          </Typography>
-                          {this.state.awards[characterClass].map(item => {
-                            return (
-                              <ListItem>
-                                <ListItemAvatar>
-                                  <img
-                                    src={require("../../../assets/icons/items/" +
-                                      item.itemModel.imgSrc)}
-                                    style={{ width: "32px", height: "32px" }}
-                                  />
-                                </ListItemAvatar>
-                                <ListItemText
-                                  primary={item.itemModel.name}
-                                  secondary={"x" + item.quantity}
-                                />
-                              </ListItem>
-                            );
-                          })}
-                        </React.Fragment>
-                      );
-                    })}
-                </List>
-              </div> */}
             </div>
           )}
+          </Grid>
+          </Grid>
         </Container>
         <ItemsModal
             open={this.state.showItemsModal}
@@ -577,6 +634,27 @@ class NewProductCreator extends Component {
             handleChangeItemQuantity={this.handleChangeItemQuantity}
             title={'Dodaj nagrody produktu'}
           />
+          <Grid
+            container
+            justify="center"
+            spacing={5}
+            style={{ marginTop: "1rem" }}
+          >
+            <Grid item>
+              <Button onClick={this.props.handleClose} color="secondary">
+                Anuluj
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                onClick={this.saveProduct}
+                color="primary"
+                variant="contained"
+              >
+                Zatwierdź
+              </Button>
+            </Grid>
+          </Grid>
       </MuiPickersUtilsProvider>
     );
   }

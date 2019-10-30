@@ -1489,7 +1489,8 @@ export const mockProducts = [
         name: "BBanie",
         description: "szotów",
         price: 7.0,
-        imgSrc: "drink.png"
+        imgSrc: "drink.png",
+        awards: []
       },
       {
         _id: uuid(),
@@ -1497,7 +1498,8 @@ export const mockProducts = [
         name: "Modżajto",
         description: "dla mojej świni",
         price: 13.5,
-        imgSrc: "drink.png"
+        imgSrc: "drink.png",
+        awards: [],
       },
       {
         _id: uuid(),
@@ -1506,8 +1508,9 @@ export const mockProducts = [
         description: "lubisz, ale się nie przyznasz przed kolegami",
         price: 27.99,
         imgSrc: "drink.png",
-        prizes: [
+        awards: [
           {
+            quantity: 2,
             itemModel: {
               _id: uuid(),
               type: {
@@ -1527,7 +1530,8 @@ export const mockProducts = [
         name: "BOrzeszki",
         description: "ziemne",
         price: 6.0,
-        imgSrc: "drink.png"
+        imgSrc: "drink.png",
+        awards: [],
       },
       {
         _id: uuid(),
@@ -1535,7 +1539,8 @@ export const mockProducts = [
         name: "BNaczosy hehe",
         description: "xddxdx",
         price: 25.0,
-        imgSrc: "drink.png"
+        imgSrc: "drink.png",
+        awards: [],
       },
       {
         _id: uuid(),
@@ -1544,17 +1549,20 @@ export const mockProducts = [
         description: "Pan na zamku",
         price: 12.0,
         imgSrc: "drink.png",
-        prizes: [      {
-          itemModel: {
-            _id: 600,
-            type: {
-              _id: 6,
-              type: "torpedo"
-            },
-            name: "D1",
-            fluff: "Ostrzelaj pole D1!",
-            imgSrc: "torpedo.png"
-          }
-        }]
+        awards: [      
+            {
+                quantity: 1,
+                itemModel: {
+                    _id: 600,
+                    type: {
+                    _id: 6,
+                    type: "torpedo"
+                    },
+                    name: "D1",
+                    fluff: "Ostrzelaj pole D1!",
+                    imgSrc: "torpedo.png"
+                }
+            }
+        ]
       },
 ]

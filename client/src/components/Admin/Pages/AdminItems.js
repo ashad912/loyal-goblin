@@ -157,9 +157,7 @@ const AdminItems = () => {
     handleDeleteDialogClose()
   }
 
-  const handleClose = () => {
-    toggleItemCreator()
-  }
+  
   return (
     <div>
       {showNewItemCreator ? (

@@ -271,12 +271,11 @@ class NewItemCreator extends Component {
   }
 
   saveItem = async () => {
-      let breakFlag = false
+      
 
       await asyncForEach(validatedFields, (fieldName) => {
         if(!this.state[fieldName] || !this.state[fieldName].length){
           console.log('halo', fieldName)
-          breakFlag = true;
           this.setState({
             formError: {
                 ...this.state.formError,
@@ -287,9 +286,18 @@ class NewItemCreator extends Component {
         }
       })
 
+      let breakFlag = false
+      Object.keys(this.state.formError).forEach((targetKey)=>{
+        if(this.state.formError[targetKey]){
+          breakFlag = true
+          return
+        }
+      })
+  
       if(breakFlag){
         return
       }
+  
 
       const item = {
         _id: this.state._id,
@@ -503,7 +511,7 @@ class NewItemCreator extends Component {
             />
             </Grid>
             
-          {this.state.perks.length ? (
+          {this.state.perks && this.state.perks.length ? (
               <PerkListBox
                 perks={this.state.perks}
                 headers={true}
@@ -516,10 +524,7 @@ class NewItemCreator extends Component {
                 buttonsWidth={2}
                 handleDeletePerk={this.handleDeletePerk}
                 handleModifyPerk={this.handleModifyPerk}
-              />
-              
-                
-                
+              />   
             ):(
                 null
             )

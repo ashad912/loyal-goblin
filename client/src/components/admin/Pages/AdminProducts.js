@@ -44,7 +44,7 @@ const AdminProducts = () => {
       awards: [],
   })
 
-  const toggleItemCreator = e => {
+  const toggleProductCreator = e => {
     if(showNewProductCreator){
       setModifyingIndex(null)
       applyStatusFilter(statusFilter);
@@ -96,14 +96,14 @@ const AdminProducts = () => {
   const handleAddItemCreator = (index) => {
     setProductToPass({   
       _id: null,
-      type: null,
+      category: null,
       name: '',
-      class: null,
+      price: null,
       description: '',
       imgSrc: null,
-      perks: [],
+      awards: [],
     })
-    toggleItemCreator()  
+    toggleProductCreator()  
   }
 
   const handleEditItemCreator = (id) => {
@@ -111,7 +111,7 @@ const AdminProducts = () => {
     const index = products.findIndex((product) => {return product._id === id})
     setProductToPass(products[index])
     setModifyingIndex(index)
-    toggleItemCreator()
+    toggleProductCreator()
     
   }
 
@@ -123,11 +123,11 @@ const AdminProducts = () => {
       tempProducts[modifyingIndex] = product
 
       setProducts(tempProducts)
-      toggleItemCreator()
+      toggleProductCreator()
       
     }else{
       setProducts([...products, product])
-      toggleItemCreator()
+      toggleProductCreator()
     }
     
   }
@@ -155,15 +155,13 @@ const AdminProducts = () => {
     handleDeleteDialogClose()
   }
 
-  const handleClose = () => {
-    toggleItemCreator()
-  }
+
   return (
     <div>
       {showNewProductCreator ? (
         <NewProductCreator
           open={showNewProductCreator}
-          handleClose={toggleItemCreator}
+          handleClose={toggleProductCreator}
           product={productToPass}
           updateProducts={updateProducts}
         />

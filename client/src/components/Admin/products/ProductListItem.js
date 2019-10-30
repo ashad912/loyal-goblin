@@ -8,11 +8,9 @@ import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import List from "@material-ui/core/List";
 import ListItemText from "@material-ui/core/ListItemText";
-//import PerkListBox from './PerkListBox'
-import Collapse from "@material-ui/core/Collapse";
-import ExpandLess from "@material-ui/icons/ExpandLess";
-import ExpandMore from "@material-ui/icons/ExpandMore";
+import Popover from "@material-ui/core/Popover";
 import {categoryLabels} from '../../../utils/labels'
+import iconCoins from "../../../assets/shop/coins.png"
 
 
 const StyledListItem = styled(ListItem)`
@@ -20,25 +18,23 @@ const StyledListItem = styled(ListItem)`
 `
 
 
-const ItemListItem = ({
+const ProductListItem = ({
     product,
     editProduct,
     deleteProduct,
     isLast
 }) => {
 
-  const [openEffect, setOpenEffect] = React.useState("");
- 
+  const [awardPopover, setAwardPopover] = React.useState(null);
 
- 
-
-  const handleOpenEffect = event => {
-    if (event.currentTarget.dataset.value === openEffect) {
-      setOpenEffect("");
-    } else {
-      setOpenEffect(event.currentTarget.dataset.value);
-    }
+  const handleAwardPopover = event => {
+    setAwardPopover(event.currentTarget);
   };
+
+  const handleClose = () => {
+    setAwardPopover(null);
+  };
+
 
 
   console.log(product)
@@ -53,13 +49,17 @@ const ItemListItem = ({
                 {categoryLabels[product.category]}
             </Typography>
           </Grid>
-          <Grid item xs={5}>
+          <Grid item xs={6}>
             
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <Box display="flex">
                 <Typography >
-                    {product.price}
+                  <img
+                    src={iconCoins}
+                    style={{width: '1rem'}}
+                  />
+                  {` ${product.price}`}
                 </Typography>
             </Box>
           </Grid>
@@ -67,7 +67,7 @@ const ItemListItem = ({
         <Grid item container>
           <Grid item xs={2}>
             <img
-              src={(product.imgSrc.includes('blob') || product.imgSrc.includes('data:image')) ? (product.imgSrc) : (require("../../../assets/shop/" + product.imgSrc))}
+              src={(product.imgSrc.includes('blob') || product.imgSrc.includes('data:image') || product.imgSrc.includes('static')) ? (product.imgSrc) : (require("../../../assets/shop/" + product.imgSrc))}
               width={32}
             />
           </Grid>
@@ -87,10 +87,50 @@ const ItemListItem = ({
             item
             container
             direction="column"
-            justify="space-around"
+            justify="flex-start"
             xs={2}
             spacing={2}
           >
+            <Grid item>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleAwardPopover}
+              >
+                Nagrody
+              </Button>
+              <Popover
+                open={Boolean(awardPopover)}
+                anchorEl={awardPopover}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: "center",
+                  horizontal: "left"
+                }}
+                transformOrigin={{
+                  vertical: "center",
+                  horizontal: "right"
+                }}
+              >
+                <Grid
+                  container
+                  direction="column"
+                  spacing={1}
+                  style={{ width: "10vw", padding: "0.5rem" }}
+                >
+                  {product.awards.map(award => {
+                    return (
+                      <Grid item key={award.itemModel._id}>
+                        <ListItemText
+                          primary={award.itemModel.name}
+                          secondary={"x" + award.quantity}
+                        />
+                      </Grid>
+                    );
+                  })}
+                </Grid>
+              </Popover>
+            </Grid>
           </Grid>
           <Grid item container direction="column" xs={2} spacing={2} style={{textAlign: 'right'}}>
             <Grid item>
@@ -139,4 +179,4 @@ const ItemListItem = ({
   );
 };
 
-export default ItemListItem;
+export default ProductListItem;
