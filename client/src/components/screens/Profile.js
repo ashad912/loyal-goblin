@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -7,8 +8,15 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Fab from "@material-ui/core/Fab";
+import Tooltip from "@material-ui/core/Tooltip";
 import ColorizeIcon from "@material-ui/icons/Colorize";
-import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
+import GroupAddIcon from "@material-ui/icons/GroupAdd";
+import EmojiPeopleIcon from "@material-ui/icons/EmojiPeople";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import ListItemText from "@material-ui/core/ListItemText";
+import Badge from "@material-ui/core/Badge";
 
 import convertBagArrayToCategories from "../../utils/bagArayToCategories";
 
@@ -17,6 +25,8 @@ import Equipment from "./profile/Equipment";
 import NewLevelDialog from "./profile/NewLevelDialog";
 import PerkBox from "./profile/PerkBox";
 import maleBody from "../../assets/avatar/male-body.png";
+import PartyCreationDialog from "./profile/PartyCreationDialog";
+import PartyJoiningDialog from "./profile/PartyJoiningDialog";
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -344,6 +354,9 @@ const Profile = props => {
 
   const [newLevelDialogOpen, setNewLevelDialogOpen] = React.useState(false);
 
+  const [isJoiningParty, setIsJoiningParty] = React.useState(false);
+  const [isCreatingParty, setIsCreatingParty] = React.useState(false);
+
   const [equippedItems, setEquippedItems] = React.useState({
     head: "",
     chest: "",
@@ -355,11 +368,11 @@ const Profile = props => {
     ringRight: "",
     ringLeft: ""
   });
-  //TODO: Main-hand and off-hand weapon
   //TODO: Multiple items of same type
 
   React.useEffect(() => {
     updateEquippedItems();
+    handleJoinOrCreateParty();
   }, []);
 
   const updateEquippedItems = () => {
@@ -377,16 +390,16 @@ const Profile = props => {
     const perks = [];
 
     Object.keys(player.equipped).forEach(category => {
-      let loadedEquippedItem 
-      if(category.startsWith('weapon')  ){
+      let loadedEquippedItem;
+      if (category.startsWith("weapon")) {
         loadedEquippedItem = player.equipment.weapon.find(
           item => item._id === player.equipped[category]
         );
-      }else if(category.startsWith('ring')){
+      } else if (category.startsWith("ring")) {
         loadedEquippedItem = player.equipment.ring.find(
           item => item._id === player.equipped[category]
         );
-      }else{
+      } else {
         loadedEquippedItem = player.equipment[category].find(
           item => item._id === player.equipped[category]
         );
@@ -470,7 +483,7 @@ const Profile = props => {
           tempPlayer.equipped.weaponLeft = "";
         }
       }
-    } else if(category === 'ring'){
+    } else if (category === "ring") {
       if (!tempPlayer.equipped.ringRight && !tempPlayer.equipped.ringLeft) {
         tempPlayer.equipped.ringRight = id;
       } else if (
@@ -501,8 +514,7 @@ const Profile = props => {
           tempPlayer.equipped.ringLeft = "";
         }
       }
-    }
-    else {
+    } else {
       tempPlayer.equipped[category] = isEquipped ? "" : id;
     }
 
@@ -560,6 +572,28 @@ const Profile = props => {
   //   console.log(props.location.push('shop'));
   //   setGoExp(prev => !prev);
   // };
+
+  const handleJoinOrCreateParty = () => {
+    //Replace with backend call
+    let party = localStorage.getItem("party");
+    const tempPlayer = { ...player };
+    if (party) {
+      party = JSON.parse(party);
+      setPlayer({ ...tempPlayer, party: { ...party } });
+    } else {
+      delete tempPlayer.party;
+      setPlayer({ ...tempPlayer });
+    }
+  };
+
+  const handleLeaveParty = () => {
+    //Replace with backend call
+
+    const tempPlayer = { ...player };
+
+    delete tempPlayer.party;
+    setPlayer({ ...tempPlayer });
+  };
 
   return (
     <Grid
@@ -696,11 +730,96 @@ const Profile = props => {
         handleItemDelete={handleItemDelete}
       />
       <Typography variant="h5" className={classes.eqHeading}>
-        Znajomi i drużyna:
+        Drużyna:
       </Typography>
-      <Fab color="primary">
-        <PeopleAltIcon />
-      </Fab>
+      {player.hasOwnProperty("party") && player.party.members.length > 0 && (
+        <div>
+          {player.party.leader._id === props.auth.uid ? (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setIsCreatingParty(prev => !prev)}
+            >
+              Zarządzaj drużyną
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleLeaveParty}
+            >
+              Opuść drużynę
+            </Button>
+          )}
+        </div>
+      )}
+
+      {player.hasOwnProperty("party") && player.party.members.length > 0 ? (
+        <List
+          style={{ width: "80%", marginTop: "2rem", border: "1px solid grey" }}
+        >
+          <ListItem>
+            <Badge badgeContent="Lider" color="primary">
+              <ListItemAvatar>
+                <img
+                  src={require("../../assets/avatar/" +
+                    player.party.leader.avatar)}
+                  width="32"
+                />
+              </ListItemAvatar>
+              <ListItemText primary={player.party.leader.name} />
+            </Badge>
+          </ListItem>
+
+          {player.party.members.map(partyMember => {
+            return (
+              <ListItem key={partyMember._id}>
+                <ListItemAvatar>
+                  <img
+                    src={require("../../assets/avatar/" + partyMember.avatar)}
+                    width="32"
+                  />
+                </ListItemAvatar>
+                <ListItemText primary={partyMember.name} />
+              </ListItem>
+            );
+          })}
+        </List>
+      ) : (
+        <div
+          style={{
+            width: "100%",
+            marginBottom: "2rem",
+            display: "flex",
+            justifyContent: "space-around"
+          }}
+        >
+          <Tooltip
+            open
+            title="Szukaj drużyny"
+            PopperProps={{ style: { margin: "-12px 0" } }}
+          >
+            <Fab
+              color="primary"
+              onClick={() => setIsJoiningParty(prev => !prev)}
+            >
+              <EmojiPeopleIcon />
+            </Fab>
+          </Tooltip>
+          <Tooltip
+            open
+            title="Stwórz drużynę"
+            PopperProps={{ style: { margin: "-12px 0" } }}
+          >
+            <Fab
+              color="primary"
+              onClick={() => setIsCreatingParty(prev => !prev)}
+            >
+              <GroupAddIcon />
+            </Fab>
+          </Tooltip>
+        </div>
+      )}
       <Typography variant="h5" className={classes.eqHeading}>
         Statystyki:
       </Typography>
@@ -709,8 +828,29 @@ const Profile = props => {
         open={newLevelDialogOpen}
         handleAddAndClose={handleNewLevelDialogClose}
       />
+      <PartyJoiningDialog
+        open={isJoiningParty}
+        handleClose={() => setIsJoiningParty(prev => !prev)}
+      />
+
+      <PartyCreationDialog
+        open={isCreatingParty}
+        isManagingParty={
+          player.hasOwnProperty("party") &&
+          player.party.members.length > 0 &&
+          player.party.leader._id === props.auth.uid
+        }
+        handleClose={() => setIsCreatingParty(prev => !prev)}
+        handleCreateParty={handleJoinOrCreateParty}
+      />
     </Grid>
   );
 };
 
-export default Profile;
+const mapStateToProps = state => {
+  return {
+    auth: state.auth
+  };
+};
+
+export default connect(mapStateToProps)(Profile);

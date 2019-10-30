@@ -142,6 +142,7 @@ export const UserSchema = new mongoose.Schema({
         required: true
     },
     party: { //suggested struct - EXPERIMENTAL
+        name: {type: String},
         leader: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'user',
