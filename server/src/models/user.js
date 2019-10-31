@@ -157,6 +157,24 @@ export const UserSchema = new mongoose.Schema({
             ref: 'user',
             unique: true
         }]       
+    },
+    statistics: {
+        missionsCounter: {
+            type: Number,
+            required: true,
+        },
+        amuletCounters: [{
+            counter: {
+                type: Number,
+                required: true,
+            },
+            amulet: {
+                type: mongoose.Schema.Types.ObjectId, 
+                ref: 'itemModel',
+                unique: true
+            }
+        }]
+
     }
     
 }, {
