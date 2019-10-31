@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { ScrollingProvider, Section } from "react-scroll-section";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
+import Button from "@material-ui/core/Button";
 
 import Divider from "@material-ui/core/Divider";
 import Badge from "@material-ui/core/Badge";
@@ -62,7 +63,7 @@ const FloatingCartIcon = styled(ShoppingCartIcon)`
 //Price is a string - JSON format returns strings - need to convert when fetching from db
 const mockShop = [
   {
-    _id:1,
+    _id:'1',
     category: "shot",
     name: "Wóda",
     description: "nie mam weny",
@@ -70,7 +71,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:2,
+    _id:'2',
     category: "shot",
     name: "Zryje",
     description: "na opisy",
@@ -78,7 +79,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:3,
+    _id:'3',
     category: "shot",
     name: "Banie",
     description: "szotów",
@@ -86,7 +87,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:4,
+    _id:'4',
     category: "shot",
     name: "BWóda",
     description: "nie mam weny",
@@ -94,7 +95,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:5,
+    _id:'5',
     category: "shot",
     name: "BZryje",
     description: "na opisy",
@@ -102,7 +103,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:6,
+    _id:'6',
     category: "shot",
     name: "BBanie",
     description: "szotów",
@@ -110,7 +111,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:7,
+    _id:'7',
     category: "drink",
     name: "Modżajto",
     description: "dla mojej świni",
@@ -118,7 +119,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:8,
+    _id:'8',
     name: "Cosmo",
     category: "drink",
     description: "lubisz, ale się nie przyznasz przed kolegami",
@@ -141,7 +142,7 @@ const mockShop = [
     ]
   },
   {
-    _id:9,
+    _id:'9',
     name: "Eau d'penis",
     category: "drink",
     description: "wyciąg z fiuta Twoim drinkiem",
@@ -163,7 +164,7 @@ const mockShop = [
     ]
   },
   {
-    _id:10,
+    _id:'10',
     name: "BModżajto",
     category: "drink",
     description: "dla mojej świni",
@@ -171,7 +172,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:11,
+    _id:'11',
     name: "BCosmo",
     category: "drink",
     description: "lubisz, ale się nie przyznasz przed kolegami",
@@ -179,7 +180,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:12,
+    _id:'12',
     name: "BEau d'penis",
     category: "drink",
     description: "wyciąg z fiuta Twoim drinkiem",
@@ -187,7 +188,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:13,
+    _id:'13',
     category: "alcoholFree",
     name: "Soczek",
     description: "szluga?",
@@ -195,7 +196,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:14,
+    _id:'14',
     category: "alcoholFree",
     name: "Piwo zero",
     description: ":(",
@@ -203,7 +204,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:15,
+    _id:'15',
     category: "alcoholFree",
     name: "Herba",
     description: "srogi czaj",
@@ -211,7 +212,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:16,
+    _id:'16',
     category: "alcoholFree",
     name: "BSoczek",
     description: "szluga?",
@@ -219,7 +220,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:17,
+    _id:'17',
     category: "alcoholFree",
     name: "BPiwo zero",
     description: ":(",
@@ -227,7 +228,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:18,
+    _id:'18',
     category: "alcoholFree",
     name: "BHerba",
     description: "srogi czaj",
@@ -235,7 +236,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:19,
+    _id:'19',
     category: "food",
     name: "Tosty",
     description: "z serem",
@@ -243,7 +244,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:20,
+    _id:'20',
     category: "food",
     name: "Orzeszki",
     description: "ziemne",
@@ -251,7 +252,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:21,
+    _id:'21',
     category: "food",
     name: "Naczosy hehe",
     description: "xddxdx",
@@ -259,7 +260,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:22,
+    _id:'22',
     category: "food",
     name: "BTosty",
     description: "z serem",
@@ -267,7 +268,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:23,
+    _id:'23',
     category: "food",
     name: "BOrzeszki",
     description: "ziemne",
@@ -275,7 +276,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:24,
+    _id:'24',
     category: "food",
     name: "BNaczosy hehe",
     description: "xddxdx",
@@ -283,7 +284,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    _id:25,
+    _id:'25',
     category: "beer",
     name: "Kasztelan",
     description: "Pan na zamku",
@@ -304,7 +305,7 @@ const mockShop = [
     }]
   },
   {
-    _id:26,
+    _id:'26',
     category: "beer",
     name: "Kormoran",
     description: "Pianka jakby ptak nasrał",
@@ -325,7 +326,7 @@ const mockShop = [
     }]
   },
   {
-    _id:27,
+    _id:'27',
     category: "beer",
     name: "Koczkodan",
     description: "O to piwo proszą, jak zapomną o kormoranie",
@@ -346,7 +347,7 @@ const mockShop = [
     }]
   },
   {
-    _id:28,
+    _id:'28',
     category: "beer",
     name: "c Ipa",
     description: "Jesteś tym co pijesz",
@@ -373,42 +374,199 @@ const mockUsers = [
   {
     _id:1,
     name: "Ancymon Bobrzyn",
-    avatar: "avatar.png"
+    avatar: "avatar.png",
+    bag: [
+      {
+        _id: 1,
+        owner: 11111,
+        itemModel: {
+          _id: 801,
+          type: {
+            _id: 8,
+            type: "scroll"
+          },
+          name: "Zwój małej zniżki na Wóde",
+          fluff: "Opis swoju",
+          imgSrc: "scroll.png",
+          perks: [
+            {
+              perkType: "disc-product",
+              target: '1',
+              value: "-5%"
+            },
+          ]
+        }
+      },
+    ]
   },
   {
     _id:2,
     name: "Cecylia Dedoles",
-    avatar: "avatar.png"
+    avatar: "avatar.png",
+    bag: [
+      {
+        _id: 2,
+        owner: 222222,
+        itemModel: {
+          _id: 801,
+          type: {
+            _id: 8,
+            type: "scroll"
+          },
+          name: "Zwój zniżki na szoty",
+          fluff: "Opis swoju",
+          imgSrc: "scroll.png",
+          perks: [
+            {
+              perkType: "disc-category",
+              target: 'shots',
+              value: "-10%"
+            },
+          ]
+        }
+      },
+      {
+        _id: 3,
+        owner: 222222,
+        itemModel: {
+          _id: 801,
+          type: {
+            _id: 8,
+            type: "scroll"
+          },
+          name: "Zwój ogromnej zniżki na Zryje",
+          fluff: "Opis swoju",
+          imgSrc: "scroll.png",
+          perks: [
+            {
+              perkType: "disc-product",
+              target: '2',
+              value: "-3"
+            },
+          ]
+        }
+      },
+    ]
   },
   {
     _id:3,
     name: "Ewelina",
-    avatar: ""
+    avatar: "",
+    bag: []
   },
   {
     _id:4,
     name: "Fristajler",
-    avatar: "avatar.png"
+    avatar: "avatar.png",
+    bag: [
+      {
+        _id: 4,
+        owner: 333333,
+        itemModel: {
+          _id: 801,
+          type: {
+            _id: 8,
+            type: "scroll"
+          },
+          name: "Zwój zniżki na driny",
+          fluff: "Opis swoju",
+          imgSrc: "scroll.png",
+          perks: [
+            {
+              perkType: "disc-category",
+              target: 'drinks',
+              value: "-10%"
+            },
+          ]
+        }
+      },
+      {
+        _id: 5,
+        owner: 333333,
+        itemModel: {
+          _id: 801,
+          type: {
+            _id: 8,
+            type: "scroll"
+          },
+          name: "Zwój ogromnej zniżki na driny",
+          fluff: "Opis swoju",
+          imgSrc: "scroll.png",
+          perks: [
+            {
+              perkType: "disc-category",
+              target: 'drinks',
+              value: "-3"
+            },
+          ]
+        }
+      },
+      {
+        _id: 7,
+        owner: 333333,
+        itemModel: {
+          _id: 801,
+          type: {
+            _id: 8,
+            type: "scroll"
+          },
+          name: "Zwój konkretnego doświadczenia",
+          fluff: "Opis swoju",
+          imgSrc: "scroll.png",
+          perks: [
+            {
+              perkType: "experience",
+              target: undefined,
+              value: "+100"
+            },
+          ]
+        }
+      }
+    ]
   },
   {
     _id:5,
     name: "Grzegorz Herbatnik",
-    avatar: ""
+    avatar: "",
+    bag: [{
+      _id: 6,
+      owner: 333333,
+      itemModel: {
+        _id: 801,
+        type: {
+          _id: 8,
+          type: "scroll"
+        },
+        name: "Zwój małego doświadczenia",
+        fluff: "Opis swoju",
+        imgSrc: "scroll.png",
+        perks: [
+          {
+            perkType: "experience",
+            target: undefined,
+            value: "+10%"
+          },
+        ]
+      }
+    },]
   },
   {
     _id:6,
     name: "I",
-    avatar: "avatar.png"
+    avatar: "avatar.png",
+    bag: []
   },
   {
     _id:7,
     name: "Justyna Kowalczyk",
-    avatar: "avatar.png"
+    avatar: "avatar.png",
+    bag: []
   },
   {
     _id:8,
     name: "Lol Łoś",
-    avatar: "avatar.png"
+    avatar: "avatar.png",
+    bag: []
   }
 ];
 
@@ -535,6 +693,7 @@ class Shop extends React.Component {
               activeUser={this.state.activeUser}
               handleChipClick={this.handleChangeactiveUser}
             />
+            <Button style={{margin: '1rem 0'}} variant="contained" color="primary">Dodaj zwój zniżki</Button>
             <Menu
               square
               sticky={this.state.menuSticky ? 1 : 0}

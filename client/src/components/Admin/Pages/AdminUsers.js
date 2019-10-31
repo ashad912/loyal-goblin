@@ -6,6 +6,8 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+
+import Collapse from "@material-ui/core/Collapse";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
@@ -16,6 +18,8 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Box from "@material-ui/core/Box";
 import SearchIcon from "@material-ui/icons/Search";
+
+import PartyList from "../components/PartyList";
 
 const mockUsers = [
   { name: "A B", level: 1, status: "away", id: 1 },
@@ -34,10 +38,30 @@ const statusCodes = {
   banned: "Zbanowany"
 };
 
+const mockPartys = [
+  {
+    name: "Drużyna A",
+    leader: { _id: "1", name: "Szef", avatar: "moose.png" },
+    members: [
+      { _id: "2", name: "Przydupas 1", avatar: "moose.png" },
+      { _id: "3", name: "Przydupas 2", avatar: "moose.png" }
+    ]
+  },
+  {
+    name: "Ekipa jamnika",
+    leader: { _id: "4", name: "Jamnik", avatar: "moose.png" },
+    members: [
+      { _id: "5", name: "Przydupas 1", avatar: "moose.png" },
+      { _id: "6", name: "Przydupas 2", avatar: "moose.png" }
+    ]
+  }
+];
+
 const AdminUsers = () => {
   const [users, setUsers] = React.useState(mockUsers);
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [nameFilter, setNameFilter] = React.useState("");
+  const [partys, setPartys] = React.useState(mockPartys);
 
   const applyStatusFilter = status => {
     let tempUsers = [...mockUsers];
@@ -155,6 +179,10 @@ const AdminUsers = () => {
             );
           })}
         </List>
+      </Grid>
+      <Grid item style={{ width: "40%" }}>
+        <Typography variant="h5" style={{margin: "2rem 0 1rem 0"}}>Drużyny: </Typography>
+        <PartyList partys={partys} />
       </Grid>
     </Grid>
   );

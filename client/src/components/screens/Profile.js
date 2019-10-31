@@ -81,7 +81,8 @@ const createTempBag = () => {
         },
         name: "Diament",
         fluff: "Najlepszy przyjaciel dziewyczyny",
-        imgSrc: "diamond-amulet.png"
+        imgSrc: "diamond-amulet.png",
+        perks: [],
       }
     },
     {
@@ -95,7 +96,8 @@ const createTempBag = () => {
         },
         name: "Diament",
         fluff: "Najlepszy przyjaciel dziewyczyny",
-        imgSrc: "diamond-amulet.png"
+        imgSrc: "diamond-amulet.png",
+        perks: [],
       }
     },
     {
@@ -110,7 +112,8 @@ const createTempBag = () => {
         },
         name: "Perła",
         fluff: "Perła prosto z lodówki, znaczy z małży",
-        imgSrc: "pearl-amulet.png"
+        imgSrc: "pearl-amulet.png",
+        perks: [],
       }
     },
     {
@@ -125,22 +128,8 @@ const createTempBag = () => {
         },
         name: "Krótki miecz",
         fluff: "Przynajmniej nie masz kompleksów",
-        imgSrc: "short-sword.png"
-      }
-    },
-    {
-      _id: 4242,
-      owner: 11111,
-
-      itemModel: {
-        _id: 201,
-        type: {
-          _id: 2,
-          type: "weapon"
-        },
-        name: "Krótki miecz",
-        fluff: "Przynajmniej nie masz kompleksów",
-        imgSrc: "short-sword.png"
+        imgSrc: "short-sword.png",
+        perks: [],
       }
     },
     {
@@ -157,6 +146,7 @@ const createTempBag = () => {
         fluff: "Zdecydowanie masz kompleksy",
         imgSrc: "short-sword.png",
         class: "warrior",
+        twoHanded: true,
         perks: [
           {
             _id: 1,
@@ -205,7 +195,8 @@ const createTempBag = () => {
         },
         name: "Skórzana kurta",
         fluff: "Lale za takimi szaleją",
-        imgSrc: "leather-jerkin.png"
+        imgSrc: "leather-jerkin.png",
+        perks: [],
       }
     },
     {
@@ -220,7 +211,8 @@ const createTempBag = () => {
         },
         name: "Lniane spodnie",
         fluff: "Zwykłe spodnie, czego jeszcze chcesz?",
-        imgSrc: "linen-trousers.png"
+        imgSrc: "linen-trousers.png",
+        perks: [],
       }
     },
     {
@@ -235,7 +227,8 @@ const createTempBag = () => {
         },
         name: "Wysokie buty",
         fluff: "Skórzane, wypastowane, lśniące",
-        imgSrc: "high-boots.png"
+        imgSrc: "high-boots.png",
+        perks: [],
       }
     },
     {
@@ -250,7 +243,8 @@ const createTempBag = () => {
         },
         name: "Czapka z piórkiem",
         fluff: "Wesoła kompaniaaaa",
-        imgSrc: "feathered-hat.png"
+        imgSrc: "feathered-hat.png",
+        perks: [],
       }
     },
     {
@@ -463,39 +457,49 @@ const Profile = props => {
     });
   };
 
-  const handleItemToggle = (id, isEquipped, category) => {
+  const handleItemToggle = (id, isEquipped, category, twoHanded) => {
     //TODO: Each item needs own ID
     const tempPlayer = { ...player };
 
     if (category === "weapon") {
-      if (!tempPlayer.equipped.weaponRight && !tempPlayer.equipped.weaponLeft) {
-        tempPlayer.equipped.weaponRight = id;
-      } else if (
-        tempPlayer.equipped.weaponRight &&
-        !tempPlayer.equipped.weaponLeft
-      ) {
-        if (tempPlayer.equipped.weaponRight === id) {
-          tempPlayer.equipped.weaponRight = "";
-        } else {
-          tempPlayer.equipped.weaponLeft = id;
+      if(twoHanded){
+        tempPlayer.equipped.weaponRight = id
+        tempPlayer.equipped.weaponLeft = ''
+      }else{
+        const rightHandItem = tempPlayer.equipment.weapon.find(item => item._id === tempPlayer.equipped.weaponRight).itemModel
+        if(rightHandItem.hasOwnProperty('twoHanded') && rightHandItem.twoHanded){
+          tempPlayer.equipped.weaponRight = ''
         }
-      } else if (
-        !tempPlayer.equipped.weaponRight &&
-        tempPlayer.equipped.weaponLeft
-      ) {
-        if (tempPlayer.equipped.weaponLeft === id) {
-          tempPlayer.equipped.weaponLeft = "";
-        } else {
+
+        if (!tempPlayer.equipped.weaponRight && !tempPlayer.equipped.weaponLeft) {
           tempPlayer.equipped.weaponRight = id;
-        }
-      } else if (
-        tempPlayer.equipped.weaponRight &&
-        tempPlayer.equipped.weaponLeft
-      ) {
-        if (tempPlayer.equipped.weaponRight === id) {
-          tempPlayer.equipped.weaponRight = "";
-        } else {
-          tempPlayer.equipped.weaponLeft = "";
+        } else if (
+          tempPlayer.equipped.weaponRight &&
+          !tempPlayer.equipped.weaponLeft
+        ) {
+          if (tempPlayer.equipped.weaponRight === id) {
+            tempPlayer.equipped.weaponRight = "";
+          } else {
+            tempPlayer.equipped.weaponLeft = id;
+          }
+        } else if (
+          !tempPlayer.equipped.weaponRight &&
+          tempPlayer.equipped.weaponLeft
+        ) {
+          if (tempPlayer.equipped.weaponLeft === id) {
+            tempPlayer.equipped.weaponLeft = "";
+          } else {
+            tempPlayer.equipped.weaponRight = id;
+          }
+        } else if (
+          tempPlayer.equipped.weaponRight &&
+          tempPlayer.equipped.weaponLeft
+        ) {
+          if (tempPlayer.equipped.weaponRight === id) {
+            tempPlayer.equipped.weaponRight = "";
+          } else {
+            tempPlayer.equipped.weaponLeft = "";
+          }
         }
       }
     } else if (category === "ring") {

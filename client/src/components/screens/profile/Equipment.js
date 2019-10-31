@@ -10,27 +10,30 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Button from "@material-ui/core/Button";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import EquipmentListItem from "./EquipmentItem";
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 
-
-import itemCategories from '../../../assets/categories/items'
+import itemCategories from "../../../assets/categories/items";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: "100%",
+    width: "100%"
   }
 }));
 
 const Equipment = props => {
   const [openList, setOpenList] = React.useState("");
-  const [deleteDialog, setDeleteDialog] = React.useState(false)
-  const [itemToDelete, setItemToDelete] = React.useState({_id: '', name: '', category: ''})
+  const [deleteDialog, setDeleteDialog] = React.useState(false);
+  const [itemToDelete, setItemToDelete] = React.useState({
+    _id: "",
+    name: "",
+    category: ""
+  });
 
   const classes = useStyles();
 
@@ -43,24 +46,20 @@ const Equipment = props => {
   };
 
   const handleShowDeleteDialog = (id, name, category) => {
-    setItemToDelete({_id:id, name, category})
-    setDeleteDialog(true)
-
-  }
+    setItemToDelete({ _id: id, name, category });
+    setDeleteDialog(true);
+  };
 
   const handleDeleteDialogClose = () => {
-
-    setDeleteDialog(false)
-  }
+    setDeleteDialog(false);
+  };
 
   const handleItemDelete = () => {
-    props.handleItemDelete(itemToDelete._id, itemToDelete.category)
-    handleDeleteDialogClose()
-  }
-
+    props.handleItemDelete(itemToDelete._id, itemToDelete.category);
+    handleDeleteDialogClose();
+  };
 
   const items = props.items;
-
 
   return (
     <Paper className={classes.root}>
@@ -78,21 +77,31 @@ const Equipment = props => {
             >
               <List component="div" disablePadding>
                 {items[itemCategory].map(item => (
-                  <EquipmentListItem key={item._id} equipped={Object.values(props.equipped).find(id => id === item._id) } item={item} handleItemToggle={props.handleItemToggle} itemCategory={itemCategory} handleItemDelete={handleShowDeleteDialog}/>
+                  <EquipmentListItem
+                    key={item._id}
+                    equipped={Object.values(props.equipped).find(
+                      id => id === item._id
+                    )}
+                    item={item}
+                    handleItemToggle={props.handleItemToggle}
+                    itemCategory={itemCategory}
+                    handleItemDelete={handleShowDeleteDialog}
+                    twoHanded={
+                      item.itemModel.hasOwnProperty("twoHanded") &&
+                      item.itemModel.twoHanded
+                    }
+                  />
                 ))}
               </List>
             </Collapse>
           </React.Fragment>
         ))}
       </List>
-      <Dialog
-        open={deleteDialog}
-        onClose={handleDeleteDialogClose}
-      >
-        <DialogTitle >Wyrzucanie przedmiotu</DialogTitle>
+      <Dialog open={deleteDialog} onClose={handleDeleteDialogClose}>
+        <DialogTitle>Wyrzucanie przedmiotu</DialogTitle>
         <DialogContent>
-          <DialogContentText >
-                  Czy na pewno chcesz wyrzucić przedmiot {itemToDelete.name}?
+          <DialogContentText>
+            Czy na pewno chcesz wyrzucić przedmiot {itemToDelete.name}?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
