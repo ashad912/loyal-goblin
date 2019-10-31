@@ -129,6 +129,21 @@ const createTempBag = () => {
       }
     },
     {
+      _id: 4242,
+      owner: 11111,
+
+      itemModel: {
+        _id: 201,
+        type: {
+          _id: 2,
+          type: "weapon"
+        },
+        name: "Krótki miecz",
+        fluff: "Przynajmniej nie masz kompleksów",
+        imgSrc: "short-sword.png"
+      }
+    },
+    {
       _id: 14,
       owner: 11111,
 

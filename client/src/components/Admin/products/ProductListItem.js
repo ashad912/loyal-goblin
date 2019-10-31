@@ -91,46 +91,47 @@ const ProductListItem = ({
             xs={2}
             spacing={2}
           >
+           {product.awards.length > 0 && 
             <Grid item>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleAwardPopover}
-              >
-                Nagrody
-              </Button>
-              <Popover
-                open={Boolean(awardPopover)}
-                anchorEl={awardPopover}
-                onClose={handleClose}
-                anchorOrigin={{
-                  vertical: "center",
-                  horizontal: "left"
-                }}
-                transformOrigin={{
-                  vertical: "center",
-                  horizontal: "right"
-                }}
-              >
-                <Grid
-                  container
-                  direction="column"
-                  spacing={1}
-                  style={{ width: "10vw", padding: "0.5rem" }}
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleAwardPopover}
                 >
-                  {product.awards.map(award => {
-                    return (
-                      <Grid item key={award.itemModel._id}>
-                        <ListItemText
-                          primary={award.itemModel.name}
-                          secondary={"x" + award.quantity}
-                        />
-                      </Grid>
-                    );
-                  })}
-                </Grid>
-              </Popover>
-            </Grid>
+                  Nagrody
+                </Button>
+                <Popover
+                  open={Boolean(awardPopover)}
+                  anchorEl={awardPopover}
+                  onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: "center",
+                    horizontal: "left"
+                  }}
+                  transformOrigin={{
+                    vertical: "center",
+                    horizontal: "right"
+                  }}
+                >
+                  <Grid
+                    container
+                    direction="column"
+                    spacing={1}
+                    style={{ width: "10vw", padding: "0.5rem" }}
+                  >
+                    {product.awards.map(award => {
+                      return (
+                        <Grid item key={award.itemModel._id}>
+                          <ListItemText
+                            primary={award.itemModel.name}
+                            secondary={"x" + award.quantity}
+                          />
+                        </Grid>
+                      );
+                    })}
+                  </Grid>
+                </Popover>
+              </Grid>}
           </Grid>
           <Grid item container direction="column" xs={2} spacing={2} style={{textAlign: 'right'}}>
             <Grid item>
