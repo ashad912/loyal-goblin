@@ -20,7 +20,7 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import MomentUtils from "@date-io/moment";
 
-import AttributeBox from './AttributeBox'
+import AttributeBox from "./AttributeBox";
 import AmuletsModal from "./AmuletsModal";
 
 import diamondAmulet from "../../../assets/icons/items/diamond-amulet.png";
@@ -29,6 +29,8 @@ import pearlAmulet from "../../../assets/icons/items/pearl-amulet.png";
 import emeraldAmulet from "../../../assets/icons/items/emerald-amulet.png";
 
 import characterClasses from "../../../assets/categories/characterClasses";
+
+import convertItemsArrayToCategories from '../utils/bagArayToCategories'
 
 import "moment/locale/pl";
 import ItemsModal from "./ItemsModal";
@@ -133,276 +135,269 @@ const mockAmulets = [
   }
 ];
 
-const mockItems = {
-  amulet: [
-    {
-      itemModel: {
-        id: 101,
-        type: {
-          id: 1,
-          type: "amulet"
-        },
-        name: "Diament",
-        fluff: "Najlepszy przyjaciel dziewyczyny",
-        imgSrc: "diamond-amulet.png",
-        class: "any"
-      }
-    },
-    {
-      itemModel: {
-        id: 102,
-        type: {
-          id: 1,
-          type: "amulet"
-        },
-        name: "Perła",
-        fluff: "Perła prosto z lodówki, znaczy z małży",
-        imgSrc: "pearl-amulet.png",
-        class: "any"
-      }
+let mockItems = [
+  {
+    itemModel: {
+      id: 101,
+      type: {
+        id: 1,
+        type: "amulet"
+      },
+      name: "Diament",
+      fluff: "Najlepszy przyjaciel dziewyczyny",
+      imgSrc: "diamond-amulet.png",
+      class: "any"
     }
-  ],
-  weapon: [
-    {
-      itemModel: {
-        id: 201,
-        type: {
-          id: 2,
-          type: "weapon"
-        },
-        name: "Krótki miecz",
-        fluff: "Przynajmniej nie masz kompleksów",
-        imgSrc: "short-sword.png",
-        class: "any"
-      }
-    },
-    {
-      itemModel: {
-        id: 202,
-        type: {
-          id: 2,
-          type: "weapon"
-        },
-        name: "Wielki miecz",
-        fluff: "Zdecydowanie masz kompleksy",
-        imgSrc: "short-sword.png",
-        class: "warrior",
-        perks: [
-          {
-            perkType: "attr-strength",
-            target: undefined,
-            time: [],
-            value: "+1"
-          }
-        ]
-      }
-    },
-    {
-      itemModel: {
-        id: 203,
-        type: {
-          id: 2,
-          type: "weapon"
-        },
-        name: "Kostur twojej starej",
-        fluff: "Niektórzy mówią, że to tylko miotła",
-        imgSrc: "short-sword.png",
-        class: "mage"
-      }
-    },
-    {
-      itemModel: {
-        id: 204,
-        type: {
-          id: 2,
-          type: "weapon"
-        },
-        name: "Nusz",
-        fluff: "(ja)nusz",
-        imgSrc: "short-sword.png",
-        class: "rogue"
-      }
-    },
-    {
-      itemModel: {
-        id: 205,
-        type: {
-          id: 2,
-          type: "weapon"
-        },
-        name: "Morgensztern",
-        fluff: "Adam Małysz, jeszcze cię pokonam",
-        imgSrc: "short-sword.png",
-        class: "cleric"
-      }
+  },
+  {
+    itemModel: {
+      id: 102,
+      type: {
+        id: 1,
+        type: "amulet"
+      },
+      name: "Perła",
+      fluff: "Perła prosto z lodówki, znaczy z małży",
+      imgSrc: "pearl-amulet.png",
+      class: "any"
     }
-  ],
-  chest: [
-    {
-      itemModel: {
-        id: 301,
-        type: {
-          id: 3,
-          type: "chest"
-        },
-        name: "Skórzana kurta",
-        fluff: "Lale za takimi szaleją",
-        imgSrc: "leather-jerkin.png",
-        class: "any"
-      }
-    },
-    {
-      itemModel: {
-        id: 302,
-        type: {
-          id: 3,
-          type: "chest"
-        },
-        name: "Sutanna bojowa",
-        fluff: "Wiadomo, kto jest kierownikiem tej plebanii",
-        imgSrc: "leather-jerkin.png",
-        class: "cleric"
-      }
+  },
+
+  {
+    itemModel: {
+      id: 201,
+      type: {
+        id: 2,
+        type: "weapon"
+      },
+      name: "Krótki miecz",
+      fluff: "Przynajmniej nie masz kompleksów",
+      imgSrc: "short-sword.png",
+      class: "any"
     }
-  ],
-  legs: [
-    {
-      itemModel: {
-        id: 401,
-        type: {
-          id: 4,
-          type: "legs"
-        },
-        name: "Lniane spodnie",
-        fluff: "Zwykłe spodnie, czego jeszcze chcesz?",
-        imgSrc: "linen-trousers.png",
-        class: "any"
-      }
-    },
-    {
-      itemModel: {
-        id: 402,
-        type: {
-          id: 4,
-          type: "legs"
-        },
-        name: "Nogawice płytowe",
-        fluff: "Nie da się w nich klękać do miecza",
-        imgSrc: "linen-trousers.png",
-        class: "warrior"
-      }
-    },
-    {
-      itemModel: {
-        id: 403,
-        type: {
-          id: 4,
-          type: "legs"
-        },
-        name: "Ledżinsy",
-        fluff: "Obcisłe jak lubisz",
-        imgSrc: "linen-trousers.png",
-        class: "rogue"
-      }
+  },
+  {
+    itemModel: {
+      id: 202,
+      type: {
+        id: 2,
+        type: "weapon"
+      },
+      name: "Wielki miecz",
+      fluff: "Zdecydowanie masz kompleksy",
+      imgSrc: "short-sword.png",
+      class: "warrior",
+      perks: [
+        {
+          perkType: "attr-strength",
+          target: undefined,
+          time: [],
+          value: "+1"
+        }
+      ]
     }
-  ],
-  feet: [
-    {
-      itemModel: {
-        id: 501,
-        type: {
-          id: 5,
-          type: "feet"
-        },
-        name: "Wysokie buty",
-        fluff: "Skórzane, wypastowane, lśniące",
-        imgSrc: "high-boots.png",
-        class: "any"
-      }
-    },
-    {
-      itemModel: {
-        id: 502,
-        type: {
-          id: 5,
-          type: "feet"
-        },
-        name: "Kapcie cichobiegi",
-        fluff: "+10 do testów skradania na linoleum",
-        imgSrc: "high-boots.png",
-        class: "rogue"
-      }
+  },
+  {
+    itemModel: {
+      id: 203,
+      type: {
+        id: 2,
+        type: "weapon"
+      },
+      name: "Kostur twojej starej",
+      fluff: "Niektórzy mówią, że to tylko miotła",
+      imgSrc: "short-sword.png",
+      class: "mage"
     }
-  ],
-  head: [
-    {
-      itemModel: {
-        id: 601,
-        type: {
-          id: 6,
-          type: "head"
-        },
-        name: "Czapka z piórkiem",
-        fluff: "Wesoła kompaniaaaa",
-        imgSrc: "feathered-hat.png",
-        class: "any"
-      }
-    },
-    {
-      itemModel: {
-        id: 602,
-        type: {
-          id: 6,
-          type: "head"
-        },
-        name: "Kaptur czarodzieja",
-        fluff: "Kiedyś nosił go czarodziej. Już nie nosi.",
-        imgSrc: "wizard-coul.png",
-        class: "mage",
-        perks: [
-          {
-            perkType: "experience",
-            target: undefined,
-            time: [
-              {
-                hoursFlag: false,
-                lengthInHours: 24,
-                startDay: 5,
-                startHour: 12
-              }
-            ],
-            value: "+10%"
-          }
-        ]
-      }
+  },
+  {
+    itemModel: {
+      id: 204,
+      type: {
+        id: 2,
+        type: "weapon"
+      },
+      name: "Nusz",
+      fluff: "(ja)nusz",
+      imgSrc: "short-sword.png",
+      class: "rogue"
     }
-  ],
-  ring: [
-    {
-      itemModel: {
-        id: 701,
-        type: {
-          id: 7,
-          type: "ring"
-        },
-        name: "Pierścień wódy",
-        fluff: "Całuj mój sygnet potęgi",
-        imgSrc: "strength-ring.png",
-        class: "any",
-        perks: [
-          {
-            perkType: "disc-product",
-            target: { name: "Wóda" },
-            time: [
-              { hoursFlag: true, lengthInHours: 2, startDay: 1, startHour: 18 }
-            ],
-            value: "-10%"
-          }
-        ]
-      }
+  },
+  {
+    itemModel: {
+      id: 205,
+      type: {
+        id: 2,
+        type: "weapon"
+      },
+      name: "Morgensztern",
+      fluff: "Adam Małysz, jeszcze cię pokonam",
+      imgSrc: "short-sword.png",
+      class: "cleric"
     }
-  ]
-};
+  },
+
+  {
+    itemModel: {
+      id: 301,
+      type: {
+        id: 3,
+        type: "chest"
+      },
+      name: "Skórzana kurta",
+      fluff: "Lale za takimi szaleją",
+      imgSrc: "leather-jerkin.png",
+      class: "any"
+    }
+  },
+  {
+    itemModel: {
+      id: 302,
+      type: {
+        id: 3,
+        type: "chest"
+      },
+      name: "Sutanna bojowa",
+      fluff: "Wiadomo, kto jest kierownikiem tej plebanii",
+      imgSrc: "leather-jerkin.png",
+      class: "cleric"
+    }
+  },
+
+  {
+    itemModel: {
+      id: 401,
+      type: {
+        id: 4,
+        type: "legs"
+      },
+      name: "Lniane spodnie",
+      fluff: "Zwykłe spodnie, czego jeszcze chcesz?",
+      imgSrc: "linen-trousers.png",
+      class: "any"
+    }
+  },
+  {
+    itemModel: {
+      id: 402,
+      type: {
+        id: 4,
+        type: "legs"
+      },
+      name: "Nogawice płytowe",
+      fluff: "Nie da się w nich klękać do miecza",
+      imgSrc: "linen-trousers.png",
+      class: "warrior"
+    }
+  },
+  {
+    itemModel: {
+      id: 403,
+      type: {
+        id: 4,
+        type: "legs"
+      },
+      name: "Ledżinsy",
+      fluff: "Obcisłe jak lubisz",
+      imgSrc: "linen-trousers.png",
+      class: "rogue"
+    }
+  },
+
+  {
+    itemModel: {
+      id: 501,
+      type: {
+        id: 5,
+        type: "feet"
+      },
+      name: "Wysokie buty",
+      fluff: "Skórzane, wypastowane, lśniące",
+      imgSrc: "high-boots.png",
+      class: "any"
+    }
+  },
+  {
+    itemModel: {
+      id: 502,
+      type: {
+        id: 5,
+        type: "feet"
+      },
+      name: "Kapcie cichobiegi",
+      fluff: "+10 do testów skradania na linoleum",
+      imgSrc: "high-boots.png",
+      class: "rogue"
+    }
+  },
+
+  {
+    itemModel: {
+      id: 601,
+      type: {
+        id: 6,
+        type: "head"
+      },
+      name: "Czapka z piórkiem",
+      fluff: "Wesoła kompaniaaaa",
+      imgSrc: "feathered-hat.png",
+      class: "any"
+    }
+  },
+  {
+    itemModel: {
+      id: 602,
+      type: {
+        id: 6,
+        type: "head"
+      },
+      name: "Kaptur czarodzieja",
+      fluff: "Kiedyś nosił go czarodziej. Już nie nosi.",
+      imgSrc: "wizard-coul.png",
+      class: "mage",
+      perks: [
+        {
+          perkType: "experience",
+          target: undefined,
+          time: [
+            {
+              hoursFlag: false,
+              lengthInHours: 24,
+              startDay: 5,
+              startHour: 12
+            }
+          ],
+          value: "+10%"
+        }
+      ]
+    }
+  },
+  {
+    itemModel: {
+      id: 701,
+      type: {
+        id: 7,
+        type: "ring"
+      },
+      name: "Pierścień wódy",
+      fluff: "Całuj mój sygnet potęgi",
+      imgSrc: "strength-ring.png",
+      class: "any",
+      perks: [
+        {
+          perkType: "disc-product",
+          target: { name: "Wóda" },
+          time: [
+            { hoursFlag: true, lengthInHours: 2, startDay: 1, startHour: 18 }
+          ],
+          value: "-10%"
+        }
+      ]
+    }
+  }
+];
+
+mockItems = convertItemsArrayToCategories(mockItems)
 
 const FileInputWrapper = styled.div`
   position: relative;
@@ -439,7 +434,7 @@ class NewEventCreator extends Component {
     minLevel: "",
     icon: "",
     partySize: [1, 5],
-    attributePool: {str: 1, dex: 1, mag: 1, end: 1},
+    attributePool: { str: 1, dex: 1, mag: 1, end: 1 },
     showAmuletsModal: false,
     amulets: [...mockAmulets],
     showItemsModal: false,
@@ -481,9 +476,22 @@ class NewEventCreator extends Component {
         partySize: event.partySize,
         amulets: amulets,
         experience: event.experience,
-        items: { any: [], warrior: [], mage: [], rogue: [], cleric: [],...event.items },
-        activationDate: moment(event.activationDate.split("T")[0] + " " + event.activationDate.split("T")[1]).format("YYYY-MM-DDTHH:mm"),
-        endDate:  moment(event.endDate.split("T")[0] + " " + event.endDate.split("T")[1]).format("YYYY-MM-DDTHH:mm"),
+        items: {
+          any: [],
+          warrior: [],
+          mage: [],
+          rogue: [],
+          cleric: [],
+          ...event.items
+        },
+        activationDate: moment(
+          event.activationDate.split("T")[0] +
+            " " +
+            event.activationDate.split("T")[1]
+        ).format("YYYY-MM-DDTHH:mm"),
+        endDate: moment(
+          event.endDate.split("T")[0] + " " + event.endDate.split("T")[1]
+        ).format("YYYY-MM-DDTHH:mm"),
         isPermanent: event.isPermanent
       });
     }
@@ -562,9 +570,9 @@ class NewEventCreator extends Component {
     this.setState({ items: allItems });
   };
 
-  handleChangeExperience = (e) => {
-    this.setState({experience: e.target.value})
-  }
+  handleChangeExperience = e => {
+    this.setState({ experience: e.target.value });
+  };
 
   handleChangeAmuletQuantity = (id, quantity) => {
     const amulets = [...this.state.amulets];
@@ -620,16 +628,16 @@ class NewEventCreator extends Component {
   };
 
   handleChangeAttributeValue = (e, attr, n) => {
-    const attributes = {...this.state.attributePool}
-    if(n){
-      attributes[attr] += n
-    }else{
-      if(/^\d+$/.test(e.target.value)){
-        attributes[attr] = parseInt(e.target.value)
+    const attributes = { ...this.state.attributePool };
+    if (n) {
+      attributes[attr] += n;
+    } else {
+      if (/^\d+$/.test(e.target.value)) {
+        attributes[attr] = parseInt(e.target.value);
       }
     }
-    this.setState({attributePool: attributes})
-  }
+    this.setState({ attributePool: attributes });
+  };
 
   handleIconChange = e => {
     if (e.target.files.length > 0) {
@@ -774,12 +782,33 @@ class NewEventCreator extends Component {
           />
           <Divider style={{ marginTop: "2rem", marginBottom: "1rem" }} />
           <div>
-            <Typography style={{width: 'fit-content', margin: '1rem 0'}}>Wymagane wartości atrybutów:</Typography>
-          <AttributeBox value={this.state.attributePool.str} attrType="str" attrTypeText="Siła" changeValue={this.handleChangeAttributeValue}/>
-          <AttributeBox value={this.state.attributePool.dex} attrType="dex" attrTypeText="Zręczność" changeValue={this.handleChangeAttributeValue}/>
-          <AttributeBox value={this.state.attributePool.mag} attrType="mag" attrTypeText="Magia" changeValue={this.handleChangeAttributeValue}/>
-          <AttributeBox value={this.state.attributePool.end} attrType="end" attrTypeText="Wytrzymałość" changeValue={this.handleChangeAttributeValue}/>
-
+            <Typography style={{ width: "fit-content", margin: "1rem 0" }}>
+              Wymagane wartości atrybutów:
+            </Typography>
+            <AttributeBox
+              value={this.state.attributePool.str}
+              attrType="str"
+              attrTypeText="Siła"
+              changeValue={this.handleChangeAttributeValue}
+            />
+            <AttributeBox
+              value={this.state.attributePool.dex}
+              attrType="dex"
+              attrTypeText="Zręczność"
+              changeValue={this.handleChangeAttributeValue}
+            />
+            <AttributeBox
+              value={this.state.attributePool.mag}
+              attrType="mag"
+              attrTypeText="Magia"
+              changeValue={this.handleChangeAttributeValue}
+            />
+            <AttributeBox
+              value={this.state.attributePool.end}
+              attrType="end"
+              attrTypeText="Wytrzymałość"
+              changeValue={this.handleChangeAttributeValue}
+            />
           </div>
           <Divider style={{ marginTop: "2rem", marginBottom: "1rem" }} />
           <Grid container spacing={2}>
@@ -796,7 +825,6 @@ class NewEventCreator extends Component {
               </Button>
             </Grid>
           </Grid>
-
 
           <AmuletsModal
             open={this.state.showAmuletsModal}
@@ -838,7 +866,7 @@ class NewEventCreator extends Component {
                 })}
             </Grid>
           )}
-                   
+
           <Divider style={{ marginTop: "1rem", marginBottom: "1rem" }} />
           <Typography style={{ textAlign: "left" }}>Nagrody:</Typography>
           <Grid
@@ -849,8 +877,8 @@ class NewEventCreator extends Component {
           >
             <Grid item>
               <TextField
-              value={this.state.experience}
-              onChange={this.handleChangeExperience}
+                value={this.state.experience}
+                onChange={this.handleChangeExperience}
                 margin="dense"
                 label="Punkty doświadczenia"
                 type="number"
@@ -882,7 +910,12 @@ class NewEventCreator extends Component {
                 <div
                   style={{
                     overflow: "auto",
-                    borderRight: "1px solid grey",
+                    borderRight:
+                      (this.state.items.warrior.length > 0 ||
+                        this.state.items.mage.length > 0 ||
+                        this.state.items.rogue.length > 0 ||
+                        this.state.items.cleric.length > 0) &&
+                      "1px solid grey",
                     flexBasis: "50%"
                   }}
                 >
@@ -1028,7 +1061,9 @@ class NewEventCreator extends Component {
                 color="primary"
                 variant="contained"
               >
-                {this.props.isEdit ? "Zatwierdź edycję wydarzenia" : "Dodaj wydarzenie"}
+                {this.props.isEdit
+                  ? "Zatwierdź edycję wydarzenia"
+                  : "Dodaj wydarzenie"}
               </Button>
             </Grid>
           </Grid>

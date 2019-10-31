@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -7,14 +8,25 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Fab from "@material-ui/core/Fab";
+import Tooltip from "@material-ui/core/Tooltip";
 import ColorizeIcon from "@material-ui/icons/Colorize";
-import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
+import GroupAddIcon from "@material-ui/icons/GroupAdd";
+import EmojiPeopleIcon from "@material-ui/icons/EmojiPeople";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import ListItemText from "@material-ui/core/ListItemText";
+import Badge from "@material-ui/core/Badge";
+
+import convertBagArrayToCategories from "../../utils/bagArayToCategories";
 
 import Attribute from "./profile/Attribute";
 import Equipment from "./profile/Equipment";
 import NewLevelDialog from "./profile/NewLevelDialog";
 import PerkBox from "./profile/PerkBox";
 import maleBody from "../../assets/avatar/male-body.png";
+import PartyCreationDialog from "./profile/PartyCreationDialog";
+import PartyJoiningDialog from "./profile/PartyJoiningDialog";
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -42,257 +54,279 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const createTempPlayer = (attributes, equipment) => {
+const createTempPlayer = (attributes, bag, equipped) => {
   return {
     firstName: "Mirosław",
     lastName: "Szczepaniak",
     level: 8,
     ...attributes,
-    equipment,
+    equipment: bag,
+    equipped,
     currentExp: 1300,
     currentExpBasis: 2100,
     nextLevelAtExp: 3400
   };
 };
 
-const createTempEquipment = () => {
+const createTempBag = () => {
+  return [
+    {
+      _id: 1,
+      owner: 11111,
+      itemModel: {
+        _id: 101,
+        type: {
+          _id: 1,
+          type: "amulet"
+        },
+        name: "Diament",
+        fluff: "Najlepszy przyjaciel dziewyczyny",
+        imgSrc: "diamond-amulet.png"
+      }
+    },
+    {
+      _id: 2,
+      owner: 11111,
+      itemModel: {
+        _id: 101,
+        type: {
+          _id: 1,
+          type: "amulet"
+        },
+        name: "Diament",
+        fluff: "Najlepszy przyjaciel dziewyczyny",
+        imgSrc: "diamond-amulet.png"
+      }
+    },
+    {
+      _id: 3,
+      owner: 11111,
+
+      itemModel: {
+        _id: 102,
+        type: {
+          _id: 1,
+          type: "amulet"
+        },
+        name: "Perła",
+        fluff: "Perła prosto z lodówki, znaczy z małży",
+        imgSrc: "pearl-amulet.png"
+      }
+    },
+    {
+      _id: 4,
+      owner: 11111,
+
+      itemModel: {
+        _id: 201,
+        type: {
+          _id: 2,
+          type: "weapon"
+        },
+        name: "Krótki miecz",
+        fluff: "Przynajmniej nie masz kompleksów",
+        imgSrc: "short-sword.png"
+      }
+    },
+    {
+      _id: 14,
+      owner: 11111,
+
+      itemModel: {
+        _id: 202,
+        type: {
+          _id: 2,
+          type: "weapon"
+        },
+        name: "Wielki miecz",
+        fluff: "Zdecydowanie masz kompleksy",
+        imgSrc: "short-sword.png",
+        class: "warrior",
+        perks: [
+          {
+            _id: 1,
+            perkType: "attr-strength",
+            target: undefined,
+            time: [],
+            value: "+1"
+          }
+        ]
+      }
+    },
+    {
+      _id: 20,
+      owner: 11111,
+
+      itemModel: {
+        _id: 206,
+        type: {
+          _id: 2,
+          type: "weapon"
+        },
+        name: "Żelazna tarcza",
+        fluff: "Twarda na zewnątrz, miękka w środku. Zupełnie jak Ty <3",
+        imgSrc: "iron-shield.png",
+        class: "warrior",
+        perks: [
+          {
+            _id: 1,
+            perkType: "attr-endurance",
+            target: undefined,
+            time: [],
+            value: "-1"
+          }
+        ]
+      }
+    },
+    {
+      _id: 5,
+      owner: 11111,
+
+      itemModel: {
+        _id: 301,
+        type: {
+          _id: 3,
+          type: "chest"
+        },
+        name: "Skórzana kurta",
+        fluff: "Lale za takimi szaleją",
+        imgSrc: "leather-jerkin.png"
+      }
+    },
+    {
+      _id: 6,
+      owner: 11111,
+
+      itemModel: {
+        _id: 401,
+        type: {
+          _id: 4,
+          type: "legs"
+        },
+        name: "Lniane spodnie",
+        fluff: "Zwykłe spodnie, czego jeszcze chcesz?",
+        imgSrc: "linen-trousers.png"
+      }
+    },
+    {
+      _id: 7,
+      owner: 11111,
+
+      itemModel: {
+        _id: 501,
+        type: {
+          _id: 5,
+          type: "feet"
+        },
+        name: "Wysokie buty",
+        fluff: "Skórzane, wypastowane, lśniące",
+        imgSrc: "high-boots.png"
+      }
+    },
+    {
+      _id: 8,
+      owner: 11111,
+
+      itemModel: {
+        _id: 601,
+        type: {
+          _id: 6,
+          type: "head"
+        },
+        name: "Czapka z piórkiem",
+        fluff: "Wesoła kompaniaaaa",
+        imgSrc: "feathered-hat.png"
+      }
+    },
+    {
+      _id: 9,
+      owner: 11111,
+
+      itemModel: {
+        _id: 602,
+        type: {
+          _id: 6,
+          type: "head"
+        },
+        name: "Kaptur czarodzieja",
+        fluff: "Kiedyś nosił go czarodziej. Już nie nosi.",
+        imgSrc: "wizard-coul.png",
+        perks: [
+          {
+            perkType: "experience",
+            target: undefined,
+            time: [
+              {
+                _id: 1,
+                hoursFlag: false,
+                lengthInHours: 24,
+                startDay: 5,
+                startHour: 12
+              }
+            ],
+            value: "+10%"
+          },
+          {
+            perkType: "experience",
+            target: undefined,
+            time: [
+              {
+                _id: 2,
+                hoursFlag: false,
+                lengthInHours: 24,
+                startDay: 6,
+                startHour: 12
+              }
+            ],
+            value: "+20%"
+          }
+        ]
+      }
+    },
+    {
+      _id: 10,
+      owner: 11111,
+
+      itemModel: {
+        _id: 701,
+        type: {
+          _id: 7,
+          type: "ring"
+        },
+        name: "Pierścień siły",
+        fluff: "Całuj mój sygnet potęgi",
+        imgSrc: "strength-ring.png",
+        perks: [
+          {
+            _id: 1,
+            perkType: "disc-product",
+            target: { name: "Wóda2" },
+            time: [
+              {
+                hoursFlag: true,
+                lengthInHours: 2,
+                startDay: 1,
+                startHour: 18
+              },
+              { hoursFlag: true, lengthInHours: 5, startDay: 3, startHour: 7 }
+            ],
+            value: "-15%"
+          }
+        ]
+      }
+    }
+  ];
+};
+
+const createTempEquipped = () => {
   return {
-    amulet: [
-      {
-        id: 1,
-        owner: 11111,
-        equipped: false,
-        itemModel: {
-          id: 101,
-          type: {
-            id: 1,
-            type: "amulet"
-          },
-          name: "Diament",
-          fluff: "Najlepszy przyjaciel dziewyczyny",
-          imgSrc: "diamond-amulet.png"
-        }
-      },
-      {
-        id: 2,
-        owner: 11111,
-        equipped: false,
-        itemModel: {
-          id: 101,
-          type: {
-            id: 1,
-            type: "amulet"
-          },
-          name: "Diament",
-          fluff: "Najlepszy przyjaciel dziewyczyny",
-          imgSrc: "diamond-amulet.png"
-        }
-      },
-      {
-        id: 3,
-        owner: 11111,
-        equipped: false,
-        itemModel: {
-          id: 102,
-          type: {
-            id: 1,
-            type: "amulet"
-          },
-          name: "Perła",
-          fluff: "Perła prosto z lodówki, znaczy z małży",
-          imgSrc: "pearl-amulet.png"
-        }
-      }
-    ],
-    weapon: [
-      {
-        id: 4,
-        owner: 11111,
-        equipped: false,
-        itemModel: {
-          id: 201,
-          type: {
-            id: 2,
-            type: "weapon"
-          },
-          name: "Krótki miecz",
-          fluff: "Przynajmniej nie masz kompleksów",
-          imgSrc: "short-sword.png"
-        }
-      },
-      {
-        id: 14,
-        owner: 11111,
-        equipped: false,
-        itemModel: {
-          id: 202,
-          type: {
-            id: 2,
-            type: "weapon"
-          },
-          name: "Wielki miecz",
-          fluff: "Zdecydowanie masz kompleksy",
-          imgSrc: "short-sword.png",
-          class: "warrior",
-          perks: [
-            {
-              id: 1,
-              perkType: "attr-strength",
-              target: undefined,
-              time: [],
-              value: "+1"
-            }
-          ]
-        }
-      }
-    ],
-    chest: [
-      {
-        id: 5,
-        owner: 11111,
-        equipped: false,
-        itemModel: {
-          id: 301,
-          type: {
-            id: 3,
-            type: "chest"
-          },
-          name: "Skórzana kurta",
-          fluff: "Lale za takimi szaleją",
-          imgSrc: "leather-jerkin.png"
-        }
-      }
-    ],
-    legs: [
-      {
-        id: 6,
-        owner: 11111,
-        equipped: false,
-        itemModel: {
-          id: 401,
-          type: {
-            id: 4,
-            type: "legs"
-          },
-          name: "Lniane spodnie",
-          fluff: "Zwykłe spodnie, czego jeszcze chcesz?",
-          imgSrc: "linen-trousers.png"
-        }
-      }
-    ],
-    feet: [
-      {
-        id: 7,
-        owner: 11111,
-        equipped: false,
-        itemModel: {
-          id: 501,
-          type: {
-            id: 5,
-            type: "feet"
-          },
-          name: "Wysokie buty",
-          fluff: "Skórzane, wypastowane, lśniące",
-          imgSrc: "high-boots.png"
-        }
-      }
-    ],
-    head: [
-      {
-        id: 8,
-        owner: 11111,
-        equipped: false,
-        itemModel: {
-          id: 601,
-          type: {
-            id: 6,
-            type: "head"
-          },
-          name: "Czapka z piórkiem",
-          fluff: "Wesoła kompaniaaaa",
-          imgSrc: "feathered-hat.png"
-        }
-      },
-      {
-        id: 9,
-        owner: 11111,
-        equipped: true,
-        itemModel: {
-          id: 602,
-          type: {
-            id: 6,
-            type: "head"
-          },
-          name: "Kaptur czarodzieja",
-          fluff: "Kiedyś nosił go czarodziej. Już nie nosi.",
-          imgSrc: "wizard-coul.png",
-          perks: [
-            {
-              perkType: "experience",
-              target: undefined,
-              time: [
-                {
-                  id: 1,
-                  hoursFlag: false,
-                  lengthInHours: 24,
-                  startDay: 5,
-                  startHour: 12
-                }
-              ],
-              value: "+10%"
-            },
-            {
-              perkType: "experience",
-              target: undefined,
-              time: [
-                {
-                  id: 2,
-                  hoursFlag: false,
-                  lengthInHours: 24,
-                  startDay: 6,
-                  startHour: 12
-                }
-              ],
-              value: "+20%"
-            }
-          ]
-        }
-      }
-    ],
-    ring: [
-      {
-        id: 10,
-        owner: 11111,
-        equipped: true,
-        itemModel: {
-          id: 701,
-          type: {
-            id: 7,
-            type: "ring"
-          },
-          name: "Pierścień siły",
-          fluff: "Całuj mój sygnet potęgi",
-          imgSrc: "strength-ring.png",
-          perks: [
-            {
-              id: 1,
-              perkType: "disc-product",
-              target: { name: "Wóda2" },
-              time: [
-                {
-                  hoursFlag: true,
-                  lengthInHours: 2,
-                  startDay: 1,
-                  startHour: 18
-                },
-                { hoursFlag: true, lengthInHours: 5, startDay: 3, startHour: 7 }
-              ],
-              value: "-15%"
-            }
-          ]
-        }
-      }
-    ]
+    head: 9,
+    chest: 5,
+    weaponRight: 4,
+    weaponLeft: 20,
+    legs: 6,
+    feet: 7,
+    ringRight: 10
   };
 };
 
@@ -300,7 +334,11 @@ const Profile = props => {
   const classes = useStyles();
 
   const [player, setPlayer] = React.useState(
-    createTempPlayer({ str: 4, dex: 2, mag: 1, end: 5 }, createTempEquipment())
+    createTempPlayer(
+      { str: 4, dex: 2, mag: 1, end: 5 },
+      convertBagArrayToCategories(createTempBag()),
+      createTempEquipped()
+    )
   ); //Returned from backend
 
   const [activePerks, setActivePerks] = React.useState([]);
@@ -316,42 +354,57 @@ const Profile = props => {
 
   const [newLevelDialogOpen, setNewLevelDialogOpen] = React.useState(false);
 
+  const [isJoiningParty, setIsJoiningParty] = React.useState(false);
+  const [isCreatingParty, setIsCreatingParty] = React.useState(false);
+
   const [equippedItems, setEquippedItems] = React.useState({
-    amulet: "",
     head: "",
     chest: "",
     hands: "",
     legs: "",
     feet: "",
-    weapon: "",
-    ring: ""
+    weaponRight: "",
+    weaponLeft: "",
+    ringRight: "",
+    ringLeft: ""
   });
-  //TODO: Main-hand and off-hand weapon
   //TODO: Multiple items of same type
 
   React.useEffect(() => {
     updateEquippedItems();
+    handleJoinOrCreateParty();
   }, []);
-
-
 
   const updateEquippedItems = () => {
     const equipment = {
-      amulet: "",
       head: "",
       chest: "",
       hands: "",
       legs: "",
       feet: "",
-      weapon: "",
-      ring: ""
+      weaponRight: "",
+      weaponLeft: "",
+      ringRight: "",
+      ringLeft: ""
     };
     const perks = [];
 
-    Object.keys(player.equipment).forEach(category => {
-      const loadedEquippedItem = player.equipment[category].find(
-        item => item.equipped
-      );
+    Object.keys(player.equipped).forEach(category => {
+      let loadedEquippedItem;
+      if (category.startsWith("weapon")) {
+        loadedEquippedItem = player.equipment.weapon.find(
+          item => item._id === player.equipped[category]
+        );
+      } else if (category.startsWith("ring")) {
+        loadedEquippedItem = player.equipment.ring.find(
+          item => item._id === player.equipped[category]
+        );
+      } else {
+        loadedEquippedItem = player.equipment[category].find(
+          item => item._id === player.equipped[category]
+        );
+      }
+
       if (loadedEquippedItem) {
         equipment[category] = loadedEquippedItem.itemModel.imgSrc;
         if (
@@ -369,6 +422,7 @@ const Profile = props => {
     setActivePerks([...perks]);
 
     const attrMods = { str: 0, dex: 0, mag: 0, end: 0 };
+    //TODO: attributes at current time
     perks.forEach(perk => {
       if (perk.perkType.startsWith("attr")) {
         //TODO: handle percentage change
@@ -390,22 +444,80 @@ const Profile = props => {
             break;
         }
       }
-      setAttributeModifiers({...attrMods})
+      setAttributeModifiers({ ...attrMods });
     });
   };
 
   const handleItemToggle = (id, isEquipped, category) => {
     //TODO: Each item needs own ID
     const tempPlayer = { ...player };
-    const modifyItemArrayIndex = tempPlayer.equipment[category].findIndex(
-      item => {
-        return item.itemModel.id === id;
-      }
-    );
 
-    //TODO: Handle 2 weapons and rings
-    tempPlayer.equipment[category].forEach(item => (item.equipped = false));
-    tempPlayer.equipment[category][modifyItemArrayIndex].equipped = !isEquipped;
+    if (category === "weapon") {
+      if (!tempPlayer.equipped.weaponRight && !tempPlayer.equipped.weaponLeft) {
+        tempPlayer.equipped.weaponRight = id;
+      } else if (
+        tempPlayer.equipped.weaponRight &&
+        !tempPlayer.equipped.weaponLeft
+      ) {
+        if (tempPlayer.equipped.weaponRight === id) {
+          tempPlayer.equipped.weaponRight = "";
+        } else {
+          tempPlayer.equipped.weaponLeft = id;
+        }
+      } else if (
+        !tempPlayer.equipped.weaponRight &&
+        tempPlayer.equipped.weaponLeft
+      ) {
+        if (tempPlayer.equipped.weaponLeft === id) {
+          tempPlayer.equipped.weaponLeft = "";
+        } else {
+          tempPlayer.equipped.weaponRight = id;
+        }
+      } else if (
+        tempPlayer.equipped.weaponRight &&
+        tempPlayer.equipped.weaponLeft
+      ) {
+        if (tempPlayer.equipped.weaponRight === id) {
+          tempPlayer.equipped.weaponRight = "";
+        } else {
+          tempPlayer.equipped.weaponLeft = "";
+        }
+      }
+    } else if (category === "ring") {
+      if (!tempPlayer.equipped.ringRight && !tempPlayer.equipped.ringLeft) {
+        tempPlayer.equipped.ringRight = id;
+      } else if (
+        tempPlayer.equipped.ringRight &&
+        !tempPlayer.equipped.ringLeft
+      ) {
+        if (tempPlayer.equipped.ringRight === id) {
+          tempPlayer.equipped.ringRight = "";
+        } else {
+          tempPlayer.equipped.ringLeft = id;
+        }
+      } else if (
+        !tempPlayer.equipped.ringRight &&
+        tempPlayer.equipped.ringLeft
+      ) {
+        if (tempPlayer.equipped.ringLeft === id) {
+          tempPlayer.equipped.ringLeft = "";
+        } else {
+          tempPlayer.equipped.ringRight = id;
+        }
+      } else if (
+        tempPlayer.equipped.ringRight &&
+        tempPlayer.equipped.ringLeft
+      ) {
+        if (tempPlayer.equipped.ringRight === id) {
+          tempPlayer.equipped.ringRight = "";
+        } else {
+          tempPlayer.equipped.ringLeft = "";
+        }
+      }
+    } else {
+      tempPlayer.equipped[category] = isEquipped ? "" : id;
+    }
+
     setPlayer({ ...tempPlayer });
     updateEquippedItems();
     //TODO: Call to backend
@@ -415,7 +527,7 @@ const Profile = props => {
     const tempPlayer = { ...player };
     const modifyItemArrayIndex = tempPlayer.equipment[category].findIndex(
       item => {
-        return item.itemModel.id === id;
+        return item.itemModel._id === id;
       }
     );
 
@@ -460,6 +572,28 @@ const Profile = props => {
   //   console.log(props.location.push('shop'));
   //   setGoExp(prev => !prev);
   // };
+
+  const handleJoinOrCreateParty = () => {
+    //Replace with backend call
+    let party = localStorage.getItem("party");
+    const tempPlayer = { ...player };
+    if (party) {
+      party = JSON.parse(party);
+      setPlayer({ ...tempPlayer, party: { ...party } });
+    } else {
+      delete tempPlayer.party;
+      setPlayer({ ...tempPlayer });
+    }
+  };
+
+  const handleLeaveParty = () => {
+    //Replace with backend call
+
+    const tempPlayer = { ...player };
+
+    delete tempPlayer.party;
+    setPlayer({ ...tempPlayer });
+  };
 
   return (
     <Grid
@@ -519,10 +653,18 @@ const Profile = props => {
             />
           )}
           {/* Main-hand weapon */}
-          {equippedItems.weapon && (
+          {equippedItems.weaponRight && (
             <img
               className={classes.avatarImage}
-              src={require(`../../assets/avatar/items/${equippedItems.weapon}`)}
+              src={require(`../../assets/avatar/items/${equippedItems.weaponRight}`)}
+            />
+          )}
+          {/* Off-hand weapon */}
+          {equippedItems.weaponLeft && (
+            <img
+              className={classes.avatarImage}
+              src={require(`../../assets/avatar/items/${equippedItems.weaponLeft}`)}
+              style={{ transform: "scaleX(-1)" }}
             />
           )}
         </Paper>
@@ -534,10 +676,26 @@ const Profile = props => {
           justify="flex-start"
           alignItems="center"
         >
-          <Attribute attributeName="Siła" attributeValue={player.str} attributeModifier={attributeModifiers.str}/>
-          <Attribute attributeName="Zręczność" attributeValue={player.dex } attributeModifier={attributeModifiers.dex}/>
-          <Attribute attributeName="Magia" attributeValue={player.mag } attributeModifier={attributeModifiers.mag}/>
-          <Attribute attributeName="Wytrzymałość" attributeValue={player.end } attributeModifier={attributeModifiers.end}/>
+          <Attribute
+            attributeName="Siła"
+            attributeValue={player.str}
+            attributeModifier={attributeModifiers.str}
+          />
+          <Attribute
+            attributeName="Zręczność"
+            attributeValue={player.dex}
+            attributeModifier={attributeModifiers.dex}
+          />
+          <Attribute
+            attributeName="Magia"
+            attributeValue={player.mag}
+            attributeModifier={attributeModifiers.mag}
+          />
+          <Attribute
+            attributeName="Wytrzymałość"
+            attributeValue={player.end}
+            attributeModifier={attributeModifiers.end}
+          />
           <Button onClick={() => handleAddExperience(500)}>Dodaj expa</Button>
           <Button>Dodaj amulet</Button>
           <Link to="/shop">
@@ -567,15 +725,101 @@ const Profile = props => {
       </Typography>
       <Equipment
         items={player.equipment}
+        equipped={player.equipped}
         handleItemToggle={handleItemToggle}
         handleItemDelete={handleItemDelete}
       />
       <Typography variant="h5" className={classes.eqHeading}>
-        Znajomi i drużyna:
+        Drużyna:
       </Typography>
-      <Fab color="primary">
-        <PeopleAltIcon />
-      </Fab>
+      {player.hasOwnProperty("party") && player.party.members.length > 0 && (
+        <div>
+          {player.party.leader._id === props.auth.uid ? (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setIsCreatingParty(prev => !prev)}
+            >
+              Zarządzaj drużyną
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleLeaveParty}
+            >
+              Opuść drużynę
+            </Button>
+          )}
+        </div>
+      )}
+
+      {player.hasOwnProperty("party") && player.party.members.length > 0 ? (
+        <List
+          style={{ width: "80%", marginTop: "2rem", border: "1px solid grey" }}
+        >
+          <ListItem>
+            <Badge badgeContent="Lider" color="primary">
+              <ListItemAvatar>
+                <img
+                  src={require("../../assets/avatar/" +
+                    player.party.leader.avatar)}
+                  width="32"
+                />
+              </ListItemAvatar>
+              <ListItemText primary={player.party.leader.name} />
+            </Badge>
+          </ListItem>
+
+          {player.party.members.map(partyMember => {
+            return (
+              <ListItem key={partyMember._id}>
+                <ListItemAvatar>
+                  <img
+                    src={require("../../assets/avatar/" + partyMember.avatar)}
+                    width="32"
+                  />
+                </ListItemAvatar>
+                <ListItemText primary={partyMember.name} />
+              </ListItem>
+            );
+          })}
+        </List>
+      ) : (
+        <div
+          style={{
+            width: "100%",
+            marginBottom: "2rem",
+            display: "flex",
+            justifyContent: "space-around"
+          }}
+        >
+          <Tooltip
+            open
+            title="Szukaj drużyny"
+            PopperProps={{ style: { margin: "-12px 0" } }}
+          >
+            <Fab
+              color="primary"
+              onClick={() => setIsJoiningParty(prev => !prev)}
+            >
+              <EmojiPeopleIcon />
+            </Fab>
+          </Tooltip>
+          <Tooltip
+            open
+            title="Stwórz drużynę"
+            PopperProps={{ style: { margin: "-12px 0" } }}
+          >
+            <Fab
+              color="primary"
+              onClick={() => setIsCreatingParty(prev => !prev)}
+            >
+              <GroupAddIcon />
+            </Fab>
+          </Tooltip>
+        </div>
+      )}
       <Typography variant="h5" className={classes.eqHeading}>
         Statystyki:
       </Typography>
@@ -584,8 +828,29 @@ const Profile = props => {
         open={newLevelDialogOpen}
         handleAddAndClose={handleNewLevelDialogClose}
       />
+      <PartyJoiningDialog
+        open={isJoiningParty}
+        handleClose={() => setIsJoiningParty(prev => !prev)}
+      />
+
+      <PartyCreationDialog
+        open={isCreatingParty}
+        isManagingParty={
+          player.hasOwnProperty("party") &&
+          player.party.members.length > 0 &&
+          player.party.leader._id === props.auth.uid
+        }
+        handleClose={() => setIsCreatingParty(prev => !prev)}
+        handleCreateParty={handleJoinOrCreateParty}
+      />
     </Grid>
   );
 };
 
-export default Profile;
+const mapStateToProps = state => {
+  return {
+    auth: state.auth
+  };
+};
+
+export default connect(mapStateToProps)(Profile);

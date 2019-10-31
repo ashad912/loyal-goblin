@@ -70,22 +70,23 @@ const EquipmentListItem = props => {
 
   const handleDelete = event => {
     event.stopPropagation();
-    props.handleItemDelete(item.itemModel.id, item.itemModel.name, props.itemCategory)  
+    props.handleItemDelete(item._id, item.itemModel.name, props.itemCategory)  
     setAnchorEl(null);
   }
 
 
   return (
     <ListItem
-      button
+      button = {props.itemCategory !== 'amulet'}
       alignItems="flex-start"
       className={classes.listItem}
-      style={{ background: item.equipped ? "#e6dc8d" : "" }}
-      equipped={item.equipped ? 1 : 0}
+      style={{ background: props.equipped ? "#e6dc8d" : "" }}
+      equipped={props.equipped ? 1 : 0}
       onClick={() =>
+        props.itemCategory !== 'amulet' &&
         props.handleItemToggle(
-          item.itemModel.id,
-          item.equipped,
+          item._id,
+          props.equipped,
           props.itemCategory
         )
       }

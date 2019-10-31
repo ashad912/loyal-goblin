@@ -50,6 +50,7 @@ const ItemModelSchema = new mongoose.Schema({
     required: true
   },
   class: { type: String, required: true },
+  weaponTwoHanded: {type: Boolean},
 
   perks: [
     {

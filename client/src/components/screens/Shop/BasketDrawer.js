@@ -39,7 +39,7 @@ const BasketDrawer = ({ open, toggle, baskets, mockUsers, activeUser, handleRemo
         <List component="nav" style={{ width: "75vw" }}>
           {Object.keys(baskets).map(user => {
             const userName = mockUsers.find(
-              mockUser => mockUser.id === Number(user)
+              mockUser => mockUser._id === Number(user)
             ).name;
             let summedPrice = 0.0;
 

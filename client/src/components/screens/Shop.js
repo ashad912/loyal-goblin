@@ -62,7 +62,7 @@ const FloatingCartIcon = styled(ShoppingCartIcon)`
 //Price is a string - JSON format returns strings - need to convert when fetching from db
 const mockShop = [
   {
-    id: 1,
+    _id:1,
     category: "shot",
     name: "Wóda",
     description: "nie mam weny",
@@ -70,7 +70,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 2,
+    _id:2,
     category: "shot",
     name: "Zryje",
     description: "na opisy",
@@ -78,7 +78,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 3,
+    _id:3,
     category: "shot",
     name: "Banie",
     description: "szotów",
@@ -86,7 +86,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 4,
+    _id:4,
     category: "shot",
     name: "BWóda",
     description: "nie mam weny",
@@ -94,7 +94,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 5,
+    _id:5,
     category: "shot",
     name: "BZryje",
     description: "na opisy",
@@ -102,7 +102,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 6,
+    _id:6,
     category: "shot",
     name: "BBanie",
     description: "szotów",
@@ -110,7 +110,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 7,
+    _id:7,
     category: "drink",
     name: "Modżajto",
     description: "dla mojej świni",
@@ -118,18 +118,19 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 8,
+    _id:8,
     name: "Cosmo",
     category: "drink",
     description: "lubisz, ale się nie przyznasz przed kolegami",
     price: 27.99,
     imgSrc: "drink.png",
-    prizes: [
+    awards: [
       {
+        quantity: 1,
         itemModel: {
-          id: 101,
+          _id:101,
           type: {
-            id: 1,
+            _id:1,
             type: "amulet"
           },
           name: "Diament",
@@ -140,30 +141,18 @@ const mockShop = [
     ]
   },
   {
-    id: 9,
+    _id:9,
     name: "Eau d'penis",
     category: "drink",
     description: "wyciąg z fiuta Twoim drinkiem",
     price: 120.03,
     imgSrc: "drink.png",
-    prizes: [
-      {
+    awards: [
+      {quantity: 2,
         itemModel: {
-          id: 102,
+          _id:102,
           type: {
-            id: 1,
-            type: "amulet"
-          },
-          name: "Perła",
-          fluff: "Perła prosto z lodówki, znaczy z małży",
-          imgSrc: "pearl-amulet.png"
-        }
-      },
-      {
-        itemModel: {
-          id: 102,
-          type: {
-            id: 1,
+            _id:1,
             type: "amulet"
           },
           name: "Perła",
@@ -174,7 +163,7 @@ const mockShop = [
     ]
   },
   {
-    id: 10,
+    _id:10,
     name: "BModżajto",
     category: "drink",
     description: "dla mojej świni",
@@ -182,7 +171,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 11,
+    _id:11,
     name: "BCosmo",
     category: "drink",
     description: "lubisz, ale się nie przyznasz przed kolegami",
@@ -190,7 +179,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 12,
+    _id:12,
     name: "BEau d'penis",
     category: "drink",
     description: "wyciąg z fiuta Twoim drinkiem",
@@ -198,7 +187,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 13,
+    _id:13,
     category: "alcoholFree",
     name: "Soczek",
     description: "szluga?",
@@ -206,7 +195,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 14,
+    _id:14,
     category: "alcoholFree",
     name: "Piwo zero",
     description: ":(",
@@ -214,7 +203,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 15,
+    _id:15,
     category: "alcoholFree",
     name: "Herba",
     description: "srogi czaj",
@@ -222,7 +211,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 16,
+    _id:16,
     category: "alcoholFree",
     name: "BSoczek",
     description: "szluga?",
@@ -230,7 +219,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 17,
+    _id:17,
     category: "alcoholFree",
     name: "BPiwo zero",
     description: ":(",
@@ -238,7 +227,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 18,
+    _id:18,
     category: "alcoholFree",
     name: "BHerba",
     description: "srogi czaj",
@@ -246,7 +235,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 19,
+    _id:19,
     category: "food",
     name: "Tosty",
     description: "z serem",
@@ -254,7 +243,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 20,
+    _id:20,
     category: "food",
     name: "Orzeszki",
     description: "ziemne",
@@ -262,7 +251,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 21,
+    _id:21,
     category: "food",
     name: "Naczosy hehe",
     description: "xddxdx",
@@ -270,7 +259,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 22,
+    _id:22,
     category: "food",
     name: "BTosty",
     description: "z serem",
@@ -278,7 +267,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 23,
+    _id:23,
     category: "food",
     name: "BOrzeszki",
     description: "ziemne",
@@ -286,7 +275,7 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 24,
+    _id:24,
     category: "food",
     name: "BNaczosy hehe",
     description: "xddxdx",
@@ -294,17 +283,18 @@ const mockShop = [
     imgSrc: "drink.png"
   },
   {
-    id: 25,
+    _id:25,
     category: "beer",
     name: "Kasztelan",
     description: "Pan na zamku",
     price: 12.0,
     imgSrc: "drink.png",
-    prizes: [      {
+    awards: [      {
+      quantity: 1,
       itemModel: {
-        _id: 600,
+        __id:600,
         type: {
-          _id: 6,
+          __id:6,
           type: "torpedo"
         },
         name: "D1",
@@ -314,17 +304,18 @@ const mockShop = [
     }]
   },
   {
-    id: 26,
+    _id:26,
     category: "beer",
     name: "Kormoran",
     description: "Pianka jakby ptak nasrał",
     price: 16.0,
     imgSrc: "drink.png",
-    prizes: [      {
+    awards: [      {
+      quantity: 1,
       itemModel: {
-        _id: 600,
+        __id:600,
         type: {
-          _id: 6,
+          __id:6,
           type: "torpedo"
         },
         name: "D1",
@@ -334,17 +325,18 @@ const mockShop = [
     }]
   },
   {
-    id: 27,
+    _id:27,
     category: "beer",
     name: "Koczkodan",
     description: "O to piwo proszą, jak zapomną o kormoranie",
     price: 11.0,
     imgSrc: "drink.png",
-    prizes: [      {
+    awards: [      {
+      quantity: 1,
       itemModel: {
-        _id: 600,
+        __id:600,
         type: {
-          _id: 6,
+          __id:6,
           type: "torpedo"
         },
         name: "D1",
@@ -354,17 +346,18 @@ const mockShop = [
     }]
   },
   {
-    id: 28,
+    _id:28,
     category: "beer",
     name: "c Ipa",
     description: "Jesteś tym co pijesz",
     price: 15.0,
     imgSrc: "drink.png",
-    prizes: [      {
+    awards: [      {
+      quantity: 1,
       itemModel: {
-        _id: 600,
+        __id:600,
         type: {
-          _id: 6,
+          __id:6,
           type: "torpedo"
         },
         name: "D1",
@@ -378,42 +371,42 @@ const mockShop = [
 //get avatar from db
 const mockUsers = [
   {
-    id: 1,
+    _id:1,
     name: "Ancymon Bobrzyn",
     avatar: "avatar.png"
   },
   {
-    id: 2,
+    _id:2,
     name: "Cecylia Dedoles",
     avatar: "avatar.png"
   },
   {
-    id: 3,
+    _id:3,
     name: "Ewelina",
     avatar: ""
   },
   {
-    id: 4,
+    _id:4,
     name: "Fristajler",
     avatar: "avatar.png"
   },
   {
-    id: 5,
+    _id:5,
     name: "Grzegorz Herbatnik",
     avatar: ""
   },
   {
-    id: 6,
+    _id:6,
     name: "I",
     avatar: "avatar.png"
   },
   {
-    id: 7,
+    _id:7,
     name: "Justyna Kowalczyk",
     avatar: "avatar.png"
   },
   {
-    id: 8,
+    _id:8,
     name: "Lol Łoś",
     avatar: "avatar.png"
   }
@@ -443,7 +436,7 @@ class Shop extends React.Component {
     //backend call for players in party
     const baskets = {};
     mockUsers.forEach(player => {
-      baskets[player.id] = [];
+      baskets[player._id] = [];
     });
 
     this.setState({ baskets });
@@ -464,13 +457,13 @@ class Shop extends React.Component {
   handleAddItemToCart = (e, id) => {
     const baskets = { ...this.state.baskets };
     const idOfProductAlreadyInBasket = baskets[this.state.activeUser].findIndex(
-      product => product.id === id
+      product => product._id === id
     );
     if (idOfProductAlreadyInBasket !== -1) {
       baskets[this.state.activeUser][idOfProductAlreadyInBasket].quantity += 1;
     } else {
       baskets[this.state.activeUser].push({
-        ...mockShop.find(product => product.id === id),
+        ...mockShop.find(product => product._id === id),
         quantity: 1
       });
     }
@@ -481,7 +474,7 @@ class Shop extends React.Component {
   handleRemoveItemFromCart = id => {
     const baskets = { ...this.state.baskets };
     const idOfProductInBasket = baskets[this.state.activeUser].findIndex(
-      product => product.id === id
+      product => product._id === id
     );
     if (baskets[this.state.activeUser][idOfProductInBasket].quantity > 1) {
       baskets[this.state.activeUser][idOfProductInBasket].quantity -= 1;
@@ -635,7 +628,7 @@ class Shop extends React.Component {
                         do koszyka{" "}
                         {
                           mockUsers.find(
-                            mockUser => mockUser.id === this.state.activeUser
+                            mockUser => mockUser._id === this.state.activeUser
                           ).name
                         }
                       </span>

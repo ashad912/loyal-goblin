@@ -13,14 +13,14 @@ const ShopList = ({title, list, handleAddItem}) => {
       {list.map(item => {
         return (
           <ShopListItem
-            key={item.id}
+            key={item._id}
             name={item.name}
             description={item.description}
             price={item.price}
             imgSrc={item.imgSrc}
-            id={item.id}
+            id={item._id}
             handleAddItem={handleAddItem}
-            prizes={item.hasOwnProperty('prizes') && item.prizes}
+            awards={item.hasOwnProperty('awards') && item.awards}
           />
         );
       })}

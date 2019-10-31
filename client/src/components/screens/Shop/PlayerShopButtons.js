@@ -19,10 +19,10 @@ const PlayerShopButtons = ({ users, activeUser, handleChipClick }) => {
           return (
             <Grid key={user.id} item xs>
               <PlayerShopButton
-                id={user.id}
+                id={user._id}
                 avatar={user.avatar}
                 name={user.name}
-                active={user.id === activeUser ? 1:0}
+                active={user._id === activeUser ? 1:0}
                 handleClick={handleChipClick}
               />
             </Grid>

@@ -89,11 +89,6 @@ export const UserSchema = new mongoose.Schema({
         unique: true
     }],
     equipped: {
-        amulet: {
-            type: mongoose.Schema.Types.ObjectId, 
-            ref: 'item',
-            unique: true
-        },
         weaponRight: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
@@ -147,6 +142,7 @@ export const UserSchema = new mongoose.Schema({
         required: true
     },
     party: { //suggested struct - EXPERIMENTAL
+        name: {type: String},
         leader: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'user',
