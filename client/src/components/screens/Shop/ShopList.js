@@ -17,6 +17,9 @@ const ShopList = ({title, list, handleAddItem}) => {
             name={item.name}
             description={item.description}
             price={item.price}
+            priceModified={item.hasOwnProperty('priceModified') && item.priceModified}
+            experience={item.experience}
+            experienceModified={ item.hasOwnProperty('experienceModified') &&  item.experienceModified}
             imgSrc={item.imgSrc}
             id={item._id}
             handleAddItem={handleAddItem}

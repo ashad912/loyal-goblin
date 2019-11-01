@@ -21,7 +21,7 @@ const FinalizeButton = styled(Button)`
   margin-top: 2rem;
 `;
 
-const BasketDrawer = ({ open, toggle, baskets, mockUsers, activeUser, handleRemoveItem, finalizeOrder }) => {
+const BasketDrawer = ({ open, toggle, baskets, users, activeUser, handleRemoveItem, finalizeOrder }) => {
  
   let totalPrice = 0.0;
   const allBaskets = Object.values(baskets)
@@ -38,7 +38,7 @@ const BasketDrawer = ({ open, toggle, baskets, mockUsers, activeUser, handleRemo
         <Divider />
         <List component="nav" style={{ width: "75vw" }}>
           {Object.keys(baskets).map(user => {
-            const userName = mockUsers.find(
+            const userName = users.find(
               mockUser => mockUser._id === Number(user)
             ).name;
             let summedPrice = 0.0;

@@ -335,7 +335,8 @@ const createTempEquipped = () => {
     weaponLeft: 20,
     legs: 6,
     feet: 7,
-    ringRight: 10
+    ringRight: 10,
+    scroll: ''
   };
 };
 
@@ -375,7 +376,8 @@ const Profile = props => {
     weaponRight: "",
     weaponLeft: "",
     ringRight: "",
-    ringLeft: ""
+    ringLeft: "",
+    scroll: ""
   });
   //TODO: Multiple items of same type
 
@@ -394,7 +396,8 @@ const Profile = props => {
       weaponRight: "",
       weaponLeft: "",
       ringRight: "",
-      ringLeft: ""
+      ringLeft: "",
+      scroll: ""
     };
     const perks = [];
 
@@ -409,7 +412,7 @@ const Profile = props => {
           item => item._id === player.equipped[category]
         );
       } else {
-        loadedEquippedItem = player.equipment[category].find(
+        loadedEquippedItem = player.equipment[category] && player.equipment[category].find(
           item => item._id === player.equipped[category]
         );
       }

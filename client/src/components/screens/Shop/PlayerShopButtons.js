@@ -17,7 +17,7 @@ const PlayerShopButtons = ({ users, activeUser, handleChipClick }) => {
       <Grid container spacing={0}>
         {users.map(user => {
           return (
-            <Grid key={user.id} item xs>
+            <Grid key={user._id} item xs>
               <PlayerShopButton
                 id={user._id}
                 avatar={user.avatar}
