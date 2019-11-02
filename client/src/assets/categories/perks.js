@@ -8,13 +8,13 @@ const perkTypes = {
     "disc-category": "Zniżka na kategorię",
     "disc-rent": "Zniżka na pokój",
     "custom": "Custom",
-    "1": 'poniedziałki',
-    "2": 'wtorki',
-    "3": 'środy',
-    "4": "czwartki",
-    "5": "piątki",
-    "6": "soboty",
-    "7": 'niedziele'
+    "1": 'Poniedziałek',
+    "2": 'Wtorek',
+    "3": 'Środa',
+    "4": "Czwartek",
+    "5": "Piątek",
+    "6": "Sobota",
+    "7": 'Niedziela'
 };
 
 export default perkTypes

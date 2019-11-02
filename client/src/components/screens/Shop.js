@@ -805,7 +805,7 @@ class Shop extends React.Component {
               activeUser={this.state.activeUser}
               handleChipClick={this.handleChangeactiveUser}
             />
-            {!activeUser.equipped.scroll ?
+            {!activeUser.equipped.scroll && activeUser.bag.length > 0  ?
             <Button
               style={{ margin: "1rem 0" }}
               variant="contained"
