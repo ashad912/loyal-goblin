@@ -781,7 +781,7 @@ const Profile = props => {
           style={{ width: "80%", marginTop: "2rem", border: "1px solid grey" }}
         >
           <ListItem>
-            <Badge badgeContent="Lider" color="primary">
+            <Badge badgeContent="Lider" color="primary" >
               <ListItemAvatar>
                 <img
                   src={require("../../assets/avatar/" +
@@ -808,39 +808,26 @@ const Profile = props => {
           })}
         </List>
       ) : (
-        <div
-          style={{
-            width: "100%",
-            marginBottom: "2rem",
-            display: "flex",
-            justifyContent: "space-around"
-          }}
-        >
-          <Tooltip
-            open
-            title="Szukaj drużyny"
-            PopperProps={{ style: { margin: "-12px 0" } }}
-          >
-            <Fab
+        <Grid container justify="space-around" >
+          <Grid item container direction="column" alignItems="center" xs={6}>
+          <Fab
               color="primary"
               onClick={() => setIsJoiningParty(prev => !prev)}
             >
               <EmojiPeopleIcon />
             </Fab>
-          </Tooltip>
-          <Tooltip
-            open
-            title="Stwórz drużynę"
-            PopperProps={{ style: { margin: "-12px 0" } }}
-          >
-            <Fab
+            <Typography variant="caption" style={{marginTop: '0.4rem'}}>Szukaj drużyny</Typography>
+          </Grid>
+          <Grid item container direction="column" alignItems="center" xs={6}>
+          <Fab
               color="primary"
               onClick={() => setIsCreatingParty(prev => !prev)}
             >
               <GroupAddIcon />
             </Fab>
-          </Tooltip>
-        </div>
+            <Typography variant="caption" style={{marginTop: '0.4rem'}}>Utwórz drużynę</Typography>
+          </Grid>
+        </Grid>
       )}
       <Typography variant="h5" className={classes.eqHeading}>
         Statystyki:
