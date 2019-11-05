@@ -12,6 +12,8 @@ import Tooltip from "@material-ui/core/Tooltip";
 import ColorizeIcon from "@material-ui/icons/Colorize";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
 import EmojiPeopleIcon from "@material-ui/icons/EmojiPeople";
+import EmojiEventsIcon from "@material-ui/icons/EmojiEvents";
+import EqualizerIcon from "@material-ui/icons/Equalizer";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
@@ -27,6 +29,8 @@ import PerkBox from "./profile/PerkBox";
 import maleBody from "../../assets/avatar/male-body.png";
 import PartyCreationDialog from "./profile/PartyCreationDialog";
 import PartyJoiningDialog from "./profile/PartyJoiningDialog";
+import RankDialog from "./profile/RankDialog";
+import StatsDialog from "./profile/StatsDialog";
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -366,6 +370,9 @@ const Profile = props => {
 
   const [isJoiningParty, setIsJoiningParty] = React.useState(false);
   const [isCreatingParty, setIsCreatingParty] = React.useState(false);
+  const [showRankDialog, setShowRankDialog] = React.useState(false);
+  const [showStatsDialog, setShowStatsDialog] = React.useState(false);
+
 
   const [equippedItems, setEquippedItems] = React.useState({
     head: "",
@@ -832,6 +839,26 @@ const Profile = props => {
       <Typography variant="h5" className={classes.eqHeading}>
         Statystyki:
       </Typography>
+      <Grid container justify="space-around" >
+          <Grid item container direction="column" alignItems="center" xs={6}>
+          <Fab
+              color="primary"
+              onClick={() => setShowRankDialog(prev => !prev)}
+            >
+              <EmojiEventsIcon />
+            </Fab>
+            <Typography variant="caption" style={{marginTop: '0.4rem'}}>Ranking</Typography>
+          </Grid>
+          <Grid item container direction="column" alignItems="center" xs={6}>
+          <Fab
+              color="primary"
+              onClick={() => setShowStatsDialog(prev => !prev)}
+            >
+              <EqualizerIcon />
+            </Fab>
+            <Typography variant="caption" style={{marginTop: '0.4rem'}}>Statystyki</Typography>
+          </Grid>
+        </Grid>
 
       <NewLevelDialog
         open={newLevelDialogOpen}
@@ -851,6 +878,14 @@ const Profile = props => {
         }
         handleClose={() => setIsCreatingParty(prev => !prev)}
         handleCreateParty={handleJoinOrCreateParty}
+      />
+      <RankDialog
+        open={showRankDialog}
+        handleClose={() => setShowRankDialog(prev => !prev)}
+      />
+      <StatsDialog
+        open={showStatsDialog}
+        handleClose={() => setShowStatsDialog(prev => !prev)}
       />
     </Grid>
   );

@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken"
 
 const userClasses = ['warrior', 'mage', 'rogue', 'cleric']
 
+const userStatuses = ['home', 'away', 'banned', 'nonactivated']
+
 const LoyalSchema = new mongoose.Schema({  
     pressed: {
         type: Boolean, 
@@ -47,6 +49,9 @@ export const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    status: {
+        type: String,
+    },
     avatar: {
         type: Buffer
     },
@@ -78,7 +83,7 @@ export const UserSchema = new mongoose.Schema({
             default: 0,
         },
     },
-    expPoints: {
+    experience: {
         type: Number,
         default: 0,
         required: true
@@ -155,7 +160,7 @@ export const UserSchema = new mongoose.Schema({
         }]       
     },
     statistics: {
-        missionsCounter: {
+        missionCounter: {
             type: Number,
             required: true,
         },

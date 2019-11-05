@@ -1566,3 +1566,223 @@ export const mockProducts = [
         ]
       },
 ]
+
+
+export const mockUsers = [
+    { 
+        _id: uuid(),
+        name: "A B",
+        active: true,
+        status: 'home',
+        class: 'warrior',
+        sex: 'man',
+        experience: 2000,
+        attributes: {
+            strength: 6,
+            dexternity: 3,
+            magic: 3,
+            endrunace: 2,
+        },
+        bag: [],
+        equipped: {},
+        loyal: [],
+        party: {},
+        statistics: {
+            missionCounter: 0,
+            amuletCounters: []
+        }      
+    },
+ 
+    { 
+        _id: uuid(),
+        name: "Ccc",
+        active: true,
+        status: 'away',
+        class: 'mage',
+        sex: 'woman',
+        experience: 1000,
+        attributes: {
+            strength: 2,
+            dexternity: 3,
+            magic: 5,
+            endrunace: 2,
+        },
+        bag: [],
+        equipped: {},
+        loyal: [],
+        party: {},
+        statistics: {
+            missionCounter: 4,
+            amuletCounters: [
+                {
+                    counter: 2,
+                    amulet: {
+                        _id: uuid(),
+                        name: 'diamond',
+                        description: 'Najlepszy przyjaciel dziewczyny',
+                        type: 'amulet',
+                        imgSrc: 'diamond-amulet.png',
+                    }
+                },
+                {
+                    counter: 3,
+                    amulet: {
+                        _id: uuid(),
+                        name: 'pearl',
+                        description: 'Perła prosto z małży, znaczy z lodówki',
+                        type: 'amulet',
+                        imgSrc: 'diamond-pearl.png',
+                    }
+                },
+
+            ]
+        }      
+    },
+    { 
+        _id: uuid(),
+        name: "Dee f",
+        active: true,
+        status: 'banned',
+        class: 'cleric',
+        sex: 'woman',
+        experience: 1500,
+        attributes: {
+            strength: 2,
+            dexternity: 3,
+            magic: 3,
+            endrunace: 4,
+        },
+        bag: [],
+        equipped: {},
+        loyal: [],
+        party: {},
+        statistics: {
+            missionCounter: 3,
+            amuletCounters: [
+                {
+                    counter: 1,
+                    amulet: {
+                        _id: uuid(),
+                        name: 'diamond',
+                        description: 'Najlepszy przyjaciel dziewczyny',
+                        type: 'amulet',
+                        imgSrc: 'diamond-amulet.png',
+                    }
+                },
+                {
+                    counter: 4,
+                    amulet: {
+                        _id: uuid(),
+                        name: 'pearl',
+                        description: 'Perła prosto z małży, znaczy z lodówki',
+                        type: 'amulet',
+                        imgSrc: 'diamond-pearl.png',
+                    }
+                },
+
+            ]
+        }      
+    },
+    { 
+        _id: uuid(),
+        name: "Ghi",
+        active: true,
+        status: 'home',
+        class: 'rogue',
+        sex: 'man',
+        experience: 3000,
+        attributes: {
+            strength: 6,
+            dexternity: 3,
+            magic: 1,
+            endrunace: 4,
+        },
+        bag: [],
+        equipped: {},
+        loyal: [],
+        party: {},
+        statistics: {
+            missionCounter: 0,
+            amuletCounters: []
+        }      
+    },
+    { 
+        _id: uuid(),
+        name: "Janusz Korwin-Mikke",
+        active: true,
+        status: 'home',
+        class: 'mage',
+        sex: 'man',
+        experience: 150000,
+        attributes: {
+            strength: 10,
+            dexternity: 8,
+            magic: 10,
+            endrunace: 9,
+        },
+        bag: [],
+        equipped: {},
+        loyal: [],
+        party: {},
+        statistics: {
+            missionCounter: 46,
+            amuletCounters: [
+                {
+                    counter: 9,
+                    amulet: {
+                        _id: uuid(),
+                        name: 'diamond',
+                        description: 'Najlepszy przyjaciel dziewczyny',
+                        type: 'amulet',
+                        imgSrc: 'diamond-amulet.png',
+                    }
+                },
+                {
+                    counter: 11,
+                    amulet: {
+                        _id: uuid(),
+                        name: 'pearl',
+                        description: 'Perła prosto z małży, znaczy z lodówki',
+                        type: 'amulet',
+                        imgSrc: 'diamond-pearl.png',
+                    }
+                },
+                {
+                    counter: 23,
+                    amulet: {
+                        _id: uuid(),
+                        name: 'saphhire',
+                        description: 'Fajny jest',
+                        type: 'amulet',
+                        imgSrc: 'sapphire-pearl.png',
+                    }
+                },
+
+            ]
+        }      
+    },
+    { 
+        _id: uuid(),
+        name: "Nnn",
+        active: true,
+        status: 'nonactivated',
+        class: 'rogue',
+        sex: 'man',
+        experience: 0,
+        attributes: {
+            strength: 2,
+            dexternity: 2,
+            magic: 2,
+            endrunace: 2,
+        },
+        bag: [],
+        equipped: {},
+        loyal: [],
+        party: {},
+        statistics: {
+            missionCounter: 0,
+            amuletCounters: []
+        }      
+    },
+    
+  ];
