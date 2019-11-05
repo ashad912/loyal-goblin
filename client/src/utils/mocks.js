@@ -1,4 +1,5 @@
 import uuid from 'uuid/v1'
+import avatarTemp from '../assets/avatar/moose.png'
 
 // export const createMockPlayer = (attributes, equipment) => {
 //     return {
@@ -1572,6 +1573,7 @@ export const mockUsers = [
     { 
         _id: uuid(),
         name: "A B",
+        avatar: avatarTemp,
         active: true,
         status: 'home',
         class: 'warrior',
@@ -1596,6 +1598,7 @@ export const mockUsers = [
     { 
         _id: uuid(),
         name: "Ccc",
+        avatar: avatarTemp,
         active: true,
         status: 'away',
         class: 'mage',
@@ -1641,6 +1644,7 @@ export const mockUsers = [
     { 
         _id: uuid(),
         name: "Dee f",
+        avatar: avatarTemp,
         active: true,
         status: 'banned',
         class: 'cleric',
@@ -1686,6 +1690,7 @@ export const mockUsers = [
     { 
         _id: uuid(),
         name: "Ghi",
+        avatar: avatarTemp,
         active: true,
         status: 'home',
         class: 'rogue',
@@ -1708,7 +1713,8 @@ export const mockUsers = [
     },
     { 
         _id: uuid(),
-        name: "Janusz Korwin-Mikke",
+        name: "KorwinKorwin",
+        avatar: avatarTemp,
         active: true,
         status: 'home',
         class: 'mage',
@@ -1764,6 +1770,7 @@ export const mockUsers = [
     { 
         _id: uuid(),
         name: "Nnn",
+        avatar: avatarTemp,
         active: true,
         status: 'nonactivated',
         class: 'rogue',

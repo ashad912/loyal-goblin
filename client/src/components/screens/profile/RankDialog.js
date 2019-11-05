@@ -38,30 +38,37 @@ const RankDialog = props => {
     }
 
     return (
-        <Dialog open={props.open} onClose={props.handleClose}>
+        <Dialog style={{margin: '-24px'}} fullWidth open={props.open} onClose={props.handleClose}>
         <DialogTitle>Najlepsi</DialogTitle>
-        <DialogContent>
+        <DialogContent style={{padding: '1rem 1rem'}}>
             <DialogContentText>
             
             </DialogContentText>
-
             <List style={{ border: "1px solid grey" }} alignItems="flex-start">
-            {users.map(user => {
+            {users.map((user, index) => {
                 return (
-                <ListItem key={user.id}>
-                    <ListItemText
-                    style={{ maxWidth: "60%" }}
-                    primary={user.name}
-                    secondary={"Doświadczenie " + user.experience + " Poziom " + designateUserLevel(user.experience)}
-                    />
-                    <ListItemAvatar>
-                    <Typography variant="caption">
-                    </Typography>
-                    </ListItemAvatar>
-                    <ListItemSecondaryAction>
-                    
-                    </ListItemSecondaryAction>
-                </ListItem>
+                    <ListItem key={user._id}>
+                                
+                                <Grid container>
+                                    <Grid item xs={1}>
+                                        <Typography style={{width: '100%', fontSize: '0.7rem'}}>{index+1}</Typography>
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <img src={user.avatar} style={{width: '16px', height: '16px'}}/>
+                                    </Grid>
+                                    <Grid item xs={5}>
+                                        <Typography style={{width: '100%', fontSize: '0.7rem'}}>{user.name}</Typography>
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <Typography style={{width: '100%', fontSize: '0.7rem'}}>{designateUserLevel(user.experience)}</Typography>
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <Typography style={{width: '100%', fontSize: '0.7rem'}}>{user.experience}</Typography>
+                                    </Grid>
+                                
+                                </Grid>
+                                
+                              </ListItem>
                 );
             })}
             </List>
