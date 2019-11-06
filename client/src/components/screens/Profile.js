@@ -881,6 +881,8 @@ const Profile = props => {
       />
       <RankDialog
         open={showRankDialog}
+        profile={props.auth.profile}
+        uid={props.auth.uid}
         handleClose={() => setShowRankDialog(prev => !prev)}
       />
       <StatsDialog
