@@ -11,6 +11,7 @@ import Menu from "@material-ui/core/Menu";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import MenuItem from "@material-ui/core/MenuItem";
+import Badge from '@material-ui/core/Badge';
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import perkLabels from "../../../assets/categories/perks";
@@ -87,7 +88,7 @@ const EquipmentListItem = props => {
     setAnchorEl(null);
   };
 
-  const quantity = item.instancesIds ? (item.instancesIds.length > 1 ?` x${item.instancesIds.length}`: '') : ''
+  const quantity = item.instancesIds && item.instancesIds.length > 1 ? item.instancesIds.length : null
   return (
     <ListItem
       button={props.itemCategory !== "amulet" && props.itemCategory !== "scroll"}
@@ -105,13 +106,16 @@ const EquipmentListItem = props => {
         )
       }
     >
-      <ListItemAvatar>
-        <img
-          style={{ width: "32px", height: "32px" }}
-          alt={item.itemModel.name}
-          src={require(`../../../assets/icons/items/${item.itemModel.imgSrc}`)}
-        />
-      </ListItemAvatar>
+      <Badge color="primary" badgeContent={quantity} anchorOrigin={{horizontal: 'right', vertical: 'bottom'}} style={{margin: '1.5rem'}}>
+
+        <ListItemAvatar>
+          <img
+            style={{ width: "32px", height: "32px" }}
+            alt={item.itemModel.name}
+            src={require(`../../../assets/icons/items/${item.itemModel.imgSrc}`)}
+          />
+        </ListItemAvatar>
+      </Badge>
       <Grid container direction="column">
         <Grid item container>
           <Grid item xs={10}>
