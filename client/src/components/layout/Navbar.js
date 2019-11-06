@@ -80,6 +80,7 @@ const Navbar = (props) => {
             formData.append("avatar", avatar)
 
             await props.updateAvatar(formData);
+            setAnchorEl(null);
         }
     };
     const createAvatarPlaceholder = (name) => {
@@ -118,7 +119,7 @@ const Navbar = (props) => {
                             horizontal: 'right',
                         }}
                     >
-                        {props.auth.profile.avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={'data:image/png;base64,' + arrayBufferToBase64(props.auth.profile.avatar.data)} /> : <Avatar style={{height: 30, width: 30}}>{createAvatarPlaceholder(props.auth.profile.name)}</Avatar>}
+                        {props.auth.profile.avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={'data:image/png;base64,' + props.auth.profile.avatar} /> : <Avatar style={{height: 30, width: 30}}>{createAvatarPlaceholder(props.auth.profile.name)}</Avatar>}
                     </Badge>
                     <Typography variant="h6" style={{flexGrow: 1, textAlign: 'left'}}>
                         {props.auth.profile.name}
