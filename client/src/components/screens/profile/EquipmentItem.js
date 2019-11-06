@@ -13,6 +13,7 @@ import Box from "@material-ui/core/Box";
 import MenuItem from "@material-ui/core/MenuItem";
 import Badge from '@material-ui/core/Badge';
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
+import TouchAppIcon from '@material-ui/icons/TouchApp';
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import perkLabels from "../../../assets/categories/perks";
 import { dayLabels, categoryLabels } from "../../../utils/labels";
@@ -118,7 +119,7 @@ const EquipmentListItem = props => {
       </Badge>
       <Grid container direction="column">
         <Grid item container>
-          <Grid item xs={10}>
+          <Grid item xs={9}>
             <ListItemText
               disableTypography
               primary={item.itemModel.name}
@@ -137,6 +138,12 @@ const EquipmentListItem = props => {
               }
             />
           </Grid>
+          {props.itemCategory !== "amulet" && props.itemCategory !== "scroll" && 
+          <Grid item xs={1}>
+            <TouchAppIcon/>
+          </Grid>
+        
+        }
           <Grid item xs={2}>
             <ListItemIcon onClick={handleClick}>
               <Button>
