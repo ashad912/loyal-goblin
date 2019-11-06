@@ -106,7 +106,7 @@ const EquipmentListItem = props => {
         )
       }
     >
-      <Badge color="primary" badgeContent={quantity} anchorOrigin={{horizontal: 'right', vertical: 'bottom'}} style={{margin: '1.5rem'}}>
+      <Badge overlap="circle" color="primary" badgeContent={quantity} anchorOrigin={{horizontal: 'right', vertical: 'bottom'}} style={{margin: '1.5rem'}}>
 
         <ListItemAvatar>
           <img
