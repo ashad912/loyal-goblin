@@ -35,47 +35,47 @@ const Navbar = (props) => {
 
     return(
         <StyledAppBar  position="static" id="navbar">
-            <Toolbar>
-        {props.auth.uid ? (
-            <React.Fragment>
-                <Badge
-                    style={{height: 30, width: 30, marginRight: '0.5rem'}}
-                    overlap="circle"
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'right',
-                    }}
-                >
-                    {avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={tempUserAvatar} /> : <Avatar style={{height: 30, width: 30}}>{createAvatarPlaceholder(props.auth.profile.name)}</Avatar>}
-                </Badge>
-                <Typography variant="h6" style={{flexGrow: 1, textAlign: 'left'}}>
-                    {props.auth.profile.name}
-                </Typography>
-                <Typography>
-                    <Link href='/signin' to='/signin' underline='none' style={{color: 'white'}}>
-                        Wyloguj  
-                    </Link>
-                </Typography>
-            </React.Fragment>
-        ) : (
-            <React.Fragment>
-                <Typography variant="h6" style={{flexGrow: 1, textAlign: 'left'}} >
-                    <Link href='/' to='/' underline='none' style={{color: 'white'}}>
-                        Loyal Goblin
-                    </Link>
-                </Typography>
-                <Typography>
-                    <Link href='/signin' to='/signin'  nderline='none' style={{color: 'white', marginRight: '1rem'}}>
-                        Zaloguj
-                    </Link>
-                </Typography>
-                <Typography>
-                    <Link href='/signup' to='/signup' underline='none' style={{color: 'white'}}>
-                        Dołącz
-                    </Link>
-                </Typography>
-            </React.Fragment>
-        )}
+        <Toolbar>
+            {props.auth.uid ? (
+                <React.Fragment>
+                    <Badge
+                        style={{height: 30, width: 30, marginRight: '0.5rem'}}
+                        overlap="circle"
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'right',
+                        }}
+                    >
+                        {avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={tempUserAvatar} /> : <Avatar style={{height: 30, width: 30}}>{createAvatarPlaceholder(props.auth.profile.name)}</Avatar>}
+                    </Badge>
+                    <Typography variant="h6" style={{flexGrow: 1, textAlign: 'left'}}>
+                        {props.auth.profile.name}
+                    </Typography>
+                    <Typography>
+                        <Link href='/signin' to='/signin' underline='none' style={{color: 'white'}}>
+                            Wyloguj  
+                        </Link>
+                    </Typography>
+                </React.Fragment>
+            ) : (
+                <React.Fragment>
+                    <Typography variant="h6" style={{flexGrow: 1, textAlign: 'left'}} >
+                        <Link href='/' to='/' underline='none' style={{color: 'white'}}>
+                            Loyal Goblin
+                        </Link>
+                    </Typography>
+                    <Typography>
+                        <Link href='/signin' to='/signin'  nderline='none' style={{color: 'white', marginRight: '1rem'}}>
+                            Zaloguj
+                        </Link>
+                    </Typography>
+                    <Typography>
+                        <Link href='/signup' to='/signup' underline='none' style={{color: 'white'}}>
+                            Dołącz
+                        </Link>
+                    </Typography>
+                </React.Fragment>
+            )}
         </Toolbar>
         </StyledAppBar>
        

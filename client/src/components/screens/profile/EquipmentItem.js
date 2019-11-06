@@ -76,19 +76,27 @@ const EquipmentListItem = props => {
 
   const handleDelete = event => {
     event.stopPropagation();
-    props.handleItemDelete(item._id, item.itemModel.name, props.itemCategory);
+    let itemId
+    if(props.stacked){
+      itemId = item.instancesIds[0]
+    }else{
+      itemId = item._id
+    }
+    console.log(itemId, item.itemModel.name, props.itemCategory)
+    props.handleItemDelete(itemId, item.itemModel.name, props.itemCategory);
     setAnchorEl(null);
   };
 
+  const quantity = item.instancesIds ? (item.instancesIds.length > 1 ?` x${item.instancesIds.length}`: '') : ''
   return (
     <ListItem
-      button={props.itemCategory !== "amulet"}
+      button={props.itemCategory !== "amulet" && props.itemCategory !== "scroll"}
       alignItems="flex-start"
       className={classes.listItem}
       style={{ background: props.equipped ? "#e6dc8d" : "" }}
       equipped={props.equipped ? 1 : 0}
       onClick={() =>
-        props.itemCategory !== "amulet" &&
+        props.itemCategory !== "amulet" && props.itemCategory !== "scroll" &&
         props.handleItemToggle(
           item._id,
           props.equipped,
@@ -109,7 +117,7 @@ const EquipmentListItem = props => {
           <Grid item xs={10}>
             <ListItemText
               disableTypography
-              primary={item.itemModel.name}
+              primary={item.itemModel.name + quantity}
               secondary={
                 <div>
                   {item.itemModel.hasOwnProperty("twoHanded") &&

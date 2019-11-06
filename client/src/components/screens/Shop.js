@@ -439,7 +439,8 @@ const mockUsers = [
             {
               perkType: "disc-product",
               target: "1",
-              value: "-5%"
+              value: "-5%",
+              time: []
             }
           ]
         }
@@ -475,7 +476,8 @@ const mockUsers = [
             {
               perkType: "disc-category",
               target: "shots",
-              value: "-10%"
+              value: "-10%",
+              time: []
             }
           ]
         }
@@ -496,7 +498,8 @@ const mockUsers = [
             {
               perkType: "disc-product",
               target: "2",
-              value: "-3"
+              value: "-3",
+              time: []
             }
           ]
         }
@@ -532,7 +535,8 @@ const mockUsers = [
             {
               perkType: "disc-category",
               target: "drinks",
-              value: "-10%"
+              value: "-10%",
+              time: []
             }
           ]
         }
@@ -553,7 +557,8 @@ const mockUsers = [
             {
               perkType: "disc-category",
               target: "drinks",
-              value: "-3"
+              value: "-3",
+              time: []
             }
           ]
         }
@@ -574,7 +579,8 @@ const mockUsers = [
             {
               perkType: "experience",
               target: undefined,
-              value: "+100"
+              value: "+100",
+              time: []
             }
           ]
         }
@@ -603,7 +609,8 @@ const mockUsers = [
             {
               perkType: "experience",
               target: undefined,
-              value: "+10%"
+              value: "+10%",
+              time: []
             }
           ]
         }

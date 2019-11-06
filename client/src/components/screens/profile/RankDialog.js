@@ -63,10 +63,10 @@ const RankDialog = props => {
                             <Typography style={{width: '100%', fontSize: '0.7rem', fontWeight: 'bold'}}>Użytkownik</Typography>
                         </Grid>
                         <Grid item xs={2}>
-                            <Typography style={{width: '100%', fontSize: '0.7rem', fontWeight: 'bold'}}>Poz.</Typography>
+                            <Typography style={{width: '100%', fontSize: '0.7rem', fontWeight: 'bold', textAlign: 'center'}}>Poz.</Typography>
                         </Grid>
                         <Grid item xs={2}>
-                            <Typography style={{width: '100%', fontSize: '0.7rem', fontWeight: 'bold'}}>PD</Typography>
+                            <Typography style={{width: '100%', fontSize: '0.7rem', fontWeight: 'bold', textAlign: 'center'}}>PD</Typography>
                         </Grid>
                     
                     </Grid>
@@ -75,7 +75,7 @@ const RankDialog = props => {
                                         
                     <Grid container style={{alignItems: 'center'}}>
                         <Grid item xs={1}>
-                            <Typography color="primary" style={{width: '100%', fontSize: '0.7rem'}}>{myUserIndex+1}</Typography>
+                            <Typography style={{width: '100%', fontSize: '0.7rem'}}>{myUserIndex+1}</Typography>
                         </Grid>
                         <Grid item xs={2}>
                             <img src={props.profile.avatar} style={{width: '16px', height: '16px', paddingLeft: '0.2rem'}}/>
@@ -101,7 +101,7 @@ const RankDialog = props => {
                                         
                                 <Grid container style={{alignItems: 'center'}}>
                                     <Grid item xs={1}>
-                                        <Typography color="primary" style={{width: '100%', fontSize: '0.7rem'}}>{index+1}</Typography>
+                                        <Typography style={{width: '100%', fontSize: '0.7rem'}}>{index+1}</Typography>
                                     </Grid>
                                     <Grid item xs={2}>
                                         <img src={user.avatar} style={{width: '16px', height: '16px', paddingLeft: '0.2rem'}}/>

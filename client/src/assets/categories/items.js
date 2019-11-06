@@ -1,11 +1,12 @@
 const items = {
-    amulet: "Amulet",
+    amulet: "Amulety",
     weapon: "Broń",
     chest: "Tors",
     legs: "Nogi",
     feet: "Stopy",
     head: "Głowa",
-    ring: "Pierścień"
+    ring: "Pierścienie",
+    scroll: 'Zwoje'
 }
 
 export default items

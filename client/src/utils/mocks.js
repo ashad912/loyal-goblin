@@ -1634,7 +1634,7 @@ export const mockUsers = [
                         name: 'pearl',
                         description: 'Perła prosto z małży, znaczy z lodówki',
                         type: 'amulet',
-                        imgSrc: 'diamond-pearl.png',
+                        imgSrc: 'pearl-amulet.png',
                     }
                 },
 
@@ -1680,7 +1680,7 @@ export const mockUsers = [
                         name: 'pearl',
                         description: 'Perła prosto z małży, znaczy z lodówki',
                         type: 'amulet',
-                        imgSrc: 'diamond-pearl.png',
+                        imgSrc: 'pearl-amulet.png',
                     }
                 },
 
@@ -1750,7 +1750,7 @@ export const mockUsers = [
                         name: 'pearl',
                         description: 'Perła prosto z małży, znaczy z lodówki',
                         type: 'amulet',
-                        imgSrc: 'diamond-pearl.png',
+                        imgSrc: 'pearl-amulet.png',
                     }
                 },
                 {
@@ -1879,7 +1879,7 @@ export const mockUsers = [
                         name: 'pearl',
                         description: 'Perła prosto z małży, znaczy z lodówki',
                         type: 'amulet',
-                        imgSrc: 'diamond-pearl.png',
+                        imgSrc: 'pearl-amulet.png',
                     }
                 },
 
@@ -1925,7 +1925,7 @@ export const mockUsers = [
                         name: 'pearl',
                         description: 'Perła prosto z małży, znaczy z lodówki',
                         type: 'amulet',
-                        imgSrc: 'diamond-pearl.png',
+                        imgSrc: 'pearl-amulet.png',
                     }
                 },
 
@@ -1995,7 +1995,7 @@ export const mockUsers = [
                         name: 'pearl',
                         description: 'Perła prosto z małży, znaczy z lodówki',
                         type: 'amulet',
-                        imgSrc: 'diamond-pearl.png',
+                        imgSrc: 'pearl-amulet.png',
                     }
                 },
                 {

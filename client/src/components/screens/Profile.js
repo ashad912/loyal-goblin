@@ -20,10 +20,11 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import Badge from "@material-ui/core/Badge";
 
-import convertBagArrayToCategories from "../../utils/bagArayToCategories";
+import convertBagArrayToCategories from "../../utils/bagArrayToCategories";
 
 import Attribute from "./profile/Attribute";
 import Equipment from "./profile/Equipment";
+import Chest from "./profile/Chest";
 import NewLevelDialog from "./profile/NewLevelDialog";
 import PerkBox from "./profile/PerkBox";
 import maleBody from "../../assets/avatar/male-body.png";
@@ -79,10 +80,7 @@ const createTempBag = () => {
       owner: 11111,
       itemModel: {
         _id: 101,
-        type: {
-          _id: 1,
-          type: "amulet"
-        },
+        type: "amulet",
         name: "Diament",
         fluff: "Najlepszy przyjaciel dziewyczyny",
         imgSrc: "diamond-amulet.png",
@@ -94,10 +92,7 @@ const createTempBag = () => {
       owner: 11111,
       itemModel: {
         _id: 101,
-        type: {
-          _id: 1,
-          type: "amulet"
-        },
+        type: "amulet",
         name: "Diament",
         fluff: "Najlepszy przyjaciel dziewyczyny",
         imgSrc: "diamond-amulet.png",
@@ -110,10 +105,7 @@ const createTempBag = () => {
 
       itemModel: {
         _id: 102,
-        type: {
-          _id: 1,
-          type: "amulet"
-        },
+        type: "amulet",
         name: "Perła",
         fluff: "Perła prosto z lodówki, znaczy z małży",
         imgSrc: "pearl-amulet.png",
@@ -126,10 +118,7 @@ const createTempBag = () => {
 
       itemModel: {
         _id: 201,
-        type: {
-          _id: 2,
-          type: "weapon"
-        },
+        type: "weapon",
         name: "Krótki miecz",
         fluff: "Przynajmniej nie masz kompleksów",
         imgSrc: "short-sword.png",
@@ -142,10 +131,7 @@ const createTempBag = () => {
 
       itemModel: {
         _id: 202,
-        type: {
-          _id: 2,
-          type: "weapon"
-        },
+        type: "weapon",
         name: "Wielki miecz",
         fluff: "Zdecydowanie masz kompleksy",
         imgSrc: "short-sword.png",
@@ -168,10 +154,7 @@ const createTempBag = () => {
 
       itemModel: {
         _id: 206,
-        type: {
-          _id: 2,
-          type: "weapon"
-        },
+        type: "weapon",
         name: "Żelazna tarcza",
         fluff: "Twarda na zewnątrz, miękka w środku. Zupełnie jak Ty <3",
         imgSrc: "iron-shield.png",
@@ -193,10 +176,7 @@ const createTempBag = () => {
 
       itemModel: {
         _id: 301,
-        type: {
-          _id: 3,
-          type: "chest"
-        },
+        type: "chest",
         name: "Skórzana kurta",
         fluff: "Lale za takimi szaleją",
         imgSrc: "leather-jerkin.png",
@@ -209,10 +189,7 @@ const createTempBag = () => {
 
       itemModel: {
         _id: 401,
-        type: {
-          _id: 4,
-          type: "legs"
-        },
+        type: "legs",
         name: "Lniane spodnie",
         fluff: "Zwykłe spodnie, czego jeszcze chcesz?",
         imgSrc: "linen-trousers.png",
@@ -225,10 +202,7 @@ const createTempBag = () => {
 
       itemModel: {
         _id: 501,
-        type: {
-          _id: 5,
-          type: "feet"
-        },
+        type: "feet",
         name: "Wysokie buty",
         fluff: "Skórzane, wypastowane, lśniące",
         imgSrc: "high-boots.png",
@@ -241,10 +215,7 @@ const createTempBag = () => {
 
       itemModel: {
         _id: 601,
-        type: {
-          _id: 6,
-          type: "head"
-        },
+        type: "head",
         name: "Czapka z piórkiem",
         fluff: "Wesoła kompaniaaaa",
         imgSrc: "feathered-hat.png",
@@ -257,10 +228,7 @@ const createTempBag = () => {
 
       itemModel: {
         _id: 602,
-        type: {
-          _id: 6,
-          type: "head"
-        },
+        type: "head",
         name: "Kaptur czarodzieja",
         fluff: "Kiedyś nosił go czarodziej. Już nie nosi.",
         imgSrc: "wizard-coul.png",
@@ -302,10 +270,7 @@ const createTempBag = () => {
 
       itemModel: {
         _id: 701,
-        type: {
-          _id: 7,
-          type: "ring"
-        },
+        type: "ring",
         name: "Pierścień siły",
         fluff: "Całuj mój sygnet potęgi",
         imgSrc: "strength-ring.png",
@@ -324,6 +289,46 @@ const createTempBag = () => {
               { hoursFlag: true, lengthInHours: 5, startDay: 3, startHour: 7 }
             ],
             value: "-15%"
+          }
+        ]
+      }
+    },
+    {
+      _id: 1321,
+      owner: 11111,
+      itemModel: {
+        _id: 801,
+        type: "scroll",
+        name: "Zwój małej zniżki na Wóde",
+        fluff: "Opis swoju",
+        imgSrc: "scroll.png",
+        perks: [
+          {
+            _id: 23143,
+            perkType: "disc-product",
+            target: "1",
+            value: "-5%",
+            time: []
+          }
+        ]
+      }
+    },
+    {
+      _id: 3423321,
+      owner: 11111,
+      itemModel: {
+        _id: 801,
+        type: "scroll",
+        name: "Zwój małej zniżki na Wóde",
+        fluff: "Opis swoju",
+        imgSrc: "scroll.png",
+        perks: [
+          {
+            _id: 23143,
+            perkType: "disc-product",
+            target: "1",
+            value: "-5%",
+            time: []
           }
         ]
       }
@@ -411,11 +416,11 @@ const Profile = props => {
     Object.keys(player.equipped).forEach(category => {
       let loadedEquippedItem;
       if (category.startsWith("weapon")) {
-        loadedEquippedItem = player.equipment.weapon.find(
+        loadedEquippedItem = player.equipment.weapon && player.equipment.weapon.find(
           item => item._id === player.equipped[category]
         );
       } else if (category.startsWith("ring")) {
-        loadedEquippedItem = player.equipment.ring.find(
+        loadedEquippedItem = player.equipment.ring && player.equipment.ring.find(
           item => item._id === player.equipped[category]
         );
       } else {
@@ -556,11 +561,14 @@ const Profile = props => {
     const tempPlayer = { ...player };
     const modifyItemArrayIndex = tempPlayer.equipment[category].findIndex(
       item => {
-        return item.itemModel._id === id;
+        return item._id === id;
       }
     );
 
     tempPlayer.equipment[category].splice(modifyItemArrayIndex, 1);
+    if(!tempPlayer.equipment[category].length){
+      delete tempPlayer.equipment[category]
+    }
     setPlayer({ ...tempPlayer });
     updateEquippedItems();
 
@@ -633,7 +641,7 @@ const Profile = props => {
       className={classes.wrapper}
       spacing={2}
     >
-      <Typography variant="h5">Poziom: {player.level}</Typography>
+      <Typography variant="h5">Poziom {player.level}</Typography>
       <Typography variant="subtitle2">
         Doświadczenie: {player.currentExp + " / " + player.nextLevelAtExp}
       </Typography>
@@ -744,14 +752,18 @@ const Profile = props => {
       {activePerks.length > 0 && (
         <React.Fragment>
           <Typography variant="h5" className={classes.eqHeading}>
-            Aktualne efekty:
+            Aktualne efekty
           </Typography>
           <PerkBox perks={activePerks} />
         </React.Fragment>
       )}
       <Typography variant="h5" className={classes.eqHeading}>
-        Ekwipunek:
+        Ekwipunek
       </Typography>
+      <Chest 
+        items={player.equipment}
+        handleItemDelete={handleItemDelete}
+      />
       <Equipment
         items={player.equipment}
         equipped={player.equipped}
@@ -759,7 +771,7 @@ const Profile = props => {
         handleItemDelete={handleItemDelete}
       />
       <Typography variant="h5" className={classes.eqHeading}>
-        Drużyna:
+       
       </Typography>
       {player.hasOwnProperty("party") && player.party.members.length > 0 && (
         <div>
@@ -837,7 +849,7 @@ const Profile = props => {
         </Grid>
       )}
       <Typography variant="h5" className={classes.eqHeading}>
-        Statystyki:
+        
       </Typography>
       <Grid container justify="space-around" >
           <Grid item container direction="column" alignItems="center" xs={6}>
@@ -887,6 +899,7 @@ const Profile = props => {
       />
       <StatsDialog
         open={showStatsDialog}
+        profile={props.auth.profile}
         handleClose={() => setShowStatsDialog(prev => !prev)}
       />
     </Grid>
