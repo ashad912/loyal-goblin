@@ -121,7 +121,7 @@ const EquipmentListItem = props => {
           <Grid item xs={10}>
             <ListItemText
               disableTypography
-              primary={item.itemModel.name + quantity}
+              primary={item.itemModel.name}
               secondary={
                 <div>
                   {item.itemModel.hasOwnProperty("twoHanded") &&
