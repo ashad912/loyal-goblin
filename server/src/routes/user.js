@@ -124,17 +124,28 @@ router.post("/me/avatar", auth, upload.single("avatar"), async (req, res) => {
     //to have access to file here, we have to delete 'dest' prop from multer
     //req.ninja.avatar = req.file.buffer //saved in binary data- base64 - it's possible to render img from binary
     const buffer = await sharp(req.file.buffer)
-      .resize({ width: 250, height: 250 })
+      .resize({ width: 100, height: 100 })
       .png()
       .toBuffer(); //convert provided img to png and specific size
     req.user.avatar = buffer;
 
     await req.user.save();
-    res.send();
+    res.send(req.user);
   },
   (err, req, res, next) => {
     res.status(400).send({ error: err.message }); //before app.use middleware with 422
   }
+);
+
+router.delete("/me/avatar", auth, async (req, res) => {
+  req.user.avatar = undefined;
+
+  await req.user.save();
+  res.send(req.user);
+},
+(err, req, res, next) => {
+  res.status(400).send({ error: err.message }); //before app.use middleware with 422
+}
 );
 
 router.patch('/addUserItem', auth, async (req, res) => {
