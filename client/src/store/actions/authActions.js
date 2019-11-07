@@ -3,17 +3,17 @@ import axios from 'axios'
 export const signIn = (credentials) => {
     return (dispatch, getState) => {
         return new Promise( async (resolve, reject) => {
-            dispatch( {type: "LOADING", loading: true})
+            //dispatch( {type: "LOADING", loading: true})
             try {
                 const res = await axios.post('/user/login', credentials)
                 const uid = res.data
                 dispatch( {type: "LOGIN_SUCCESS", uid})
-                dispatch( {type: "LOADING", loading: false})
+                //dispatch( {type: "LOADING", loading: false})
                 resolve()
             } catch (e) {
                 const language = null//getState().canvas.language
                 dispatch( {type: "LOGIN_ERROR", language})
-                dispatch( {type: "LOADING", loading: false})
+                //dispatch( {type: "LOADING", loading: false})
                 reject(e)
             }
         })
@@ -41,7 +41,7 @@ const data = res.json() //and unstrinify lol
 export const signOut = () => {
     return dispatch => {
         return new Promise( async (resolve, reject) => {
-            await dispatch( {type: "LOADING", loading: true})
+            //await dispatch( {type: "LOADING", loading: true})
             try{
                 await axios.post('/user/logout')
                 await dispatch ( {type: "LOGOUT_SUCCESS"})
@@ -59,7 +59,7 @@ export const signOut = () => {
 export const authCheck =  () => {
     return dispatch => {
         return new Promise( async (resolve, reject) => {
-            await dispatch( {type: "LOADING", loading: true})
+            //await dispatch( {type: "LOADING", loading: true})
             try {
                 const res = await axios('/user/me')
                 const profile = res.data
