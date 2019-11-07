@@ -3,7 +3,7 @@
 const initState = {
     uid: null,
     profile: {},
-    authError: null
+    authError: null,
     
 };
 
@@ -21,7 +21,7 @@ const authReducer = (state = initState, action) => {
             return {
                 ...state,
                 uid: action.uid,
-                authError: null
+                authError: null,
             }
         case 'LOGOUT_SUCCESS':
             console.log('signout success');
@@ -44,6 +44,7 @@ const authReducer = (state = initState, action) => {
                 profile: action.profile,
                 uid: action.uid,
             }
+
         default:
             return state;
     }

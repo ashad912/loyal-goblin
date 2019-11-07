@@ -12,9 +12,11 @@ const withAuth = (WrappedComponent) => {
             loading: true
         }
 
-        async componentWillMount(){
+        componentDidMount = async () => { 
+            if(this.state.loading){
+                await this.props.authCheck()
+            }
             
-            await this.props.authCheck()
             this.setState({loading: false})
         }
 

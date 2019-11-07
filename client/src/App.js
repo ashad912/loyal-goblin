@@ -12,6 +12,13 @@ import ForgotPassword from "./components/auth/ForgotPassword";
 import Admin from "./components/admin/Admin";
 import Mission from "./components/screens/events/Mission";
 
+import Snackbar from "@material-ui/core/Snackbar";
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import { connect } from 'react-redux';
+import {resetConnectionError} from './store/actions/connectionActions'
+
 import withAuth from "./hoc/withAuth";
 
 class App extends React.Component {
@@ -50,10 +57,44 @@ class App extends React.Component {
               <Footer />
             </div>
           )}
+          <Snackbar
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left"
+            }}
+            open={this.props.connectionError}
+            onClose={this.props.resetConnectionError}
+            autoHideDuration={2000}
+            message={
+              <span>
+                Brak połączenia z serwerem.
+              </span>
+            }
+          />
+            <Dialog style={{margin: '-24px'}} open={this.props.loading} >
+              <DialogContent style={{padding: '0'}}>
+                  <CircularProgress style={{height: 50, width: 50}}/>
+              </DialogContent>
+          </Dialog>
         </StylesProvider>
       </BrowserRouter>
     );
   }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+      connectionError: state.connection.connectionError,
+      loading: state.connection.loading,
+  }
+}
+
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+      resetConnectionError: () => dispatch(resetConnectionError()),
+  }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
