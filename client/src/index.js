@@ -9,13 +9,13 @@ import { Provider} from 'react-redux' //to wire reducer to App, and choose store
 import thunk from 'redux-thunk' //for asynchronous things
 
 
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
 
-const store = createStore(rootReducer, 
-    compose(
-        applyMiddleware(thunk)
-    ) 
-); 
+
+const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
+
+
 
 ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementById('root'));
 

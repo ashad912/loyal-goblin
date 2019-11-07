@@ -8,20 +8,18 @@ import Loading from '../components/layout/Loading';
 const withAuth = (WrappedComponent) => {
 
     return class extends React.Component {
-        state = {
-            loading: true
-        }
+
 
         componentDidMount = async () => { 
-            if(this.state.loading){
+            if(this.props.loading){
                 await this.props.authCheck()
             }
             
-            this.setState({loading: false})
+            
         }
 
         render () {
-            if(this.state.loading) {
+            if(this.props.loading) {
                 return <Loading/>
             }
             
@@ -44,6 +42,7 @@ const withAuth = (WrappedComponent) => {
 const mapStateToProps = (state) => {
     return {
         auth: state.auth,
+        connection: !!state.loading
     }
 }
 const mapDispatchToProps = (dispatch) => {

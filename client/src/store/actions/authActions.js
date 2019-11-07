@@ -59,7 +59,7 @@ export const signOut = () => {
 export const authCheck =  () => {
     return dispatch => {
         return new Promise( async (resolve, reject) => {
-            //await dispatch( {type: "LOADING", loading: true})
+            await dispatch( {type: "LOADING", loading: true})
             try {
                 const res = await axios('/user/me')
                 const profile = res.data
@@ -73,7 +73,7 @@ export const authCheck =  () => {
                 
             }
             resolve()
-            //await dispatch( {type: "LOADING", loading: false})
+            await dispatch( {type: "LOADING", loading: false})
             
             
         })
