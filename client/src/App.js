@@ -20,6 +20,7 @@ import { connect } from 'react-redux';
 import {resetConnectionError} from './store/actions/connectionActions'
 
 import withAuth from "./hoc/withAuth";
+import { authCheck } from "./store/actions/authActions";
 
 class App extends React.Component {
   state = {
@@ -28,10 +29,15 @@ class App extends React.Component {
   };
 
 
-  //FOR PRESENTATION ONLY
   componentDidMount() {
+    //FOR PRESENTATION ONLY
     const isAdmin = localStorage.getItem("isAdmin") ? true : false;
     this.setState({ isAdmin });
+
+    //CHECK AUTH ON APP LOAD
+    if (!this.props.loading) {
+      this.props.authCheck();
+    }
   }
 
   render() {
@@ -85,7 +91,7 @@ class App extends React.Component {
 const mapStateToProps = (state) => {
   return {
       connectionError: state.connection.connectionError,
-      loading: state.connection.loading,
+      loading: !!state.connection.loading
   }
 }
 
@@ -93,6 +99,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
       resetConnectionError: () => dispatch(resetConnectionError()),
+      authCheck: () => dispatch(authCheck())
   }
 }
 

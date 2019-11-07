@@ -23,7 +23,7 @@ import {updateAvatar} from '../../store/actions/profileActions'
 
 
 const StyledMenu = styled(Menu)`
-    border: "1px solid #d3d4d5"
+    border: "1px solid #d3d4d5";
 `
   
 const StyledMenuItem = styled(MenuItem)`

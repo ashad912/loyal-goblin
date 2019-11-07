@@ -897,11 +897,11 @@ const Profile = props => {
         uid={props.auth.uid}
         handleClose={() => setShowRankDialog(prev => !prev)}
       />
-      <StatsDialog
+      {/* <StatsDialog
         open={showStatsDialog}
         profile={props.auth.profile}
         handleClose={() => setShowStatsDialog(prev => !prev)}
-      />
+      /> */}
     </Grid>
   );
 };

@@ -8,3 +8,8 @@ export const resetConnectionError = () => {
         })
     }
 }
+
+
+export const setLoading = (isLoading) => {
+    return {type: "LOADING", loading: isLoading}
+}
