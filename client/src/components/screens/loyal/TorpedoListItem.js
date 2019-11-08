@@ -82,7 +82,7 @@ const TorpedoListItem = props => {
       alignItems="flex-start"
       className={classes.listItem}
       style={{ background: props.loadedTorpedoId === item.instancesIds[0] ? "#e6dc8d" : "" }}
-      loaded={props.loadedTorpedoId === item.instancesIds[0] ? (true) : (false)}
+      loaded={props.loadedTorpedoId === item.instancesIds[0] ? (1) : (0)}
       onClick={() =>
         props.handleTorpedoToggle(
           item.instancesIds[0],

@@ -1,9 +1,9 @@
 import axios from 'axios'
-import {signOut} from './authActions'
+
 export const updateAvatar = (avatar) => {
     return (dispatch) => {
         return new Promise( async (resolve, reject) => {
-            dispatch( {type: "LOADING", loading: true})
+            
             try {
                 console.log(avatar)
                 let res
@@ -19,12 +19,13 @@ export const updateAvatar = (avatar) => {
                 
                 const profile = res.data
                 const uid = profile._id
-                delete profile._id
+                delete profile._id  
                 dispatch( {type: "AUTH_SUCCESS", profile, uid}) //DISPATCH IS SYNCHRONOUS!!!
             } catch (e) {
+                console.log(e)
                 dispatch( {type: "NO_CONNECTION", error: e})               
             }
-            dispatch( {type: "LOADING", loading: false})
+            
             resolve()
             
         })

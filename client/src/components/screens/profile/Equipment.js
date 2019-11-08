@@ -65,7 +65,7 @@ const Equipment = props => {
     <Paper className={classes.root}>
       <List component="nav" className={classes.root}>
         {Object.keys(items).map(itemCategory => {
-          console.log(itemCategory)
+          //console.log(itemCategory)
           return (itemCategory !== 'amulet' && itemCategory !== 'scroll') && (
             <React.Fragment key={itemCategory}>
               <ListItem onClick={handleOpenList} data-value={itemCategory}>

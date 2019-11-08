@@ -66,7 +66,7 @@ const Chest = props => {
         if(itemModels.filter(itemModel => itemModel.name === itemToConvert.itemModel.name).length === 0){
             itemModels = [...itemModels, itemToConvert.itemModel]
         }
-        console.log(itemModels)
+        //console.log(itemModels)
         })
     
         let itemObjects = []
@@ -93,7 +93,7 @@ const Chest = props => {
             let stackedItems
             if(chest){
                 stackedItems = convertToStack(items[itemCategory])
-                console.log(stackedItems)
+                //console.log(stackedItems)
             }
             return (chest) && (
                 <React.Fragment key={itemCategory}>

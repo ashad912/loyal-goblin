@@ -1096,3 +1096,19 @@ export default NewPerkModal;
                     </Select>
               </FormControl> 
 */
+
+
+
+
+
+ {/* </Typography>
+                    <Typography>
+                        <Link href='/signin' to='/signin'  nderline='none' style={{color: 'white', marginRight: '1rem'}}>
+                            Zaloguj
+                        </Link>
+                    </Typography>
+                    <Typography>
+                        <Link href='/signup' to='/signup' underline='none' style={{color: 'white'}}>
+                            Dołącz
+                        </Link>
+                    </Typography> */}

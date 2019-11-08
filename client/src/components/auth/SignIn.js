@@ -164,13 +164,11 @@ class SignIn extends Component {
       }
 
     handleSubmit = async (e) => {
-        console.log(this.state)
         e.preventDefault();
 
         const targets = ['email', 'password']
         await asyncForEach(targets, async (target) => {
-            console.log(this.state.error)
-            console.log(this.state.error[target])
+
             if(this.state[target].length === 0){
                 await this.setState({
                     error: {
@@ -194,8 +192,7 @@ class SignIn extends Component {
 
 
     render() {
-        if(this.props.auth.uid) return <Redirect to='/' />
-        const { authError } = this.props
+        const authError = this.props.auth.authError
         
         return (
             <div style={{display: 'flex', justifyContent: 'center', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`}}>
@@ -256,8 +253,8 @@ class SignIn extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        authError: state.auth.authError, // auth in rootReducer, authError in authReducer, state global Redux store
         auth: state.auth,
+        connection: state.connection,
     }
 }
 

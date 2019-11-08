@@ -40,7 +40,7 @@ const StatsDialog = props => {
         return initials
     }
 
-    const avatar = true
+    //const avatar = true
     const height = 100
     const width = 100
 
@@ -89,7 +89,7 @@ const StatsDialog = props => {
                                 horizontal: 'right',
                             }}
                         >
-                            {avatar ? <Avatar style={{height: height, width: width}} alt="avatar" src={tempUserAvatar} /> : <Avatar style={{height: height, width: width, fontSize: '3.7rem'}}>{createAvatarPlaceholder(props.profile.name)}</Avatar>}
+                            {props.profile.avatar ? <Avatar style={{height: height, width: width}} alt="avatar" src={'data:image/png;base64,' + props.profile.avatar} /> : <Avatar style={{height: height, width: width, fontSize: '3.7rem'}}>{createAvatarPlaceholder(props.profile.name)}</Avatar>}
                         </Badge>
                     </Grid>
                     <Grid item style={{padding: '1rem 0 0 0'}}>

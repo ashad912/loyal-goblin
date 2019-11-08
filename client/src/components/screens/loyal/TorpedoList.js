@@ -93,7 +93,7 @@ const TorpedoList = props => {
       if(itemModels.filter(itemModel => itemModel.name === itemToConvert.itemModel.name).length === 0){
         itemModels = [...itemModels, itemToConvert.itemModel]
       }
-      console.log(itemModels)
+      //console.log(itemModels)
     })
   
     let itemObjects = []
@@ -111,7 +111,7 @@ const TorpedoList = props => {
   }
 
   const userTorpedos = convertToStack(props.userTorpedos)
-  console.log(userTorpedos)
+  //console.log(userTorpedos)
   return (
     <Dialog
         open={props.handleOpen}

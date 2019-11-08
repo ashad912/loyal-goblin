@@ -220,8 +220,7 @@ class SignUp extends Component {
   };
 
   render() {
-    if (this.props.auth.uid) return <Redirect to="/" />;
-    const dudUrl = "javascript:;";
+    
     const { authError } = this.props;
 
     return (

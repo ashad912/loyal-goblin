@@ -4,29 +4,18 @@ import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import Loading from "../components/layout/Loading";
 
-const withAuth = WrappedComponent => {
+const withNoAuth = WrappedComponent => {
   return class extends React.Component {
-    // state = {
-    //   confirmLoaded: false
-    // }
-
-    // componentDidUpdate = (prevProps) =>  {
-    //   if(prevProps.connection.auth.uid === null &&  === false && this.state.confirmLoaded === false){
-    //     this.setState({
-    //       confirmLoaded: true
-    //     })
-    //   }
-    // }
 
 
     render() {
       console.log(this.props.auth)
-      if ((this.props.connection.loading && !this.props.auth.uid) || this.props.auth.init) {
+      if ((this.props.connection.loading && this.props.auth.uid) || this.props.auth.init) {
         return <Loading />;
       }
 
-      if (!this.props.auth.uid) {
-        return <Redirect to="/signin" />;
+      if (this.props.auth.uid) {
+        return <Redirect to="/" />;
       }
 
       return (
@@ -45,11 +34,11 @@ const mapStateToProps = state => {
 };
 
 
-const composedWithAuth = compose(
+const composedWithNoAuth = compose(
   connect(
     mapStateToProps
   ),
-  withAuth
+  withNoAuth
 );
 
-export default composedWithAuth;
+export default composedWithNoAuth;

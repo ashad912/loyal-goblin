@@ -285,7 +285,7 @@ class Loyal extends Component {
 
     render() { 
         const userTorpedos = this.state.userTorpedos
-        console.log(this.state.seconds)
+        //console.log(this.state.seconds)
         return ( 
             <React.Fragment>
                 {this.state.loading && <Loading/>}

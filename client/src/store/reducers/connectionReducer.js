@@ -2,7 +2,7 @@
 
 const initState = {
     connectionError: null,
-    loading: null,
+    loading: true,
     
 };
 

@@ -15,11 +15,13 @@ import MenuItem from "@material-ui/core/MenuItem";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import MenuIcon from "@material-ui/icons/Menu";
+import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import { Badge } from '@material-ui/core';
 import tempUserAvatar from '../../assets/avatar/moose.png'
 import { connect } from 'react-redux';
 import { Link } from '@material-ui/core';
 import {updateAvatar} from '../../store/actions/profileActions'
+import {signOut} from '../../store/actions/authActions'
 
 
 const StyledMenu = styled(Menu)`
@@ -72,17 +74,30 @@ const Navbar = (props) => {
         setAnchorEl(null);
     };
 
-    const handleIconChange = async e => {
+    const handleAvatarChange = async e => {
         if (e.target.files.length > 0) {
             const avatar = e.target.files[0]
 
             const formData = new FormData()
             formData.append("avatar", avatar)
-
-            await props.updateAvatar(formData);
+            e.stopPropagation();
             setAnchorEl(null);
+            await props.updateAvatar(formData); 
         }
     };
+
+    const handleAvatarDelete = async e => {
+        e.stopPropagation();
+        setAnchorEl(null);
+        await props.updateAvatar(); 
+        
+    };
+
+    const handleLogout = async e => {
+        e.stopPropagation();
+        setAnchorEl(null);
+        await props.signOut() 
+    }
     const createAvatarPlaceholder = (name) => {
 
         if (!(/\s/.test(name))) {
@@ -104,7 +119,7 @@ const Navbar = (props) => {
     };
 
     const avatar = true
-    console.log(props.auth)
+    //console.log(props.auth)
 
     return(
         <StyledAppBar  position="static" id="navbar">
@@ -161,17 +176,34 @@ const Navbar = (props) => {
                                 <HiddenFileInput
                                     type="file"
                                     accept="image/*"
-                                    onChange={handleIconChange}
+                                    onChange={handleAvatarChange}
                                 />
                             </ListItemText>
                         </StyledMenuItem>
+                        {props.auth.profile.avatar && 
+                            <StyledMenuItem>
+                                
+                                <ListItemIcon>
+                                    <DeleteForeverIcon />
+                                </ListItemIcon>
+                                
+                                
+                                <ListItemText>
+                                <Link onClick={handleAvatarDelete} underline='none' color="primary">
+                                    Usuń avatar  
+                                </Link>
+                                </ListItemText>
+                            </StyledMenuItem>
+                        }
                         <StyledMenuItem>
                                 
                             <ListItemIcon>
                                 <ExitToAppIcon />
                             </ListItemIcon>
+                            
+                            
                             <ListItemText>
-                            <Link href='/signin' to='/signin' underline='none' color="primary">
+                            <Link onClick={handleLogout} underline='none' color="primary">
                                 Wyloguj  
                             </Link>
                             </ListItemText>
@@ -179,13 +211,14 @@ const Navbar = (props) => {
                     </StyledMenu>
                 </React.Fragment>
             ) : (
+                
                 <React.Fragment>
                     <Typography variant="h6" style={{flexGrow: 1, textAlign: 'left'}} >
                         <Link href='/' to='/' underline='none' style={{color: 'white'}}>
                             Loyal Goblin
                         </Link>
                     </Typography>
-                    <Typography>
+                    {/* <Typography>
                         <Link href='/signin' to='/signin'  nderline='none' style={{color: 'white', marginRight: '1rem'}}>
                             Zaloguj
                         </Link>
@@ -194,7 +227,7 @@ const Navbar = (props) => {
                         <Link href='/signup' to='/signup' underline='none' style={{color: 'white'}}>
                             Dołącz
                         </Link>
-                    </Typography>
+                    </Typography> */}
                 </React.Fragment>
             )}
             
@@ -217,6 +250,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         updateAvatar: (avatar) => dispatch(updateAvatar(avatar)),
+        signOut: () => dispatch(signOut())
     }
 }
 

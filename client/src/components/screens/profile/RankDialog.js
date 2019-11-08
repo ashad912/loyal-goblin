@@ -96,7 +96,7 @@ const RankDialog = props => {
     
                 {sortedUsers.map((user, index) => {
                     return (
-                        <React.Fragment>
+                        <React.Fragment key={user._id}>
                             <ListItem key={user._id}>
                                         
                                 <Grid container style={{alignItems: 'center'}}>

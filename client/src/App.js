@@ -20,6 +20,7 @@ import { connect } from 'react-redux';
 import {resetConnectionError} from './store/actions/connectionActions'
 
 import withAuth from "./hoc/withAuth";
+import withNoAuth from './hoc/withNoAuth'
 import { authCheck } from "./store/actions/authActions";
 
 class App extends React.Component {
@@ -35,9 +36,9 @@ class App extends React.Component {
     this.setState({ isAdmin });
 
     //CHECK AUTH ON APP LOAD
-    if (!this.props.loading) {
-      this.props.authCheck();
-    }
+    
+    this.props.authCheck();
+    
   }
 
   render() {
@@ -47,19 +48,20 @@ class App extends React.Component {
           {this.state.isAdmin ? (
             <div className="App">
               <Route exact path="/" component={withAuth(Admin)} />
+              <Route exact path="/signin" component={withNoAuth(SignIn)} />
             </div>
           ) : (
             <div className="App">
               <Navbar />
-              <Switch>
-                <Route exact path="/" component={withAuth(Root)} />
-                <Route exact path="/shop" component={withAuth(Shop)} />
-                <Route exact path="/mission" component={withAuth(Mission)} />
-                <Route exact path="/signin" component={SignIn} />
-                <Route exact path="/signup" component={SignUp} />
-                <Route exact path="/lost-password" component={ForgotPassword} />
-                <Route exact path="/admin" component={Admin} />
-              </Switch>
+                <Switch>
+                  <Route exact path="/" component={withAuth(Root)} />
+                  <Route exact path="/shop" component={withAuth(Shop)} />
+                  <Route exact path="/mission" component={withAuth(Mission)} />
+                  <Route exact path="/signin" component={withNoAuth(SignIn)} />
+                  <Route exact path="/signup" component={withNoAuth(SignUp)} />
+                  <Route exact path="/lost-password" component={withNoAuth(ForgotPassword)} />
+                  <Route exact path="/admin" component={Admin} />
+                </Switch>
               <Footer />
             </div>
           )}
@@ -68,16 +70,16 @@ class App extends React.Component {
               vertical: "bottom",
               horizontal: "left"
             }}
-            open={this.props.connectionError}
+            open={this.props.connection.connectionError}
             onClose={this.props.resetConnectionError}
-            autoHideDuration={2000}
+            autoHideDuration={3000}
             message={
               <span>
                 Brak połączenia z serwerem.
               </span>
             }
           />
-            <Dialog  open={this.props.loading} >
+            <Dialog open={this.props.connection.loading} >
               <DialogContent style={{display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10', height: '10rem', width: '10rem'}}>
                   <CircularProgress style={{height: 100, width: 100}}/>
               </DialogContent>
@@ -90,8 +92,8 @@ class App extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-      connectionError: state.connection.connectionError,
-      loading: !!state.connection.loading
+      connection: state.connection,
+      auth: state.auth
   }
 }
 

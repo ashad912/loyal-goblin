@@ -1,6 +1,7 @@
 //import {labels} from '../../components/strings/labels'
 
 const initState = {
+    init: true,
     uid: null,
     profile: {},
     authError: null,
@@ -14,7 +15,8 @@ const authReducer = (state = initState, action) => {
             console.log('login error')
             return {
                 ...state,
-                authError: 'Login failed'
+                authError: 'Login failed',
+                init: false
             }
         case 'LOGIN_SUCCESS':
             console.log('login success')
@@ -23,6 +25,7 @@ const authReducer = (state = initState, action) => {
                 profile: action.profile,
                 uid: action.uid,
                 authError: null,
+                init: false
             }
         case 'LOGOUT_SUCCESS':
             console.log('signout success');
@@ -30,6 +33,7 @@ const authReducer = (state = initState, action) => {
                 ...state,
                 profile: {},
                 uid: null,
+                init: false
             };
         case 'NO_AUTH':
             console.log("no auth")
@@ -37,6 +41,7 @@ const authReducer = (state = initState, action) => {
                 ...state,
                 profile: {},
                 uid: null,
+                init: false
             }
         case 'AUTH_SUCCESS':
             console.log("auth success")
@@ -44,6 +49,7 @@ const authReducer = (state = initState, action) => {
                 ...state,
                 profile: action.profile,
                 uid: action.uid,
+                init: false
             }
 
         default:
