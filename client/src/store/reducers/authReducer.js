@@ -20,6 +20,7 @@ const authReducer = (state = initState, action) => {
             console.log('login success')
             return {
                 ...state,
+                profile: action.profile,
                 uid: action.uid,
                 authError: null,
             }

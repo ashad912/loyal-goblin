@@ -6,8 +6,10 @@ export const signIn = (credentials) => {
 
             try {
                 const res = await axios.post('/user/login', credentials)
-                const uid = res.data
-                dispatch( {type: "LOGIN_SUCCESS", uid})
+                const profile = res.data
+                const uid = profile._id
+                delete profile._id
+                dispatch( {type: "LOGIN_SUCCESS", profile, uid})
 
                 resolve()
             } catch (e) {

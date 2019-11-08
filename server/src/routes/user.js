@@ -42,8 +42,8 @@ router.post("/login", async (req, res) => {
       req.body.password
     );
     const token = await user.generateAuthToken(); //on instancegenerateAuthToken
-    const uid = user._id;
-    res.cookie("token", token, { httpOnly: true }).send(uid);
+    //const uid = user._id;
+    res.cookie("token", token, { httpOnly: true }).send(user);
   } catch (e) {
     res.status(400).send(e);
   }

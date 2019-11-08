@@ -7,9 +7,22 @@ import Loading from "../components/layout/Loading";
 const withAuth = WrappedComponent => {
   return class extends React.Component {
 
+    state = {
+      loading: true,
+    }
+
+    componentDidUpdate = (prevProps) => {
+        if(prevProps.loading === false && this.state.loading === true){
+          
+          this.setState({
+            loading: false
+          })
+        }
+    }
+
 
     render() {
-      if (this.props.loading) {
+      if (this.props.loading || this.state.loading) {
         return <Loading />;
       }
 

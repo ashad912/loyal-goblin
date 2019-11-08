@@ -77,9 +77,9 @@ class App extends React.Component {
               </span>
             }
           />
-            <Dialog style={{margin: '-24px'}} open={this.props.loading} >
-              <DialogContent style={{padding: '0'}}>
-                  <CircularProgress style={{height: 50, width: 50}}/>
+            <Dialog  open={this.props.loading} >
+              <DialogContent style={{display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10', height: '10rem', width: '10rem'}}>
+                  <CircularProgress style={{height: 100, width: 100}}/>
               </DialogContent>
           </Dialog>
         </StylesProvider>
