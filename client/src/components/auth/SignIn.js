@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { signIn } from '../../store/actions/authActions'
-import { Redirect } from 'react-router-dom'
+import { Redirect, Link } from 'react-router-dom'
 import Container from '@material-ui/core/Container';
 import { Typography } from '@material-ui/core';
 import { TextField } from '@material-ui/core';
@@ -13,7 +13,6 @@ import { FormHelperText } from '@material-ui/core';
 import { Input } from '@material-ui/core';
 import { InputLabel } from '@material-ui/core';
 import { Divider } from '@material-ui/core';
-import { Link } from '@material-ui/core';
 import ErrorIcon from '@material-ui/icons/Error';
 import {asyncForEach} from '../../utils/methods'
 
@@ -44,6 +43,12 @@ const ErrorPaper = styled(Paper)`
 const ActionBar = styled.div`
     display: flex;
     justify-content: space-between;
+`
+const StyledLink = styled(Link)`
+color: #249123;
+&:visited {
+  color: #249123;
+}
 `
 
 class SignIn extends Component {
@@ -233,14 +238,14 @@ class SignIn extends Component {
                                 <Divider style={{marginTop: '1.5rem', marginBottom: '1rem'}}/>
                                 <ActionBar>
                                     <Typography>
-                                        <Link href='/lost-password' to='/lost-password' >
+                                        <StyledLink href='/lost-password' to='/lost-password' >
                                             Zapomniałaś/eś hasła?
-                                        </Link>
+                                        </StyledLink>
                                     </Typography>
                                     <Typography>
-                                        <Link href='/signup' to='/signup' >
+                                        <StyledLink  to='/signup' >
                                             Nie masz konta? Zarejestruj się!
-                                        </Link>
+                                        </StyledLink>
                                     </Typography>
                                 </ActionBar>
                             </StyledPaper>                 
