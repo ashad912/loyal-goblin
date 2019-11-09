@@ -337,7 +337,7 @@ class SignUp extends Component {
               <Divider style={{ marginTop: "1.5rem", marginBottom: "1rem" }} />
               <ActionBar>
                 <Typography>
-                  <StyledLink  to="/signin">
+                  <StyledLink to="/signin" style={{ textDecoration: 'none'}}>
                     Masz już konto? Zaloguj się!
                   </StyledLink>
                 </Typography>

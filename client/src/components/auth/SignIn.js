@@ -238,12 +238,12 @@ class SignIn extends Component {
                                 <Divider style={{marginTop: '1.5rem', marginBottom: '1rem'}}/>
                                 <ActionBar>
                                     <Typography>
-                                        <StyledLink href='/lost-password' to='/lost-password' >
+                                        <StyledLink to='/lost-password' style={{ textDecoration: 'none'}}>
                                             Zapomniałaś/eś hasła?
                                         </StyledLink>
                                     </Typography>
                                     <Typography>
-                                        <StyledLink  to='/signup' >
+                                        <StyledLink to='/signup' style={{ textDecoration: 'none'}}>
                                             Nie masz konta? Zarejestruj się!
                                         </StyledLink>
                                     </Typography>

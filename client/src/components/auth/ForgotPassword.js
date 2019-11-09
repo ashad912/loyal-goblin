@@ -210,7 +210,7 @@ class SignIn extends Component {
                                 <Divider style={{marginTop: '1.5rem', marginBottom: '1rem'}}/>
                                 <ActionBar>
                                     <Typography>
-                                        <StyledLink to='/signin' >
+                                        <StyledLink to='/signin' style={{ textDecoration: 'none', textAlign: 'left' }}>
                                             Pamiętasz hasło?
                                         </StyledLink>
                                     </Typography>
