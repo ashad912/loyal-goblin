@@ -803,8 +803,7 @@ const Profile = props => {
             <Badge badgeContent="Lider" color="primary" >
               <ListItemAvatar>
                 <img
-                  src={require("../../assets/avatar/" +
-                    player.party.leader.avatar)}
+                  src={player.party.leader.avatar.includes('data:image') ? (player.party.leader.avatar) : (require("../../assets/avatar/" + player.party.leader.avatar))}
                   width="32"
                 />
               </ListItemAvatar>
@@ -817,7 +816,7 @@ const Profile = props => {
               <ListItem key={partyMember._id}>
                 <ListItemAvatar>
                   <img
-                    src={require("../../assets/avatar/" + partyMember.avatar)}
+                    src={partyMember.avatar.includes('data:image') ? (partyMember.avatar) : (require("../../assets/avatar/" + partyMember.avatar))}
                     width="32"
                   />
                 </ListItemAvatar>

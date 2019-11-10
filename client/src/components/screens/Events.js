@@ -21,15 +21,12 @@ import moment from 'moment'
 import playersIcon from '../../assets/avatar/players.png'
 import levelIcon from '../../assets/avatar/level.png'
 
+import Rally from './events/Rally'
 
 const pathToIcons = '../../assets/icons/items'
 const itemLabelHeight = 210 //REFACTOR: need to be changed to 'dimensionLabel'
 
 
-const StyledCard = styled(Card)`
-    min-width: 275px;
-    margin: 0 0 1rem 0;
-`
 const StyledList = styled(List)`
     width: 100%;
     margin: 0 0 1rem 0;
@@ -345,7 +342,7 @@ const createTempRally = () => {
         id: 1,
         title: 'OMG!Rally',
         avatarSrc: missionIconTemp,
-        date: moment().add(1, 'days').calendar(),
+        date: moment().add(1, 'd'),
         requiredPlayers: 20,
         description: 'Super important rally. It is only one rally on board! You need to cooperate with ppl, u introvert scum xd',
         
@@ -355,9 +352,6 @@ const createTempRally = () => {
 
 
 
-const handleRallyClick = () => {
-    console.log('clicked rally')
-}
 
 
 const Events = () => {
@@ -514,7 +508,7 @@ const Events = () => {
         })
     ) : ( null )
 
-    
+    console.log(rally)
     return (
         
         <React.Fragment>
@@ -528,43 +522,13 @@ const Events = () => {
                 Rally
             </Typography>
 
-
-            {rally ? (
-                <StyledCard>
-                    <CardContent>
-                        <Typography style={{fontSize: 14}} color="textSecondary" gutterBottom>
-                            Ladies and Gentelmen!
-                        </Typography>
-                        <Typography variant="h5" component="h2">
-                            oo
-                        <Bullet>•</Bullet>
-                            {rally.title}
-                        <Bullet>•</Bullet>
-                            oo
-                        </Typography>
-                        <Typography style={{marginBottom: '0.5rem'}} color="textSecondary">
-                            {rally.date}
-                        </Typography>
-                        <Typography variant="body2" component="p">
-                            {rally.description}
-                        <br />
-                        {'"Treasurrrre!"'}
-                        </Typography>
-                    </CardContent>
-                    <CardActions style={{justifyContent: 'flex-end'}}>
-                        <Button onClick={handleRallyClick} size="small">Go in!</Button>
-                    </CardActions>
-                </StyledCard>
-            ) : (<RallyPlaceholder>There is no active really!</RallyPlaceholder>)}
-
+            <Rally rally={rally} />
 
             <Typography variant="h6">
                 Missions
             </Typography>
 
-            <StyledList>
-                
-                
+            <StyledList> 
                 {missionList}
             </StyledList>
         
