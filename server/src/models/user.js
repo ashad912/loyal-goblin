@@ -184,17 +184,23 @@ export const UserSchema = new mongoose.Schema({
 
 
 
-UserSchema.virtual('events', { //events can be reached by relations, BI RELATION!!
-    ref: 'event',
-    localField: '_id', //relation from user side (we are in user schema!)
-    foreignField: 'users.user' //relation from event side
-})
+// UserSchema.virtual('missions', { //events can be reached by relations, BI RELATION!!
+//     ref: 'mission',
+//     localField: '_id', //relation from user side (we are in user schema!)
+//     foreignField: 'completedByUsers.user' //relation from event side
+// })
 
 //it is recognized as an array
-UserSchema.virtual('activeEvent', { //events can be reached by relations, BI RELATION!!
-    ref: 'eventInstance',
+UserSchema.virtual('activeMission', { //events can be reached by relations, BI RELATION!!
+    ref: 'missionInstance',
     localField: '_id', //relation from user side (we are in user schema!)
     foreignField: 'party.user' //relation from event side
+})
+
+UserSchema.virtual('activeRally', { //events can be reached by relations, BI RELATION!!
+    ref: 'rally',
+    localField: '_id', //relation from user side (we are in user schema!)
+    foreignField: 'users.user' //relation from event side
 })
 
 

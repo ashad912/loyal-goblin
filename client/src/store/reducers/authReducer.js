@@ -16,7 +16,6 @@ const authReducer = (state = initState, action) => {
             return {
                 ...state,
                 authError: 'Login failed',
-                init: false
             }
         case 'LOGIN_SUCCESS':
             console.log('login success')
@@ -25,7 +24,6 @@ const authReducer = (state = initState, action) => {
                 profile: action.profile,
                 uid: action.uid,
                 authError: null,
-                init: false
             }
         case 'LOGOUT_SUCCESS':
             console.log('signout success');
@@ -33,7 +31,6 @@ const authReducer = (state = initState, action) => {
                 ...state,
                 profile: {},
                 uid: null,
-                init: false
             };
         case 'NO_AUTH':
             console.log("no auth")

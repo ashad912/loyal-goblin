@@ -1,14 +1,14 @@
 import mongoose from 'mongoose'
-import {EventSchema} from './event'
+import {MissionSchema} from './mission'
 import {UserSchema} from './user'
 import arrayUniquePlugin from 'mongoose-unique-array'
 
-const EventInstanceSchema = new mongoose.Schema({ //instance of ItemModel
+const MissionInstanceSchema = new mongoose.Schema({ //instance of ItemModel
 
     //event instance is existing through small period - easier to keep full objects? NO
-    event: {
+    mission: {
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'event',
+        ref: 'mission',
         required: true,
     },
     party: {
@@ -32,6 +32,6 @@ const EventInstanceSchema = new mongoose.Schema({ //instance of ItemModel
 
 })
 
-EventInstanceSchema.plugin(arrayUniquePlugin);
+MissionInstanceSchema.plugin(arrayUniquePlugin);
 
-export const EventInstance = new mongoose.model('eventInstance', EventInstanceSchema)
+export const MissionInstance = new mongoose.model('missionInstance', MissionInstanceSchema)

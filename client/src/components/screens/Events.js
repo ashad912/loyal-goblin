@@ -4,6 +4,7 @@ import VisibilitySensor from 'react-visibility-sensor'
 import missionIconTemp from '../../assets/avatar/mission.png'
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
+import Grid from '@material-ui/core/Grid';
 import ListItem from '@material-ui/core/ListItem';
 
 import ListItemText from '@material-ui/core/ListItemText';
@@ -32,7 +33,7 @@ const StyledList = styled(List)`
     margin: 0 0 1rem 0;
 `
 const StyledBox = styled(Box)`
-    margin: 0.5rem 0.5rem 0.5rem 0.5rem;
+    margin: 0.5rem 0;
 
 `
 
@@ -411,7 +412,7 @@ const Events = () => {
                 {({isVisible}) =>
                     <div>{isVisible ? ( /*inVisible defined only inside div witch is fucking kurwa crazy */
                         <StyledBox border={1} borderColor="primary.main">
-                        <ListItem style={{height: itemLabelHeight, paddingRight: '2rem'}} alignItems="flex-start"> 
+                        {/* <ListItem style={{height: itemLabelHeight, paddingRight: '2rem'}} alignItems="flex-start"> 
                             <ListItemAvatar>
                                 <Avatar alt="avatar" src={mission.avatarSrc.avatarTemp} />
                             </ListItemAvatar>
@@ -495,7 +496,82 @@ const Events = () => {
                             </ListItemSecondaryAction>
                             
                             
-                        </ListItem>
+                        </ListItem> */}
+                        <Grid
+                            container
+                            direction="column"
+                        >
+                            <Grid
+                                container
+                                direction="row"
+                            >
+                                <Grid item xs={2}>
+                                    <Grid
+                                        container
+                                        direction="column"
+                                    >
+                                        <Grid item>
+                                            <Avatar alt="avatar" src={mission.avatarSrc.avatarTemp} />
+                                        </Grid>
+                                    </Grid>
+                                </Grid>    
+                                <Grid item xs={10}>
+                                    <Grid
+                                        container
+                                        direction="column"
+                                    >
+                                        <Grid item>
+                                            <Typography
+                                                component="span"
+                                                variant="body1"
+                                                color="textPrimary"
+                                            >
+                                                {mission.title}
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item>
+                                            <Typography
+                                                component="span"
+                                                variant="body2"
+                                                style={{display: 'block'}}
+                                                color="textPrimary"
+                                            >
+                                                {mission.description}
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>   
+                                </Grid> 
+                            </Grid>
+                            <Grid
+                                container
+                                direction="row"
+                            >
+                                <Grid item xs={2}>
+
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <Button size="small">Szczegóły</Button>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <Button size="small" onClick={() => handleMissionClick(mission.id)} disabled={!isMissionActive || !leader}>{leader ? ('Go in!') : ('You are not the leader!')}</Button>
+                                </Grid>
+                            </Grid>
+                            <Grid
+                                container
+                                direction="row"
+                            >
+                                
+                                <Grid item xs={4}>
+                                    <Typography
+                                        component="span"
+                                        variant="body1"
+                                        color="textPrimary"
+                                    >
+                                        Wymagania
+                                    </Typography>
+                                </Grid> 
+                            </Grid>
+                        </Grid>
                         
                         </StyledBox>
                            

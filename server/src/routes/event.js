@@ -1,11 +1,11 @@
 import express from 'express'
 import bcrypt from 'bcryptjs'
 import { User } from '../models/user';
-import { Event } from '../models/event';
+import { Mission } from '../models/mission';
 import { auth } from '../middleware/auth';
-import { EventInstance } from '../models/eventInstance';
+import { MissionInstance } from '../models/missionInstance';
 import { Item } from '../models/item'
-import { asyncForEach } from '../reducer'
+import { asyncForEach } from '../utils/methods'
 
 import isEqual from 'lodash/isEqual'
 
@@ -16,12 +16,12 @@ const router = new express.Router
 //TEST
 router.post('/create', auth, async (req, res) =>{
 
-    const event = new Event(req.body)
+    const mission = new Mission(req.body)
     
 
     try {
-        await event.save() //this method holds updated user!
-        res.status(201).send(event)
+        await mission.save() //this method holds updated user!
+        res.status(201).send(mission)
     } catch (e) {
         console.log(e)
         res.status(400).send(e)
@@ -33,7 +33,7 @@ router.post('/create', auth, async (req, res) =>{
 // - no party DONE
 // - party
 //assumed, when user finishes the mission, mission saves his id in array
-router.get('/events', auth, async (req, res) => { //get active events which are available for specific user AND for all user's party!!
+router.get('/missions', auth, async (req, res) => { //get active missions which are available for specific user AND for all user's party!!
     
     const user = req.user;
 
@@ -48,24 +48,24 @@ router.get('/events', auth, async (req, res) => { //get active events which are 
     
     
     try {
-        //CONSIDER: move populate to middleware Event.post('find', ...)
-        const events = await Event.find({status: 'active', users: {$not: {$elemMatch: {$nin: partyIds}}}})
+        //CONSIDER: move populate to middleware Mission.post('find', ...)
+        const missions = await Mission.find({status: 'active', users: {$not: {$elemMatch: {$nin: partyIds}}}})
             .populate({ //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
                 path: 'amulets.itemModel',
                 options: {}
             })
         
         //IMPORTANT: .execPopulate() does not work on array!!!!!! lost 1,5 hour on this xd
-        /*events.forEach( async (event) => {
-            console.log(event)
-            await event.populate({ 
+        /*missions.forEach( async (mission) => {
+            console.log(mission)
+            await mission.populate({ 
                 path: 'amulets.itemModel'
             }).execPopulate()
         })*/
 
-        console.log(events)
+        console.log(missions)
         
-        res.send(events)
+        res.send(missions)
     } catch (e) {
         console.log(e)
         res.status(500).send(e)
@@ -73,15 +73,15 @@ router.get('/events', auth, async (req, res) => { //get active events which are 
 })
 
 //CHECK:
-router.get('/enterInstance/:id', auth, async (req, res) => { //event id passed from front
+router.get('/enterInstance/:id', auth, async (req, res) => { //mission id passed from front
     const user = req.user
     
     try{
 
-        const event = await Event.findOne({_id: req.params.id, status: 'active'})
+        const mission = await Mission.findOne({_id: req.params.id, status: 'active'})
 
-        if(!event){
-            throw new Error('There is no such event!')
+        if(!mission){
+            throw new Error('There is no such mission!')
         }
 
     
@@ -98,7 +98,7 @@ router.get('/enterInstance/:id', auth, async (req, res) => { //event id passed f
 
         console.log('got members ids', membersIds)
 
-        if(membersIds.length + 1 > event.maxPlayers || membersIds.length + 1 < event.minPlayers){ //+1 - for leader
+        if(membersIds.length + 1 > mission.maxPlayers || membersIds.length + 1 < mission.minPlayers){ //+1 - for leader
             throw new Error('Unappropriate party size!')
         }
 
@@ -114,16 +114,16 @@ router.get('/enterInstance/:id', auth, async (req, res) => { //event id passed f
         console.log('got all party', party)
 
         await asyncForEach(party, async (member) => {
-            await member.populate({ //looking for user's id in event instances 
-                path: 'activeEvent'
+            await member.populate({ //looking for user's id in mission instances 
+                path: 'activeMission'
             }).execPopulate()
 
-            //activeEvent is recognized as an array due to virtualization
+            //activeMission is recognized as an array due to virtualization
 
-            console.log('got activeEvent field for ', member._id, member.activeEvent)
+            console.log('got activeMission field for ', member._id, member.activeMission)
 
-            if(member.activeEvent.length) {
-                throw new Error(`Member (${member._id}) is in another event!`)
+            if(member.activeMission.length) {
+                throw new Error(`Member (${member._id}) is in another mission!`)
             }
 
         })
@@ -138,14 +138,14 @@ router.get('/enterInstance/:id', auth, async (req, res) => { //event id passed f
                 partyObject = [...partyObject, memberObject]
         })
         
-        const eventInstanceObject = {event: event._id, party: partyObject, items: []}
+        const missionInstanceObject = {mission: mission._id, party: partyObject, items: []}
 
-        console.log(eventInstanceObject)
-        const eventInstance = new EventInstance(eventInstanceObject)
-        console.log(eventInstance)
-        await eventInstance.save()
+        console.log(missionInstanceObject)
+        const missionInstance = new MissionInstance(missionInstanceObject)
+        console.log(missionInstance)
+        await missionInstance.save()
 
-        res.status(200).send(eventInstance)
+        res.status(200).send(missionInstance)
   
     } catch (e) {
         console.log(e.message)
@@ -160,32 +160,30 @@ router.patch('/sendItem/mission', auth, async (req, res) => {
    
     try{
         await user.populate({
-            path: 'activeEvent'
+            path: 'activeMission'
         }).execPopulate()
     
        
-        const eventInstance =  await EventInstance.findOne({_id: user.activeEvent})
+        const missionInstance =  await MissionInstance.findOne({_id: user.activeMission})
 
-        if(!eventInstance){
-            throw Error('There is no such event instance!')
+        if(!missionInstance){
+            throw Error('There is no such mission instance!')
         }
 
         const party = [user.party.leader, ...user.party.members]
 
-        let eventParty = [] 
-        await asyncForEach(eventInstance.party, async (memberObject) => {
+        let missionParty = [] 
+        await asyncForEach(missionInstance.party, async (memberObject) => {
             const memberId = memberObject.user
-            eventParty = [...eventParty, memberId]
+            missionParty = [...missionParty, memberId]
         })
 
-        if(!isEqual(eventParty, party)) {
+        if(!isEqual(missionParty, party)) {
             throw Error('Invalid party!')
         }
 
         const itemId = req.body.item
 
-        //To jest czy nie jest w eq usera? Bo tu jest test, czy jest, i jak jest to Error
-        //odp.: tak, zjebałem
         if(!user.bag.includes(itemId)){
             throw Error('No such item in eq!')
         }
@@ -209,9 +207,9 @@ router.patch('/sendItem/mission', auth, async (req, res) => {
         }
 
 
-        eventInstance.items = [...eventInstance.items, itemId]
+        missionInstance.items = [...missionInstance.items, itemId]
 
-        await eventInstance.save()
+        await missionInstance.save()
         
         console.log('item added to mission')
 
@@ -224,7 +222,7 @@ router.patch('/sendItem/mission', auth, async (req, res) => {
 
         console.log('item deleted from user eq - item still has owner prop')
 
-        res.status(200).send({user, eventInstance})
+        res.status(200).send({user, missionInstance})
     } catch (e) {
         console.log(e.message)
         res.status(400).send()

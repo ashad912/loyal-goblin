@@ -10,7 +10,7 @@ router.post('/createProduct', auth, async (req, res) =>{
     const product = new Product(req.body)
 
     try {
-        await product.save() //this method holds updated user!
+        await product.save()
         res.status(201).send(product)
     } catch (e) {
         res.status(400).send(e)
