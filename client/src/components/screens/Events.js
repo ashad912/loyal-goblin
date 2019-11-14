@@ -1,67 +1,30 @@
 import React, {useState}  from 'react'
 import { Redirect} from 'react-router-dom'
 import VisibilitySensor from 'react-visibility-sensor'
+import MissionDetails from './events/MissionDetails'
+import MissionListItem from './events/MissionListItem'
+import withMissionItemCommon from './events/hoc/withMissionItemCommon'
 import missionIconTemp from '../../assets/avatar/mission.png'
-import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
-import Grid from '@material-ui/core/Grid';
-import ListItem from '@material-ui/core/ListItem';
-
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import Avatar from '@material-ui/core/Avatar';
+import uuid from 'uuid/v1'
 import Typography from '@material-ui/core/Typography';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
-import Box from '@material-ui/core/Box';
 import styled from 'styled-components'
 import moment from 'moment'
-import playersIcon from '../../assets/avatar/players.png'
-import levelIcon from '../../assets/avatar/level.png'
 
 import Rally from './events/Rally'
 
+
 const pathToIcons = '../../assets/icons/items'
-const itemLabelHeight = 210 //REFACTOR: need to be changed to 'dimensionLabel'
+const itemLabelHeight = 468.4 //REFACTOR: need to be changed to 'dimensionLabel'
+
 
 
 const StyledList = styled(List)`
     width: 100%;
     margin: 0 0 1rem 0;
 `
-const StyledBox = styled(Box)`
-    margin: 0.5rem 0;
 
-`
 
-const Bullet = styled.span`
-    display: inline-block;
-    margin: 0 2px 0 0;
-    transform: scale(0.8);
-`
-const RallyPlaceholder = styled.div`
-    display: flex;
-    height: 100%;
-    width: auto;
-    justify-content: center;
-    align-items: center;
-    margin: 0 0 1rem 0;
-    
-`
-const TitleMissionContainer = styled.div`
-    width: auto;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-`
-
-const RequiredAttribute = styled.span`
-    margin: 0 0.5rem 0 0
-    color: ${props => props.attr ? 'green' : 'red' } 
-`
 const createTempList = () => {
     return [
         {
@@ -72,10 +35,10 @@ const createTempList = () => {
             maxPlayers: 4,
             level: 1,
             strength: 1,
-            dexternity: 2,
+            dexterity: 2,
             magic: 3,
             endurance: 4,
-            description: 'Super important mission. You need have things and attributes, as always loool xd',
+            description: 'Super important mission. You need have things and attributes, as always loool xd Musiałem napisać więcej opisu, żeby przetestować jak to będzie wyglądać jak się rozwinie. Bo może być tak, że opis będzie taki długi i epicki, hehe.',
             amulets: [
                 {
                     quantity: 2,
@@ -101,7 +64,215 @@ const createTempList = () => {
                         imgSrc: 'pearl-amulet.png'
                     }
                 },
-            ]
+            ],
+            awardsAreSecret: false,
+            awards: {
+                any: [
+                    {
+                        quantity: 2,
+                        itemModel: {
+                            _id: uuid(),
+                            type: "feet",
+                            class: 'any',
+                            name: "Wysokie buty",
+                            description: "Skórzane, wypastowane, lśniące",
+                            imgSrc: "high-boots.png",
+                            perks: [
+                                {
+                                _id: 1,
+                                perkType: "disc-category",
+                                target: 'food',
+                                time: [
+                                    {
+                                        hoursFlag: true,
+                                        lengthInHours: 24,
+                                        startDay: 4,
+                                        startHour: 18
+                                    },
+                                    { hoursFlag: true, lengthInHours: 5, startDay: 3, startHour: 7 }
+                                ],
+                                value: "-10%"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        quantity: 1,
+                        itemModel: {
+                            _id: uuid(),
+                            type: "legs",
+                            name: "Lniane spodnie",
+                            class: 'any',
+                            description: "Zwykłe spodnie, czego jeszcze chcesz?",
+                            imgSrc: "linen-trousers.png",
+                            perks: []
+                        }
+                    }
+                ],
+                warrior: [
+                    {
+                        quantity: 1,
+                        itemModel: {
+                            _id: uuid(),
+                            type: "weapon",
+                            name: "Wielki miecz",
+                            class: null,
+                            description: "Zdecydowanie masz kompleksy",
+                            imgSrc: "short-sword.png",
+                            class: "warrior",
+                            twoHanded: true,
+                            perks: [
+                                {
+                                    _id: 1,
+                                    perkType: "attr-strength",
+                                    target: undefined,
+                                    time: [
+                                        {
+                                            _id: 1,
+                                            hoursFlag: false,
+                                            lengthInHours: 5,
+                                            startDay: 4,
+                                            startHour: 19
+                                        },
+                                        {
+                                            _id: 1,
+                                            hoursFlag: true,
+                                            lengthInHours: 1,
+                                            startDay: 3,
+                                            startHour: 18
+                                        },
+                                    ],
+                                        value: "+3"
+                                },
+                                {
+                                    _id: 13213,
+                                    perkType: "attr-dexterity",
+                                    target: undefined,
+                                    time: [
+                                        {
+                                            _id: 1,
+                                            hoursFlag: false,
+                                            lengthInHours: 5,
+                                            startDay: 4,
+                                            startHour: 19
+                                        },
+                                        {
+                                            _id: 1,
+                                            hoursFlag: true,
+                                            lengthInHours: 1,
+                                            startDay: 3,
+                                            startHour: 18
+                                        },
+                                    ],
+                                        value: "-1"
+                                    }
+                            ]
+                        }
+                    }
+                ],
+                rogue: [
+                    {
+                        quantity: 1,
+                        itemModel: {
+                            _id: uuid(),
+                            type: "chest",
+                            name: "Skórzana kurta",
+                            class: null,
+                            description: "Lale za takimi szaleją",
+                            imgSrc: "leather-jerkin.png",
+                            perks: []
+                        }
+                    }
+                ],
+                mage: [
+                    {
+                        quantity: 2,
+                        itemModel: {
+                            _id: uuid(),
+                            type: "head",
+                            name: "Kaptur czarodzieja",
+                            class: 'mage',
+                            description: "Kiedyś nosił go czarodziej. Już nie nosi.",
+                            imgSrc: "wizard-coul.png",
+                            perks: [
+                                {
+                                perkType: "experience",
+                                target: undefined,
+                                time: [
+                                    {
+                                    _id: 1,
+                                    hoursFlag: false,
+                                    lengthInHours: 24,
+                                    startDay: 4,
+                                    startHour: 12
+                                    }
+                                ],
+                                value: "+10%"
+                                },
+                                {
+                                    perkType: "experience",
+                                    target: undefined,
+                                    time: [
+                                        {
+                                        _id: 1,
+                                        hoursFlag: false,
+                                        lengthInHours: 24,
+                                        startDay: 4,
+                                        startHour: 12
+                                        }
+                                    ],
+                                    value: "+10"
+                                    },
+                                {
+                                perkType: "experience",
+                                target: undefined,
+                                time: [
+                                    {
+                                    _id: 2,
+                                    hoursFlag: false,
+                                    lengthInHours: 24,
+                                    startDay: 4,
+                                    startHour: 12
+                                    }
+                                ],
+                                value: "+20%"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                cleric: [
+                    {
+                        quantity: 3,
+                        itemModel: {
+                            _id: uuid(),
+                            type: "ring",
+                            name: "Pierścień siły",
+                            class: null,
+                            description: "Całuj mój sygnet potęgi",
+                            imgSrc: "strength-ring.png",
+                            perks: [
+                                {
+                                    _id: 1,
+                                    perkType: "disc-product",
+                                    target: { name: "Wóda2" },
+                                    time: [
+                                    {
+                                        hoursFlag: true,
+                                        lengthInHours: 12,
+                                        startDay: 4,
+                                        startHour: 20,
+                                    },
+                                    { hoursFlag: true, lengthInHours: 5, startDay: 3, startHour: 7 }
+                                    ],
+                                    value: "-15%"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                
+            }
         },
         {
             id: 2,
@@ -111,7 +282,7 @@ const createTempList = () => {
             maxPlayers: 3,
             level: 3,
             strength: 5,
-            dexternity: 3,
+            dexterity: 3,
             magic: 2,
             endurance: 1,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
@@ -152,7 +323,15 @@ const createTempList = () => {
                         imgSrc: 'pearl-amulet.png'
                     }
                 },
-            ]
+            ],
+            awardsAreSecret: false,
+            awards: {
+                any: [],
+                warrior: [],
+                rogue: [],
+                mage: [],
+                cleric: [],
+            }
         },
         {
             id: 3,
@@ -162,7 +341,7 @@ const createTempList = () => {
             maxPlayers: 4,
             level: 1,
             strength: 1,
-            dexternity: 2,
+            dexterity: 2,
             magic: 3,
             endurance: 4,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
@@ -191,7 +370,15 @@ const createTempList = () => {
                         imgSrc: 'pearl-amulet.png'
                     }
                 },
-            ]
+            ],
+            awardsAreSecret: true,
+            awards: {
+                any: [],
+                warrior: [],
+                rogue: [],
+                mage: [],
+                cleric: [],
+            }
         },
         {
             id: 4,
@@ -201,7 +388,7 @@ const createTempList = () => {
             maxPlayers: 3,
             level: 3,
             strength: 5,
-            dexternity: 3,
+            dexterity: 3,
             magic: 2,
             endurance: 1,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
@@ -242,7 +429,15 @@ const createTempList = () => {
                         imgSrc: 'pearl-amulet.png'
                     }
                 },
-            ]
+            ],
+            awardsAreSecret: true,
+            awards: {
+                any: [],
+                warrior: [],
+                rogue: [],
+                mage: [],
+                cleric: [],
+            }
         },
         {
             id: 5,
@@ -252,7 +447,7 @@ const createTempList = () => {
             maxPlayers: 4,
             level: 1,
             strength: 1,
-            dexternity: 2,
+            dexterity: 2,
             magic: 3,
             endurance: 4,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
@@ -281,7 +476,15 @@ const createTempList = () => {
                         imgSrc: 'pearl-amulet.png'
                     }
                 },
-            ]
+            ],
+            awardsAreSecret: true,
+            awards: {
+                any: [],
+                warrior: [],
+                rogue: [],
+                mage: [],
+                cleric: [],
+            }
         },
         {
             id: 6,
@@ -291,7 +494,7 @@ const createTempList = () => {
             maxPlayers: 3,
             level: 3,
             strength: 5,
-            dexternity: 3,
+            dexterity: 3,
             magic: 2,
             endurance: 1,
             description: 'Super important mission. You need have things and attributes, as always loool xd',
@@ -332,7 +535,15 @@ const createTempList = () => {
                         imgSrc: 'pearl-amulet.png'
                     }
                 },
-            ]
+            ],
+            awardsAreSecret: true,
+            awards: {
+                any: [],
+                warrior: [],
+                rogue: [],
+                mage: [],
+                cleric: [],
+            }
         },
 
     ]
@@ -358,223 +569,37 @@ const createTempRally = () => {
 const Events = () => {
 
     const [missionId, setMissionId] = useState(null);
+    const [activeMissionDetails, setActiveMissionDetails] = useState(null)
     
+    const rally = createTempRally() //returned from backend
+    const missionListData = createTempList() //returned from backend
 
     const handleMissionClick = (id) => {
         console.log('clicked',  id) //shot to backend - verify party quantity and leader status (amulets verifed inside the mission), redirect to mission
         setMissionId(id)
     }
 
-    const isAppropriatePlayers = (minPlayers, maxPlayers) => {
-        return (currentPlayersInParty >= minPlayers && currentPlayersInParty <= maxPlayers)
-    } 
-
-
-    const players = (minPlayers, maxPlayers) => {
-        if(minPlayers === maxPlayers){
-            return minPlayers
-        }else {
-            return `${minPlayers}-${maxPlayers}`
-        }
+    const handleMissionDetailsOpen = (index) => {
+        setActiveMissionDetails(missionListData[index])
     }
 
-   
-    const userLevel = 2;
-    const currentPlayersInParty = 4; //returned from backend (read from user profile -> user.party.members.length + 1 [1 for leader] EXPERIMENTAL)
-    const leader = true //only leader can enter mission - from backend as above
-    
-    const rally = createTempRally() //returned from backend
-    const missionListData = createTempList() //returned from backend
-    //one shot to events can be separated (rally, missions) on back/front
-    
-    //party.map -> sum = sum + user.strength -> totalStrength
-    
-    const totalStrength = 4
-    const totalDexternity = 4
-    const totalMagic = 4
-    const totalEndurance = 4
+    const handleMissionDetailsClose = () => {
+        setActiveMissionDetails(null)
+    }
 
     //for better perfomance uses VisibilitySensor to load only visible (or partly visible) elements
     //to work need fixed listem item size (which is ok, i believe)
     const missionList = missionListData ? (
-        missionListData.map(mission => {
-            const appropriatePlayers = isAppropriatePlayers(mission.minPlayers, mission.maxPlayers)
-            const appropriateLevel = userLevel >= mission.level;
-            const appropriateStrength = totalStrength >= mission.strength
-            const appropriateDexternity = totalDexternity >= mission.dexternity
-            const appropriateMagic = totalMagic >= mission.magic
-            const appropriateEndurance = totalEndurance >= mission.endurance
-            const appropriateAttributes = appropriateStrength && appropriateDexternity && appropriateMagic && appropriateEndurance
-
-            const isMissionActive = appropriatePlayers && appropriateLevel && appropriateAttributes
+        missionListData.map((mission, index) => {
+            const MissionListItemHoc = withMissionItemCommon(MissionListItem, mission)
             return(
                 <VisibilitySensor partialVisibility key={mission.id}>
                 {({isVisible}) =>
                     <div>{isVisible ? ( /*inVisible defined only inside div witch is fucking kurwa crazy */
-                        <StyledBox border={1} borderColor="primary.main">
-                        {/* <ListItem style={{height: itemLabelHeight, paddingRight: '2rem'}} alignItems="flex-start"> 
-                            <ListItemAvatar>
-                                <Avatar alt="avatar" src={mission.avatarSrc.avatarTemp} />
-                            </ListItemAvatar>
-                            <ListItemText
-                                primary={
-                                    <TitleMissionContainer>
-                                    <Typography
-                                        component="span"
-                                        variant="body1"
-                                        color="textPrimary"
-                                    >
-                                        {mission.title}
-                                    </Typography>
-                                    <Typography
-                                        component="span"
-                                        style={{display: 'inline-flex'}}
-                                        variant="body2"
-                                        color={appropriateLevel ? 'textPrimary' : 'error'}
-                                    >
-                                        <img style= {{height: 15, width: 15}} src={levelIcon}/>
-                                        {`: ${mission.level}`}
-                                    </Typography>
-                                    <Typography
-                                        component="span"
-                                        style={{display: 'inline-flex'}}
-                                        variant="body2"
-                                        color={appropriatePlayers ? 'textPrimary' : 'error'}
-                                    >
-                                        <img style= {{height: 20, width: 20}} src={playersIcon}/>
-                                        {`: ${players(mission.minPlayers, mission.maxPlayers)}`}
-                                    </Typography>
-                                    </TitleMissionContainer>
-                                }
-                                secondary={
-                                    <React.Fragment>
-                                    <Typography
-                                        component="span"
-                                        variant="body2"
-                                        style={{display: 'block'}}
-                                        color="textPrimary"
-                                    >
-                                        {mission.description}
-                                    </Typography>
-                                    <br />
-                                    
-                                    
-                                    {`A: `}
-                                    {mission.amulets ? (
-                                        mission.amulets.map(amulet => {
-                                            //TODO: Fix problem with webpack.
-                                            //console.log(`../../assets/icons/${amulet.itemModel.imgSrc}`) //this works
-                                            //console.log(`${pathToIcons}${amulet.itemModel.imgSrc}`) // does not work
-                                            //console.log(pathToIcons + amulet.itemModel.imgSrc) //does not work
-
-                                            
-                                            
-                                            return(
-                                                <React.Fragment key={amulet.itemModel.id}>
-                                                    {`${amulet.quantity}x`}
-                                                    <img style={{height: 20, width: 20}} src={require(`../../assets/icons/items/${amulet.itemModel.imgSrc}`)} alt='icon'/>
-                                                    {` `}
-                                                </React.Fragment>
-                                                )
-                                            })
-                                        ):(null)
-                                    }
-                                    <br />
-                                    <RequiredAttribute attr={appropriateStrength} >{`S: ${totalStrength}/${mission.strength}`}</RequiredAttribute>
-                                    <RequiredAttribute attr={appropriateDexternity} >{`Z: ${totalDexternity}/${mission.dexternity}`}</RequiredAttribute>
-                                    <br />
-                                    <RequiredAttribute attr={appropriateMagic} >{`M: ${totalMagic}/${mission.magic}`}</RequiredAttribute> 
-                                    <RequiredAttribute attr={appropriateEndurance} >{`W: ${totalEndurance}/${mission.endurance}`}</RequiredAttribute>
-                                    </React.Fragment>
-                                }  
-                            />
-
-                         
-                            
-                            <ListItemSecondaryAction style={{transform: 'translateY(50%)'}}>
-                                <Button size="small" onClick={() => handleMissionClick(mission.id)} disabled={!isMissionActive || !leader}>{leader ? ('Go in!') : ('You are not the leader!')}</Button>
-                            </ListItemSecondaryAction>
-                            
-                            
-                        </ListItem> */}
-                        <Grid
-                            container
-                            direction="column"
-                        >
-                            <Grid
-                                container
-                                direction="row"
-                            >
-                                <Grid item xs={2}>
-                                    <Grid
-                                        container
-                                        direction="column"
-                                    >
-                                        <Grid item>
-                                            <Avatar alt="avatar" src={mission.avatarSrc.avatarTemp} />
-                                        </Grid>
-                                    </Grid>
-                                </Grid>    
-                                <Grid item xs={10}>
-                                    <Grid
-                                        container
-                                        direction="column"
-                                    >
-                                        <Grid item>
-                                            <Typography
-                                                component="span"
-                                                variant="body1"
-                                                color="textPrimary"
-                                            >
-                                                {mission.title}
-                                            </Typography>
-                                        </Grid>
-                                        <Grid item>
-                                            <Typography
-                                                component="span"
-                                                variant="body2"
-                                                style={{display: 'block'}}
-                                                color="textPrimary"
-                                            >
-                                                {mission.description}
-                                            </Typography>
-                                        </Grid>
-                                    </Grid>   
-                                </Grid> 
-                            </Grid>
-                            <Grid
-                                container
-                                direction="row"
-                            >
-                                <Grid item xs={2}>
-
-                                </Grid>
-                                <Grid item xs={5}>
-                                    <Button size="small">Szczegóły</Button>
-                                </Grid>
-                                <Grid item xs={5}>
-                                    <Button size="small" onClick={() => handleMissionClick(mission.id)} disabled={!isMissionActive || !leader}>{leader ? ('Go in!') : ('You are not the leader!')}</Button>
-                                </Grid>
-                            </Grid>
-                            <Grid
-                                container
-                                direction="row"
-                            >
-                                
-                                <Grid item xs={4}>
-                                    <Typography
-                                        component="span"
-                                        variant="body1"
-                                        color="textPrimary"
-                                    >
-                                        Wymagania
-                                    </Typography>
-                                </Grid> 
-                            </Grid>
-                        </Grid>
-                        
-                        </StyledBox>
-                           
+                        <MissionListItemHoc
+                            index={index}
+                            handleMissionDetailsOpen={handleMissionDetailsOpen}
+                        />   
                     ) : (<div style={{height: itemLabelHeight}}></div>)   /*empty div with the same height - IMPORTANT */
                     }
                     </div>
@@ -584,7 +609,8 @@ const Events = () => {
         })
     ) : ( null )
 
-    console.log(rally)
+
+    const MissionDetailsHoc = activeMissionDetails ? (withMissionItemCommon(MissionDetails, activeMissionDetails)) : (null)
     return (
         
         <React.Fragment>
@@ -595,19 +621,33 @@ const Events = () => {
             }} /> : null}
 
             <Typography style={{marginBottom: '1rem'}} variant="h6" >
-                Rally
+                Najbliższy rajd
             </Typography>
 
             <Rally rally={rally} />
 
             <Typography variant="h6">
-                Missions
+                Dostępne misje
             </Typography>
 
             <StyledList> 
                 {missionList}
             </StyledList>
-        
+            
+                
+            {activeMissionDetails && 
+                <MissionDetailsHoc
+                    open={activeMissionDetails}
+                    handleClose={handleMissionDetailsClose}
+                    handleMissionClick={handleMissionClick}
+                />
+            }   
+            
+                    
+                
+            
+            
+
         </React.Fragment>
       
     )

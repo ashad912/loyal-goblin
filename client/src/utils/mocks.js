@@ -1463,21 +1463,21 @@ export const mockItemModels = [
             description: "Całuj mój sygnet potęgi",
             imgSrc: "strength-ring.png",
             perks: [
-            {
-                _id: 1,
-                perkType: "disc-product",
-                target: uuid(),
-                time: [
                 {
-                    hoursFlag: true,
-                    lengthInHours: 12,
-                    startDay: 4,
-                    startHour: 20,
-                },
-                { hoursFlag: true, lengthInHours: 5, startDay: 3, startHour: 7 }
-                ],
-                value: "-15%"
-            }
+                    _id: 1,
+                    perkType: "disc-product",
+                    target: uuid(),
+                    time: [
+                    {
+                        hoursFlag: true,
+                        lengthInHours: 12,
+                        startDay: 4,
+                        startHour: 20,
+                    },
+                    { hoursFlag: true, lengthInHours: 5, startDay: 3, startHour: 7 }
+                    ],
+                    value: "-15%"
+                }
             ]
         
     },

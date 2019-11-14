@@ -1112,3 +1112,349 @@ export default NewPerkModal;
                             Dołącz
                         </Link>
                     </Typography> */}
+
+
+
+
+
+
+                                            {/* <ListItem style={{height: itemLabelHeight, paddingRight: '2rem'}} alignItems="flex-start"> 
+                            <ListItemAvatar>
+                                <Avatar alt="avatar" src={mission.avatarSrc.avatarTemp} />
+                            </ListItemAvatar>
+                            <ListItemText
+                                primary={
+                                    <TitleMissionContainer>
+                                    <Typography
+                                        component="span"
+                                        variant="body1"
+                                        color="textPrimary"
+                                    >
+                                        {mission.title}
+                                    </Typography>
+                                    <Typography
+                                        component="span"
+                                        style={{display: 'inline-flex'}}
+                                        variant="body2"
+                                        color={appropriateLevel ? 'textPrimary' : 'error'}
+                                    >
+                                        <img style= {{height: 15, width: 15}} src={levelIcon}/>
+                                        {`: ${mission.level}`}
+                                    </Typography>
+                                    <Typography
+                                        component="span"
+                                        style={{display: 'inline-flex'}}
+                                        variant="body2"
+                                        color={appropriatePlayers ? 'textPrimary' : 'error'}
+                                    >
+                                        <img style= {{height: 20, width: 20}} src={playersIcon}/>
+                                        {`: ${players(mission.minPlayers, mission.maxPlayers)}`}
+                                    </Typography>
+                                    </TitleMissionContainer>
+                                }
+                                secondary={
+                                    <React.Fragment>
+                                    <Typography
+                                        component="span"
+                                        variant="body2"
+                                        style={{display: 'block'}}
+                                        color="textPrimary"
+                                    >
+                                        {mission.description}
+                                    </Typography>
+                                    <br />
+                                    
+                                    
+                                    {`A: `}
+                                    {mission.amulets ? (
+                                        mission.amulets.map(amulet => {
+                                            //TODO: Fix problem with webpack.
+                                            //console.log(`../../assets/icons/${amulet.itemModel.imgSrc}`) //this works
+                                            //console.log(`${pathToIcons}${amulet.itemModel.imgSrc}`) // does not work
+                                            //console.log(pathToIcons + amulet.itemModel.imgSrc) //does not work
+
+                                            
+                                            
+                                            return(
+                                                <React.Fragment key={amulet.itemModel.id}>
+                                                    {`${amulet.quantity}x`}
+                                                    <img style={{height: 20, width: 20}} src={require(`../../assets/icons/items/${amulet.itemModel.imgSrc}`)} alt='icon'/>
+                                                    {` `}
+                                                </React.Fragment>
+                                                )
+                                            })
+                                        ):(null)
+                                    }
+                                    <br />
+                                    <RequiredAttribute attr={appropriateStrength} >{`S: ${totalStrength}/${mission.strength}`}</RequiredAttribute>
+                                    <RequiredAttribute attr={appropriateDexternity} >{`Z: ${totalDexternity}/${mission.dexternity}`}</RequiredAttribute>
+                                    <br />
+                                    <RequiredAttribute attr={appropriateMagic} >{`M: ${totalMagic}/${mission.magic}`}</RequiredAttribute> 
+                                    <RequiredAttribute attr={appropriateEndurance} >{`W: ${totalEndurance}/${mission.endurance}`}</RequiredAttribute>
+                                    </React.Fragment>
+                                }  
+                            />
+
+                         
+                            
+                            <ListItemSecondaryAction style={{transform: 'translateY(50%)'}}>
+                                <Button size="small" onClick={() => handleMissionClick(mission.id)} disabled={!isMissionActive || !leader}>{leader ? ('Go in!') : ('You are not the leader!')}</Button>
+                            </ListItemSecondaryAction>
+                            
+                            
+                        </ListItem> */}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        <StyledBox border={1} borderColor="primary.main">
+
+                        <Grid
+                            container
+                            direction="column"
+                            style={{padding: '1rem', textAlign: 'left'}}
+                        >
+                            <Grid
+                                container
+                                direction="row"
+                            >
+                                   
+                                <Grid item xs={9}>
+                                    <Grid
+                                        container
+                                        direction="column"
+                                        
+                                    >
+                                        <Grid item style={{marginBottom: '0.5rem'}}>
+                                            <Typography
+                                                component="span"
+                                                variant="h6"
+                                                color="textPrimary"
+                                            >
+                                                {mission.title}
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item>
+                                            <ShortDescription
+                                                component="span"
+                                                variant="body2"
+                                                color="textPrimary"
+                                            >
+                                                {mission.description}
+                                            </ShortDescription>
+                                        </Grid>
+                                    </Grid>   
+                                </Grid> 
+                                <Grid item xs={3} >
+                                    <Grid
+                                        container
+                                        direction="column"
+                                    >
+                                        <Grid item style={{display: 'flex', justifyContent: 'flex-end'}}>
+                                            <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={mission.avatarSrc.avatarTemp} />
+                                        </Grid>
+                                    </Grid>
+                                </Grid> 
+                            </Grid>
+                            <Grid
+                                container
+                                direction="row"
+                                display="flex"
+                                style={{marginTop: '0.5rem'}}
+                            >
+                                <Grid item xs={0}>
+
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <Button size="small" color="primary" style={{paddingLeft: '0'}} onClick={() => handleMissionDetailsOpen(index)}>Szczegóły</Button>
+                                </Grid>
+                                <Grid item xs={5} style={{display: 'flex', justifyContent: 'flex-end'}}>
+                                    <Button size="small" color="primary" style={{textAlign: 'right', paddingRight: '0'}} onClick={() => handleMissionClick(mission.id)} disabled={!isMissionActive || !leader}>Wyrusz!</Button>
+                                </Grid>
+                            </Grid>
+                            <Divider style={{margin: '0.5rem 0'}}/>
+                            <Grid
+                                container
+                                direction="column"
+                            >
+                                <Grid
+                                    container
+                                    direction="row"
+                                >
+                                    
+                                    <Grid item>
+                                        <Typography
+                                            component="span"
+                                            variant="body1"
+                                            color="textPrimary"
+                                            style={{fontWeight: 'bold'}}
+                                        >
+                                            Wymagania
+                                        </Typography>
+                                    </Grid> 
+                                </Grid>
+                                <Grid
+                                    container
+                                    direction="row"
+                                    style={{margin: '0.1rem 0'}}
+                                >
+                                    
+                                    <Grid item xs={3}>
+                                    
+                                        <Typography
+                                            component="span"
+                                            style={{display: 'inline-flex'}}
+                                            variant="body2"
+                                            color={appropriateLevel ? 'textPrimary' : 'error'}
+                                        >
+                                            {/* <img style= {{height: 20, width: 20}} src={levelIcon}/> */}
+                                            {`P: ${mission.level}`}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={3}>
+                                        <Typography
+                                            component="span"
+                                            style={{display: 'inline-flex'}}
+                                            variant="body2"
+                                            color={appropriatePlayers ? 'textPrimary' : 'error'}
+                                        >
+                                            {/* <img style= {{height: 20, width: 20}} src={playersIcon}/> */}
+                                            {`G: ${players(mission.minPlayers, mission.maxPlayers)}`}
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                                <Grid
+                                    container
+                                    direction="row"
+                                    style={{margin: '0.1rem 0'}}
+                                >
+                                    <Grid item xs={3}>
+                                        <RequiredAttribute variant="body2" attr={appropriateStrength} >{`S: ${totalStrength}/${mission.strength}`}</RequiredAttribute>
+                                    </Grid>
+                                    <Grid item xs={3}>
+                                        <RequiredAttribute variant="body2" attr={appropriateDexterity} >{`Z: ${totalDexterity}/${mission.dexterity}`}</RequiredAttribute>
+                                    </Grid>
+                                    <Grid item xs={3}>
+                                        <RequiredAttribute variant="body2" attr={appropriateMagic} >{`M: ${totalMagic}/${mission.magic}`}</RequiredAttribute> 
+                                    </Grid>
+                                    <Grid item xs={3}>
+                                        <RequiredAttribute variant="body2" attr={appropriateEndurance} >{`W: ${totalEndurance}/${mission.endurance}`}</RequiredAttribute>
+                                    </Grid>
+                                </Grid>
+                                <Grid
+                                    container
+                                    direction="row"
+                                    style={{margin: '0.2rem 0'}}
+                                >
+                                    <Grid item>
+                                        <Typography 
+                                            variant='body2'
+                                            component="span"
+                                            style={{display: 'inline-flex', margin: '0 0.3rem 0 0'}}
+                                        >
+                                        {`A: `}  
+                                        </Typography>
+                                        
+                                        {mission.amulets ? (
+                                            mission.amulets.map(amulet => {
+
+                                                return(
+                                                    <Typography 
+                                                        variant='body2'
+                                                        component="span"
+                                                        style={{display: 'inline-flex', margin: '0 0.2rem 0 0'}}
+                                                        key={amulet.itemModel.id}
+                                                    >
+                                                        {`${amulet.quantity}x`}
+                                                        <img style={{height: 20, width: 20, marginLeft: '0.1rem'}} src={require(`../../assets/icons/items/${amulet.itemModel.imgSrc}`)} alt='icon'/>
+                                                        {` `}
+                                                    </Typography>
+                                                    )
+                                                })
+                                            ):(null)
+                                        }
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <Divider style={{margin: '0.5rem 0'}}/>
+                            <Grid 
+                                container
+                                direction='column'
+                            >
+                                <Grid
+                                    container
+                                    direction="row"
+                                >
+                                        
+                                    <Grid item>
+                                        <Typography
+                                            component="span"
+                                            variant="body1"
+                                            color="textPrimary"
+                                            style={{fontWeight: 'bold'}}
+                                        >
+                                            Nagrody
+                                        </Typography>
+                                    </Grid> 
+                                </Grid>
+                                {/*mission.hasOwnProperty('awards') &&*/ Object.keys(mission.awards).map((className)=> {
+                                    console.log(className)
+                                    return(
+                                        <Grid
+                                            container
+                                            direction="row"
+                                            style={{marginBottom: '0.2rem'}}
+                                        >
+                                            <Grid item xs={4}>
+                                            <Typography 
+                                                variant='body2'
+                                                component="span"
+                                                style={{display: 'inline-flex', margin: '0 0.3rem 0 0'}}
+                                            >
+                                                {`${classLabelsAny[className]}: `} 
+                                            </Typography>
+                                            </Grid>
+                                            <Grid item xs={8} style={{display: 'flex', alignItems: 'center'}}>
+                                                {mission.awards[className].length && !mission.awardsAreSecret ? (
+                                                    <React.Fragment>
+                                                        {mission.awards[className].map((award)=>{
+                                                            let copies = []
+                                                            for(let i=0; i<award.quantity; i++){
+                                                                const copy = <img style={{height: 20, width: 20, marginLeft: '0.1rem'}} src={require(`../../assets/icons/items/${award.itemModel.imgSrc}`)} alt='icon'/>
+                                                                copies = [...copies, copy]
+                                                            }
+                                                            return copies
+                                                        })}
+                                                    </React.Fragment>
+                                                ) : (
+                                                    <Typography 
+                                                        variant='body2'
+                                                        component="span"
+                                                        style={{display: 'inline-flex', margin: '0 0.3rem 0 0'}}
+                                                    >
+                                                        ?
+                                                    </Typography>
+                                                )
+                                                }
+                                            </Grid>
+                                        </Grid>
+                                    )
+                                        
+                                    })
+                                }
+                                
+                            </Grid>
+                        </Grid>
+                        </StyledBox>

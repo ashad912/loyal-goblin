@@ -80,7 +80,7 @@ export default function FullWidthTabs(props) {
 
   const classes = useStyles();
   const theme = useTheme();
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState(1);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -116,10 +116,10 @@ export default function FullWidthTabs(props) {
               aria-label="full width tabs example"
               variant="fullWidth"
             >
-              <Tab label="Profile" {...a11yProps(0)} />
-              <Tab label="Events" {...a11yProps(1)} />
-              <Tab label="Loyal" {...a11yProps(2)} />
-              <Tab label="Booking" {...a11yProps(3)} />
+              <Tab label="Postać" {...a11yProps(0)} />
+              <Tab label="Wydarzenia" {...a11yProps(1)} />
+              <Tab label="Statki" {...a11yProps(2)} />
+              <Tab label="Rezerwuj" {...a11yProps(3)} />
             </Tabs>
           </AppBar>
           <SwipeableViews

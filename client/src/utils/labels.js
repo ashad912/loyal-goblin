@@ -19,6 +19,14 @@ export const classLabels = {
     cleric: 'Kleryk'
 }
 
+export const classLabelsAny = {
+  any: 'Ogólne',
+  warrior: 'Wojownik',
+  mage: 'Mag',
+  rogue: 'Łotrzyk',
+  cleric: 'Kleryk'
+}
+
 
 
 

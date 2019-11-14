@@ -121,7 +121,7 @@ const createTempMission = () => {
     }
 }
 
-export default class Mission extends React.Component {
+export default class MissionInstance extends React.Component {
     
 
     state = {

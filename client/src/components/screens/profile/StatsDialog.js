@@ -140,7 +140,7 @@ const StatsDialog = props => {
         </DialogContent>
         <DialogActions>
             <Button onClick={props.handleClose} variant="contained" color="primary">
-            Wróć
+                Wróć
             </Button>
         </DialogActions>
         </Dialog>

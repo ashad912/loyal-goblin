@@ -10,7 +10,7 @@ import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import Admin from "./components/admin/Admin";
-import Mission from "./components/screens/events/Mission";
+import MissionInstance from "./components/screens/events/MissionInstance";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -56,7 +56,7 @@ class App extends React.Component {
                 <Switch>
                   <Route exact path="/" component={withAuth(Root)} />
                   <Route exact path="/shop" component={withAuth(Shop)} />
-                  <Route exact path="/mission" component={withAuth(Mission)} />
+                  <Route exact path="/mission" component={withAuth(MissionInstance)} />
                   <Route exact path="/signin" component={withNoAuth(SignIn)} />
                   <Route exact path="/signup" component={withNoAuth(SignUp)} />
                   <Route exact path="/lost-password" component={withNoAuth(ForgotPassword)} />
