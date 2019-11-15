@@ -235,4 +235,4 @@ router.get('/sendItem/user', auth, async (req, res) => {
 
 })
 
-export const eventRouter = router
+export const missionRouter = router

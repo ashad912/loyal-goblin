@@ -99,7 +99,21 @@ const StatsDialog = props => {
                     </Grid>
                 </Grid>
             </Background>
-            <List style={{padding: '0' }} alignItems="flex-start">
+            </DialogContent>
+            <DialogContent style={{padding: '0'}}>
+            <List style={{padding: '0', maxHeight: '172px' }} alignItems="flex-start">
+                <ListItem style={{paddingTop: '0.75rem', paddingBottom: '0.75rem'}}>
+                    <Grid container style={{alignItems: 'center'}}>
+                        <Grid item xs={11}>
+                            <Typography>Ukończone rajdy</Typography>
+                        </Grid>
+                        <Grid item xs={1}>
+                            <Typography style={{fontWeight: 'bold'}}>{props.profile.statistics.rallyCounter}</Typography>
+                        </Grid>
+                    
+                    </Grid>
+                </ListItem>
+                <Divider/>
                 <ListItem style={{paddingTop: '0.75rem', paddingBottom: '0.75rem'}}>
                     <Grid container style={{alignItems: 'center'}}>
                         <Grid item xs={11}>

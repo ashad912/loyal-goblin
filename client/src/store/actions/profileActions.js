@@ -18,7 +18,7 @@ export const updateAvatar = (avatar) => {
                 }
                 
                 const profile = res.data
-                profile.avatar = 'data:image/png;base64,' + profile.avatar
+                profile.avatar = profile.avatar ? ('data:image/png;base64,' + profile.avatar) : (undefined)
                 const uid = profile._id
                 delete profile._id  
                 dispatch( {type: "AUTH_SUCCESS", profile, uid}) //DISPATCH IS SYNCHRONOUS!!!

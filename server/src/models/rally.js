@@ -25,11 +25,15 @@ export const RallySchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    users: [{ //users active in rally
-        type: mongoose.Schema.Types.ObjectId, //id in mongo - user id
-        ref: 'user',
-        unique: true,
+    users: [{
+        experience: Number,
+        profile: { //users active in rally
+            type: mongoose.Schema.Types.ObjectId, //id in mongo - user id
+            ref: 'user',
+            unique: true,
+        }
     }],
+    awardsAreSecret: Boolean,
     awardsLevels: [{
         awardsLevel: {
             level: {

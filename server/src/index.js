@@ -1,6 +1,7 @@
 import express from 'express'
 import {userRouter} from './routes/user'
-import {eventRouter} from './routes/event'
+import {missionRouter} from './routes/mission'
+import {rallyRouter} from './routes/rally'
 import {itemRouter} from './routes/item'
 import {productRouter} from './routes/product'
 import bodyParser from 'body-parser'
@@ -28,7 +29,8 @@ app.use(cookieParser())
 
 
 app.use('/user', userRouter)
-app.use('/event', eventRouter)
+app.use('/mission', missionRouter)
+app.use('/rally', rallyRouter)
 app.use('/item', itemRouter)
 app.use('/product', productRouter)
 

@@ -24,18 +24,21 @@ const Background = styled.div`
 `
 
 
-const RallyAwards = (props) => {
+const RallyDetails = (props) => {
 
     const rally = props.rally
 
 
     const [openList, setOpenList] = React.useState("");
+    const [levelList, setLevelList] = React.useState(null);
 
-    const handleOpenList = (event) => {
-            if (event.currentTarget.dataset.value === openList) {
+    const handleOpenList = (event, level) => {
+            if (event.currentTarget.dataset.value === openList && levelList === level) {
                 setOpenList("");
+                setLevelList(null)
               } else {
                 setOpenList(event.currentTarget.dataset.value);
+                setLevelList(level)
               }
       };
 
@@ -131,7 +134,7 @@ const RallyAwards = (props) => {
                     </Grid> 
                 </Grid>
                 <Grid item style={{marginTop: '0.5rem'}}>
-                {!rally.awardsAreSecret && rally.awardsLevels.sort((a, b)=> (a.level > b.level) ? 1 : -1).map((awardsLevel) => {
+                {!rally.awardsAreSecret && rally.awardsLevels.sort((a, b)=> (a.level > b.level) ? 1 : -1).map((awardsLevel, index) => {
                     console.log(awardsLevel)
                     return(
                         <Grid
@@ -141,19 +144,19 @@ const RallyAwards = (props) => {
 
                         >
                             <ListItem style={{paddingLeft: '0' , paddingRight: '0'}} >
-                                <Typography variant="h6">Próg doświadczenia {awardsLevel.level}</Typography>
+                                <Typography variant="h6">Jeśli zdobędziesz {awardsLevel.level} PD</Typography>
                             </ListItem>
                             {Object.keys(awardsLevel.awards).map((className) => {
                                 return(
                                     <Grid item>
                                         {awardsLevel.awards[className].length > 0 && (
                                             <React.Fragment>
-                                                <ListItem style={{paddingRight: '0'}} onClick={handleOpenList} data-value={className}>
+                                                <ListItem style={{paddingRight: '0'}} onClick={(event) => handleOpenList(event, awardsLevel.level)} data-value={className}>
                                                     <ListItemText primary={classLabelsAny[className]} />
-                                                    {openList === className ? <ExpandLess /> : <ExpandMore />}
+                                                    {openList === className && levelList === awardsLevel.level ? <ExpandLess /> : <ExpandMore />}
                                                 </ListItem>
                                                 <Collapse
-                                                    in={openList === className}
+                                                    in={openList === className && levelList === awardsLevel.level}
                                                     timeout="auto"
                                                     unmountOnExit
                                                 >
@@ -177,10 +180,16 @@ const RallyAwards = (props) => {
                                                 </React.Fragment>
                                         )}
                                         
+                                    
+                                    
                                     </Grid>
                                 )
                             })}
-                            
+                            {index !== 0 && 
+                                <ListItem style={{paddingRight: '0'}}>
+                                    <ListItemText primary={'oraz łupy z niższych progów.'} style={{fontStyle: 'italic'}}/>
+                                </ListItem>
+                            }
                         </Grid>
                     )
                         
@@ -196,7 +205,7 @@ const RallyAwards = (props) => {
 
         
         <DialogActions style={{justifyContent: 'flex-end'}}>
-            <Button onClick={props.handleClose} variant="contained" color="primary">
+            <Button onClick={props.handleClose}  color="primary">
                 Wróć
             </Button>
         </DialogActions>
@@ -204,4 +213,4 @@ const RallyAwards = (props) => {
     )
 }
 
-export default RallyAwards
+export default RallyDetails

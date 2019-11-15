@@ -43,19 +43,37 @@ class Rally extends Component {
     }
 
     state = {
-        openAwards: ''
+        rallyExpired: false,
     }
 
     componentWillUnmount(){
-        if(this.state.seconds !== 0){
+        if(this.state.fullTimeInSeconds !== 0){
             clearInterval(this.timer);
         }
     }
 
+    initTimer = () => {
+       if(this.props.rally){
+            if(this.props.rally.activationDate.diff(moment(), 'seconds') > 0){
+                const fullTime = this.props.rally.activationDate.diff(moment(), 'seconds')
+                this.updateCounter(fullTime)
+                this.timer = setInterval(this.countDown, 1000);
+            }else if(this.props.rally.expiryDate.diff(moment(), 'seconds') > 0){
+                const fullTime = this.props.rally.expiryDate.diff(moment(), 'seconds')
+                this.updateCounter(fullTime)
+                this.timer = setInterval(this.countDown, 1000);
+            }else{
+                this.setState({
+                    rallyExpired: true
+                }, () => {
+                    this.props.handleRallyDetailsClose()
+                })
+            }
+       } 
+    }
+
     componentDidMount = () => {
-        this.timer = setInterval(this.countDown, 1000);
-        const fullTime = this.props.rally.activationDate.diff(moment(), 'seconds')
-        this.updateCounter(fullTime)
+        this.initTimer()
     }
 
 
@@ -79,42 +97,24 @@ class Rally extends Component {
         }, () => {
             if (fullTime == 0) { 
                 clearInterval(this.timer);
-                // this.endAnimation()
-              }
+                this.initTimer()
+            }
         })
     }
-
-    handleRallyClick = () => {
-        console.log('clicked rally')
-        console.log(this.props.rally.activationDate.diff(moment(), 'seconds'))
-    }
-
-
-    handleOpenAwards = event => {
-        if (event.currentTarget.dataset.value === this.state.openAwards) {
-          this.setState({
-              openAwards: ''
-          })
-        } else {
-          this.setState({
-              openAwards: event.currentTarget.dataset.value
-          })
-        }
-    };
 
 
     render() { 
         const height = 100
         const width = 100
         const rally = this.props.rally
-        const rallyIsActive = this.props.rally.activationDate.diff(moment()) <= 0
+        const rallyIsActive = this.props.rally.activationDate.diff(moment(), 's') <= 0
         return ( 
             <React.Fragment>
-                {rally ? (
+                {rally && !this.state.rallyExpired ? (
                     <StyledCard>
-                        <CardContent>
-                            <Typography variant="h6" gutterBottom>
-                                {rallyIsActive ? ('Trwa wielki rajd!') :('Nadchodzi wielki rajd!')}
+                        <CardContent style={{paddingBottom: '0.5rem'}}>
+                            <Typography variant="body1" color="textSecondary" gutterBottom>
+                                {rallyIsActive ? ('Trwa wielki rajd!') : ('Nadchodzi wielki rajd!')}
                             </Typography>
                             <ActiveRallyTypo variant="h5" active={rallyIsActive}>
                                 
@@ -134,24 +134,19 @@ class Rally extends Component {
                             >
                                 <Avatar style={{height: height, width: width, }} alt="avatar" src={rally.avatarSrc} />
                             </Badge>
-                            <Typography variant="h5" style={{marginBottom: '0.5rem'}}>
-                            
+                            <Typography variant="h5">
                                 {rally.title}
-                            
                             </Typography>
-                            
-                            <Typography variant="body2" style={{fontSize: '12px'}} component="p">
-                                {rally.description}
-                            </Typography>
+
                         </CardContent>
                         <CardActions style={{justifyContent: 'flex-end'}}>
-                            <Button onClick={this.props.handleRallyAwardsOpen} color="primary" size="small">Sprawdź nagrody</Button>
+                            <Button onClick={this.props.handleRallyDetailsOpen} color="primary" fullWidth>Szczegóły i nagrody</Button>
                         </CardActions>
                         
                     </StyledCard>
                     
                     
-                ) : (<RallyPlaceholder><Typography variant="h5">Rajd nie został zapowiedziany!</Typography></RallyPlaceholder>)}
+                ) : (<RallyPlaceholder><Typography variant="h6">Rajd nie został zapowiedziany!</Typography></RallyPlaceholder>)}
             </React.Fragment>
         );
     }

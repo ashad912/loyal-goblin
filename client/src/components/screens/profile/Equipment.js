@@ -59,14 +59,43 @@ const Equipment = props => {
     handleDeleteDialogClose();
   };
 
+  const convertToStack = (itemsToConvert) => {
+      let itemModels = []
+      itemsToConvert.forEach((itemToConvert) => {
+      //NOTE: filter returns new array - if for itemModels gets zero length, it is new name
+      if(itemModels.filter(itemModel => itemModel.name === itemToConvert.itemModel.name).length === 0){
+          itemModels = [...itemModels, itemToConvert.itemModel]
+      }
+      //console.log(itemModels)
+      })
+
+      let itemObjects = []
+      itemModels.forEach((itemModel) => {
+      let instanceItemsIds = []
+      itemsToConvert.forEach((itemToConvert) => {
+          if(itemModel.name === itemToConvert.itemModel.name){
+          instanceItemsIds = [...instanceItemsIds, itemToConvert._id]
+          }
+      })
+      const itemObject = {itemModel: itemModel, instancesIds: instanceItemsIds}
+      itemObjects = [...itemObjects, itemObject]
+      })
+      return itemObjects
+  }
+
   const items = props.items;
 
   return (
     <Paper className={classes.root}>
       <List component="nav" className={classes.root}>
         {Object.keys(items).map(itemCategory => {
-          //console.log(itemCategory)
-          return (itemCategory !== 'amulet' && itemCategory !== 'scroll') && (
+          const chest = itemCategory === 'amulet' || itemCategory === 'scroll'
+          let stackedItems
+          if(chest){
+              stackedItems = convertToStack(items[itemCategory])
+              //console.log(stackedItems)
+          }
+          return (!chest) ? (
             <React.Fragment key={itemCategory}>
               <ListItem onClick={handleOpenList} data-value={itemCategory}>
                 <ListItemText primary={itemCategories[itemCategory]} />
@@ -97,7 +126,33 @@ const Equipment = props => {
                 </List>
               </Collapse>
             </React.Fragment>
-        )})}
+        ) : (
+                <React.Fragment key={itemCategory}>
+                    <ListItem onClick={handleOpenList} data-value={itemCategory}>
+                        <ListItemText primary={itemCategories[itemCategory]} />
+                        {openList === itemCategory ? <ExpandLess /> : <ExpandMore />}
+                    </ListItem>
+                    <Collapse
+                        in={openList === itemCategory}
+                        timeout="auto"
+                        unmountOnExit
+                    >
+                    <List component="div" disablePadding>
+                        {stackedItems.map(item => (
+                        <EquipmentItem
+                            key={item.itemModel._id}
+                            stacked={true}
+                            item={item}
+                            handleItemToggle={props.handleItemToggle}
+                            itemCategory={itemCategory}
+                            handleItemDelete={handleShowDeleteDialog}
+                            
+                        />
+                        ))}
+                    </List>
+                    </Collapse>
+                </React.Fragment>
+            )})}
       </List>
       <Dialog open={deleteDialog} onClose={handleDeleteDialogClose}>
         <DialogTitle>Wyrzucanie przedmiotu</DialogTitle>

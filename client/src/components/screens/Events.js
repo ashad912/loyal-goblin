@@ -2,7 +2,7 @@ import React, {useState}  from 'react'
 import { Redirect} from 'react-router-dom'
 import VisibilitySensor from 'react-visibility-sensor'
 import MissionDetails from './events/MissionDetails'
-import RallyAwards from './events/RallyAwards'
+import RallyDetails from './events/RallyDetails'
 import MissionListItem from './events/MissionListItem'
 import withMissionItemCommon from './events/hoc/withMissionItemCommon'
 import missionIconTemp from '../../assets/avatar/mission.png'
@@ -553,58 +553,17 @@ const createTempList = () => {
 const createTempRally = () => {
     return {
         _id: 1,
-        title: 'OMG!Rally',
+        title: 'Pierwszy rajd Goblina!',
         avatarSrc: missionIconTemp,
-        activationDate: moment().add(45, 's'),
-        expiryDate: moment().add(90, 's'),
+        activationDate: moment().add(2, 'm'),
+        expiryDate: moment().add(3, 'm'),
         awardsAreSecret: false,
         description: 'Super important rally. It is only one rally on board! You need to cooperate with ppl, u introvert scum xd Aby wziąć udział wystarczy, że wyexpisz coś, kiedy rajd będzie aktywny. Im więcej doświadczenia tym lepsze przedmioty możesz zdobyć!',
         awardsLevels: [
             {
                 level: 1000,
                 awards: {
-                    any: [
-                        {
-                            quantity: 2,
-                            itemModel: {
-                                _id: uuid(),
-                                type: "feet",
-                                class: 'any',
-                                name: "Wysokie buty",
-                                description: "Skórzane, wypastowane, lśniące",
-                                imgSrc: "high-boots.png",
-                                perks: [
-                                    {
-                                    _id: 1,
-                                    perkType: "disc-category",
-                                    target: 'food',
-                                    time: [
-                                        {
-                                            hoursFlag: true,
-                                            lengthInHours: 24,
-                                            startDay: 4,
-                                            startHour: 18
-                                        },
-                                        { hoursFlag: true, lengthInHours: 5, startDay: 3, startHour: 7 }
-                                    ],
-                                    value: "-10%"
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            quantity: 1,
-                            itemModel: {
-                                _id: uuid(),
-                                type: "legs",
-                                name: "Lniane spodnie",
-                                class: 'any',
-                                description: "Zwykłe spodnie, czego jeszcze chcesz?",
-                                imgSrc: "linen-trousers.png",
-                                perks: []
-                            }
-                        }
-                    ],
+                    any: [],
                     warrior: [
                         {
                             quantity: 1,
@@ -771,9 +730,50 @@ const createTempRally = () => {
                 }
             },
             {
-                level: 50,
+                level: 500,
                 awards: {
-                    any: [],
+                    any: [
+                        {
+                            quantity: 2,
+                            itemModel: {
+                                _id: uuid(),
+                                type: "feet",
+                                class: 'any',
+                                name: "Wysokie buty",
+                                description: "Skórzane, wypastowane, lśniące",
+                                imgSrc: "high-boots.png",
+                                perks: [
+                                    {
+                                    _id: 1,
+                                    perkType: "disc-category",
+                                    target: 'food',
+                                    time: [
+                                        {
+                                            hoursFlag: true,
+                                            lengthInHours: 24,
+                                            startDay: 4,
+                                            startHour: 18
+                                        },
+                                        { hoursFlag: true, lengthInHours: 5, startDay: 3, startHour: 7 }
+                                    ],
+                                    value: "-10%"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            quantity: 1,
+                            itemModel: {
+                                _id: uuid(),
+                                type: "legs",
+                                name: "Lniane spodnie",
+                                class: 'any',
+                                description: "Zwykłe spodnie, czego jeszcze chcesz?",
+                                imgSrc: "linen-trousers.png",
+                                perks: []
+                            }
+                        }
+                    ],
                     warrior: [],
                     rogue: [],
                     mage: [],
@@ -781,7 +781,31 @@ const createTempRally = () => {
                 }
 
 
-            }
+            },
+            {
+                level: 2000,
+                awards: {
+                    any: [
+                        {
+                            quantity: 1,
+                            itemModel: {
+                                _id: uuid(),
+                                type: "legs",
+                                name: "Lniane spodnie",
+                                class: 'any',
+                                description: "Zwykłe spodnie, czego jeszcze chcesz?",
+                                imgSrc: "linen-trousers.png",
+                                perks: []
+                            }
+                        }
+                    ],
+                    warrior: [],
+                    rogue: [],
+                    mage: [],
+                    cleric: [],
+                    
+                }
+            },
         ] 
     }
     //return undefined
@@ -795,7 +819,7 @@ const Events = () => {
 
     const [missionId, setMissionId] = useState(null);
     const [activeMissionDetails, setActiveMissionDetails] = useState(null)
-    const [activeRallyAwards, setActiveRallyAwards] = useState(null)
+    const [activeRallyDetails, setActiveRallyDetails] = useState(null)
     
     const rally = createTempRally() //returned from backend
     const missionListData = createTempList() //returned from backend
@@ -813,12 +837,12 @@ const Events = () => {
         setActiveMissionDetails(null)
     }
 
-    const handleRallyAwardsOpen = () => {
-        setActiveRallyAwards(rally)
+    const handleRallyDetailsOpen = () => {
+        setActiveRallyDetails(rally)
     }
 
-    const handleRallyAwardsClose = () => {
-        setActiveRallyAwards(null)
+    const handleRallyDetailsClose = () => {
+        setActiveRallyDetails(null)
     }
 
     //for better perfomance uses VisibilitySensor to load only visible (or partly visible) elements
@@ -854,7 +878,7 @@ const Events = () => {
                   state: { id: missionId}                                      
             }} /> : null}
 
-            <Rally rally={rally} handleRallyAwardsOpen={handleRallyAwardsOpen}/>
+            <Rally rally={rally} handleRallyDetailsOpen={handleRallyDetailsOpen} handleRallyDetailsClose={handleRallyDetailsClose}/>
 
             <Typography variant="h6">
                 Dostępne misje
@@ -872,11 +896,11 @@ const Events = () => {
                     handleMissionClick={handleMissionClick}
                 />
             }
-            {activeRallyAwards && 
-                <RallyAwards
-                    open={activeRallyAwards ? 1 : 0}
-                    rally={activeRallyAwards}
-                    handleClose={handleRallyAwardsClose}
+            {activeRallyDetails && 
+                <RallyDetails
+                    open={activeRallyDetails ? 1 : 0}
+                    rally={activeRallyDetails}
+                    handleClose={handleRallyDetailsClose}
                 />
             }    
             

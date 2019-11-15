@@ -111,7 +111,7 @@ export const MissionSchema = new mongoose.Schema({
         ref: 'user',
         unique: true,
     }],
-
+    awardsAreSecret: Boolean,
     awards: {
         any: [ClassAwardsSchema],
         warrior: [ClassAwardsSchema],

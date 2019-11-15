@@ -8,7 +8,7 @@ export const signIn = (credentials) => {
                 const res = await axios.post('/user/login', credentials)
                 const profile = res.data
                 const uid = profile._id
-                profile.avatar = 'data:image/png;base64,' + profile.avatar
+                profile.avatar = profile.avatar ? ('data:image/png;base64,' + profile.avatar) : (undefined)
                 delete profile._id
                 dispatch( {type: "LOGIN_SUCCESS", profile, uid})
 
@@ -67,7 +67,7 @@ export const authCheck =  () => {
                 console.log('authCheck')
                 const res = await axios('/user/me')
                 const profile = res.data
-                profile.avatar = 'data:image/png;base64,' + profile.avatar
+                profile.avatar = profile.avatar ? ('data:image/png;base64,' + profile.avatar) : (undefined)
                 const uid = profile._id
                 delete profile._id
                 dispatch( {type: "AUTH_SUCCESS", profile, uid}) //DISPATCH IS SYNCHRONOUS!!!

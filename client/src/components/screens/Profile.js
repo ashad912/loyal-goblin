@@ -24,7 +24,6 @@ import convertBagArrayToCategories from "../../utils/bagArrayToCategories";
 
 import Attribute from "./profile/Attribute";
 import Equipment from "./profile/Equipment";
-import Chest from "./profile/Chest";
 import NewLevelDialog from "./profile/NewLevelDialog";
 import PerkBox from "./profile/PerkBox";
 import maleBody from "../../assets/avatar/male-body.png";
@@ -760,10 +759,6 @@ const Profile = props => {
       <Typography variant="h5" className={classes.eqHeading}>
         Ekwipunek
       </Typography>
-      <Chest 
-        items={player.equipment}
-        handleItemDelete={handleItemDelete}
-      />
       <Equipment
         items={player.equipment}
         equipped={player.equipped}

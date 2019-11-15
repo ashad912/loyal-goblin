@@ -164,6 +164,10 @@ export const UserSchema = new mongoose.Schema({
             type: Number,
             required: true,
         },
+        rallyCounter: {
+            type: Number,
+            required: true,
+        },
         amuletCounters: [{
             counter: {
                 type: Number,
