@@ -2,6 +2,7 @@ import React, {useState}  from 'react'
 import { Redirect} from 'react-router-dom'
 import VisibilitySensor from 'react-visibility-sensor'
 import MissionDetails from './events/MissionDetails'
+import RallyAwards from './events/RallyAwards'
 import MissionListItem from './events/MissionListItem'
 import withMissionItemCommon from './events/hoc/withMissionItemCommon'
 import missionIconTemp from '../../assets/avatar/mission.png'
@@ -28,7 +29,7 @@ const StyledList = styled(List)`
 const createTempList = () => {
     return [
         {
-            id: 1,
+            _id: 1,
             title: 'Mission1',
             avatarSrc: {avatarTemp: missionIconTemp},
             minPlayers: 3,
@@ -43,9 +44,9 @@ const createTempList = () => {
                 {
                     quantity: 2,
                     itemModel: {
-                        id: 101,
+                        _id: 101,
                         type: {
-                            id: 201,
+                            _id: 201,
                             type: 'amulet'
                         },
                         name: 'diamond',
@@ -55,9 +56,9 @@ const createTempList = () => {
                 {
                     quantity: 1,
                     itemModel: {
-                        id: 102,
+                        _id: 102,
                         type: {
-                            id: 201,
+                            _id: 201,
                             type: 'amulet'
                         },
                         name: 'pearl',
@@ -275,7 +276,7 @@ const createTempList = () => {
             }
         },
         {
-            id: 2,
+            _id: 2,
             title: 'Mission2',
             avatarSrc: {avatarTemp: missionIconTemp},
             minPlayers: 3,
@@ -290,9 +291,9 @@ const createTempList = () => {
                 {
                     quantity: 2,
                     itemModel: {
-                        id: 103,
+                        _id: 103,
                         type: {
-                            id: 201,
+                            _id: 201,
                             type: 'amulet'
                         },
                         name: 'sapphire',
@@ -302,9 +303,9 @@ const createTempList = () => {
                 {
                     quantity: 1,
                     itemModel: {
-                        id: 101,
+                        _id: 101,
                         type: {
-                            id: 201,
+                            _id: 201,
                             type: 'amulet'
                         },
                         name: 'diamond',
@@ -314,9 +315,9 @@ const createTempList = () => {
                 {
                     quantity: 2,
                     itemModel: {
-                        id: 102,
+                        _id: 102,
                         type: {
-                            id: 201,
+                            _id: 201,
                             type: 'amulet'
                         },
                         name: 'pearl',
@@ -334,7 +335,7 @@ const createTempList = () => {
             }
         },
         {
-            id: 3,
+            _id: 3,
             title: 'Mission3',
             avatarSrc: {avatarTemp: missionIconTemp},
             minPlayers: 3,
@@ -349,9 +350,9 @@ const createTempList = () => {
                 {
                     quantity: 2,
                     itemModel: {
-                        id: 101,
+                        _id: 101,
                         type: {
-                            id: 201,
+                            _id: 201,
                             type: 'amulet'
                         },
                         name: 'diamond',
@@ -361,9 +362,9 @@ const createTempList = () => {
                 {
                     quantity: 1,
                     itemModel: {
-                        id: 102,
+                        _id: 102,
                         type: {
-                            id: 201,
+                            _id: 201,
                             type: 'amulet'
                         },
                         name: 'pearl',
@@ -381,7 +382,7 @@ const createTempList = () => {
             }
         },
         {
-            id: 4,
+            _id: 4,
             title: 'Mission4',
             avatarSrc: {avatarTemp: missionIconTemp},
             minPlayers: 3,
@@ -396,9 +397,9 @@ const createTempList = () => {
                 {
                     quantity: 2,
                     itemModel: {
-                        id: 103,
+                        _id: 103,
                         type: {
-                            id: 201,
+                            _id: 201,
                             type: 'amulet'
                         },
                         name: 'sapphire',
@@ -408,9 +409,9 @@ const createTempList = () => {
                 {
                     quantity: 1,
                     itemModel: {
-                        id: 101,
+                        _id: 101,
                         type: {
-                            id: 201,
+                            _id: 201,
                             type: 'amulet'
                         },
                         name: 'diamond',
@@ -420,9 +421,9 @@ const createTempList = () => {
                 {
                     quantity: 2,
                     itemModel: {
-                        id: 102,
+                        _id: 102,
                         type: {
-                            id: 201,
+                            _id: 201,
                             type: 'amulet'
                         },
                         name: 'pearl',
@@ -440,7 +441,7 @@ const createTempList = () => {
             }
         },
         {
-            id: 5,
+            _id: 5,
             title: 'Mission5',
             avatarSrc: {avatarTemp: missionIconTemp},
             minPlayers: 3,
@@ -455,9 +456,9 @@ const createTempList = () => {
                 {
                     quantity: 2,
                     itemModel: {
-                        id: 101,
+                        _id: 101,
                         type: {
-                            id: 201,
+                            _id: 201,
                             type: 'amulet'
                         },
                         name: 'diamond',
@@ -467,9 +468,9 @@ const createTempList = () => {
                 {
                     quantity: 1,
                     itemModel: {
-                        id: 102,
+                        _id: 102,
                         type: {
-                            id: 201,
+                            _id: 201,
                             type: 'amulet'
                         },
                         name: 'pearl',
@@ -487,7 +488,7 @@ const createTempList = () => {
             }
         },
         {
-            id: 6,
+            _id: 6,
             title: 'Mission6',
             avatarSrc: {avatarTemp: missionIconTemp},
             minPlayers: 3,
@@ -502,9 +503,9 @@ const createTempList = () => {
                 {
                     quantity: 2,
                     itemModel: {
-                        id: 103,
+                        _id: 103,
                         type: {
-                            id: 201,
+                            _id: 201,
                             type: 'amulet'
                         },
                         name: 'sapphire',
@@ -514,9 +515,9 @@ const createTempList = () => {
                 {
                     quantity: 1,
                     itemModel: {
-                        id: 101,
+                        _id: 101,
                         type: {
-                            id: 201,
+                            _id: 201,
                             type: 'amulet'
                         },
                         name: 'diamond',
@@ -526,9 +527,9 @@ const createTempList = () => {
                 {
                     quantity: 2,
                     itemModel: {
-                        id: 102,
+                        _id: 102,
                         type: {
-                            id: 201,
+                            _id: 201,
                             type: 'amulet'
                         },
                         name: 'pearl',
@@ -551,13 +552,237 @@ const createTempList = () => {
 
 const createTempRally = () => {
     return {
-        id: 1,
+        _id: 1,
         title: 'OMG!Rally',
         avatarSrc: missionIconTemp,
-        date: moment().add(1, 'd'),
-        requiredPlayers: 20,
-        description: 'Super important rally. It is only one rally on board! You need to cooperate with ppl, u introvert scum xd',
-        
+        activationDate: moment().add(45, 's'),
+        expiryDate: moment().add(90, 's'),
+        awardsAreSecret: false,
+        description: 'Super important rally. It is only one rally on board! You need to cooperate with ppl, u introvert scum xd Aby wziąć udział wystarczy, że wyexpisz coś, kiedy rajd będzie aktywny. Im więcej doświadczenia tym lepsze przedmioty możesz zdobyć!',
+        awardsLevels: [
+            {
+                level: 1000,
+                awards: {
+                    any: [
+                        {
+                            quantity: 2,
+                            itemModel: {
+                                _id: uuid(),
+                                type: "feet",
+                                class: 'any',
+                                name: "Wysokie buty",
+                                description: "Skórzane, wypastowane, lśniące",
+                                imgSrc: "high-boots.png",
+                                perks: [
+                                    {
+                                    _id: 1,
+                                    perkType: "disc-category",
+                                    target: 'food',
+                                    time: [
+                                        {
+                                            hoursFlag: true,
+                                            lengthInHours: 24,
+                                            startDay: 4,
+                                            startHour: 18
+                                        },
+                                        { hoursFlag: true, lengthInHours: 5, startDay: 3, startHour: 7 }
+                                    ],
+                                    value: "-10%"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            quantity: 1,
+                            itemModel: {
+                                _id: uuid(),
+                                type: "legs",
+                                name: "Lniane spodnie",
+                                class: 'any',
+                                description: "Zwykłe spodnie, czego jeszcze chcesz?",
+                                imgSrc: "linen-trousers.png",
+                                perks: []
+                            }
+                        }
+                    ],
+                    warrior: [
+                        {
+                            quantity: 1,
+                            itemModel: {
+                                _id: uuid(),
+                                type: "weapon",
+                                name: "Wielki miecz",
+                                class: null,
+                                description: "Zdecydowanie masz kompleksy",
+                                imgSrc: "short-sword.png",
+                                class: "warrior",
+                                twoHanded: true,
+                                perks: [
+                                    {
+                                        _id: 1,
+                                        perkType: "attr-strength",
+                                        target: undefined,
+                                        time: [
+                                            {
+                                                _id: 1,
+                                                hoursFlag: false,
+                                                lengthInHours: 5,
+                                                startDay: 4,
+                                                startHour: 19
+                                            },
+                                            {
+                                                _id: 1,
+                                                hoursFlag: true,
+                                                lengthInHours: 1,
+                                                startDay: 3,
+                                                startHour: 18
+                                            },
+                                        ],
+                                            value: "+3"
+                                    },
+                                    {
+                                        _id: 13213,
+                                        perkType: "attr-dexterity",
+                                        target: undefined,
+                                        time: [
+                                            {
+                                                _id: 1,
+                                                hoursFlag: false,
+                                                lengthInHours: 5,
+                                                startDay: 4,
+                                                startHour: 19
+                                            },
+                                            {
+                                                _id: 1,
+                                                hoursFlag: true,
+                                                lengthInHours: 1,
+                                                startDay: 3,
+                                                startHour: 18
+                                            },
+                                        ],
+                                            value: "-1"
+                                        }
+                                ]
+                            }
+                        }
+                    ],
+                    rogue: [
+                        {
+                            quantity: 1,
+                            itemModel: {
+                                _id: uuid(),
+                                type: "chest",
+                                name: "Skórzana kurta",
+                                class: null,
+                                description: "Lale za takimi szaleją",
+                                imgSrc: "leather-jerkin.png",
+                                perks: []
+                            }
+                        }
+                    ],
+                    mage: [
+                        {
+                            quantity: 2,
+                            itemModel: {
+                                _id: uuid(),
+                                type: "head",
+                                name: "Kaptur czarodzieja",
+                                class: 'mage',
+                                description: "Kiedyś nosił go czarodziej. Już nie nosi.",
+                                imgSrc: "wizard-coul.png",
+                                perks: [
+                                    {
+                                    perkType: "experience",
+                                    target: undefined,
+                                    time: [
+                                        {
+                                        _id: 1,
+                                        hoursFlag: false,
+                                        lengthInHours: 24,
+                                        startDay: 4,
+                                        startHour: 12
+                                        }
+                                    ],
+                                    value: "+10%"
+                                    },
+                                    {
+                                        perkType: "experience",
+                                        target: undefined,
+                                        time: [
+                                            {
+                                            _id: 1,
+                                            hoursFlag: false,
+                                            lengthInHours: 24,
+                                            startDay: 4,
+                                            startHour: 12
+                                            }
+                                        ],
+                                        value: "+10"
+                                        },
+                                    {
+                                    perkType: "experience",
+                                    target: undefined,
+                                    time: [
+                                        {
+                                        _id: 2,
+                                        hoursFlag: false,
+                                        lengthInHours: 24,
+                                        startDay: 4,
+                                        startHour: 12
+                                        }
+                                    ],
+                                    value: "+20%"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    cleric: [
+                        {
+                            quantity: 3,
+                            itemModel: {
+                                _id: uuid(),
+                                type: "ring",
+                                name: "Pierścień siły",
+                                class: null,
+                                description: "Całuj mój sygnet potęgi",
+                                imgSrc: "strength-ring.png",
+                                perks: [
+                                    {
+                                        _id: 1,
+                                        perkType: "disc-product",
+                                        target: { name: "Wóda2" },
+                                        time: [
+                                        {
+                                            hoursFlag: true,
+                                            lengthInHours: 12,
+                                            startDay: 4,
+                                            startHour: 20,
+                                        },
+                                        { hoursFlag: true, lengthInHours: 5, startDay: 3, startHour: 7 }
+                                        ],
+                                        value: "-15%"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    
+                }
+            },
+            {
+                level: 50,
+                awards: {
+                    any: [],
+                    warrior: [],
+                    rogue: [],
+                    mage: [],
+                    cleric: [],
+                }
+
+
+            }
+        ] 
     }
     //return undefined
 }
@@ -570,6 +795,7 @@ const Events = () => {
 
     const [missionId, setMissionId] = useState(null);
     const [activeMissionDetails, setActiveMissionDetails] = useState(null)
+    const [activeRallyAwards, setActiveRallyAwards] = useState(null)
     
     const rally = createTempRally() //returned from backend
     const missionListData = createTempList() //returned from backend
@@ -587,13 +813,21 @@ const Events = () => {
         setActiveMissionDetails(null)
     }
 
+    const handleRallyAwardsOpen = () => {
+        setActiveRallyAwards(rally)
+    }
+
+    const handleRallyAwardsClose = () => {
+        setActiveRallyAwards(null)
+    }
+
     //for better perfomance uses VisibilitySensor to load only visible (or partly visible) elements
     //to work need fixed listem item size (which is ok, i believe)
     const missionList = missionListData ? (
         missionListData.map((mission, index) => {
             const MissionListItemHoc = withMissionItemCommon(MissionListItem, mission)
             return(
-                <VisibilitySensor partialVisibility key={mission.id}>
+                <VisibilitySensor partialVisibility key={mission._id}>
                 {({isVisible}) =>
                     <div>{isVisible ? ( /*inVisible defined only inside div witch is fucking kurwa crazy */
                         <MissionListItemHoc
@@ -620,11 +854,7 @@ const Events = () => {
                   state: { id: missionId}                                      
             }} /> : null}
 
-            <Typography style={{marginBottom: '1rem'}} variant="h6" >
-                Najbliższy rajd
-            </Typography>
-
-            <Rally rally={rally} />
+            <Rally rally={rally} handleRallyAwardsOpen={handleRallyAwardsOpen}/>
 
             <Typography variant="h6">
                 Dostępne misje
@@ -637,11 +867,18 @@ const Events = () => {
                 
             {activeMissionDetails && 
                 <MissionDetailsHoc
-                    open={activeMissionDetails}
+                    open={activeMissionDetails ? 1 : 0}
                     handleClose={handleMissionDetailsClose}
                     handleMissionClick={handleMissionClick}
                 />
-            }   
+            }
+            {activeRallyAwards && 
+                <RallyAwards
+                    open={activeRallyAwards ? 1 : 0}
+                    rally={activeRallyAwards}
+                    handleClose={handleRallyAwardsClose}
+                />
+            }    
             
                     
                 

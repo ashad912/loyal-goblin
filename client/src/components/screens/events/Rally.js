@@ -4,20 +4,27 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from "@material-ui/core/Button";
 import { Typography } from '@material-ui/core';
+import Avatar from '@material-ui/core/Avatar';
+import { Badge } from '@material-ui/core';
+import { ListItem } from '@material-ui/core';
+import { ListItemText } from '@material-ui/core';
+import { List } from '@material-ui/core';
 import styled from 'styled-components'
 import moment from 'moment'
+import Collapse from "@material-ui/core/Collapse";
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
 
 const StyledCard = styled(Card)`
     min-width: 275px;
     margin: 0 0 1rem 0;
+  
 `
 
-
-const Bullet = styled.span`
-    display: inline-block;
-    margin: 0 2px 0 0;
-    transform: scale(0.8);
+const ActiveRallyTypo = styled(Typography)`
+    color: ${props => props.active ? ('red') : ('#3f51b5')}
 `
+
 const RallyPlaceholder = styled.div`
     display: flex;
     height: 100%;
@@ -35,7 +42,9 @@ class Rally extends Component {
         this.timer = 0;
     }
 
-    state = {}
+    state = {
+        openAwards: ''
+    }
 
     componentWillUnmount(){
         if(this.state.seconds !== 0){
@@ -45,7 +54,7 @@ class Rally extends Component {
 
     componentDidMount = () => {
         this.timer = setInterval(this.countDown, 1000);
-        const fullTime = this.props.rally.date.diff(moment(), 'seconds')
+        const fullTime = this.props.rally.activationDate.diff(moment(), 'seconds')
         this.updateCounter(fullTime)
     }
 
@@ -77,71 +86,72 @@ class Rally extends Component {
 
     handleRallyClick = () => {
         console.log('clicked rally')
-        console.log(this.props.rally.date.diff(moment(), 'seconds'))
+        console.log(this.props.rally.activationDate.diff(moment(), 'seconds'))
     }
 
 
-    // startAnimation = () => {
-    //     this.timer = setInterval(this.countDown, 1000);
-    //     this.setState({
-    //         seconds: 5,
-    //     });
-    // }
-
-   
-
-    // endAnimation = () => {
-    //     const svgRawObject = this.refs.boardsvg
-    //     const doc = svgRawObject.contentDocument
-    //     const field = doc.getElementsByName(this.state.loadedTorpedo.itemModel.name)[0] //assuming id as in serverFields array
-    //     field.style.fill = 'red'
-    //     this.handleTorpedoDelete(this.state.loadedTorpedo._id)
-    // }
+    handleOpenAwards = event => {
+        if (event.currentTarget.dataset.value === this.state.openAwards) {
+          this.setState({
+              openAwards: ''
+          })
+        } else {
+          this.setState({
+              openAwards: event.currentTarget.dataset.value
+          })
+        }
+    };
 
 
     render() { 
-        
+        const height = 100
+        const width = 100
         const rally = this.props.rally
+        const rallyIsActive = this.props.rally.activationDate.diff(moment()) <= 0
         return ( 
             <React.Fragment>
                 {rally ? (
-                    <React.Fragment>
-                    {this.state.hasOwnProperty('fullTimeInSeconds') && this.state.fullTimeInSeconds > 0 ? (
                     <StyledCard>
                         <CardContent>
-                            <Typography style={{fontSize: 14}} color="textSecondary" gutterBottom>
-                                Ladies and Gentelmen!
+                            <Typography variant="h6" gutterBottom>
+                                {rallyIsActive ? ('Trwa wielki rajd!') :('Nadchodzi wielki rajd!')}
                             </Typography>
-                            <Typography variant="h5" component="h2">
-                                oo
-                            <Bullet>•</Bullet>
-                                {rally.title}
-                            <Bullet>•</Bullet>
-                                oo
-                            </Typography>
-                            <Typography style={{marginBottom: '0.5rem'}} color="textSecondary">
+                            <ActiveRallyTypo variant="h5" active={rallyIsActive}>
                                 
                                     {this.state.hasOwnProperty('days') && this.state.days > 0 && `${this.state.days} d. `}
                                     {this.state.hasOwnProperty('hours') && this.state.hours > 0 && `${this.state.hours} g. `}
                                     {this.state.hasOwnProperty('minutes') && this.state.minutes > 0 && `${this.state.minutes} min `}
                                     {this.state.hasOwnProperty('seconds') && this.state.seconds > 0 && `${this.state.seconds} s`}
        
+                            </ActiveRallyTypo>
+                            <Badge
+                                style={{height: height, width: width, marginRight: '0.5rem', marginTop: '0.6rem', marginBottom: '1rem'}}
+                                overlap="circle"
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'right',
+                                }}
+                            >
+                                <Avatar style={{height: height, width: width, }} alt="avatar" src={rally.avatarSrc} />
+                            </Badge>
+                            <Typography variant="h5" style={{marginBottom: '0.5rem'}}>
+                            
+                                {rally.title}
+                            
                             </Typography>
-                            <Typography variant="body2" component="p">
+                            
+                            <Typography variant="body2" style={{fontSize: '12px'}} component="p">
                                 {rally.description}
-                            <br />
-                            {'"Treasurrrre!"'}
                             </Typography>
                         </CardContent>
                         <CardActions style={{justifyContent: 'flex-end'}}>
-                            <Button onClick={this.handleRallyClick} size="small">Go in!</Button>
+                            <Button onClick={this.props.handleRallyAwardsOpen} color="primary" size="small">Sprawdź nagrody</Button>
                         </CardActions>
+                        
                     </StyledCard>
-                    ) : (
-                        <RallyPlaceholder>Trwa wielki rajd!</RallyPlaceholder>
-                    )}
-                    </React.Fragment>
-                ) : (<RallyPlaceholder>Rajd nie został zapowiedziany!</RallyPlaceholder>)}
+                    
+                    
+                ) : (<RallyPlaceholder><Typography variant="h5">Rajd nie został zapowiedziany!</Typography></RallyPlaceholder>)}
             </React.Fragment>
         );
     }

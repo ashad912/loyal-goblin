@@ -107,33 +107,33 @@ const ItemListItem = ({
           </Grid>
         </Grid>
         {item.perks.length > 0 && (
-        <List component="nav" style={{width: '100%', borderTop: '1px solid #ddd'}}>
-            
-            
-            <ListItem onClick={handleOpenEffect} data-value={item._id} style={{paddingLeft: '0.5rem'}}>
-              <ListItemText primary={'Efekty'} />
-              {openEffect === item._id ? <ExpandLess /> : <ExpandMore />}
-            </ListItem>
-            <Collapse
-              in={openEffect === item._id}
-              timeout="auto"
-              unmountOnExit
-            >
-            <PerkListBox
-                perks={item.perks}
-                headers={false}
-                typeWidth={4}
-                valueWidth={2}
-                targetWidth={1}
-                timeWidth={5}
-                breakWidth={0}
-                actions={false}
-                buttonsWidth={0}
-              />
-                    
-                  </Collapse>
-                  </List>
-                )}
+          <List component="nav" style={{width: '100%', borderTop: '1px solid #ddd'}}>
+              
+              
+              <ListItem onClick={handleOpenEffect} data-value={item._id} style={{paddingLeft: '0.5rem'}}>
+                <ListItemText primary={'Efekty'} />
+                {openEffect === item._id ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse
+                in={openEffect === item._id}
+                timeout="auto"
+                unmountOnExit
+              >
+              <PerkListBox
+                  perks={item.perks}
+                  headers={false}
+                  typeWidth={4}
+                  valueWidth={2}
+                  targetWidth={1}
+                  timeWidth={5}
+                  breakWidth={0}
+                  actions={false}
+                  buttonsWidth={0}
+                />
+                      
+                </Collapse>
+          </List>
+        )}
       </Grid>
     </StyledListItem>
     {!isLast && <Divider />}
