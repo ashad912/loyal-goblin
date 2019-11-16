@@ -119,6 +119,7 @@ export const MissionSchema = new mongoose.Schema({
         mage: [ClassAwardsSchema],
         cleric: [ClassAwardsSchema],
     },
+    awardsAreSecret: {type: Boolean}
     // awards: [{
     //     class: String, //if undefined -> award is overall
     //     itemModel: {

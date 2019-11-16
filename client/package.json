@@ -14,6 +14,7 @@
     "moment": "^2.24.0",
     "path": "^0.12.7",
     "prop-types": "^15.7.2",
+    "qrcode": "^1.4.4",
     "react": "^16.9.0",
     "react-beautiful-dnd": "^11.0.5",
     "react-dnd": "^9.3.4",

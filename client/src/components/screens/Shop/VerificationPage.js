@@ -1,4 +1,6 @@
 import React from "react";
+import QRCode from 'qrcode'
+import uuid from 'uuid/v1'
 import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
@@ -7,6 +9,8 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Divider from "@material-ui/core/Divider";
+
+
 
 //Info z backendu
 const baskets = [
@@ -64,13 +68,19 @@ const baskets = [
 ];
 
 const VerificationPage = props => {
-  //CZY DZIELIMY EXPA PO RÓWNO W DRUŻYNIE, CZY KAŻDY DOSTAJE SWOJE EXPY?
+
+  React.useEffect(() => {
+    //repace UUID with corresponding _id of created order
+    QRCode.toCanvas(document.getElementById('qr-canvas'),uuid(), { errorCorrectionLevel: 'H' }, function (err) {
+      
+    })
+  }, [])
 
   return (
     <Container maxWidth="sm">
       <Paper style={{ width: "100%" }}>
         <Typography>Pokaż ten kod przy barze, by otrzymać nagrody!</Typography>
-        <img src={require("../../../assets/mocks/mock-qr.png")} />
+        <canvas id="qr-canvas" width={500} height={500}/>
         <Divider />
         <List component="nav" style={{ width: "100%" }}>
           {baskets.map(basket => {

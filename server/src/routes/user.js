@@ -4,6 +4,7 @@ import multer from "multer";
 import sharp from "sharp";
 import { User } from "../models/user";
 import { auth } from "../middleware/auth";
+import { asyncForEach } from "../utils/methods";
 
 const router = express.Router();
 
@@ -120,7 +121,11 @@ const upload = multer({
   }
 });
 
-router.post("/me/avatar", auth, upload.single("avatar"), async (req, res) => {
+router.post(
+  "/me/avatar",
+  auth,
+  upload.single("avatar"),
+  async (req, res) => {
     //to have access to file here, we have to delete 'dest' prop from multer
     //req.ninja.avatar = req.file.buffer //saved in binary data- base64 - it's possible to render img from binary
     const buffer = await sharp(req.file.buffer)
@@ -137,55 +142,62 @@ router.post("/me/avatar", auth, upload.single("avatar"), async (req, res) => {
   }
 );
 
-router.delete("/me/avatar", auth, async (req, res) => {
-  req.user.avatar = undefined;
+router.delete(
+  "/me/avatar",
+  auth,
+  async (req, res) => {
+    req.user.avatar = undefined;
 
-  await req.user.save();
-  res.send(req.user);
-},
-(err, req, res, next) => {
-  res.status(400).send({ error: err.message }); //before app.use middleware with 422
-}
+    await req.user.save();
+    res.send(req.user);
+  },
+  (err, req, res, next) => {
+    res.status(400).send({ error: err.message }); //before app.use middleware with 422
+  }
 );
 
-router.patch('/addUserItem', auth, async (req, res) => {
-    try {
-        const user = await User.findById(req.body.user)
-        
-        user.bag = [...user.bag, req.body.item]
+router.patch("/addUserItem", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.body.user);
 
-        await user.save()
-        res.send()
-    } catch (e) {
-        console.log(e.message)
-        res.status(400).send();
-    }
-    
+    user.bag = [...user.bag, req.body.item];
 
-})
+    await user.save();
+    res.send();
+  } catch (e) {
+    console.log(e.message);
+    res.status(400).send();
+  }
+});
 
-router.patch('/deleteUserItem', auth, async (req, res) => {
+router.patch("/deleteUserItem", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.body.user);
 
-    try {
-      const user = await User.findById(req.body.user)
+    user.bag = user.bag.filter(item => {
+      return item.toString() !== req.body.item;
+    });
 
-      user.bag = user.bag.filter((item) => {
-        return item.toString() !== req.body.item
-      })
+    await user.save();
+    res.send();
+  } catch (e) {
+    console.log(e.message);
+    res.status(400).send();
+  }
+});
 
-      await user.save()
-      res.send()
-    } catch (e) {
-        console.log(e.message)
-        res.status(400).send();
-    }
-
-})
-
-//WIP
-//Nie wiem kiedy i jak i czy są tu te populejty
+//WIP not working
 router.get("/me/myItems", auth, async (req, res) => {
-  const items = { bag: req.user.bag, equipped: req.user.equipped };
+  const user = req.user;
+  await asyncForEach(user.bag, async item => {
+    await item
+      .populate({
+        path: "item"
+      })
+      .execPopulate();
+  });
+
+  const items = { bag: user.bag, equipped: user.equipped };
   res.send(items);
 });
 
@@ -193,6 +205,8 @@ router.patch("/me/myItems/equip/", auth, async (req, res) => {
   const user = req.user;
   const itemId = req.body.itemId;
   const itemCategory = req.body.itemCategory;
+  //Used for equipped items, because of right and left hand weapons and rings
+  const itemSlot = req.body.itemSlot;
   //Store item in const
   const itemToEquip = user.bag[itemCategory].find(item => {
     item._id === itemId;
@@ -201,7 +215,7 @@ router.patch("/me/myItems/equip/", auth, async (req, res) => {
   user.bag = user.bag[itemCategory].filter(item => {
     item._id !== itemId;
   });
-  user.equipped[itemCategory] = itemToEquip;
+  user.equipped[itemSlot] = itemToEquip;
   await user.save();
   res.sendStatus(200);
 });

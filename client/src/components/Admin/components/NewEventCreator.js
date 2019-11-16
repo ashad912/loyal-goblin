@@ -30,7 +30,7 @@ import emeraldAmulet from "../../../assets/icons/items/emerald-amulet.png";
 
 import characterClasses from "../../../assets/categories/characterClasses";
 
-import convertItemsArrayToCategories from '../utils/bagArayToCategories'
+import convertItemsArrayToCategories from "../utils/bagArayToCategories";
 
 import "moment/locale/pl";
 import ItemsModal from "./ItemsModal";
@@ -397,7 +397,7 @@ let mockItems = [
   }
 ];
 
-mockItems = convertItemsArrayToCategories(mockItems)
+mockItems = convertItemsArrayToCategories(mockItems);
 
 const FileInputWrapper = styled.div`
   position: relative;
@@ -439,10 +439,12 @@ class NewEventCreator extends Component {
     amulets: [...mockAmulets],
     showItemsModal: false,
     experience: 0,
-    prizesAreSecret: false,
+    awardsAreSecret: false,
     items: { any: [], warrior: [], mage: [], rogue: [], cleric: [] },
     activationDate: moment().format("YYYY-MM-DDTHH:mm"),
+    raidStartTime: moment().add(1, "d").format("YYYY-MM-DDTHH:mm"),
     isInstant: false,
+    raidIsInstantStart: false,
     endDate: moment()
       .add(1, "d")
       .format("YYYY-MM-DDTHH:mm"),
@@ -507,6 +509,11 @@ class NewEventCreator extends Component {
     this.setState({ endDate: e.target.value });
   };
 
+
+  handleRaidStartTimeChange = e => {
+    this.setState({ raidStartTime: e.target.value });
+  }
+
   handleActivationDateChange = e => {
     this.setState({ activationDate: e.target.value });
   };
@@ -516,6 +523,12 @@ class NewEventCreator extends Component {
       return { isPermanent: !prevState.isPermanent };
     });
   };
+
+  handleRaidInstantStart = () => {
+    this.setState(prevState => {
+      return { raidIsInstantStart: !prevState.raidIsInstantStart };
+    });
+  }
 
   handleInstantChange = () => {
     this.setState(prevState => {
@@ -568,6 +581,12 @@ class NewEventCreator extends Component {
     }
     allItems[characterClass] = classItems;
     this.setState({ items: allItems });
+  };
+
+  handleChangeAwardsAreSecret = e => {
+    this.setState(prevState => {
+      return { awardsAreSecret: !prevState.awardsAreSecret };
+    });
   };
 
   handleChangeExperience = e => {
@@ -688,6 +707,8 @@ class NewEventCreator extends Component {
               </Grid>
               <Grid item>Rajd</Grid>
               <Grid item>
+                {!this.state.isRaid && 
+                
                 <FormControlLabel
                   style={{ marginLeft: "4rem" }}
                   control={
@@ -696,8 +717,9 @@ class NewEventCreator extends Component {
                       onChange={this.handleUniqueChange}
                     />
                   }
-                  label="Wydarzenie unikalne"
+                  label="Misja unikalna"
                 />
+                }
               </Grid>
             </Grid>
           </Typography>
@@ -714,14 +736,16 @@ class NewEventCreator extends Component {
               />
             </Grid>
             <Grid item xs={4}>
-              <TextField
-                value={this.state.minLevel}
-                onChange={this.handleMinLevelChange}
-                margin="dense"
-                label="Minimalny poziom"
-                type="number"
-                inputProps={{ min: "1" }}
-              />
+              {!this.state.isRaid && (
+                <TextField
+                  value={this.state.minLevel}
+                  onChange={this.handleMinLevelChange}
+                  margin="dense"
+                  label="Minimalny poziom"
+                  type="number"
+                  inputProps={{ min: "1" }}
+                />
+              )}
             </Grid>
           </Grid>
           <TextField
@@ -770,101 +794,107 @@ class NewEventCreator extends Component {
               )}
             </Grid>
           </Grid>
-          <Typography style={{ marginBottom: "3rem", textAlign: "left" }}>
-            Wielkość drużyny:
-          </Typography>
-          <Slider
-            value={this.state.partySize}
-            onChange={this.handlePartySizeSliderChange}
-            valueLabelDisplay="on"
-            min={1}
-            max={8}
-          />
-          <Divider style={{ marginTop: "2rem", marginBottom: "1rem" }} />
-          <div>
-            <Typography style={{ width: "fit-content", margin: "1rem 0" }}>
-              Wymagane wartości atrybutów:
-            </Typography>
-            <AttributeBox
-              value={this.state.attributePool.str}
-              attrType="str"
-              attrTypeText="Siła"
-              changeValue={this.handleChangeAttributeValue}
-            />
-            <AttributeBox
-              value={this.state.attributePool.dex}
-              attrType="dex"
-              attrTypeText="Zręczność"
-              changeValue={this.handleChangeAttributeValue}
-            />
-            <AttributeBox
-              value={this.state.attributePool.mag}
-              attrType="mag"
-              attrTypeText="Magia"
-              changeValue={this.handleChangeAttributeValue}
-            />
-            <AttributeBox
-              value={this.state.attributePool.end}
-              attrType="end"
-              attrTypeText="Wytrzymałość"
-              changeValue={this.handleChangeAttributeValue}
-            />
-          </div>
-          <Divider style={{ marginTop: "2rem", marginBottom: "1rem" }} />
-          <Grid container spacing={2}>
-            <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={this.handleToggleAmuletsModal}
-                style={{ marginBottom: "1rem" }}
-              >
-                {amuletListEmpty
-                  ? "Dodaj wymagane amulety"
-                  : "Edytuj wymagane amulety"}
-              </Button>
-            </Grid>
-          </Grid>
+          {!this.state.isRaid && (
+            <React.Fragment>
+              <Typography style={{ marginBottom: "3rem", textAlign: "left" }}>
+                Wielkość drużyny:
+              </Typography>
+              <Slider
+                value={this.state.partySize}
+                onChange={this.handlePartySizeSliderChange}
+                valueLabelDisplay="on"
+                min={1}
+                max={8}
+              />
+              <Divider style={{ marginTop: "2rem", marginBottom: "1rem" }} />
+              <div>
+                <Typography style={{ width: "fit-content", margin: "1rem 0" }}>
+                  Wymagane wartości atrybutów:
+                </Typography>
+                <AttributeBox
+                  value={this.state.attributePool.str}
+                  attrType="str"
+                  attrTypeText="Siła"
+                  changeValue={this.handleChangeAttributeValue}
+                />
+                <AttributeBox
+                  value={this.state.attributePool.dex}
+                  attrType="dex"
+                  attrTypeText="Zręczność"
+                  changeValue={this.handleChangeAttributeValue}
+                />
+                <AttributeBox
+                  value={this.state.attributePool.mag}
+                  attrType="mag"
+                  attrTypeText="Magia"
+                  changeValue={this.handleChangeAttributeValue}
+                />
+                <AttributeBox
+                  value={this.state.attributePool.end}
+                  attrType="end"
+                  attrTypeText="Wytrzymałość"
+                  changeValue={this.handleChangeAttributeValue}
+                />
+              </div>
+              <Divider style={{ marginTop: "2rem", marginBottom: "1rem" }} />
+              <Grid container spacing={2}>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={this.handleToggleAmuletsModal}
+                    style={{ marginBottom: "1rem" }}
+                  >
+                    {amuletListEmpty
+                      ? "Dodaj wymagane amulety"
+                      : "Edytuj wymagane amulety"}
+                  </Button>
+                </Grid>
+              </Grid>
 
-          <AmuletsModal
-            open={this.state.showAmuletsModal}
-            handleClose={this.handleToggleAmuletsModal}
-            amuletList={this.props.isEdit ? this.state.amulets : mockAmulets}
-            eventAmuletsList={this.state.amulets}
-            handleAddAmulet={this.handleAddAmulet}
-            handleSubtractAmulet={this.handleSubtractAmulet}
-            handleDeleteAmulet={this.handleDeleteAmulet}
-            handleChangeAmuletQuantity={this.handleChangeAmuletQuantity}
-          />
-          {!amuletListEmpty > 0 && !this.state.showAmuletsModal && (
-            <Grid
-              spacing={2}
-              style={{ width: "100%" }}
-              direction="row"
-              container
-              alignItems="flex-end"
-            >
-              {this.state.amulets
-                .filter(amulet => amulet.quantity > 0)
-                .map(amulet => {
-                  return (
-                    <Grid item key={amulet.itemModel.id}>
-                      <ListItemAvatar>
-                        <img
-                          src={require("../../../assets/icons/items/" +
-                            amulet.itemModel.imgSrc)}
-                          width="64px"
-                        />
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={amulet.itemModel.name}
-                        secondary={"x" + amulet.quantity}
-                        style={{ marginLeft: "1rem" }}
-                      />
-                    </Grid>
-                  );
-                })}
-            </Grid>
+              <AmuletsModal
+                open={this.state.showAmuletsModal}
+                handleClose={this.handleToggleAmuletsModal}
+                amuletList={
+                  this.props.isEdit ? this.state.amulets : mockAmulets
+                }
+                eventAmuletsList={this.state.amulets}
+                handleAddAmulet={this.handleAddAmulet}
+                handleSubtractAmulet={this.handleSubtractAmulet}
+                handleDeleteAmulet={this.handleDeleteAmulet}
+                handleChangeAmuletQuantity={this.handleChangeAmuletQuantity}
+              />
+              {!amuletListEmpty > 0 && !this.state.showAmuletsModal && (
+                <Grid
+                  spacing={2}
+                  style={{ width: "100%" }}
+                  direction="row"
+                  container
+                  alignItems="flex-end"
+                >
+                  {this.state.amulets
+                    .filter(amulet => amulet.quantity > 0)
+                    .map(amulet => {
+                      return (
+                        <Grid item key={amulet.itemModel.id}>
+                          <ListItemAvatar>
+                            <img
+                              src={require("../../../assets/icons/items/" +
+                                amulet.itemModel.imgSrc)}
+                              width="64px"
+                            />
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={amulet.itemModel.name}
+                            secondary={"x" + amulet.quantity}
+                            style={{ marginLeft: "1rem" }}
+                          />
+                        </Grid>
+                      );
+                    })}
+                </Grid>
+              )}
+            </React.Fragment>
           )}
 
           <Divider style={{ marginTop: "1rem", marginBottom: "1rem" }} />
@@ -885,14 +915,28 @@ class NewEventCreator extends Component {
                 inputProps={{ min: "0", step: "50" }}
               />
             </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={this.handleToggleItemsModal}
-              >
-                Dodaj przedmioty
-              </Button>
+            <Grid item container>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={this.handleToggleItemsModal}
+                >
+                  Dodaj przedmioty
+                </Button>
+              </Grid>
+              <Grid item>
+                <FormControlLabel
+                  style={{ marginLeft: "4rem" }}
+                  control={
+                    <Checkbox
+                      checked={this.state.awardsAreSecret}
+                      onChange={this.handleChangeAwardsAreSecret}
+                    />
+                  }
+                  label="Nagrody są tajne"
+                />
+              </Grid>
             </Grid>
           </Grid>
           {!this.state.showItemsModal && (
@@ -989,7 +1033,7 @@ class NewEventCreator extends Component {
             handleAddItem={this.handleAddItem}
             handleSubtractItem={this.handleSubtractItem}
             handleChangeItemQuantity={this.handleChangeItemQuantity}
-            title={'Dodaj nagrody misji'}
+            title={"Dodaj nagrody misji"}
           />
           <Divider style={{ marginTop: "1rem", marginBottom: "1rem" }} />
           <Grid
@@ -1002,7 +1046,9 @@ class NewEventCreator extends Component {
             <Grid item style={{ textAlign: "left" }}>
               {!this.state.isInstant && (
                 <React.Fragment>
-                  <Typography>Czas publikacji wydarzenia: </Typography>
+                  <Typography>
+                    Czas publikacji {this.state.isRaid ? "rajdu:" : "misji:"}
+                  </Typography>
                   <TextField
                     type="datetime-local"
                     value={this.state.activationDate}
@@ -1021,10 +1067,40 @@ class NewEventCreator extends Component {
                 label="Publikuj natychmiast"
               />
             </Grid>
+            {this.state.isRaid &&
+            <Grid item style={{ textAlign: "left" }}>
+              {!this.state.raidIsInstantStart &&
+              <React.Fragment>
+
+                <Typography>
+                      Czas rozpoczęcia rajdu:
+                    </Typography>
+                    <TextField
+                      type="datetime-local"
+                      value={this.state.raidStartTime}
+                      onChange={this.handleRaidStartTimeChange}
+                    />
+              </React.Fragment>
+              }
+                  <FormControlLabel
+                style={{ marginLeft: "2rem" }}
+                control={
+                  <Checkbox
+                    checked={this.state.raidIsInstantStart}
+                    onChange={this.handleRaidInstantStart}
+                  />
+                }
+                label="Rozpocznij natychmiast"
+              />
+            </Grid>
+            }
             <Grid item style={{ textAlign: "left" }}>
               {!this.state.isPermanent && (
                 <React.Fragment>
-                  <Typography>Czas zakończenia wydarzenia: </Typography>
+                  <Typography>
+                    Czas zakończenia{" "}
+                    {this.state.isRaid ? "rajdu:" : "misji:"}
+                  </Typography>
                   <TextField
                     type="datetime-local"
                     value={this.state.endDate}
@@ -1032,16 +1108,18 @@ class NewEventCreator extends Component {
                   />
                 </React.Fragment>
               )}
-              <FormControlLabel
-                style={{ marginLeft: "2rem" }}
-                control={
-                  <Checkbox
-                    checked={this.state.isPermanent}
-                    onChange={this.handlePermanentChange}
-                  />
-                }
-                label="Wydarzenie bezterminowe"
-              />
+              {!this.state.isRaid && (
+                <FormControlLabel
+                  style={{ marginLeft: "2rem" }}
+                  control={
+                    <Checkbox
+                      checked={this.state.isPermanent}
+                      onChange={this.handlePermanentChange}
+                    />
+                  }
+                  label="Wydarzenie bezterminowe"
+                />
+              )}
             </Grid>
           </Grid>
           <Grid
