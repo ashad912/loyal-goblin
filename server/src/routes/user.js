@@ -189,13 +189,29 @@ router.patch("/deleteUserItem", auth, async (req, res) => {
 //WIP not working
 router.get("/me/myItems", auth, async (req, res) => {
   const user = req.user;
-  await asyncForEach(user.bag, async item => {
-    await item
-      .populate({
-        path: "item"
-      })
-      .execPopulate();
-  });
+
+  //jak chcesz uzyskać itemy pełne, a nie array idków to populujesz z poziomu obiektu w kolekcji ->
+  //po auth user jest już 'mongosowy' więc robimy tak:
+
+  await user.populate({
+    path: 'bag'
+  }).populate({
+    path: 'equipped'
+  }).execPopulate();
+
+  //populuje dwa pola w kolekcji - w user.bag i w user.equipped masz teraz teoretycznie pożądane rzeczy
+  //zobacz czy działa, nie jestem pewien - jak nie spróbuj się dostać przez np. 'equipped.chest' do pojedyńczego itema
+  //jeśli chodzi o populacje całej tablicy (bag), też powinno działać
+  
+  // await asyncForEach(user.bag, async item => {
+    
+
+  //   await item
+  //     .populate({
+  //       path: "item"
+  //     })
+  //     .execPopulate();
+  // });
 
   const items = { bag: user.bag, equipped: user.equipped };
   res.send(items);
