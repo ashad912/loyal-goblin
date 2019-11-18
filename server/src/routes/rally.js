@@ -1,10 +1,14 @@
 import express from 'express'
+import cron from 'node-cron'
+import axios from 'axios'
 import { Rally} from '../models/rally';
 import { auth } from '../middleware/auth';
 import { Item } from '../models/item';
 import { asyncForEach } from '../utils/methods'
 
 const router = new express.Router
+
+
 
 
 router.post('/createRally', auth, async (req, res) =>{
@@ -62,5 +66,29 @@ router.post('/finishRally', auth, async (req, res) => {
 
 
 })
+
+
+
+router.get('/triggerCron', auth, async(req, res) => {
+    cron.schedule("* * * * *", async () => {
+        console.log(`this message logs every minute`);
+        try{
+            const res = getCron()
+            console.log(res)
+        }catch(e) {
+            console.log(e.message)
+        }
+        
+        
+    });
+    res.send()
+    
+})
+
+const getCron = () => {
+    console.log('hello from getCron')
+    return Date.now()
+}
+
 
 export const rallyRouter = router
