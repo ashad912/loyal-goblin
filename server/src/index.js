@@ -1,7 +1,7 @@
 import express from 'express'
 import {userRouter} from './routes/user'
 import {missionRouter} from './routes/mission'
-import {rallyRouter} from './routes/rally'
+import {rallyRouter, updateRallyQueue} from './routes/rally'
 import {itemRouter} from './routes/item'
 import {productRouter} from './routes/product'
 import bodyParser from 'body-parser'
@@ -10,6 +10,8 @@ import path from 'path'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import socket from 'socket.io'
+
+
 
 //TO-START: npm run-script dev
 
@@ -40,6 +42,7 @@ app.use((err, req, res, next)=>{
 
 const server = app.listen(port, ()=>{
     console.log(`Listening at ${port}`)
+    updateRallyQueue()
 })
 
 //cant refactor socket methods to separate file :<< but it worked on another computer, maybe clean and rebuild?
@@ -86,3 +89,5 @@ mission.on('connection', (socket) => {
 //-> promise -> authMiddleware + authEventMiddleware -> load component with id of instance (!!!) -> socket emit connection
 //==io.use -> query being in party by token->user->party //additional eventToken
 //-> joining room refs by instance id
+
+

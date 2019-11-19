@@ -1151,4 +1151,52 @@ class NewEventCreator extends Component {
   }
 }
 
+
+// const checkRallyDates = async (/*param*/) => {
+//   const rallyList = [
+//       {
+//           activationDate: moment('2019-11-19T08:00:00.000+00:00'),
+//           expiryDate: moment('2019-11-19T20:00:00.000+00:00')
+//       },
+//       {
+//           activationDate: moment('2019-11-19T21:00:00.000+00:00'),
+//           expiryDate: moment('2019-11-20T07:00:00.000+00:00')
+//       },
+//       {
+//           activationDate: moment('2019-11-20T08:00:00.000+00:00'),
+//           expiryDate: moment('2019-11-20T20:00:00.000+00:00')
+//       },
+//   ]
+
+//   const rally = {
+//       activationDate: moment('2019-11-19T20:03:00.000+00:00'),
+//       expiryDate: moment('2019-11-19T20:02:00.000+00:00')
+//   }
+
+  
+//   const newRallyStart = rally.activationDate.valueOf()
+//   const newRallyEnd = rally.expiryDate.valueOf()
+
+//   if(newRallyStart >= newRallyEnd){
+//       console.log('switch dates, dummy boy')
+//       return
+//   }
+
+//   let causingRallyList = []
+//   await asyncForEach(rallyList, (rallyItem) => {
+//       const existingRallyStart = rallyItem.activationDate.valueOf()
+//       const existingRallyEnd = rallyItem.expiryDate.valueOf()
+
+//       if(!((existingRallyStart < newRallyStart && existingRallyEnd < newRallyStart) || (existingRallyEnd > newRallyEnd && existingRallyStart > newRallyEnd))){
+//           causingRallyList = [...causingRallyList, rallyItem] //assembling list of 'bad' rallies :<<
+//       }
+//   })
+
+//   if(causingRallyList.length){
+//       console.log(causingRallyList)
+//   }else{
+//       console.log('no problemo seniorita')
+//   }
+// }
+
 export default NewEventCreator;
