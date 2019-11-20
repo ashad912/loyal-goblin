@@ -1178,7 +1178,7 @@ class NewEventCreator extends Component {
 //   const newRallyEnd = rally.expiryDate.valueOf()
 
 //   if(newRallyStart >= newRallyEnd){
-//       console.log('switch dates, dummy boy')
+//       console.log('swap dates, dummy boy')
 //       return
 //   }
 

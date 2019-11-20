@@ -92,7 +92,8 @@ export const MissionSchema = new mongoose.Schema({
             if (!validator.isInteger(value)) {
                 throw new Error(`${value} is not an integer value!`)
             }
-        }
+        },
+        required: true,
     },
     description: {
         type: String,
@@ -132,5 +133,10 @@ export const MissionSchema = new mongoose.Schema({
     timestamps: true
 })
 
+MissionSchema.pre('remove', async function (next){
+    const mission = this
+    await MissionInstance.deleteMany({mission: mission._id})
+    next()
+})
 
 export const Mission = new mongoose.model('mission', MissionSchema)

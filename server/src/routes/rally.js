@@ -1,14 +1,15 @@
 import express from 'express'
 import cron from 'node-cron'
 import moment from 'moment'
-import { Rally} from '../models/rally';
+import { Rally } from '../models/rally';
 import { auth } from '../middleware/auth';
 import { Item } from '../models/item';
 import { asyncForEach } from '../utils/methods'
-import { createCipher } from 'crypto';
 
 const router = new express.Router
 
+
+////ADMIN-SIDE
 var rallyStartTask
 var rallyFinishTask
 var rallyTestTask
@@ -23,7 +24,6 @@ const startRally = async (rally) => {
     }
 
 }
-
 
 const addAwards = async (user, awardsLevels) => {
     let items = []
@@ -60,8 +60,8 @@ const finishRally = async (rally) => {
             
                 const user = await User.findById(rallyUser.profile._id).populate({
                     path: 'activeRally'
-                })
-                if(user.activeRally && rallyUser.experience > 0){
+                }) //recoginized as an array
+                if(user.activeRally.length && rallyUser.experience > 0){
                     const items = await addAwards(rallyUser, rally.awardsLevels)
                     user.bag = [...user.bag, items]
                 }
@@ -92,7 +92,7 @@ const designateScheduleTime = (date) => {
     return `${seconds} ${minutes} ${hour} ${dayOfMonth} ${month} *`
 }
 
-//NOTE: -cron checked (without db)
+//NOTE: - cron checked (without db)
 export const updateRallyQueue = async () => {
     try {
         
@@ -105,8 +105,8 @@ export const updateRallyQueue = async () => {
         
         
         
-        const firstToActivate = await Rally.find({status: 'active'}).sort({"activationDate": -1 }).limit(1)
-        const firstToExpire = await Rally.find({status: 'active'}).sort({"expiryDate": -1 }).limit(1)
+        const firstToActivate = await Rally.find({status: { $ne: 'archive'}}).sort({"activationDate": -1 }).limit(1)
+        const firstToExpire = await Rally.find({status: { $ne: 'archive'}}).sort({"expiryDate": -1 }).limit(1)
 
         // const firstToActivate = {
         //     _id: 'halo1234',
@@ -166,11 +166,10 @@ export const updateRallyQueue = async () => {
     }
 }
 
-// 
-
-router.get('/getAdminRallyList', auth, async (req, res) => {
+//CHECK
+router.get('/listEventCreator', auth, async (req, res) => {
     try {
-        const rallyList = await Rally.find({status: { $not: 'archive'}})
+        const rallyList = await Rally.find({status: { $ne: 'archive'}})
         res.send(rallyList)
     }catch(e){
         res.status(400).send(e.message)
@@ -179,9 +178,11 @@ router.get('/getAdminRallyList', auth, async (req, res) => {
 
 })
 
-router.post('/rally', auth, async (req, res) =>{
+//CHECK
+router.post('/create', auth, async (req, res) =>{
 
     const rally = new Rally(req.body)
+    rally.status = 'ready'
 
     try {
         await rally.save()
@@ -194,18 +195,9 @@ router.post('/rally', auth, async (req, res) =>{
 })
 
 
-
-router.patch("/rally", auth, async (req, res, next) => {
+//CHECK
+router.patch("/update", auth, async (req, res, next) => {
     const updates = Object.keys(req.body);
-    // const allowedUpdates = ["name", "password"];
-  
-    // const isValidOperation = updates.every(update => {
-    //   return allowedUpdates.includes(update);
-    // });
-  
-    // if (!isValidOperation) {
-    //   return res.status(400).send({ error: "Invalid update!" });
-    // }
 
     const forbiddenUpdates = ["_id"];
   
@@ -232,11 +224,12 @@ router.patch("/rally", auth, async (req, res, next) => {
 
       res.send(rally);
     } catch (e) {
-      res.status(400).send(e);
+      res.status(500).send(e.message);
     }
   });
 
-router.delete('/rally', auth, async (req, res) =>{
+//CHECK
+router.delete('/remove', auth, async (req, res) =>{
 
     try {
         const rally = await Rally.findOneAndDelete({_id: req.body._id})
@@ -251,19 +244,29 @@ router.delete('/rally', auth, async (req, res) =>{
     }
 })
 
+////USER-SIDE
+
+//CHECK
+router.get('/getFirst', auth, async (req, res)=> {
+    try{
+        const rally = await Rally.find({status: { $ne: 'archive'}}).sort({"activationDate": -1 }).limit(1)
+        res.send(rally)
+    }catch (e) {
+        res.status(500).send(e.message)
+    }
+})
 
 
 
-
-
+////////////////////TEST
 
 router.get('/triggerCron', auth, async(req, res) => {
     
-    
+    var halo = 'haloVar'
     rallyTestTask = cron.schedule("* * * * * *", async () => {
         //console.log(`this message logs every minute`);
         try{
-            getCron()
+            getCron(halo)
         }catch(e) {
             console.log(e.message)
         }
@@ -278,8 +281,8 @@ router.get('/triggerCron', auth, async(req, res) => {
     res.send()
 })
 
-const getCron = () => {
-    console.log('hello from testTask')
+const getCron = (p) => {
+    console.log('hello from testTask var:' + p)
     //rallyTestTask.destroy()
 } 
 

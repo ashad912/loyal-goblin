@@ -4,7 +4,7 @@ import multer from "multer";
 import sharp from "sharp";
 import { User } from "../models/user";
 import { auth } from "../middleware/auth";
-import { asyncForEach } from "../utils/methods";
+import { asyncForEach, designateUserPerks } from "../utils/methods";
 
 const router = express.Router();
 
@@ -232,6 +232,7 @@ router.patch("/me/myItems/equip/", auth, async (req, res) => {
     item._id !== itemId;
   });
   user.equipped[itemSlot] = itemToEquip;
+  //user.userPerks = designateUserPerks(user)
   await user.save();
   res.sendStatus(200);
 });

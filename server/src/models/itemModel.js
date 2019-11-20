@@ -95,8 +95,13 @@ const ItemModelSchema = new mongoose.Schema({
       ]
     }
   ]
-
-  //Potrzeba więcej perków - zapytać Krystiana
 });
+
+
+ItemModelSchema.pre('remove', async function (next){
+  const itemModel = this
+  await Item.deleteMany({itemModel: itemModel._id})
+  next()
+})
 
 export const ItemModel = new mongoose.model("itemModel", ItemModelSchema);

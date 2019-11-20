@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import validator from 'validator'
 import bcrypt from 'bcryptjs'
 import jwt from "jsonwebtoken"
-
+import {Item} from './item'
 const userClasses = ['warrior', 'mage', 'rogue', 'cleric']
 
 const userStatuses = ['home', 'away', 'banned', 'nonactivated']
@@ -162,10 +162,12 @@ export const UserSchema = new mongoose.Schema({
     statistics: {
         missionCounter: {
             type: Number,
+            default: 0,
             required: true,
         },
         rallyCounter: {
             type: Number,
+            default: 0,
             required: true,
         },
         amuletCounters: [{
@@ -180,13 +182,72 @@ export const UserSchema = new mongoose.Schema({
             }
         }]
 
+    },
+    userPerks: {
+        attrStrength: {
+            type: Number,
+            default: 0,
+            min: 0,
+            validate(value) {
+                if (!validator.isInteger(value)) {
+                    throw new Error(`${value} is not an integer value!`)
+                }
+            },
+            required: true,
+        },
+        attrDexterity: {
+            type: Number,
+            default: 0,
+            min: 0,
+            validate(value) {
+                if (!validator.isInteger(value)) {
+                    throw new Error(`${value} is not an integer value!`)
+                }
+            },
+            required: true,
+        },
+        attrMagic: {
+            type: Number,
+            default: 0,
+            min: 0,
+            validate(value) {
+                if (!validator.isInteger(value)) {
+                    throw new Error(`${value} is not an integer value!`)
+                }
+            },
+            required: true,
+        },
+        attrEndurance: {
+            type: Number,
+            default: 0,
+            min: 0,
+            validate(value) {
+                if (!validator.isInteger(value)) {
+                    throw new Error(`${value} is not an integer value!`)
+                }
+            },
+            required: true,
+        },
+        rawExperience: {
+            absolute: {
+                type: String,
+                default: '0',
+                required: true,
+            },
+            percent: {
+                type: String,
+                default: '0%',
+                required: true,
+            }
+        },
+        products: [{
+            type: String,
+        }]
     }
     
 }, {
     timestamps: true
 })
-
-
 
 // UserSchema.virtual('missions', { //events can be reached by relations, BI RELATION!!
 //     ref: 'mission',
@@ -262,6 +323,12 @@ UserSchema.pre('save', async function(next){//middleware, working with static Us
 
     next()
 
+})
+
+UserSchema.pre('remove', async function(next){
+    const user = this
+    await Item.deleteMany({owner: user._id})
+    next()
 })
 
 export const User = new mongoose.model('user', UserSchema)

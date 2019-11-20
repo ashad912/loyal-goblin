@@ -95,13 +95,12 @@ class Rally extends Component {
             minutes,
             seconds
         }, () => {
-            if (fullTime == 0) { 
+            if (fullTime === 0) { 
                 clearInterval(this.timer);
                 this.initTimer()
             }
         })
     }
-
 
     render() { 
         const height = 100

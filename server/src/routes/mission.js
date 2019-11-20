@@ -8,32 +8,106 @@ import { Item } from '../models/item'
 import { asyncForEach } from '../utils/methods'
 
 import isEqual from 'lodash/isEqual'
+import {Rally} from '../models/rally'
 
 const router = new express.Router
 
 
 
-//TEST
+////ADMIN-SIDE
+
+
+//CHECK
+router.get('/eventList', auth, async (req,res) => {
+    try{
+        const missionList = await Mission.find({})
+        const rallyList = await Rally.find({})
+        const eventList = [...missionList, ...rallyList]
+    
+        if(!eventList.length){
+            res.status(404).send()
+        }
+
+        res.send(eventList)
+    }catch(e){
+        res.status(500).send(e.message)
+    }
+
+})
+
+//CHECK
 router.post('/create', auth, async (req, res) =>{
 
     const mission = new Mission(req.body)
-    
 
     try {
         await mission.save() //this method holds updated user!
         res.status(201).send(mission)
     } catch (e) {
         console.log(e)
-        res.status(400).send(e)
+        res.status(500).send(e.message)
     }
 })
+
+//CHECK
+router.delete('/remove', auth, async(req, res) => {
+    try {
+        const mission = await Mission.findOne({_id: req.body._id})
+
+        if(!mission){
+            res.status(404).send()
+        }
+        
+        await mission.remove()
+
+        res.send()
+    } catch (e) {
+        res.status(500).send(e.message)
+    }
+})
+
+//CHECK
+router.patch("/update", auth, async (req, res, next) => {
+    const updates = Object.keys(req.body);
+
+    const forbiddenUpdates = ["_id"];
+  
+    const isValidOperation = updates.every(update => {
+        return !forbiddenUpdates.includes(update);
+    });
+  
+    if (!isValidOperation) {
+        return res.status(400).send({ error: "Invalid update!" });
+    }
+  
+    try {
+      const mission = await Mission.findById(req.body._id)
+  
+      updates.forEach(update => {
+        mission[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.
+      });
+  
+      await mission.save();
+
+      res.send(mission);
+    } catch (e) {
+      res.status(500).send(e.message);
+    }
+});
+
+
+////USER-SIDE
+
+//TO-DO
+// - leaveInstance
+// - finishMission
 
 //CHECK:
 // - no amulets DONE
 // - no party DONE
 // - party
 //assumed, when user finishes the mission, mission saves his id in array
-router.get('/missions', auth, async (req, res) => { //get active missions which are available for specific user AND for all user's party!!
+router.get('/list', auth, async (req, res) => { //get active missions which are available for specific user AND for all user's party!!
     
     const user = req.user;
 
@@ -72,8 +146,8 @@ router.get('/missions', auth, async (req, res) => { //get active missions which 
     }
 })
 
-//CHECK:
-router.get('/enterInstance/:id', auth, async (req, res) => { //mission id passed from front
+//CHECK - OK without further changes
+router.get('/enterInstance/:id', auth, async (req, res) => { //mission id passed from frontend
     const user = req.user
     
     try{
@@ -154,7 +228,8 @@ router.get('/enterInstance/:id', auth, async (req, res) => { //mission id passed
     
 })
 
-//CHECK:
+
+//CHECK - OK without further changes
 router.patch('/sendItem/mission', auth, async (req, res) => {
     const user = req.user
    
