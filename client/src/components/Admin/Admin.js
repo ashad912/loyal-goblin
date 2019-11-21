@@ -13,7 +13,7 @@ import CropFreeIcon from "@material-ui/icons/CropFree";
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
 import MenuDrawer from "./MenuDrawer";
-import AdminMissions from "./Pages/AdminMissions";
+import AdminEvents from "./Pages/AdminEvents";
 import AdminItems from "./Pages/AdminItems";
 import AdminProducts from "./Pages/AdminProducts";
 import AdminUsers from "./Pages/AdminUsers";
@@ -72,7 +72,7 @@ const Admin = () => {
 
   switch (currentPage) {
     case "Misje":
-      page = <AdminMissions />;
+      page = <AdminEvents />;
       break;
     case "Przedmioty":
       page = <AdminItems />;

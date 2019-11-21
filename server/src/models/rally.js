@@ -15,6 +15,9 @@ export const RallySchema = new mongoose.Schema({
     activationDate: {
         type: Date
     },
+    startDate: {
+        type: Date
+    },
     expiryDate: { //counted from time length (days, hours, minutes, seconds) passed by admin?
         type: Date
     },
@@ -33,6 +36,16 @@ export const RallySchema = new mongoose.Schema({
             unique: true,
         }
     }],
+    experience: {
+        type: Number,
+        min: 0,
+        validate(value) {
+            if (!validator.isInteger(value)) {
+                throw new Error(`${value} is not an integer value!`)
+            }
+        },
+        required: true,
+    },
     awardsAreSecret: Boolean,
     awardsLevels: [{
         awardsLevel: {

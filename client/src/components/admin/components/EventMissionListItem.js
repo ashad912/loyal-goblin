@@ -29,7 +29,7 @@ const StyledListItem = styled(ListItem)`
 animation:${pulse} ${props => props.active ? '5s ease-in-out infinite' : 'none'};
 `
 
-const EventListItem = ({
+const EventMissionListItem = ({
   event,
   active,
   activateNow,
@@ -58,34 +58,37 @@ const EventListItem = ({
     <StyledListItem active={active ? 1: 0}>
       <Grid container direction="column" spacing={2}>
         <Grid item container>
-          <Grid item xs={3}>
+          <Grid item xs={2}>
             <Typography style={{ textAlign: "center" }}>
-              {event.isRaid ? "* Rajd *" : "- Misja -"}
+              - Misja -
             </Typography>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={2}>
             <Typography>{active ? "Aktywna" : "Nieaktywna"}</Typography>
           </Grid>
+          <Grid item xs={2}>
+              <Typography>{event.awardsAreSecret ? "Nagrody ukryte" : "Nagrody jawne"}</Typography>
+            </Grid>
           <Grid item xs={6}>
             <Box display="flex">
               <Typography style={{ marginRight: "1rem" }}>{`${
-                event.partySize[0]
-              } - ${event.partySize[1]}`}</Typography>{" "}
+                event.minPlayers
+              } - ${event.maxPlayers}`}</Typography>{" "}
               <PeopleIcon />
-              <Typography  style={{ marginLeft: "1rem" }}>Poziom {event.minLevel} + | {`S: ${event.attributes.str} / Z: ${event.attributes.dex} / M: ${event.attributes.mag} / W: ${event.attributes.end}`}</Typography>
+              <Typography  style={{ marginLeft: "1rem" }}>Poziom {event.minLevel} + | {`S: ${event.strength} / Z: ${event.dexterity} / M: ${event.magic} / W: ${event.endurance}`}</Typography>
             </Box>
           </Grid>
         </Grid>
         <Grid item container>
           <Grid item xs={2}>
             <img
-              src={require("../../../assets/icons/events/" + event.icon)}
+              src={require("../../../assets/icons/events/" + event.imgSrc)}
               width={128}
             />
           </Grid>
           <Grid item container direction="column" xs={6}>
             <Grid item>
-              <Typography variant="h5" style={{fontSize: '1.2rem', fontWeight: 'bolder'}}>{event.name}</Typography>
+              <Typography variant="h5" style={{fontSize: '1.2rem', fontWeight: 'bolder'}}>{event.title}</Typography>
             </Grid>
             <Grid item>
               <Typography>{`Czas publikacji: ${
@@ -93,8 +96,8 @@ const EventListItem = ({
               }, ${event.activationDate.split("T")[1]}`}</Typography>
             </Grid>
             <Grid item>
-              <Typography>{`Czas zakończenia: ${event.endDate.split("T")[0]}, ${
-                event.endDate.split("T")[1]
+              <Typography>{`Czas zakończenia: ${event.expiryDate.split("T")[0]}, ${
+                event.expiryDate.split("T")[1]
               }`}</Typography>
             </Grid>
             {!active &&
@@ -223,4 +226,4 @@ const EventListItem = ({
   );
 };
 
-export default EventListItem;
+export default EventMissionListItem;

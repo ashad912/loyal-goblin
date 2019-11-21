@@ -45,6 +45,17 @@ export const MissionSchema = new mongoose.Schema({
         },
         required: true,
     },
+    experience: {
+        type: Number,
+        min: 0,
+        validate(value) {
+            if (!validator.isInteger(value)) {
+                throw new Error(`${value} is not an integer value!`)
+            }
+        },
+        required: true,
+    },
+
     strength: {
         type: Number,
         min: 1,
@@ -85,7 +96,7 @@ export const MissionSchema = new mongoose.Schema({
         },
         required: true,
     },
-    level: {
+    minLevel: {
         type: Number,
         min: 1,
         validate(value) {
@@ -120,7 +131,6 @@ export const MissionSchema = new mongoose.Schema({
         mage: [ClassAwardsSchema],
         cleric: [ClassAwardsSchema],
     },
-    awardsAreSecret: {type: Boolean}
     // awards: [{
     //     class: String, //if undefined -> award is overall
     //     itemModel: {

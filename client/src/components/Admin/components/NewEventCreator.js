@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import moment from "moment";
 import styled from "styled-components";
 import Button from "@material-ui/core/Button";
+import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
@@ -22,6 +23,7 @@ import MomentUtils from "@date-io/moment";
 
 import AttributeBox from "./AttributeBox";
 import AmuletsModal from "./AmuletsModal";
+import ItemsModal from "./ItemsModal";
 
 import diamondAmulet from "../../../assets/icons/items/diamond-amulet.png";
 import sapphireAmulet from "../../../assets/icons/items/sapphire-amulet.png";
@@ -33,7 +35,6 @@ import characterClasses from "../../../assets/categories/characterClasses";
 import convertItemsArrayToCategories from "../utils/bagArayToCategories";
 
 import "moment/locale/pl";
-import ItemsModal from "./ItemsModal";
 moment.locale("pl");
 
 const mockAmulets = [
@@ -397,8 +398,6 @@ let mockItems = [
   }
 ];
 
-mockItems = convertItemsArrayToCategories(mockItems);
-
 const FileInputWrapper = styled.div`
   position: relative;
   background: red;
@@ -427,92 +426,129 @@ const FileInputButton = styled(Button)`
 
 class NewEventCreator extends Component {
   state = {
-    isRaid: false,
-    isUnique: false,
-    name: "",
+    isRally: false,
+    unique: false,
+    title: "",
     description: "",
     minLevel: "",
-    icon: "",
-    partySize: [1, 5],
-    attributePool: { str: 1, dex: 1, mag: 1, end: 1 },
+    imgSrc: "",
+    minPlayers: 1,
+    maxPlayers: 8,
+    strength: 1,
+    dexterity: 1,
+    magic: 1,
+    endurance: 1,
     showAmuletsModal: false,
-    amulets: [...mockAmulets],
+    amulets: [],
     showItemsModal: false,
     experience: 0,
+    awardLevelExperienceInput: 0,
     awardsAreSecret: false,
+    fullItemsList: {},
     items: { any: [], warrior: [], mage: [], rogue: [], cleric: [] },
+    awardsLevels: [],
+    currentAwardTier: -1,
     activationDate: moment().format("YYYY-MM-DDTHH:mm"),
-    raidStartTime: moment().add(1, "d").format("YYYY-MM-DDTHH:mm"),
+    startDate: moment()
+      .add(1, "d")
+      .format("YYYY-MM-DDTHH:mm"),
     isInstant: false,
     raidIsInstantStart: false,
-    endDate: moment()
+    expiryDate: moment()
       .add(1, "d")
       .format("YYYY-MM-DDTHH:mm"),
     isPermanent: false
   };
 
   componentDidMount() {
-    if (this.props.isEdit) {
-      const event = { ...this.props.eventToEdit };
-      const amulets = mockAmulets.map(amulet => {
-        return {
-          ...amulet,
-          quantity:
-            event.amulets.find(
-              eventAmulet => eventAmulet.itemModel.id === amulet.itemModel.id
-            ) !== undefined
-              ? event.amulets.find(
-                  eventAmulet =>
-                    eventAmulet.itemModel.id === amulet.itemModel.id
-                ).quantity
-              : 0
-        };
-      });
-      this.setState({
-        isRaid: event.isRaid,
-        isUnique: event.isUnique,
-        name: event.name,
-        description: event.description,
-        minLevel: event.minLevel,
-        icon: event.icon,
-        partySize: event.partySize,
-        amulets: amulets,
-        experience: event.experience,
-        items: {
-          any: [],
-          warrior: [],
-          mage: [],
-          rogue: [],
-          cleric: [],
-          ...event.items
-        },
-        activationDate: moment(
-          event.activationDate.split("T")[0] +
-            " " +
-            event.activationDate.split("T")[1]
-        ).format("YYYY-MM-DDTHH:mm"),
-        endDate: moment(
-          event.endDate.split("T")[0] + " " + event.endDate.split("T")[1]
-        ).format("YYYY-MM-DDTHH:mm"),
-        isPermanent: event.isPermanent
-      });
-    }
+    //fetch things from back end
+    this.setState(
+      {
+        amulets: [...mockAmulets],
+        fullItemsList: { ...convertItemsArrayToCategories(mockItems) }
+      },
+      () => {
+        if (this.props.isEdit) {
+          const event = { ...this.props.eventToEdit };
+          if (event.hasOwnProperty("minLevel")) {
+            //MISSION
+            const amulets = mockAmulets.map(amulet => {
+              return {
+                ...amulet,
+                quantity:
+                  event.amulets.find(
+                    eventAmulet =>
+                      eventAmulet.itemModel.id === amulet.itemModel.id
+                  ) !== undefined
+                    ? event.amulets.find(
+                        eventAmulet =>
+                          eventAmulet.itemModel.id === amulet.itemModel.id
+                      ).quantity
+                    : 0
+              };
+            });
+            this.setState({
+              id: event.id,
+              isRally: false,
+              unique: event.isUnique,
+              title: event.title,
+              description: event.description,
+              minLevel: event.minLevel,
+              imgSrc: event.imgSrc,
+              minPlayers: event.minPlayers,
+              maxPlayers: event.maxPlayers,
+              amulets: [...amulets],
+              experience: event.experience,
+              strength: event.strength,
+              dexterity: event.dexterity,
+              magic: event.magic,
+              endurance: event.endurance,
+              items: {
+                any: [],
+                warrior: [],
+                mage: [],
+                rogue: [],
+                cleric: [],
+                ...event.items
+              },
+              activationDate: event.activationDate,
+              expiryDate: event.expiryDate,
+              isPermanent: event.isPermanent,
+              awardsAreSecret: event.awardsAreSecret
+            });
+          } else {
+            this.setState({
+              id: event.id,
+              isRally: true,
+              title: event.title,
+              description: event.description,
+              imgSrc: event.imgSrc,
+              experience: event.experience,
+              awardsLevels: [...event.awardsLevels],
+              activationDate: event.activationDate,
+              startDate: event.startDate,
+              expiryDate: event.expiryDate,
+              awardsAreSecret: event.awardsAreSecret
+            });
+          }
+        }
+      }
+    );
   }
 
   handleUniqueChange = () => {
     this.setState(prevState => {
-      return { isUnique: !prevState.isUnique };
+      return { unique: !prevState.unique };
     });
   };
 
   handleEndDateChange = e => {
-    this.setState({ endDate: e.target.value });
+    this.setState({ expiryDate: e.target.value });
   };
 
-
   handleRaidStartTimeChange = e => {
-    this.setState({ raidStartTime: e.target.value });
-  }
+    this.setState({ startDate: e.target.value });
+  };
 
   handleActivationDateChange = e => {
     this.setState({ activationDate: e.target.value });
@@ -528,7 +564,7 @@ class NewEventCreator extends Component {
     this.setState(prevState => {
       return { raidIsInstantStart: !prevState.raidIsInstantStart };
     });
-  }
+  };
 
   handleInstantChange = () => {
     this.setState(prevState => {
@@ -537,11 +573,17 @@ class NewEventCreator extends Component {
   };
 
   handlePartySizeSliderChange = (event, newValue) => {
-    this.setState({ partySize: newValue });
+    this.setState({ minPlayers: newValue[0], maxPlayers: newValue[1] });
   };
 
-  handleChangeItemQuantity = (currentItem, quantity, characterClass) => {
-    const allItems = { ...this.state.items };
+  handleChangeItemQuantity = (currentItem, quantity, characterClass, tier) => {
+    let allItems, awardsLevels
+    if(this.state.isRally){
+      awardsLevels = [...this.state.awardsLevels]
+      allItems = {...awardsLevels[tier].awards}
+    }else{
+      allItems = { ...this.state.items };
+    }
     const classItems = [...allItems[characterClass]];
     const idOfItem = classItems.findIndex(
       item => item.itemModel.id === currentItem.itemModel.id
@@ -550,11 +592,22 @@ class NewEventCreator extends Component {
     classItems[idOfItem].quantity = parseInt(quantity);
 
     allItems[characterClass] = classItems;
-    this.setState({ items: allItems });
+    if(this.state.isRally){
+      awardsLevels[tier].awards = allItems
+      this.setState({awardsLevels })
+    }else{
+      this.setState({ items: allItems });
+    }
   };
 
-  handleSubtractItem = (currentItem, characterClass) => {
-    const allItems = { ...this.state.items };
+  handleSubtractItem = (currentItem, characterClass, tier) => {
+    let allItems, awardsLevels
+    if(this.state.isRally){
+      awardsLevels = [...this.state.awardsLevels]
+      allItems = {...awardsLevels[tier].awards}
+    }else{
+      allItems = { ...this.state.items };
+    }
     let classItems = [...allItems[characterClass]];
     const idOfItem = classItems.findIndex(
       item => item.itemModel.id === currentItem.itemModel.id
@@ -565,11 +618,22 @@ class NewEventCreator extends Component {
       classItems.splice(idOfItem, 1);
     }
     allItems[characterClass] = classItems;
-    this.setState({ items: allItems });
+    if(this.state.isRally){
+      awardsLevels[tier].awards = allItems
+      this.setState({awardsLevels })
+    }else{
+      this.setState({ items: allItems });
+    }
   };
 
-  handleAddItem = (currentItem, characterClass) => {
-    const allItems = { ...this.state.items };
+  handleAddItem = (currentItem, characterClass, tier) => {
+    let allItems, awardsLevels
+    if(this.state.isRally){
+      awardsLevels = [...this.state.awardsLevels]
+      allItems = {...awardsLevels[tier].awards}
+    }else{
+      allItems = { ...this.state.items };
+    }
     const classItems = [...allItems[characterClass]];
     const idOfItemAlreadyAdded = classItems.findIndex(
       item => item.itemModel.id === currentItem.itemModel.id
@@ -580,7 +644,12 @@ class NewEventCreator extends Component {
       classItems[idOfItemAlreadyAdded].quantity += 1;
     }
     allItems[characterClass] = classItems;
-    this.setState({ items: allItems });
+    if(this.state.isRally){
+      awardsLevels[tier].awards = allItems
+      this.setState({awardsLevels })
+    }else{
+      this.setState({ items: allItems });
+    }
   };
 
   handleChangeAwardsAreSecret = e => {
@@ -589,8 +658,30 @@ class NewEventCreator extends Component {
     });
   };
 
+  handleAddNewAwardLevel = () => {
+    const awardsLevels = [...this.state.awardsLevels];
+    if (
+      !awardsLevels.find(
+        awardLevel => awardLevel.level === this.state.awardLevelExperienceInput
+      )
+    ) {
+      awardsLevels.push({
+        level: this.state.awardLevelExperienceInput,
+        awards: { any: [], warrior: [], mage: [], rogue: [], cleric: [] }
+      });
+      awardsLevels.sort((a, b) => a.level - b.level);
+      this.setState({ awardLevelExperienceInput: 0, awardsLevels });
+    }
+  };
+
+  handleChangeAwardLevelExperienceInput = e => {
+    this.setState({
+      awardLevelExperienceInput: e.target.value.replace(/^0+/, "").trim()
+    });
+  };
+
   handleChangeExperience = e => {
-    this.setState({ experience: e.target.value });
+    this.setState({ experience: e.target.value.replace(/^0+/, "").trim() });
   };
 
   handleChangeAmuletQuantity = (id, quantity) => {
@@ -634,6 +725,15 @@ class NewEventCreator extends Component {
     this.setState({ amulets });
   };
 
+  handleToggleRallyItemsModal = (e, awardTier) => {
+    this.setState(prevState => {
+      return {
+        showItemsModal: !prevState.showItemsModal,
+        currentAwardTier: awardTier
+      };
+    });
+  };
+
   handleToggleItemsModal = e => {
     this.setState(prevState => {
       return { showItemsModal: !prevState.showItemsModal };
@@ -647,20 +747,20 @@ class NewEventCreator extends Component {
   };
 
   handleChangeAttributeValue = (e, attr, n) => {
-    const attributes = { ...this.state.attributePool };
+    let attributeValue = this.state[attr];
     if (n) {
-      attributes[attr] += n;
+      attributeValue += n;
     } else {
       if (/^\d+$/.test(e.target.value)) {
-        attributes[attr] = parseInt(e.target.value);
+        attributeValue = parseInt(e.target.value);
       }
     }
-    this.setState({ attributePool: attributes });
+    this.setState({ [attr]: attributeValue });
   };
 
   handleIconChange = e => {
     if (e.target.files.length > 0) {
-      this.setState({ icon: URL.createObjectURL(e.target.files[0]) });
+      this.setState({ imgSrc: URL.createObjectURL(e.target.files[0]) });
     }
   };
 
@@ -673,12 +773,12 @@ class NewEventCreator extends Component {
   };
 
   handleNameChange = e => {
-    this.setState({ name: e.target.value.trim() });
+    this.setState({ title: e.target.value.trim() });
   };
 
   handleToggleRaid = e => {
     this.setState(prevState => {
-      return { isRaid: !prevState.isRaid };
+      return { isRally: !prevState.isRally };
     });
   };
 
@@ -701,42 +801,41 @@ class NewEventCreator extends Component {
               <Grid item>Misja</Grid>
               <Grid item>
                 <Switch
-                  checked={this.state.isRaid}
+                  checked={this.state.isRally}
                   onChange={this.handleToggleRaid}
                 />
               </Grid>
               <Grid item>Rajd</Grid>
               <Grid item>
-                {!this.state.isRaid && 
-                
-                <FormControlLabel
-                  style={{ marginLeft: "4rem" }}
-                  control={
-                    <Checkbox
-                      checked={this.state.isUnique}
-                      onChange={this.handleUniqueChange}
-                    />
-                  }
-                  label="Misja unikalna"
-                />
-                }
+                {!this.state.isRally && (
+                  <FormControlLabel
+                    style={{ marginLeft: "4rem" }}
+                    control={
+                      <Checkbox
+                        checked={this.state.unique}
+                        onChange={this.handleUniqueChange}
+                      />
+                    }
+                    label="Misja unikalna"
+                  />
+                )}
               </Grid>
             </Grid>
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={8}>
               <TextField
-                value={this.state.name}
+                value={this.state.title}
                 onChange={this.handleNameChange}
                 autoFocus
                 margin="dense"
-                label={`Nazwa ${this.state.isRaid ? "rajdu" : "misji"}`}
+                label={`Nazwa ${this.state.isRally ? "rajdu" : "misji"}`}
                 type="text"
                 fullWidth
               />
             </Grid>
             <Grid item xs={4}>
-              {!this.state.isRaid && (
+              {!this.state.isRally && (
                 <TextField
                   value={this.state.minLevel}
                   onChange={this.handleMinLevelChange}
@@ -752,7 +851,7 @@ class NewEventCreator extends Component {
             value={this.state.description}
             onChange={this.handleDescriptionChange}
             margin="dense"
-            label={`Opis ${this.state.isRaid ? "rajdu" : "misji"}`}
+            label={`Opis ${this.state.isRally ? "rajdu" : "misji"}`}
             type="text"
             fullWidth
             multiline
@@ -763,8 +862,8 @@ class NewEventCreator extends Component {
             <Grid item>
               <FileInputWrapper>
                 <FileInputButton variant="contained" color="primary">
-                  {this.state.icon ? "Zmień ikonę" : "Dodaj ikonę"}{" "}
-                  {this.state.isRaid ? " rajdu" : " misji"}
+                  {this.state.imgSrc ? "Zmień ikonę" : "Dodaj ikonę"}{" "}
+                  {this.state.isRally ? " rajdu" : " misji"}
                 </FileInputButton>
                 <HiddenFileInput
                   type="file"
@@ -781,26 +880,26 @@ class NewEventCreator extends Component {
                 alignItems: "center"
               }}
             >
-              {this.state.icon && (
+              {this.state.imgSrc && (
                 <img
                   src={
-                    this.state.icon.startsWith("blob")
-                      ? this.state.icon
+                    this.state.imgSrc.startsWith("blob")
+                      ? this.state.imgSrc
                       : require("../../../assets/icons/events/" +
-                          this.state.icon)
+                          this.state.imgSrc)
                   }
                   style={{ width: "64px" }}
                 />
               )}
             </Grid>
           </Grid>
-          {!this.state.isRaid && (
+          {!this.state.isRally && (
             <React.Fragment>
               <Typography style={{ marginBottom: "3rem", textAlign: "left" }}>
                 Wielkość drużyny:
               </Typography>
               <Slider
-                value={this.state.partySize}
+                value={[this.state.minPlayers, this.state.maxPlayers]}
                 onChange={this.handlePartySizeSliderChange}
                 valueLabelDisplay="on"
                 min={1}
@@ -812,26 +911,26 @@ class NewEventCreator extends Component {
                   Wymagane wartości atrybutów:
                 </Typography>
                 <AttributeBox
-                  value={this.state.attributePool.str}
-                  attrType="str"
+                  value={this.state.strength}
+                  attrType="strength"
                   attrTypeText="Siła"
                   changeValue={this.handleChangeAttributeValue}
                 />
                 <AttributeBox
-                  value={this.state.attributePool.dex}
-                  attrType="dex"
+                  value={this.state.dexterity}
+                  attrType="dexterity"
                   attrTypeText="Zręczność"
                   changeValue={this.handleChangeAttributeValue}
                 />
                 <AttributeBox
-                  value={this.state.attributePool.mag}
-                  attrType="mag"
+                  value={this.state.magic}
+                  attrType="magic"
                   attrTypeText="Magia"
                   changeValue={this.handleChangeAttributeValue}
                 />
                 <AttributeBox
-                  value={this.state.attributePool.end}
-                  attrType="end"
+                  value={this.state.endurance}
+                  attrType="endurance"
                   attrTypeText="Wytrzymałość"
                   changeValue={this.handleChangeAttributeValue}
                 />
@@ -855,9 +954,7 @@ class NewEventCreator extends Component {
               <AmuletsModal
                 open={this.state.showAmuletsModal}
                 handleClose={this.handleToggleAmuletsModal}
-                amuletList={
-                  this.props.isEdit ? this.state.amulets : mockAmulets
-                }
+                amuletList={this.state.amulets}
                 eventAmuletsList={this.state.amulets}
                 handleAddAmulet={this.handleAddAmulet}
                 handleSubtractAmulet={this.handleSubtractAmulet}
@@ -905,7 +1002,7 @@ class NewEventCreator extends Component {
             spacing={2}
             alignItems="flex-start"
           >
-            <Grid item>
+            <Grid item style={{ minWidth: "20vw" }}>
               <TextField
                 value={this.state.experience}
                 onChange={this.handleChangeExperience}
@@ -913,33 +1010,201 @@ class NewEventCreator extends Component {
                 label="Punkty doświadczenia"
                 type="number"
                 inputProps={{ min: "0", step: "50" }}
+                style={{ width: "100%" }}
               />
             </Grid>
-            <Grid item container>
-              <Grid item>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={this.handleToggleItemsModal}
-                >
-                  Dodaj przedmioty
-                </Button>
+
+            {this.state.isRally && (
+              <Grid
+                item
+                container
+                alignItems="center"
+                justify="flex-start"
+                spacing={2}
+              >
+                <Grid item style={{ minWidth: "20vw" }}>
+                  <TextField
+                    value={this.state.awardLevelExperienceInput}
+                    onChange={this.handleChangeAwardLevelExperienceInput}
+                    margin="dense"
+                    label="Wymagane doświadczenie"
+                    type="number"
+                    inputProps={{ min: "0" }}
+                    style={{ width: "100%" }}
+                  />
+                </Grid>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={this.handleAddNewAwardLevel}
+                  >
+                    Dodaj poziom nagród
+                  </Button>
+                </Grid>
               </Grid>
-              <Grid item>
-                <FormControlLabel
-                  style={{ marginLeft: "4rem" }}
-                  control={
-                    <Checkbox
-                      checked={this.state.awardsAreSecret}
-                      onChange={this.handleChangeAwardsAreSecret}
-                    />
-                  }
-                  label="Nagrody są tajne"
-                />
+            )}
+
+            {this.state.isRally ? (
+              this.state.awardsLevels.map((awardLevel, index) => {
+                return (
+                  <Paper
+                    key={awardLevel.level}
+                    style={{
+                      width: "100%",
+                      padding: "1rem",
+                      margin: "0.5rem 0",
+                      boxSizing: "border-box"
+                    }}
+                  >
+                    <Grid item container>
+                      <Grid item xs={2}>
+                        <Typography variant="h6">Próg {index + 1}.</Typography>
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Typography variant="h6">{`Minimum ${awardLevel.level} PD`}</Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={e =>
+                            this.handleToggleRallyItemsModal(
+                              e,
+                              index
+                            )
+                          }
+                        >
+                          Dodaj przedmioty do tego progu
+                        </Button>
+                      </Grid>
+                    </Grid>
+                    {!this.state.showItemsModal && (
+                      <div
+                        style={{
+                          maxHeight: "30vh",
+                          display: "flex",
+                          justifyContent: "space-around",
+                          overflow: "hidden",
+                          width: "70%",
+                          marginTop: "1rem"
+                        }}
+                      >
+                        {awardLevel.awards.any.length > 0 && (
+                          <div
+                            style={{
+                              overflow: "auto",
+                              borderRight:
+                                (this.state.items.warrior.length > 0 ||
+                                  this.state.items.mage.length > 0 ||
+                                  this.state.items.rogue.length > 0 ||
+                                  this.state.items.cleric.length > 0) &&
+                                "1px solid grey",
+                              flexBasis: "50%"
+                            }}
+                          >
+                            <Typography style={{ fontWeight: "bolder" }}>
+                              Wszystkie klasy
+                            </Typography>
+                            <List dense>
+                              {awardLevel.awards.any.map(item => {
+                                return (
+                                  <ListItem>
+                                    <ListItemAvatar>
+                                      <img
+                                        src={require("../../../assets/icons/items/" +
+                                          item.itemModel.imgSrc)}
+                                        style={{
+                                          width: "32px",
+                                          height: "32px"
+                                        }}
+                                      />
+                                    </ListItemAvatar>
+                                    <ListItemText
+                                      primary={item.itemModel.name}
+                                      secondary={"x" + item.quantity}
+                                    />
+                                  </ListItem>
+                                );
+                              })}
+                            </List>
+                          </div>
+                        )}
+                        <div style={{ overflow: "auto", flexBasis: "50%" }}>
+                          <List dense>
+                            {Object.keys(awardLevel.awards)
+                              .filter(
+                                characterClass =>
+                                  characterClass !== "any" &&
+                                  awardLevel.awards[characterClass].length > 0
+                              )
+                              .map(characterClass => {
+                                return (
+                                  <React.Fragment>
+                                    <Typography
+                                      style={{ fontWeight: "bolder" }}
+                                    >
+                                      {characterClasses[characterClass]}
+                                    </Typography>
+                                    {awardLevel.awards[characterClass].map(
+                                      item => {
+                                        return (
+                                          <ListItem>
+                                            <ListItemAvatar>
+                                              <img
+                                                src={require("../../../assets/icons/items/" +
+                                                  item.itemModel.imgSrc)}
+                                                style={{
+                                                  width: "32px",
+                                                  height: "32px"
+                                                }}
+                                              />
+                                            </ListItemAvatar>
+                                            <ListItemText
+                                              primary={item.itemModel.name}
+                                              secondary={"x" + item.quantity}
+                                            />
+                                          </ListItem>
+                                        );
+                                      }
+                                    )}
+                                  </React.Fragment>
+                                );
+                              })}
+                          </List>
+                        </div>
+                      </div>
+                    )}
+                  </Paper>
+                );
+              })
+            ) : (
+              <Grid item container>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={this.handleToggleItemsModal}
+                  >
+                    Dodaj przedmioty
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <FormControlLabel
+                    style={{ marginLeft: "4rem" }}
+                    control={
+                      <Checkbox
+                        checked={this.state.awardsAreSecret}
+                        onChange={this.handleChangeAwardsAreSecret}
+                      />
+                    }
+                    label="Nagrody są tajne"
+                  />
+                </Grid>
               </Grid>
-            </Grid>
+            )}
           </Grid>
-          {!this.state.showItemsModal && (
+          {!this.state.showItemsModal && !this.state.isRally && (
             <div
               style={{
                 maxHeight: "30vh",
@@ -1028,12 +1293,14 @@ class NewEventCreator extends Component {
           <ItemsModal
             open={this.state.showItemsModal}
             handleClose={this.handleToggleItemsModal}
-            itemsList={mockItems}
+            itemsList={this.state.fullItemsList}
             eventItemsList={this.state.items}
             handleAddItem={this.handleAddItem}
             handleSubtractItem={this.handleSubtractItem}
             handleChangeItemQuantity={this.handleChangeItemQuantity}
-            title={"Dodaj nagrody misji"}
+            isRally={this.state.isRally}
+            awardsLevels={this.state.awardsLevels}
+            currentAwardTier={this.state.currentAwardTier}
           />
           <Divider style={{ marginTop: "1rem", marginBottom: "1rem" }} />
           <Grid
@@ -1047,7 +1314,7 @@ class NewEventCreator extends Component {
               {!this.state.isInstant && (
                 <React.Fragment>
                   <Typography>
-                    Czas publikacji {this.state.isRaid ? "rajdu:" : "misji:"}
+                    Czas publikacji {this.state.isRally ? "rajdu:" : "misji:"}
                   </Typography>
                   <TextField
                     type="datetime-local"
@@ -1067,48 +1334,44 @@ class NewEventCreator extends Component {
                 label="Publikuj natychmiast"
               />
             </Grid>
-            {this.state.isRaid &&
-            <Grid item style={{ textAlign: "left" }}>
-              {!this.state.raidIsInstantStart &&
-              <React.Fragment>
-
-                <Typography>
-                      Czas rozpoczęcia rajdu:
-                    </Typography>
+            {this.state.isRally && (
+              <Grid item style={{ textAlign: "left" }}>
+                {!this.state.raidIsInstantStart && (
+                  <React.Fragment>
+                    <Typography>Czas rozpoczęcia rajdu:</Typography>
                     <TextField
                       type="datetime-local"
-                      value={this.state.raidStartTime}
+                      value={this.state.startDate}
                       onChange={this.handleRaidStartTimeChange}
                     />
-              </React.Fragment>
-              }
-                  <FormControlLabel
-                style={{ marginLeft: "2rem" }}
-                control={
-                  <Checkbox
-                    checked={this.state.raidIsInstantStart}
-                    onChange={this.handleRaidInstantStart}
-                  />
-                }
-                label="Rozpocznij natychmiast"
-              />
-            </Grid>
-            }
+                  </React.Fragment>
+                )}
+                <FormControlLabel
+                  style={{ marginLeft: "2rem" }}
+                  control={
+                    <Checkbox
+                      checked={this.state.raidIsInstantStart}
+                      onChange={this.handleRaidInstantStart}
+                    />
+                  }
+                  label="Rozpocznij natychmiast"
+                />
+              </Grid>
+            )}
             <Grid item style={{ textAlign: "left" }}>
               {!this.state.isPermanent && (
                 <React.Fragment>
                   <Typography>
-                    Czas zakończenia{" "}
-                    {this.state.isRaid ? "rajdu:" : "misji:"}
+                    Czas zakończenia {this.state.isRally ? "rajdu:" : "misji:"}
                   </Typography>
                   <TextField
                     type="datetime-local"
-                    value={this.state.endDate}
+                    value={this.state.expiryDate}
                     onChange={this.handleEndDateChange}
                   />
                 </React.Fragment>
               )}
-              {!this.state.isRaid && (
+              {!this.state.isRally && (
                 <FormControlLabel
                   style={{ marginLeft: "2rem" }}
                   control={
@@ -1151,7 +1414,6 @@ class NewEventCreator extends Component {
   }
 }
 
-
 // const checkRallyDates = async (/*param*/) => {
 //   const rallyList = [
 //       {
@@ -1173,7 +1435,6 @@ class NewEventCreator extends Component {
 //       expiryDate: moment('2019-11-19T20:02:00.000+00:00')
 //   }
 
-  
 //   const newRallyStart = rally.activationDate.valueOf()
 //   const newRallyEnd = rally.expiryDate.valueOf()
 

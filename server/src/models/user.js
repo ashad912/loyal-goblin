@@ -70,7 +70,7 @@ export const UserSchema = new mongoose.Schema({
             type: Number,
             default: 0,
         },
-        dexternity: {
+        dexterity: {
             type: Number,
             default: 0,
         }, 
@@ -189,55 +189,49 @@ export const UserSchema = new mongoose.Schema({
             default: 0,
             min: 0,
             validate(value) {
-                if (!validator.isInteger(value)) {
+                if (!Number.isInteger(value)) {
                     throw new Error(`${value} is not an integer value!`)
                 }
             },
-            required: true,
         },
         attrDexterity: {
             type: Number,
             default: 0,
             min: 0,
             validate(value) {
-                if (!validator.isInteger(value)) {
+                if (!Number.isInteger(value)) {
                     throw new Error(`${value} is not an integer value!`)
                 }
             },
-            required: true,
         },
         attrMagic: {
             type: Number,
             default: 0,
             min: 0,
             validate(value) {
-                if (!validator.isInteger(value)) {
+                if (!Number.isInteger(value)) {
                     throw new Error(`${value} is not an integer value!`)
                 }
             },
-            required: true,
         },
         attrEndurance: {
             type: Number,
             default: 0,
             min: 0,
             validate(value) {
-                if (!validator.isInteger(value)) {
+                if (!Number.isInteger(value)) {
                     throw new Error(`${value} is not an integer value!`)
                 }
             },
-            required: true,
         },
         rawExperience: {
             absolute: {
                 type: String,
                 default: '0',
-                required: true,
             },
             percent: {
                 type: String,
                 default: '0%',
-                required: true,
             }
         },
         products: [{

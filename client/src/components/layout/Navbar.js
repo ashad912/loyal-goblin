@@ -30,7 +30,6 @@ const StyledMenu = styled(Menu)`
   
 const StyledMenuItem = styled(MenuItem)`
 
-
 `
   
 const StyledAppBar = styled(AppBar)`
@@ -153,7 +152,7 @@ const Navbar = (props) => {
                         anchorEl={anchorEl}
                         open={Boolean(anchorEl)}
                         onClose={handleClose}
-                        elevation={0}
+                        elevation={2}
                         getContentAnchorEl={null}
                         anchorOrigin={{
                             vertical: "bottom",

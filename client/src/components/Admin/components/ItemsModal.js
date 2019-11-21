@@ -32,18 +32,24 @@ import itemCategories from "../../../assets/categories/items";
 import characterClasses from "../../../assets/categories/characterClasses";
 
 const ItemsModal = props => {
-  const [searchValue, setSearchValue] = useState("");
-  const [itemsList, setItemsList] = useState(props.itemsList);
-  const [classFilter, setClassFilter] = useState("any");
-  const categories = {};
 
-  Object.keys(props.itemsList).forEach(
-    category => 
-    (categories[category] = true)
-  );
- 
-  const [categoryFilter, setCategoryFilter] = useState(categories);
+  const [searchValue, setSearchValue] = useState("");
+  const [itemsList, setItemsList] = useState({});
+  const [classFilter, setClassFilter] = useState("any");
+    const [categoryFilter, setCategoryFilter] = useState({});
   const [perksFilter, setPerksFilter] = useState(false);
+  
+  useEffect(() => {
+
+    setItemsList({...props.itemsList})
+    const categories = {};
+    Object.keys(props.itemsList).forEach(
+      category => 
+      (categories[category] = true)
+    );
+    setCategoryFilter(categories)
+    
+  }, [props.itemsList])
 
   useEffect(() => {
     if (searchValue.trim().length > 0) {
@@ -112,16 +118,18 @@ const ItemsModal = props => {
 
 
   const handleSubtract = (item, characterClass) => {
-    props.handleSubtractItem(item, characterClass);
+    props.handleSubtractItem(item, characterClass, props.currentAwardTier);
   };
 
   const handleChangeQuantity = (item, e, characterClass) => {
-    props.handleChangeItemQuantity(item, e.target.value, characterClass);
+    props.handleChangeItemQuantity(item, e.target.value, characterClass, props.currentAwardTier);
   };
 
   const handleAdd = (item, characterClass) =>  {
-    props.handleAddItem(item, characterClass);
+    props.handleAddItem(item, characterClass, props.currentAwardTier);
   };
+
+  const eventItems = props.isRally? (props.currentAwardTier > -1 && props.awardsLevels[props.currentAwardTier].awards) : props.eventItemsList
 
   return (
     <Dialog
@@ -130,7 +138,7 @@ const ItemsModal = props => {
       fullWidth
       maxWidth="lg"
     >
-      <DialogTitle>{props.title}</DialogTitle>
+      <DialogTitle>{props.isRally ? `Nagrody dla progu ${props.currentAwardTier+1 }` : "Dodaj przedmioty do misji"}</DialogTitle>
       <div style={{ display: "flex", overflow: "hidden", height: "70vh" }}>
         <div
           style={{
@@ -166,7 +174,7 @@ const ItemsModal = props => {
                         Kategorie:
                       </FormLabel>
                       <FormGroup>
-                        {Object.keys(categories).map(category => {
+                        {Object.keys(categoryFilter).map(category => {
                           return (
                             <FormControlLabel
                               key={category}
@@ -266,15 +274,15 @@ const ItemsModal = props => {
         </div>
         <div style={{ flexBasis: "40%", overflow: "auto" }}>
           <List dense style={{ padding: "1rem" }}>
-            {Object.keys(props.eventItemsList).map(characterClass => {
+            {Object.keys(eventItems).map(characterClass => {
               return (
-                props.eventItemsList[characterClass].length > 0 && (
+                eventItems[characterClass].length > 0 && (
                   <React.Fragment key={characterClass}>
                     <Typography style={{ fontWeight: "bolder" }}>
                       {characterClasses[characterClass]}
                     </Typography>
                     <List>
-                      {props.eventItemsList[characterClass].map(item => {
+                      {eventItems[characterClass].map(item => {
                         return (
                           <ListItem key={item.itemModel.id}>
                             <Grid

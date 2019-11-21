@@ -18,7 +18,7 @@ const ItemsModalListItemPerks = ({perk}) => {
         ? "Czas trwania: " + time.lengthInHours + " h"
         : "Czas trwania: 1 d";
       return (
-        <React.Fragment >
+        <React.Fragment key={perk.perkType+time.startDay+time.duration}>
           <Grid item>
             <Typography style={{fontSize: '0.8rem'}}>{startTime}</Typography>
           </Grid>
