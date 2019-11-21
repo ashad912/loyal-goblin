@@ -10,10 +10,6 @@ export const RallySchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    status: {
-        type: String,
-        required: true,
-    },
     activationDate: {
         type: Date
     },
@@ -33,7 +29,7 @@ export const RallySchema = new mongoose.Schema({
     users: [{
         experience: Number,
         profile: { //users active in rally
-            type: mongoose.Schema.Types.ObjectId, //id in mongo - user id
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'user',
             unique: true,
         }
@@ -42,7 +38,7 @@ export const RallySchema = new mongoose.Schema({
         type: Number,
         min: 0,
         validate(value) {
-            if (!validator.isInteger(value)) {
+            if (!Number.isInteger(value)) {
                 throw new Error(`${value} is not an integer value!`)
             }
         },
@@ -50,25 +46,23 @@ export const RallySchema = new mongoose.Schema({
     },
     awardsAreSecret: Boolean,
     awardsLevels: [{
-        awardsLevel: {
-            level: {
-                type: Number,
-                min: 1,
-                validate(value) {
-                    if (!validator.isInteger(value)) {
-                        throw new Error(`${value} is not an integer value!`)
-                    }
-                },
-                unique: true,
+        level: {
+            type: Number,
+            min: 1,
+            validate(value) {
+                if (!Number.isInteger(value)) {
+                    throw new Error(`${value} is not an integer value!`)
+                }
             },
-            awards: {
-                any: [ClassAwardsSchema],
-                warrior: [ClassAwardsSchema],
-                rogue: [ClassAwardsSchema],
-                mage: [ClassAwardsSchema],
-                cleric: [ClassAwardsSchema],
-            }   
+            unique: true,
         },
+        awards: {
+            any: [ClassAwardsSchema],
+            warrior: [ClassAwardsSchema],
+            rogue: [ClassAwardsSchema],
+            mage: [ClassAwardsSchema],
+            cleric: [ClassAwardsSchema],
+        }   
     }],
         
 },

@@ -5,10 +5,12 @@ import { Mission } from '../models/mission';
 import { auth } from '../middleware/auth';
 import { MissionInstance } from '../models/missionInstance';
 import { Item } from '../models/item'
+import { ItemModel } from '../models/itemModel'
 import { asyncForEach } from '../utils/methods'
 
 import isEqual from 'lodash/isEqual'
 import {Rally} from '../models/rally'
+import moment from 'moment';
 
 const router = new express.Router
 
@@ -20,21 +22,7 @@ const router = new express.Router
 //CHECK
 router.get('/eventList', auth, async (req,res) => {
     try{
-        //const missionList = await Mission.find({})
-        //TO-CHECK: hiding awards when flag is set
-        const missionList = Mission.aggregate().match({})
-        .project({ 
-          'awards': {
-            $cond: {
-              if: {
-                '$eq': ['$awardsAreSecret', true]
-              },
-              then: [],
-              else: '$awards'
-            }
-          },
-        })
-        //await asyncForEach(())
+        const missionList = await Mission.find({})
         const rallyList = await Rally.find({})
         const eventList = [...missionList, ...rallyList]
     
@@ -55,7 +43,7 @@ router.post('/create', auth, async (req, res) =>{
     const mission = new Mission(req.body)
 
     try {
-        await mission.save() //this method holds updated user!
+        await mission.save() 
         res.status(201).send(mission)
     } catch (e) {
         console.log(e)
@@ -137,11 +125,53 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
     
     try {
         //CONSIDER: move populate to middleware Mission.post('find', ...)
-        const missions = await Mission.find({status: 'active', users: {$not: {$elemMatch: {$nin: partyIds}}}})
-            .populate({ //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
-                path: 'amulets.itemModel',
-                options: {}
-            })
+        // const missions = await Mission.find({completedByUsers:  {$elemMatch: {$nin: partyIds}}})
+        //     .populate({ //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
+        //         path: 'amulets.itemModel',
+        //         options: {}
+        //     })
+
+
+        
+        //console.log( new Date().toUTCString())
+        const missions = await Mission.aggregate().match({
+             $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }, {completedByUsers: {$elemMatch: {$nin: partyIds}}}],
+        })
+        .project({ 
+            'title': 1,
+            'description': 1,
+            'minPlayers': 1,
+            'maxPlayers': 1,
+            'level': 1,
+            'strength': 1,
+            'dexterity': 1,
+            'magic': 1,
+            'endurance': 1,
+            'unique': 1,
+            'amulets': 1,
+            'awards': {
+                $cond: {
+                    if: {
+                        '$eq': ['$awardsAreSecret', true]
+                    },
+                    then: {     
+                        "any": [],
+                        "warrior": [],
+                        "rogue": [],
+                        "mage": [],
+                        "cleric": [],
+                    },
+                    else: '$awards'
+                }
+            },
+        })
+        
+        
+        //population on all colection saved to missions var
+        await ItemModel.populate(missions, { //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
+            path: 'amulets.itemModel',
+            options: {}
+        })
         
         //IMPORTANT: .execPopulate() does not work on array!!!!!! lost 1,5 hour on this xd
         /*missions.forEach( async (mission) => {
@@ -151,7 +181,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
             }).execPopulate()
         })*/
 
-        console.log(missions)
+        //console.log(missions)
         
         res.send(missions)
     } catch (e) {

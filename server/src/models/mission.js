@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import validator from 'validator'
 import {ClassAwardsSchema} from '../schemas/ClassAwardsSchema'
 
 export const eventStatuses = ['ready', 'active', 'archive']
@@ -12,14 +11,10 @@ export const MissionSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    status: {
-        type: String,
-        required: true,
-    },
     activationDate: {
         type: Date
     },
-    expiryDate: { //counted from time length (days, hours, minutes, seconds) passed by admin?
+    expiryDate: { 
         type: Date
     },
     imgSrc: {
@@ -29,7 +24,7 @@ export const MissionSchema = new mongoose.Schema({
         type: Number,
         min: 1,
         validate(value) {
-            if (!validator.isInteger(value)) {
+            if (!Number.isInteger(value)) {
                 throw new Error(`${value} is not an integer value!`)
             }
         },
@@ -39,7 +34,7 @@ export const MissionSchema = new mongoose.Schema({
         type: Number,
         min: 1,
         validate(value) {
-            if (!validator.isInteger(value)) {
+            if (!Number.isInteger(value)) {
                 throw new Error(`${value} is not an integer value!`)
             }
         },
@@ -49,7 +44,7 @@ export const MissionSchema = new mongoose.Schema({
         type: Number,
         min: 0,
         validate(value) {
-            if (!validator.isInteger(value)) {
+            if (!Number.isInteger(value)) {
                 throw new Error(`${value} is not an integer value!`)
             }
         },
@@ -60,7 +55,7 @@ export const MissionSchema = new mongoose.Schema({
         type: Number,
         min: 1,
         validate(value) {
-            if (!validator.isInteger(value)) {
+            if (!Number.isInteger(value)) {
                 throw new Error(`${value} is not an integer value!`)
             }
         },
@@ -70,7 +65,7 @@ export const MissionSchema = new mongoose.Schema({
         type: Number,
         min: 1,
         validate(value) {
-            if (!validator.isInteger(value)) {
+            if (!Number.isInteger(value)) {
                 throw new Error(`${value} is not an integer value!`)
             }
         },
@@ -80,7 +75,7 @@ export const MissionSchema = new mongoose.Schema({
         type: Number,
         min: 1,
         validate(value) {
-            if (!validator.isInteger(value)) {
+            if (!Number.isInteger(value)) {
                 throw new Error(`${value} is not an integer value!`)
             }
         },
@@ -90,17 +85,17 @@ export const MissionSchema = new mongoose.Schema({
         type: Number,
         min: 1,
         validate(value) {
-            if (!validator.isInteger(value)) {
+            if (!Number.isInteger(value)) {
                 throw new Error(`${value} is not an integer value!`)
             }
         },
         required: true,
     },
-    minLevel: {
+    level: {
         type: Number,
         min: 1,
         validate(value) {
-            if (!validator.isInteger(value)) {
+            if (!Number.isInteger(value)) {
                 throw new Error(`${value} is not an integer value!`)
             }
         },

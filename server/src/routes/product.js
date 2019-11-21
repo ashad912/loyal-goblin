@@ -85,7 +85,7 @@ router.get('/shop', auth, async (req, res)=> {
 })
 //DEVELOP
 //ADMIN?
-router.post('/finalize', auth, async(req, res) => {
+router.post('/finalize', auth, async (req, res) => {
     //depends on source of request
     const party = req.party
     const user = req.user //if admin-side: get leader of this party
@@ -100,7 +100,7 @@ router.post('/finalize', auth, async(req, res) => {
     
         const partyIds = [...user.party.members, party.leader]
     
-        await asyncForEach((partyIds), (memberId) => {
+        await asyncForEach((partyIds), async (memberId) => {
             const member = await User.findById(memberId)
             member.bag = [...member.bag /*, things from order*/]
             member.experience = member.experience /*+ exp from order for user*/
