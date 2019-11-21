@@ -33,6 +33,7 @@ import emeraldAmulet from "../../../assets/icons/items/emerald-amulet.png";
 import characterClasses from "../../../assets/categories/characterClasses";
 
 import convertItemsArrayToCategories from "../utils/bagArayToCategories";
+import { asyncForEach } from "../utils/asyncForEach";
 
 import "moment/locale/pl";
 moment.locale("pl");
@@ -40,9 +41,9 @@ moment.locale("pl");
 const mockAmulets = [
   {
     itemModel: {
-      id: 101,
+      _id: 101,
       type: {
-        id: 201,
+        _id: 201,
         type: "amulet"
       },
       name: "Diament",
@@ -52,9 +53,9 @@ const mockAmulets = [
   },
   {
     itemModel: {
-      id: 102,
+      _id: 102,
       type: {
-        id: 201,
+        _id: 201,
         type: "amulet"
       },
       name: "Perła",
@@ -64,9 +65,9 @@ const mockAmulets = [
   },
   {
     itemModel: {
-      id: 103,
+      _id: 103,
       type: {
-        id: 201,
+        _id: 201,
         type: "amulet"
       },
       name: "Szmaragd",
@@ -76,9 +77,9 @@ const mockAmulets = [
   },
   {
     itemModel: {
-      id: 104,
+      _id: 104,
       type: {
-        id: 201,
+        _id: 201,
         type: "amulet"
       },
       name: "Szafir",
@@ -88,9 +89,9 @@ const mockAmulets = [
   },
   {
     itemModel: {
-      id: 105,
+      _id: 105,
       type: {
-        id: 201,
+        _id: 201,
         type: "amulet"
       },
       name: "Diament2",
@@ -100,9 +101,9 @@ const mockAmulets = [
   },
   {
     itemModel: {
-      id: 106,
+      _id: 106,
       type: {
-        id: 201,
+        _id: 201,
         type: "amulet"
       },
       name: "Perła2",
@@ -112,9 +113,9 @@ const mockAmulets = [
   },
   {
     itemModel: {
-      id: 107,
+      _id: 107,
       type: {
-        id: 201,
+        _id: 201,
         type: "amulet"
       },
       name: "Szmaragd2",
@@ -124,9 +125,9 @@ const mockAmulets = [
   },
   {
     itemModel: {
-      id: 108,
+      _id: 108,
       type: {
-        id: 201,
+        _id: 201,
         type: "amulet"
       },
       name: "Szafir2",
@@ -139,9 +140,9 @@ const mockAmulets = [
 let mockItems = [
   {
     itemModel: {
-      id: 101,
+      _id: 101,
       type: {
-        id: 1,
+        _id: 1,
         type: "amulet"
       },
       name: "Diament",
@@ -152,9 +153,9 @@ let mockItems = [
   },
   {
     itemModel: {
-      id: 102,
+      _id: 102,
       type: {
-        id: 1,
+        _id: 1,
         type: "amulet"
       },
       name: "Perła",
@@ -166,9 +167,9 @@ let mockItems = [
 
   {
     itemModel: {
-      id: 201,
+      _id: 201,
       type: {
-        id: 2,
+        _id: 2,
         type: "weapon"
       },
       name: "Krótki miecz",
@@ -179,9 +180,9 @@ let mockItems = [
   },
   {
     itemModel: {
-      id: 202,
+      _id: 202,
       type: {
-        id: 2,
+        _id: 2,
         type: "weapon"
       },
       name: "Wielki miecz",
@@ -200,9 +201,9 @@ let mockItems = [
   },
   {
     itemModel: {
-      id: 203,
+      _id: 203,
       type: {
-        id: 2,
+        _id: 2,
         type: "weapon"
       },
       name: "Kostur twojej starej",
@@ -213,9 +214,9 @@ let mockItems = [
   },
   {
     itemModel: {
-      id: 204,
+      _id: 204,
       type: {
-        id: 2,
+        _id: 2,
         type: "weapon"
       },
       name: "Nusz",
@@ -226,9 +227,9 @@ let mockItems = [
   },
   {
     itemModel: {
-      id: 205,
+      _id: 205,
       type: {
-        id: 2,
+        _id: 2,
         type: "weapon"
       },
       name: "Morgensztern",
@@ -240,9 +241,9 @@ let mockItems = [
 
   {
     itemModel: {
-      id: 301,
+      _id: 301,
       type: {
-        id: 3,
+        _id: 3,
         type: "chest"
       },
       name: "Skórzana kurta",
@@ -253,9 +254,9 @@ let mockItems = [
   },
   {
     itemModel: {
-      id: 302,
+      _id: 302,
       type: {
-        id: 3,
+        _id: 3,
         type: "chest"
       },
       name: "Sutanna bojowa",
@@ -267,9 +268,9 @@ let mockItems = [
 
   {
     itemModel: {
-      id: 401,
+      _id: 401,
       type: {
-        id: 4,
+        _id: 4,
         type: "legs"
       },
       name: "Lniane spodnie",
@@ -280,9 +281,9 @@ let mockItems = [
   },
   {
     itemModel: {
-      id: 402,
+      _id: 402,
       type: {
-        id: 4,
+        _id: 4,
         type: "legs"
       },
       name: "Nogawice płytowe",
@@ -293,9 +294,9 @@ let mockItems = [
   },
   {
     itemModel: {
-      id: 403,
+      _id: 403,
       type: {
-        id: 4,
+        _id: 4,
         type: "legs"
       },
       name: "Ledżinsy",
@@ -307,9 +308,9 @@ let mockItems = [
 
   {
     itemModel: {
-      id: 501,
+      _id: 501,
       type: {
-        id: 5,
+        _id: 5,
         type: "feet"
       },
       name: "Wysokie buty",
@@ -320,9 +321,9 @@ let mockItems = [
   },
   {
     itemModel: {
-      id: 502,
+      _id: 502,
       type: {
-        id: 5,
+        _id: 5,
         type: "feet"
       },
       name: "Kapcie cichobiegi",
@@ -334,9 +335,9 @@ let mockItems = [
 
   {
     itemModel: {
-      id: 601,
+      _id: 601,
       type: {
-        id: 6,
+        _id: 6,
         type: "head"
       },
       name: "Czapka z piórkiem",
@@ -347,9 +348,9 @@ let mockItems = [
   },
   {
     itemModel: {
-      id: 602,
+      _id: 602,
       type: {
-        id: 6,
+        _id: 6,
         type: "head"
       },
       name: "Kaptur czarodzieja",
@@ -375,9 +376,9 @@ let mockItems = [
   },
   {
     itemModel: {
-      id: 701,
+      _id: 701,
       type: {
-        id: 7,
+        _id: 7,
         type: "ring"
       },
       name: "Pierścień wódy",
@@ -455,9 +456,29 @@ class NewEventCreator extends Component {
     isInstant: false,
     raidIsInstantStart: false,
     expiryDate: moment()
-      .add(1, "d")
+      .add(2, "d")
       .format("YYYY-MM-DDTHH:mm"),
-    isPermanent: false
+    isPermanent: false,
+    dateErrors: {
+      activationDate: ["", ""],
+      startDate: ["", ""],
+      expiryDate: ["", ""]
+    },
+    awaitingRallyList: false,
+    collisionRallyList: [],
+    validationErrors: {
+      title: "",
+      minLevel: "",
+      description: "",
+      imgSrc: ""
+    },
+    dirtyFields: {
+      title: false,
+      minLevel: false,
+      description: false,
+      imgSrc: false
+    },
+    disableSubmit: true
   };
 
   componentDidMount() {
@@ -531,10 +552,149 @@ class NewEventCreator extends Component {
               awardsAreSecret: event.awardsAreSecret
             });
           }
+          this.validateRequiredFields()
         }
       }
     );
   }
+
+  handleValidateDates = (value, type, isRally) => {
+    const event = {
+      activationDate: moment(this.state.activationDate),
+      startDate: isRally ? moment(this.state.startDate) : null,
+      expiryDate: moment(this.state.expiryDate)
+    };
+
+    event[type] = moment(value);
+
+    const errors = { ...this.state.dateErrors };
+
+    const newEventActivation = event.activationDate.valueOf();
+    const newEventStart = isRally ? event.startDate.valueOf() : null;
+    const newEventEnd = event.expiryDate.valueOf();
+
+    switch (type) {
+      case "activationDate":
+        if (newEventActivation >= newEventEnd) {
+          errors.activationDate[0] =
+            "Czas publikacji nie może być późniejszy niż czas zakończenia";
+        } else {
+          errors.activationDate[0] = "";
+        }
+        if (isRally && newEventActivation >= newEventStart) {
+          errors.activationDate[1] =
+            "Czas publikacji nie może być późniejszy niż czas rozpoczęcia";
+        } else {
+          errors.activationDate[1] = "";
+        }
+
+        break;
+      case "startDate":
+        if (newEventStart < newEventActivation) {
+          errors.startDate[0] =
+            "Czas rozpoczęcia nie może być wcześniejszy niż czas publikacji";
+        } else {
+          errors.startDate[0] = "";
+        }
+        if (newEventStart >= newEventEnd) {
+          errors.startDate[1] =
+            "Czas rozpoczęcia nie może być późniejszy niż czas zakończenia";
+        } else {
+          errors.startDate[1] = "";
+        }
+        break;
+
+      case "expiryDate":
+        if (newEventEnd <= newEventActivation) {
+          errors.expiryDate[0] =
+            "Czas zakończenia nie może być wcześniejszy niż czas publikacji";
+        } else {
+          errors.expiryDate[0] = "";
+        }
+        if (isRally && newEventEnd <= newEventStart) {
+          errors.expiryDate[1] =
+            "Czas zakończenia nie może być wcześniejszy niż czas rozpoczęcia";
+        } else {
+          errors.expiryDate[1] = "";
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    if (
+      Object.values(errors)
+        .reduce((a, b) => a.concat(b))
+        .every(error => error === "")
+    ) {
+      return { value, errors };
+    } else {
+      return { value: null, errors };
+    }
+  };
+
+  handleCheckRallyDates = async () => {
+    if (
+      this.state.activationDate &&
+      this.state.expiryDate &&
+      this.state.startDate
+    ) {
+      this.setState({ awaitingRallyList: true }, async () => {
+        const rallyList = [
+          {
+            title: "Wydarzenie 1",
+            activationDate: moment("2019-11-19T08:00"),
+            expiryDate: moment("2019-11-19T20:00")
+          },
+          {
+            title: "Wydarzenie 2",
+            activationDate: moment("2019-11-19T21:00"),
+            expiryDate: moment("2019-11-20T07:00:00")
+          },
+          {
+            title: "Wydarzenie 3",
+            activationDate: moment("2019-11-20T08:00"),
+            expiryDate: moment("2019-11-20T20:00")
+          }
+        ];
+
+        const rally = {
+          activationDate: moment(this.state.activationDate),
+          expiryDate: moment(this.state.expiryDate)
+        };
+
+        const newRallyActivation = rally.activationDate.valueOf();
+        const newRallyEnd = rally.expiryDate.valueOf();
+
+        let causingRallyList = [];
+        await asyncForEach(rallyList, rallyItem => {
+          const existingRallyActiviation = rallyItem.activationDate.valueOf();
+          const existingRallyEnd = rallyItem.expiryDate.valueOf();
+
+          if (
+            !(
+              (existingRallyActiviation < newRallyActivation &&
+                existingRallyEnd < newRallyActivation) ||
+              (existingRallyEnd > newRallyEnd &&
+                existingRallyActiviation > newRallyEnd)
+            )
+          ) {
+            causingRallyList = [...causingRallyList, rallyItem]; //assembling list of 'bad' rallies :<<
+          }
+        });
+
+        if (causingRallyList.length) {
+          this.setState({
+            collisionRallyList: causingRallyList,
+            awaitingRallyList: false
+          });
+        } else {
+          this.setState({ collisionRallyList: [], awaitingRallyList: false });
+        }
+      });
+    }
+  };
 
   handleUniqueChange = () => {
     this.setState(prevState => {
@@ -543,15 +703,73 @@ class NewEventCreator extends Component {
   };
 
   handleEndDateChange = e => {
-    this.setState({ expiryDate: e.target.value });
+    const result = this.handleValidateDates(
+      e.target.value,
+      "expiryDate",
+      this.state.isRally
+    );
+
+    this.setState(
+      prevState => {
+        return {
+          expiryDate: result.value ? result.value : prevState.expiryDate,
+          dateErrors: { ...result.errors }
+        };
+      },
+      () => {
+        if (this.state.isRally) {
+          this.handleCheckRallyDates();
+        }
+      }
+    );
   };
 
   handleRaidStartTimeChange = e => {
-    this.setState({ startDate: e.target.value });
+    const result = this.handleValidateDates(
+      e.target.value,
+      "startDate",
+      this.state.isRally
+    );
+
+    this.setState(
+      prevState => {
+        return {
+          startDate: result.value ? result.value : prevState.startDate,
+          dateErrors: { ...result.errors }
+        };
+      },
+      () => {
+        if (this.state.isRally) {
+          this.handleCheckRallyDates();
+        }
+      }
+    );
   };
 
   handleActivationDateChange = e => {
-    this.setState({ activationDate: e.target.value });
+    const result = this.handleValidateDates(
+      e.target.value,
+      "activationDate",
+      this.state.isRally
+    );
+
+    this.setState(
+      prevState => {
+        return {
+          activationDate: result.value
+            ? result.value
+            : prevState.activationDate,
+          dateErrors: { ...result.errors }
+        };
+      },
+      () => {
+        if (this.state.isRally) {
+          this.handleCheckRallyDates();
+        }else{
+          this.handleRaidStartTimeChange(e)
+        }
+      }
+    );
   };
 
   handlePermanentChange = () => {
@@ -577,11 +795,11 @@ class NewEventCreator extends Component {
   };
 
   handleChangeItemQuantity = (currentItem, quantity, characterClass, tier) => {
-    let allItems, awardsLevels
-    if(this.state.isRally){
-      awardsLevels = [...this.state.awardsLevels]
-      allItems = {...awardsLevels[tier].awards}
-    }else{
+    let allItems, awardsLevels;
+    if (this.state.isRally) {
+      awardsLevels = [...this.state.awardsLevels];
+      allItems = { ...awardsLevels[tier].awards };
+    } else {
       allItems = { ...this.state.items };
     }
     const classItems = [...allItems[characterClass]];
@@ -592,20 +810,20 @@ class NewEventCreator extends Component {
     classItems[idOfItem].quantity = parseInt(quantity);
 
     allItems[characterClass] = classItems;
-    if(this.state.isRally){
-      awardsLevels[tier].awards = allItems
-      this.setState({awardsLevels })
-    }else{
+    if (this.state.isRally) {
+      awardsLevels[tier].awards = allItems;
+      this.setState({ awardsLevels });
+    } else {
       this.setState({ items: allItems });
     }
   };
 
   handleSubtractItem = (currentItem, characterClass, tier) => {
-    let allItems, awardsLevels
-    if(this.state.isRally){
-      awardsLevels = [...this.state.awardsLevels]
-      allItems = {...awardsLevels[tier].awards}
-    }else{
+    let allItems, awardsLevels;
+    if (this.state.isRally) {
+      awardsLevels = [...this.state.awardsLevels];
+      allItems = { ...awardsLevels[tier].awards };
+    } else {
       allItems = { ...this.state.items };
     }
     let classItems = [...allItems[characterClass]];
@@ -618,20 +836,20 @@ class NewEventCreator extends Component {
       classItems.splice(idOfItem, 1);
     }
     allItems[characterClass] = classItems;
-    if(this.state.isRally){
-      awardsLevels[tier].awards = allItems
-      this.setState({awardsLevels })
-    }else{
+    if (this.state.isRally) {
+      awardsLevels[tier].awards = allItems;
+      this.setState({ awardsLevels });
+    } else {
       this.setState({ items: allItems });
     }
   };
 
   handleAddItem = (currentItem, characterClass, tier) => {
-    let allItems, awardsLevels
-    if(this.state.isRally){
-      awardsLevels = [...this.state.awardsLevels]
-      allItems = {...awardsLevels[tier].awards}
-    }else{
+    let allItems, awardsLevels;
+    if (this.state.isRally) {
+      awardsLevels = [...this.state.awardsLevels];
+      allItems = { ...awardsLevels[tier].awards };
+    } else {
       allItems = { ...this.state.items };
     }
     const classItems = [...allItems[characterClass]];
@@ -644,10 +862,10 @@ class NewEventCreator extends Component {
       classItems[idOfItemAlreadyAdded].quantity += 1;
     }
     allItems[characterClass] = classItems;
-    if(this.state.isRally){
-      awardsLevels[tier].awards = allItems
-      this.setState({awardsLevels })
-    }else{
+    if (this.state.isRally) {
+      awardsLevels[tier].awards = allItems;
+      this.setState({ awardsLevels });
+    } else {
       this.setState({ items: allItems });
     }
   };
@@ -758,22 +976,36 @@ class NewEventCreator extends Component {
     this.setState({ [attr]: attributeValue });
   };
 
+  handleMakeDirtyField = (field) => {
+    const dirty = {...this.state.dirtyFields}
+    dirty[field] = true
+    return dirty
+  }
+
   handleIconChange = e => {
     if (e.target.files.length > 0) {
-      this.setState({ imgSrc: URL.createObjectURL(e.target.files[0]) });
+      this.setState({ imgSrc: URL.createObjectURL(e.target.files[0]), dirtyFields: this.handleMakeDirtyField('imgSrc') }, () => {
+        this.validateRequiredFields();
+      });
     }
   };
 
   handleDescriptionChange = e => {
-    this.setState({ description: e.target.value.trim() });
+    this.setState({ description: e.target.value.trim(), dirtyFields: this.handleMakeDirtyField('description') }, () => {
+      this.validateRequiredFields();
+    });
   };
 
   handleMinLevelChange = e => {
-    this.setState({ minLevel: e.target.value.trim() });
+    this.setState({ minLevel: e.target.value.trim(), dirtyFields: this.handleMakeDirtyField('minLevel') }, () => {
+      this.validateRequiredFields();
+    });
   };
 
   handleNameChange = e => {
-    this.setState({ title: e.target.value.trim() });
+    this.setState({ title: e.target.value.trim(), dirtyFields: this.handleMakeDirtyField('title') }, () => {
+      this.validateRequiredFields();
+    });
   };
 
   handleToggleRaid = e => {
@@ -782,14 +1014,51 @@ class NewEventCreator extends Component {
     });
   };
 
+  validateRequiredFields = () => {
+    const validationErrors = {
+      title: "",
+      minLevel: "",
+      description: "",
+      imgSrc: ""
+    };
+    if (this.state.dirtyFields.title && this.state.title.trim() === "") {
+      validationErrors.title = "Pole wymagane";
+    }
+    if (this.state.dirtyFields.minLevel && this.state.minLevel.trim() === "") {
+      validationErrors.minLevel = "Pole wymagane";
+    }
+    if (this.state.dirtyFields.description && this.state.description.trim() === "") {
+      validationErrors.description = "Pole wymagane";
+    }
+    if (this.state.dirtyFields.imgSrc && !this.state.imgSrc) {
+      validationErrors.imgSrc = "Wczytaj ikonę";
+    }
+    
+
+    let inputAndDateValidation = Object.values(validationErrors).every(error => error === "") && Object.values(this.state.dateErrors)
+    .reduce((a, b) => a.concat(b))
+    .every(error => error === "")
+    if (this.state.isRally) {
+      if (this.state.collisionRallyList.length > 0) {
+        inputAndDateValidation = false
+      }
+    }
+
+    this.setState({ disableSubmit: !inputAndDateValidation, validationErrors });
+
+  };
+
   handleSubmit = () => {
     //valdidate and send data
-    this.props.handleClose();
+    
+      this.props.handleClose();
+
   };
 
   render() {
     let amuletListEmpty =
       this.state.amulets.filter(amulet => amulet.quantity > 0).length === 0;
+
     return (
       <MuiPickersUtilsProvider utils={MomentUtils}>
         <Button onClick={this.props.handleClose}>
@@ -832,6 +1101,9 @@ class NewEventCreator extends Component {
                 label={`Nazwa ${this.state.isRally ? "rajdu" : "misji"}`}
                 type="text"
                 fullWidth
+                required
+                error={this.state.validationErrors.title ? true : false}
+                helperText={this.state.validationErrors.title}
               />
             </Grid>
             <Grid item xs={4}>
@@ -843,6 +1115,9 @@ class NewEventCreator extends Component {
                   label="Minimalny poziom"
                   type="number"
                   inputProps={{ min: "1" }}
+                  required
+                  error={this.state.validationErrors.minLevel ? true : false}
+                  helperText={this.state.validationErrors.minLevel}
                 />
               )}
             </Grid>
@@ -857,13 +1132,21 @@ class NewEventCreator extends Component {
             multiline
             rows={2}
             rowsMax={5}
+            required
+            error={this.state.validationErrors.description ? true : false}
+            helperText={this.state.validationErrors.description}
           />
           <Grid container spacing={2}>
+            {this.state.validationErrors.imgSrc && 
+            <Grid item>
+  <Typography variant="caption" style={{ color: "rgb(206, 0, 0)" }}>{this.state.validationErrors.imgSrc}</Typography>
+            </Grid>
+            }
             <Grid item>
               <FileInputWrapper>
                 <FileInputButton variant="contained" color="primary">
                   {this.state.imgSrc ? "Zmień ikonę" : "Dodaj ikonę"}{" "}
-                  {this.state.isRally ? " rajdu" : " misji"}
+                  {this.state.isRally ? " rajdu *" : " misji *"}
                 </FileInputButton>
                 <HiddenFileInput
                   type="file"
@@ -1069,10 +1352,7 @@ class NewEventCreator extends Component {
                           variant="contained"
                           color="primary"
                           onClick={e =>
-                            this.handleToggleRallyItemsModal(
-                              e,
-                              index
-                            )
+                            this.handleToggleRallyItemsModal(e, index)
                           }
                         >
                           Dodaj przedmioty do tego progu
@@ -1234,7 +1514,7 @@ class NewEventCreator extends Component {
                   <List dense>
                     {this.state.items.any.map(item => {
                       return (
-                        <ListItem>
+                        <ListItem key={item.itemModel._id}>
                           <ListItemAvatar>
                             <img
                               src={require("../../../assets/icons/items/" +
@@ -1268,7 +1548,7 @@ class NewEventCreator extends Component {
                           </Typography>
                           {this.state.items[characterClass].map(item => {
                             return (
-                              <ListItem>
+                              <ListItem key={item.itemModel._id}>
                                 <ListItemAvatar>
                                   <img
                                     src={require("../../../assets/icons/items/" +
@@ -1310,7 +1590,41 @@ class NewEventCreator extends Component {
             alignItems="flex-start"
             spacing={2}
           >
+            {this.state.collisionRallyList.length > 0 && (
+              <Grid item>
+                <Typography style={{ color: "rgb(206, 0, 0)" }}>
+                  Rajdy kolidujące czasowo:
+                </Typography>
+                {this.state.collisionRallyList.map(rally => {
+                  return (
+                    <p
+                      style={{ color: "rgb(157, 0, 0)" }}
+                      key={rally.title}
+                    >{`${rally.title}: od ${moment(rally.activationDate).format(
+                      "lll"
+                    )} do ${moment(rally.expiryDate).format("lll")}`}</p>
+                  );
+                })}
+              </Grid>
+            )}
             <Grid item style={{ textAlign: "left" }}>
+              <Grid direction="column" container>
+                {this.state.dateErrors.activationDate.map(
+                  (dateError, index) => {
+                    return (
+                      <Grid item key={index}>
+                        <Typography
+                          variant="caption"
+                          style={{ color: "rgb(206, 0, 0)" }}
+                        >
+                          {dateError}
+                        </Typography>
+                      </Grid>
+                    );
+                  }
+                )}
+              </Grid>
+
               {!this.state.isInstant && (
                 <React.Fragment>
                   <Typography>
@@ -1336,9 +1650,24 @@ class NewEventCreator extends Component {
             </Grid>
             {this.state.isRally && (
               <Grid item style={{ textAlign: "left" }}>
+                <Grid direction="column" container>
+                  {this.state.dateErrors.startDate.map((dateError, index) => {
+                    return (
+                      <Grid item key={index}>
+                        <Typography
+                          variant="caption"
+                          style={{ color: "rgb(206, 0, 0)" }}
+                        >
+                          {dateError}
+                        </Typography>
+                      </Grid>
+                    );
+                  })}
+                </Grid>
                 {!this.state.raidIsInstantStart && (
                   <React.Fragment>
                     <Typography>Czas rozpoczęcia rajdu:</Typography>
+
                     <TextField
                       type="datetime-local"
                       value={this.state.startDate}
@@ -1359,11 +1688,26 @@ class NewEventCreator extends Component {
               </Grid>
             )}
             <Grid item style={{ textAlign: "left" }}>
+              <Grid direction="column" container>
+                {this.state.dateErrors.expiryDate.map((dateError, index) => {
+                  return (
+                    <Grid item key={index}>
+                      <Typography
+                        variant="caption"
+                        style={{ color: "rgb(206, 0, 0)" }}
+                      >
+                        {dateError}
+                      </Typography>
+                    </Grid>
+                  );
+                })}
+              </Grid>
               {!this.state.isPermanent && (
                 <React.Fragment>
                   <Typography>
                     Czas zakończenia {this.state.isRally ? "rajdu:" : "misji:"}
                   </Typography>
+
                   <TextField
                     type="datetime-local"
                     value={this.state.expiryDate}
@@ -1398,9 +1742,10 @@ class NewEventCreator extends Component {
             </Grid>
             <Grid item>
               <Button
-                onClick={this.props.handleClose}
+                onClick={this.handleSubmit}
                 color="primary"
                 variant="contained"
+                disabled={this.state.disableSubmit}
               >
                 {this.props.isEdit
                   ? "Zatwierdź edycję wydarzenia"

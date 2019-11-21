@@ -112,7 +112,7 @@ const mockEvents = [
     },
     experience: 2000,
     activationDate: "2019-10-21T19:00",
-    expiryDate: "2019-10-21T24:00",
+    expiryDate: "2019-10-21T00:00",
     isPermanent: false,
     awardsAreSecret: false
   },
@@ -200,7 +200,7 @@ const mockEvents = [
     },
     experience: 5000,
     activationDate: "2019-10-21T19:00",
-    expiryDate: "2019-10-21T24:00",
+    expiryDate: "2019-10-21T00:00",
     isPermanent: false,
     awardsAreSecret: true
   },
@@ -456,15 +456,15 @@ class AdminMissions extends Component {
     switch (this.state.statusFilter) {
       case "all":
         break;
+        case "ready":
+          tempEvents = tempEvents.filter(event => event.status === "ready");
+  
+          break;
       case "active":
         tempEvents = tempEvents.filter(event => event.status === "active");
         break;
-      case "ready":
-        tempEvents = tempEvents.filter(event => event.status === "ready");
-
-        break;
-      case "ended":
-        tempEvents = tempEvents.filter(event => event.status === "ended");
+      case "running":
+        tempEvents = tempEvents.filter(event => event.status === "running");
         break;
       case "archive":
         tempEvents = tempEvents.filter(event => event.status === "archive");
@@ -548,9 +548,9 @@ class AdminMissions extends Component {
                     }}
                   >
                     <MenuItem value={"all"}>Wszystkie</MenuItem>
-                    <MenuItem value={"active"}>Aktywne</MenuItem>
                     <MenuItem value={"ready"}>Oczekujące</MenuItem>
-                    <MenuItem value={"ended"}>Zakończone</MenuItem>
+                    <MenuItem value={"active"}>Aktywne</MenuItem>
+                    <MenuItem value={"running"}>Uruchomiony rajd</MenuItem>
                     <MenuItem value={"archive"}>Zarchiwizowane</MenuItem>
                   </Select>
                 </FormControl>

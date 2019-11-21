@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import validator from 'validator'
 import {ClassAwardsSchema} from '../schemas/ClassAwardsSchema'
 
-export const eventStatuses = ['ready', 'active', 'archive', 'ended']
+export const eventStatuses = ['ready', 'active', 'archive']
 
 
 

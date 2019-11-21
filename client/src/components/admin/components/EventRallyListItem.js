@@ -72,7 +72,7 @@ const EventRallyListItem = ({
                 width={128}
               />
             </Grid>
-            <Grid item container direction="column" xs={4}>
+            <Grid item container direction="column" xs={6}>
               <Grid item>
                 <Typography
                   variant="h5"
@@ -112,27 +112,19 @@ const EventRallyListItem = ({
               item
               container
               direction="column"
-              justify="space-around"
-              alignItems="center"
-              xs={4}
-              spacing={1}
+              justify="flex-start"
+              alignItems="flex-start"
+              xs={2}
             >
-              <Grid item>
-                <Typography>Nagrody:</Typography>
-              </Grid>
-              {event.awardsLevels.map(awardLevel => {
-                return (
                   <Grid item>
                     <Button
                       variant="contained"
                       color="primary"
                       onClick={handleItemPopover}
                     >
-                      {"Próg" + " " + awardLevel.level + " " + "PD"}
+                      {"Nagrody"}
                     </Button>
                   </Grid>
-                );
-              })}
 
               <Popover
                 open={Boolean(itemPopover)}
@@ -187,25 +179,7 @@ const EventRallyListItem = ({
                 </List>
                 
 
-                {/* {event.awardsLevels && selectedLevel && Object.values(event.awardsLevels.find(
-                      awardLevel => awardLevel.level === selectedLevel
-                    ).awards).reduce((a, b) => a.concat(b))
-                    .map(item => {
-                      return (
-                        <Grid
-                          item
-                          style={{
-                            background: classThemes[item.itemModel.class]
-                          }}
-                          key={item.itemModel.id}
-                        >
-                          <ListItemText
-                            primary={item.itemModel.name}
-                            secondary={"x" + item.quantity}
-                          />
-                        </Grid>
-                      );
-                    })}  */}
+
               </Popover>
               
             </Grid>

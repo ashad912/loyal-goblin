@@ -2,6 +2,8 @@ import mongoose from 'mongoose'
 import validator from 'validator'
 import {ClassAwardsSchema} from '../schemas/ClassAwardsSchema'
 
+export const eventStatuses = ['ready', 'active', 'running', 'archive']
+
 export const RallySchema = new mongoose.Schema({
 
     title: {
