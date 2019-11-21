@@ -10,20 +10,20 @@ const router = new express.Router
 
 
 ////ADMIN-SIDE
-var rallyStartTask
+//var rallyStartTask
 var rallyFinishTask
 var rallyTestTask
 
-const startRally = async (rally) => {
-    try{
-        rally.status = 'active'
-        await rally.save()
-        rallyStartTask.destroy()
-    }catch(e){
-        return e
-    }
+// const startRally = async (rally) => {
+//     try{
+//         rally.status = 'active'
+//         await rally.save()
+//         rallyStartTask.destroy()
+//     }catch(e){
+//         return e
+//     }
 
-}
+// }
 
 const addAwards = async (user, awardsLevels) => {
     let items = []
@@ -70,9 +70,10 @@ const finishRally = async (rally) => {
             
         })
 
-        rally.status = 'archive'
+        
         await rally.save()
         rallyFinishTask.destroy()
+        await updateRallyQueue() //if update is to fast??
         return
 
     }catch(e){
@@ -96,17 +97,27 @@ const designateScheduleTime = (date) => {
 export const updateRallyQueue = async () => {
     try {
         
-        if(rallyStartTask){
-            rallyStartTask.destroy()
-        }
-        if(rallyFinishTask){
+        // if(rallyStartTask){
+        //     rallyStartTask.destroy()
+        // }
+        if(rallyFinishTask){ //what if is it not undefined - after restart
             rallyFinishTask.destroy()
         }
         
         
         
-        const firstToActivate = await Rally.find({status: { $ne: 'archive'}}).sort({"activationDate": -1 }).limit(1)
-        const firstToExpire = await Rally.find({status: { $ne: 'archive'}}).sort({"expiryDate": -1 }).limit(1)
+        const firstToActivateArray = await Rally.find({ $and: [{ activationDate: { $lte: moment() } }, {expiryDate: { $gte: moment() } }]}).sort({"activationDate": -1 }).limit(1)
+        const firstToExpireArray = await Rally.find({ $and: [{ activationDate: { $lte: moment() } }, {expiryDate: { $gte: moment() } }]}).sort({"expiryDate": -1 }).limit(1)
+
+       
+        
+        if(!firstToActivateArray.length || !firstToExpireArray.length){
+            console.log('There is no rally for update criteria!')
+            return
+        }
+
+        const firstToActivate = firstToActivateArray[0]
+        const firstToExpire = firstToExpireArray[0]
 
         // const firstToActivate = {
         //     _id: 'halo1234',
@@ -114,12 +125,6 @@ export const updateRallyQueue = async () => {
         //     expiryDate: '2019-11-19T15:56:00.000+00:00'
         // }
 
-        // const firstToExpire = firstToActivate
-        
-        if(!firstToActivate.length || !firstToExpire.length){
-            console.log('There is no rally for update criteria!')
-            return
-        }
 
         if(firstToActivate._id.toString() !== firstToExpire._id.toString()){
             console.log('Gap in frontend validation!')
@@ -127,22 +132,22 @@ export const updateRallyQueue = async () => {
         
         
         //startRally
-        rallyStartTask = cron.schedule(designateScheduleTime(firstToActivate.activationDate), () => {
+        // rallyStartTask = cron.schedule(designateScheduleTime(firstToActivate.activationDate), () => {
             
-            try{
-                startRally(firstToActivate)
+        //     try{
+        //         startRally(firstToActivate)
                 
                 
-            }catch(e) {
-                console.log(e.message)
-            }
+        //     }catch(e) {
+        //         console.log(e.message)
+        //     }
             
             
-        },
-        {
-            scheduled: true,
-            timezone: "Europe/Warsaw"
-        })
+        // },
+        // {
+        //     scheduled: true,
+        //     timezone: "Europe/Warsaw"
+        // })
 
         //finishRally
         rallyFinishTask = cron.schedule(designateScheduleTime(firstToExpire.expiryDate), () => {
@@ -169,7 +174,9 @@ export const updateRallyQueue = async () => {
 //CHECK
 router.get('/listEventCreator', auth, async (req, res) => {
     try {
-        const rallyList = await Rally.find({status: { $ne: 'archive'}})
+        //const rallyList = await Rally.find({status: { $ne: 'archive'}})
+        const rallyList = await Rally.find({ $and: [{ activationDate: { $lte: moment() } }, {expiryDate: { $gte: moment() } }]})
+
         res.send(rallyList)
     }catch(e){
         res.status(400).send(e.message)

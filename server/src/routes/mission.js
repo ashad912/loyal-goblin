@@ -20,7 +20,21 @@ const router = new express.Router
 //CHECK
 router.get('/eventList', auth, async (req,res) => {
     try{
-        const missionList = await Mission.find({})
+        //const missionList = await Mission.find({})
+        //TO-CHECK: hiding awards when flag is set
+        const missionList = Mission.aggregate().match({})
+        .project({ 
+          'awards': {
+            $cond: {
+              if: {
+                '$eq': ['$awardsAreSecret', true]
+              },
+              then: [],
+              else: '$awards'
+            }
+          },
+        })
+        //await asyncForEach(())
         const rallyList = await Rally.find({})
         const eventList = [...missionList, ...rallyList]
     
