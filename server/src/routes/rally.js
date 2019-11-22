@@ -2,6 +2,7 @@ import express from 'express'
 import cron from 'node-cron'
 import moment from 'moment'
 import { Rally } from '../models/rally';
+import { User } from '../models/user'
 import { auth } from '../middleware/auth';
 import { Item } from '../models/item';
 import { asyncForEach } from '../utils/methods'
@@ -14,18 +15,34 @@ const router = new express.Router
 var rallyFinishTask
 var rallyTestTask
 
-
+//OK
 const addAwards = async (user, awardsLevels) => {
     let items = []
     
     await asyncForEach(awardsLevels, async (awardsLevel) => {
+        
         if(user.experience >= awardsLevel.level){
-            await asyncForEach(Object.keys(awardsLevel), async (className) => {
+            
+            await asyncForEach(Object.keys(awardsLevel.awards), async (className) => {
+                
                 if(user.profile.class === className || className === 'any') {
-                    await asyncForEach(className, async (item) => {
-                        const newItem = new Item({model: item, owner: user.profile._id})
-                        items = [...items, newItem]
-                        await newItem.save()
+                    
+                    await asyncForEach(awardsLevel.awards[className], async (item) => {
+
+                        const createNewItem = async (items, item, user) => {
+                            const newItem = new Item({model: item.itemModel, owner: user.profile._id})
+                            
+                            items = [...items, newItem]
+                            await newItem.save()
+                            
+                            return items
+                        }
+                        
+                        for(let i=0; i < item.quantity; i++) {
+                        
+                            items = await createNewItem(items, item, user)
+                        }
+                        
                     })
                 }
             }) 
@@ -36,10 +53,10 @@ const addAwards = async (user, awardsLevels) => {
     return items  
 }
 
-//CHECKED WITHOUT awards and users
+//OK
 const finishRally = async (rally) => {
     
-    console.log(rally.awardsLevels)
+
 
     await rally.populate({
         path: 'awardsLevels.awards.any.itemModel'
@@ -55,18 +72,21 @@ const finishRally = async (rally) => {
         path: 'users.profile'
     }).execPopulate()
 
-    console.log(rally.awardsLevels)
+
 
     const users = rally.users
 
     await asyncForEach(users, async (rallyUser) => {
-        
+           
             const user = await User.findById(rallyUser.profile._id).populate({
                 path: 'activeRally'
             }) //recoginized as an array
+            console.log(user.activeRally, rallyUser.experience)
             if(user.activeRally.length && rallyUser.experience > 0){
                 const items = await addAwards(rallyUser, rally.awardsLevels)
-                user.bag = [...user.bag, items]
+                console.log('Before ', user.bag, items)
+                user.bag = [...user.bag, ...items]
+                console.log('After ', user.bag)
             }
             await user.save() 
         
@@ -83,7 +103,7 @@ const finishRally = async (rally) => {
     
 
 }
-
+//OK
 const designateScheduleTime = (date) => {
     const momentDate = moment(date)
     const month = momentDate.month() + 1
@@ -95,7 +115,7 @@ const designateScheduleTime = (date) => {
     return `${seconds} ${minutes} ${hour} ${dayOfMonth} ${month} *`
 }
 
-//NOTE: - db ok, cron ok, CHECKED WITHOUT awards and users
+//OK
 export const updateRallyQueue = async () => {
     try {
         
@@ -104,8 +124,8 @@ export const updateRallyQueue = async () => {
             rallyFinishTask.destroy()
         }
         
-        const firstToStartArray = await Rally.find({ $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }]}).sort({"startDate": -1 }).limit(1)
-        const firstToExpireArray = await Rally.find({ $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }]}).sort({"expiryDate": -1 }).limit(1)
+        const firstToStartArray = await Rally.find({ $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }]}).sort({"startDate": 1 }).limit(1)
+        const firstToExpireArray = await Rally.find({ $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }]}).sort({"expiryDate": 1 }).limit(1)
         
         if(!firstToStartArray.length || !firstToExpireArray.length){
             console.log('There is no rally for update criteria!')
@@ -153,10 +173,10 @@ export const updateRallyQueue = async () => {
     }
 }
 
-//CHECK
+//OK
 router.get('/listEventCreator', auth, async (req, res) => {
     try {
-        const rallyList = await Rally.find({ $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }]})
+        const rallyList = await Rally.find({expiryDate: { $gte: new Date() } })
 
         res.send(rallyList)
     }catch(e){
@@ -185,7 +205,7 @@ router.post('/create', auth, async (req, res) =>{
 //OK
 router.patch("/update", auth, async (req, res, next) => {
     let updates = Object.keys(req.body);
-    const rallyId = req.body._id
+    const id = req.body._id
 
     updates = updates.filter((update) => {
         return update !== '_id'
@@ -202,7 +222,7 @@ router.patch("/update", auth, async (req, res, next) => {
     }
   
     try {
-      const rally = await Rally.findById(rallyId)
+      const rally = await Rally.findById(id)
   
       if(!rally){
           throw Error('Rally does not exist!')
@@ -223,7 +243,7 @@ router.patch("/update", auth, async (req, res, next) => {
     }
   });
 
-//CHECK
+//OK
 router.delete('/remove', auth, async (req, res) =>{
 
     try {
@@ -241,11 +261,12 @@ router.delete('/remove', auth, async (req, res) =>{
 
 ////USER-SIDE
 
-//CHECK
-router.get('/getFirst', auth, async (req, res)=> {
+//OK
+router.get('/first', auth, async (req, res)=> {
     try{
-        const rally = await Rally.find({status: { $ne: 'archive'}}).sort({"activationDate": -1 }).limit(1)
-        res.send(rally)
+        const rallyArray = await Rally.find({ $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }]}).sort({"startDate": 1 }).limit(1)
+        const rally = rallyArray[0]
+        res.send(rally) //can send undefined, what have to be supported by frontend
     }catch (e) {
         res.status(500).send(e.message)
     }

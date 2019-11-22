@@ -37,7 +37,7 @@ router.get('/eventList', auth, async (req,res) => {
 
 })
 
-//CHECK
+//OK
 router.post('/create', auth, async (req, res) =>{
 
     const mission = new Mission(req.body)
@@ -51,7 +51,7 @@ router.post('/create', auth, async (req, res) =>{
     }
 })
 
-//CHECK
+//OK
 router.delete('/remove', auth, async(req, res) => {
     try {
         const mission = await Mission.findOne({_id: req.body._id})
@@ -68,11 +68,18 @@ router.delete('/remove', auth, async(req, res) => {
     }
 })
 
-//CHECK
+//OK
 router.patch("/update", auth, async (req, res, next) => {
-    const updates = Object.keys(req.body);
 
-    const forbiddenUpdates = ["_id"];
+    let updates = Object.keys(req.body);
+    const id = req.body._id
+
+
+    updates = updates.filter((update) => {
+        return update !== '_id'
+    })
+
+    const forbiddenUpdates = [""];
   
     const isValidOperation = updates.every(update => {
         return !forbiddenUpdates.includes(update);
@@ -83,7 +90,7 @@ router.patch("/update", auth, async (req, res, next) => {
     }
   
     try {
-      const mission = await Mission.findById(req.body._id)
+      const mission = await Mission.findById(id)
   
       updates.forEach(update => {
         mission[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.

@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import {ClassAwardsSchema} from '../schemas/ClassAwardsSchema'
-
+import { MissionInstance } from './missionInstance';
+import arrayUniquePlugin from 'mongoose-unique-array'
 export const eventStatuses = ['ready', 'active', 'archive']
 
 
@@ -137,6 +138,8 @@ export const MissionSchema = new mongoose.Schema({
 {
     timestamps: true
 })
+
+MissionSchema.plugin(arrayUniquePlugin)
 
 MissionSchema.pre('remove', async function (next){
     const mission = this

@@ -3,6 +3,10 @@ import validator from 'validator'
 import bcrypt from 'bcryptjs'
 import jwt from "jsonwebtoken"
 import {Item} from './item'
+import {ProductsOrderSchema} from '../schemas/ProductsOrderSchema'
+
+import arrayUniquePlugin from 'mongoose-unique-array'
+
 const userClasses = ['warrior', 'mage', 'rogue', 'cleric']
 
 const userStatuses = ['home', 'away', 'banned', 'nonactivated']
@@ -13,6 +17,8 @@ const LoyalSchema = new mongoose.Schema({
         required: true,
     }   
 })
+
+
 
 export const UserSchema = new mongoose.Schema({
     
@@ -63,7 +69,6 @@ export const UserSchema = new mongoose.Schema({
     },
     class: { //userClasses
         type: String,
-        required: true
     },
     attributes: {
         strength: {
@@ -88,11 +93,14 @@ export const UserSchema = new mongoose.Schema({
         default: 0,
         required: true
     },
-    bag: [{   
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'item',
-        unique: true
-    }],
+    bag: {
+        type: [{  //for plugin proper work - bag field is required while user is being created
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'item',
+            unique: true
+        }],
+        required: true,
+    },
     equipped: {
         weaponRight: {
             type: mongoose.Schema.Types.ObjectId, 
@@ -158,6 +166,16 @@ export const UserSchema = new mongoose.Schema({
             ref: 'user',
             unique: true
         }]       
+    },
+    activeOrder: {
+        users: [{
+            user: {
+                type: mongoose.Schema.Types.ObjectId, 
+                ref: 'user',
+                unique: true
+            },
+            products: [ProductsOrderSchema]
+        }]
     },
     statistics: {
         missionCounter: {
@@ -235,7 +253,7 @@ export const UserSchema = new mongoose.Schema({
             }
         },
         products: [{
-            type: String,
+            type: mongoose.Schema.Types.Mixed,
         }]
     }
     
@@ -259,9 +277,11 @@ UserSchema.virtual('activeMission', { //events can be reached by relations, BI R
 UserSchema.virtual('activeRally', { //events can be reached by relations, BI RELATION!!
     ref: 'rally',
     localField: '_id', //relation from user side (we are in user schema!)
-    foreignField: 'users.user' //relation from event side
+    foreignField: 'users.profile' //relation from event side
 })
 
+
+UserSchema.plugin(arrayUniquePlugin)
 
 UserSchema.methods.generateAuthToken = async function () { //on instances
     const user = this

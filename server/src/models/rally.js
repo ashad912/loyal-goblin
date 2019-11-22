@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import validator from 'validator'
 import {ClassAwardsSchema} from '../schemas/ClassAwardsSchema'
+import arrayUniquePlugin from 'mongoose-unique-array'
 
 export const eventStatuses = ['ready', 'active', 'running', 'archive']
 
@@ -31,7 +32,7 @@ export const RallySchema = new mongoose.Schema({
         profile: { //users active in rally
             type: mongoose.Schema.Types.ObjectId,
             ref: 'user',
-            unique: true,
+            unique: true
         }
     }],
     experience: {
@@ -70,5 +71,6 @@ export const RallySchema = new mongoose.Schema({
     timestamps: true
 })
 
+RallySchema.plugin(arrayUniquePlugin)
 
 export const Rally = new mongoose.model('rally', RallySchema)
