@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { asyncForEach } from '../utils/methods'
 
 const ItemSchema = new mongoose.Schema({ //instance of ItemModel
 
@@ -13,6 +14,27 @@ const ItemSchema = new mongoose.Schema({ //instance of ItemModel
         required: true 
     }
 
+})
+
+//CHECK
+ItemSchema.pre('remove', async function (next){
+    const item = this
+    let user = await User.findOne({bag: {$elemMatch: {$eq: item._id}}})
+
+    
+    user.bag = user.bag.filter((bagItem) => {
+        return bagItem._id.toString() !== item._id.toString
+    })
+
+    await asyncForEach(Object.keys(user.equipped), (category) => {
+        if(user.equipped[category].toString() === item._id.toString()){
+            user.equipped[category] = null //or remove key?
+        }
+    })
+
+    await user.save()
+
+    next()
 })
 
 

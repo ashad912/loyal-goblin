@@ -97,10 +97,36 @@ const ItemModelSchema = new mongoose.Schema({
   ]
 });
 
-
+//CHECK
 ItemModelSchema.pre('remove', async function (next){
   const itemModel = this
-  await Item.deleteMany({itemModel: itemModel._id})
+
+  const itemInstances = await Item.find({itemModel: itemModel._id})
+
+  const itemInstancesIds = itemInstances.map(itemInstance => itemInstance._id)
+
+  let users = await User.find({bag: {$elemMatch: {$in: itemInstancesIds}}})
+
+  await asyncForEach(users, async (user) => {
+    await asyncForEach(itemInstancesIds, async (itemId) => {
+      user.bag = user.bag.filter((bagItem) => {
+          return bagItem._id.toString() !== itemId.toString()
+      })
+
+      await asyncForEach(Object.keys(user.equipped), (category) => {
+          if(user.equipped[category].toString() === itemId.toString()){
+              user.equipped[category] = null //or remove key?
+          }
+      })
+
+      
+    })
+    await user.save()
+  })
+
+
+  //await Item.deleteMany({itemModel: itemModel._id})
+  await itemInstances.remove() //TO CHECK
   next()
 })
 

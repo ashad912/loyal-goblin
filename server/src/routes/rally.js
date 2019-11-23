@@ -29,19 +29,12 @@ const addAwards = async (user, awardsLevels) => {
                     
                     await asyncForEach(awardsLevel.awards[className], async (item) => {
 
-                        const createNewItem = async (items, item, user) => {
+                        for(let i=0; i < item.quantity; i++) {
                             const newItem = new Item({model: item.itemModel, owner: user.profile._id})
-                            
                             items = [...items, newItem]
                             await newItem.save()
-                            
-                            return items
                         }
                         
-                        for(let i=0; i < item.quantity; i++) {
-                        
-                            items = await createNewItem(items, item, user)
-                        }
                         
                     })
                 }
