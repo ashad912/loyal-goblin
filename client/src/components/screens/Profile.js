@@ -31,6 +31,7 @@ import PartyCreationDialog from "./profile/PartyCreationDialog";
 import PartyJoiningDialog from "./profile/PartyJoiningDialog";
 import RankDialog from "./profile/RankDialog";
 import StatsDialog from "./profile/StatsDialog";
+import { toggleItem } from "../../store/actions/profileActions";
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -344,12 +345,20 @@ const createTempEquipped = () => {
     legs: 6,
     feet: 7,
     ringRight: 10,
-    scroll: ''
+    scroll: null
   };
 };
 
 const Profile = props => {
   const classes = useStyles();
+
+
+  const [bag, setBag] = React.useState(convertBagArrayToCategories(props.auth.profile.bag))
+
+  React.useEffect(() => {
+    setBag(convertBagArrayToCategories(props.auth.profile.bag))
+    console.log(bag)
+  }, [props.auth.profile.bag])
 
   const [player, setPlayer] = React.useState(
     createTempPlayer(
@@ -379,16 +388,16 @@ const Profile = props => {
 
 
   const [equippedItems, setEquippedItems] = React.useState({
-    head: "",
-    chest: "",
-    hands: "",
-    legs: "",
-    feet: "",
-    weaponRight: "",
-    weaponLeft: "",
-    ringRight: "",
-    ringLeft: "",
-    scroll: ""
+    head: null,
+    chest: null,
+    hands: null,
+    legs: null,
+    feet: null,
+    weaponRight: null,
+    weaponLeft: null,
+    ringRight: null,
+    ringLeft: null,
+    scroll: null
   });
   //TODO: Multiple items of same type
 
@@ -399,16 +408,16 @@ const Profile = props => {
 
   const updateEquippedItems = () => {
     const equipment = {
-      head: "",
-      chest: "",
-      hands: "",
-      legs: "",
-      feet: "",
-      weaponRight: "",
-      weaponLeft: "",
-      ringRight: "",
-      ringLeft: "",
-      scroll: ""
+      head: null,
+      chest: null,
+      hands: null,
+      legs: null,
+      feet: null,
+      weaponRight: null,
+      weaponLeft: null,
+      ringRight: null,
+      ringLeft: null,
+      scroll: null
     };
     const perks = [];
 
@@ -472,17 +481,17 @@ const Profile = props => {
   };
 
   const handleItemToggle = (id, isEquipped, category, twoHanded) => {
-    //TODO: Each item needs own ID
-    const tempPlayer = { ...player };
+
+    const tempPlayer = { ...props.auth.profile };
 
     if (category === "weapon") {
       if(twoHanded){
         tempPlayer.equipped.weaponRight = id
-        tempPlayer.equipped.weaponLeft = ''
+        tempPlayer.equipped.weaponLeft = null
       }else{
-        const rightHandItem = tempPlayer.equipment.weapon.find(item => item._id === tempPlayer.equipped.weaponRight).itemModel
-        if(rightHandItem.hasOwnProperty('twoHanded') && rightHandItem.twoHanded){
-          tempPlayer.equipped.weaponRight = ''
+        const rightHandItem = tempPlayer.equipped.weaponRight && bag.weapon.find(item => item._id ===  tempPlayer.equipped.weaponRight).itemModel
+        if(rightHandItem && rightHandItem.hasOwnProperty('twoHanded') && rightHandItem.twoHanded){
+          tempPlayer.equipped.weaponRight = null
         }
 
         if (!tempPlayer.equipped.weaponRight && !tempPlayer.equipped.weaponLeft) {
@@ -492,7 +501,7 @@ const Profile = props => {
           !tempPlayer.equipped.weaponLeft
         ) {
           if (tempPlayer.equipped.weaponRight === id) {
-            tempPlayer.equipped.weaponRight = "";
+            tempPlayer.equipped.weaponRight = null;
           } else {
             tempPlayer.equipped.weaponLeft = id;
           }
@@ -501,7 +510,7 @@ const Profile = props => {
           tempPlayer.equipped.weaponLeft
         ) {
           if (tempPlayer.equipped.weaponLeft === id) {
-            tempPlayer.equipped.weaponLeft = "";
+            tempPlayer.equipped.weaponLeft = null;
           } else {
             tempPlayer.equipped.weaponRight = id;
           }
@@ -510,9 +519,9 @@ const Profile = props => {
           tempPlayer.equipped.weaponLeft
         ) {
           if (tempPlayer.equipped.weaponRight === id) {
-            tempPlayer.equipped.weaponRight = "";
+            tempPlayer.equipped.weaponRight = null;
           } else {
-            tempPlayer.equipped.weaponLeft = "";
+            tempPlayer.equipped.weaponLeft = null;
           }
         }
       }
@@ -524,7 +533,7 @@ const Profile = props => {
         !tempPlayer.equipped.ringLeft
       ) {
         if (tempPlayer.equipped.ringRight === id) {
-          tempPlayer.equipped.ringRight = "";
+          tempPlayer.equipped.ringRight = null;
         } else {
           tempPlayer.equipped.ringLeft = id;
         }
@@ -533,7 +542,7 @@ const Profile = props => {
         tempPlayer.equipped.ringLeft
       ) {
         if (tempPlayer.equipped.ringLeft === id) {
-          tempPlayer.equipped.ringLeft = "";
+          tempPlayer.equipped.ringLeft = null;
         } else {
           tempPlayer.equipped.ringRight = id;
         }
@@ -542,17 +551,20 @@ const Profile = props => {
         tempPlayer.equipped.ringLeft
       ) {
         if (tempPlayer.equipped.ringRight === id) {
-          tempPlayer.equipped.ringRight = "";
+          tempPlayer.equipped.ringRight = null;
         } else {
-          tempPlayer.equipped.ringLeft = "";
+          tempPlayer.equipped.ringLeft = null;
         }
       }
     } else {
-      tempPlayer.equipped[category] = isEquipped ? "" : id;
+      tempPlayer.equipped[category] = isEquipped ? null : id;
     }
 
-    setPlayer({ ...tempPlayer });
-    updateEquippedItems();
+    //id category equipped
+    props.onItemToggle(id, category, tempPlayer.equipped)
+
+    //setPlayer({ ...tempPlayer });
+    //updateEquippedItems();
     //TODO: Call to backend
   };
 
@@ -714,23 +726,23 @@ const Profile = props => {
         >
           <Attribute
             attributeName="Siła"
-            attributeValue={player.str}
-            attributeModifier={attributeModifiers.str}
+            attributeValue={props.auth.profile.attributes.strength}
+            attributeModifier={props.auth.profile.userPerks.attrStrength}
           />
           <Attribute
             attributeName="Zręczność"
-            attributeValue={player.dex}
-            attributeModifier={attributeModifiers.dex}
+            attributeValue={props.auth.profile.attributes.dexterity}
+            attributeModifier={props.auth.profile.userPerks.attrDexterity}
           />
           <Attribute
             attributeName="Magia"
-            attributeValue={player.mag}
-            attributeModifier={attributeModifiers.mag}
+            attributeValue={props.auth.profile.attributes.magic}
+            attributeModifier={props.auth.profile.userPerks.attrMagic}
           />
           <Attribute
             attributeName="Wytrzymałość"
-            attributeValue={player.end}
-            attributeModifier={attributeModifiers.end}
+            attributeValue={props.auth.profile.attributes.endurance}
+            attributeModifier={props.auth.profile.userPerks.attrEndurance}
           />
           <Button onClick={() => handleAddExperience(500)}>Dodaj expa</Button>
           <Button>Dodaj amulet</Button>
@@ -760,17 +772,17 @@ const Profile = props => {
         Ekwipunek
       </Typography>
       <Equipment
-        items={player.equipment}
-        equipped={player.equipped}
+        items={bag}
+        equipped={props.auth.profile.hasOwnProperty('equipped') && props.auth.profile.equipped}
         handleItemToggle={handleItemToggle}
         handleItemDelete={handleItemDelete}
       />
       <Typography variant="h5" className={classes.eqHeading}>
        
       </Typography>
-      {player.hasOwnProperty("party") && player.party.members.length > 0 && (
+      {props.auth.profile.hasOwnProperty("party") && props.auth.profile.party.members.length > 0 && (
         <div>
-          {player.party.leader._id === props.auth.uid ? (
+          {props.auth.profile.party.leader._id === props.auth.uid ? (
             <Button
               variant="contained"
               color="primary"
@@ -790,7 +802,7 @@ const Profile = props => {
         </div>
       )}
 
-      {player.hasOwnProperty("party") && player.party.members.length > 0 ? (
+      {props.auth.profile.hasOwnProperty("party") && props.auth.profile.party.members.length > 0 ? (
         <List
           style={{ width: "80%", marginTop: "2rem", border: "1px solid grey" }}
         >
@@ -798,15 +810,15 @@ const Profile = props => {
             <Badge badgeContent="Lider" color="primary" >
               <ListItemAvatar>
                 <img
-                  src={player.party.leader.avatar.includes('data:image') ? (player.party.leader.avatar) : (require("../../assets/avatar/" + player.party.leader.avatar))}
+                  src={props.auth.profile.party.leader.avatar.includes('data:image') ? (props.auth.profile.party.leader.avatar) : (require("../../assets/avatar/" + props.auth.profile.party.leader.avatar))}
                   width="32"
                 />
               </ListItemAvatar>
-              <ListItemText primary={player.party.leader.name} />
+              <ListItemText primary={props.auth.profile.party.leader.name} />
             </Badge>
           </ListItem>
 
-          {player.party.members.map(partyMember => {
+          {props.auth.profile.party.members.map(partyMember => {
             return (
               <ListItem key={partyMember._id}>
                 <ListItemAvatar>
@@ -878,9 +890,9 @@ const Profile = props => {
       <PartyCreationDialog
         open={isCreatingParty}
         isManagingParty={
-          player.hasOwnProperty("party") &&
-          player.party.members.length > 0 &&
-          player.party.leader._id === props.auth.uid
+          props.auth.profile.hasOwnProperty("party") &&
+          props.auth.profile.party.members.length > 0 &&
+          props.auth.profile.party.leader._id === props.auth.uid
         }
         handleClose={() => setIsCreatingParty(prev => !prev)}
         handleCreateParty={handleJoinOrCreateParty}
@@ -906,4 +918,10 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(Profile);
+const mapDispatchToProps = dispatch => {
+  return {
+    onItemToggle: (id, category, equipped) => dispatch(toggleItem(id, category, equipped))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);

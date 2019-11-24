@@ -97,49 +97,58 @@ export const UserSchema = new mongoose.Schema({
         weaponRight: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true
+            unique: true,
+            default: null
         },
         weaponLeft: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true
+            unique: true,
+            default: null
         },
         chest: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true
+            unique: true,
+            default: null
         }
         ,
         legs: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true
+            unique: true,
+            default: null
         }
         ,
         hands: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true
+            unique: true,
+            default: null
         },
         feet: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true
+            unique: true,
+            default: null
         },
         head: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true
+            unique: true,
+            default: null
         },
         ringRight: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true
+            unique: true,
+            default: null
         },
         ringLeft: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true
+            unique: true,
+            default: null
         },
     },
     loyal: { //is it appropriate structure?

@@ -1,58 +1,63 @@
 //import {labels} from '../../components/strings/labels'
 
 const initState = {
-    init: true,
-    uid: null,
-    profile: {},
-    authError: null,
-    
+  init: true,
+  uid: null,
+  profile: {},
+  authError: null
 };
 
-
 const authReducer = (state = initState, action) => {
-    switch (action.type){ //it ll generate thing to authReducer not firebaseReducer remember!
-        case 'LOGIN_ERROR':
-            console.log('login error')
-            return {
-                ...state,
-                authError: 'Login failed',
-            }
-        case 'LOGIN_SUCCESS':
-            console.log('login success')
-            return {
-                ...state,
-                profile: action.profile,
-                uid: action.uid,
-                authError: null,
-            }
-        case 'LOGOUT_SUCCESS':
-            console.log('signout success');
-            return {
-                ...state,
-                profile: {},
-                uid: null,
-            };
-        case 'NO_AUTH':
-            console.log("no auth")
-            return {
-                ...state,
-                profile: {},
-                uid: null,
-                init: false
-            }
-        case 'AUTH_SUCCESS':
-            console.log("auth success")
-            return {
-                ...state,
-                profile: action.profile,
-                uid: action.uid,
-                init: false
-            }
+  switch (
+    action.type //it ll generate thing to authReducer not firebaseReducer remember!
+  ) {
+    case "LOGIN_ERROR":
+      console.log("login error");
+      return {
+        ...state,
+        authError: "Login failed"
+      };
+    case "LOGIN_SUCCESS":
+      console.log("login success");
+      return {
+        ...state,
+        profile: action.profile,
+        uid: action.uid,
+        authError: null
+      };
+    case "LOGOUT_SUCCESS":
+      console.log("signout success");
+      return {
+        ...state,
+        profile: {},
+        uid: null
+      };
+    case "NO_AUTH":
+      console.log("no auth");
+      return {
+        ...state,
+        profile: {},
+        uid: null,
+        init: false
+      };
+    case "AUTH_SUCCESS":
+      console.log("auth success");
+      return {
+        ...state,
+        profile: action.profile,
+        uid: action.uid,
+        init: false
+      };
+    case "UPDATE_PROFILE_DATA":
+      return {
+        ...state,
+        profile: action.profile,
+        init: false
+      };
 
-        default:
-            return state;
-    }
-}
+    default:
+      return state;
+  }
+};
 
-
-export default authReducer
+export default authReducer;
