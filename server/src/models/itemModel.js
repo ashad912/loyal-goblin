@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import validator from "validator";
+import { Mission } from "./mission";
 
 export const itemModelTypes = [
   "amulet",
@@ -124,6 +125,49 @@ ItemModelSchema.pre('remove', async function (next){
     await user.save()
   })
 
+  //mission - amultes, awards; 
+  let missions = await Mission.find(
+    {$or: [
+      {'amulets.itemModel': {$elemMatch: {$in: itemModel._id}}},
+      {'awards.warrior.itemModel': {$elemMatch: {$in: itemModel._id}}},
+      {'awards.rogue.itemModel': {$elemMatch: {$in: itemModel._id}}},
+      {'awards.cleric.itemModel': {$elemMatch: {$in: itemModel._id}}},
+      {'awards.mage.itemModel': {$elemMatch: {$in: itemModel._id}}},
+      {'awards.any.itemModel': {$elemMatch: {$in: itemModel._id}}},
+    ] })
+  
+  await asyncForEach((missions), mission => {
+    mission.amulets = mission.amulets.filter((mission, index)=> {
+      return mission.itemModel !== itemModel._id
+    })
+    await asyncForEach((Object.keys(mission.awards), (className) => {
+      mission.awards[className] = mission.awards[className].filter((classAward) => {
+        return classAward.itemModel !== itemModel._id
+      })
+    }))
+    await mission.save()
+  })
+
+  //rally - awardsLevels -> awards
+  let rallies = await Rally.find(
+    {$or: [
+      {'awardsLevels.awards.any.itemModel': {$elemMatch: {$in: itemModel._id}}},
+      {'awardsLevels.awards.warrior.itemModel': {$elemMatch: {$in: itemModel._id}}},
+      {'awardsLevels.awards.rogue.itemModel': {$elemMatch: {$in: itemModel._id}}},
+      {'awardsLevels.awards.mage.itemModel': {$elemMatch: {$in: itemModel._id}}},
+      {'awardsLevels.awards.cleric.itemModel': {$elemMatch: {$in: itemModel._id}}},
+    ] })
+  
+  await asyncForEach((rallies), rally => {
+    await asyncForEach((rallies.awardsLevels, (awardLevel, index) => {
+      await asyncForEach((Object.keys(awardLevel.awards), (className) => {
+        rally.awardsLevels[index].awards[className] = rally.awardsLevels[index].awards[className].filter((classAward) => {
+          return classAward.itemModel !== itemModel._id
+        })
+      }))
+    }))
+    await rally.save()
+  })
 
   //await Item.deleteMany({itemModel: itemModel._id})
   await itemInstances.remove() //TO CHECK
