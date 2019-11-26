@@ -97,7 +97,6 @@ export const UserSchema = new mongoose.Schema({
         type: [{  //for plugin proper work - bag field is required while user is being created
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true
         }],
         required: true,
     },
@@ -281,7 +280,6 @@ UserSchema.virtual('activeRally', { //events can be reached by relations, BI REL
 })
 
 
-UserSchema.plugin(arrayUniquePlugin)
 
 UserSchema.methods.generateAuthToken = async function () { //on instances
     const user = this
@@ -350,5 +348,8 @@ UserSchema.pre('remove', async function(next){
     //whate else - missionInstance
     next()
 })
+
+UserSchema.plugin(arrayUniquePlugin)
+
 
 export const User = new mongoose.model('user', UserSchema)

@@ -32,7 +32,6 @@ export const RallySchema = new mongoose.Schema({
         profile: { //users active in rally
             type: mongoose.Schema.Types.ObjectId,
             ref: 'user',
-            unique: true
         }
     }],
     experience: {

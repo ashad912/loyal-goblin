@@ -1,6 +1,9 @@
 import express from 'express'
-import bcrypt from 'bcryptjs'
+import { asyncForEach } from '../utils/methods'
 import { ItemModel } from '../models/itemModel';
+import { Mission } from '../models/mission';
+import { Rally } from '../models/rally';
+import { User } from '../models/user';
 import { auth } from '../middleware/auth';
 import { Item } from '../models/item';
 
@@ -33,6 +36,122 @@ router.post('/create', auth, async (req, res) =>{
     } catch (e) {
         res.status(400).send(e)
     }
+})
+
+
+//REFACTOR - MOVE to middleware
+
+router.post('/testRemoveMiddleware', auth, async(req, res) => {
+    const itemModel = await ItemModel.findById(req.body._id)
+
+    //will be changed from: model to itemModel!!!
+    //const itemInstances = await Item.find({model: itemModel._id})
+
+    //const itemInstancesIds = itemInstances.map(itemInstance => itemInstance._id)
+
+    //console.log(itemInstancesIds)
+
+    ////DONE IN item middleware
+    // let users = await User.find({bag: {$elemMatch: {$in: itemInstancesIds}}})
+
+    // //console.log(users)
+    // //OK!
+    // //res.send(users.map((user) => user._id))
+    // await asyncForEach(users, async (user) => {
+    //     await asyncForEach(itemInstancesIds, async (itemId) => {
+    //     user.bag = user.bag.filter((bagItem) => {
+    //         return bagItem._id.toString() !== itemId.toString()
+    //     })
+
+    //     await asyncForEach(Object.keys(user.equipped.toJSON()), (category) => {
+    //         //console.log(category, user.equipped[category], itemId)
+    //         if(user.equipped[category] && (user.equipped[category].toString() === itemId.toString())){
+    //             user.equipped[category] = null //or remove key?
+    //         }
+    //     })
+
+        
+    //     })
+    //     console.log(user._id)
+    //     console.log(user.bag)
+    //     // console.log(user.equipped)
+    //     //await user.save()
+    // })
+    // //OK!
+    
+
+    // //mission - amultes, awards; 
+    let missions = await Mission.find(
+        {$or: [
+            {'amulets': {$elemMatch: {'itemModel': itemModel._id}}},
+            {'awards.any': {$elemMatch: {'itemModel': itemModel._id}}},
+            {'awards.warrior': {$elemMatch: {'itemModel': itemModel._id}}},
+            {'awards.rogue': {$elemMatch: {'itemModel': itemModel._id}}},
+            {'awards.mage': {$elemMatch: {'itemModel': itemModel._id}}},
+            {'awards.cleric': {$elemMatch: {'itemModel': itemModel._id}}},
+        ] })
+
+    
+    //OK!
+    await asyncForEach((missions), async mission => {
+        mission.amulets = mission.amulets.filter((mission, index)=> {
+            return mission.itemModel.toString() !== itemModel._id.toString()
+        })
+        await asyncForEach(Object.keys(mission.awards.toJSON()), async (className) => { //need toJSON to remove 'mongo keys'
+            
+            
+            mission.awards[className] = mission.awards[className].filter((classAward) => {
+                // /console.log('eq', classAward.itemModel, itemModel._id)
+                return classAward.itemModel.toString() !== itemModel._id.toString()
+            })
+            
+        })
+        //console.log(mission._id)
+        //console.log(mission.amulets)
+        //console.log(mission.awards)
+        await mission.save()
+    })
+    
+    //OK!
+
+
+    //rally - awardsLevels -> awards
+    let rallies = await Rally.find(
+        
+        {'awardsLevels': {$elemMatch:
+            {$or: [
+                {'awards.any': {$elemMatch: {'itemModel': itemModel._id}}},
+                {'awards.warrior': {$elemMatch: {'itemModel': itemModel._id}}},
+                {'awards.rogue': {$elemMatch: {'itemModel': itemModel._id}}},
+                {'awards.mage': {$elemMatch: {'itemModel': itemModel._id}}},
+                {'awards.cleric': {$elemMatch: {'itemModel': itemModel._id}}},
+            ]}
+        }})
+    
+    //OK
+
+    await asyncForEach(rallies, async rally => {
+        await asyncForEach(rally.awardsLevels, async (awardsLevel, index) => {
+            await asyncForEach(Object.keys(awardsLevel.awards.toJSON()), async (className) => {
+                rally.awardsLevels[index].awards[className] = rally.awardsLevels[index].awards[className].filter((classAward) => {
+                    return classAward.itemModel.toString() !== itemModel._id.toString()
+                })
+            })
+        })
+        console.log(rally._id)
+        console.log(rally.awardsLevels)
+        await rally.save()
+    })
+    
+    //OK
+
+    //await Item.deleteMany({itemModel: itemModel._id})
+    await asyncForEach((itemInstances), async itemInstance => {
+        //console.log(itemInstance._id)
+        await itemInstance.remove() //TO CHECK
+    })
+    res.send()
+    
 })
 
 export const itemRouter = router

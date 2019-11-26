@@ -1,0 +1,108 @@
+{
+    "_id" : ObjectId("5ddd32ba436a721f80ec8941"),
+    "attributes" : {
+        "strength" : 0,
+        "dexterity" : 0,
+        "magic" : 0,
+        "endurance" : 0
+    },
+    "equipped" : {
+        "weaponRight" : ObjectId("5ddd30bb07b3ea0c688654ef"),
+        "weaponLeft" : ObjectId("5ddd32fd436a721f80ec8944")
+    },
+    "party" : {
+        "members" : []
+    },
+    "activeOrder" : {
+        "users" : []
+    },
+    "statistics" : {
+        "missionCounter" : 0,
+        "rallyCounter" : 0,
+        "amuletCounters" : []
+    },
+    "userPerks" : {
+        "rawExperience" : {
+            "absolute" : "0",
+            "percent" : "0%"
+        },
+        "attrStrength" : 0,
+        "attrDexterity" : 0,
+        "attrMagic" : 0,
+        "attrEndurance" : 0,
+        "products" : []
+    },
+    "active" : true,
+    "experience" : 0,
+    "bag" : [ 
+        ObjectId("5ddd30bb07b3ea0c688654ef"), 
+        ObjectId("5ddd32fd436a721f80ec8944")
+    ],
+    "name" : "admin1",
+    "email" : "admin1@admin.com",
+    "password" : "$2a$08$7lO9eY38WNXzdRPoKjnSAOq1GzXtNZM1dkWpbOMZd5P5zbR0KGveC",
+    "class" : "warrior",
+    "tokens" : [],
+    "loyal" : [],
+    "createdAt" : ISODate("2019-11-26T14:12:10.679Z"),
+    "updatedAt" : ISODate("2019-11-26T14:12:10.679Z"),
+    "__v" : 0
+}
+
+
+
+{
+    "_id" : ObjectId("5ddd32c0436a721f80ec8942"),
+    "attributes" : {
+        "strength" : 0,
+        "dexterity" : 0,
+        "magic" : 0,
+        "endurance" : 0
+    },
+    "equipped" : {
+        "weaponRight" : ObjectId("5ddd332f436a721f80ec8945"),
+        "weaponLeft" : ObjectId("5ddd32fd436a721f80ec8946")
+    },
+    "party" : {
+        "members" : []
+    },
+    "activeOrder" : {
+        "users" : []
+    },
+    "statistics" : {
+        "missionCounter" : 0,
+        "rallyCounter" : 0,
+        "amuletCounters" : []
+    },
+    "userPerks" : {
+        "rawExperience" : {
+            "absolute" : "0",
+            "percent" : "0%"
+        },
+        "attrStrength" : 0,
+        "attrDexterity" : 0,
+        "attrMagic" : 0,
+        "attrEndurance" : 0,
+        "products" : []
+    },
+    "active" : true,
+    "experience" : 0,
+    "bag" : [ 
+        ObjectId("5ddd332f436a721f80ec8945"), 
+        ObjectId("5ddd3330436a721f80ec8946")
+    ],
+    "name" : "admin",
+    "email" : "admin@admin.com",
+    "password" : "$2a$08$07Ye3i/f25/IVrCNhjKKROOfxvmIlnv8ZuCw3miLt1bgsfyJ5yY5a",
+    "class" : "warrior",
+    "tokens" : [ 
+        {
+            "_id" : ObjectId("5ddd32fa436a721f80ec8943"),
+            "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZGRkMzJjMDQzNmE3MjFmODBlYzg5NDIiLCJpYXQiOjE1NzQ3Nzc1OTR9.Trmp6xzivUBVZcpUFtLDQB9xPe10vpNIOnk8de19zLc"
+        }
+    ],
+    "loyal" : [],
+    "createdAt" : ISODate("2019-11-26T14:12:16.070Z"),
+    "updatedAt" : ISODate("2019-11-26T14:13:14.302Z"),
+    "__v" : 1
+}

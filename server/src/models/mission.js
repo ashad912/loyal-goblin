@@ -127,13 +127,6 @@ export const MissionSchema = new mongoose.Schema({
         mage: [ClassAwardsSchema],
         cleric: [ClassAwardsSchema],
     },
-    // awards: [{
-    //     class: String, //if undefined -> award is overall
-    //     itemModel: {
-    //         type: mongoose.Schema.Types.ObjectId, 
-    //         ref: 'itemModel'
-    //     }   
-    // }]
 },
 {
     timestamps: true
