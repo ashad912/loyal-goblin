@@ -21,13 +21,13 @@ const ItemSchema = new mongoose.Schema({ //instance of ItemModel
 ItemSchema.pre('remove', async function (next){
     const item = this
     let user = await User.findOne({bag: {$elemMatch: {$eq: item._id}}})
-
+    console.log('halo user', user)
     if(user){
         user.bag = user.bag.filter((bagItem) => {
             return bagItem._id.toString() !== item._id.toString
         })
 
-        await asyncForEach(Object.keys(user.equipped), (category) => {
+        await asyncForEach(Object.keys(user.equipped.toJSON()), (category) => {
             if(user.equipped[category].toString() === item._id.toString()){
                 user.equipped[category] = null //or remove key?
             }

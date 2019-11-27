@@ -102,79 +102,84 @@ const ItemModelSchema = new mongoose.Schema({
   ]
 });
 
-//CHECK
+//OK
 ItemModelSchema.pre('remove', async function (next){
   const itemModel = this
 
-  const itemInstances = await Item.find({itemModel: itemModel._id})
+  
 
-  const itemInstancesIds = itemInstances.map(itemInstance => itemInstance._id)
-
-  // let users = await User.find({bag: {$elemMatch: {$in: itemInstancesIds}}})
-
-  // await asyncForEach(users, async (user) => {
-  //   await asyncForEach(itemInstancesIds, async (itemId) => {
-  //     user.bag = user.bag.filter((bagItem) => {
-  //         return bagItem._id.toString() !== itemId.toString()
-  //     })
-
-  //     await asyncForEach(Object.keys(user.equipped), (category) => {
-  //         if(user.equipped[category].toString() === itemId.toString()){
-  //             user.equipped[category] = null //or remove key?
-  //         }
-  //     })
-
-      
-  //   })
-  //   await user.save()
-  // })
-
-  //mission - amultes, awards; 
+  // //mission - amultes, awards; 
   let missions = await Mission.find(
     {$or: [
-      {'amulets.itemModel': {$elemMatch: {$in: itemModel._id}}},
-      {'awards.warrior.itemModel': {$elemMatch: {$in: itemModel._id}}},
-      {'awards.rogue.itemModel': {$elemMatch: {$in: itemModel._id}}},
-      {'awards.cleric.itemModel': {$elemMatch: {$in: itemModel._id}}},
-      {'awards.mage.itemModel': {$elemMatch: {$in: itemModel._id}}},
-      {'awards.any.itemModel': {$elemMatch: {$in: itemModel._id}}},
+        {'amulets': {$elemMatch: {'itemModel': itemModel._id}}},
+        {'awards.any': {$elemMatch: {'itemModel': itemModel._id}}},
+        {'awards.warrior': {$elemMatch: {'itemModel': itemModel._id}}},
+        {'awards.rogue': {$elemMatch: {'itemModel': itemModel._id}}},
+        {'awards.mage': {$elemMatch: {'itemModel': itemModel._id}}},
+        {'awards.cleric': {$elemMatch: {'itemModel': itemModel._id}}},
     ] })
-  
+
+
+  //OK!
   await asyncForEach((missions), async mission => {
-    mission.amulets = mission.amulets.filter((mission, index)=> {
-      return mission.itemModel !== itemModel._id
-    })
-    await asyncForEach((Object.keys(mission.awards), async (className) => {
-      mission.awards[className] = mission.awards[className].filter((classAward) => {
-        return classAward.itemModel !== itemModel._id
+      mission.amulets = mission.amulets.filter((mission, index)=> {
+          return mission.itemModel.toString() !== itemModel._id.toString()
       })
-    }))
-    await mission.save()
+      await asyncForEach(Object.keys(mission.awards.toJSON()), async (className) => { //need toJSON to remove 'mongo keys'
+          
+          
+          mission.awards[className] = mission.awards[className].filter((classAward) => {
+              // /console.log('eq', classAward.itemModel, itemModel._id)
+              return classAward.itemModel.toString() !== itemModel._id.toString()
+          })
+          
+      })
+      //console.log(mission._id)
+      //console.log(mission.amulets)
+      //console.log(mission.awards)
+      await mission.save()
   })
+
+  //OK!
+
 
   //rally - awardsLevels -> awards
   let rallies = await Rally.find(
-    {$or: [
-      {'awardsLevels.awards.any.itemModel': {$elemMatch: {$in: itemModel._id}}},
-      {'awardsLevels.awards.warrior.itemModel': {$elemMatch: {$in: itemModel._id}}},
-      {'awardsLevels.awards.rogue.itemModel': {$elemMatch: {$in: itemModel._id}}},
-      {'awardsLevels.awards.mage.itemModel': {$elemMatch: {$in: itemModel._id}}},
-      {'awardsLevels.awards.cleric.itemModel': {$elemMatch: {$in: itemModel._id}}},
-    ] })
-  
-  await asyncForEach((rallies), async rally => {
-    await asyncForEach((rallies.awardsLevels, async (awardLevel, index) => {
-      await asyncForEach((Object.keys(awardLevel.awards), async (className) => {
-        rally.awardsLevels[index].awards[className] = rally.awardsLevels[index].awards[className].filter((classAward) => {
-          return classAward.itemModel !== itemModel._id
-        })
-      }))
-    }))
-    await rally.save()
+      
+      {'awardsLevels': {$elemMatch:
+          {$or: [
+              {'awards.any': {$elemMatch: {'itemModel': itemModel._id}}},
+              {'awards.warrior': {$elemMatch: {'itemModel': itemModel._id}}},
+              {'awards.rogue': {$elemMatch: {'itemModel': itemModel._id}}},
+              {'awards.mage': {$elemMatch: {'itemModel': itemModel._id}}},
+              {'awards.cleric': {$elemMatch: {'itemModel': itemModel._id}}},
+          ]}
+      }})
+
+  //OK
+
+  await asyncForEach(rallies, async rally => {
+      await asyncForEach(rally.awardsLevels, async (awardsLevel, index) => {
+          await asyncForEach(Object.keys(awardsLevel.awards.toJSON()), async (className) => {
+              rally.awardsLevels[index].awards[className] = rally.awardsLevels[index].awards[className].filter((classAward) => {
+                  return classAward.itemModel.toString() !== itemModel._id.toString()
+              })
+          })
+      })
+      //console.log(rally._id)
+      //console.log(rally.awardsLevels)
+      await rally.save()
   })
 
-  //await Item.deleteMany({itemModel: itemModel._id})
-  await itemInstances.remove() //TO CHECK
+  //OK
+
+  
+  const itemInstances = await Item.find({itemModel: itemModel._id}) //if deleteMany runs remove middleware? -> NO
+
+  await asyncForEach((itemInstances), async itemInstance => {
+      //console.log(itemInstance._id)
+      await itemInstance.remove() //running 'pre remove' item middleware
+  })
   next()
 })
 

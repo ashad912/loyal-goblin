@@ -337,12 +337,27 @@ UserSchema.pre('save', async function(next){//middleware, working with static Us
 
 })
 
-//CHECK
+
+
+
+//CHECKED PARTLY
 UserSchema.pre('remove', async function(next){
     const user = this
     await Item.deleteMany({owner: user._id})
-    //what else - party logic?
-    await User.update({$or: [{'party.leader': user._id}, {'party': { "$elemMatch": {"members": {'$in': [user._id]}}}}]}, {$set: {party: {}, activeOrder : {}}}, {multi: true}) //clear party and order for security reasons
+    //what else - party logic? ->
+    await User.updateMany(
+        {$or: [
+            {'party.leader': user._id}, 
+            {'party.members': { $elemMatch: {$eq: user._id}}}
+        ]},
+        {$set: {
+            party: {members: []},
+            activeOrder : {}
+        }}
+    )
+    //OK!
+
+
     //what else - rally
     //await Rally.update({"$elemMatch": {"user.profile": {'$in': [user._id]}}}, {$pull: {"user.profile": {$in: [user._id]}}})
     //whate else - missionInstance

@@ -38,14 +38,28 @@ router.post('/create', auth, async (req, res) =>{
     }
 })
 
+router.post('/testUpdateUser', auth, async(req, res) => {
+    const user = {_id: req.body._id}
+    res.send(await User.updateMany(
+            {$or: [
+                {'party.leader': user._id}, 
+                {'party.members': { $elemMatch: {$eq: user._id}}}
+            ]},
+            {$set: {
+                party: {members: []},
+                activeOrder : {}
+            }}
+        )
+    )
+})
 
-//REFACTOR - MOVE to middleware
+
+//REFACTOR - left here for backup
 
 router.post('/testRemoveMiddleware', auth, async(req, res) => {
     const itemModel = await ItemModel.findById(req.body._id)
 
-    //will be changed from: model to itemModel!!!
-    //const itemInstances = await Item.find({model: itemModel._id})
+    
 
     //const itemInstancesIds = itemInstances.map(itemInstance => itemInstance._id)
 
@@ -80,7 +94,7 @@ router.post('/testRemoveMiddleware', auth, async(req, res) => {
     // //OK!
     
 
-    // //mission - amultes, awards; 
+    //mission - amultes, awards; 
     let missions = await Mission.find(
         {$or: [
             {'amulets': {$elemMatch: {'itemModel': itemModel._id}}},
@@ -138,17 +152,21 @@ router.post('/testRemoveMiddleware', auth, async(req, res) => {
                 })
             })
         })
-        console.log(rally._id)
-        console.log(rally.awardsLevels)
+        //console.log(rally._id)
+        //console.log(rally.awardsLevels)
         await rally.save()
     })
     
-    //OK
+    // //OK
 
-    //await Item.deleteMany({itemModel: itemModel._id})
+    //will be changed from: model to itemModel!!!
+    //const itemInstances = await Item.find({model: itemModel._id})
+
+    //await Item.deleteMany({model: itemModel._id}) <- does not trigger pre remove middleware
+    
     await asyncForEach((itemInstances), async itemInstance => {
         //console.log(itemInstance._id)
-        await itemInstance.remove() //TO CHECK
+        await itemInstance.remove() //running 'pre remove' item middleware
     })
     res.send()
     
