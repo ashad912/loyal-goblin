@@ -2,6 +2,7 @@ import express from 'express'
 import { asyncForEach } from '../utils/methods'
 import { ItemModel } from '../models/itemModel';
 import { Mission } from '../models/mission';
+import { MissionInstance } from '../models/missionInstance';
 import { Rally } from '../models/rally';
 import { User } from '../models/user';
 import { auth } from '../middleware/auth';
@@ -58,24 +59,25 @@ router.post('/testUpdateUser', auth, async(req, res) => {
     
 
     //what else - rally
-    res.send(await Rally.updateMany(
-        {"$and": [
-            { users: { $elemMatch: {profile: user._id}}}, //wihout eq
-            { $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }]}, //leave users in achive rallies
-        ]},
-        {$pull: {
-            "users": {profile: user._id}
-        }}
-    ))
+    // await Rally.updateMany(
+    //     {"$and": [
+    //         { users: { $elemMatch: {profile: user._id}}}, //wihout eq
+    //         { $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }]}, //leave users in achive rallies
+    //     ]},
+    //     {$pull: {
+    //         "users": {profile: user._id}
+    //     }}
+    // )
 
     //missionInstance
-    // const missionInstance = await MissionInstance.findOne({party: {$elemMatch: {user: user._id}}}).populate({
-    //     path: "item"
-    // })
-
-    // await asyncForEach((missionInstance.items), async item => {
-    //     await User.updateOne({_id: item.owner}, {$addToSet: {bag: item_id}})
-    // })
+    const missionInstance = await MissionInstance.findOne({party: {$elemMatch: {user: user._id}}}).populate({
+        path: "items"
+    })
+    
+    await asyncForEach((missionInstance.items), async item => {
+        await User.updateOne({_id: item.owner}, {$addToSet: {bag: item._id}})
+    })
+    res.send()
 
     // missionInstance.remove()
     

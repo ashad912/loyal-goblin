@@ -11,6 +11,7 @@ import { asyncForEach } from '../utils/methods'
 import isEqual from 'lodash/isEqual'
 import {Rally} from '../models/rally'
 import moment from 'moment';
+import { createCipher } from 'crypto';
 
 const router = new express.Router
 
@@ -103,6 +104,8 @@ router.patch("/update", auth, async (req, res, next) => {
       res.status(500).send(e.message);
     }
 });
+
+
 
 
 ////USER-SIDE
@@ -361,4 +364,17 @@ router.get('/sendItem/user', auth, async (req, res) => {
 
 })
 
+
+//TEST
+
+router.post('/testCreateMissionInstance', auth, async(req,res) => {
+    try{
+        const missionInstance = new MissionInstance(req.body)
+        await missionInstance.save()
+        res.send(missionInstance)
+    }catch(e){
+        res.status(400).send(e.message)
+    }
+
+})
 export const missionRouter = router

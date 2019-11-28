@@ -20,6 +20,25 @@ const ItemSchema = new mongoose.Schema({ //instance of ItemModel
 //OK
 ItemSchema.pre('remove', async function (next){
     const item = this
+
+    //THIS CASE NOT TESTED
+    const missionInstance = await MissionInstance.findOne({items: {$elemMatch: {$eq: item._id}}})
+    // .populate({
+    //     path: "items"
+    // })
+
+    if(missionInstance){
+        //BELOW IS DONE IN MISSION INSTANCE REMOVE MIDDLEWARE
+        // await asyncForEach((missionInstance.items), async missionItem => {
+        //     if(missionItem._id.toString() !== item._id.toString()){
+        //         await User.updateOne({_id: missionItem.owner}, {$addToSet: {bag: missionItem._id}})
+        //     } 
+        // })
+
+        missionInstance.remove()
+    }
+    //
+
     let user = await User.findOne({bag: {$elemMatch: {$eq: item._id}}})
     console.log('halo user', user)
     if(user){

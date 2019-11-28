@@ -341,7 +341,7 @@ UserSchema.pre('save', async function(next){//middleware, working with static Us
 
 
 
-//CHECKED PARTLY
+//OK!
 UserSchema.pre('remove', async function(next){
     const user = this
     await Item.deleteMany({owner: user._id})
@@ -371,15 +371,21 @@ UserSchema.pre('remove', async function(next){
     )
 
     //missionInstance
-    const missionInstance = await MissionInstance.findOne({party: {$elemMatch: {user: user._id}}}).populate({
-        path: "item"
-    })
+    const missionInstance = await MissionInstance.findOne({party: {$elemMatch: {user: user._id}}})
+    // .populate({
+    //     path: "items"
+    // })
 
-    await asyncForEach((missionInstance.items), async item => {
-        await User.updateOne({_id: item.owner}, {$addToSet: {bag: item_id}})
-    })
-
-    missionInstance.remove()
+    if(missionInstance){
+        //BELOW IS DONE IN MISSION INSTANCE REMOVE MIDDLEWARE
+        // await asyncForEach((missionInstance.items), async item => {
+        //     await User.updateOne({_id: item.owner}, {$addToSet: {bag: item._id}})
+        // })
+        
+    
+        missionInstance.remove()
+    }
+    
 
     next()
 })
