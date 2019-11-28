@@ -6,6 +6,7 @@ import {Item} from './item'
 import {ProductsOrderSchema} from '../schemas/ProductsOrderSchema'
 
 import arrayUniquePlugin from 'mongoose-unique-array'
+import { asyncForEach } from '../utils/methods'
 
 const userClasses = ['warrior', 'mage', 'rogue', 'cleric']
 
@@ -356,11 +357,30 @@ UserSchema.pre('remove', async function(next){
         }}
     )
     //OK!
-
+    
 
     //what else - rally
-    //await Rally.update({"$elemMatch": {"user.profile": {'$in': [user._id]}}}, {$pull: {"user.profile": {$in: [user._id]}}})
-    //whate else - missionInstance
+    await Rally.updateMany(
+        {"$and": [
+            { users: { $elemMatch: {profile:  user._id}}}, //wihout eq
+            { $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }]},
+        ]},
+        {$pull: {
+            "users": {profile: user._id}
+        }}
+    )
+
+    //missionInstance
+    const missionInstance = await MissionInstance.findOne({party: {$elemMatch: {user: user._id}}}).populate({
+        path: "item"
+    })
+
+    await asyncForEach((missionInstance.items), async item => {
+        await User.updateOne({_id: item.owner}, {$addToSet: {bag: item_id}})
+    })
+
+    missionInstance.remove()
+
     next()
 })
 

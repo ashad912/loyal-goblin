@@ -106,7 +106,29 @@ const ItemModelSchema = new mongoose.Schema({
 ItemModelSchema.pre('remove', async function (next){
   const itemModel = this
 
-  
+  //CHECK THIS ALTERNATIVE
+  // await Mission.updateMany(
+  //   {
+  //     $or: [
+  //       {'amulets': {$elemMatch: {'itemModel': itemModel._id}}},
+  //       {'awards.any': {$elemMatch: {'itemModel': itemModel._id}}},
+  //       {'awards.warrior': {$elemMatch: {'itemModel': itemModel._id}}},
+  //       {'awards.rogue': {$elemMatch: {'itemModel': itemModel._id}}},
+  //       {'awards.mage': {$elemMatch: {'itemModel': itemModel._id}}},
+  //       {'awards.cleric': {$elemMatch: {'itemModel': itemModel._id}}},
+  //     ] 
+  //   },
+  //   {
+  //     $pull: {
+  //       'amulets':  {'itemModel': itemModel._id},
+  //       'awards.any': {'itemModel': itemModel._id},
+  //       'awards.warrior': {'itemModel': itemModel._id},
+  //       'awards.rogue': {'itemModel': itemModel._id},
+  //       'awards.mage': {'itemModel': itemModel._id},
+  //       'awards.cleric': {'itemModel': itemModel._id}
+  //     }
+  //   }
+  // )
 
   // //mission - amultes, awards; 
   let missions = await Mission.find(

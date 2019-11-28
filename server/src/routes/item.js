@@ -40,17 +40,45 @@ router.post('/create', auth, async (req, res) =>{
 
 router.post('/testUpdateUser', auth, async(req, res) => {
     const user = {_id: req.body._id}
-    res.send(await User.updateMany(
-            {$or: [
-                {'party.leader': user._id}, 
-                {'party.members': { $elemMatch: {$eq: user._id}}}
-            ]},
-            {$set: {
-                party: {members: []},
-                activeOrder : {}
-            }}
-        )
-    )
+
+    
+    //await Item.deleteMany({owner: user._id})
+    //what else - party logic? ->
+    // await User.updateMany(
+    //     {$or: [
+    //         {'party.leader': user._id}, 
+    //         {'party.members': { $elemMatch: {$eq: user._id}}}
+    //     ]},
+    //     {$set: {
+    //         party: {members: []},
+    //         activeOrder : {}
+    //     }}
+    // )
+    //OK!
+    
+
+    //what else - rally
+    res.send(await Rally.updateMany(
+        {"$and": [
+            { users: { $elemMatch: {profile: user._id}}}, //wihout eq
+            { $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }]}, //leave users in achive rallies
+        ]},
+        {$pull: {
+            "users": {profile: user._id}
+        }}
+    ))
+
+    //missionInstance
+    // const missionInstance = await MissionInstance.findOne({party: {$elemMatch: {user: user._id}}}).populate({
+    //     path: "item"
+    // })
+
+    // await asyncForEach((missionInstance.items), async item => {
+    //     await User.updateOne({_id: item.owner}, {$addToSet: {bag: item_id}})
+    // })
+
+    // missionInstance.remove()
+    
 })
 
 
