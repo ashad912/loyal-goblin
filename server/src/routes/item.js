@@ -86,7 +86,7 @@ router.post('/testUpdateUser', auth, async(req, res) => {
 
 //REFACTOR - left here for backup
 
-router.post('/testRemoveMiddleware', auth, async(req, res) => {
+router.post('/testItemModelRemove', auth, async (req, res) => {
     const itemModel = await ItemModel.findById(req.body._id)
 
     
@@ -124,45 +124,9 @@ router.post('/testRemoveMiddleware', auth, async(req, res) => {
     // //OK!
     
 
-    //mission - amultes, awards; 
-    let missions = await Mission.find(
-        {$or: [
-            {'amulets': {$elemMatch: {'itemModel': itemModel._id}}},
-            {'awards.any': {$elemMatch: {'itemModel': itemModel._id}}},
-            {'awards.warrior': {$elemMatch: {'itemModel': itemModel._id}}},
-            {'awards.rogue': {$elemMatch: {'itemModel': itemModel._id}}},
-            {'awards.mage': {$elemMatch: {'itemModel': itemModel._id}}},
-            {'awards.cleric': {$elemMatch: {'itemModel': itemModel._id}}},
-        ] })
-
-    
-    //OK!
-    await asyncForEach((missions), async mission => {
-        mission.amulets = mission.amulets.filter((mission, index)=> {
-            return mission.itemModel.toString() !== itemModel._id.toString()
-        })
-        await asyncForEach(Object.keys(mission.awards.toJSON()), async (className) => { //need toJSON to remove 'mongo keys'
-            
-            
-            mission.awards[className] = mission.awards[className].filter((classAward) => {
-                // /console.log('eq', classAward.itemModel, itemModel._id)
-                return classAward.itemModel.toString() !== itemModel._id.toString()
-            })
-            
-        })
-        //console.log(mission._id)
-        //console.log(mission.amulets)
-        //console.log(mission.awards)
-        await mission.save()
-    })
-    
-    //OK!
-
-
-    //rally - awardsLevels -> awards
-    let rallies = await Rally.find(
-        
-        {'awardsLevels': {$elemMatch:
+    res.send(await Rally.updateMany(
+        {'awardsLevels': 
+          {$elemMatch:
             {$or: [
                 {'awards.any': {$elemMatch: {'itemModel': itemModel._id}}},
                 {'awards.warrior': {$elemMatch: {'itemModel': itemModel._id}}},
@@ -170,36 +134,132 @@ router.post('/testRemoveMiddleware', auth, async(req, res) => {
                 {'awards.mage': {$elemMatch: {'itemModel': itemModel._id}}},
                 {'awards.cleric': {$elemMatch: {'itemModel': itemModel._id}}},
             ]}
-        }})
-    
-    //OK
+          }
+        }, 
+        //https://docs.mongodb.com/manual/reference/operator/update/positional/
+        //https://docs.mongodb.com/manual/reference/operator/update/positional-all/
+            {$pull: {
+              'awardsLevels.$[].awards.any': {'itemModel': itemModel._id},
+              'awardsLevels.$[].awards.warrior': {'itemModel': itemModel._id},
+              'awardsLevels.$[].awards.rogue': {'itemModel': itemModel._id},
+              'awardsLevels.$[].awards.mage': {'itemModel': itemModel._id},
+              'awardsLevels.$[].awards.cleric': {'itemModel': itemModel._id}
+            }
+          
+        }))
 
-    await asyncForEach(rallies, async rally => {
-        await asyncForEach(rally.awardsLevels, async (awardsLevel, index) => {
-            await asyncForEach(Object.keys(awardsLevel.awards.toJSON()), async (className) => {
-                rally.awardsLevels[index].awards[className] = rally.awardsLevels[index].awards[className].filter((classAward) => {
-                    return classAward.itemModel.toString() !== itemModel._id.toString()
-                })
-            })
-        })
-        //console.log(rally._id)
-        //console.log(rally.awardsLevels)
-        await rally.save()
-    })
+    //mission - amultes, awards; 
+    // let missions = await Mission.find(
+    //     {$or: [
+    //         {'amulets': {$elemMatch: {'itemModel': itemModel._id}}},
+    //         {'awards.any': {$elemMatch: {'itemModel': itemModel._id}}},
+    //         {'awards.warrior': {$elemMatch: {'itemModel': itemModel._id}}},
+    //         {'awards.rogue': {$elemMatch: {'itemModel': itemModel._id}}},
+    //         {'awards.mage': {$elemMatch: {'itemModel': itemModel._id}}},
+    //         {'awards.cleric': {$elemMatch: {'itemModel': itemModel._id}}},
+    //     ] })
+
+    
+    // //OK!
+    // await asyncForEach((missions), async mission => {
+    //     mission.amulets = mission.amulets.filter((mission, index)=> {
+    //         return mission.itemModel.toString() !== itemModel._id.toString()
+    //     })
+    //     await asyncForEach(Object.keys(mission.awards.toJSON()), async (className) => { //need toJSON to remove 'mongo keys'
+            
+            
+    //         mission.awards[className] = mission.awards[className].filter((classAward) => {
+    //             // /console.log('eq', classAward.itemModel, itemModel._id)
+    //             return classAward.itemModel.toString() !== itemModel._id.toString()
+    //         })
+            
+    //     })
+    //     //console.log(mission._id)
+    //     //console.log(mission.amulets)
+    //     //console.log(mission.awards)
+    //     await mission.save()
+    // })
+    
+    // //OK!
+
+
+    // //rally - awardsLevels -> awards
+    // let rallies = await Rally.find(
+        
+    //     {'awardsLevels': {$elemMatch:
+    //         {$or: [
+    //             {'awards.any': {$elemMatch: {'itemModel': itemModel._id}}},
+    //             {'awards.warrior': {$elemMatch: {'itemModel': itemModel._id}}},
+    //             {'awards.rogue': {$elemMatch: {'itemModel': itemModel._id}}},
+    //             {'awards.mage': {$elemMatch: {'itemModel': itemModel._id}}},
+    //             {'awards.cleric': {$elemMatch: {'itemModel': itemModel._id}}},
+    //         ]}
+    //     }})
     
     // //OK
 
-    //will be changed from: model to itemModel!!!
-    //const itemInstances = await Item.find({model: itemModel._id})
-
-    //await Item.deleteMany({model: itemModel._id}) <- does not trigger pre remove middleware
+    // await asyncForEach(rallies, async rally => {
+    //     await asyncForEach(rally.awardsLevels, async (awardsLevel, index) => {
+    //         await asyncForEach(Object.keys(awardsLevel.awards.toJSON()), async (className) => {
+    //             rally.awardsLevels[index].awards[className] = rally.awardsLevels[index].awards[className].filter((classAward) => {
+    //                 return classAward.itemModel.toString() !== itemModel._id.toString()
+    //             })
+    //         })
+    //     })
+    //     //console.log(rally._id)
+    //     //console.log(rally.awardsLevels)
+    //     await rally.save()
+    // })
     
-    await asyncForEach((itemInstances), async itemInstance => {
-        //console.log(itemInstance._id)
-        await itemInstance.remove() //running 'pre remove' item middleware
-    })
-    res.send()
+    // // //OK
+
+    // //will be changed from: model to itemModel!!!
+    // //const itemInstances = await Item.find({model: itemModel._id})
+
+    // //await Item.deleteMany({model: itemModel._id}) <- does not trigger pre remove middleware
+    
+    // await asyncForEach((itemInstances), async itemInstance => {
+    //     //console.log(itemInstance._id)
+    //     await itemInstance.remove() //running 'pre remove' item middleware
+    // })
+    //res.send()
     
 })
+
+
+router.post('/testItemRemove', auth, async (req,res) => {
+    const item = req.body
+    // let user = await User.findOne({bag: {$elemMatch: {$eq: item._id}}})
+    // console.log('halo user', user)
+    // if(user){
+    //     user.bag = user.bag.filter((bagItem) => {
+    //         return bagItem._id.toString() !== item._id.toString
+    //     })
+
+    //     await asyncForEach(Object.keys(user.equipped.toJSON()), (category) => {
+    //         if(user.equipped[category].toString() === item._id.toString()){
+    //             user.equipped[category] = null //or remove key?
+    //         }
+    //     })
+
+    //     await user.save()
+    // }
+    // {$pull: {
+    //     'awardsLevels.$[].awards.any': {'itemModel': itemModel._id},
+    //     'awardsLevels.$[].awards.warrior': {'itemModel': itemModel._id},
+    //     'awardsLevels.$[].awards.rogue': {'itemModel': itemModel._id},
+    //     'awardsLevels.$[].awards.mage': {'itemModel': itemModel._id},
+    //     'awardsLevels.$[].awards.cleric': {'itemModel': itemModel._id}
+    //   }
+    // await User.updateOne({
+    //     bag: {$elemMatch: {$eq: item._id}}
+    // }, {
+    //     $pull: {
+    //         'bag': {$eq: item._id},
+    //         'equipped' ...
+    //     }
+    // })
+})
+
 
 export const itemRouter = router

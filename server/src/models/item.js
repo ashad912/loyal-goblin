@@ -40,7 +40,7 @@ ItemSchema.pre('remove', async function (next){
     //
 
     let user = await User.findOne({bag: {$elemMatch: {$eq: item._id}}})
-    console.log('halo user', user)
+    //console.log('halo user', user)
     if(user){
         user.bag = user.bag.filter((bagItem) => {
             return bagItem._id.toString() !== item._id.toString
@@ -54,6 +54,16 @@ ItemSchema.pre('remove', async function (next){
 
         await user.save()
     }
+
+    // ALTERATIVE require specifying all nested equipped fields... can be developed
+    // await User.updateOne({
+    //     bag: {$elemMatch: {$eq: item._id}}
+    // }, {
+    //     $pull: {
+    //         'bag': {$eq: item._id},
+    //         'equipped' ...
+    //     }
+    // })
 
     next()
 
