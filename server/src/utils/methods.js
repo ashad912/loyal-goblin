@@ -18,14 +18,24 @@ export async function asyncFor(array, callback) {
 export const designateUserPerks = async (user) => {
 
       //TO-DO: how to populate nested objects
-      await user.populate({
-        path: 'equipped'
-      }).populate({
-        path: 'equipped.*.itemModel'
-      }).execPopulate();
 
+
+      await asyncForEach(Object.keys(user.equipped), async (slot) => {
+        await user.populate({
+            path: 'equipped.'+slot,
+            populate: {path:'itemModel'}
+          }).execPopulate();
+      })
+
+
+
+    //   await user.populate({
+    //     path: 'equipped.*.itemModel'
+    //   }).execPopulate()
 
       const equippedItems = user.equipped
+
+      console.log(equippedItems)
 
       const products = await Product.find({})
 
@@ -132,9 +142,10 @@ export const designateUserPerks = async (user) => {
 
           return exp
       }
-      
-      Object.keys(equippedItems).forEach((itemKey) => {
-          if(equippedItems[itemKey].hasOwnProperty('itemModel') && equippedItems[itemKey].itemModel.hasOwnProperty('perks') && equippedItems[itemKey].itemModel.perks && equippedItems[itemKey].itemModel.perks.length){
+
+      Object.keys(equippedItems).forEach((itemKey, index) => {
+          
+          if(equippedItems[itemKey] && equippedItems[itemKey].hasOwnProperty('itemModel') && equippedItems[itemKey].itemModel.hasOwnProperty('perks') && equippedItems[itemKey].itemModel.perks && equippedItems[itemKey].itemModel.perks.length > 0){
               const perks = equippedItems[itemKey].itemModel.perks
               console.log(perks)
               perks.forEach((perk) => {
@@ -227,4 +238,15 @@ export const designateUserPerks = async (user) => {
       console.log(modelPerks)
 
       return modelPerks
+}
+
+
+export const userPopulateBag = async (user) => {
+    await user
+      .populate({
+        path: "bag",
+        populate: {path: 'itemModel'}
+      }).execPopulate();
+
+    return user
 }

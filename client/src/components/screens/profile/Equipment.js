@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
+import Typography from "@material-ui/core/Typography";
 import ListItemText from "@material-ui/core/ListItemText";
 import Collapse from "@material-ui/core/Collapse";
 import Paper from "@material-ui/core/Paper";
@@ -154,6 +154,8 @@ const Equipment = props => {
                 </React.Fragment>
             )})}
       </List>
+      {Object.keys(items).length <= 0 && 
+      <Typography variant="caption">Ekwipunek jest pusty</Typography>}
       <Dialog open={deleteDialog} onClose={handleDeleteDialogClose}>
         <DialogTitle>Wyrzucanie przedmiotu</DialogTitle>
         <DialogContent>

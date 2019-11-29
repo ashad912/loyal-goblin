@@ -4,7 +4,7 @@ import {User} from './user'
 
 const ItemSchema = new mongoose.Schema({ //instance of ItemModel
 
-    model: {
+    itemModel: {
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'itemModel',
         required: true

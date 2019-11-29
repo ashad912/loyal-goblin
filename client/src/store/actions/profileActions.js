@@ -33,3 +33,18 @@ export const updateAvatar = (avatar) => {
     }
 
 }
+
+
+
+export const toggleItem = (id, category, equipped) => {
+    return async dispatch => {
+        try {
+            const res = await axios.patch('/user/myItems/equip', {id, category, equipped})
+            dispatch({type: 'UPDATE_PROFILE_DATA', profile: res.data})
+
+        } catch (e) {
+            console.log(e)
+            dispatch( {type: "NO_CONNECTION", error: e})     
+        }
+    }
+}

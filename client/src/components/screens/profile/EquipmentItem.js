@@ -132,7 +132,7 @@ const EquipmentListItem = props => {
                       </Typography>
                     )}
                   <Typography variant="caption">
-                    {item.itemModel.fluff}
+                    {item.itemModel.description}
                   </Typography>
                 </div>
               }

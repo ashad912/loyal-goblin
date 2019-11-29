@@ -5,7 +5,7 @@ import sharp from "sharp";
 import { User } from "../models/user";
 import { Item } from "../models/item";
 import { auth } from "../middleware/auth";
-import { asyncForEach, designateUserPerks } from "../utils/methods";
+import { asyncForEach, designateUserPerks, userPopulateBag } from "../utils/methods";
 
 const router = express.Router();
 
@@ -39,12 +39,12 @@ router.post("/create", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
-    const user = await User.findByCredentials(
+    let user = await User.findByCredentials(
       req.body.email,
       req.body.password
     );
     const token = await user.generateAuthToken(); //on instancegenerateAuthToken
-    //const uid = user._id;
+    user = await userPopulateBag(user)
     res.cookie("token", token, { httpOnly: true }).send(user);
   } catch (e) {
     res.status(400).send(e);
@@ -75,8 +75,13 @@ router.post("/logoutAll", auth, async (req, res) => {
   }
 });
 
-router.get("/me", auth, (req, res, next) => {
-  res.send(req.user);
+router.get("/me", auth, async (req, res, next) => {
+  try {
+    const user = await userPopulateBag(req.user)
+    res.send(user);
+  } catch (error) {
+    console.log(error)
+  }
 });
 
 router.patch("/me", auth, async (req, res, next) => {
@@ -159,7 +164,7 @@ router.delete(
 
 router.patch("/addUserItem", auth, async (req, res) => {
   try {
-    const user = await User.findById(req.body.user);
+    const user = await User.findById(req.user._id);
 
     user.bag = [...user.bag, req.body.item];
 
@@ -188,17 +193,11 @@ router.patch("/deleteUserItem", auth, async (req, res) => {
 });
 
 //WIP not working
-router.get("/me/myItems", auth, async (req, res) => {
-  const user = req.user;
+router.get("/myItems", auth, async (req, res) => {
+  let user = req.user;
 
   try {
-    await user
-      .populate({
-        path: "bag"
-      })
-      .execPopulate();
-
-    await user.populate({ path: "bag.itemModel" }).execPopulate();
+    user = await userPopulateBag(user)
 
     const items = { bag: user.bag, equipped: user.equipped };
     res.send(items);
@@ -207,24 +206,36 @@ router.get("/me/myItems", auth, async (req, res) => {
   }
 });
 
-router.patch("/me/myItems/equip/", auth, async (req, res) => {
-  const user = req.user;
-  const itemId = req.body.itemId;
-  const itemCategory = req.body.itemCategory;
-  //Used for equipped items, because of right and left hand weapons and rings
-  const itemSlot = req.body.itemSlot;
-  //Store item in const
-  const itemToEquip = user.bag[itemCategory].find(item => {
-    item._id === itemId;
-  });
-  //Remove item from bag
-  user.bag = user.bag[itemCategory].filter(item => {
-    item._id !== itemId;
-  });
-  user.equipped[itemSlot] = itemToEquip;
-  //user.userPerks = designateUserPerks(user)
-  await user.save();
-  res.sendStatus(200);
+router.patch("/myItems/equip", auth, async (req, res) => {
+  let user = req.user;
+  const itemId = req.body.id;
+  const category = req.body.category;
+
+  const equipped = req.body.equipped;
+  try {
+    const itemToEquip = user.bag.find(item => {
+      return item.toString() === itemId;
+    });
+   
+    
+    if(itemToEquip){
+      user.equipped = {...equipped}
+      user.userPerks = await designateUserPerks(user)
+      await user.save();
+      user = await userPopulateBag(user)
+      res.status(200).send(user);
+    }else{
+     // console.log("item not found")
+      res.sendStatus(400)
+    }
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(400)
+  }
+  
+  
+  
+  
 });
 
 export const userRouter = router;
