@@ -77,9 +77,9 @@ const finishRally = async (rally) => {
             console.log(user.activeRally, rallyUser.experience)
             if(user.activeRally.length && rallyUser.experience > 0){
                 const items = await addAwards(rallyUser, rally.awardsLevels)
-                console.log('Before ', user.bag, items)
+                
                 user.bag = [...user.bag, ...items]
-                console.log('After ', user.bag)
+                
             }
             await user.save() 
         

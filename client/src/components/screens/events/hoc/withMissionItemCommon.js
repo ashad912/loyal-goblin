@@ -25,7 +25,7 @@ const withMissionItemCommon = (WrappedComponent, mission) => {
 
 
         
-            const userLevel = 2;
+            
             const currentPlayersInParty = 4; //returned from backend (read from user profile -> user.party.members.length + 1 [1 for leader] EXPERIMENTAL)
             const leader = true //only leader can enter mission - from backend as above
             
@@ -38,9 +38,10 @@ const withMissionItemCommon = (WrappedComponent, mission) => {
             const totalDexterity = 4
             const totalMagic = 4
             const totalEndurance = 4
+            const minUserLevelInParty = 2;
 
             const appropriatePlayers = isAppropriatePlayers(mission.minPlayers, mission.maxPlayers)
-            const appropriateLevel = userLevel >= mission.level;
+            const appropriateLevel = minUserLevelInParty >= mission.level;
             const appropriateStrength = totalStrength >= mission.strength
             const appropriateDexterity = totalDexterity >= mission.dexterity
             const appropriateMagic = totalMagic >= mission.magic

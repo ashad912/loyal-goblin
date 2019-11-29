@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import {User} from './user'
 import arrayUniquePlugin from 'mongoose-unique-array'
+import {asyncForEach} from '../utils/methods'
 
 const MissionInstanceSchema = new mongoose.Schema({ //instance of ItemModel
 
@@ -38,12 +39,12 @@ MissionInstanceSchema.pre('remove', async function(next){
 
     await missionInstance.populate({
         path: "items"
-    })
+    }).execPopulate()
 
     await asyncForEach((missionInstance.items), async item => {
         await User.updateOne({_id: item.owner}, {$addToSet: {bag: item._id}})
     })
-
+    
     next()
 })
 
