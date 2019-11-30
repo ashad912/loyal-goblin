@@ -361,7 +361,7 @@ UserSchema.pre('remove', async function(next){
             {'party.members': { $elemMatch: {$eq: user._id}}}
         ]},
         {$set: {
-            party: {members: []},
+            party: {members: [], leader: null},
             activeOrder : {}
         }}
     )
