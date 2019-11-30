@@ -280,10 +280,10 @@ export const UserSchema = new mongoose.Schema({
 UserSchema.virtual('activeMission', { //events can be reached by relations, BI RELATION!!
     ref: 'missionInstance',
     localField: '_id', //relation from user side (we are in user schema!)
-    foreignField: 'party.user' //relation from event side
+    foreignField: 'party.profile' //relation from event side
 })
 
-UserSchema.virtual('activeRally', { //events can be reached by relations, BI RELATION!!
+UserSchema.virtual('userRallies', { //events can be reached by relations, BI RELATION!!
     ref: 'rally',
     localField: '_id', //relation from user side (we are in user schema!)
     foreignField: 'users.profile' //relation from event side

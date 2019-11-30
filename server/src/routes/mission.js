@@ -373,7 +373,7 @@ router.delete('/deleteInstance', auth, async (req, res) => {
             throw Error('There is no such mission instance!')
         }
 
-        missionInstance.remove() //remove middleware trigger method returning instance items to owner bags
+        await missionInstance.remove() //remove middleware trigger method returning instance items to owner bags
 
         res.send()
     }catch(e){
@@ -394,7 +394,7 @@ const toggleUserRoomStatus = (user, field, newStatus, secondField, secondNewStat
                 throw Error('There is no such mission instance!')
             }
             
-            const index = missionInstance.party.findIndex(member => member.user.toString() === user._id.toString())
+            const index = missionInstance.party.findIndex(member => member.profile.toString() === user._id.toString())
     
             if(index < 0){
                 throw Error('You are not in this mission!')
@@ -467,6 +467,86 @@ router.patch('/notReady', auth, async (req, res) => {
     }catch(e){
         res.status(400).send(e.message)
     }
+})
+
+const addAwards = async (user, awards) => {
+    let items = []
+         
+    await asyncForEach(Object.keys(awards.toJSON()), async (className) => {
+        
+        if(user.profile.class === className || className === 'any') {
+            
+            await asyncForEach(awardsLevel.awards[className], async (item) => {
+
+                for(let i=0; i < item.quantity; i++) {
+                    const newItem = new Item({itemModel: item.itemModel, owner: user.profile._id})
+                    items = [...items, newItem]
+                    await newItem.save()
+                }
+                
+                
+            })
+        }
+    }) 
+    
+    return items  
+}
+
+//CHECK AND DEVELOP
+router.post('/finishMission', auth, async (req,res) => {
+    const user = req.user
+
+    try{
+        //CONDITIONS TO DEVELOP!!!
+
+
+        if(user.party.leader.toString() !== user._id.toString()){ //here are objectIDs - need to be string
+            throw new Error('User is not the leader!')
+        }
+
+        await user.populate({
+            path: 'activeMission'
+        }).execPopulate()
+
+
+        const missionInstance =  await MissionInstance.findOne({_id: user.activeMission}).populate({
+            path: 'mission'
+        }).populate({
+            path: 'party.profile'
+        })
+
+        if(!missionInstance){
+            throw Error('There is no such mission instance!')
+        }
+
+        await asyncForEach(missionInstance.party, async (member) => {
+               
+                const user = await User.findById(member.profile._id).populate({
+                    path: 'activeMission'
+                }) //recoginized as an array
+                console.log(user.activeMission)
+                if(user.activeMission.length && (user.activeMission[0]._id.toString() === missionInstance._id.toString())){
+                    const items = await addAwards(member, missionInstance.mission.awards)
+                    
+                    user.bag = [...user.bag, ...items]
+                    
+                }
+                await user.save() 
+            
+            
+        })
+        await asyncForEach(missionInstance.items, async (itemId) => {
+            const item = await Item.findById(itemId)
+            await item.remove() //pre removing middleware (item) clear missionInstance items array!
+        })
+
+       
+        await missionInstance.remove() //remove middleware trigger method returning instance items to owner bags (in this case instance items array is empty)
+
+        res.send()
+    }catch(e){
+        res.status(400).send(e.message)
+    }  
 })
 
 const verifySendItem = (user, missionInstance, itemId) => {

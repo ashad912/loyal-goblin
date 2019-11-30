@@ -15,7 +15,7 @@ const MissionInstanceSchema = new mongoose.Schema({ //instance of ItemModel
         type: [{
             inRoom: Boolean,
             readyStatus: Boolean,
-            user: {
+            profile: {
                 type: mongoose.Schema.Types.ObjectId, 
                 ref: 'user',
                 unique: true

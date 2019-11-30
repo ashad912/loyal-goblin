@@ -23,14 +23,14 @@ const addAwards = async (user, awardsLevels) => {
         
         if(user.experience >= awardsLevel.level){
             
-            await asyncForEach(Object.keys(awardsLevel.awards), async (className) => {
+            await asyncForEach(Object.keys(awardsLevel.awards.toJSON()), async (className) => {
                 
                 if(user.profile.class === className || className === 'any') {
                     
                     await asyncForEach(awardsLevel.awards[className], async (item) => {
 
                         for(let i=0; i < item.quantity; i++) {
-                            const newItem = new Item({model: item.itemModel, owner: user.profile._id})
+                            const newItem = new Item({itemModel: item.itemModel, owner: user.profile._id})
                             items = [...items, newItem]
                             await newItem.save()
                         }
@@ -46,7 +46,7 @@ const addAwards = async (user, awardsLevels) => {
     return items  
 }
 
-//OK
+//OK - CHECK PARTLY
 const finishRally = async (rally) => {
     
 
@@ -72,15 +72,20 @@ const finishRally = async (rally) => {
     await asyncForEach(users, async (rallyUser) => {
            
             const user = await User.findById(rallyUser.profile._id).populate({
-                path: 'activeRally'
+                path: 'userRallies'
             }) //recoginized as an array
-            console.log(user.activeRally, rallyUser.experience)
-            if(user.activeRally.length && rallyUser.experience > 0){
+            console.log(user.userRallies, rallyUser.experience)
+
+            //UPDATE TO CHECK
+            const index = user.userRallies.findIndex((activeRally) => activeRally._id === rally._id)
+
+            if((user.userRallies.length) && (index >= 0) && (rallyUser.experience > 0)){ 
                 const items = await addAwards(rallyUser, rally.awardsLevels)
                 
                 user.bag = [...user.bag, ...items]
                 
             }
+            //
             await user.save() 
         
         

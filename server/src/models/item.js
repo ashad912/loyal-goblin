@@ -22,21 +22,24 @@ ItemSchema.pre('remove', async function (next){
     const item = this
 
     //THIS CASE NOT TESTED
-    const missionInstance = await MissionInstance.findOne({items: {$elemMatch: {$eq: item._id}}})
+    await MissionInstance.updateOne(
+        {items: {$elemMatch: {$eq: item._id}}},
+        {$pull: {items: {$eq: item._id}}}
+    )
     // .populate({
     //     path: "items"
     // })
 
-    if(missionInstance){
-        //BELOW IS DONE IN MISSION INSTANCE REMOVE MIDDLEWARE
+    //if(missionInstance){
+        // BELOW IS DONE IN MISSION INSTANCE REMOVE MIDDLEWARE
         // await asyncForEach((missionInstance.items), async missionItem => {
         //     if(missionItem._id.toString() !== item._id.toString()){
         //         await User.updateOne({_id: missionItem.owner}, {$addToSet: {bag: missionItem._id}})
         //     } 
         // })
 
-        missionInstance.remove()
-    }
+        //missionInstance.remove()
+    //}
     //
 
     let user = await User.findOne({bag: {$elemMatch: {$eq: item._id}}})
