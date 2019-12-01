@@ -16,12 +16,14 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import MenuIcon from "@material-ui/icons/Menu";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import LockIcon from '@material-ui/icons/Lock';
 import { Badge } from '@material-ui/core';
 import tempUserAvatar from '../../assets/avatar/moose.png'
 import { connect } from 'react-redux';
 import { Link } from '@material-ui/core';
 import {updateAvatar} from '../../store/actions/profileActions'
 import {signOut} from '../../store/actions/authActions'
+import ChangePasswordModal from '../auth/ChangePasswordModal';
 
 
 const StyledMenu = styled(Menu)`
@@ -62,6 +64,7 @@ const Navbar = (props) => {
 
 
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [showPasswordChangeModal, setShowPasswordChangeModal] = React.useState(false)
 
     const handleClick = event => {
         event.stopPropagation();
@@ -116,6 +119,10 @@ const Navbar = (props) => {
         bytes.forEach((b) => binary += String.fromCharCode(b));
         return window.btoa(binary);
     };
+
+    const togglePasswordChangeModal = () => {
+        setShowPasswordChangeModal(prev => !prev)
+    }
 
     const avatar = true
     //console.log(props.auth)
@@ -195,6 +202,16 @@ const Navbar = (props) => {
                             </StyledMenuItem>
                         }
                         <StyledMenuItem>
+                            <ListItemIcon>
+                                <LockIcon/>
+                            </ListItemIcon>
+                            <ListItemText>
+                                <Link onClick={togglePasswordChangeModal} underline="none" color="primary">
+                                    Zmień hasło
+                                </Link>
+                            </ListItemText>
+                        </StyledMenuItem>
+                        <StyledMenuItem>
                                 
                             <ListItemIcon>
                                 <ExitToAppIcon />
@@ -231,6 +248,7 @@ const Navbar = (props) => {
             )}
             
         </Toolbar>
+        <ChangePasswordModal open={showPasswordChangeModal} handleClose={togglePasswordChangeModal}/>
         </StyledAppBar>
         
        

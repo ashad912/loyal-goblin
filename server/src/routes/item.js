@@ -227,6 +227,7 @@ router.post('/testItemModelRemove', auth, async (req, res) => {
 })
 
 
+
 router.post('/testItemRemove', auth, async (req,res) => {
     const item = req.body
     // let user = await User.findOne({bag: {$elemMatch: {$eq: item._id}}})

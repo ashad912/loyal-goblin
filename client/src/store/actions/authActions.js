@@ -84,7 +84,23 @@ export const authCheck =  () => {
 }
 
             
-            
+
+export const changePassword = (password, repeatedPassword) => {
+    return async dispatch => {
+        try {
+            if(password === repeatedPassword){
+                const res = await axios.patch('/user/me', {password})
+                if(res){
+                    signOut()
+                }
+            }
+
+        } catch (e) {
+            console.log(e)
+            dispatch( {type: "NO_CONNECTION", error: e})     
+        }
+    }
+}
 
     
 

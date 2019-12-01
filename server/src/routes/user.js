@@ -176,21 +176,36 @@ router.patch("/addUserItem", auth, async (req, res) => {
   }
 });
 
-router.patch("/deleteUserItem", auth, async (req, res) => {
+
+router.delete('/deleteUserItem', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.body.user);
-
-    user.bag = user.bag.filter(item => {
-      return item.toString() !== req.body.item;
-    });
-
-    await user.save();
-    res.send();
-  } catch (e) {
-    console.log(e.message);
-    res.status(400).send();
+      const item = await Item.findById({_id: req.body.id})
+      await item.remove()
+      let user = await User.findById({_id: req.user._id})
+      user = await userPopulateBag(user)
+      res.status(200).send(user)
+      
+  } catch (error) {
+      console.log(error)
+      res.status(403).send(error)
   }
-});
+})
+
+// router.patch("/deleteUserItem", auth, async (req, res) => {
+//   try {
+//     const user = req.user
+
+//     user.bag = user.bag.filter(item => {
+//       return item.toString() !== req.body.item;
+//     });
+
+//     await user.save();
+//     res.send();
+//   } catch (e) {
+//     console.log(e.message);
+//     res.status(400).send();
+//   }
+// });
 
 //WIP not working
 router.get("/myItems", auth, async (req, res) => {
@@ -223,6 +238,8 @@ router.patch("/myItems/equip", auth, async (req, res) => {
       user.userPerks = await designateUserPerks(user)
       await user.save();
       user = await userPopulateBag(user)
+      //Depopulate equipped key
+      user.equipped = {...equipped}
       res.status(200).send(user);
     }else{
      // console.log("item not found")

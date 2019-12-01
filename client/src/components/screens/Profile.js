@@ -31,7 +31,7 @@ import PartyCreationDialog from "./profile/PartyCreationDialog";
 import PartyJoiningDialog from "./profile/PartyJoiningDialog";
 import RankDialog from "./profile/RankDialog";
 import StatsDialog from "./profile/StatsDialog";
-import { toggleItem } from "../../store/actions/profileActions";
+import { toggleItem, deleteItem } from "../../store/actions/profileActions";
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -84,7 +84,7 @@ const createTempBag = () => {
         name: "Diament",
         fluff: "Najlepszy przyjaciel dziewyczyny",
         imgSrc: "diamond-amulet.png",
-        perks: [],
+        perks: []
       }
     },
     {
@@ -96,7 +96,7 @@ const createTempBag = () => {
         name: "Diament",
         fluff: "Najlepszy przyjaciel dziewyczyny",
         imgSrc: "diamond-amulet.png",
-        perks: [],
+        perks: []
       }
     },
     {
@@ -109,7 +109,7 @@ const createTempBag = () => {
         name: "Perła",
         fluff: "Perła prosto z lodówki, znaczy z małży",
         imgSrc: "pearl-amulet.png",
-        perks: [],
+        perks: []
       }
     },
     {
@@ -122,7 +122,7 @@ const createTempBag = () => {
         name: "Krótki miecz",
         fluff: "Przynajmniej nie masz kompleksów",
         imgSrc: "short-sword.png",
-        perks: [],
+        perks: []
       }
     },
     {
@@ -180,7 +180,7 @@ const createTempBag = () => {
         name: "Skórzana kurta",
         fluff: "Lale za takimi szaleją",
         imgSrc: "leather-jerkin.png",
-        perks: [],
+        perks: []
       }
     },
     {
@@ -193,7 +193,7 @@ const createTempBag = () => {
         name: "Lniane spodnie",
         fluff: "Zwykłe spodnie, czego jeszcze chcesz?",
         imgSrc: "linen-trousers.png",
-        perks: [],
+        perks: []
       }
     },
     {
@@ -206,7 +206,7 @@ const createTempBag = () => {
         name: "Wysokie buty",
         fluff: "Skórzane, wypastowane, lśniące",
         imgSrc: "high-boots.png",
-        perks: [],
+        perks: []
       }
     },
     {
@@ -219,7 +219,7 @@ const createTempBag = () => {
         name: "Czapka z piórkiem",
         fluff: "Wesoła kompaniaaaa",
         imgSrc: "feathered-hat.png",
-        perks: [],
+        perks: []
       }
     },
     {
@@ -352,54 +352,29 @@ const createTempEquipped = () => {
 const Profile = props => {
   const classes = useStyles();
 
-
-  const [bag, setBag] = React.useState(convertBagArrayToCategories(props.auth.profile.bag))
+  const [bag, setBag] = React.useState(
+    convertBagArrayToCategories(props.auth.profile.bag)
+  );
+  const [equippedItems, setEquippedItems] = React.useState(null);
 
   React.useEffect(() => {
-    setBag(convertBagArrayToCategories(props.auth.profile.bag))
-    console.log(bag)
-  }, [props.auth.profile.bag])
+    setBag(convertBagArrayToCategories(props.auth.profile.bag));
+  }, [props.auth.profile.bag]);
 
-  const [player, setPlayer] = React.useState(
-    createTempPlayer(
-      { str: 4, dex: 2, mag: 1, end: 5 },
-      convertBagArrayToCategories(createTempBag()),
-      createTempEquipped()
-    )
-  ); //Returned from backend
+  React.useEffect(() => {
+    setEquippedItems(props.auth.profile.equipped);
+  }, [props.auth.profile.equipped]);
+
+
 
   const [activePerks, setActivePerks] = React.useState([]);
 
-  const [attributeModifiers, setAttributeModifiers] = React.useState({
-    str: 0,
-    dex: 0,
-    mag: 0,
-    end: 0
-  });
-
   const [goExp, setGoExp] = React.useState(false);
-
   const [newLevelDialogOpen, setNewLevelDialogOpen] = React.useState(false);
-
   const [isJoiningParty, setIsJoiningParty] = React.useState(false);
   const [isCreatingParty, setIsCreatingParty] = React.useState(false);
   const [showRankDialog, setShowRankDialog] = React.useState(false);
   const [showStatsDialog, setShowStatsDialog] = React.useState(false);
-
-
-  const [equippedItems, setEquippedItems] = React.useState({
-    head: null,
-    chest: null,
-    hands: null,
-    legs: null,
-    feet: null,
-    weaponRight: null,
-    weaponLeft: null,
-    ringRight: null,
-    ringLeft: null,
-    scroll: null
-  });
-  //TODO: Multiple items of same type
 
   React.useEffect(() => {
     updateEquippedItems();
@@ -421,20 +396,20 @@ const Profile = props => {
     };
     const perks = [];
 
-    Object.keys(player.equipped).forEach(category => {
+    Object.keys(props.auth.profile.equipped).forEach(category => {
       let loadedEquippedItem;
       if (category.startsWith("weapon")) {
-        loadedEquippedItem = player.equipment.weapon && player.equipment.weapon.find(
-          item => item._id === player.equipped[category]
-        );
+        loadedEquippedItem =
+          bag.weapon &&
+          bag.weapon.find(item => item._id === props.auth.profile.equipped[category]);
       } else if (category.startsWith("ring")) {
-        loadedEquippedItem = player.equipment.ring && player.equipment.ring.find(
-          item => item._id === player.equipped[category]
-        );
+        loadedEquippedItem =
+          bag.ring &&
+          bag.ring.find(item => item._id === props.auth.profile.equipped[category]);
       } else {
-        loadedEquippedItem = player.equipment[category] && player.equipment[category].find(
-          item => item._id === player.equipped[category]
-        );
+        loadedEquippedItem =
+          bag[category] &&
+          bag[category].find(item => item._id === props.auth.profile.equipped[category]);
       }
 
       if (loadedEquippedItem) {
@@ -452,49 +427,32 @@ const Profile = props => {
 
     setEquippedItems({ ...equipment });
     setActivePerks([...perks]);
-
-    const attrMods = { str: 0, dex: 0, mag: 0, end: 0 };
-    //TODO: attributes at current time
-    perks.forEach(perk => {
-      if (perk.perkType.startsWith("attr")) {
-        //TODO: handle percentage change
-        switch (perk.perkType) {
-          case "attr-strength":
-            attrMods.str += parseInt(perk.value);
-            break;
-          case "attr-dexterity":
-            attrMods.dex += parseInt(perk.value);
-            break;
-          case "attr-magic":
-            attrMods.mag += parseInt(perk.value);
-            break;
-          case "attr-endurance":
-            attrMods.end += parseInt(perk.value);
-            break;
-
-          default:
-            break;
-        }
-      }
-      setAttributeModifiers({ ...attrMods });
-    });
   };
 
   const handleItemToggle = (id, isEquipped, category, twoHanded) => {
-
     const tempPlayer = { ...props.auth.profile };
 
     if (category === "weapon") {
-      if(twoHanded){
-        tempPlayer.equipped.weaponRight = id
-        tempPlayer.equipped.weaponLeft = null
-      }else{
-        const rightHandItem = tempPlayer.equipped.weaponRight && bag.weapon.find(item => item._id ===  tempPlayer.equipped.weaponRight).itemModel
-        if(rightHandItem && rightHandItem.hasOwnProperty('twoHanded') && rightHandItem.twoHanded){
-          tempPlayer.equipped.weaponRight = null
+      if (twoHanded) {
+        tempPlayer.equipped.weaponRight = id;
+        tempPlayer.equipped.weaponLeft = null;
+      } else {
+        const rightHandItem =
+          tempPlayer.equipped.weaponRight &&
+          bag.weapon.find(item => item._id === tempPlayer.equipped.weaponRight)
+            .itemModel;
+        if (
+          rightHandItem &&
+          rightHandItem.hasOwnProperty("twoHanded") &&
+          rightHandItem.twoHanded
+        ) {
+          tempPlayer.equipped.weaponRight = null;
         }
 
-        if (!tempPlayer.equipped.weaponRight && !tempPlayer.equipped.weaponLeft) {
+        if (
+          !tempPlayer.equipped.weaponRight &&
+          !tempPlayer.equipped.weaponLeft
+        ) {
           tempPlayer.equipped.weaponRight = id;
         } else if (
           tempPlayer.equipped.weaponRight &&
@@ -560,60 +518,55 @@ const Profile = props => {
       tempPlayer.equipped[category] = isEquipped ? null : id;
     }
 
-    //id category equipped
-    props.onItemToggle(id, category, tempPlayer.equipped)
 
-    //setPlayer({ ...tempPlayer });
-    //updateEquippedItems();
-    //TODO: Call to backend
+    props.onItemToggle(id, category, tempPlayer.equipped);
+
   };
 
-  const handleItemDelete = (id, category) => {
-    const tempPlayer = { ...player };
-    const modifyItemArrayIndex = tempPlayer.equipment[category].findIndex(
-      item => {
-        return item._id === id;
-      }
-    );
+  const handleItemDelete = (id) => {
+    // const modifyItemArrayIndex = tempPlayer.bag[category].findIndex(
+    //   item => {
+    //     return item._id === id;
+    //   }
+    // );
 
-    tempPlayer.equipment[category].splice(modifyItemArrayIndex, 1);
-    if(!tempPlayer.equipment[category].length){
-      delete tempPlayer.equipment[category]
-    }
-    setPlayer({ ...tempPlayer });
+    // tempPlayer.bag[category].splice(modifyItemArrayIndex, 1);
+    // if (!tempPlayer.bag[category].length) {
+    //   delete tempPlayer.bag[category];
+    // }
+    // setPlayer({ ...tempPlayer });
+    props.onItemDelete(id)
     updateEquippedItems();
-
-    //TODO: Call to backend
   };
 
-  const handleAddExperience = newExp => {
-    const tempPlayer = { ...player };
-    if (tempPlayer.currentExp + newExp >= tempPlayer.nextLevelAtExp) {
-      setPlayer({ ...handleNewLevel(tempPlayer) });
-      setNewLevelDialogOpen(true);
-    } else {
-      tempPlayer.currentExp += newExp;
-      setPlayer({ ...tempPlayer });
-    }
-  };
+  // const handleAddExperience = newExp => {
+  //   const tempPlayer = { ...player };
+  //   if (tempPlayer.currentExp + newExp >= tempPlayer.nextLevelAtExp) {
+  //     setPlayer({ ...handleNewLevel(tempPlayer) });
+  //     setNewLevelDialogOpen(true);
+  //   } else {
+  //     tempPlayer.currentExp += newExp;
+  //     setPlayer({ ...tempPlayer });
+  //   }
+  // };
 
-  const handleNewLevel = player => {
-    player.level++;
-    player.currentExp = player.nextLevelAtExp - player.currentExp;
-    const tempCurrentExpBasis = player.nextLevelAtExp;
-    player.nextLevelAtExp = player.currentExpBasis + player.nextLevelAtExp;
-    player.currentExpBasis = tempCurrentExpBasis;
+  // const handleNewLevel = player => {
+  //   player.level++;
+  //   player.currentExp = player.nextLevelAtExp - player.currentExp;
+  //   const tempCurrentExpBasis = player.nextLevelAtExp;
+  //   player.nextLevelAtExp = player.currentExpBasis + player.nextLevelAtExp;
+  //   player.currentExpBasis = tempCurrentExpBasis;
 
-    //TODO: call back end
+  //   
 
-    return player;
-  };
+  //   return player;
+  // };
 
   const handleNewLevelDialogClose = attribute => {
     setNewLevelDialogOpen(false);
-    const tempPlayer = { ...player };
-    tempPlayer[attribute]++;
-    setPlayer({ ...tempPlayer });
+    const attributes = { ...props.auth.profile.attributes };
+    attributes[attribute]++;
+    //TODO: backend add attribute point
   };
 
   // const handleGoExp = () => {
@@ -622,25 +575,27 @@ const Profile = props => {
   // };
 
   const handleJoinOrCreateParty = () => {
-    //Replace with backend call
+
     let party = localStorage.getItem("party");
-    const tempPlayer = { ...player };
+    const tempPlayer = { ...props.auth.profile };
     if (party) {
       party = JSON.parse(party);
-      setPlayer({ ...tempPlayer, party: { ...party } });
+      //TODO: backend call
+
     } else {
       delete tempPlayer.party;
-      setPlayer({ ...tempPlayer });
+      //TODO: backend call
+
     }
   };
 
   const handleLeaveParty = () => {
-    //Replace with backend call
-
-    const tempPlayer = { ...player };
+    const tempPlayer = { ...props.auth.profile  };
 
     delete tempPlayer.party;
-    setPlayer({ ...tempPlayer });
+    //TODO: backend call
+
+
   };
 
   return (
@@ -652,13 +607,15 @@ const Profile = props => {
       className={classes.wrapper}
       spacing={2}
     >
-      <Typography variant="h5">Poziom {player.level}</Typography>
+      {/* TODO: add user level */}
+      <Typography variant="h5">Poziom {0}</Typography>
+      {/* TODO: add experience needed for next level */}
       <Typography variant="subtitle2">
-        Doświadczenie: {player.currentExp + " / " + player.nextLevelAtExp}
+        Doświadczenie: {props.auth.profile.experience + " / " + props.auth.profile.experience}
       </Typography>
       <LinearProgress
         variant="determinate"
-        value={(player.currentExp * 100) / player.nextLevelAtExp}
+        value={(props.auth.profile.experience * 100) / props.auth.profile.experience}
         className={classes.expBar}
       />
       <Grid
@@ -673,42 +630,42 @@ const Profile = props => {
           {/* body */}
           <img src={maleBody} alt="male-body" className={classes.avatarImage} />
           {/* legs */}
-          {equippedItems.legs && (
+          {equippedItems && equippedItems.legs && (
             <img
               className={classes.avatarImage}
               src={require(`../../assets/avatar/items/${equippedItems.legs}`)}
             />
           )}
           {/* feet */}
-          {equippedItems.feet && (
+          {equippedItems && equippedItems.feet && (
             <img
               className={classes.avatarImage}
               src={require(`../../assets/avatar/items/${equippedItems.feet}`)}
             />
           )}
           {/* chest */}
-          {equippedItems.chest && (
+          {equippedItems && equippedItems.chest && (
             <img
               className={classes.avatarImage}
               src={require(`../../assets/avatar/items/${equippedItems.chest}`)}
             />
           )}
           {/* head */}
-          {equippedItems.head && (
+          {equippedItems && equippedItems.head && (
             <img
               className={classes.avatarImage}
               src={require(`../../assets/avatar/items/${equippedItems.head}`)}
             />
           )}
           {/* Main-hand weapon */}
-          {equippedItems.weaponRight && (
+          {equippedItems && equippedItems.weaponRight && (
             <img
               className={classes.avatarImage}
               src={require(`../../assets/avatar/items/${equippedItems.weaponRight}`)}
             />
           )}
           {/* Off-hand weapon */}
-          {equippedItems.weaponLeft && (
+          {equippedItems && equippedItems.weaponLeft && (
             <img
               className={classes.avatarImage}
               src={require(`../../assets/avatar/items/${equippedItems.weaponLeft}`)}
@@ -744,9 +701,8 @@ const Profile = props => {
             attributeValue={props.auth.profile.attributes.endurance}
             attributeModifier={props.auth.profile.userPerks.attrEndurance}
           />
-          <Button onClick={() => handleAddExperience(500)}>Dodaj expa</Button>
-          <Button>Dodaj amulet</Button>
-          <Link to="/shop">
+          
+          <Link to="/shop" style={{marginTop: '1rem'}}>
             <Button variant="contained" color="primary">
               Idziemy expić!
               <ColorizeIcon
@@ -773,44 +729,54 @@ const Profile = props => {
       </Typography>
       <Equipment
         items={bag}
-        equipped={props.auth.profile.hasOwnProperty('equipped') && props.auth.profile.equipped}
+        equipped={
+          props.auth.profile.hasOwnProperty("equipped") &&
+          props.auth.profile.equipped
+        }
         handleItemToggle={handleItemToggle}
         handleItemDelete={handleItemDelete}
       />
-      <Typography variant="h5" className={classes.eqHeading}>
-       
-      </Typography>
-      {props.auth.profile.hasOwnProperty("party") && props.auth.profile.party.members.length > 0 && (
-        <div>
-          {props.auth.profile.party.leader._id === props.auth.uid ? (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setIsCreatingParty(prev => !prev)}
-            >
-              Zarządzaj drużyną
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleLeaveParty}
-            >
-              Opuść drużynę
-            </Button>
-          )}
-        </div>
-      )}
+      <Typography variant="h5" className={classes.eqHeading}></Typography>
+      {props.auth.profile.hasOwnProperty("party") &&
+        props.auth.profile.party.members.length > 0 && (
+          <div>
+            {props.auth.profile.party.leader._id === props.auth.uid ? (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setIsCreatingParty(prev => !prev)}
+              >
+                Zarządzaj drużyną
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleLeaveParty}
+              >
+                Opuść drużynę
+              </Button>
+            )}
+          </div>
+        )}
 
-      {props.auth.profile.hasOwnProperty("party") && props.auth.profile.party.members.length > 0 ? (
+      {props.auth.profile.hasOwnProperty("party") &&
+      props.auth.profile.party.members.length > 0 ? (
         <List
           style={{ width: "80%", marginTop: "2rem", border: "1px solid grey" }}
         >
           <ListItem>
-            <Badge badgeContent="Lider" color="primary" >
+            <Badge badgeContent="Lider" color="primary">
               <ListItemAvatar>
                 <img
-                  src={props.auth.profile.party.leader.avatar.includes('data:image') ? (props.auth.profile.party.leader.avatar) : (require("../../assets/avatar/" + props.auth.profile.party.leader.avatar))}
+                  src={
+                    props.auth.profile.party.leader.avatar.includes(
+                      "data:image"
+                    )
+                      ? props.auth.profile.party.leader.avatar
+                      : require("../../assets/avatar/" +
+                          props.auth.profile.party.leader.avatar)
+                  }
                   width="32"
                 />
               </ListItemAvatar>
@@ -823,7 +789,11 @@ const Profile = props => {
               <ListItem key={partyMember._id}>
                 <ListItemAvatar>
                   <img
-                    src={partyMember.avatar.includes('data:image') ? (partyMember.avatar) : (require("../../assets/avatar/" + partyMember.avatar))}
+                    src={
+                      partyMember.avatar.includes("data:image")
+                        ? partyMember.avatar
+                        : require("../../assets/avatar/" + partyMember.avatar)
+                    }
                     width="32"
                   />
                 </ListItemAvatar>
@@ -833,50 +803,53 @@ const Profile = props => {
           })}
         </List>
       ) : (
-        <Grid container justify="space-around" >
+        <Grid container justify="space-around">
           <Grid item container direction="column" alignItems="center" xs={6}>
-          <Fab
+            <Fab
               color="primary"
               onClick={() => setIsJoiningParty(prev => !prev)}
             >
               <EmojiPeopleIcon />
             </Fab>
-            <Typography variant="caption" style={{marginTop: '0.4rem'}}>Szukaj drużyny</Typography>
+            <Typography variant="caption" style={{ marginTop: "0.4rem" }}>
+              Szukaj drużyny
+            </Typography>
           </Grid>
           <Grid item container direction="column" alignItems="center" xs={6}>
-          <Fab
+            <Fab
               color="primary"
               onClick={() => setIsCreatingParty(prev => !prev)}
             >
               <GroupAddIcon />
             </Fab>
-            <Typography variant="caption" style={{marginTop: '0.4rem'}}>Utwórz drużynę</Typography>
+            <Typography variant="caption" style={{ marginTop: "0.4rem" }}>
+              Utwórz drużynę
+            </Typography>
           </Grid>
         </Grid>
       )}
-      <Typography variant="h5" className={classes.eqHeading}>
-        
-      </Typography>
-      <Grid container justify="space-around" >
-          <Grid item container direction="column" alignItems="center" xs={6}>
-          <Fab
-              color="primary"
-              onClick={() => setShowRankDialog(prev => !prev)}
-            >
-              <EmojiEventsIcon />
-            </Fab>
-            <Typography variant="caption" style={{marginTop: '0.4rem'}}>Ranking</Typography>
-          </Grid>
-          <Grid item container direction="column" alignItems="center" xs={6}>
-          <Fab
-              color="primary"
-              onClick={() => setShowStatsDialog(prev => !prev)}
-            >
-              <EqualizerIcon />
-            </Fab>
-            <Typography variant="caption" style={{marginTop: '0.4rem'}}>Statystyki</Typography>
-          </Grid>
+      <Typography variant="h5" className={classes.eqHeading}></Typography>
+      <Grid container justify="space-around">
+        <Grid item container direction="column" alignItems="center" xs={6}>
+          <Fab color="primary" onClick={() => setShowRankDialog(prev => !prev)}>
+            <EmojiEventsIcon />
+          </Fab>
+          <Typography variant="caption" style={{ marginTop: "0.4rem" }}>
+            Ranking
+          </Typography>
         </Grid>
+        <Grid item container direction="column" alignItems="center" xs={6}>
+          <Fab
+            color="primary"
+            onClick={() => setShowStatsDialog(prev => !prev)}
+          >
+            <EqualizerIcon />
+          </Fab>
+          <Typography variant="caption" style={{ marginTop: "0.4rem" }}>
+            Statystyki
+          </Typography>
+        </Grid>
+      </Grid>
 
       <NewLevelDialog
         open={newLevelDialogOpen}
@@ -920,8 +893,10 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onItemToggle: (id, category, equipped) => dispatch(toggleItem(id, category, equipped))
-  }
-}
+    onItemToggle: (id, category, equipped) =>
+      dispatch(toggleItem(id, category, equipped)),
+      onItemDelete: (id) => dispatch(deleteItem(id))
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

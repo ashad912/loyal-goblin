@@ -55,7 +55,7 @@ const Equipment = props => {
   };
 
   const handleItemDelete = () => {
-    props.handleItemDelete(itemToDelete._id, itemToDelete.category);
+    props.handleItemDelete(itemToDelete._id);
     handleDeleteDialogClose();
   };
 
@@ -155,7 +155,7 @@ const Equipment = props => {
             )})}
       </List>
       {Object.keys(items).length <= 0 && 
-      <Typography variant="caption">Ekwipunek jest pusty</Typography>}
+      <Typography variant="caption" >Ekwipunek jest pusty</Typography>}
       <Dialog open={deleteDialog} onClose={handleDeleteDialogClose}>
         <DialogTitle>Wyrzucanie przedmiotu</DialogTitle>
         <DialogContent>
@@ -164,10 +164,10 @@ const Equipment = props => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDeleteDialogClose} color="primary">
+          <Button onClick={handleDeleteDialogClose} >
             Anuluj
           </Button>
-          <Button onClick={handleItemDelete} color="primary" autoFocus>
+          <Button onClick={handleItemDelete} color="secondary" autoFocus>
             Potwierdź
           </Button>
         </DialogActions>

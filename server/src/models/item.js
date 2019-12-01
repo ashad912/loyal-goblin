@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import { asyncForEach } from '../utils/methods'
 import {User} from './user'
+import { MissionInstance } from './missionInstance'
 
 const ItemSchema = new mongoose.Schema({ //instance of ItemModel
 
@@ -22,10 +23,14 @@ ItemSchema.pre('remove', async function (next){
     const item = this
 
     //THIS CASE NOT TESTED
+    
+    //Changed elemMatch design to $all
     await MissionInstance.updateOne(
-        {items: {$elemMatch: {$eq: item._id}}},
-        {$pull: {items: {$eq: item._id}}}
+        {items: {$all: item._id}},
+        {$pull: {items:{$all: item._id}}}
     )
+
+    
     // .populate({
     //     path: "items"
     // })
@@ -42,15 +47,18 @@ ItemSchema.pre('remove', async function (next){
     //}
     //
 
-    let user = await User.findOne({bag: {$elemMatch: {$eq: item._id}}})
+    //Changed elemMatch design to $all
+    let user = await User.findOne({bag: {$all: item._id}})
     //console.log('halo user', user)
     if(user){
         user.bag = user.bag.filter((bagItem) => {
-            return bagItem._id.toString() !== item._id.toString
+            return bagItem._id.toString() !== item._id.toString()
         })
 
         await asyncForEach(Object.keys(user.equipped.toJSON()), (category) => {
-            if(user.equipped[category].toString() === item._id.toString()){
+
+            if(user.equipped[category] && user.equipped[category].toString() === item._id.toString()){
+                console.log(user.equipped[category].toString(), item._id.toString())
                 user.equipped[category] = null //or remove key?
             }
         })

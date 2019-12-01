@@ -48,3 +48,17 @@ export const toggleItem = (id, category, equipped) => {
         }
     }
 }
+
+export const deleteItem = (id) => {
+    return async dispatch => {
+        try {
+            const res = await axios.delete('/user/deleteUserItem', {data: {id}})
+            dispatch({type: 'UPDATE_PROFILE_DATA', profile: res.data})
+
+        } catch (e) {
+            console.log(e)
+            dispatch( {type: "NO_CONNECTION", error: e})     
+        }
+    }
+}
+

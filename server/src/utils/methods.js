@@ -27,12 +27,6 @@ export const designateUserPerks = async (user) => {
           }).execPopulate();
       })
 
-
-
-    //   await user.populate({
-    //     path: 'equipped.*.itemModel'
-    //   }).execPopulate()
-
       const equippedItems = user.equipped
 
       console.log(equippedItems)
