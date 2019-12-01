@@ -26,8 +26,8 @@ ItemSchema.pre('remove', async function (next){
     
     //Changed elemMatch design to $all
     await MissionInstance.updateOne(
-        {items: {$all: item._id}},
-        {$pull: {items:{$all: item._id}}}
+        {items: {$elemMatch: {$eq: item._id}}},
+        {$pull: {elemMatch : {$eq: item._id}}}
     )
 
     
@@ -48,7 +48,7 @@ ItemSchema.pre('remove', async function (next){
     //
 
     //Changed elemMatch design to $all
-    let user = await User.findOne({bag: {$all: item._id}})
+    let user = await User.findOne({bag: {$elemMatch: {$eq: item._id}}})
     //console.log('halo user', user)
     if(user){
         user.bag = user.bag.filter((bagItem) => {
