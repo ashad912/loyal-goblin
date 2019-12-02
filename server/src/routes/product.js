@@ -3,8 +3,8 @@ import { Product } from '../models/product';
 import { auth } from '../middleware/auth';
 import isEqual from 'lodash/isEqual'
 import { asyncForEach } from '../utils/methods';
-import { rallyRouter } from './rally';
 import { Rally } from '../models/rally';
+import { User } from '../models/user'
 
 const router = new express.Router
 
@@ -95,15 +95,69 @@ router.get('/shop', auth, async (req, res)=> {
     }
 })
 
-//CHECK AND DEVELOP
-router.post('/activate', auth, async (req, res)=> {
+const verifyParty = (user, membersIds, order) => {
+    return new Promise( async (resolve, reject) => {
+
+        try{
+            const members = await User.find({
+                $and: [
+                    {_id: {$in: membersIds}},
+                    {activeOrder: {$size: 0}} //checking active order - party
+                ]
+            })
+    
+            if(members.length !== membersIds.length){
+                throw new Error('Not every member found OR member has another active order!')
+            }
+    
+            // MORE COMPLEX WAY
+            // await asyncForEach(membersIds, async (memberId) => {
+            //     const member = await User.findById(memberId)
+            //     if(!member){
+            //         throw new Error(`Member ${member} does not exist!`)
+            //     }
+                
+            //     if(member.activeOrder.length){
+            //         throw new Error(`Another active order exists (user: ${memberId})!`)
+            //     }
+            // })
+            
+    
+            
+            //checking if order profiles match party
+            const party = [user.party.leader.toString(), ...user.party.members.map(member => member.toString())]
+            let orderParty = [] 
+            await asyncForEach(order, async (user) => {
+                const memberId = user.profile
+                orderParty = [...orderParty, memberId.toString()]
+            })
+    
+            //console.log(orderParty, party)
+            if(!isEqual(orderParty, party)) {
+                throw Error('Invalid party!')
+            }
+
+            resolve(members)
+
+        }catch(e){
+            reject(e)
+        }
+        
+    })
+}
+
+//OK
+router.patch('/activate', auth, async (req, res)=> {
 
     const order = req.body
+    const user = req.user
 
     try{
-        if(Object.entries(user.activeOrder).length > 0 && user.activeOrder.constructor === Object){
-                throw new Error('Another active order exists!')
+        //checking active order - user
+        if(user.activeOrder.length){
+            throw new Error(`Another active order exists (user: ${user._id})!`)
         }
+
         const membersIds = [...user.party.members]
 
         console.log('got members ids', membersIds)
@@ -116,13 +170,73 @@ router.post('/activate', auth, async (req, res)=> {
             throw new Error('User is not the leader!')
         }
 
+        await verifyParty(user, membersIds, order)
+    
+
         user.activeOrder = order
 
         await user.save()
 
+        //WORKING! AS COMMENT FOR TESTS
+        /*
+        setTimeout(async () => {
+            user.activeOrder = []
+            await user.save()
+        }, 60*1000); //removing activeOrder after 60 seconds
+        */
+
+        res.send(user)
+
     }catch(e){
         res.status(400).send(e.message)
     }
+})
+
+//triggered by ADMIN 
+//OK BUT TO DEVELOP
+router.patch('/verify', auth, async (req, res) => {
+    
+    try{
+        const user = await User.findOne({
+            $and: [
+                {_id: req.body._id},
+                {'party.leader': req.body._id},
+                {'activeOrder': {$not: {$size: 0}}} //size does not accept ranges
+            ]
+        })
+        
+        const membersIds = [...user.party.members]
+        const members = await verifyParty(user, membersIds, user.activeOrder)
+
+
+        await user.populate({ //populate after verification
+            path: 'activeOrder.profile'
+        }).populate({
+            path: 'activeOrder.products.product',
+            populate: {path: 'awards.itemModel'} //is necessary here?
+        }).execPopulate()
+
+        const activeOrder = user.activeOrder
+
+        const partyFullObject = [user, ...members]
+
+        console.log(activeOrder)
+
+        await asyncForEach(partyFullObject, async (user) => {
+            const userPerks = user.userPerks
+            console.log(userPerks)
+            //HERE IMPLEMENT PRICE AND EXPERIENCE MODS - input: activeOrder, userPerks; output: object for view
+        })
+
+        //create ArchiveOrder - save modified experience for users OR repeat function in 'finalize'
+
+        res.send()
+        
+    }catch(e){
+        res.status(400).send(e.message)
+    }
+
+
 })
 
 
@@ -134,7 +248,7 @@ router.post('/finalize', auth, async (req, res) => {
     const user = req.user //if admin-side: get leader of this party
 
     try{
-        //const order = await Order.findById(req.body.order)
+        //const order = await ArchiveOrder.findById(req.body.order)
         const activeRally = await Rally.findOne({ $and: [{ startDate: { $lte: moment() } }, {expiryDate: { $gte: moment() } }]})
         
         if(party.name !== user.party.name || party.leader.toString() !== user.party.leader.toString() || isEqual(party.members, user.party.members)){

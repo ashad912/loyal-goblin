@@ -176,16 +176,14 @@ export const UserSchema = new mongoose.Schema({
             unique: true
         }]       
     },
-    activeOrder: {
-        users: [{
-            user: {
-                type: mongoose.Schema.Types.ObjectId, 
-                ref: 'user',
-                unique: true
-            },
-            products: [ProductsOrderSchema]
-        }]
-    },
+    activeOrder: [{
+        profile: {
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'user',
+            unique: true
+        },
+        products: [ProductsOrderSchema]
+    }],
     statistics: {
         missionCounter: {
             type: Number,
