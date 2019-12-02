@@ -8,11 +8,6 @@ export async function asyncForEach(array, callback) {
     }
 }
 
-export async function asyncFor(array, callback) {
-    for (let index = 0; index < array.length; index++) {
-      await callback(array[index], index, array);
-    }
-}
 
 //CHECK
 export const designateUserPerks = async (user) => {

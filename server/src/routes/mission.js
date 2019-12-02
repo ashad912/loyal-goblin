@@ -113,6 +113,7 @@ router.patch("/update", auth, async (req, res, next) => {
 //TO-DO
 // - leaveInstance
 // - finishMission
+// - get users amulets from bag, appropriate for the mission
 
 //CHECK:
 // - no amulets DONE
@@ -232,7 +233,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
     
     try{
 
-        if(user.party.leader.toString() !== user._id.toString()){ //here are objectIDs - need to be string
+        if(user.party.leader && (user.party.leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
             throw new Error('User is not the leader!')
         }
 
@@ -358,7 +359,7 @@ router.delete('/deleteInstance', auth, async (req, res) => {
 
     try{
 
-        if(user.party.leader.toString() !== user._id.toString()){ //here are objectIDs - need to be string
+        if(user.party.leader && (user.party.leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
             throw new Error('User is not the leader!')
         }
 
@@ -476,7 +477,7 @@ const addAwards = async (user, awards) => {
         
         if(user.profile.class === className || className === 'any') {
             
-            await asyncForEach(awardsLevel.awards[className], async (item) => {
+            await asyncForEach(awards[className], async (item) => {
 
                 for(let i=0; i < item.quantity; i++) {
                     const newItem = new Item({itemModel: item.itemModel, owner: user.profile._id})
@@ -493,14 +494,14 @@ const addAwards = async (user, awards) => {
 }
 
 //CHECK AND DEVELOP
-router.post('/finishMission', auth, async (req,res) => {
+router.delete('/finishMission', auth, async (req,res) => {
     const user = req.user
 
     try{
         //CONDITIONS TO DEVELOP!!!
 
 
-        if(user.party.leader.toString() !== user._id.toString()){ //here are objectIDs - need to be string
+        if(user.party.leader && (user.party.leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
             throw new Error('User is not the leader!')
         }
 
@@ -509,32 +510,75 @@ router.post('/finishMission', auth, async (req,res) => {
         }).execPopulate()
 
 
-        const missionInstance =  await MissionInstance.findOne({_id: user.activeMission}).populate({
+        //finding missionInstance & checkin all user ready statuses
+        const missionInstance =  await MissionInstance.findOne({
+            $and: [
+                {_id: user.activeMission},
+                {party: 
+                    {$not: //invert to true
+                        {$elemMatch: //if all readyStatuses are true => got false here // even one readyStatus is false -> got true here
+                            {readyStatus: 
+                                {$ne: true}
+                            }
+                        }
+                    }  
+                }
+            ]  
+        }).populate({
             path: 'mission'
+        }).populate({
+            path: 'items'
         }).populate({
             path: 'party.profile'
         })
 
         if(!missionInstance){
-            throw Error('There is no such mission instance!')
+            throw Error('No matching mission instance found!')
         }
 
+        
+        //check amulets
+        const amulets = missionInstance.mission.amulets
+        let setQuantity = 0
+
+        for(let index = 0; index < amulets.length; index++) {
+            const specificAmuletInstances = missionInstance.items.filter((item) => {
+                return item.itemModel._id.toString() === amulets[index].itemModel.toString()
+            })
+
+            console.log(amulets[index].itemModel, amulets[index].quantity)
+            console.log(specificAmuletInstances)
+
+
+            if(specificAmuletInstances.length !== amulets[index].quantity){
+                throw new Error(`Amulets (${amulets[index].itemModel}) quantity is invalid!`)   
+            }
+
+            setQuantity += amulets[index].quantity
+        }
+
+        //verify if there are no additional items
+        console.log(missionInstance.items.length, setQuantity)
+        if(missionInstance.items.length !== setQuantity){
+            throw new Error(`Total amulets quantity is invalid!`)  
+        }
+
+ 
         await asyncForEach(missionInstance.party, async (member) => {
                
-                const user = await User.findById(member.profile._id).populate({
-                    path: 'activeMission'
-                }) //recoginized as an array
-                console.log(user.activeMission)
-                if(user.activeMission.length && (user.activeMission[0]._id.toString() === missionInstance._id.toString())){
-                    const items = await addAwards(member, missionInstance.mission.awards)
-                    
-                    user.bag = [...user.bag, ...items]
-                    
-                }
-                await user.save() 
-            
-            
+            const user = await User.findById(member.profile._id).populate({
+                path: 'activeMission'
+            }) //recoginized as an array
+            console.log(user.activeMission)
+            if(user.activeMission.length && (user.activeMission[0]._id.toString() === missionInstance._id.toString())){
+                const items = await addAwards(member, missionInstance.mission.awards)
+                
+                user.bag = [...user.bag, ...items]
+                
+            }
+            await user.save()  
         })
+
         await asyncForEach(missionInstance.items, async (itemId) => {
             const item = await Item.findById(itemId)
             await item.remove() //pre removing middleware (item) clear missionInstance items array!
@@ -682,13 +726,13 @@ router.patch('/sendItem/user', auth, async (req, res) => {
 
 ////TESTS
 
-router.post('/testCreateMissionInstance', auth, async(req,res) => {
+router.post('/testCreateMissionInstance', auth, async (req, res) => {
     try{
         const missionInstance = new MissionInstance(req.body)
         await missionInstance.save()
         res.send(missionInstance)
     }catch(e){
-        res.status(400).send(e.message)
+        res.status(400).send(e)
     }
 
 })

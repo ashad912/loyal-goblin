@@ -18,7 +18,7 @@ const MissionInstanceSchema = new mongoose.Schema({ //instance of ItemModel
             profile: {
                 type: mongoose.Schema.Types.ObjectId, 
                 ref: 'user',
-                unique: true
+                unique: true //give missionInstance unique!
             }
         }],
         required: true

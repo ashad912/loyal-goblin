@@ -1,0 +1,1593 @@
+{
+	"info": {
+		"_postman_id": "82879e58-ce57-4745-a132-9de90be32742",
+		"name": "LoyalGoblin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "41f09ce0-4d4d-4bb1-8d4f-9319033ab3a7",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"disabled": false
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"name\": \"admin4\",\r\n\t\"email\": \"admin4@admin.com\",\r\n\t\"password\": \"adminadmin\",\r\n\t\"active\": true,\r\n\t\"experience\": 0,\r\n\t\"class\": \"warrior\",\r\n\t\"bag\": [],\r\n\t\"equipped\": {\r\n\t\t\"weaponRight\": \"5d7c037e7459ac65c4f05019\",\r\n\t\t\"weaponLeft\": \"5d7c037e7459ac65c4f05019\"\r\n\t},\r\n\t\"party\": {\r\n\t\t\t\"leader\": \"5d7c037e7459ac65c4f05019\",\r\n            \"members\": [\"5d7c037e7459ac65c4f05019\", \"5d7c037e7459ac65c4f05020\"]\r\n    },\r\n    \"statistics\": {\r\n    \t\"rallyCounter\": 0,\r\n    \t\"missionCounter\": 0\r\n    },\r\n\t\"registerKey\": \"ad!QAZmin@WSX\",\r\n\t\"activeOrder\": {\r\n\t\t\"users\": [\r\n\t\t\t{\r\n\t\t\t\t\"user\": \"5d7c037e7459ac65c4f05010\",\r\n\t\t\t\t\"products\": [\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t\"quantity\": 1,\r\n\t\t\t\t\t\t\"product\": \"5d7c037e7459ac65c4f05019\"\r\n\t\t\t\t\t},\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t\"quantity\": 1,\r\n\t\t\t\t\t\t\"product\": \"5d7c037e7459ac65c4f05019\"\r\n\t\t\t\t\t}\r\n\t\t\t\t]\r\n\t\t\t},\r\n\t\t\t{\r\n\t\t\t\t\"user\": \"5d7c037e7459ac65c4f05018\",\r\n\t\t\t\t\"products\": [\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t\"quantity\": 2,\r\n\t\t\t\t\t\t\"product\": \"5d7c037e7459ac65c4f05011\"\r\n\t\t\t\t\t},\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t\"quantity\": 1,\r\n\t\t\t\t\t\t\"product\": \"5d7c037e7459ac65c4f05019\"\r\n\t\t\t\t\t}\r\n\t\t\t\t]\r\n\t\t\t}\r\n\t\t]\r\n\t}\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/user/create",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0e82b13c-1190-47e3-a874-0a62d8de57f8",
+						"exec": [
+							"if(pm.response.code === 200) {",
+							"    pm.environment.set('authToken', pm.cookies.get('token'))",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"admin@admin.com\",\n\t\"password\": \"adminadmin\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/user/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check auth",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZDUzZTljNGFmOWQyMTUxMjQ5MDJmOTUiLCJpYXQiOjE1NjU3ODI4NTZ9.Suq33SEUPQekyvxRkswdIf4KLo6mEVE7GhrkbJw09q4"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/user/me",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create itemModel",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"disabled": false
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"type\": \"weapon\",\r\n\t\"name\": \"sword\",\r\n\t\"class\": \"warrior\",\r\n\t\"description\": \"Super sword\",\r\n\t\"imgSrc\": \"sword-weapon.png\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/item/createModel",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"item",
+						"createModel"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create mission",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"title\": \"MissionTest1\",\r\n\t\"activationDate\": \"2019-11-21T15:55:00.000+00:00\",\r\n\t\"startDate\": \"2019-11-21T18:55:00.000+00:00\",\r\n\t\"expiryDate\": \"2019-11-21T20:55:00.000+00:00\",\r\n\t\"minPlayers\": 3,\r\n\t\"maxPlayers\": 5,\r\n\t\"level\": 3,\r\n\t\"experience\": 1000,\r\n\t\"strength\": 1,\r\n\t\"dexterity\": 1,\r\n\t\"magic\": 1,\r\n\t\"endurance\": 1,\r\n\t\"unique\": false,\r\n\t\"description\": \"Super important mission. You need have things and attributes, as always loool xd\",\r\n\t\"completedByUsers\": [],\r\n\t\"amulets\": [\r\n\t\t{\r\n\t\t\t\"quantity\": 2,\r\n\t\t\t\"itemModel\": \"5d9ef62c2e4b14508475a105\"\r\n\t\t}\r\n\t],\r\n\t\"awardsAreSecret\": false,\r\n\t\"awards\": {\r\n\t\t\"any\": [\r\n\t\t\t{\r\n\t\t\t\t\"quantity\": 2,\r\n\t\t\t\t\"itemModel\": \"5d9ef62c2e4b14508475a107\"\r\n\t\t\t},\r\n\t\t\t{\r\n\t\t\t\t\"quantity\": 1,\r\n\t\t\t\t\"itemModel\": \"5d9ef62c2e4b14508475a108\"\r\n\t\t\t}\r\n\t\t],\r\n\t\t\"warrior\": [],\r\n\t\t\"rogue\": [],\r\n\t\t\"mage\": [],\r\n\t\t\"cleric\": []\r\n\t}\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/mission/create",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mission",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update mission",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"_id\": \"5dd6ddd8e4137b1ec0c61b7a\",\r\n\t\"title\": \"Mission231\",\r\n\t\"expiryDate\": \"2019-11-21T20:28:00.000+00:00\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/mission/update",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mission",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete mission",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"_id\": \"5dd6ddd8e4137b1ec0c61b7a\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/mission/remove",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mission",
+						"remove"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get available missions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cf2e17d8-12ce-4199-92a8-f0019be4b8e6",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/mission/list",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mission",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create rally",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"title\": \"RallyTest11212\",\r\n\t\"activationDate\": \"2019-11-28T09:55:00.000+00:00\",\r\n\t\"startDate\": \"2019-11-28T19:00:01.000+00:00\",\r\n\t\"expiryDate\": \"2019-11-28T19:00:10.000+00:00\",\r\n\t\"description\": \"Super important rally\",\r\n\t\"experience\": 1000,\r\n\t\"users\": [],\r\n\t\"awardsAreSecret\": false,\r\n\t\"awardsLevels\":[\r\n\t\t{\r\n\t\t\t\"level\": 1000,\r\n\t\t\t\"awards\": {\r\n\t\t\t\t\"any\": [\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t\"quantity\": 2,\r\n\t\t\t\t\t\t\"itemModel\": \"5d9ef62c2e4b14508475a105\"\r\n\t\t\t\t\t}\r\n\t\t\t\t],\r\n\t\t\t\t\"warrior\": [\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t\"quantity\": 2,\r\n\t\t\t\t\t\t\"itemModel\": \"5d9ef62c2e4b14508475a107\"\r\n\t\t\t\t\t}\r\n\t\t\t\t],\r\n\t\t\t\t\"rogue\": [],\r\n\t\t\t\t\"mage\": [],\r\n\t\t\t\t\"cleric\": []\r\n\t\t\t}\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"level\": 2000,\r\n\t\t\t\"awards\": {\r\n\t\t\t\t\"any\": [\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t\"quantity\": 2,\r\n\t\t\t\t\t\t\"itemModel\": \"5d9ef62c2e4b14508475a107\"\r\n\t\t\t\t\t}\r\n\t\t\t\t\t\r\n\t\t\t\t],\r\n\t\t\t\t\"warrior\": [],\r\n\t\t\t\t\"rogue\": [],\r\n\t\t\t\t\"mage\": [\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t\"quantity\": 1,\r\n\t\t\t\t\t\t\"itemModel\": \"5d9ef62c2e4b14508475a105\"\r\n\t\t\t\t\t}\r\n\t\t\t\t],\r\n\t\t\t\t\"cleric\": []\r\n\t\t\t}\r\n\t\t}\r\n\t]\r\n\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/rally/create",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"rally",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update rally",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"_id\": \"5dd7be0be822c260dc897542\",\r\n\t\"title\": \"RallyTest231\",\r\n\t\"activationDate\": \"2019-11-22T08:55:00.000Z\",\r\n    \"startDate\": \"2019-11-22T12:55:00.000Z\",\r\n\t\"expiryDate\": \"2019-11-23T11:16:00.000+00:00\",\r\n\t\"users\": [\r\n\t\t{\r\n\t\t\t\"experience\": 2000,\r\n\t\t\t\"profile\": \"5dd80956c3aad45a5c890823\"\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"experience\": 500,\r\n\t\t\t\"profile\": \"5dd8095cc3aad45a5c89082a\"\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"experience\": 1000,\r\n\t\t\t\"profile\": \"5dd80991c3aad45a5c890831\"\r\n\t\t}\r\n\t],\r\n\t\"awardsLevels\":[\r\n\t\t{\r\n\t\t\t\"level\": 500,\r\n\t\t\t\"awards\": {\r\n\t\t\t\t\"any\": [\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t\"quantity\": 2,\r\n\t\t\t\t\t\t\"itemModel\": \"5d9ef62c2e4b14508475a105\"\r\n\t\t\t\t\t}\r\n\t\t\t\t],\r\n\t\t\t\t\"warrior\": [],\r\n\t\t\t\t\"rogue\": [],\r\n\t\t\t\t\"mage\": [],\r\n\t\t\t\t\"cleric\": []\r\n\t\t\t}\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"level\": 1000,\r\n\t\t\t\"awards\": {\r\n\t\t\t\t\"any\": [\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t\"quantity\": 1,\r\n\t\t\t\t\t\t\"itemModel\": \"5db2df35267e338cac5e5e64\"\r\n\t\t\t\t\t}\r\n\t\t\t\t],\r\n\t\t\t\t\"warrior\": [\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t\"quantity\": 2,\r\n\t\t\t\t\t\t\"itemModel\": \"5dd80db5c3aad45a5c89083a\"\r\n\t\t\t\t\t}\r\n\t\t\t\t],\r\n\t\t\t\t\"rogue\": [],\r\n\t\t\t\t\"mage\": [],\r\n\t\t\t\t\"cleric\": []\r\n\t\t\t}\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"level\": 2000,\r\n\t\t\t\"awards\": {\r\n\t\t\t\t\"any\": [],\r\n\t\t\t\t\"warrior\": [\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t\"quantity\": 2,\r\n\t\t\t\t\t\t\"itemModel\": \"5dd80df4c3aad45a5c89083b\"\r\n\t\t\t\t\t}\r\n\t\t\t\t],\r\n\t\t\t\t\"rogue\": [],\r\n\t\t\t\t\"mage\": [],\r\n\t\t\t\t\"cleric\": []\r\n\t\t\t}\r\n\t\t}\r\n\t\t\r\n\t]\r\n\t\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/rally/update",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"rally",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete rally",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"_id\": \"5dd7b948d20e893cc0465dec\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/rally/remove",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"rally",
+						"remove"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get first rally",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cf2e17d8-12ce-4199-92a8-f0019be4b8e6",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/rally/first",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"rally",
+						"first"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get rally list for admin event creator",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cf2e17d8-12ce-4199-92a8-f0019be4b8e6",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/rally/listEventCreator",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"rally",
+						"listEventCreator"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create item",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						],
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"model\": \"5d9ef62c2e4b14508475a105\",\r\n\t\"owner\": \"5d9ef53b2e4b14508475a100\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/item/create",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"item",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add item to user bag",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"user\": \"5dd8095cc3aad45a5c89082a\",\r\n\t\"item\": \"5d9f1a37dceb8048f4f13c28\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/user/addUserItem",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"addUserItem"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete item from user bag",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						],
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"user\": \"5d9ef53b2e4b14508475a100\",\r\n\t\"item\": \"5d9f1a37dceb8048f4f13c28\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/user/deleteUserItem",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"deleteUserItem"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create mission instance",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cf2e17d8-12ce-4199-92a8-f0019be4b8e6",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"_id\": \"5dd7beceffbcba692041eb2a\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/mission/createInstance",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mission",
+						"createInstance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Enter room",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/mission/enterRoom",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mission",
+						"enterRoom"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Leave room",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"item\": \"5dd82b80d1960223c4d0c8bf\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/mission/leaveRoom",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mission",
+						"leaveRoom"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send item from user to mission",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"item\": \"5dd82b80d1960223c4d0c8be\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/mission/sendItem/mission",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mission",
+						"sendItem",
+						"mission"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send item from mission to user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"item\": \"5dd82b80d1960223c4d0c8bf\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/mission/sendItem/user",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mission",
+						"sendItem",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change status to 'ready'",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"item\": \"5dd82b80d1960223c4d0c8bf\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/mission/ready",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mission",
+						"ready"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change status to 'not ready'",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4baa2773-746b-47f4-967e-3a9d99f476a9",
+						"exec": [
+							"if(pm.response.code === 201) {",
+							"    pm.environment.set('authToken', pm.response.json().token)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"item\": \"5dd82b80d1960223c4d0c8bf\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/mission/notReady",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mission",
+						"notReady"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete mission instance",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cf2e17d8-12ce-4199-92a8-f0019be4b8e6",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/mission/deleteInstance",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mission",
+						"deleteInstance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Finish mission instance",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cf2e17d8-12ce-4199-92a8-f0019be4b8e6",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/mission/finishMission",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mission",
+						"finishMission"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout user",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "4af44b38-98cb-413e-9059-a47f20e978df",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "8477f164-456a-48eb-9206-207985983ab8",
+						"type": "text/javascript",
+						"exec": [
+							"if(pm.response.code === 200) {",
+							"    pm.environment.unset('authToken')",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"name\": \"mario3\",\r\n\t\"rank\": \"belt3\",\r\n\t\"email\": \"mario3@ninja.com\",\r\n\t\"password\": \"1234ninja3\",\r\n\t\"available\": true,\r\n\t\"geometry\": {\r\n\t\t\"type\": \"Point\",\r\n\t\t\"coordinates\": [-80.345, 25.291]\r\n\t}\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/user/logout",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout user from all sessions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0fd2697c-c38e-4e23-8dc2-6b46d4c97560",
+						"type": "text/javascript",
+						"exec": [
+							"if(pm.response.code === 200) {",
+							"    pm.environment.unset('authToken')",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"name\": \"mario3\",\r\n\t\"rank\": \"belt3\",\r\n\t\"email\": \"mario3@ninja.com\",\r\n\t\"password\": \"1234ninja3\",\r\n\t\"available\": true,\r\n\t\"geometry\": {\r\n\t\t\"type\": \"Point\",\r\n\t\t\"coordinates\": [-80.345, 25.291]\r\n\t}\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/user/logoutAll",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"logoutAll"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test cron",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZDUzZTljNGFmOWQyMTUxMjQ5MDJmOTUiLCJpYXQiOjE1NjU3ODI4NTZ9.Suq33SEUPQekyvxRkswdIf4KLo6mEVE7GhrkbJw09q4"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/rally/triggerCron",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"rally",
+						"triggerCron"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test user remove middleware",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "4af44b38-98cb-413e-9059-a47f20e978df",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "8477f164-456a-48eb-9206-207985983ab8",
+						"exec": [
+							"if(pm.response.code === 200) {",
+							"    pm.environment.unset('authToken')",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"_id\": \"5ddfa6bac30de388c4d51e55\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/item/testUpdateUser",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"item",
+						"testUpdateUser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test itemModel remove middleware",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "4af44b38-98cb-413e-9059-a47f20e978df",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "8477f164-456a-48eb-9206-207985983ab8",
+						"exec": [
+							"if(pm.response.code === 200) {",
+							"    pm.environment.unset('authToken')",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"_id\": \"5d9ef62c2e4b14508475a105\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/item/testItemModelRemove",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"item",
+						"testItemModelRemove"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test create mission instance",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "4af44b38-98cb-413e-9059-a47f20e978df",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "8477f164-456a-48eb-9206-207985983ab8",
+						"exec": [
+							"if(pm.response.code === 200) {",
+							"    pm.environment.unset('authToken')",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"mission\": \"5dd7beceffbcba692041eb2a\",\n\t\"party\": [\n\t\t{\n\t\t\t\"readyStatus\": false,\n\t\t\t\"inRoom\": true,\n\t\t\t\"profile\": \"5ddfa6bac30de388c4d51e55\"\n\t\t},\n\t\t{\n\t\t\t\"readyStatus\": false,\n\t\t\t\"inRoom\": true,\n\t\t\t\"profile\": \"5dd80991c3aad45a5c890831\"\n\t\t}\n\t],\n\t\"items\": [\n\t\t\"5d9f1a37dceb8048f4f13c28\",\n\t\t\"5dd82b80d1960223c4d0c8be\",\n\t\t\"5dd82b80d1960223c4d0c8c3\"\n\t]\n}"
+				},
+				"url": {
+					"raw": "{{url}}/mission/testCreateMissionInstance",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mission",
+						"testCreateMissionInstance"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{authToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "53b03896-32c9-4800-b8e3-9d5e1525f5e8",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "a5516c34-c7b3-4918-bb76-f92b43bf7c69",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
