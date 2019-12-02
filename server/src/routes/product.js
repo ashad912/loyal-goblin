@@ -95,6 +95,7 @@ router.get('/shop', auth, async (req, res)=> {
     }
 })
 
+//CHECK AND DEVELOP
 router.post('/activate', auth, async (req, res)=> {
 
     const order = req.body
