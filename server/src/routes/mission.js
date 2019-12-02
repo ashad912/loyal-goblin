@@ -10,8 +10,7 @@ import { asyncForEach } from '../utils/methods'
 
 import isEqual from 'lodash/isEqual'
 import {Rally} from '../models/rally'
-import moment from 'moment';
-import { createCipher } from 'crypto';
+
 
 const router = new express.Router
 
@@ -20,8 +19,8 @@ const router = new express.Router
 ////ADMIN-SIDE
 
 
-//CHECK
-router.get('/eventList', auth, async (req,res) => {
+//OK
+router.get('/events', auth, async (req,res) => {
     try{
         const missionList = await Mission.find({})
         const rallyList = await Rally.find({})
@@ -110,15 +109,8 @@ router.patch("/update", auth, async (req, res, next) => {
 
 ////USER-SIDE
 
-//TO-DO
-// - leaveInstance
-// - finishMission
-// - get users amulets from bag, appropriate for the mission
 
-//CHECK:
-// - no amulets DONE
-// - no party DONE
-// - party
+//OK
 //assumed, when user finishes the mission, mission saves his id in array
 router.get('/list', auth, async (req, res) => { //get active missions which are available for specific user AND for all user's party!!
     
@@ -211,6 +203,57 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
     }
 })
 
+//OK
+//get user's amulets available for specific mission
+router.get('/amulets', auth, async(req,res) => {
+    const user = req.user
+
+    try{
+        await user.populate({
+            path: 'activeMission'
+        }).populate({
+            path: 'bag'
+        }).populate({
+            path: 'bag.itemModel'
+        }).execPopulate()
+
+
+        const missionInstance =  await MissionInstance.findOne({_id: user.activeMission}).populate({
+            path: 'mission'
+        })
+
+        if(!missionInstance){
+            throw Error('There is no such mission instance!')
+        }
+
+        const party = [user.party.leader, ...user.party.members]
+    
+        let missionParty = [] 
+        await asyncForEach(missionInstance.party, async (memberObject) => {
+            const memberId = memberObject.profile
+            missionParty = [...missionParty, memberId]
+        })
+
+        if(!isEqual(missionParty, party)) {
+            throw Error('Invalid party!')
+        }
+
+        //amulets used in mission
+        const missionAmulets = missionInstance.mission.amulets.map((amulet) => {
+            return amulet.itemModel.toString()
+        })
+
+        //available amulets to use for user
+        const amulets = user.bag.filter((item) => {
+            return missionAmulets.includes(item.itemModel._id.toString())
+        })
+
+        res.send(amulets) //return populated amulets
+    }catch(e){
+        res.status(400).send(e.message)
+    }
+})
+
 const designateUserLevel = (points) => {
     const a = 10;
     const b = 100;
@@ -233,13 +276,18 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
     
     try{
 
-        if(user.party.leader && (user.party.leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
-            throw new Error('User is not the leader!')
-        }
-
         const membersIds = [...user.party.members]
 
         console.log('got members ids', membersIds)
+
+        if(!membersIds.length && !user.party.leader){ //one person party - giving user leader privileges
+            user.party.leader = user._id
+            await user.save()
+        }
+
+        if(user.party.leader && (user.party.leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
+            throw new Error('User is not the leader!')
+        }
 
         const mission = await Mission.findOne({
             $and: [
@@ -353,7 +401,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
     }
     
 })
-
+//OK
 router.delete('/deleteInstance', auth, async (req, res) => {
     const user = req.user
 
@@ -493,14 +541,12 @@ const addAwards = async (user, awards) => {
     return items  
 }
 
-//CHECK AND DEVELOP
+//OK
 router.delete('/finishMission', auth, async (req,res) => {
     const user = req.user
 
     try{
-        //CONDITIONS TO DEVELOP!!!
-
-
+        
         if(user.party.leader && (user.party.leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
             throw new Error('User is not the leader!')
         }
@@ -528,12 +574,25 @@ router.delete('/finishMission', auth, async (req,res) => {
             path: 'mission'
         }).populate({
             path: 'items'
-        }).populate({
-            path: 'party.profile'
         })
 
         if(!missionInstance){
             throw Error('No matching mission instance found!')
+        }
+
+        const party = [user.party.leader, ...user.party.members]
+    
+        let missionParty = [] 
+        await asyncForEach(missionInstance.party, async (memberObject) => {
+            const memberId = memberObject.profile
+            missionParty = [...missionParty, memberId]
+            if(memberObject.profile.toString() === user._id.toString() && memberObject.inRoom === false){
+                throw Error('User is not in the mission room!')
+            }
+        })
+
+        if(!isEqual(missionParty, party)) {
+            throw Error('Invalid party!')
         }
 
         
@@ -546,10 +605,6 @@ router.delete('/finishMission', auth, async (req,res) => {
                 return item.itemModel._id.toString() === amulets[index].itemModel.toString()
             })
 
-            console.log(amulets[index].itemModel, amulets[index].quantity)
-            console.log(specificAmuletInstances)
-
-
             if(specificAmuletInstances.length !== amulets[index].quantity){
                 throw new Error(`Amulets (${amulets[index].itemModel}) quantity is invalid!`)   
             }
@@ -558,7 +613,6 @@ router.delete('/finishMission', auth, async (req,res) => {
         }
 
         //verify if there are no additional items
-        console.log(missionInstance.items.length, setQuantity)
         if(missionInstance.items.length !== setQuantity){
             throw new Error(`Total amulets quantity is invalid!`)  
         }
@@ -566,7 +620,7 @@ router.delete('/finishMission', auth, async (req,res) => {
  
         await asyncForEach(missionInstance.party, async (member) => {
                
-            const user = await User.findById(member.profile._id).populate({
+            const user = await User.findById(member.profile).populate({
                 path: 'activeMission'
             }) //recoginized as an array
             console.log(user.activeMission)
@@ -605,9 +659,9 @@ const verifySendItem = (user, missionInstance, itemId) => {
     
             let missionParty = [] 
             await asyncForEach(missionInstance.party, async (memberObject) => {
-                const memberId = memberObject.user
+                const memberId = memberObject.profile
                 missionParty = [...missionParty, memberId]
-                if(memberObject.user.toString() === user._id.toString() && memberObject.inRoom === false){
+                if(memberObject.profile.toString() === user._id.toString() && memberObject.inRoom === false){
                     throw Error('User is not in the mission room!')
                 }
             })

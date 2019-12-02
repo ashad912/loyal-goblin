@@ -11,7 +11,7 @@ const router = new express.Router
 
 ////ADMIN-SIDE
 
-//CHECK
+//OK
 router.post('/create', auth, async (req, res) =>{
 
     const product = new Product(req.body)
@@ -26,11 +26,17 @@ router.post('/create', auth, async (req, res) =>{
 
 
 
-//CHECK
+//OK
 router.patch("/update", auth, async (req, res, next) => {
-    const updates = Object.keys(req.body);
+    let updates = Object.keys(req.body);
+    const id = req.body._id
 
-    const forbiddenUpdates = ["_id"];
+
+    updates = updates.filter((update) => {
+        return update !== '_id'
+    })
+
+    const forbiddenUpdates = [""];
   
     const isValidOperation = updates.every(update => {
         return !forbiddenUpdates.includes(update);
@@ -41,7 +47,7 @@ router.patch("/update", auth, async (req, res, next) => {
     }
   
     try {
-      const product = await Product.findById(req.body._id)
+      const product = await Product.findById(id)
   
       updates.forEach(update => {
         product[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.
@@ -55,7 +61,9 @@ router.patch("/update", auth, async (req, res, next) => {
     }
   });
 
-//CHECK
+
+
+//OK
 router.delete('/remove', auth, async (req, res) =>{
 
     try {
@@ -73,16 +81,50 @@ router.delete('/remove', auth, async (req, res) =>{
 
 ////USER-SIDE
 
-//CHECK
+//OK
 router.get('/shop', auth, async (req, res)=> {
 
     try{
-        const shop = await Product.find({})
+        const shop = await Product.find({}).populate({
+            path: 'awards.itemModel'
+        })
+
         res.send(shop)
     }catch(e){
         res.status(400).send(e.message)
     }
 })
+
+router.post('/activate', auth, async (req, res)=> {
+
+    const order = req.body
+
+    try{
+        if(Object.entries(user.activeOrder).length > 0 && user.activeOrder.constructor === Object){
+                throw new Error('Another active order exists!')
+        }
+        const membersIds = [...user.party.members]
+
+        console.log('got members ids', membersIds)
+
+        if(!membersIds.length && !user.party.leader){ //one person party - giving user leader privileges
+            user.party.leader = user._id
+        }
+
+        if(user.party.leader && (user.party.leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
+            throw new Error('User is not the leader!')
+        }
+
+        user.activeOrder = order
+
+        await user.save()
+
+    }catch(e){
+        res.status(400).send(e.message)
+    }
+})
+
+
 //DEVELOP
 //ADMIN?
 router.post('/finalize', auth, async (req, res) => {

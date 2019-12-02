@@ -20,7 +20,14 @@ const ProductSchema = new mongoose.Schema({ //instance of ItemModel
     },
     imgSrc: {
         type: String,
-    }
+    },
+    awards: [{   
+        quantity: Number,
+        itemModel: {
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'itemModel'
+        }  
+    }]
 
 })
 

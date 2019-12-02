@@ -17,8 +17,8 @@ export const designateUserPerks = async (user) => {
 
       await asyncForEach(Object.keys(user.equipped), async (slot) => {
         await user.populate({
-            path: 'equipped.'+slot,
-            populate: {path:'itemModel'}
+            path: 'equipped.' + slot,
+            populate: {path: 'itemModel'}
           }).execPopulate();
       })
 

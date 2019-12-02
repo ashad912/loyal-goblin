@@ -3,7 +3,7 @@ import { asyncForEach } from '../utils/methods'
 import validator from "validator";
 import { Mission } from "./mission";
 import { Rally } from '../models/rally';
-import { User } from '../models/user';
+import { Product } from '../models/product';
 import { Item } from '../models/item'
 
 export const itemModelTypes = [
@@ -215,6 +215,19 @@ ItemModelSchema.pre('remove', async function (next){
 
   //OK
 
+
+  //OK!
+  //product - awards
+  await Product.updateMany(
+    {
+      'awards': {$elemMatch: {'itemModel': itemModel._id}},
+    },
+    {
+      $pull: {
+        'awards':  {'itemModel': itemModel._id},
+      }
+    }
+  )
   
   const itemInstances = await Item.find({itemModel: itemModel._id}) //if deleteMany runs remove middleware? -> NO
 

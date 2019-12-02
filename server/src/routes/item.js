@@ -123,30 +123,32 @@ router.post('/testItemModelRemove', auth, async (req, res) => {
     // })
     // //OK!
     
+    itemModel.remove()
+    res.send()
 
-    res.send(await Rally.updateMany(
-        {'awardsLevels': 
-          {$elemMatch:
-            {$or: [
-                {'awards.any': {$elemMatch: {'itemModel': itemModel._id}}},
-                {'awards.warrior': {$elemMatch: {'itemModel': itemModel._id}}},
-                {'awards.rogue': {$elemMatch: {'itemModel': itemModel._id}}},
-                {'awards.mage': {$elemMatch: {'itemModel': itemModel._id}}},
-                {'awards.cleric': {$elemMatch: {'itemModel': itemModel._id}}},
-            ]}
-          }
-        }, 
-        //https://docs.mongodb.com/manual/reference/operator/update/positional/
-        //https://docs.mongodb.com/manual/reference/operator/update/positional-all/
-            {$pull: {
-              'awardsLevels.$[].awards.any': {'itemModel': itemModel._id},
-              'awardsLevels.$[].awards.warrior': {'itemModel': itemModel._id},
-              'awardsLevels.$[].awards.rogue': {'itemModel': itemModel._id},
-              'awardsLevels.$[].awards.mage': {'itemModel': itemModel._id},
-              'awardsLevels.$[].awards.cleric': {'itemModel': itemModel._id}
-            }
+    // res.send(await Rally.updateMany(
+    //     {'awardsLevels': 
+    //       {$elemMatch:
+    //         {$or: [
+    //             {'awards.any': {$elemMatch: {'itemModel': itemModel._id}}},
+    //             {'awards.warrior': {$elemMatch: {'itemModel': itemModel._id}}},
+    //             {'awards.rogue': {$elemMatch: {'itemModel': itemModel._id}}},
+    //             {'awards.mage': {$elemMatch: {'itemModel': itemModel._id}}},
+    //             {'awards.cleric': {$elemMatch: {'itemModel': itemModel._id}}},
+    //         ]}
+    //       }
+    //     }, 
+    //     //https://docs.mongodb.com/manual/reference/operator/update/positional/
+    //     //https://docs.mongodb.com/manual/reference/operator/update/positional-all/
+    //         {$pull: {
+    //           'awardsLevels.$[].awards.any': {'itemModel': itemModel._id},
+    //           'awardsLevels.$[].awards.warrior': {'itemModel': itemModel._id},
+    //           'awardsLevels.$[].awards.rogue': {'itemModel': itemModel._id},
+    //           'awardsLevels.$[].awards.mage': {'itemModel': itemModel._id},
+    //           'awardsLevels.$[].awards.cleric': {'itemModel': itemModel._id}
+    //         }
           
-        }))
+    //     }))
 
     //mission - amultes, awards; 
     // let missions = await Mission.find(
