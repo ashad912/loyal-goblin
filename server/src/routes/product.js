@@ -48,6 +48,10 @@ router.patch("/update", auth, async (req, res, next) => {
   
     try {
       const product = await Product.findById(id)
+
+      if(!product){
+        res.status(404).send()
+      }
   
       updates.forEach(update => {
         product[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.

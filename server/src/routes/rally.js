@@ -28,14 +28,13 @@ const addAwards = async (user, awardsLevels) => {
                 if(user.profile.class === className || className === 'any') {
                     
                     await asyncForEach(awardsLevel.awards[className], async (item) => {
-
+                        //UPDATE TO CHECK
                         for(let i=0; i < item.quantity; i++) {
                             const newItem = new Item({itemModel: item.itemModel, owner: user.profile._id})
-                            items = [...items, newItem]
                             await newItem.save()
+                            items = [...items, newItem._id]
                         }
-                        
-                        
+                        //
                     })
                 }
             }) 
@@ -82,13 +81,14 @@ const finishRally = async (rally) => {
             if((user.userRallies.length) && (index >= 0) && (rallyUser.experience > 0)){ 
                 const items = await addAwards(rallyUser, rally.awardsLevels)
                 
-                user.bag = [...user.bag, ...items]
+                await User.updateOne(
+                    {_id: user._id},
+                    { $addToSet: { bag: { $each: items } } }
+                )
                 
             }
             //
-            await user.save() 
-        
-        
+  
     })
 
     
@@ -223,8 +223,9 @@ router.patch("/update", auth, async (req, res, next) => {
       const rally = await Rally.findById(id)
   
       if(!rally){
-          throw Error('Rally does not exist!')
+        res.status(404).send()
       }
+
       updates.forEach(update => {
         rally[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.
       });

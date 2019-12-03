@@ -10,7 +10,11 @@ import { Item } from '../models/item';
 
 const router = new express.Router
 
+////ADMIN-SIDE
 
+///MODEL
+
+//OK
 router.post('/createModel', auth, async (req, res) =>{
 
     const itemModel = new ItemModel(req.body)
@@ -23,66 +27,126 @@ router.post('/createModel', auth, async (req, res) =>{
     }
 })
 
+//OK
+router.patch("/updateModel", auth, async (req, res, next) => {
+    let updates = Object.keys(req.body);
+    const id = req.body._id
 
 
+    updates = updates.filter((update) => {
+        return update !== '_id'
+    })
+
+    const forbiddenUpdates = [""];
+  
+    const isValidOperation = updates.every(update => {
+        return !forbiddenUpdates.includes(update);
+    });
+  
+    if (!isValidOperation) {
+        return res.status(400).send({ error: "Invalid update!" });
+    }
+  
+    try {
+      const itemModel = await ItemModel.findById(id)
+
+      if(!itemModel){
+        res.status(404).send()
+      }
+  
+      updates.forEach(update => {
+        itemModel[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.
+      });
+  
+      await itemModel.save();
+
+      res.send(itemModel);
+    } catch (e) {
+      res.status(500).send(e.message);
+    }
+  });
+
+
+
+//OK
+router.delete('/removeModel', auth, async (req, res) =>{
+
+    try {
+        const itemModel = await ItemModel.findOne({_id: req.body._id})
+
+        if(!itemModel){
+            res.status(404).send()
+        }
+
+        itemModel.remove()
+
+        res.send()
+    } catch (e) {
+        res.status(500).send(e.message)
+    }
+})
+
+
+///INSTANCE
+
+//OK
 router.post('/create', auth, async (req, res) =>{
 
-    //without adding to spefic user eq!
 
     const item = new Item(req.body)
 
     try {
-        await item.save() //this method holds updated user!
+        const user = await User.findById(req.body.owner)
+
+        if(!user){
+            throw Error('Invalid owner!')
+        }
+
+        const itemModel = await ItemModel.findById(req.body.itemModel)
+
+        if(!itemModel){
+            throw Error('Invalid model!')
+        }
+        
+        await item.save()
+        console.log(item)
+
+        //NOTE: without using 'post save' middleware (adding to bag) due to optimalization issues - less queries for adding awards
+
+        await User.updateOne(
+            {_id: req.body.owner},
+            { $addToSet: { bag: item._id } }
+        )
+        // user.bag = [...user.bag, item._id]
+        // await user.save()
+        
         res.status(201).send(item)
     } catch (e) {
-        res.status(400).send(e)
+        res.status(400).send(e.message)
     }
 })
 
-router.post('/testUpdateUser', auth, async(req, res) => {
-    const user = {_id: req.body._id}
 
-    
-    //await Item.deleteMany({owner: user._id})
-    //what else - party logic? ->
-    // await User.updateMany(
-    //     {$or: [
-    //         {'party.leader': user._id}, 
-    //         {'party.members': { $elemMatch: {$eq: user._id}}}
-    //     ]},
-    //     {$set: {
-    //         party: {members: []},
-    //         activeOrder : {}
-    //     }}
-    // )
-    //OK!
-    
+//OK
+router.delete('/remove', auth, async (req, res) =>{
 
-    //what else - rally
-    // await Rally.updateMany(
-    //     {"$and": [
-    //         { users: { $elemMatch: {profile: user._id}}}, //wihout eq
-    //         { $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }]}, //leave users in achive rallies
-    //     ]},
-    //     {$pull: {
-    //         "users": {profile: user._id}
-    //     }}
-    // )
+    try {
+        const item = await Item.findOne({_id: req.body._id})
 
-    //missionInstance
-    const missionInstance = await MissionInstance.findOne({party: {$elemMatch: {user: user._id}}}).populate({
-        path: "items"
-    })
-    
-    await asyncForEach((missionInstance.items), async item => {
-        await User.updateOne({_id: item.owner}, {$addToSet: {bag: item._id}})
-    })
-    res.send()
+        if(!item){
+            res.status(404).send()
+        }
 
-    // missionInstance.remove()
-    
+        item.remove()
+
+        res.send()
+    } catch (e) {
+        res.status(500).send(e.message)
+    }
 })
 
+
+//TESTS
 
 //REFACTOR - left here for backup
 

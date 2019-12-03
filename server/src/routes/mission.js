@@ -9,6 +9,7 @@ import { ItemModel } from '../models/itemModel'
 import { asyncForEach } from '../utils/methods'
 
 import isEqual from 'lodash/isEqual'
+import moment from 'moment'
 import {Rally} from '../models/rally'
 
 
@@ -91,6 +92,10 @@ router.patch("/update", auth, async (req, res, next) => {
   
     try {
       const mission = await Mission.findById(id)
+
+      if(!mission){
+        res.status(404).send()
+      }
   
       updates.forEach(update => {
         mission[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.
@@ -104,7 +109,48 @@ router.patch("/update", auth, async (req, res, next) => {
     }
 });
 
+//OK
+//completedByUsers is cleared by 'copy' request
+router.post("/copy", auth, async (req, res, next) => {
 
+    
+    try {
+        const copiedMission = await Mission.findById(req.body._id)
+        const copiedMissionObject = copiedMission.toJSON()
+
+        delete copiedMissionObject._id
+        copiedMissionObject.completedByUsers = []
+
+        const mission = new Mission(copiedMissionObject)
+        
+        mission.title = req.body.title
+        mission.activationDate = req.body.activationDate
+        mission.expiryDate = req.body.expiryDate
+
+        await mission.save();
+
+        res.send(mission);
+    } catch (e) {
+        res.status(500).send(e.message);
+    }
+});
+
+//OK (DEVELOP DATES)
+router.patch("/publish", auth, async (req, res, next) => {
+
+    
+    try {
+        const mission = await Mission.findById(req.body._id)
+
+        mission.activationDate = moment().toISOString(/*true*/)
+
+        await mission.save();
+
+        res.send(mission);
+    } catch (e) {
+        res.status(500).send(e.message);
+    }
+});
 
 
 ////USER-SIDE
@@ -529,8 +575,8 @@ const addAwards = async (user, awards) => {
 
                 for(let i=0; i < item.quantity; i++) {
                     const newItem = new Item({itemModel: item.itemModel, owner: user.profile._id})
-                    items = [...items, newItem]
                     await newItem.save()
+                    items = [...items, newItem._id]
                 }
                 
                 
@@ -627,11 +673,22 @@ router.delete('/finishMission', auth, async (req,res) => {
             if(user.activeMission.length && (user.activeMission[0]._id.toString() === missionInstance._id.toString())){
                 const items = await addAwards(member, missionInstance.mission.awards)
                 
-                user.bag = [...user.bag, ...items]
-                
+                await User.updateOne(
+                    {_id: user._id},
+                    { $addToSet: { bag: { $each: items } } }
+                )
+
+                // PREVIOUS VERSION
+                // user.bag = [...user.bag, ...items]
+                // await user.save()
             }
-            await user.save()  
+              
         })
+
+        db.inventory.update(
+            { _id: 2 },
+            { $addToSet: { tags: { $each: [ "camera", "electronics", "accessories" ] } } }
+          )
 
         await asyncForEach(missionInstance.items, async (itemId) => {
             const item = await Item.findById(itemId)
@@ -700,7 +757,7 @@ const verifySendItem = (user, missionInstance, itemId) => {
 }
 
 
-//OK
+//OK - UPDATE CHECK
 router.patch('/sendItem/mission', auth, async (req, res) => {
     const user = req.user
     const itemId = req.body.item
@@ -718,9 +775,12 @@ router.patch('/sendItem/mission', auth, async (req, res) => {
 
         await verifySendItem(user, missionInstance, itemId)
 
-        
-        missionInstance.items = [...missionInstance.items, itemId]
-        await missionInstance.save()
+        await MissionInstance.updateOne(
+            {_id: missionInstance._id},
+            { $addToSet: { items: itemId } }
+        )
+        // missionInstance.items = [...missionInstance.items, itemId]
+        // await missionInstance.save()
         console.log('item added to mission')
 
     
@@ -740,7 +800,7 @@ router.patch('/sendItem/mission', auth, async (req, res) => {
 
 })
 
-//OK
+//OK - UPDATE CHECK
 router.patch('/sendItem/user', auth, async (req, res) => {
     const user = req.user
     const itemId = req.body.item
@@ -758,8 +818,13 @@ router.patch('/sendItem/user', auth, async (req, res) => {
             throw Error('No such item in items array!')
         }
         
-        user.bag = [...user.bag, itemId]
-        await user.save()
+        await User.updateOne(
+            {_id: user._id},
+            { $addToSet: { bag: itemId } }
+        )
+
+        // user.bag = [...user.bag, itemId]
+        // await user.save()
         console.log('item added to user')
 
     
