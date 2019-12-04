@@ -5,7 +5,7 @@ import { Rally } from '../models/rally';
 import { User } from '../models/user'
 import { auth } from '../middleware/auth';
 import { Item } from '../models/item';
-import { asyncForEach } from '../utils/methods'
+import { asyncForEach, designateUserPerks } from '../utils/methods'
 
 const router = new express.Router
 
@@ -69,7 +69,8 @@ const finishRally = async (rally) => {
     const users = rally.users
 
     await asyncForEach(users, async (rallyUser) => {
-           
+
+        try{
             const user = await User.findById(rallyUser.profile._id).populate({
                 path: 'userRallies'
             }) //recoginized as an array
@@ -87,6 +88,11 @@ const finishRally = async (rally) => {
                 )
                 
             }
+        }catch(e){
+            console.log('Problem with user population!')
+        }
+           
+            
             //
   
     })
@@ -103,7 +109,8 @@ const finishRally = async (rally) => {
 }
 //OK
 const designateScheduleTime = (date) => {
-    const momentDate = moment(date)
+    
+    const momentDate = moment.utc(date) //was moment(date) for 'Europe/Warsaw'
     const month = momentDate.month() + 1
     const dayOfMonth = momentDate.date()
     const hour = momentDate.hour()
@@ -160,11 +167,11 @@ export const updateRallyQueue = async () => {
             }
             
          
-        },
-        {
+        },{
             scheduled: true,
-            timezone: "Europe/Warsaw"
-        });
+            timezone: "Africa/Casablanca" //always UTC 0 //Warsaw UTC+1/UTC+2
+        }
+        );
 
     }catch (e) {
         console.log(e.message)
@@ -274,6 +281,16 @@ router.get('/first', auth, async (req, res)=> {
 
 
 ////////////////////TEST
+
+router.get('/perks', auth, async(req,res) => {
+    try{
+        await designateUserPerks(req.user)
+        res.send()
+    }catch(e){
+        res.status(400).send(e.message)
+    }
+    
+})
 
 router.get('/triggerCron', auth, async(req, res) => {
     

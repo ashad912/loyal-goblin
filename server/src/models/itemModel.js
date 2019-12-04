@@ -71,7 +71,7 @@ const ItemModelSchema = new mongoose.Schema({
             min: 1,
             max: 7,
             validate(value) {
-              if (!validator.isInteger(value)) {
+              if (!Number.isInteger(value)) {
                 throw new Error(`${value} is not an integer value!`);
               }
             }
@@ -81,7 +81,7 @@ const ItemModelSchema = new mongoose.Schema({
             min: 0,
             max: 23,
             validate(value) {
-              if (!validator.isInteger(value)) {
+              if (!Number.isInteger(value)) {
                 throw new Error(`${value} is not an integer value!`);
               }
             }
@@ -91,7 +91,7 @@ const ItemModelSchema = new mongoose.Schema({
             min: 1,
             max: 24,
             validate(value) {
-              if (!validator.isInteger(value)) {
+              if (!Number.isInteger(value)) {
                 throw new Error(`${value} is not an integer value!`);
               }
             }
