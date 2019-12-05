@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { User} from '../models/user'
 import {Product} from '../models/product'
 import moment from 'moment'
+import { levelingEquation } from './definitions';
 
 export async function asyncForEach(array, callback) {
     for (let index = 0; index < array.length; index++) {
@@ -9,11 +10,54 @@ export async function asyncForEach(array, callback) {
     }
 }
 
+export const updatePerks = (user, forcing) => { //'forcing' - update without checking perksUpdatedAt
+    return new Promise( async (resolve, reject) => {
+      try{
+  
+        if(forcing || isNeedToPerksUpdate(user)){
+          user.userPerks = await designateUserPerks(user)
+          user.perksUpdatedAt = moment().toISOString() //always in utc
+          await user.save()
+        }
+    
+        if(user.party.leader){ //party perks updating
+            let party = [user.party.leader, ...user.party.members].filter((memberId) =>{ //exclude 'req.user' and nulls
+                return (memberId && memberId.toString() !== user._id.toString())
+            } )
+            
+            if(party.length){
+                await asyncForEach((party), async memberId => {
+                    const member = await User.findById(memberId)
+            
+                    if(!member){
+                        throw Error(`Member (${memberId} does not exist!`)
+                    }    
+                    
+                    if(forcing || isNeedToPerksUpdate(member)){
+                        member.userPerks = await designateUserPerks(member)
+                        member.perksUpdatedAt = moment().toISOString() //always in utc
+                        await member.save()
+                    }
+        
+                })
+            }
+        }
+        
+  
+        resolve(user.userPerks)
+  
+      }catch(e){
+        reject(e)
+      }
+      
+      
+    })
+  }
 
-//CHECK
+//OK
 export const designateUserPerks = async (user) => {
 
-      //TO-DO: how to populate nested objects
+    
     return new Promise( async (resolve, reject) => {
 
         try{
@@ -28,7 +72,7 @@ export const designateUserPerks = async (user) => {
 
             const equippedItems = equippedItemsRaw.toObject() //to behave like normal JS object: delete, hasOwnProperty
     
-            console.log(equippedItems)
+            //console.log(equippedItems)
     
             const products = await Product.find({})
 
@@ -42,7 +86,7 @@ export const designateUserPerks = async (user) => {
                     absolute: '0',
                     percent: '0%'
                 },
-                products: [],
+                products: {},
             }
     
             const isTime = (timeArray) => {
@@ -70,7 +114,7 @@ export const designateUserPerks = async (user) => {
                         if(startTime.isBefore(endTime)){
                             //console.log('before midnight')
                             let isTime = moment.utc().isBetween(startTime, endTime, null, "[]");
-                            console.log(isTime)
+                            //console.log(isTime)
                             if(isTime){
                                 return true
                             }
@@ -80,9 +124,9 @@ export const designateUserPerks = async (user) => {
                             //console.log('after midnight')
                             let startTimeMinusDay = startTime.clone().subtract(1, 'd')
                             let endTimeMinusDay = endTime.clone().subtract(1, 'd')
-                            console.log(startTimeMinusDay, endTimeMinusDay)
+                            //console.log(startTimeMinusDay, endTimeMinusDay)
                             let isTime = moment.utc().isBetween(startTimeMinusDay, endTimeMinusDay, null, "[]");
-                            console.log(isTime)
+                            //console.log(isTime)
                             if(isTime){
                                 return true
                             }
@@ -112,7 +156,7 @@ export const designateUserPerks = async (user) => {
                         result = mod
                     }
                     
-                    console.log(result)
+                    //console.log(result)
                 }else{
                     perkValue = parseFloat(perkValue)
                     if(isCurrency){
@@ -122,7 +166,7 @@ export const designateUserPerks = async (user) => {
                     }
     
                     result = perkValue
-                    console.log(result)
+                    //console.log(result)
                 }
     
                 return result
@@ -135,7 +179,7 @@ export const designateUserPerks = async (user) => {
                     exp.percent = `${parseFloat(exp.percent) + perkValue}%`
                     
                     
-                    console.log(exp.percent)
+                   //console.log(exp.percent)
                 }else{
                     perkValue = truncCurrency(parseFloat(perkValue))
                     exp.absolute = `${parseFloat(exp.absolute) + perkValue}`
@@ -146,7 +190,7 @@ export const designateUserPerks = async (user) => {
             }
             
             Object.keys(equippedItems).forEach((itemKey, index) => {
-                console.log(itemKey)
+                
                 
                 
                 if(equippedItems[itemKey] && equippedItems[itemKey].hasOwnProperty('itemModel') && equippedItems[itemKey].itemModel.hasOwnProperty('perks') && equippedItems[itemKey].itemModel.perks && equippedItems[itemKey].itemModel.perks.length > 0){
@@ -171,7 +215,7 @@ export const designateUserPerks = async (user) => {
                                 case 'experience':
                                         
                                     modelPerks.rawExperience = countRawExperience(modelPerks.rawExperience, perk.value)
-                                    console.log(modelPerks)
+                                   // console.log(modelPerks)
                                     break
                                 case 'disc-product':
     
@@ -192,7 +236,7 @@ export const designateUserPerks = async (user) => {
         
                                     break
                                 case 'disc-category':
-                                    console.log('haleczko')
+                                    //console.log('haleczko')
                                     const productsInCategory = products.filter((product) => {
                                         return product.category === perk.target
                                     })
@@ -251,6 +295,29 @@ export const designateUserPerks = async (user) => {
     })
 }
 
+//OK
+export const isNeedToPerksUpdate = (user) => {
+    
+
+    if(user.perksUpdatedAt && (user.perksUpdatedAt instanceof Date)){
+      const lastUpdateDate = moment.utc(user.perksUpdatedAt)
+      
+      let lastUpdateHour = lastUpdateDate.hour()
+      if(lastUpdateDate.minutes() === 0 && lastUpdateDate.seconds() === 0){ //very rare super equal hour update
+        lastUpdateHour -=1
+      }
+
+      const nextUpdateDate = moment.utc(`${lastUpdateHour+1}:00:01`, 'HH:mm:ss')
+      const now = moment.utc()
+      
+      if(now.valueOf() >= nextUpdateDate.valueOf()){
+        return true
+      }
+  
+      return false
+      
+    }
+  }
 
 export const userPopulateBag = async (user) => {
     await user
@@ -260,4 +327,21 @@ export const userPopulateBag = async (user) => {
       }).execPopulate();
 
     return user
+}
+
+export const designateUserLevel = (points) => {
+    const a = levelingEquation.a;
+    const b = levelingEquation.b;
+    const pow = levelingEquation.pow
+    
+    let previousThreshold = 0;
+    for (let i=1; i<=100; i++) {
+        const bottomThreshold = previousThreshold
+        const topThreshold = previousThreshold + (a*(i**pow) + b)
+
+        if(points >= bottomThreshold && points < topThreshold){
+            return i
+        }
+        previousThreshold = topThreshold;
+    }
 }

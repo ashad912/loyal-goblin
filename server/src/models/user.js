@@ -105,57 +105,57 @@ export const UserSchema = new mongoose.Schema({
         weaponRight: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true,
+            //unique: true,
             default: null
         },
         weaponLeft: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true,
+            //unique: true,
             default: null
         },
         chest: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true,
+            //unique: true,
             default: null
         }
         ,
         legs: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true,
+            //unique: true,
             default: null
         }
         ,
         hands: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true,
+            //unique: true,
             default: null
         },
         feet: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true,
+            //unique: true,
             default: null
         },
         head: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true,
+           // unique: true,
             default: null
         },
         ringRight: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true,
+            //unique: true,
             default: null
         },
         ringLeft: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'item',
-            unique: true,
+            //unique: true,
             default: null
         },
     },
@@ -168,7 +168,7 @@ export const UserSchema = new mongoose.Schema({
         leader: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'user',
-            unique: true
+            unique: true,
         },
         members: [{
             type: mongoose.Schema.Types.ObjectId, 
@@ -208,6 +208,7 @@ export const UserSchema = new mongoose.Schema({
         }]
 
     },
+    perksUpdatedAt: Date,
     userPerks: {
         attrStrength: {
             type: Number,
@@ -259,12 +260,14 @@ export const UserSchema = new mongoose.Schema({
                 default: '0%',
             }
         },
-        products: [{
+        products: { //important change! [] -> {}
             type: mongoose.Schema.Types.Mixed,
-        }]
+            default: {}
+        }
     }
     
 }, {
+    minimize: false, //to save {} as default
     timestamps: true
 })
 
@@ -359,7 +362,7 @@ UserSchema.pre('remove', async function(next){
             {'party.members': { $elemMatch: {$eq: user._id}}}
         ]},
         {$set: {
-            party: {members: [], leader: null},
+            party: {members: []},
             activeOrder : {}
         }}
     )

@@ -2,7 +2,7 @@ import express from 'express'
 import { Product } from '../models/product';
 import { auth } from '../middleware/auth';
 import isEqual from 'lodash/isEqual'
-import { asyncForEach } from '../utils/methods';
+import { asyncForEach, updatePerks } from '../utils/methods';
 import { Rally } from '../models/rally';
 import { User } from '../models/user'
 
@@ -85,13 +85,15 @@ router.delete('/remove', auth, async (req, res) =>{
 
 ////USER-SIDE
 
-//OK
+//OK (TO DEVELOP)
 router.get('/shop', auth, async (req, res)=> {
 
     try{
         const shop = await Product.find({}).populate({
             path: 'awards.itemModel'
-        })
+        }) 
+
+        await updatePerks(req.user, false)
 
         res.send(shop)
     }catch(e){

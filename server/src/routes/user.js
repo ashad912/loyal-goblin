@@ -5,7 +5,9 @@ import sharp from "sharp";
 import { User } from "../models/user";
 import { Item } from "../models/item";
 import { auth } from "../middleware/auth";
-import { asyncForEach, designateUserPerks, userPopulateBag } from "../utils/methods";
+import { asyncForEach, designateUserPerks, userPopulateBag, updatePerks } from "../utils/methods";
+import moment from "moment";
+import { resolve } from "url";
 
 const router = express.Router();
 
@@ -26,6 +28,7 @@ router.post("/create", async (req, res) => {
   }
 
   delete req.body.registerKey;
+  req.body.perksUpdatedAt = moment().toISOString()
   const user = new User(req.body);
 
   try {
@@ -75,12 +78,32 @@ router.post("/logoutAll", auth, async (req, res) => {
   }
 });
 
+
+
+//OK
+router.patch('/updatePerks', auth, async (req, res, next) => {
+
+  const user = req.user
+
+  try{
+      user.userPerks = await updatePerks(user, true)
+
+      res.send(user.userPerks)
+  }catch(e){
+      res.status(400).send(e.message)
+  }
+})
+
+
 router.get("/me", auth, async (req, res, next) => {
   try {
     const user = await userPopulateBag(req.user)
+    
+    user.userPerks = await updatePerks(user, false)
+
     res.send(user);
-  } catch (error) {
-    console.log(error)
+  } catch (e) {
+    res.status(400).send(e.message)
   }
 });
 
@@ -249,6 +272,42 @@ router.patch("/myItems/equip", auth, async (req, res) => {
     console.log(error)
     res.sendStatus(400)
   }
+})
+
+//CHECK
+router.patch('/removeParty', auth, async (req, res) => {
+  const user = req.user
+
+  try{
+
+    if(!user.party.leader){
+      throw new Error('No party!')
+    }
+
+    // if(!user.party.toJSON().hasOwnProperty('leader')){
+    //   throw new Error('No party!')
+    // }
+  
+    if(user._id.toString() !== user.party.leader.toString()){
+      throw new Error('You are not the leader!')
+    }
+
+    await User.updateMany(
+      {$or: [
+          {'party.leader': user._id}, 
+          {'party.members': { $elemMatch: {$eq: user._id}}}
+      ]},
+      {$set: {
+          party: {members: []}, //deleting 'leader' field
+          activeOrder : {}
+      }}
+    )
+    res.send()
+  }catch(e){
+    res.status(400).send(e.message)
+  }
+    
+})
   
   router.post('/testUpdateUser', auth, async(req, res) => {
     const user = {_id: req.body._id}
@@ -295,6 +354,5 @@ router.patch("/myItems/equip", auth, async (req, res) => {
 })
   
   
-});
 
 export const userRouter = router;

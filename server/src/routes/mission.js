@@ -6,7 +6,7 @@ import { auth } from '../middleware/auth';
 import { MissionInstance } from '../models/missionInstance';
 import { Item } from '../models/item'
 import { ItemModel } from '../models/itemModel'
-import { asyncForEach } from '../utils/methods'
+import { asyncForEach, designateUserPerks, isNeedToPerksUpdate, designateUserLevel } from '../utils/methods'
 
 import isEqual from 'lodash/isEqual'
 import moment from 'moment'
@@ -300,32 +300,20 @@ router.get('/amulets', auth, async(req,res) => {
     }
 })
 
-const designateUserLevel = (points) => {
-    const a = 10;
-    const b = 100;
-    
-    let previousThreshold = 0;
-    for (let i=1; i<=100; i++) {
-        const bottomThreshold = previousThreshold
-        const topThreshold = previousThreshold + (a*(i**2) + b)
 
-        if(points >= bottomThreshold && points < topThreshold){
-            return i
-        }
-        previousThreshold = topThreshold;
-    }
-}
 
-//OK
+//OK, CHECK UPDATE PERKS
 router.post('/createInstance', auth, async (req, res) => { //mission id passed from frontend
     const user = req.user
+
+    
     
     try{
 
         const membersIds = [...user.party.members]
 
         console.log('got members ids', membersIds)
-
+        console.log(user.party.leader)
         if(!membersIds.length && !user.party.leader){ //one person party - giving user leader privileges
             user.party.leader = user._id
             await user.save()
@@ -364,27 +352,41 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
             throw new Error('Unappropriate party size!')
         }
 
+        if(isNeedToPerksUpdate(user)){
+            user.userPerks = await designateUserPerks(user)
+            user.perksUpdatedAt = moment().toISOString() //always in utc
+            await user.save()
+        }
+
         let party = [user]
-        let totalStrength = user.attributes.strength
-        let totalDexterity = user.attributes.dexterity
-        let totalMagic = user.attributes.magic
-        let totalEndurance = user.attributes.endurance
+        let totalStrength = user.attributes.strength + user.userPerks.attrStrength
+        let totalDexterity = user.attributes.dexterity + user.userPerks.attrDexterity
+        let totalMagic = user.attributes.magic + user.userPerks.attrMagic
+        let totalEndurance = user.attributes.endurance + user.userPerks.attrEndurance
         let minUserLevelInParty = designateUserLevel(user.experience)
+
+        
 
         await asyncForEach(membersIds, async (memberId) => {
             const member = await User.findById(memberId)
 
             if(!member){
-                throw Error(`Member (${member._id}) does not exist!`)
+                throw Error(`Member (${memberId}) does not exist!`)
             }
 
             console.log('got member', member._id)
 
+            if(isNeedToPerksUpdate(member)){
+                member.userPerks = await designateUserPerks(member)
+                member.perksUpdatedAt = moment().toISOString() //always in utc
+                await member.save()
+            }
+
             party = [...party, member]
-            totalStrength += member.attributes.strength
-            totalDexterity += member.attributes.dexterity
-            totalMagic += member.attributes.magic
-            totalEndurance += member.attributes.endurance
+            totalStrength += member.attributes.strength + member.userPerks.attrStrength
+            totalDexterity += member.attributes.dexterity + member.userPerks.attrDexterity
+            totalMagic += member.attributes.magic + member.userPerks.attrMagic
+            totalEndurance += member.attributes.endurance + member.userPerks.attrEndurance
             minUserLevelInParty = Math.min(designateUserLevel(member.experience), minUserLevelInParty)
         })
 
