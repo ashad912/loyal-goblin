@@ -3,6 +3,7 @@ import { User} from '../models/user'
 import {Product} from '../models/product'
 import moment from 'moment'
 import { levelingEquation } from './definitions';
+import { Party } from '../models/party';
 
 export async function asyncForEach(array, callback) {
     for (let index = 0; index < array.length; index++) {
@@ -10,7 +11,8 @@ export async function asyncForEach(array, callback) {
     }
 }
 
-export const updatePerks = (user, forcing) => { //'forcing' - update without checking perksUpdatedAt
+export const updatePerks = (user, forcing, forcingWithoutParty) => { //'forcing' - update without checking perksUpdatedAt
+
     return new Promise( async (resolve, reject) => {
       try{
   
@@ -20,8 +22,9 @@ export const updatePerks = (user, forcing) => { //'forcing' - update without che
           await user.save()
         }
     
-        if(user.party.leader){ //party perks updating
-            let party = [user.party.leader, ...user.party.members].filter((memberId) =>{ //exclude 'req.user' and nulls
+        if(user.party){ //party perks updating
+            const partyObject = await Party.findById(user.party)
+            let party = [partyObject.leader, ...partyObject.members].filter((memberId) =>{ //exclude 'req.user' and nulls
                 return (memberId && memberId.toString() !== user._id.toString())
             } )
             
@@ -33,7 +36,7 @@ export const updatePerks = (user, forcing) => { //'forcing' - update without che
                         throw Error(`Member (${memberId} does not exist!`)
                     }    
                     
-                    if(forcing || isNeedToPerksUpdate(member)){
+                    if((forcing && !forcingWithoutParty) || isNeedToPerksUpdate(member)){
                         member.userPerks = await designateUserPerks(member)
                         member.perksUpdatedAt = moment().toISOString() //always in utc
                         await member.save()

@@ -274,43 +274,10 @@ router.patch("/myItems/equip", auth, async (req, res) => {
   }
 })
 
-//CHECK
-router.patch('/removeParty', auth, async (req, res) => {
-  const user = req.user
 
-  try{
-
-    if(!user.party.leader){
-      throw new Error('No party!')
-    }
-
-    // if(!user.party.toJSON().hasOwnProperty('leader')){
-    //   throw new Error('No party!')
-    // }
   
-    if(user._id.toString() !== user.party.leader.toString()){
-      throw new Error('You are not the leader!')
-    }
-
-    await User.updateMany(
-      {$or: [
-          {'party.leader': user._id}, 
-          {'party.members': { $elemMatch: {$eq: user._id}}}
-      ]},
-      {$set: {
-          party: {members: []}, //deleting 'leader' field
-          activeOrder : {}
-      }}
-    )
-    res.send()
-  }catch(e){
-    res.status(400).send(e.message)
-  }
-    
-})
-  
-  router.post('/testUpdateUser', auth, async(req, res) => {
-    const user = {_id: req.body._id}
+  router.patch('/testUpdateUser', auth, async(req, res) => {
+    const user = req.user
 
     
     //await Item.deleteMany({owner: user._id})
@@ -340,13 +307,14 @@ router.patch('/removeParty', auth, async (req, res) => {
     // )
 
     //missionInstance
-    const missionInstance = await MissionInstance.findOne({party: {$elemMatch: {user: user._id}}}).populate({
-        path: "items"
-    })
+    // const missionInstance = await MissionInstance.findOne({party: {$elemMatch: {user: user._id}}}).populate({
+    //     path: "items"
+    // })
     
-    await asyncForEach((missionInstance.items), async item => {
-        await User.updateOne({_id: item.owner}, {$addToSet: {bag: item._id}})
-    })
+    // await asyncForEach((missionInstance.items), async item => {
+    //     await User.updateOne({_id: item.owner}, {$addToSet: {bag: item._id}})
+    // })
+    try{await user.remove()}catch(e){res.status(400).send(e.message)}
     res.send()
 
     // missionInstance.remove()

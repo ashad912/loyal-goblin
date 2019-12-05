@@ -4,6 +4,7 @@ import {missionRouter} from './routes/mission'
 import {rallyRouter, updateRallyQueue} from './routes/rally'
 import {itemRouter} from './routes/item'
 import {productRouter} from './routes/product'
+import {partyRouter} from './routes/party'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import path from 'path'
@@ -35,6 +36,7 @@ app.use('/mission', missionRouter)
 app.use('/rally', rallyRouter)
 app.use('/item', itemRouter)
 app.use('/product', productRouter)
+app.use('/party', partyRouter)
 
 app.use((err, req, res, next)=>{ 
     res.status(422).send({error: err.message}) 

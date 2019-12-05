@@ -3,6 +3,8 @@ import validator from 'validator'
 import bcrypt from 'bcryptjs'
 import jwt from "jsonwebtoken"
 import {Item} from './item'
+import {Party} from './party'
+import {Rally} from './rally'
 import {ProductsOrderSchema} from '../schemas/ProductsOrderSchema'
 
 import arrayUniquePlugin from 'mongoose-unique-array'
@@ -164,23 +166,14 @@ export const UserSchema = new mongoose.Schema({
         required: true
     },
     party: { //suggested struct - EXPERIMENTAL
-        name: {type: String},
-        leader: {
-            type: mongoose.Schema.Types.ObjectId, 
-            ref: 'user',
-            unique: true,
-        },
-        members: [{
-            type: mongoose.Schema.Types.ObjectId, 
-            ref: 'user',
-            unique: true
-        }]       
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'party',
+        default: null      
     },
     activeOrder: [{
         profile: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'user',
-            unique: true
         },
         products: [ProductsOrderSchema]
     }],
@@ -203,7 +196,6 @@ export const UserSchema = new mongoose.Schema({
             amulet: {
                 type: mongoose.Schema.Types.ObjectId, 
                 ref: 'itemModel',
-                unique: true
             }
         }]
 
@@ -356,17 +348,23 @@ UserSchema.pre('remove', async function(next){
     const user = this
     await Item.deleteMany({owner: user._id})
     //what else - party logic? ->
-    await User.updateMany(
-        {$or: [
-            {'party.leader': user._id}, 
-            {'party.members': { $elemMatch: {$eq: user._id}}}
-        ]},
-        {$set: {
-            party: {members: []},
-            activeOrder : {}
-        }}
-    )
-    //OK!
+    // await User.updateMany(
+    //     {$or: [
+    //         {'party.leader': user._id}, 
+    //         {'party.members': { $elemMatch: {$eq: user._id}}}
+    //     ]},
+    //     {$set: {
+    //         party: {members: []},
+    //         activeOrder : {}
+    //     }}
+    // )
+
+    const party = await Party.findById(user.party)
+
+    if(party){
+        await party.remove()
+    }
+    
     
 
     //what else - rally
@@ -380,21 +378,7 @@ UserSchema.pre('remove', async function(next){
         }}
     )
 
-    //missionInstance
-    const missionInstance = await MissionInstance.findOne({party: {$elemMatch: {user: user._id}}})
-    // .populate({
-    //     path: "items"
-    // })
-
-    if(missionInstance){
-        //BELOW IS DONE IN MISSION INSTANCE REMOVE MIDDLEWARE
-        // await asyncForEach((missionInstance.items), async item => {
-        //     await User.updateOne({_id: item.owner}, {$addToSet: {bag: item._id}})
-        // })
-        
     
-        missionInstance.remove()
-    }
     
 
     next()

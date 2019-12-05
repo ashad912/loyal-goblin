@@ -5,6 +5,7 @@ import isEqual from 'lodash/isEqual'
 import { asyncForEach, updatePerks } from '../utils/methods';
 import { Rally } from '../models/rally';
 import { User } from '../models/user'
+import { Party } from '../models/party'
 
 const router = new express.Router
 
@@ -85,7 +86,7 @@ router.delete('/remove', auth, async (req, res) =>{
 
 ////USER-SIDE
 
-//OK (TO DEVELOP)
+//OK
 router.get('/shop', auth, async (req, res)=> {
 
     try{
@@ -101,7 +102,7 @@ router.get('/shop', auth, async (req, res)=> {
     }
 })
 
-const verifyParty = (user, membersIds, order) => {
+const verifyParty = (leader, membersIds, order) => {
     return new Promise( async (resolve, reject) => {
 
         try{
@@ -131,14 +132,14 @@ const verifyParty = (user, membersIds, order) => {
     
             
             //checking if order profiles match party
-            const party = [user.party.leader.toString(), ...user.party.members.map(member => member.toString())]
+            const party = [leader.toString(), ...membersIds.map(member => member.toString())]
             let orderParty = [] 
             await asyncForEach(order, async (user) => {
                 const memberId = user.profile
                 orderParty = [...orderParty, memberId.toString()]
             })
     
-            //console.log(orderParty, party)
+            console.log(orderParty, party)
             if(!isEqual(orderParty, party)) {
                 throw Error('Invalid party!')
             }
@@ -164,19 +165,29 @@ router.patch('/activate', auth, async (req, res)=> {
             throw new Error(`Another active order exists (user: ${user._id})!`)
         }
 
-        const membersIds = [...user.party.members]
+
+        let membersIds = []
+        let leader = null
+
+        if(user.party){
+            const party = await Party.findById(user.party)
+            membersIds = [...party.members]
+            leader = party.leader
+        }else{
+            leader = user._id
+        }
 
         console.log('got members ids', membersIds)
 
-        if(!membersIds.length && !user.party.leader){ //one person party - giving user leader privileges
-            user.party.leader = user._id
-        }
+        // if(!membersIds.length && !user.party.leader){ //one person party - giving user leader privileges
+        //     user.party.leader = user._id
+        // }
 
-        if(user.party.leader && (user.party.leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
+        if(leader && (leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
             throw new Error('User is not the leader!')
         }
 
-        await verifyParty(user, membersIds, order)
+        await verifyParty(leader, membersIds, order)
     
 
         user.activeOrder = order
@@ -203,16 +214,36 @@ router.patch('/activate', auth, async (req, res)=> {
 router.patch('/verify', auth, async (req, res) => {
     
     try{
+
+        const party = await Party.findOne({
+            'leader': req.body._id
+        })
+
+        let partyId = null
+        let leader = null
+        let membersIds = []
+
+        if(party){
+            partyId = party._id
+            membersIds = [...party.members]
+            leader = party.leader
+        }else{
+            leader = req.user._id
+        }
+        
         const user = await User.findOne({
             $and: [
                 {_id: req.body._id},
-                {'party.leader': req.body._id},
+                {party: partyId},
                 {'activeOrder': {$not: {$size: 0}}} //size does not accept ranges
             ]
         })
+
+        if(!user){
+            throw Error('User not found!')
+        }
         
-        const membersIds = [...user.party.members]
-        const members = await verifyParty(user, membersIds, user.activeOrder)
+        const members = await verifyParty(leader, membersIds, user.activeOrder)
 
 
         await user.populate({ //populate after verification

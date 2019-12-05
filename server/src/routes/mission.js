@@ -11,6 +11,7 @@ import { asyncForEach, designateUserPerks, isNeedToPerksUpdate, designateUserLev
 import isEqual from 'lodash/isEqual'
 import moment from 'moment'
 import {Rally} from '../models/rally'
+import { Party } from '../models/party';
 
 
 const router = new express.Router
@@ -135,14 +136,14 @@ router.post("/copy", auth, async (req, res, next) => {
     }
 });
 
-//OK (DEVELOP DATES)
+//OK
 router.patch("/publish", auth, async (req, res, next) => {
 
     
     try {
         const mission = await Mission.findById(req.body._id)
 
-        mission.activationDate = moment().toISOString(/*true*/)
+        mission.activationDate = moment().toISOString()
 
         await mission.save();
 
@@ -164,9 +165,9 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
 
     let partyIds = []
 
-
-    if(user.party.members.length) {
-        partyIds = [user.party.leader, ...user.party.members]
+    if(user.party){
+        const party = await Party.findById(user.party)
+        partyIds = [party.leader, ...party.members]
     }
 
     console.log(partyIds)
@@ -302,24 +303,47 @@ router.get('/amulets', auth, async(req,res) => {
 
 
 
-//OK, CHECK UPDATE PERKS
+//OK
 router.post('/createInstance', auth, async (req, res) => { //mission id passed from frontend
     const user = req.user
 
     
     
     try{
+        //if user.party get Party
+        let membersIds = []
+        let leader = null
 
-        const membersIds = [...user.party.members]
+        if(user.party){
+            const party = await Party.findById(user.party)
+            membersIds = [...party.members]
+            leader = party.leader
+        }else{
+            leader = user._id
+        }
+        // OVERLOADED CODE
+        // if(user.party){
+        //     const party = await Party.findById(user.party)
+        //     if(party){
+        //         membersIds = [...party.members]
+        //         leader = party.leader
+        //     }else{ //very eventually cleaning empty record
+        //         user.party = null
+        //         await user.save()
+        //     }
+            
+        // }
+
+        
 
         console.log('got members ids', membersIds)
-        console.log(user.party.leader)
-        if(!membersIds.length && !user.party.leader){ //one person party - giving user leader privileges
-            user.party.leader = user._id
-            await user.save()
-        }
-
-        if(user.party.leader && (user.party.leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
+        // console.log(user.party.leader)
+        // if(!membersIds.length && !user.party.leader){ //one person party - giving user leader privileges
+        //     user.party.leader = user._id
+        //     await user.save()
+        // }
+        //user.party !== null -> membersIds = []
+        if(leader && (leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
             throw new Error('User is not the leader!')
         }
 
@@ -331,7 +355,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
                 {completedByUsers: 
                     {$not: //true inverts to false; to get this mission ALL elements do not have to include any element from 'party' 
                         {$elemMatch: //elemMatch works as 'or' - false, false, false, true => true
-                            {$in: [...membersIds, user.party.leader]} //if even one of completedByUsers elements includes some element from 'party' -> true
+                            {$in: [...membersIds, leader]} //if even one of completedByUsers elements includes some element from 'party' -> true
                         }
                     }
                     
@@ -373,8 +397,6 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
             if(!member){
                 throw Error(`Member (${memberId}) does not exist!`)
             }
-
-            console.log('got member', member._id)
 
             if(isNeedToPerksUpdate(member)){
                 member.userPerks = await designateUserPerks(member)
@@ -426,11 +448,11 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
 
         console.log('party is available')
 
-        let partyIds = [user._id, ...membersIds]
+        let partyIds = [leader, ...membersIds]
 
         let partyObject = []
         await asyncForEach(partyIds, async (memberId) => {
-                const memberObject = {inRoom: false, readyStatus: false, user: memberId}
+                const memberObject = {inRoom: false, readyStatus: false, profile: memberId}
                 partyObject = [...partyObject, memberObject]
         })
         
@@ -455,7 +477,17 @@ router.delete('/deleteInstance', auth, async (req, res) => {
 
     try{
 
-        if(user.party.leader && (user.party.leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
+        
+        let leader = null
+
+        if(user.party){
+            const party = await Party.findById(user.party)
+            leader = party.leader
+        }else{
+            leader = user._id
+        }
+
+        if(leader && (leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
             throw new Error('User is not the leader!')
         }
 
@@ -590,12 +622,23 @@ const addAwards = async (user, awards) => {
 }
 
 //OK
-router.delete('/finishMission', auth, async (req,res) => {
+router.delete('/finishInstance', auth, async (req,res) => {
     const user = req.user
 
     try{
         
-        if(user.party.leader && (user.party.leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
+        let membersIds = []
+        let leader = null
+
+        if(user.party){
+            const party = await Party.findById(user.party)
+            membersIds = [...party.members]
+            leader = party.leader
+        }else{
+            leader = user._id
+        }
+
+        if(leader && (leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
             throw new Error('User is not the leader!')
         }
 
@@ -628,7 +671,7 @@ router.delete('/finishMission', auth, async (req,res) => {
             throw Error('No matching mission instance found!')
         }
 
-        const party = [user.party.leader, ...user.party.members]
+        const party = [leader, ...membersIds]
     
         let missionParty = [] 
         await asyncForEach(missionInstance.party, async (memberObject) => {
@@ -687,10 +730,6 @@ router.delete('/finishMission', auth, async (req,res) => {
               
         })
 
-        db.inventory.update(
-            { _id: 2 },
-            { $addToSet: { tags: { $each: [ "camera", "electronics", "accessories" ] } } }
-          )
 
         await asyncForEach(missionInstance.items, async (itemId) => {
             const item = await Item.findById(itemId)
@@ -714,7 +753,20 @@ const verifySendItem = (user, missionInstance, itemId) => {
                 throw Error('There is no such mission instance!')
             }
 
-            const party = [user.party.leader, ...user.party.members]
+            
+
+            let membersIds = []
+            let leader = null
+
+            if(user.party){
+                const party = await Party.findById(user.party)
+                membersIds = [...party.members]
+                leader = party.leader
+            }else{
+                leader = user._id
+            }
+
+            const party = [leader, ...membersIds]
     
             let missionParty = [] 
             await asyncForEach(missionInstance.party, async (memberObject) => {
@@ -759,7 +811,7 @@ const verifySendItem = (user, missionInstance, itemId) => {
 }
 
 
-//OK - UPDATE CHECK
+//OK
 router.patch('/sendItem/mission', auth, async (req, res) => {
     const user = req.user
     const itemId = req.body.item
@@ -837,7 +889,7 @@ router.patch('/sendItem/user', auth, async (req, res) => {
         console.log('item deleted from missionInstance items')
 
 
-        res.status(200).send({user, missionInstance})
+        res.status(200).send({user})
     } catch (e) {
         //console.log(e.message)
         res.status(400).send(e.message)
