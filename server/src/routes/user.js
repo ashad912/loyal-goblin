@@ -4,6 +4,7 @@ import multer from "multer";
 import sharp from "sharp";
 import { User } from "../models/user";
 import { Item } from "../models/item";
+import { ItemModel } from "../models/itemModel";
 import { auth } from "../middleware/auth";
 import { asyncForEach, designateUserPerks, userPopulateBag, updatePerks } from "../utils/methods";
 import moment from "moment";
@@ -100,6 +101,10 @@ router.get("/me", auth, async (req, res, next) => {
     const user = await userPopulateBag(req.user)
     
     user.userPerks = await updatePerks(user, false)
+
+    await user.populate({
+      path: 'party'
+    })
 
     res.send(user);
   } catch (e) {
@@ -274,51 +279,162 @@ router.patch("/myItems/equip", auth, async (req, res) => {
   }
 })
 
+const allFieldsTrue = (loyal) => {
+  for (var field in loyal){
+    if(!loyal[field]){
+      return false
+    }
+  }
+  return true
+}
+
+const verifyTorpedo = (user, fieldName) => {
+  return new Promise(async (resolve, reject) => {
+    try{
+      await user
+      .populate({
+        path: "bag",
+        populate: {path: 'itemModel'}
+      }).execPopulate();
+      
+      const torpedo = user.bag.find((bagItem) =>
+        bagItem.itemModel.type === 'torpedo' && bagItem.itemModel.name === fieldName
+      )
+  
+      if(!torpedo){
+        throw new Error('Matching torpedo not found!')
+      }
+      
+      const item = await Item.findById(torpedo._id)
+  
+      if(!item){
+        throw new Error('Item does not exist!')
+      }
+  
+      if(item.owner.toString() !== user._id.toString()){
+        throw new Error('Owner field conflict!')
+      }
+
+      resolve(item)
+    }catch(e){
+      reject(e)
+    }
+  })
+ 
+}
+
+router.patch('/loyal', auth, async (req, res) => {
+  const user = req.user
+  
+
+  const fieldName = req.body.field
+  try{
+
+    
+    if(!user.bag.length){
+      throw new Error('Bag is empty!')
+    }
+    
+    const item = await verifyTorpedo(user, fieldName)
+    
+    const fieldValue = user.loyal[fieldName]
+    if(fieldValue === null || fieldValue === undefined){
+      throw new Error ('Field not found!')
+    }
+  
+    if(fieldValue === true){
+      throw new Error ('Field already shoted!')
+    }
+
+    
+    await item.remove() //user bag and equipped cleared by remove middleware
+
+    let updatedUser = await User.findById(user._id) 
+    //updated by item removing middleware -> have to pass to resposne 'fresh' object
+    updatedUser.loyal[fieldName] = true
+    const isAward = allFieldsTrue(updatedUser.loyal.toJSON())
+    
+    let awardToPass = null
+    if(isAward){
+      const awards = await ItemModel.find({loyalAward: true})
+      
+      if(awards.length){
+        //get random award
+        const randomAward = awards[Math.floor(Math.random() * awards.length)];
+
+        //create item and add to updatedUser bag
+        const newItem = new Item({itemModel: randomAward._id, owner: updatedUser._id})
+        await newItem.save()
+        //new item id -> normal js saving
+        
+        updatedUser.bag = [...updatedUser.bag, newItem._id]
+        await newItem.populate({
+          path: 'itemModel'
+        }).execPopulate()
+
+        awardToPass = newItem
+        
+      }
+
+      Object.keys(updatedUser.loyal.toJSON()).forEach(key => {
+        updatedUser.loyal[key] = false //IMPORTANT: overwriting keys!! important .toJSON() to not overwrite 'mongo keys'
+      })
+    }
+    
+    await updatedUser.save()
+
+    updatedUser = await userPopulateBag(updatedUser)
+    
+    res.send({updatedUser, awardToPass})
+    
+  }catch(e){
+    res.status(400).send(e.message)
+  }
+})
+  
+router.patch('/testUpdateUser', auth, async(req, res) => {
+  const user = req.user
 
   
-  router.patch('/testUpdateUser', auth, async(req, res) => {
-    const user = req.user
+  //await Item.deleteMany({owner: user._id})
+  //what else - party logic? ->
+  // await User.updateMany(
+  //     {$or: [
+  //         {'party.leader': user._id}, 
+  //         {'party.members': { $elemMatch: {$eq: user._id}}}
+  //     ]},
+  //     {$set: {
+  //         party: {members: []},
+  //         activeOrder : {}
+  //     }}
+  // )
+  //OK!
+  
 
-    
-    //await Item.deleteMany({owner: user._id})
-    //what else - party logic? ->
-    // await User.updateMany(
-    //     {$or: [
-    //         {'party.leader': user._id}, 
-    //         {'party.members': { $elemMatch: {$eq: user._id}}}
-    //     ]},
-    //     {$set: {
-    //         party: {members: []},
-    //         activeOrder : {}
-    //     }}
-    // )
-    //OK!
-    
+  //what else - rally
+  // await Rally.updateMany(
+  //     {"$and": [
+  //         { users: { $elemMatch: {profile: user._id}}}, //wihout eq
+  //         { $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }]}, //leave users in achive rallies
+  //     ]},
+  //     {$pull: {
+  //         "users": {profile: user._id}
+  //     }}
+  // )
 
-    //what else - rally
-    // await Rally.updateMany(
-    //     {"$and": [
-    //         { users: { $elemMatch: {profile: user._id}}}, //wihout eq
-    //         { $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }]}, //leave users in achive rallies
-    //     ]},
-    //     {$pull: {
-    //         "users": {profile: user._id}
-    //     }}
-    // )
+  //missionInstance
+  // const missionInstance = await MissionInstance.findOne({party: {$elemMatch: {user: user._id}}}).populate({
+  //     path: "items"
+  // })
+  
+  // await asyncForEach((missionInstance.items), async item => {
+  //     await User.updateOne({_id: item.owner}, {$addToSet: {bag: item._id}})
+  // })
+  try{await user.remove()}catch(e){res.status(400).send(e.message)}
+  res.send()
 
-    //missionInstance
-    // const missionInstance = await MissionInstance.findOne({party: {$elemMatch: {user: user._id}}}).populate({
-    //     path: "items"
-    // })
-    
-    // await asyncForEach((missionInstance.items), async item => {
-    //     await User.updateOne({_id: item.owner}, {$addToSet: {bag: item._id}})
-    // })
-    try{await user.remove()}catch(e){res.status(400).send(e.message)}
-    res.send()
-
-    // missionInstance.remove()
-    
+  // missionInstance.remove()
+  
 })
   
   

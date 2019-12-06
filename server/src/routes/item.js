@@ -78,7 +78,7 @@ router.delete('/removeModel', auth, async (req, res) =>{
             res.status(404).send()
         }
 
-        itemModel.remove()
+        await itemModel.remove()
 
         res.send()
     } catch (e) {
@@ -137,7 +137,7 @@ router.delete('/remove', auth, async (req, res) =>{
             res.status(404).send()
         }
 
-        item.remove()
+        await item.remove()
 
         res.send()
     } catch (e) {
@@ -145,8 +145,13 @@ router.delete('/remove', auth, async (req, res) =>{
     }
 })
 
+////USER-SIDE
 
-//TESTS
+// blank
+
+//
+
+////TESTS
 
 //REFACTOR - left here for backup
 

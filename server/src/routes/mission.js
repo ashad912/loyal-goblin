@@ -799,7 +799,7 @@ const verifySendItem = (user, missionInstance, itemId) => {
             }
     
             if(item.owner._id.toString() !== user._id.toString()){
-                throw Error('Item has invalid owner prop!')
+                throw Error('Owner field conflict!')
             }
 
             resolve()

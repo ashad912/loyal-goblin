@@ -6,6 +6,7 @@ import {Item} from './item'
 import {Party} from './party'
 import {Rally} from './rally'
 import {ProductsOrderSchema} from '../schemas/ProductsOrderSchema'
+import {LoyalSchema} from '../schemas/LoyalSchema'
 
 import arrayUniquePlugin from 'mongoose-unique-array'
 import { asyncForEach } from '../utils/methods'
@@ -13,14 +14,6 @@ import { asyncForEach } from '../utils/methods'
 const userClasses = ['warrior', 'mage', 'rogue', 'cleric']
 
 const userStatuses = ['home', 'away', 'banned', 'nonactivated']
-
-const LoyalSchema = new mongoose.Schema({  
-    pressed: {
-        type: Boolean, 
-        required: true,
-    }   
-})
-
 
 
 export const UserSchema = new mongoose.Schema({
@@ -160,9 +153,27 @@ export const UserSchema = new mongoose.Schema({
             //unique: true,
             default: null
         },
+        hands: {
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'item',
+            //unique: true,
+            default: null
+        },
+        scroll: {
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'item',
+            //unique: true,
+            default: null
+        },
+        torpedo: {
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'item',
+            //unique: true,
+            default: null
+        },
     },
-    loyal: { //is it appropriate structure?
-        type: [LoyalSchema],
+    loyal: {
+        type: LoyalSchema,
         required: true
     },
     party: { //suggested struct - EXPERIMENTAL

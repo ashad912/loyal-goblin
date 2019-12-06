@@ -328,8 +328,8 @@ export const userPopulateBag = async (user) => {
         path: "bag",
         populate: {path: 'itemModel'}
       }).execPopulate();
-
-    return user
+    
+    return user //CONSIDER: return user.bag -> props: const user declaration
 }
 
 export const designateUserLevel = (points) => {

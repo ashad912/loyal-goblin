@@ -737,7 +737,7 @@ const Profile = props => {
         handleItemDelete={handleItemDelete}
       />
       <Typography variant="h5" className={classes.eqHeading}></Typography>
-      {props.auth.profile.hasOwnProperty("party") &&
+      {props.auth.profile.party &&
         props.auth.profile.party.members.length > 0 && (
           <div>
             {props.auth.profile.party.leader._id === props.auth.uid ? (
@@ -760,7 +760,7 @@ const Profile = props => {
           </div>
         )}
 
-      {props.auth.profile.hasOwnProperty("party") &&
+      {props.auth.profile.party &&
       props.auth.profile.party.members.length > 0 ? (
         <List
           style={{ width: "80%", marginTop: "2rem", border: "1px solid grey" }}
@@ -863,7 +863,7 @@ const Profile = props => {
       <PartyCreationDialog
         open={isCreatingParty}
         isManagingParty={
-          props.auth.profile.hasOwnProperty("party") &&
+          props.auth.profile.party &&
           props.auth.profile.party.members.length > 0 &&
           props.auth.profile.party.leader._id === props.auth.uid
         }

@@ -147,13 +147,13 @@ const TorpedoList = props => {
       )}
         
         <DialogActions>
-          {(props.userTorpedos.length > 0) && (
+          {/* {(props.userTorpedos.length > 0) && (
             <Button onClick={handleSave} color="primary">
               Zatwierdź
             </Button>
-          )}
+          )} */}
           
-          <Button onClick={handleClose} color="primary" autoFocus>
+          <Button onClick={handleSave} color="primary" autoFocus>
               Powrót
           </Button>
         </DialogActions>

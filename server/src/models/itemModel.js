@@ -56,7 +56,7 @@ const ItemModelSchema = new mongoose.Schema({
   },
   class: { type: String, required: true },
   twoHanded: {type: Boolean},
-
+  loyalAward: Boolean,
   perks: [
     {
       perkType: String, //perkTypes - easier to search -> u know key words -> perks.map(perk => if(perk.perkType = 'disc-product' && perk.name === product.name) -> give discount

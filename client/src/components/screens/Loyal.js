@@ -7,7 +7,8 @@ import LoadedTorpedo from './loyal/LoadedTorpedo'
 import Button from "@material-ui/core/Button";
 import { Typography } from '@material-ui/core';
 import styled from 'styled-components'
-
+import { connect } from 'react-redux';
+import {shootShip} from '../../store/actions/profileActions'
 
 const LoadedTorpedoContainer = styled.div`
     align-items: center;
@@ -21,16 +22,16 @@ const createTempTorpedos = () => {
 
     return [
         {
-            _id: 120,
+            _id: 120342,
             owner: 11111,
             itemModel: {
-              _id: 600,
+              _id: 605,
               type: {
                 _id: 6,
                 type: "torpedo"
               },
-              name: "D1",
-              fluff: "Ostrzelaj pole D1!",
+              name: "H7",
+              fluff: "Ostrzelaj pole H7!",
               imgSrc: "torpedo.png"
             }
         },
@@ -121,29 +122,54 @@ class Loyal extends Component {
     handleLoad = () => {
         
         //shot to backend - returned: field array
-        let serverFields = [
-            {id: 1, name: 'D1', pressed: true},
-            {id: 2, name: 'E3', pressed: false},
-            {id: 3, name: 'I1', pressed: true},
-            {id: 4, name: 'I2', pressed: true},
-            {id: 5, name: 'I3', pressed: false},
-            {id: 6, name: 'I4', pressed: true},
-            {id: 7, name: 'E4', pressed: true},
-            {id: 8, name: 'E5', pressed: false},
-            {id: 9, name: 'G7', pressed: true},
-            {id: 10, name: 'H7', pressed: true},
-            {id: 11, name: 'C1', pressed: false},
-            {id: 12, name: 'B9', pressed: true},
-            {id: 13, name: 'C9', pressed: true},
-            {id: 14, name: 'D9', pressed: false},
-            {id: 15, name: 'E9', pressed: true},
-            {id: 16, name: 'F9', pressed: false},
-            {id: 17, name: 'B4', pressed: false},
-            {id: 18, name: 'B5', pressed: false},
-            {id: 19, name: 'B6', pressed: false},
-            {id: 20, name: 'B7', pressed: false},
-        ]
+        // let serverFields = [
+        //     {id: 1, name: 'D1', pressed: true},
+        //     {id: 2, name: 'E3', pressed: false},
+        //     {id: 3, name: 'I1', pressed: true},
+        //     {id: 4, name: 'I2', pressed: true},
+        //     {id: 5, name: 'I3', pressed: false},
+        //     {id: 6, name: 'I4', pressed: true},
+        //     {id: 7, name: 'E4', pressed: true},
+        //     {id: 8, name: 'E5', pressed: false},
+        //     {id: 9, name: 'G7', pressed: true},
+        //     {id: 10, name: 'H7', pressed: true},
+        //     {id: 11, name: 'C1', pressed: false},
+        //     {id: 12, name: 'B9', pressed: true},
+        //     {id: 13, name: 'C9', pressed: true},
+        //     {id: 14, name: 'D9', pressed: false},
+        //     {id: 15, name: 'E9', pressed: true},
+        //     {id: 16, name: 'F9', pressed: false},
+        //     {id: 17, name: 'B4', pressed: false},
+        //     {id: 18, name: 'B5', pressed: false},
+        //     {id: 19, name: 'B6', pressed: false},
+        //     {id: 20, name: 'B7', pressed: false},
+        // ]
         //
+
+        let serverFields = [
+            {id: 1, name: 'D1', pressed: this.props.loyal['D1']},
+            {id: 2, name: 'E3', pressed: this.props.loyal['E3']},
+            {id: 3, name: 'I1', pressed: this.props.loyal['I1']},
+            {id: 4, name: 'I2', pressed: this.props.loyal['I2']},
+            {id: 5, name: 'I3', pressed: this.props.loyal['I3']},
+            {id: 6, name: 'I4', pressed: this.props.loyal['I4']},
+            {id: 7, name: 'E4', pressed: this.props.loyal['E4']},
+            {id: 8, name: 'E5', pressed: this.props.loyal['E5']},
+            {id: 9, name: 'G7', pressed: this.props.loyal['G7']},
+            {id: 10, name: 'H7', pressed: this.props.loyal['H7']},
+            {id: 11, name: 'C1', pressed: this.props.loyal['C1']},
+            {id: 12, name: 'B9', pressed: this.props.loyal['B9']},
+            {id: 13, name: 'C9', pressed: this.props.loyal['C9']},
+            {id: 14, name: 'D9', pressed: this.props.loyal['D9']},
+            {id: 15, name: 'E9', pressed: this.props.loyal['E9']},
+            {id: 16, name: 'F9', pressed: this.props.loyal['F9']},
+            {id: 17, name: 'B4', pressed: this.props.loyal['B4']},
+            {id: 18, name: 'B5', pressed: this.props.loyal['B5']},
+            {id: 19, name: 'B6', pressed: this.props.loyal['B6']},
+            {id: 20, name: 'B7', pressed: this.props.loyal['B7']},
+        ]
+
+        
 
         console.log(serverFields)
 
@@ -225,7 +251,7 @@ class Loyal extends Component {
         })
     }
 
-    handleShoot = () => {
+    handleShoot =  () => {
         if(this.state.seconds === 0){
             const svgRawObject = this.refs.boardsvg
             const doc = svgRawObject.contentDocument
@@ -234,10 +260,7 @@ class Loyal extends Component {
     
             const pressed_value = field.dataset.pressed === 'true' ? true : false
             if(pressed_value === false){
-                //shot to backend: verify false value, next generate QR
-                //socket for auto-effect when qr scan is confirmed
-                //verification failed: this.handleLoad() to reload styles -> protecting 'data-pressed' value manipulation
-    
+                
                 field.style.fill = 'orange'
                 this.startAnimation()
        
@@ -266,12 +289,21 @@ class Loyal extends Component {
     
     }
 
-    endAnimation = () => {
+    endAnimation = async () => {
         const svgRawObject = this.refs.boardsvg
         const doc = svgRawObject.contentDocument
         const field = doc.getElementsByName(this.state.loadedTorpedo.itemModel.name)[0] //assuming id as in serverFields array
-        field.style.fill = 'red'
-        this.handleTorpedoDelete(this.state.loadedTorpedo._id)
+        try{
+            const award = await this.props.shootShip(this.state.loadedTorpedo.itemModel.name)
+            if(award){
+                console.log('award granted')
+            }
+            field.style.fill = 'red'
+            this.handleTorpedoDelete(this.state.loadedTorpedo._id)
+        }catch(e){
+            console.log(e)
+        }
+        
     }
 
     handleToggleTorpedosModal = e => {
@@ -321,5 +353,17 @@ class Loyal extends Component {
         );
     }
 }
+
+const mapStateToProps = (state) => {
+    return {
+        loyal: state.auth.profile.loyal
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        shootShip: (fieldName) => dispatch(shootShip(fieldName))
+    }
+  }
  
-export default Loyal;
+export default connect(mapStateToProps, mapDispatchToProps)(Loyal);
