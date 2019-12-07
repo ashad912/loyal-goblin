@@ -305,6 +305,22 @@ UserSchema.methods.generateAuthToken = async function () { //on instances
     return token
 }
 
+UserSchema.methods.updatePassword = async function(oldPassword, newPassword) {
+    const user = this;
+  
+    return new Promise((resolve, reject) => {
+      bcrypt.compare(oldPassword, user.password, (err, res) => {
+        if (res) {
+          user.password = newPassword
+  
+          resolve(user);
+        } else {
+          reject();
+        }
+      });
+    });
+}
+
 
 
 UserSchema.methods.toJSON = function () { //like a middleware from express, we can use it with everythin
@@ -395,7 +411,8 @@ UserSchema.pre('remove', async function(next){
     next()
 })
 
-UserSchema.plugin(arrayUniquePlugin)
+
+//UserSchema.plugin(arrayUniquePlugin)
 
 
 export const User = new mongoose.model('user', UserSchema)

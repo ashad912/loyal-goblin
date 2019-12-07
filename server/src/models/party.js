@@ -7,7 +7,10 @@ import {MissionInstance} from './missionInstance'
 
 export const PartySchema = new mongoose.Schema({
     
-    name: String,
+    name: {
+        type: String,
+        required: true
+    },
     leader: {
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'user',
@@ -16,7 +19,7 @@ export const PartySchema = new mongoose.Schema({
     members: [{
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'user',
-        unique: true
+        //unique: true
     }],
     inShop: {
         type: Boolean,

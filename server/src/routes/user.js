@@ -112,32 +112,58 @@ router.get("/me", auth, async (req, res, next) => {
   }
 });
 
-router.patch("/me", auth, async (req, res, next) => {
-  const updates = Object.keys(req.body);
-  const allowedUpdates = ["name", "password"];
+// router.patch("/me", auth, async (req, res, next) => {
+//   const updates = Object.keys(req.body);
+//   const allowedUpdates = ["name", "password"];
 
-  const isValidOperation = updates.every(update => {
-    return allowedUpdates.includes(update);
-  });
+//   const isValidOperation = updates.every(update => {
+//     return allowedUpdates.includes(update);
+//   });
 
-  if (!isValidOperation) {
-    return res.status(400).send({ error: "Invalid update!" });
+//   if (!isValidOperation) {
+//     return res.status(400).send({ error: "Invalid update!" });
+//   }
+
+//   try {
+//     let user = req.user;
+//     updates.forEach(async (update) => {
+//       if(update === "password"){
+
+//           user = await req.user.updatePassword(req.body.password.oldPassword, req.body.password.newPassword)
+// console.log(user)
+
+//       }else{
+//         user[update] = req.body[update]; //user[update] -> user.name, user.password itd.
+//       }
+//     });
+
+//     await user.save();
+
+//     res.send(user);
+//   } catch (e) {
+//     res.status(400).send(e);
+//   }
+// });
+
+router.patch("/changePassword", auth, async (req, res, next) => {
+  let user = req.user
+  const oldPassword = req.body.oldPassword
+  const newPassword = req.body.newPassword
+  if(oldPassword === newPassword){
+    res.sendStatus(400)
+  }else{
+
+    try {
+      user = await req.user.updatePassword(oldPassword, newPassword)
+      await user.save();
+      res.send(user);
+    } catch (e) {
+      res.status(400).send(e);
+    }
   }
 
-  try {
-    const user = req.user;
+})
 
-    updates.forEach(update => {
-      user[update] = req.body[update]; //user[update] -> user.name, user.password itd.
-    });
-
-    await user.save();
-
-    res.send(user);
-  } catch (e) {
-    res.status(400).send(e);
-  }
-});
 
 const upload = multer({
   //dest: 'public/avatars',
