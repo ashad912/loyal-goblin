@@ -15,9 +15,11 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 
+
 import tempUserAvatar from '../../../assets/avatar/moose.png'
 import styled from 'styled-components'
 import uuid from 'uuid/v1'
+import createAvatarPlaceholder from "../../../utils/createAvatarPlaceholder";
 
 const Background = styled.div`
     background-color: #3f51b5;
@@ -27,18 +29,7 @@ const Background = styled.div`
 
 const StatsDialog = props => {
   
-    const createAvatarPlaceholder = (name) => {
 
-        if (!(/\s/.test(name))) {
-            return name.charAt(0).toUpperCase()
-        }
-        
-        const initials = name.split(" ").map(word => {
-            return word.charAt(0)
-        }).join('').toUpperCase()
-
-        return initials
-    }
 
     //const avatar = true
     const height = 100

@@ -12,16 +12,14 @@ import ForgotPassword from "./components/auth/ForgotPassword";
 import Admin from "./components/admin/Admin";
 import MissionInstance from "./components/screens/events/MissionInstance";
 
-import Snackbar from "@material-ui/core/Snackbar";
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import { connect } from 'react-redux';
-import {resetConnectionError} from './store/actions/connectionActions'
+import { connect } from "react-redux";
+import { resetConnectionError } from "./store/actions/connectionActions";
 
 import withAuth from "./hoc/withAuth";
-import withNoAuth from './hoc/withNoAuth'
+import withNoAuth from "./hoc/withNoAuth";
 import { authCheck } from "./store/actions/authActions";
+import ConnectionSpinnerDialog from "./components/layout/ConnectionSpinnerDialog";
+import ConnectionSnackbar from "./components/layout/ConnectionSnackbar";
 
 class App extends React.Component {
   state = {
@@ -29,16 +27,28 @@ class App extends React.Component {
     isAdmin: false
   };
 
-
   componentDidMount() {
     //FOR PRESENTATION ONLY
     const isAdmin = localStorage.getItem("isAdmin") ? true : false;
     this.setState({ isAdmin });
 
     //CHECK AUTH ON APP LOAD
-    
+
     this.props.authCheck();
-    
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    //USEFUL COMPONENT UPDATE DIAGNOSTICS
+    // Object.entries(this.props).forEach(
+    //   ([key, val]) =>
+    //     prevProps[key] !== val && console.log(`Prop '${key}' changed`)
+    // );
+    // if (this.state) {
+    //   Object.entries(this.state).forEach(
+    //     ([key, val]) =>
+    //       prevState[key] !== val && console.log(`State '${key}' changed`)
+    //   );
+    // }
   }
 
   render() {
@@ -53,57 +63,43 @@ class App extends React.Component {
           ) : (
             <div className="App">
               <Navbar />
-                <Switch>
-                  <Route exact path="/" component={withAuth(Root)} />
-                  <Route exact path="/shop" component={withAuth(Shop)} />
-                  <Route exact path="/mission" component={withAuth(MissionInstance)} />
-                  <Route exact path="/signin" component={withNoAuth(SignIn)} />
-                  <Route exact path="/signup" component={withNoAuth(SignUp)} />
-                  <Route exact path="/lost-password" component={withNoAuth(ForgotPassword)} />
-                  <Route exact path="/admin" component={Admin} />
-                </Switch>
+              <Switch>
+                <Route exact path="/" component={withAuth(Root)} />
+                <Route exact path="/shop" component={withAuth(Shop)} />
+                <Route
+                  exact
+                  path="/mission"
+                  component={withAuth(MissionInstance)}
+                />
+                <Route exact path="/signin" component={withNoAuth(SignIn)} />
+                <Route exact path="/signup" component={withNoAuth(SignUp)} />
+                <Route
+                  exact
+                  path="/lost-password"
+                  component={withNoAuth(ForgotPassword)}
+                />
+                <Route exact path="/admin" component={Admin} />
+              </Switch>
               <Footer />
             </div>
           )}
-          <Snackbar
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left"
-            }}
-            open={this.props.connection.connectionError}
-            onClose={this.props.resetConnectionError}
-            autoHideDuration={3000}
-            message={
-              <span>
-                Brak połączenia z serwerem.
-              </span>
-            }
-          />
-            <Dialog open={this.props.connection.loading} >
-              <DialogContent style={{display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10', height: '10rem', width: '10rem'}}>
-                  <CircularProgress style={{height: 100, width: 100}}/>
-              </DialogContent>
-          </Dialog>
+
+         <ConnectionSnackbar />
+          <ConnectionSpinnerDialog />
+         
         </StylesProvider>
       </BrowserRouter>
     );
   }
 }
 
-const mapStateToProps = (state) => {
+
+
+const mapDispatchToProps = dispatch => {
   return {
-      connection: state.connection,
-      auth: state.auth
-  }
-}
+    resetConnectionError: () => dispatch(resetConnectionError()),
+    authCheck: () => dispatch(authCheck())
+  };
+};
 
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-      resetConnectionError: () => dispatch(resetConnectionError()),
-      authCheck: () => dispatch(authCheck())
-  }
-}
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(null, mapDispatchToProps)(App);

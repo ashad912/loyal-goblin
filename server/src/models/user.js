@@ -55,7 +55,7 @@ export const UserSchema = new mongoose.Schema({
         type: String,
     },
     avatar: {
-        type: Buffer
+        type: String
     },
     name: {
         type: String,

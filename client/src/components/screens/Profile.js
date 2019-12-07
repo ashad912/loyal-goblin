@@ -19,6 +19,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import Badge from "@material-ui/core/Badge";
+import Avatar from "@material-ui/core/Avatar";
 
 import convertBagArrayToCategories from "../../utils/bagArrayToCategories";
 
@@ -32,6 +33,8 @@ import PartyJoiningDialog from "./profile/PartyJoiningDialog";
 import RankDialog from "./profile/RankDialog";
 import StatsDialog from "./profile/StatsDialog";
 import { toggleItem, deleteItem } from "../../store/actions/profileActions";
+import { updateParty, removeMember } from "../../store/actions/partyActions";
+import createAvatarPlaceholder from "../../utils/createAvatarPlaceholder";
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -365,8 +368,6 @@ const Profile = props => {
     setEquippedItems(props.auth.profile.equipped);
   }, [props.auth.profile.equipped]);
 
-
-
   const [activePerks, setActivePerks] = React.useState([]);
 
   const [goExp, setGoExp] = React.useState(false);
@@ -379,6 +380,7 @@ const Profile = props => {
   React.useEffect(() => {
     updateEquippedItems();
     handleJoinOrCreateParty();
+    props.onPartyUpdate();
   }, []);
 
   const updateEquippedItems = () => {
@@ -401,15 +403,21 @@ const Profile = props => {
       if (category.startsWith("weapon")) {
         loadedEquippedItem =
           bag.weapon &&
-          bag.weapon.find(item => item._id === props.auth.profile.equipped[category]);
+          bag.weapon.find(
+            item => item._id === props.auth.profile.equipped[category]
+          );
       } else if (category.startsWith("ring")) {
         loadedEquippedItem =
           bag.ring &&
-          bag.ring.find(item => item._id === props.auth.profile.equipped[category]);
+          bag.ring.find(
+            item => item._id === props.auth.profile.equipped[category]
+          );
       } else {
         loadedEquippedItem =
           bag[category] &&
-          bag[category].find(item => item._id === props.auth.profile.equipped[category]);
+          bag[category].find(
+            item => item._id === props.auth.profile.equipped[category]
+          );
       }
 
       if (loadedEquippedItem) {
@@ -518,12 +526,10 @@ const Profile = props => {
       tempPlayer.equipped[category] = isEquipped ? null : id;
     }
 
-
     props.onItemToggle(id, category, tempPlayer.equipped);
-
   };
 
-  const handleItemDelete = (id) => {
+  const handleItemDelete = id => {
     // const modifyItemArrayIndex = tempPlayer.bag[category].findIndex(
     //   item => {
     //     return item._id === id;
@@ -535,7 +541,7 @@ const Profile = props => {
     //   delete tempPlayer.bag[category];
     // }
     // setPlayer({ ...tempPlayer });
-    props.onItemDelete(id)
+    props.onItemDelete(id);
     updateEquippedItems();
   };
 
@@ -557,7 +563,7 @@ const Profile = props => {
   //   player.nextLevelAtExp = player.currentExpBasis + player.nextLevelAtExp;
   //   player.currentExpBasis = tempCurrentExpBasis;
 
-  //   
+  //
 
   //   return player;
   // };
@@ -575,27 +581,19 @@ const Profile = props => {
   // };
 
   const handleJoinOrCreateParty = () => {
-
     let party = localStorage.getItem("party");
     const tempPlayer = { ...props.auth.profile };
     if (party) {
       party = JSON.parse(party);
       //TODO: backend call
-
     } else {
       delete tempPlayer.party;
       //TODO: backend call
-
     }
   };
 
   const handleLeaveParty = () => {
-    const tempPlayer = { ...props.auth.profile  };
-
-    delete tempPlayer.party;
-    //TODO: backend call
-
-
+    props.onRemoveMember(props.party._id, props.auth.uid)
   };
 
   return (
@@ -611,11 +609,14 @@ const Profile = props => {
       <Typography variant="h5">Poziom {0}</Typography>
       {/* TODO: add experience needed for next level */}
       <Typography variant="subtitle2">
-        Doświadczenie: {props.auth.profile.experience + " / " + props.auth.profile.experience}
+        Doświadczenie:{" "}
+        {props.auth.profile.experience + " / " + props.auth.profile.experience}
       </Typography>
       <LinearProgress
         variant="determinate"
-        value={(props.auth.profile.experience * 100) / props.auth.profile.experience}
+        value={
+          (props.auth.profile.experience * 100) / props.auth.profile.experience
+        }
         className={classes.expBar}
       />
       <Grid
@@ -701,8 +702,8 @@ const Profile = props => {
             attributeValue={props.auth.profile.attributes.endurance}
             attributeModifier={props.auth.profile.userPerks.attrEndurance}
           />
-          
-          <Link to="/shop" style={{marginTop: '1rem'}}>
+
+          <Link to="/shop" style={{ marginTop: "1rem" }}>
             <Button variant="contained" color="primary">
               Idziemy expić!
               <ColorizeIcon
@@ -737,70 +738,70 @@ const Profile = props => {
         handleItemDelete={handleItemDelete}
       />
       <Typography variant="h5" className={classes.eqHeading}></Typography>
-      {props.auth.profile.party &&
-        props.auth.profile.party.members.length > 0 && (
-          <div>
-            {props.auth.profile.party.leader._id === props.auth.uid ? (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => setIsCreatingParty(prev => !prev)}
-              >
-                Zarządzaj drużyną
-              </Button>
-            ) : (
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleLeaveParty}
-              >
-                Opuść drużynę
-              </Button>
-            )}
-          </div>
-        )}
+      {props.party && props.party.leader && (
+        <div>
+          {props.party.leader._id === props.auth.uid ? (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setIsCreatingParty(prev => !prev)}
+            >
+              Zarządzaj drużyną
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleLeaveParty}
+            >
+              Opuść drużynę
+            </Button>
+          )}
+        </div>
+      )}
 
-      {props.auth.profile.party &&
-      props.auth.profile.party.members.length > 0 ? (
+      {props.party && props.party.leader ? (
         <List
           style={{ width: "80%", marginTop: "2rem", border: "1px solid grey" }}
         >
           <ListItem>
-            <Badge badgeContent="Lider" color="primary">
+            <Badge badgeContent="Lider" color="primary" anchorOrigin={{horizontal:'right', vertical:'top'}}>
               <ListItemAvatar>
-                <img
-                  src={
-                    props.auth.profile.party.leader.avatar.includes(
-                      "data:image"
-                    )
-                      ? props.auth.profile.party.leader.avatar
-                      : require("../../assets/avatar/" +
-                          props.auth.profile.party.leader.avatar)
-                  }
-                  width="32"
-                />
-              </ListItemAvatar>
-              <ListItemText primary={props.auth.profile.party.leader.name} />
-            </Badge>
-          </ListItem>
-
-          {props.auth.profile.party.members.map(partyMember => {
-            return (
-              <ListItem key={partyMember._id}>
-                <ListItemAvatar>
+                {props.party.leader.avatar ? (
                   <img
-                    src={
-                      partyMember.avatar.includes("data:image")
-                        ? partyMember.avatar
-                        : require("../../assets/avatar/" + partyMember.avatar)
-                    }
+                    src={"/images/user_uploads/" + props.party.leader.avatar}
                     width="32"
                   />
-                </ListItemAvatar>
-                <ListItemText primary={partyMember.name} />
-              </ListItem>
-            );
-          })}
+                ) : (
+                  <Avatar>
+                    {createAvatarPlaceholder(props.party.leader.name)}
+                  </Avatar>
+                )}
+              </ListItemAvatar>
+            </Badge>
+              <ListItemText primary={props.party.leader.name} />
+          </ListItem>
+
+          {props.party.members.length > 0 &&
+            props.party.members.map(partyMember => {
+              return (
+                <ListItem key={partyMember._id}>
+                  <ListItemAvatar>
+                    {partyMember.avatar ? (
+                      <img
+                        src={"/images/user_uploads/" + partyMember.avatar}
+                        width="32"
+                      />
+                    ) : (
+                      <Avatar>
+                        {createAvatarPlaceholder(partyMember.name)}
+                      </Avatar>
+                    )}
+                  </ListItemAvatar>
+                  <ListItemText primary={partyMember.name} />
+                </ListItem>
+              );
+            })}
         </List>
       ) : (
         <Grid container justify="space-around">
@@ -857,16 +858,18 @@ const Profile = props => {
       />
       <PartyJoiningDialog
         open={isJoiningParty}
+        userId={props.auth.uid}
         handleClose={() => setIsJoiningParty(prev => !prev)}
       />
 
       <PartyCreationDialog
         open={isCreatingParty}
         isManagingParty={
-          props.auth.profile.party &&
-          props.auth.profile.party.members.length > 0 &&
-          props.auth.profile.party.leader._id === props.auth.uid
+          props.party &&
+          props.party.leader &&
+          props.party.leader._id === props.auth.uid
         }
+        partyName={props.party && props.party.name}
         handleClose={() => setIsCreatingParty(prev => !prev)}
         handleCreateParty={handleJoinOrCreateParty}
       />
@@ -887,7 +890,8 @@ const Profile = props => {
 
 const mapStateToProps = state => {
   return {
-    auth: state.auth
+    auth: state.auth,
+    party: state.party
   };
 };
 
@@ -895,7 +899,9 @@ const mapDispatchToProps = dispatch => {
   return {
     onItemToggle: (id, category, equipped) =>
       dispatch(toggleItem(id, category, equipped)),
-      onItemDelete: (id) => dispatch(deleteItem(id))
+    onItemDelete: id => dispatch(deleteItem(id)),
+    onPartyUpdate: () => dispatch(updateParty()),
+    onRemoveMember: (partyId, memberId) => dispatch(removeMember(partyId, memberId))
   };
 };
 

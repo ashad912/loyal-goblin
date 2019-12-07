@@ -21,6 +21,7 @@
     "react-dnd-html5-backend": "^9.3.4",
     "react-dom": "^16.9.0",
     "react-drag-drop-container": "^6.1.1",
+    "react-qr-reader": "^2.2.1",
     "react-redux": "^7.1.1",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.1.1",

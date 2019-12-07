@@ -181,27 +181,48 @@ const upload = multer({
   }
 });
 
-router.post(
-  "/me/avatar",
-  auth,
-  upload.single("avatar"),
-  async (req, res) => {
-    //to have access to file here, we have to delete 'dest' prop from multer
-    //req.ninja.avatar = req.file.buffer //saved in binary data- base64 - it's possible to render img from binary
-    const buffer = await sharp(req.file.buffer)
-      .resize({ width: 100, height: 100 })
-      .png()
-      .toBuffer(); //convert provided img to png and specific size
-    req.user.avatar = buffer;
+// router.post("/me/avatar", auth, upload.single("avatar"), async (req, res) => {
+//     //to have access to file here, we have to delete 'dest' prop from multer
+//     //req.ninja.avatar = req.file.buffer //saved in binary data- base64 - it's possible to render img from binary
+//     const buffer = await sharp(req.file.buffer)
+//       .resize({ width: 100, height: 100 })
+//       .png()
+//       .toBuffer(); //convert provided img to png and specific size
+//     req.user.avatar = buffer;
 
-    await req.user.save();
-    const user = await userPopulateBag(req.user)
-    res.send(user);
-  },
-  (err, req, res, next) => {
-    res.status(400).send({ error: err.message }); //before app.use middleware with 422
-  }
-);
+//     await req.user.save();
+//     const user = await userPopulateBag(req.user)
+//     res.send(user);
+//   },
+//   (err, req, res, next) => {
+//     res.status(400).send({ error: err.message }); //before app.use middleware with 422
+//   }
+// );
+
+router.post('/me/avatar', auth, async (req, res) => {
+  try {
+    if(!req.files) {
+        res.send({
+            status: false,
+            message: 'Brak pliku'
+        });
+    } else {
+        //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
+        let avatar = req.files.avatar;
+        
+        //Use the mv() method to place the file in upload directory (i.e. "uploads")
+        avatar.name = req.user._id + '.jpg'
+        avatar.mv('../client/public/images/user_uploads/' + avatar.name);
+        req.user.avatar = avatar.name
+        const user = await req.user.save()
+
+        //send response
+        res.send(user);
+    }
+} catch (err) {
+    res.status(500).send(err);
+}
+})
 
 router.delete(
   "/me/avatar",
@@ -211,7 +232,7 @@ router.delete(
 
     await req.user.save();
     const user = await userPopulateBag(req.user)
-    res.send(req.user);
+    res.send(user);
   },
   (err, req, res, next) => {
     res.status(400).send({ error: err.message }); //before app.use middleware with 422

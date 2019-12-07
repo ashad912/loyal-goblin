@@ -64,13 +64,6 @@ export default function FullWidthTabs(props) {
       const redirectToIndex = props.location.state.indexRedirect;
       props.history.replace("", null);
       setValue(redirectToIndex);
-    }else{
-      const respawn = localStorage.getItem("respawn") ? true : false;
-
-      if(respawn){
-        const redirectToIndex = parseInt(localStorage.getItem("respawn"))
-        setValue(redirectToIndex);
-      }
     }
 
     
@@ -93,7 +86,6 @@ export default function FullWidthTabs(props) {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    localStorage.setItem("respawn", newValue) 
   };
 
   const handleChangeIndex = index => {

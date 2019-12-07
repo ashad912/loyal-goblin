@@ -1,4 +1,5 @@
 import express from 'express'
+const fileUpload = require('express-fileupload');
 import {userRouter} from './routes/user'
 import {missionRouter} from './routes/mission'
 import {rallyRouter, updateRallyQueue} from './routes/rally'
@@ -23,6 +24,9 @@ mongoose.connect(process.env.MONGODB_URL, {useNewUrlParser: true, useCreateIndex
 export const app = express()
 const port = process.env.PORT || 4000;
 
+app.use(fileUpload({
+    createParentPath: true
+}));
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, '../client/build')));

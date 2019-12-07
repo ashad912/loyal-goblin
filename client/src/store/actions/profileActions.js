@@ -18,7 +18,7 @@ export const updateAvatar = (avatar) => {
                 }
                 
                 const profile = res.data
-                profile.avatar = profile.avatar ? ('data:image/png;base64,' + profile.avatar) : (undefined)
+                profile.avatar = profile.avatar ? (profile.avatar) : (undefined)
                 const uid = profile._id
                 delete profile._id
 
@@ -41,7 +41,7 @@ export const shootShip = (fieldName) => {
             try {
                 const res = await axios.patch('/user/loyal', {field: fieldName})
                 const profile = res.data.updatedUser
-                profile.avatar = profile.avatar ? ('data:image/png;base64,' + profile.avatar) : (undefined)
+                profile.avatar = profile.avatar ? (profile.avatar) : (undefined)
                 
                 delete profile._id
                 dispatch({type: 'UPDATE_PROFILE_DATA', profile})
@@ -62,7 +62,7 @@ export const toggleItem = (id, category, equipped) => {
         try {
             const res = await axios.patch('/user/myItems/equip', {id, category, equipped})
             const profile = res.data
-            profile.avatar = profile.avatar ? ('data:image/png;base64,' + profile.avatar) : (undefined)
+            profile.avatar = profile.avatar ? (profile.avatar) : (undefined)
             
             delete profile._id
             dispatch({type: 'UPDATE_PROFILE_DATA', profile})
@@ -79,7 +79,7 @@ export const deleteItem = (id) => {
         try {
             const res = await axios.delete('/user/deleteUserItem', {data: {id}})
             const profile = res.data
-            profile.avatar = profile.avatar ? ('data:image/png;base64,' + profile.avatar) : (undefined)
+            profile.avatar = profile.avatar ? (profile.avatar) : (undefined)
             
             delete profile._id
             dispatch({type: 'UPDATE_PROFILE_DATA', profile})
