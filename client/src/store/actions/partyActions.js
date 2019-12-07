@@ -70,8 +70,8 @@ export const removeMember =  (partyId, memberId) => {
         try {
                 const res = await axios.patch('/party/leave', {partyId, memberId})
                 if(res){
-                    if(res.data){
-                        dispatch({type: "REMOVE_MEMBER", party: res.data})
+                    if(res.data.party !== null){
+                        dispatch({type: "REMOVE_MEMBER", party: res.data.party})
                     }else{
                         dispatch({type: "DELETE_PARTY"})
                     }

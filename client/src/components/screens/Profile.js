@@ -381,6 +381,7 @@ const Profile = props => {
     updateEquippedItems();
     handleJoinOrCreateParty();
     props.onPartyUpdate();
+
   }, []);
 
   const updateEquippedItems = () => {
@@ -593,7 +594,7 @@ const Profile = props => {
   };
 
   const handleLeaveParty = () => {
-    props.onRemoveMember(props.party._id, props.auth.uid)
+    props.onRemoveMember(props.party._id, props.auth.uid);
   };
 
   return (
@@ -765,7 +766,11 @@ const Profile = props => {
           style={{ width: "80%", marginTop: "2rem", border: "1px solid grey" }}
         >
           <ListItem>
-            <Badge badgeContent="Lider" color="primary" anchorOrigin={{horizontal:'right', vertical:'top'}}>
+            <Badge
+              badgeContent="Lider"
+              color="primary"
+              anchorOrigin={{ horizontal: "right", vertical: "top" }}
+            >
               <ListItemAvatar>
                 {props.party.leader.avatar ? (
                   <img
@@ -779,7 +784,7 @@ const Profile = props => {
                 )}
               </ListItemAvatar>
             </Badge>
-              <ListItemText primary={props.party.leader.name} />
+            <ListItemText primary={props.party.leader.name} />
           </ListItem>
 
           {props.party.members.length > 0 &&
@@ -901,7 +906,8 @@ const mapDispatchToProps = dispatch => {
       dispatch(toggleItem(id, category, equipped)),
     onItemDelete: id => dispatch(deleteItem(id)),
     onPartyUpdate: () => dispatch(updateParty()),
-    onRemoveMember: (partyId, memberId) => dispatch(removeMember(partyId, memberId))
+    onRemoveMember: (partyId, memberId) =>
+      dispatch(removeMember(partyId, memberId))
   };
 };
 

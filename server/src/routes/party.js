@@ -16,26 +16,33 @@ import isEqual from "lodash/isEqual";
 import moment from "moment";
 import { Rally } from "../models/rally";
 import { Party } from "../models/party";
+import _ from "lodash";
 
 const router = new express.Router();
 
+
+
+
+
 router.get("/", auth, async (req, res) => {
-  const user = req.user
-  if(user.party){
+  const user = req.user;
+  if (user.party) {
     try {
-      await user.populate({
-        path: 'party',
-        populate: {path: 'leader members', select: 'name avatar'},
-      }).execPopulate()
-      res.send(user.party)
+      await user
+        .populate({
+          path: "party",
+          populate: { path: "leader members", select: "name avatar" }
+        })
+        .execPopulate();
+      res.send(user.party);
     } catch (e) {
-      console.log(e)
-      res.sendStatus(400)
+      console.log(e);
+      res.sendStatus(400);
     }
-  }else{
-    res.send(null)
+  } else {
+    res.send(null);
   }
-})
+});
 
 //Called when party leader names party and can qr-scan new members
 router.post("/create", auth, async (req, res) => {
@@ -88,9 +95,13 @@ router.patch("/addMember", auth, async (req, res) => {
       );
       party.members.push(req.body.memberId);
       await party.save();
-      await party.populate({
-        path: 'leader members', select: '_id name avatar'
-      }).execPopulate()
+      await party
+        .populate({
+          path: "leader members",
+          select: "_id name avatar"
+        })
+        .execPopulate();
+        
       res.status(201).send(party);
     }
   } catch (e) {
@@ -104,26 +115,34 @@ router.patch("/addMember", auth, async (req, res) => {
 router.patch("/leave", auth, async (req, res) => {
   try {
     let party = await Party.findById(req.body.partyId);
-    //Sanity check if user is not leader (impossible from front end)
-    if(req.body.memberId.toString() !== party.leader.toString()){
-      party.members.pull({_id: req.body.memberId}) 
-      await party.save();
+    
+    if(req.body.memberId !== party.leader.toString()){
 
+      party.members.pull({ _id: req.body.memberId });
+      await party.save();
+  
       //Set leaving user party to null
       await User.updateOne({ _id: req.body.memberId }, { $set: { party: null } });
-
+  
       //Remove party's existing mission instance if present on user leave
-      const missionInstance = await MissionInstance.findOne({party: {$elemMatch: {profile: {$in: req.body.memberId}}}})
-      if(missionInstance){    
-          missionInstance.remove()
+      const missionInstance = await MissionInstance.findOne({
+        party: { $elemMatch: { profile: { $in: req.body.memberId } } }
+      });
+      if (missionInstance) {
+        missionInstance.remove();
       }
-      res.send(null)
-    }else {
-
-      await party.populate({
-        path: 'leader members', select: '_id name avatar'
-      }).execPopulate()
-      res.status(201).send(party);
+  
+      await party
+        .populate({
+          path: "leader members",
+          select: "_id name avatar"
+        })
+        .execPopulate();
+        if(req.body.memberId === req.user._id.toString()){
+          return res.send({party: null})
+        }else{
+          return res.status(201).send({party});
+        }
     }
   } catch (e) {
     console.log(e);

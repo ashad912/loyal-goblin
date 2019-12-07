@@ -17,7 +17,7 @@ import { resetConnectionError } from "./store/actions/connectionActions";
 
 import withAuth from "./hoc/withAuth";
 import withNoAuth from "./hoc/withNoAuth";
-import { authCheck } from "./store/actions/authActions";
+import { authCheck, registerForEvents } from "./store/actions/authActions";
 import ConnectionSpinnerDialog from "./components/layout/ConnectionSpinnerDialog";
 import ConnectionSnackbar from "./components/layout/ConnectionSnackbar";
 
@@ -33,8 +33,8 @@ class App extends React.Component {
     this.setState({ isAdmin });
 
     //CHECK AUTH ON APP LOAD
-
     this.props.authCheck();
+     
   }
 
   componentDidUpdate(prevProps, prevState) {

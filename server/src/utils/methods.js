@@ -286,7 +286,7 @@ export const designateUserPerks = async (user) => {
     
             }
     
-            console.log(modelPerks)
+            //console.log(modelPerks)
     
             resolve(modelPerks)
 
