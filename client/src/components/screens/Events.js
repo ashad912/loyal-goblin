@@ -856,6 +856,7 @@ const Events = () => {
                     <div>{isVisible ? ( /*inVisible defined only inside div witch is fucking kurwa crazy */
                         <MissionListItemHoc
                             index={index}
+                            handleMissionClick={handleMissionClick}
                             handleMissionDetailsOpen={handleMissionDetailsOpen}
                         />   
                     ) : (<div style={{height: itemLabelHeight}}></div>)   /*empty div with the same height - IMPORTANT */

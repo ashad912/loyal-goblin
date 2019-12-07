@@ -195,7 +195,8 @@ router.post(
     req.user.avatar = buffer;
 
     await req.user.save();
-    res.send(req.user);
+    const user = await userPopulateBag(req.user)
+    res.send(user);
   },
   (err, req, res, next) => {
     res.status(400).send({ error: err.message }); //before app.use middleware with 422
@@ -209,6 +210,7 @@ router.delete(
     req.user.avatar = undefined;
 
     await req.user.save();
+    const user = await userPopulateBag(req.user)
     res.send(req.user);
   },
   (err, req, res, next) => {

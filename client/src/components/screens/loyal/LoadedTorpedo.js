@@ -41,7 +41,7 @@ const LoadedTorpedo = (props) => {
         </ListItemAvatar>
         <ListItemText
           primary={torpedo.itemModel.name}
-          secondary={<span>{torpedo.itemModel.fluff}</span>}
+          secondary={<span>{torpedo.itemModel.description}</span>}
         />
         <ListItemIcon>
           <Button color="primary" disabled={props.inProgress}>

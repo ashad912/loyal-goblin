@@ -90,6 +90,10 @@ const Equipment = props => {
       <List component="nav" className={classes.root}>
         {Object.keys(items).map(itemCategory => {
           const chest = itemCategory === 'amulet' || itemCategory === 'scroll'
+          const torpedo = itemCategory === 'torpedo'
+          if(torpedo){
+            return null
+          }
           let stackedItems
           if(chest){
               stackedItems = convertToStack(items[itemCategory])

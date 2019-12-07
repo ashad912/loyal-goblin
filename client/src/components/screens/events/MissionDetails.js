@@ -294,7 +294,7 @@ const MissionDetails = (props) => {
             <Button onClick={props.handleClose} color="secondary">
                 Wróć
             </Button>
-            <Button variant="contained" color="primary" onClick={() => props.handleMissionClick(mission.id)} disabled={!props.isMissionActive || !props.leader}>Wyrusz!</Button>
+            <Button variant="contained" color="primary" onClick={() => props.handleMissionClick(mission._id)} disabled={!props.isMissionActive || !props.leader}>Wyrusz!</Button>
         </DialogActions>
         </Dialog>
     )

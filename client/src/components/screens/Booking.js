@@ -559,7 +559,7 @@ const Booking = () => {
     }
 
     return(
-        <div onClick={handleCount}>Booking</div>
+        <div onClick={handleCount}>Rezerwacje w budowie!</div>
     )
 }
 

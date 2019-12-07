@@ -412,7 +412,7 @@ UserSchema.pre('remove', async function(next){
 })
 
 
-//UserSchema.plugin(arrayUniquePlugin)
+UserSchema.plugin(arrayUniquePlugin)
 
 
 export const User = new mongoose.model('user', UserSchema)

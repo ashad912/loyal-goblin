@@ -106,7 +106,7 @@ class Loyal extends Component {
         seconds: 0,
         loading: true,
         dialogOpen: false,
-        userTorpedos: createTempTorpedos(),
+        userTorpedos: [],
         loadedTorpedo: undefined,
         showTorpedosModal: false
     }
@@ -117,6 +117,12 @@ class Loyal extends Component {
         if(this.state.seconds !== 0){
             clearInterval(this.timer);
         }
+    }
+
+    componentDidMount = () => {
+        this.setState({
+            userTorpedos: this.props.bag.filter((item) => item.itemModel.type === "torpedo"),
+        })
     }
 
     handleLoad = () => {
@@ -294,6 +300,7 @@ class Loyal extends Component {
         const doc = svgRawObject.contentDocument
         const field = doc.getElementsByName(this.state.loadedTorpedo.itemModel.name)[0] //assuming id as in serverFields array
         try{
+            
             const award = await this.props.shootShip(this.state.loadedTorpedo.itemModel.name)
             if(award){
                 console.log('award granted')
@@ -304,6 +311,13 @@ class Loyal extends Component {
             console.log(e)
         }
         
+    }
+
+    backToEvents = (history) => {
+        history.push({
+          pathname: '/',
+          state: {indexRedirect: 1}
+        }) 
     }
 
     handleToggleTorpedosModal = e => {
@@ -356,6 +370,7 @@ class Loyal extends Component {
 
 const mapStateToProps = (state) => {
     return {
+        bag: state.auth.profile.bag,
         loyal: state.auth.profile.loyal
     }
 }

@@ -102,7 +102,7 @@ const MissionListItem = (props) => {
                         <Button size="small" color="primary" style={{paddingLeft: '0'}} onClick={() => props.handleMissionDetailsOpen(props.index)}>Szczegóły</Button>
                     </Grid>
                     <Grid item xs={5} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                        <Button size="small" color="primary" style={{textAlign: 'right', paddingRight: '0'}} onClick={() => props.handleMissionClick(mission.id)} disabled={!props.isMissionActive || !props.leader}>Wyrusz!</Button>
+                        <Button size="small" color="primary" style={{textAlign: 'right', paddingRight: '0'}} onClick={() => props.handleMissionClick(mission._id)} disabled={!props.isMissionActive || !props.leader}>Wyrusz!</Button>
                     </Grid>
                 </Grid>
                 <Divider style={{margin: '0.5rem 0'}}/>

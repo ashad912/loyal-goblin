@@ -98,7 +98,7 @@ const TorpedoListItem = props => {
       </ListItemAvatar>
       <ListItemText
         primary={item.instancesIds.length < 2 ? (item.itemModel.name) : (`${item.itemModel.name} x${item.instancesIds.length}`)}
-        secondary={<span>{item.itemModel.fluff}</span>}
+        secondary={<span>{item.itemModel.description}</span>}
       />
       <ListItemIcon onClick={handleClick}>
         <Button >

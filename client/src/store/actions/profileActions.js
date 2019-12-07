@@ -20,8 +20,9 @@ export const updateAvatar = (avatar) => {
                 const profile = res.data
                 profile.avatar = profile.avatar ? ('data:image/png;base64,' + profile.avatar) : (undefined)
                 const uid = profile._id
-                delete profile._id  
-                dispatch( {type: "UPDATE_PROFILE_DATA'", profile}) //DISPATCH IS SYNCHRONOUS!!!
+                delete profile._id
+
+                dispatch( {type: "UPDATE_PROFILE_DATA", profile}) //DISPATCH IS SYNCHRONOUS!!!
             } catch (e) {
                 console.log(e)
                 dispatch( {type: "NO_CONNECTION", error: e})               
@@ -37,20 +38,21 @@ export const updateAvatar = (avatar) => {
 export const shootShip = (fieldName) => {
     return (dispatch) => {
         return new Promise( async (resolve, reject) => {
-        try {
-            const res = await axios.patch('/user/loyal', {field: fieldName})
-            const profile = res.data.updatedUser
-            profile.avatar = profile.avatar ? ('data:image/png;base64,' + profile.avatar) : (undefined)
-            
-            delete profile._id
-            dispatch({type: 'UPDATE_PROFILE_DATA', profile})
-            resolve(res.data.awardToPass)
-        } catch (e) {
-            console.log(e)
-            dispatch( {type: "NO_CONNECTION", error: e})
-            reject(e)     
-        }
-    })
+            try {
+                const res = await axios.patch('/user/loyal', {field: fieldName})
+                const profile = res.data.updatedUser
+                profile.avatar = profile.avatar ? ('data:image/png;base64,' + profile.avatar) : (undefined)
+                
+                delete profile._id
+                dispatch({type: 'UPDATE_PROFILE_DATA', profile})
+                
+                resolve(res.data.awardToPass)
+            } catch (e) {
+                console.log(e)
+                dispatch( {type: "NO_CONNECTION", error: e})
+                reject(e)     
+            }
+        })
     }
 }
 

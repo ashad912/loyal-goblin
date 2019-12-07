@@ -19,7 +19,6 @@ export const PartySchema = new mongoose.Schema({
     members: [{
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'user',
-        //unique: true
     }],
     inShop: {
         type: Boolean,
