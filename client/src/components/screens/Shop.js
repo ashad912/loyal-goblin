@@ -765,6 +765,9 @@ class Shop extends React.Component {
               products[modifyIndex].price +=
               activeUser.userPerks.products[modifiedProduct].priceMod;
               products[modifyIndex].priceModified = activeUser.userPerks.products[modifiedProduct].priceMod > 0 ? "#c10000" : "#28a52e";
+              if(products[modifyIndex].price < 0){
+                products[modifyIndex].price = 0.0
+              }
             }
             if (
               activeUser.userPerks.products[modifiedProduct].hasOwnProperty("experienceMod")
