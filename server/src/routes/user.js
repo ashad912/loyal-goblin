@@ -49,6 +49,7 @@ router.post("/login", async (req, res) => {
     );
     const token = await user.generateAuthToken(); //on instancegenerateAuthToken
     user = await userPopulateBag(user)
+    user.userPerks = await updatePerks(user, true)
     res.cookie("token", token, { httpOnly: true }).send(user);
   } catch (e) {
     res.status(400).send(e);

@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import styled from "styled-components";
 
 import { ScrollingProvider, Section } from "react-scroll-section";
@@ -11,7 +12,7 @@ import Badge from "@material-ui/core/Badge";
 import Snackbar from "@material-ui/core/Snackbar";
 
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 
 import MenuItem from "./shop/MenuItem";
 import ShopList from "./shop/ShopList";
@@ -20,6 +21,8 @@ import BasketDrawer from "./shop/BasketDrawer";
 import VerificationPage from "./shop/VerificationPage";
 import ScrollModal from "./shop/ScrollModal";
 import ScrollListItem from "./shop/ScrollListItem";
+import { getShop, activateOrder } from "../../store/actions/shopActions";
+import { updateParty } from "../../store/actions/partyActions";
 
 const Menu = styled(Paper)`
   flex-grow: 1;
@@ -133,7 +136,7 @@ const mockShop = [
     name: "Cosmo",
     category: "drink",
     description: "lubisz, ale się nie przyznasz przed kolegami",
-    price: 28.00,
+    price: 28.0,
     experience: 280,
     imgSrc: "drink.png",
     awards: [
@@ -190,7 +193,7 @@ const mockShop = [
     name: "BCosmo",
     category: "drink",
     description: "lubisz, ale się nie przyznasz przed kolegami",
-    price: 28.00,
+    price: 28.0,
     experience: 280,
     imgSrc: "drink.png"
   },
@@ -416,11 +419,11 @@ const mockUsers = [
     name: "Ancymon Bobrzyn",
     avatar: "avatar.png",
     productModifiers: {
-      "1": {experienceMod: 21},
-      "2": {experienceMod: 40},
-      "3": {experienceMod: 82},
-      "4": {priceMod: -0.6, experienceMod: 18},
-      "5": {experienceMod: 36}
+      "1": { experienceMod: 21 },
+      "2": { experienceMod: 40 },
+      "3": { experienceMod: 82 },
+      "4": { priceMod: -0.6, experienceMod: 18 },
+      "5": { experienceMod: 36 }
     },
     bag: [
       {
@@ -446,18 +449,18 @@ const mockUsers = [
         }
       }
     ],
-    equipped: {scroll: ''}
+    equipped: { scroll: "" }
   },
   {
     _id: 2,
     name: "Cecylia Dedoles",
     avatar: "avatar.png",
     productModifiers: {
-      "1": {priceMod: -1},
-      "2": {priceMod: -1},
-      "3": {priceMod: -1},
-      "4": {priceMod: -1},
-      "5": {priceMod: -1}
+      "1": { priceMod: -1 },
+      "2": { priceMod: -1 },
+      "3": { priceMod: -1 },
+      "4": { priceMod: -1 },
+      "5": { priceMod: -1 }
     },
     bag: [
       {
@@ -505,14 +508,14 @@ const mockUsers = [
         }
       }
     ],
-    equipped: {scroll: ''}
+    equipped: { scroll: "" }
   },
   {
     _id: 3,
     name: "Ewelina",
     avatar: "",
     bag: [],
-    equipped: {scroll: ''}
+    equipped: { scroll: "" }
   },
   {
     _id: 4,
@@ -586,7 +589,7 @@ const mockUsers = [
         }
       }
     ],
-    equipped: {scroll: ''}
+    equipped: { scroll: "" }
   },
   {
     _id: 5,
@@ -616,28 +619,28 @@ const mockUsers = [
         }
       }
     ],
-    equipped: {scroll: ''}
+    equipped: { scroll: "" }
   },
   {
     _id: 6,
     name: "I",
     avatar: "avatar.png",
     bag: [],
-    equipped: {scroll: ''}
+    equipped: { scroll: "" }
   },
   {
     _id: 7,
     name: "Justyna Kowalczyk",
     avatar: "avatar.png",
     bag: [],
-    equipped: {scroll: ''}
+    equipped: { scroll: "" }
   },
   {
     _id: 8,
     name: "Lol Łoś",
     avatar: "avatar.png",
     bag: [],
-    equipped: {scroll: ''}
+    equipped: { scroll: "" }
   }
 ];
 
@@ -645,42 +648,54 @@ class Shop extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      users: [...mockUsers],
-      products: [...mockShop],
+      users: [],
+      products: [],
       menuTopOffset: 0,
       menuSticky: false,
       baskets: {},
       snackbarOpen: false,
       activeUser: 1,
       basketDrawerOpen: false,
-      showVerificationPage: false,
+      //showVerificationPage: false,
       showScrollModal: false
     };
     this.menuRef = React.createRef();
   }
 
-  componentDidMount() {
-    let menuTopOffset = this.menuRef.current.offsetTop;
+  async componentDidMount() {
+    let menuTopOffset = this.menuRef.current && this.menuRef.current.offsetTop;
     this.setState({ menuTopOffset }, () => {
       window.addEventListener("scroll", this.handleScrollPosition);
     });
 
+    //this.props.onGetShop()
+    await this.props.onGetShop();
+    
+
     //backend call for players in party
+    this.props.onUpdateParty();
     const baskets = {};
-    this.state.users.forEach(player => {
-      baskets[player._id] = [];
-    });
+    if (this.props.party.length > 0) {
+      this.props.party.forEach(player => {
+        baskets[player._id] = [];
+      });
+    } else {
+      baskets[this.props.auth.uid] = [];
+    }
 
-    this.setState({ baskets });
+    this.setState({ baskets, products: [...this.props.products] });
 
-    this.handleChangeactiveUser(null, this.state.activeUser)
+    this.handleChangeactiveUser(
+      null,
+      this.props.party.length > 0
+        ? this.props.party[0]._id
+        : this.props.auth.uid
+    );
 
   }
 
   componentWillUnmount() {
-
-      window.removeEventListener("scroll", this.handleScrollPosition);
-    
+    window.removeEventListener("scroll", this.handleScrollPosition);
   }
 
   handleScrollPosition = () => {
@@ -700,7 +715,7 @@ class Shop extends React.Component {
       baskets[this.state.activeUser][idOfProductAlreadyInBasket].quantity += 1;
     } else {
       baskets[this.state.activeUser].push({
-        ...this.state.products.find(product => product._id === id),
+        ...this.props.products.find(product => product._id === id),
         quantity: 1
       });
     }
@@ -727,30 +742,41 @@ class Shop extends React.Component {
 
   handleChangeactiveUser = (e, id) => {
     //CALL BACKEND FOR PRODUCT MODIFIERS EACH TIME ACTIVE USER CHANGES
-    this.setState({ activeUser: id}, () => {
-      const products = [...mockShop]
+    this.setState({ activeUser: id }, () => {
+      const products = [...this.props.products];
       products.forEach(product => {
-        product.priceModified = false
-        product.experienceModified = false
-      })
-      const activeUser = this.state.users.find(user => user._id === this.state.activeUser)
-      if(activeUser.hasOwnProperty('productModifiers') && Object.keys(activeUser.productModifiers).length > 0){
-
-        Object.keys(activeUser.productModifiers).forEach(mod => {
-          const modifyIndex = products.findIndex(product => product._id === mod)
-          if(modifyIndex > -1){
-            if(activeUser.productModifiers[mod].hasOwnProperty('priceMod')){
-              products[modifyIndex].price += activeUser.productModifiers[mod].priceMod
-              products[modifyIndex].priceModified = true
+        product.priceModified = false;
+        product.experienceModified = false;
+      });
+      const activeUser = this.props.party.length > 0 ? this.props.party.find(
+        user => user._id === this.state.activeUser
+      ) : this.props.auth.profile;
+      if (
+        activeUser.hasOwnProperty("userPerks") &&
+        Object.keys(activeUser.userPerks.products).length > 0
+      ) {
+        Object.keys(activeUser.userPerks.products).forEach(modifiedProduct => {
+          const modifyIndex = products.findIndex(
+            product => product._id === modifiedProduct
+          );
+          
+          if (modifyIndex > -1) {
+            if (activeUser.userPerks.products[modifiedProduct].hasOwnProperty("priceMod")) {
+              products[modifyIndex].price +=
+              activeUser.userPerks.products[modifiedProduct].priceMod;
+              products[modifyIndex].priceModified = activeUser.userPerks.products[modifiedProduct].priceMod > 0 ? "#c10000" : "#28a52e";
             }
-            if(activeUser.productModifiers[mod].hasOwnProperty('experienceMod')){
-              products[modifyIndex].experience += activeUser.productModifiers[mod].experienceMod
-              products[modifyIndex].experienceModified = true
+            if (
+              activeUser.userPerks.products[modifiedProduct].hasOwnProperty("experienceMod")
+            ) {
+              products[modifyIndex].experience =
+              activeUser.userPerks.products[modifiedProduct].experienceMod;
+              products[modifyIndex].experienceModified = activeUser.userPerks.products[modifiedProduct].experienceMod > 0 ? "#28a52e" : "#c10000";
             }
           }
-        })
+        });
       }
-      this.setState({products})
+      this.setState({ products });
     });
   };
 
@@ -761,7 +787,8 @@ class Shop extends React.Component {
   };
 
   handleFinalizeOrder = () => {
-    this.setState({ showVerificationPage: true });
+    this.props.onActivateOrder(this.state.baskets)
+    //this.setState({ showVerificationPage: true });
   };
 
   handleScrollModalToggle = () => {
@@ -771,12 +798,15 @@ class Shop extends React.Component {
   };
 
   handleScrollSelect = id => {
-    const tempUsers = [...this.state.users]
-    const activeUser = tempUsers.findIndex(user => user._id === this.state.activeUser)
-    tempUsers[activeUser].equipped.scroll = tempUsers[activeUser].equipped.scroll === id ? '' : id
-    this.setState({users: tempUsers})
+    const tempUsers = [...this.props.party];
+    const activeUser = tempUsers.findIndex(
+      user => user._id === this.state.activeUser
+    );
+    tempUsers[activeUser].equipped.scroll =
+      tempUsers[activeUser].equipped.scroll === id ? "" : id;
+    this.setState({ users: tempUsers });
     //TODO: call to backend for new productModifiers
-  }
+  };
 
   render() {
     const shotList = this.state.products.filter(product => {
@@ -799,40 +829,60 @@ class Shop extends React.Component {
       return product.category === "food";
     });
 
-    const activeUser = this.state.users.find(user => user._id === this.state.activeUser)
-    const equippedScroll = activeUser.bag.find(item => item._id === activeUser.equipped.scroll)
+    const activeUser = this.props.party.length > 0 ? this.props.party.find(
+      user => user._id === this.state.activeUser
+    ) : this.props.auth.profile
+    const equippedScroll = activeUser.bag.find(
+      item => item._id === activeUser.equipped.scroll
+    );
     return (
       <div>
-        {this.state.showVerificationPage ? (
-          <VerificationPage />
+        {this.props.activeOrder.length > 0 ? (
+          <VerificationPage user={this.props.auth} party={this.props.party}/>
         ) : (
           <ScrollingProvider>
-            <PlayerShopButtons
-              users={this.state.users}
-              activeUser={this.state.activeUser}
-              handleChipClick={this.handleChangeactiveUser}
-            />
-            {!activeUser.equipped.scroll && activeUser.bag.length > 0  ?
-            <Button
-              style={{ margin: "1rem 0" }}
-              variant="contained"
-              color="primary"
-              onClick={this.handleScrollModalToggle}
-            >
-              Dodaj zwój z ekwipunku
-            </Button> :
-            activeUser.bag.length > 0 && (
-            <Grid container alignItems="center" style={{width: '100%', margin: '1rem 0', padding: '0.4rem', boxSizing: 'border-box'}}>
-              <Grid item xs={10}>
-                <ScrollListItem inactive scroll={equippedScroll}/>
-              </Grid>
-              <Grid item>
-              <HighlightOffIcon onClick={() => this.handleScrollSelect(equippedScroll._id)} style={{fontSize: '3rem', color: '#be0000'}}/>
-              </Grid>
-            </Grid>
-            )
-            }
-
+            {this.props.party.length > 0 && (
+              <PlayerShopButtons
+                users={this.props.party}
+                activeUser={this.state.activeUser}
+                handleChipClick={this.handleChangeactiveUser}
+              />
+            )}
+            {!activeUser.equipped.scroll && activeUser.bag.length > 0 ? (
+              <Button
+                style={{ margin: "1rem 0" }}
+                variant="contained"
+                color="primary"
+                onClick={this.handleScrollModalToggle}
+              >
+                Dodaj zwój z ekwipunku
+              </Button>
+            ) : (
+              activeUser.bag.length > 0 && (
+                <Grid
+                  container
+                  alignItems="center"
+                  style={{
+                    width: "100%",
+                    margin: "1rem 0",
+                    padding: "0.4rem",
+                    boxSizing: "border-box"
+                  }}
+                >
+                  <Grid item xs={10}>
+                    <ScrollListItem inactive scroll={equippedScroll} />
+                  </Grid>
+                  <Grid item>
+                    <HighlightOffIcon
+                      onClick={() =>
+                        this.handleScrollSelect(equippedScroll._id)
+                      }
+                      style={{ fontSize: "3rem", color: "#be0000" }}
+                    />
+                  </Grid>
+                </Grid>
+              )
+            )}
 
             <Menu
               square
@@ -917,18 +967,25 @@ class Shop extends React.Component {
                     onClose={this.handleSnackbarClose}
                     autoHideDuration={1000}
                     message={
+                      this.props.party.length > 0 ?
                       <span>
                         Dodano{" "}
                         {
                           this.state.baskets[this.state.activeUser][
                             this.state.baskets[this.state.activeUser].length - 1
-                          ].title
+                          ].name
                         }{" "}
-                        do koszyka{" "}
-                        {
-                          activeUser.name
-                        }
-                      </span>
+                        do koszyka {activeUser.name}
+                      </span> :
+                      <span>
+                      Dodano{" "}
+                      {
+                        this.state.baskets[this.state.activeUser][
+                          this.state.baskets[this.state.activeUser].length - 1
+                        ].name
+                      }{" "}
+                      do Twojego koszyka
+                    </span> 
                     }
                   />
                 </React.Fragment>
@@ -953,7 +1010,7 @@ class Shop extends React.Component {
               open={this.state.basketDrawerOpen}
               toggle={this.handleToggleBasketDrawer}
               baskets={this.state.baskets}
-              users={this.state.users}
+              users={this.props.party.length > 0 ? this.props.party : [this.props.auth.profile]}
               activeUser={this.state.activeUser}
               handleRemoveItem={this.handleRemoveItemFromCart}
               finalizeOrder={this.handleFinalizeOrder}
@@ -963,13 +1020,30 @@ class Shop extends React.Component {
         <ScrollModal
           open={this.state.showScrollModal}
           handleClose={this.handleScrollModalToggle}
-          scrolls={ activeUser.bag}
+          scrolls={activeUser.bag}
           equippedScrollId={activeUser.equipped.scroll}
-          handleScrollSelect = {this.handleScrollSelect}
+          handleScrollSelect={this.handleScrollSelect}
         />
       </div>
     );
   }
 }
 
-export default Shop;
+const mapStateToProps = state => {
+  return {
+    auth: state.auth,
+    activeOrder: state.auth.profile.activeOrder,
+    products: state.shop.products,
+    party: state.party.members.unshift(state.party.leader)
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onGetShop: () => dispatch(getShop()),
+    onUpdateParty: () => dispatch(updateParty()),
+    onActivateOrder: (baskets) => dispatch(activateOrder(baskets))
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Shop);

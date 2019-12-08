@@ -19,8 +19,8 @@ const AddIcon = styled(AddCircleIcon)`
 const ShopListItem = props => {
   const price = props.price;
   const exp = props.experience
-  const priceModified = props.priceModified
-  const experienceModified = props.experienceModified
+  let priceModified = props.priceModified
+  let experienceModified = props.experienceModified
   const name = props.name;
   const description = props.description;
   const imgSrc = props.imgSrc;
@@ -40,8 +40,8 @@ const ShopListItem = props => {
       </Grid>
       <ListItemIcon>
       <Grid container direction="column">
-        <Typography variant="body1" style={{marginRight: '2rem', color: priceModified ? '#28a52e' : 'inherit'}}>{price.toFixed(2) + " ZŁ"}</Typography>
-        <Typography variant="body2" style={{marginRight: '2rem', color: experienceModified ? '#28a52e' : 'inherit'}}>+ {exp + " PD"}</Typography>
+        <Typography variant="body1" style={{marginRight: '2rem', color: priceModified ? priceModified : 'inherit'}}>{price.toFixed(2) + " ZŁ"}</Typography>
+        <Typography variant="body2" style={{marginRight: '2rem', color: experienceModified ? experienceModified : 'inherit'}}>+ {exp + " PD"}</Typography>
       </Grid>
       </ListItemIcon>
       <AddIcon onClick={e => props.handleAddItem(e, props.id)} />

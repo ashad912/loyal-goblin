@@ -68,19 +68,27 @@ const baskets = [
 ];
 
 const VerificationPage = props => {
+  const [qrCode, setQrCode] = React.useState(null)
+  var opts = {
+    errorCorrectionLevel: 'H',
+    type: 'image/jpeg',
+    quality: 0.9,
+    margin: 1
+  }
 
   React.useEffect(() => {
-    //repace UUID with corresponding _id of created order
-    QRCode.toCanvas(document.getElementById('qr-canvas'),uuid(), { errorCorrectionLevel: 'H' }, function (err) {
-      
+    QRCode.toDataURL(props.user.uid, opts, function (err, url) {
+      if (err) throw err
+      setQrCode(url)
     })
   }, [])
 
+
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm" style={{padding: '1rem 0.4rem'}}>
       <Paper style={{ width: "100%" }}>
         <Typography>Pokaż ten kod przy barze, by otrzymać nagrody!</Typography>
-        <canvas id="qr-canvas" width={500} height={500}/>
+        <img src={qrCode} style={{width: '100%'}}/>
         <Divider />
         <List component="nav" style={{ width: "100%" }}>
           {baskets.map(basket => {

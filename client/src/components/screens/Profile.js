@@ -366,7 +366,8 @@ const Profile = props => {
 
   React.useEffect(() => {
     setEquippedItems(props.auth.profile.equipped);
-  }, [props.auth.profile.equipped]);
+    updateEquippedItems()
+  }, [props.auth.profile.bag, props.auth.profile.equipped]);
 
   const [activePerks, setActivePerks] = React.useState([]);
 
@@ -420,7 +421,7 @@ const Profile = props => {
             item => item._id === props.auth.profile.equipped[category]
           );
       }
-
+      
       if (loadedEquippedItem) {
         equipment[category] = loadedEquippedItem.itemModel.imgSrc;
         if (
@@ -526,7 +527,7 @@ const Profile = props => {
     } else {
       tempPlayer.equipped[category] = isEquipped ? null : id;
     }
-
+   
     props.onItemToggle(id, category, tempPlayer.equipped);
   };
 
@@ -653,7 +654,7 @@ const Profile = props => {
             />
           )}
           {/* head */}
-          {equippedItems && equippedItems.head && (
+          {equippedItems && equippedItems.head && equippedItems.head.includes(".") && (
             <img
               className={classes.avatarImage}
               src={require(`../../assets/avatar/items/${equippedItems.head}`)}

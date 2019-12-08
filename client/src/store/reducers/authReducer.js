@@ -54,6 +54,14 @@ const authReducer = (state = initState, action) => {
         profile: action.profile,
         init: false
       };
+      case "UPDATE_ACTIVE_ORDER":
+        const profile = {...state.profile}
+        profile.activeOrder = action.activeOrder
+        return {
+          ...state,
+          profile: {...profile},
+          init: false
+        };
 
     default:
       return state;

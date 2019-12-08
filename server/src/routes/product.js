@@ -2,7 +2,7 @@ import express from 'express'
 import { Product } from '../models/product';
 import { auth } from '../middleware/auth';
 import isEqual from 'lodash/isEqual'
-import { asyncForEach, updatePerks } from '../utils/methods';
+import { asyncForEach, updatePerks, designateUserPerks } from '../utils/methods';
 import { Rally } from '../models/rally';
 import { User } from '../models/user'
 import { Party } from '../models/party'
@@ -134,12 +134,14 @@ const verifyParty = (leader, membersIds, order) => {
             //checking if order profiles match party
             const party = [leader.toString(), ...membersIds.map(member => member.toString())]
             let orderParty = [] 
+            
             await asyncForEach(order, async (user) => {
                 const memberId = user.profile
+               
                 orderParty = [...orderParty, memberId.toString()]
             })
     
-            console.log(orderParty, party)
+            //console.log(orderParty, party)
             if(!isEqual(orderParty, party)) {
                 throw Error('Invalid party!')
             }
@@ -156,11 +158,12 @@ const verifyParty = (leader, membersIds, order) => {
 //OK
 router.patch('/activate', auth, async (req, res)=> {
 
-    const order = req.body
+    const order = req.body.order
     const user = req.user
 
     try{
         //checking active order - user
+        //TODO: should override last order?
         if(user.activeOrder.length){
             throw new Error(`Another active order exists (user: ${user._id})!`)
         }
@@ -186,7 +189,6 @@ router.patch('/activate', auth, async (req, res)=> {
         if(leader && (leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
             throw new Error('User is not the leader!')
         }
-
         await verifyParty(leader, membersIds, order)
     
 
@@ -202,7 +204,7 @@ router.patch('/activate', auth, async (req, res)=> {
         }, 60*1000); //removing activeOrder after 60 seconds
         */
 
-        res.send(user)
+        res.send(order)
 
     }catch(e){
         res.status(400).send(e.message)
@@ -234,13 +236,16 @@ router.patch('/verify', auth, async (req, res) => {
         const user = await User.findOne({
             $and: [
                 {_id: req.body._id},
-                {party: partyId},
+                //{party: partyId},
                 {'activeOrder': {$not: {$size: 0}}} //size does not accept ranges
             ]
         })
 
         if(!user){
-            throw Error('User not found!')
+            throw Error('Nie znaleziono użytkownika!')
+        }
+        if(partyId && !user.party){
+            throw Error('Użytkownik nie należy do żadnej drużyny!')
         }
         
         const members = await verifyParty(leader, membersIds, user.activeOrder)
@@ -257,17 +262,19 @@ router.patch('/verify', auth, async (req, res) => {
 
         const partyFullObject = [user, ...members]
 
-        console.log(activeOrder)
-
+        //console.log(activeOrder)
+        let modelPerks
         await asyncForEach(partyFullObject, async (user) => {
-            const userPerks = user.userPerks
-            console.log(userPerks)
+           // const userPerks = user.userPerks
+           // console.log(userPerks)
             //HERE IMPLEMENT PRICE AND EXPERIENCE MODS - input: activeOrder, userPerks; output: object for view
+            modelPerks =await designateUserPerks(user)
+ 
         })
 
         //create ArchiveOrder - save modified experience for users OR repeat function in 'finalize'
 
-        res.send()
+        res.send(modelPerks.products)
         
     }catch(e){
         res.status(400).send(e.message)
