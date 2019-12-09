@@ -81,6 +81,10 @@ router.post("/create", auth, async (req, res) => {
 router.patch("/addMember", auth, async (req, res) => {
   try {
     const party = await Party.findById(req.body.partyId);
+    if (party.members.length  >= 7){
+      res.status(401).send("Maksymalna wielkość drużyny została osiągnięta!");
+    }
+
     const user = await User.findById(req.body.memberId);
     if (user.party) {
       if (user.party === req.body.partyId) {
@@ -93,6 +97,7 @@ router.patch("/addMember", auth, async (req, res) => {
         { _id: req.body.memberId },
         { $set: { party: req.body.partyId } }
       );
+      
       party.members.push(req.body.memberId);
       await party.save();
       await party
@@ -126,7 +131,7 @@ router.patch("/leave", auth, async (req, res) => {
   
       //Remove party's existing mission instance if present on user leave
       const missionInstance = await MissionInstance.findOne({
-        party: { $elemMatch: { profile: { $in: req.body.memberId } } }
+        party: { $elemMatch: { profile: req.body.memberId } }
       });
       if (missionInstance) {
         missionInstance.remove();

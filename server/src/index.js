@@ -11,8 +11,9 @@ import mongoose from "mongoose";
 import path from "path";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import cookie from "cookie";
 import socket from "socket.io";
-import { auth } from "./middleware/auth";
+import { socketJoinAuth } from "./middleware/auth";
 import _ from "lodash";
 
 //TO-START: npm run-script dev
@@ -62,18 +63,40 @@ const server = app.listen(port, () => {
 
 var io = socket(server); //param is a server, defined upper
 
+io.use((socket, next) => {
+  var cookies = cookie.parse(socket.handshake.headers.cookie);
+  var token = cookies.token
+  //console.log(token)
+  if (true) {
+    return next();
+  }
+  return next(new Error('authentication error'));
+});
+
 const mission = io.of("/mission");
 
 mission.on("connection", socket => {
+  
   console.log("New client connected", socket.id);
 
-  socket.on("joinRoom", roomId => {
-    socket.join(roomId, () => {
-      console.log(socket.id, "joined the room", roomId);
-      io.of("mission")
-        .to(roomId)
-        .emit("joinRoom", roomId);
-    });
+  socket.on("joinRoom", async (roomId) => {
+
+  
+    try{
+      await socketJoinAuth(socket, roomId)
+
+      socket.join(roomId, () => {
+        console.log(socket.id, "joined the room", roomId);
+        io.of("mission")
+          .to(roomId)
+          .emit("joinRoom", roomId);
+      });
+    }catch(e){
+      console.log(e)
+    }
+    
+
+    
   });
 
   socket.on("addItem", data => {

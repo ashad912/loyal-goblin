@@ -11,9 +11,18 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components'
 import avatarTemp from '../../../../assets/avatar/moose.png'
 import bagImg from '../../../../assets/avatar/bag.png'
+import Cookies from 'js-cookie';
 
-
-
+const socket =  io('/mission', {
+  autoConnect: false,
+  transportOptions: {
+    polling: {
+      extraHeaders: {
+        'token': Cookies.get('token')
+      }
+    }
+  }
+})
 
 
 const userItemsName = 'userItems'
@@ -159,9 +168,9 @@ export default class ExchangeArea extends React.Component {
       allItems: [...this.state[userItemsName], ...this.state[missionItemsName]]
     })
    
-    const socket =  io('/mission')
-
-    //await from backend generating roomId -> roomId = eventInstanceId
+    
+    console.log(socket)
+    //await from backend generating roomId -> roomId = missionInstanceId
     
     //temporary separate room for specific mission
     socketFuncs.joinRoomEmit(socket, this.props.locationId)
@@ -250,7 +259,10 @@ export default class ExchangeArea extends React.Component {
       this.setState({
         userRegistered: true
       }, () => {
-        const {socket} = this.state
+        
+        //const {socket} = this.state
+        console.log(socket)
+        socket.open()
         const user = {_id: this.props.userId, readyStatus: false}
         socketFuncs.registerUserEmit(socket, user, this.state.roomId)
       })
@@ -354,9 +366,9 @@ export default class ExchangeArea extends React.Component {
   
   render() {
 
-    if(!this.state.roomId){
-      return <Loading/>
-    }
+    // if(!this.state.roomId){
+    //   return <Loading/>
+    // }
     
     const registerLabel = this.state.userRegistered ? ('User registered!') : ('Register user in SocketIO!')
 
