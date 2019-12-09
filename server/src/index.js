@@ -13,7 +13,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import cookie from "cookie";
 import socket from "socket.io";
-import { socketJoinAuth } from "./middleware/auth";
+import { socketJoinRoomAuth, socketConnectAuth } from "./middleware/auth";
 import _ from "lodash";
 
 //TO-START: npm run-script dev
@@ -63,14 +63,17 @@ const server = app.listen(port, () => {
 
 var io = socket(server); //param is a server, defined upper
 
-io.use((socket, next) => {
-  var cookies = cookie.parse(socket.handshake.headers.cookie);
-  var token = cookies.token
-  //console.log(token)
-  if (true) {
-    return next();
+io.use(async (socket, next) => {
+
+  try{
+    await socketConnectAuth(socket)
+    
+  }catch(e){
+    return next(new Error('authentication error'));
   }
-  return next(new Error('authentication error'));
+
+  return next();
+  
 });
 
 const mission = io.of("/mission");
@@ -79,17 +82,17 @@ mission.on("connection", socket => {
   
   console.log("New client connected", socket.id);
 
-  socket.on("joinRoom", async (roomId) => {
+  socket.on("joinRoom", async (partyId) => {
 
   
     try{
-      await socketJoinAuth(socket, roomId)
+      await socketJoinRoomAuth(socket, partyId)
 
-      socket.join(roomId, () => {
-        console.log(socket.id, "joined the room", roomId);
+      socket.join(partyId, () => {
+        console.log(socket.id, "joined the room", partyId);
         io.of("mission")
-          .to(roomId)
-          .emit("joinRoom", roomId);
+          .to(partyId)
+          .emit("joinRoom", partyId);
       });
     }catch(e){
       console.log(e)
