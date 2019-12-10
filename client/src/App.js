@@ -22,7 +22,7 @@ import { updateParty } from "./store/actions/partyActions";
 import ConnectionSpinnerDialog from "./components/layout/ConnectionSpinnerDialog";
 import ConnectionSnackbar from "./components/layout/ConnectionSnackbar";
 
-import {joinRoomSubscribe, refreshPartySubscribe} from './socket'
+import {socket, joinRoomSubscribe, leaveRoomSubscribe, refreshRoomSubscribe, deleteRoomSubscribe} from './socket'
 
 class App extends React.Component {
   state = {
@@ -30,21 +30,37 @@ class App extends React.Component {
     isAdmin: false
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     //FOR PRESENTATION ONLY
     const isAdmin = localStorage.getItem("isAdmin") ? true : false;
     this.setState({ isAdmin });
 
     //CHECK AUTH ON APP LOAD
-    this.props.authCheck();
+    const uid = await this.props.authCheck();
 
     joinRoomSubscribe((roomId) => {
       console.log(roomId)
       this.props.onPartyUpdate()
     })
 
-    refreshPartySubscribe((roomId) => {
-      console.log(roomId)
+    leaveRoomSubscribe((socketUserIdToLeave) => {
+      console.log(uid, socketUserIdToLeave)
+      if(uid === socketUserIdToLeave && socket.connected){
+        socket.disconnect()
+      }
+      this.props.onPartyUpdate()
+      
+      
+    })
+
+    refreshRoomSubscribe((roomId) => {
+      this.props.onPartyUpdate()
+    })
+
+    deleteRoomSubscribe((roomId) => {
+      if(socket.connected){
+        socket.disconnect()
+      }
       this.props.onPartyUpdate()
     })
      

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {socket, joinRoomEmit, refreshPartyEmit} from '../../socket'
+import {socket, joinRoomEmit, leaveRoomEmit, refreshRoomEmit, deleteRoomEmit} from '../../socket'
 
 
 
@@ -18,7 +18,9 @@ export const updateParty = () => {
                     joinRoomEmit(party._id)
                 }
                 
-            }      
+            }else{
+                dispatch({type: "DELETE_PARTY"})
+            }
         }
 
         catch (e) {
@@ -35,8 +37,14 @@ export const createParty =  (name, leader) => {
     return async dispatch => {
         try {
                 const res = await axios.post('/party/create', {name})
-                if(res){
+                if(res.data){
                     dispatch({type: "CREATE_PARTY", name, partyId: res.data.partyId, leader})
+
+                    if(!socket.connected){
+                        socket.open()
+                        joinRoomEmit(res.data.partyId)
+                    }
+                    
                 }
             }
 
@@ -51,9 +59,9 @@ export const deleteParty =  () => {
     return async dispatch => {
         try {
                 const res = await axios.delete('/party/remove')
-                if(res){
+                if(res.data){
                     dispatch({type: "DELETE_PARTY"})
-                    refreshPartyEmit(res.data.party._id)
+                    deleteRoomEmit(res.data._id)
                 }
             }
 
@@ -68,9 +76,9 @@ export const addMember =  (partyId, memberId) => {
     return async dispatch => {
         try {
                 const res = await axios.patch('/party/addMember', {partyId, memberId})
-                if(res){
+                if(res.data){
                     dispatch({type: "ADD_MEMBER", party: res.data})
-                    refreshPartyEmit(partyId)
+                    refreshRoomEmit(res.data._id)
                 }
             }
 
@@ -85,14 +93,20 @@ export const removeMember =  (partyId, memberId) => {
     return async dispatch => {
         try {
                 const res = await axios.patch('/party/leave', {partyId, memberId})
-                if(res){
-                    if(res.data.party !== null){
-                        dispatch({type: "REMOVE_MEMBER", party: res.data.party})
-                    }else{
-                        dispatch({type: "DELETE_PARTY"})
-                    }
-                    refreshPartyEmit(partyId)
+                console.log(res.data)
+                
+                if(res.data !== null){
+                    dispatch({type: "REMOVE_MEMBER", party: res.data})
+                    console.log(memberId, partyId)
+                    leaveRoomEmit(memberId, partyId)
+                }else{
+                    dispatch({type: "DELETE_PARTY"})
+                    deleteRoomEmit(res.data._id)
                 }
+
+                leaveRoomEmit(memberId, partyId)
+                    
+                
             }
 
      catch (e) {

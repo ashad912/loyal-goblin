@@ -12,8 +12,20 @@ export const joinRoomSubscribe = (roomId) => {
     })
 }
 
-export const refreshPartySubscribe = (roomId) => {
-    socket.on('refreshParty', roomId, () => {
+export const leaveRoomSubscribe = (id) => {
+    socket.on('leaveRoom', id, () => {
+        return id
+    })
+}
+
+export const refreshRoomSubscribe = (roomId) => {
+    socket.on('refreshRoom', roomId, () => {
+        return  roomId
+    })
+}
+
+export const deleteRoomSubscribe = (roomId) => {
+    socket.on('deleteRoom', roomId, () => {
         return  roomId
     })
 }
@@ -53,8 +65,17 @@ export const joinRoomEmit = (roomId) => {
     socket.emit('joinRoom', roomId)
 }
 
-export const refreshPartyEmit = (roomId) => {
-    socket.emit('refreshParty', roomId)
+export const leaveRoomEmit = (id, roomId) => {
+    const data = {id: id, roomId: roomId}
+    socket.emit('leaveRoom', data)
+}
+
+export const refreshRoomEmit = (roomId) => {
+    socket.emit('refreshRoom', roomId)
+}
+
+export const deleteRoomEmit = (roomId) => {
+    socket.emit('deleteRoom', roomId)
 }
 
 export const addItemEmit = ( item, roomId) => {

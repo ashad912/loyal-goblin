@@ -24,49 +24,60 @@ const router = new express.Router();
 
 
 
-router.get("/", auth, async (req, res) => {
+router.get("/", auth, async (req, res, next) => {
   const user = req.user;
-  if (user.party) {
-    try {
-      await user
-        .populate({
-          path: "party",
-          populate: { path: "leader members", select: "_id name avatar" }
-        })
-        .execPopulate();
 
-      res.send(user.party);
-    } catch (e) {
-      console.log(e);
-      res.sendStatus(400);
+  try {
+    if(!user.party){
+      res.send(null)
+      return
     }
-  } else {
-    res.send(null);
+    
+    await user
+      .populate({
+        path: "party",
+        populate: { path: "leader members", select: "_id name avatar" }
+      })
+      .execPopulate();
+
+    res.send(user.party);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send();
   }
+  
 });
 
 //Called when party leader names party and can qr-scan new members
 router.post("/create", auth, async (req, res) => {
   //Leader is User model
   const leader = req.user;
-
-  //Remove old party if leader creates new one
-  if (leader.party) {
-    try {
-      const oldParty = await Party.findById(leader.party._id);
-      if (oldParty.leader.toString() === leader._id.toString()) {
-        await oldParty.remove();
-      }
-    } catch (e) {
-      console.log(e);
-      res.sendStatus(400);
-    }
-  }
-
-  //Create new party with name from request and leader from auth
-  const party = new Party({ name: req.body.name, leader: leader._id });
-
   try {
+
+    //Forbid party creation if user is in another party
+    const oldParty = await Party.findOne({
+      $or: [
+        {leader: leader._id},
+        {members: {$elemMatch: {$eq: leader._id}}}
+      ]
+    })
+
+    if(oldParty){
+      throw new Error('User is in another party!')
+    }
+    
+    if (leader.party) {
+      
+        const oldParty = await Party.findById(leader.party);
+        if(oldParty){
+          throw new Error('User is in another party!')
+        }    
+    }
+
+    //Create new party with name from request and leader from auth
+    const party = new Party({ name: req.body.name, leader: leader._id });
+
+  
     await party.save();
     leader.party = party._id;
     await leader.save();
@@ -121,35 +132,40 @@ router.patch("/addMember", auth, async (req, res) => {
 router.patch("/leave", auth, async (req, res) => {
   try {
     let party = await Party.findById(req.body.partyId);
-    
-    if(req.body.memberId !== party.leader.toString()){
 
-      party.members.pull({ _id: req.body.memberId });
-      await party.save();
-  
-      //Set leaving user party to null
-      await User.updateOne({ _id: req.body.memberId }, { $set: { party: null } });
-  
-      //Remove party's existing mission instance if present on user leave
-      const missionInstance = await MissionInstance.findOne({
-        party: { $elemMatch: { profile: req.body.memberId } }
-      });
-      if (missionInstance) {
-        missionInstance.remove();
-      }
-  
-      await party
-        .populate({
-          path: "leader members",
-          select: "_id name avatar"
-        })
-        .execPopulate();
-        if(req.body.memberId === req.user._id.toString()){
-          return res.send({party: null})
-        }else{
-          return res.status(201).send({party});
-        }
+    if(req.body.memberId === party.leader.toString()){
+      throw new Error('Leader cannot leave the party!')
     }
+    
+    
+
+    party.members.pull({ _id: req.body.memberId });
+    await party.save();
+
+    //Set leaving user party to null
+    await User.updateOne({ _id: req.body.memberId }, { $set: { party: null } });
+
+    //Remove party's existing mission instance if present on user leave
+    const missionInstance = await MissionInstance.findOne({
+      party: { $elemMatch: { profile: req.body.memberId } }
+    });
+    if (missionInstance) {
+      missionInstance.remove();
+    }
+
+    await party
+      .populate({
+        path: "leader members",
+        select: "_id name avatar"
+      })
+      .execPopulate();
+    if(req.body.memberId !== req.user._id.toString()){
+      res.send(null)
+      
+    }else{
+      res.status(201).send(party);
+    }
+    
   } catch (e) {
     console.log(e);
     res.sendStatus(400);
@@ -199,7 +215,6 @@ router.delete("/remove", auth, async (req, res) => {
     }
 
     await party.remove(); //look at middleware
-
     res.send(party);
   } catch (e) {
     res.status(400).send(e.message);
