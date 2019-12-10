@@ -17,11 +17,16 @@ const ScrollModal = ({open, handleClose, scrolls, equippedScrollId, handleScroll
         Zarządzaj zwojami
       </DialogTitle>
       <DialogContent>
-{scrolls.map(scroll => {
+        {scrolls.length>0 ? 
+
+        
+scrolls.map(scroll => {
     return (
         <ScrollListItem key={scroll._id} scroll= {scroll} equipped={scroll._id === equippedScrollId} handleScrollSelect={handleScrollSelect}/>
     )
-})}
+}) :
+<DialogContentText> Brak zwojów w ekwipunku </DialogContentText>
+}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} variant="contained" color="primary">

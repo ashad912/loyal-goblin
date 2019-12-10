@@ -198,9 +198,9 @@ export const designateUserPerks = async (user) => {
                 
                 if(equippedItems[itemKey] && equippedItems[itemKey].hasOwnProperty('itemModel') && equippedItems[itemKey].itemModel.hasOwnProperty('perks') && equippedItems[itemKey].itemModel.perks && equippedItems[itemKey].itemModel.perks.length > 0){
                     const perks = equippedItems[itemKey].itemModel.perks
-                    console.log(perks)
+                    //console.log(perks)
                     perks.forEach((perk) => {
-                        console.log(perk.perkType)
+                       // console.log(perk.perkType)
                         if(isTime(perk.time)){
                             switch(perk.perkType){
                                 case 'attr-strength':

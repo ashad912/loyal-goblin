@@ -91,13 +91,14 @@ const VerificationPage = props => {
         <img src={qrCode} style={{width: '80%', marginBottom: '1rem'}}/>
         <Divider />
         <List component="nav" style={{ width: "100%" }}>
-          {baskets.map(basket => {
+          {/* TODO: replace with back end data */}
+          {/* {props.activeOrder && props.activeOrder.map(basket => {
             return (
-              <React.Fragment key={basket.user.id}>
+              <React.Fragment key={basket.profile._id}>
                 <ListItem style={{ flexDirection: "column"}}>
                   <List style={{ width: "100%" }}>
                     <ListItem>
-                      <ListItemText primary={basket.user.name} />
+                      <ListItemText primary={basket.profile.name} />
                       <ListItemText
                         secondary={basket.price.toFixed(2) + " ZŁ"}
                       />
@@ -128,7 +129,7 @@ const VerificationPage = props => {
                 <Divider />
               </React.Fragment>
             );
-          })}
+          })} */}
         </List>
       </Paper>
     </Container>
