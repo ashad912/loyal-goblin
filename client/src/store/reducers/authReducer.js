@@ -4,7 +4,7 @@ const initState = {
   init: true,
   uid: null,
   profile: {},
-  authError: null
+  authError: null,
 };
 
 const authReducer = (state = initState, action) => {

@@ -69,6 +69,7 @@ io.use(async (socket, next) => {
     await socketConnectAuth(socket)
     
   }catch(e){
+    console.log(e)
     return next(new Error('authentication error'));
   }
 
@@ -76,9 +77,9 @@ io.use(async (socket, next) => {
   
 });
 
-const mission = io.of("/mission");
+//const mission = io.of("/mission");
 
-mission.on("connection", socket => {
+io.on("connection", socket => {
   
   console.log("New client connected", socket.id);
 
@@ -90,10 +91,34 @@ mission.on("connection", socket => {
 
       socket.join(partyId, () => {
         console.log(socket.id, "joined the room", partyId);
-        io.of("mission")
-          .to(partyId)
-          .emit("joinRoom", partyId);
+        io.to(partyId).emit("joinRoom", partyId);
+
+          // io.of("mission")
+          // .to(partyId)
+          // .emit("joinRoom", partyId);
       });
+    }catch(e){
+      console.log(e)
+    }
+    
+
+    
+  });
+
+
+  socket.on("refreshParty", async (partyId) => {
+
+  
+    try{
+
+      
+        console.log('Party has changed!');
+        io.to(partyId).emit("refreshParty", partyId);
+
+          // io.of("mission")
+          // .to(partyId)
+          // .emit("joinRoom", partyId);
+      
     }catch(e){
       console.log(e)
     }
@@ -114,17 +139,17 @@ mission.on("connection", socket => {
       .emit("deleteItem", data.id);
   });
 
-  socket.on("registerUser", data => {
-    io.of("mission")
-      .to(data.roomId)
-      .emit("registerUser", data.user);
-  });
+  // socket.on("registerUser", data => {
+  //   io.of("mission")
+  //     .to(data.roomId)
+  //     .emit("registerUser", data.user);
+  // });
 
-  socket.on("unregisterUser", data => {
-    io.of("mission")
-      .to(data.roomId)
-      .emit("unregisterUser", data.id);
-  });
+  // socket.on("unregisterUser", data => {
+  //   io.of("mission")
+  //     .to(data.roomId)
+  //     .emit("unregisterUser", data.id);
+  // });
 
   socket.on("modifyUserStatus", data => {
     io.of("mission")

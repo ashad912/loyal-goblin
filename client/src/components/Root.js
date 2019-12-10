@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function FullWidthTabs(props) {
+function Root(props) {
   //TODO: Verify if user has a character from db object, not local storage
   const [
     showCharacterCreationModal,
@@ -148,3 +148,7 @@ export default function FullWidthTabs(props) {
     </div>
   );
 }
+
+
+
+export default Root

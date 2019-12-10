@@ -18,8 +18,11 @@ import { resetConnectionError } from "./store/actions/connectionActions";
 import withAuth from "./hoc/withAuth";
 import withNoAuth from "./hoc/withNoAuth";
 import { authCheck, registerForEvents } from "./store/actions/authActions";
+import { updateParty } from "./store/actions/partyActions";
 import ConnectionSpinnerDialog from "./components/layout/ConnectionSpinnerDialog";
 import ConnectionSnackbar from "./components/layout/ConnectionSnackbar";
+
+import {joinRoomSubscribe, refreshPartySubscribe} from './socket'
 
 class App extends React.Component {
   state = {
@@ -34,6 +37,16 @@ class App extends React.Component {
 
     //CHECK AUTH ON APP LOAD
     this.props.authCheck();
+
+    joinRoomSubscribe((roomId) => {
+      console.log(roomId)
+      this.props.onPartyUpdate()
+    })
+
+    refreshPartySubscribe((roomId) => {
+      console.log(roomId)
+      this.props.onPartyUpdate()
+    })
      
   }
 
@@ -98,7 +111,8 @@ class App extends React.Component {
 const mapDispatchToProps = dispatch => {
   return {
     resetConnectionError: () => dispatch(resetConnectionError()),
-    authCheck: () => dispatch(authCheck())
+    authCheck: () => dispatch(authCheck()),
+    onPartyUpdate: () => dispatch(updateParty())
   };
 };
 

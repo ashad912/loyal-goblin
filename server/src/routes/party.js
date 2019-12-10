@@ -199,7 +199,7 @@ router.delete("/remove", auth, async (req, res) => {
 
     await party.remove(); //look at middleware
 
-    res.send();
+    res.send(party);
   } catch (e) {
     res.status(400).send(e.message);
   }

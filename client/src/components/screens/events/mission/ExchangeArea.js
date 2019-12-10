@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Box from './Box';
-import io from 'socket.io-client'
+
 import uuid from 'uuid/v1'
 import Loading from '../../../layout/Loading';
 import Grid from '@material-ui/core/Grid';
@@ -12,17 +12,13 @@ import styled from 'styled-components'
 import avatarTemp from '../../../../assets/avatar/moose.png'
 import bagImg from '../../../../assets/avatar/bag.png'
 import Cookies from 'js-cookie';
+import {socket} from '../../../../socket'
 
-const socket =  io('/mission', {
-  autoConnect: false,
-  transportOptions: {
-    polling: {
-      extraHeaders: {
-        'token': Cookies.get('token')
-      }
-    }
-  }
-})
+// import io from 'socket.io-client'
+// export const socket =  io('/mission', {
+//   autoConnect: false,
+
+// })
 
 
 const userItemsName = 'userItems'
@@ -173,11 +169,12 @@ export default class ExchangeArea extends React.Component {
     //await from backend generating roomId -> roomId = missionInstanceId
     
     //temporary separate room for specific mission
+    console.log(this.props.locationId)
     socketFuncs.joinRoomEmit(socket, this.props.locationId)
 
     ////
     if(!this.state.roomId){
-      socketFuncs.joinRoomSubscribe(socket, (roomId) => {
+      socketFuncs.joinRoomSubscribe((roomId) => {
         this.setState({
           socket: socket,
           roomId: roomId,
@@ -187,15 +184,15 @@ export default class ExchangeArea extends React.Component {
       })
     }
     
-    socketFuncs.addItemSubscribe(socket, (item) => {
+    socketFuncs.addItemSubscribe((item) => {
       this.addItemToState(item, missionItemsName)
     })
 
-    socketFuncs.deleteItemSubscribe(socket, (id) => {
+    socketFuncs.deleteItemSubscribe((id) => {
       this.deleteItemFromState(id, missionItemsName)
     })
 
-    socketFuncs.registerUserSubscribe(socket, (user) => {
+    socketFuncs.registerUserSubscribe((user) => {
 
       const users = [...this.state.connectedUsers, user]
 
@@ -242,7 +239,7 @@ export default class ExchangeArea extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (this.state.roomId && (prevProps.userReadyStatus !== this.props.userReadyStatus)) {
-      const {socket} = this.state
+      //const {socket} = this.state
       const user = {_id: this.props.userId, readyStatus: this.props.userReadyStatus}
       socketFuncs.modifyUserStatusEmit(socket, user, this.state.roomId)
     }
@@ -262,7 +259,7 @@ export default class ExchangeArea extends React.Component {
         
         //const {socket} = this.state
         console.log(socket)
-        socket.open()
+        //socket.open()
         const user = {_id: this.props.userId, readyStatus: false}
         socketFuncs.registerUserEmit(socket, user, this.state.roomId)
       })

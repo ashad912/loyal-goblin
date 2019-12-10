@@ -51,7 +51,7 @@ const socketBasicAuth = (socket) => {
             const party = await Party.findOne({
                 $or: [
                     {leader: user._id},
-                    {members: {$elemMatch: user._id}}
+                    {members: {$elemMatch: {$eq: user._id}}}
                 ]
             })
         

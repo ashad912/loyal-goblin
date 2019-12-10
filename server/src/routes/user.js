@@ -215,7 +215,8 @@ router.post('/me/avatar', auth, async (req, res) => {
         avatar.name = req.user._id + '.jpg'
         avatar.mv('../client/public/images/user_uploads/' + avatar.name);
         req.user.avatar = avatar.name
-        const user = await req.user.save()
+        let user = await req.user.save()
+        user = await userPopulateBag(user)
 
         //send response
         res.send(user);

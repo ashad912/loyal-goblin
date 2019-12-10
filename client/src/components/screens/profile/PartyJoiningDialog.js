@@ -7,6 +7,8 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import { updateParty } from "../../../store/actions/partyActions";
+
 
 const PartyJoiningDialog = props => {
 
@@ -26,7 +28,10 @@ const PartyJoiningDialog = props => {
     })
   }, [])
 
-
+  const handleCloseAndTriggerSocket = () => {
+    props.forcePartyUpdate()
+    props.handleClose()
+  }
 
   return (
     <Dialog
@@ -51,10 +56,11 @@ const PartyJoiningDialog = props => {
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={props.handleClose}>Zamknij</Button>
+        <Button onClick={handleCloseAndTriggerSocket}>Zamknij</Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default PartyJoiningDialog;
+
+export default PartyJoiningDialog

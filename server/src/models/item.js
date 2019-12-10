@@ -27,7 +27,7 @@ ItemSchema.pre('remove', async function (next){
     //Changed elemMatch design to $all
     await MissionInstance.updateOne(
         {items: {$elemMatch: {$eq: item._id}}},
-        {$pull: {elemMatch : {$eq: item._id}}}
+        {$pull: {items: {$eq: item._id}}}
     )
 
     

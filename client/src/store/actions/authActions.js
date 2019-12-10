@@ -67,7 +67,7 @@ export const authCheck =  () => {
                 console.log('authCheck')
                 const res = await axios('/user/me')
                 const profile = res.data
-                profile.avatar = profile.avatar ? (profile.avatar) : (undefined)
+                
                 const uid = profile._id
                 delete profile._id
                 dispatch( {type: "AUTH_SUCCESS", profile, uid}) //DISPATCH IS SYNCHRONOUS!!!

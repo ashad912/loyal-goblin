@@ -1,19 +1,33 @@
 import axios from 'axios'
+import {socket, joinRoomEmit, refreshPartyEmit} from '../../socket'
+
 
 
 export const updateParty = () => {
     return async dispatch => {
+        
         try {
-                const res = await axios.get('/party')
-                if(res){
-                    dispatch({type: "UPDATE_PARTY", party: res.data})
+            const res = await axios.get('/party')
+            
+            if(res.data){
+                dispatch({type: "UPDATE_PARTY", party: res.data})
+                const party = res.data
+                
+                if(!socket.connected){
+                    socket.open()
+                    joinRoomEmit(party._id)
                 }
-            }
-
-     catch (e) {
-            console.log(e)
-            dispatch( {type: "NO_CONNECTION", error: e})     
+                
+            }      
         }
+
+        catch (e) {
+            console.log(e)
+            dispatch( {type: "NO_CONNECTION", error: e})
+                
+        }
+        
+        
     }
 }
 
@@ -39,6 +53,7 @@ export const deleteParty =  () => {
                 const res = await axios.delete('/party/remove')
                 if(res){
                     dispatch({type: "DELETE_PARTY"})
+                    refreshPartyEmit(res.data.party._id)
                 }
             }
 
@@ -55,6 +70,7 @@ export const addMember =  (partyId, memberId) => {
                 const res = await axios.patch('/party/addMember', {partyId, memberId})
                 if(res){
                     dispatch({type: "ADD_MEMBER", party: res.data})
+                    refreshPartyEmit(partyId)
                 }
             }
 
@@ -75,6 +91,7 @@ export const removeMember =  (partyId, memberId) => {
                     }else{
                         dispatch({type: "DELETE_PARTY"})
                     }
+                    refreshPartyEmit(partyId)
                 }
             }
 

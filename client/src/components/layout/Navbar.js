@@ -65,6 +65,7 @@ const Navbar = (props) => {
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [showPasswordChangeModal, setShowPasswordChangeModal] = React.useState(false)
+    
 
     const handleClick = event => {
         event.stopPropagation();
@@ -84,14 +85,20 @@ const Navbar = (props) => {
             formData.append("avatar", avatar)
             e.stopPropagation();
             setAnchorEl(null);
+            //window.location.reload();
             await props.updateAvatar(formData); 
+            
+            
         }
     };
 
     const handleAvatarDelete = async e => {
         e.stopPropagation();
         setAnchorEl(null);
-        await props.updateAvatar(); 
+        window.location.reload(); 
+        await props.updateAvatar();
+        
+        
         
     };
 

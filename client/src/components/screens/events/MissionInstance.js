@@ -10,6 +10,7 @@ import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
 import VerificationPage from './mission/VerificationPage'
 import { Typography } from '@material-ui/core';
+import {connect} from 'react-redux'
 
 const getRandomInt = (min, max) => {
     min = Math.ceil(min);
@@ -121,7 +122,7 @@ const createTempMission = () => {
     }
 }
 
-export default class MissionInstance extends React.Component {
+class MissionInstance extends React.Component {
     
 
     state = {
@@ -300,7 +301,7 @@ export default class MissionInstance extends React.Component {
                 
                 </MissionBar>
                 
-                <ExchangeArea userId={randomUserId} locationId={this.props.location.state.id} setConnection={this.handleConnection} instanceUsers={this.updateInstanceUsers} instanceItems={this.updateInstanceItems} userReadyStatus={this.state.userReadyStatus}/>
+                <ExchangeArea userId={randomUserId} locationId={this.props.party._id/*this.props.location.state.id*/} setConnection={this.handleConnection} instanceUsers={this.updateInstanceUsers} instanceItems={this.updateInstanceItems} userReadyStatus={this.state.userReadyStatus}/>
                 {this.state.roomId ? (
                     
                     <PartyList userId={randomUserId} instanceUsers={this.state.instanceUsers} instanceItems={this.state.instanceItems} isUserLeader={this.state.leader} userReadyStatus={this.state.userReadyStatus} partyCondition={this.updatePartyCondition}/>
@@ -351,3 +352,12 @@ export default class MissionInstance extends React.Component {
     
     
 }
+
+const mapStateToProps = state => {
+    return {
+      auth: state.auth,
+      party: state.party
+    };
+  };
+
+export default connect(mapStateToProps)(MissionInstance)

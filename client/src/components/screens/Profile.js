@@ -35,6 +35,9 @@ import StatsDialog from "./profile/StatsDialog";
 import { toggleItem, deleteItem } from "../../store/actions/profileActions";
 import { updateParty, removeMember } from "../../store/actions/partyActions";
 import createAvatarPlaceholder from "../../utils/createAvatarPlaceholder";
+import {socket} from '../../socket'
+
+import * as socketFuncs from '../../socket'
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -381,9 +384,10 @@ const Profile = props => {
   React.useEffect(() => {
     updateEquippedItems();
     handleJoinOrCreateParty();
-    props.onPartyUpdate();
+    props.onPartyUpdate()
 
   }, []);
+
 
   const updateEquippedItems = () => {
     const equipment = {
@@ -865,6 +869,7 @@ const Profile = props => {
       <PartyJoiningDialog
         open={isJoiningParty}
         userId={props.auth.uid}
+        forcePartyUpdate={() => props.onPartyUpdate()}
         handleClose={() => setIsJoiningParty(prev => !prev)}
       />
 

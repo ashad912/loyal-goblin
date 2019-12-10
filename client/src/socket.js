@@ -1,66 +1,83 @@
+import io from 'socket.io-client'
+
+export const socket =  io({
+  autoConnect: false,
+})
+
+
 //SUBSCRIBE
-export const joinRoomSubscribe = (socket, roomId) => {
+export const joinRoomSubscribe = (roomId) => {
     socket.on('joinRoom', roomId, () => {
         return  roomId
     })
 }
 
-export const addItemSubscribe = (socket, item) => {
+export const refreshPartySubscribe = (roomId) => {
+    socket.on('refreshParty', roomId, () => {
+        return  roomId
+    })
+}
+
+export const addItemSubscribe = (item) => {
     socket.on('addItem', item, () => {
         return item
     })
 }
 
-export const deleteItemSubscribe = (socket, id) => {
+export const deleteItemSubscribe = (id) => {
     socket.on('deleteItem', id, () => {
         return id
     })
 }
 
-export const registerUserSubscribe = (socket, user) => {
+export const registerUserSubscribe = (user) => {
     socket.on('registerUser', user, () => {
         return user
     })
 }
 
-export const unregisterUserSubscribe = (socket, id) => {
+export const unregisterUserSubscribe = (id) => {
     socket.on('unregisterUser', id, () => {
         return id
     })
 }
 
-export const modifyUserStatusSubscribe = (socket, data) => {
+export const modifyUserStatusSubscribe = (data) => {
     socket.on('modifyUserStatus', data, () => {
         return data
     })
 }
 
 //EMIT
-export const joinRoomEmit = (socket, roomId) => {
+export const joinRoomEmit = (roomId) => {
     socket.emit('joinRoom', roomId)
 }
 
-export const addItemEmit = (socket, item, roomId) => {
+export const refreshPartyEmit = (roomId) => {
+    socket.emit('refreshParty', roomId)
+}
+
+export const addItemEmit = ( item, roomId) => {
     const data = {item: item, roomId: roomId}
     socket.emit('addItem', data)
 }
 
-export const deleteItemEmit = (socket, id, roomId) => {
+export const deleteItemEmit = ( id, roomId) => {
     const data = {id: id, roomId: roomId}
     socket.emit('deleteItem', data)
 }
 
-export const registerUserEmit = (socket, user, roomId) => {
+export const registerUserEmit = ( user, roomId) => {
     const data = {user: user, roomId: roomId}
     socket.emit('registerUser', data)
 }
 
-export const unregisterUserEmit = (socket, id, roomId) => {
+export const unregisterUserEmit = ( id, roomId) => {
     const data = {id: id, roomId: roomId}
     socket.emit('unregisterUser', data)
 }
 
-export const modifyUserStatusEmit = (socket, user, roomId) => {
+export const modifyUserStatusEmit = ( user, roomId) => {
     const data = {user: user, roomId: roomId}
     socket.emit('modifyUserStatus', data)
 }
