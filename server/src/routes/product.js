@@ -96,7 +96,28 @@ router.get('/shop', auth, async (req, res)=> {
 
         await updatePerks(req.user, false)
 
-        res.send(shop)
+        if(req.user.activeOrder.length){
+           await req.user.populate({
+                path: 'activeOrder.profile',
+                select: "_id name avatar bag"
+            }).execPopulate()
+        }else{
+
+            await req.user
+            .populate({
+                path: 'party',
+                populate: {
+                    path: "members",
+                    select:'bag equipped',
+                    populate: { path: "bag", populate: {path: 'itemModel'} },
+                    
+                }
+            })
+            .execPopulate();
+        }
+
+
+        res.send({shop, party: req.user.party, activeOrder: req.user.activeOrder})
     }catch(e){
         res.status(400).send(e.message)
     }
@@ -180,21 +201,37 @@ router.patch('/activate', auth, async (req, res)=> {
             leader = user._id
         }
 
-        console.log('got members ids', membersIds)
 
-        // if(!membersIds.length && !user.party.leader){ //one person party - giving user leader privileges
-        //     user.party.leader = user._id
-        // }
 
         if(leader && (leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
             throw new Error('User is not the leader!')
         }
-        await verifyParty(leader, membersIds, order)
+        const party = await verifyParty(leader, membersIds, order)
     
 
         user.activeOrder = order
-
         await user.save()
+
+
+        await user.populate({ //populate after verification
+            path: 'activeOrder.profile',
+            select: "_id name avatar"
+        }).populate({
+            path: 'activeOrder.products.product',
+            populate: {path: 'awards.itemModel'} //is necessary here?
+        }).execPopulate()
+
+
+        let modelPerks
+        await asyncForEach(party, async (user) => {
+           // const userPerks = user.userPerks
+           // console.log(userPerks)
+            //HERE IMPLEMENT PRICE AND EXPERIENCE MODS - input: activeOrder, userPerks; output: object for view
+            modelPerks = await designateUserPerks(user)
+ 
+        })
+
+
 
         //WORKING! AS COMMENT FOR TESTS
         /*

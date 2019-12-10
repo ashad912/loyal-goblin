@@ -370,7 +370,7 @@ const Profile = props => {
   React.useEffect(() => {
     setEquippedItems(props.auth.profile.equipped);
     updateEquippedItems()
-  }, [props.auth.profile.bag, props.auth.profile.equipped]);
+  }, [props.auth.profile.equipped]);
 
   const [activePerks, setActivePerks] = React.useState([]);
 

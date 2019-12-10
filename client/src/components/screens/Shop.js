@@ -654,7 +654,7 @@ class Shop extends React.Component {
       menuSticky: false,
       baskets: {},
       snackbarOpen: false,
-      activeUser: 1,
+      activeUser: null,
       basketDrawerOpen: false,
       //showVerificationPage: false,
       showScrollModal: false
@@ -673,7 +673,7 @@ class Shop extends React.Component {
     
 
     //backend call for players in party
-    this.props.onUpdateParty();
+    await this.props.onUpdateParty();
     const baskets = {};
     if (this.props.party.length > 0) {
       this.props.party.forEach(player => {
@@ -687,7 +687,7 @@ class Shop extends React.Component {
 
     this.handleChangeactiveUser(
       null,
-      this.props.party.length > 0
+      this.props.party.length > 0 && this.props.party[0]
         ? this.props.party[0]._id
         : this.props.auth.uid
     );
@@ -832,12 +832,18 @@ class Shop extends React.Component {
       return product.category === "food";
     });
 
-    const activeUser = this.props.party.length > 0 ? this.props.party.find(
+    console.log(this.state.activeUser, this.props.auth.uid )
+    const activeUser = this.state.activeUser&& this.props.party.length > 0 && this.state.activeUser !== this.props.auth.uid ? this.props.party.find(
       user => user._id === this.state.activeUser
     ) : this.props.auth.profile
-    const equippedScroll = activeUser.bag.find(
-      item => item._id === activeUser.equipped.scroll
-    );
+
+    let equippedScroll 
+    if(activeUser.bag){
+      equippedScroll  = activeUser.bag.find(
+        item => item._id === activeUser.equipped.scroll
+      );
+
+    }
     return (
       <div>
         {this.props.activeOrder.length > 0 ? (
@@ -1037,7 +1043,7 @@ const mapStateToProps = state => {
     auth: state.auth,
     activeOrder: state.auth.profile.activeOrder,
     products: state.shop.products,
-    party: state.party.members.unshift(state.party.leader)
+    party:  state.party.leader ? [state.party.leader, ...state.party.members] : []
   };
 };
 

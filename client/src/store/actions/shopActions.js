@@ -5,7 +5,9 @@ export const getShop = () => {
         try {
             const res = await axios.get('/product/shop')
 
-            dispatch({type: 'GET_SHOP', shop:res.data})
+            dispatch({type: 'GET_SHOP', shop:res.data.shop})
+            dispatch({type: "UPDATE_PARTY", party: res.data.party})
+            dispatch({type: 'UPDATE_ACTIVE_ORDER', activeOrder: res.data.activeOrder})
 
         } catch (e) {
             console.log(e)
@@ -21,7 +23,6 @@ export const activateOrder = (order) => {
                 return {profile: user, products: order[user]}
             })
             const res = await axios.patch('/product/activate', {order: arrayOrder})
-
             dispatch({type: 'UPDATE_ACTIVE_ORDER', activeOrder: res.data })
 
         } catch (e) {

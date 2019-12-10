@@ -1,6 +1,6 @@
 import React from "react";
+import {connect} from 'react-redux'
 import QRCode from 'qrcode'
-import uuid from 'uuid/v1'
 import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
@@ -86,9 +86,9 @@ const VerificationPage = props => {
 
   return (
     <Container maxWidth="sm" style={{padding: '1rem 0.4rem'}}>
-      <Paper style={{ width: "100%" }}>
-        <Typography>Pokaż ten kod przy barze, by otrzymać nagrody!</Typography>
-        <img src={qrCode} style={{width: '100%'}}/>
+      <Paper style={{ width: "100%", paddingTop: '1rem' }}>
+        <Typography variant="h5" style={{marginBottom: '1rem'}}>Pokaż ten kod przy barze, by otrzymać nagrody!</Typography>
+        <img src={qrCode} style={{width: '80%', marginBottom: '1rem'}}/>
         <Divider />
         <List component="nav" style={{ width: "100%" }}>
           {baskets.map(basket => {
@@ -135,4 +135,18 @@ const VerificationPage = props => {
   );
 };
 
-export default VerificationPage;
+const mapStateToProps = state => {
+  return {
+    auth: state.auth,
+    activeOrder: state.auth.profile.activeOrder,
+    party: state.party.members.unshift(state.party.leader)
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(VerificationPage);

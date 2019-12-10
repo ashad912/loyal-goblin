@@ -31,9 +31,10 @@ router.get("/", auth, async (req, res) => {
       await user
         .populate({
           path: "party",
-          populate: { path: "leader members", select: "name avatar" }
+          populate: { path: "leader members", select: "_id name avatar" }
         })
         .execPopulate();
+
       res.send(user.party);
     } catch (e) {
       console.log(e);
@@ -103,7 +104,7 @@ router.patch("/addMember", auth, async (req, res) => {
       await party
         .populate({
           path: "leader members",
-          select: "_id name avatar"
+          select: "_id name avatar bag"
         })
         .execPopulate();
         

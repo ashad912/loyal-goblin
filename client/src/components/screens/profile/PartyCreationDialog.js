@@ -135,6 +135,7 @@ const PartyCreationDialog = props => {
                 variant="contained"
                 color="primary"
                 onClick={handlePartyCreateConfirm}
+                disabled={partyName.trim().length <= 0}
               >
                 Dalej
               </Button>
