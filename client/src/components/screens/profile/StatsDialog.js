@@ -120,8 +120,8 @@ const StatsDialog = props => {
     
                 {amuletCounters.map((amuletCounter, index) => {
                     return (
-                        <React.Fragment>
-                            <ListItem key={amuletCounter._id} style={{paddingTop: '0.75rem', paddingBottom: '0.75rem'}}>
+                        <React.Fragment key={amuletCounter._id}>
+                            <ListItem style={{paddingTop: '0.75rem', paddingBottom: '0.75rem'}}>
                                         
                                 <Grid container>
                                 <Grid item xs={11} style={{display: 'flex', alignItems: 'center'}}>

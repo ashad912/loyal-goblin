@@ -84,55 +84,44 @@ io.on("connection", socket => {
   console.log("New client connected", socket.id);
 
   socket.on("joinRoom", async (roomId) => {
-
-  
     try{
       await socketJoinRoomAuth(socket, roomId)
 
       socket.join(roomId, () => {
         console.log(socket.id, "joined the room", roomId);
-        io.to(roomId).emit("joinRoom", roomId);
-
-          // io.of("mission")
-          // .to(partyId)
-          // .emit("joinRoom", partyId);
+        socket.broadcast.to(roomId).emit("joinRoom", roomId);    
       });
     }catch(e){
       console.log(e)
     }
-    
-
-    
   });
 
   socket.on("leaveRoom", data => {
     console.log(`User ${data.id} left the room ${data.roomId}`)
-    io.to(data.roomId).emit("leaveRoom", data.id);
+    socket.broadcast.to(data.roomId).emit("leaveRoom", data.id);
   });
 
 
-  socket.on("refreshRoom", async (roomId) => {
-
-  
+  socket.on("addMemberToRoom", async (roomId) => {
     try{
-
-      
         console.log('Party has been changed!');
-        io.to(roomId).emit("refreshRoom", roomId);
-      
+        socket.broadcast.to(roomId).emit("addMemberToRoom", roomId);
     }catch(e){
       console.log(e)
     }
-    
-
-    
   });
 
   socket.on("deleteRoom", roomId => {
     console.log('Party has been removed!');
-    io.to(roomId).emit("deleteRoom", roomId);
+    socket.broadcast.to(roomId).emit("deleteRoom", roomId);
   })
 
+
+ // io.of("mission")
+          // .to(partyId)
+          // .emit("joinRoom", partyId);
+
+  /////////
   socket.on("addItem", data => {
     io.of("mission")
       .to(data.roomId)

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {socket, joinRoomEmit, leaveRoomEmit, refreshRoomEmit, deleteRoomEmit} from '../../socket'
+import {socket, joinRoomEmit, leaveRoomEmit, addMemberToRoomEmit, deleteRoomEmit} from '../../socket'
 
 
 
@@ -7,9 +7,10 @@ export const updateParty = () => {
     return async dispatch => {
         
         try {
+            console.log('updateParty')
             const res = await axios.get('/party')
             
-            if(res.data){
+            if(res.data && res.status === 200){
                 dispatch({type: "UPDATE_PARTY", party: res.data})
                 const party = res.data
                 
@@ -36,21 +37,17 @@ export const updateParty = () => {
 export const createParty =  (name, leader) => {
     return async dispatch => {
         try {
-                const res = await axios.post('/party/create', {name})
-                if(res.data){
-                    dispatch({type: "CREATE_PARTY", name, partyId: res.data.partyId, leader})
+            const res = await axios.post('/party/create', {name})
+            
+            dispatch({type: "CREATE_PARTY", name, partyId: res.data.partyId, leader})
 
-                    if(!socket.connected){
-                        socket.open()
-                        joinRoomEmit(res.data.partyId)
-                    }
-                    
-                }
-            }
-
-     catch (e) {
+            if(!socket.connected){
+                socket.open()
+                joinRoomEmit(res.data.partyId)
+            }     
+        }catch (e) {
             console.log(e)
-            dispatch( {type: "NO_CONNECTION", error: e})     
+            dispatch( {type: "NO_CONNECTION", error: e})  
         }
     }
 }
@@ -58,14 +55,15 @@ export const createParty =  (name, leader) => {
 export const deleteParty =  () => {
     return async dispatch => {
         try {
-                const res = await axios.delete('/party/remove')
-                if(res.data){
-                    dispatch({type: "DELETE_PARTY"})
-                    deleteRoomEmit(res.data._id)
-                }
-            }
+            const res = await axios.delete('/party/remove')
+            
+            dispatch({type: "DELETE_PARTY"})
+            deleteRoomEmit(res.data._id)
 
-     catch (e) {
+            if(socket.connected){
+                socket.disconnect()
+            }     
+        }catch (e) {
             console.log(e)
             dispatch( {type: "NO_CONNECTION", error: e})     
         }
@@ -75,14 +73,11 @@ export const deleteParty =  () => {
 export const addMember =  (partyId, memberId) => {
     return async dispatch => {
         try {
-                const res = await axios.patch('/party/addMember', {partyId, memberId})
-                if(res.data){
-                    dispatch({type: "ADD_MEMBER", party: res.data})
-                    refreshRoomEmit(res.data._id)
-                }
-            }
-
-     catch (e) {
+            const res = await axios.patch('/party/addMember', {partyId, memberId})
+            dispatch({type: "ADD_MEMBER", party: res.data})
+            addMemberToRoomEmit(res.data._id)
+                
+        }catch (e) {
             console.log(e)
             dispatch( {type: "NO_CONNECTION", error: e})     
         }
@@ -93,23 +88,24 @@ export const removeMember =  (partyId, memberId) => {
     return async dispatch => {
         try {
                 const res = await axios.patch('/party/leave', {partyId, memberId})
-                console.log(res.data)
+                console.log(res.data, res.data.length) //res.data returns string -> if null string length:0
                 
-                if(res.data !== null){
-                    dispatch({type: "REMOVE_MEMBER", party: res.data})
-                    console.log(memberId, partyId)
-                    leaveRoomEmit(memberId, partyId)
+                if(res.data){ //check also string length
+                    
+                    
+                    dispatch({type: "REMOVE_MEMBER", party: res.data}) //updating leader redux - he has just dropped the member
+                    leaveRoomEmit(memberId, partyId)  //from party point of view - some user left the party with success - take his id and trigger leave event
                 }else{
-                    dispatch({type: "DELETE_PARTY"})
-                    deleteRoomEmit(res.data._id)
+                    
+                    leaveRoomEmit(memberId, partyId)
+                    if(socket.connected){
+                        socket.disconnect()
+                    }
+                    dispatch({type: "DELETE_PARTY"}) //clearing member redux - he has just left (only for member!)
                 }
 
-                leaveRoomEmit(memberId, partyId)
-                    
                 
-            }
-
-     catch (e) {
+        }catch (e) {
             console.log(e)
             dispatch( {type: "NO_CONNECTION", error: e})     
         }

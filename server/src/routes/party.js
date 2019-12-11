@@ -29,7 +29,7 @@ router.get("/", auth, async (req, res, next) => {
 
   try {
     if(!user.party){
-      res.send(null)
+      res.status(204).send(null)
       return
     }
     
@@ -94,33 +94,39 @@ router.patch("/addMember", auth, async (req, res) => {
   try {
     const party = await Party.findById(req.body.partyId);
     if (party.members.length  >= 7){
-      res.status(401).send("Maksymalna wielkość drużyny została osiągnięta!");
+      throw new Error("Maksymalna wielkość drużyny została osiągnięta!");
     }
 
     const user = await User.findById(req.body.memberId);
     if (user.party) {
+      let errMssg = ""
       if (user.party === req.body.partyId) {
-        res.status(401).send("Użytkownik jest już w tej drużynie!");
+        errMssg = "Użytkownik jest już w tej drużynie!"
       } else {
-        res.status(401).send("Użytkownik jest już w innej drużynie!");
+        errMssg = "Użytkownik jest już w innej drużynie!"
       }
-    } else {
-      await User.updateOne(
-        { _id: req.body.memberId },
-        { $set: { party: req.body.partyId } }
-      );
+
+      throw new Error(errMssg)
       
-      party.members.push(req.body.memberId);
-      await party.save();
-      await party
-        .populate({
-          path: "leader members",
-          select: "_id name avatar bag"
-        })
-        .execPopulate();
-        
-      res.status(201).send(party);
     }
+
+
+    await User.updateOne(
+      { _id: req.body.memberId },
+      { $set: { party: req.body.partyId } }
+    );
+    
+    party.members.push(req.body.memberId);
+    await party.save();
+    await party
+      .populate({
+        path: "leader members",
+        select: "_id name avatar bag"
+      })
+      .execPopulate();
+      
+    res.status(200).send(party);
+    
   } catch (e) {
     console.log(e);
     res.sendStatus(400);
@@ -159,11 +165,12 @@ router.patch("/leave", auth, async (req, res) => {
         select: "_id name avatar"
       })
       .execPopulate();
+    
     if(req.body.memberId !== req.user._id.toString()){
-      res.send(null)
+      res.status(200).send(party)  //send by leader to drop a member
       
     }else{
-      res.status(201).send(party);
+      res.send(null) //send by member to leave - clean redux
     }
     
   } catch (e) {

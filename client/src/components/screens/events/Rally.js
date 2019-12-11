@@ -115,7 +115,7 @@ class Rally extends Component {
                             <Typography variant="body1" color="textSecondary" gutterBottom>
                                 {rallyIsActive ? ('Trwa wielki rajd!') : ('Nadchodzi wielki rajd!')}
                             </Typography>
-                            <ActiveRallyTypo variant="h5" active={rallyIsActive}>
+                            <ActiveRallyTypo variant="h5" active={rallyIsActive ? 1 : 0}>
                                 
                                     {this.state.hasOwnProperty('days') && this.state.days > 0 && `${this.state.days} d. `}
                                     {this.state.hasOwnProperty('hours') && this.state.hours > 0 && `${this.state.hours} g. `}
