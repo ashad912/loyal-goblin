@@ -452,7 +452,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
 
         let partyObject = []
         await asyncForEach(partyIds, async (memberId) => {
-                const memberObject = {inRoom: false, readyStatus: false, profile: memberId}
+                const memberObject = {inInstance: false, readyStatus: false, profile: memberId}
                 partyObject = [...partyObject, memberObject]
         })
         
@@ -510,7 +510,7 @@ router.delete('/deleteInstance', auth, async (req, res) => {
     }
 })
 
-const toggleUserRoomStatus = (user, field, newStatus, secondField, secondNewStatus) => {
+const toggleUserInstanceStatus = (user, field, newStatus, secondField, secondNewStatus) => {
     return new Promise( async (resolve, reject) => {
         try{
             await user.populate({
@@ -537,6 +537,8 @@ const toggleUserRoomStatus = (user, field, newStatus, secondField, secondNewStat
     
             await missionInstance.save()
 
+           
+
             resolve(missionInstance)
         }catch(e){
             reject(e)
@@ -545,12 +547,12 @@ const toggleUserRoomStatus = (user, field, newStatus, secondField, secondNewStat
     })
 }
 //OK
-router.patch('/leaveRoom', auth, async (req, res) => {
+router.patch('/leaveInstance', auth, async (req, res) => {
     const user = req.user
 
     try{
 
-        const missionInstance = await toggleUserRoomStatus(user, 'inRoom', false, 'readyStatus', false)
+        const missionInstance = await toggleUserInstanceStatus(user, 'inInstance', false, 'readyStatus', false)
         
         res.send(missionInstance)
 
@@ -559,11 +561,16 @@ router.patch('/leaveRoom', auth, async (req, res) => {
     }
 })
 //OK
-router.patch('/enterRoom', auth, async (req, res) => {
+router.patch('/enterInstance', auth, async (req, res) => {
     const user = req.user
 
     try{
-        const missionInstance = await toggleUserRoomStatus(user, 'inRoom', true)
+        const missionInstance = await toggleUserInstanceStatus(user, 'inInstance', true)
+
+        await user.populate({
+            path: 'mission',
+            populate: {path: 'amulets.itemModel'}
+        }).execPopulate()
 
         res.send(missionInstance)
 
@@ -576,7 +583,7 @@ router.patch('/ready', auth, async (req, res) => {
     const user = req.user
 
     try{
-        const missionInstance = await toggleUserRoomStatus(user, 'readyStatus', true)
+        const missionInstance = await toggleUserInstanceStatus(user, 'readyStatus', true)
 
         res.send(missionInstance)
 
@@ -589,7 +596,7 @@ router.patch('/notReady', auth, async (req, res) => {
     const user = req.user
 
     try{
-        const missionInstance = await toggleUserRoomStatus(user, 'readyStatus', false)
+        const missionInstance = await toggleUserInstanceStatus(user, 'readyStatus', false)
 
         res.send(missionInstance)
 
@@ -677,8 +684,8 @@ router.delete('/finishInstance', auth, async (req,res) => {
         await asyncForEach(missionInstance.party, async (memberObject) => {
             const memberId = memberObject.profile
             missionParty = [...missionParty, memberId]
-            if(memberObject.profile.toString() === user._id.toString() && memberObject.inRoom === false){
-                throw Error('User is not in the mission room!')
+            if(memberObject.profile.toString() === user._id.toString() && memberObject.inInstance === false){
+                throw Error('User is not in the mission instance!')
             }
         })
 
@@ -772,8 +779,8 @@ const verifySendItem = (user, missionInstance, itemId) => {
             await asyncForEach(missionInstance.party, async (memberObject) => {
                 const memberId = memberObject.profile
                 missionParty = [...missionParty, memberId]
-                if(memberObject.profile.toString() === user._id.toString() && memberObject.inRoom === false){
-                    throw Error('User is not in the mission room!')
+                if(memberObject.profile.toString() === user._id.toString() && memberObject.inInstance === false){
+                    throw Error('User is not in the mission instance!')
                 }
             })
     

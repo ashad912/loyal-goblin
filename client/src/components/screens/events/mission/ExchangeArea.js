@@ -147,7 +147,7 @@ export default class ExchangeArea extends React.Component {
   state = {
     roomId: null,
     userRegistered: false,
-    connectedUsers: [/*from backend*/],
+    //connectedUsers: [/*from backend*/],
     [userItemsName]: createTempItemListUser(this.props.userId),
     [missionItemsName]: createTempItemListMission(this.props.userId),
     //all possible items in communication
@@ -165,24 +165,24 @@ export default class ExchangeArea extends React.Component {
     })
    
     
-    console.log(socket)
-    //await from backend generating roomId -> roomId = missionInstanceId
+    // console.log(socket)
+    // //await from backend generating roomId -> roomId = missionInstanceId
     
-    //temporary separate room for specific mission
-    console.log(this.props.locationId)
-    socketFuncs.joinRoomEmit(socket, this.props.locationId)
+    // //temporary separate room for specific mission
+    // console.log(this.props.locationId)
+    // socketFuncs.joinRoomEmit(socket, this.props.locationId)
 
-    ////
-    if(!this.state.roomId){
-      socketFuncs.joinRoomSubscribe((roomId) => {
-        this.setState({
-          socket: socket,
-          roomId: roomId,
-        }, () => {
-            this.props.setConnection(roomId)  
-        })
-      })
-    }
+    // ////
+    // if(!this.state.roomId){
+    //   socketFuncs.joinRoomSubscribe((roomId) => {
+    //     this.setState({
+    //       socket: socket,
+    //       roomId: roomId,
+    //     }, () => {
+    //         this.props.setConnection(roomId)  
+    //     })
+    //   })
+    //}
     
     socketFuncs.addItemSubscribe((item) => {
       this.addItemToState(item, missionItemsName)
@@ -192,79 +192,79 @@ export default class ExchangeArea extends React.Component {
       this.deleteItemFromState(id, missionItemsName)
     })
 
-    socketFuncs.registerUserSubscribe((user) => {
+    // socketFuncs.registerUserSubscribe((user) => {
 
-      const users = [...this.state.connectedUsers, user]
+    //   const users = [...this.state.connectedUsers, user]
 
-      this.setState({
-        connectedUsers: users
-      }, () => {
-        this.props.instanceUsers(this.state.connectedUsers) 
-      })
-    })
+    //   this.setState({
+    //     connectedUsers: users
+    //   }, () => {
+    //     this.props.instanceUsers(this.state.connectedUsers) 
+    //   })
+    // })
 
-    socketFuncs.unregisterUserSubscribe(socket, (id) => {
+    // socketFuncs.unregisterUserSubscribe(socket, (id) => {
 
-      const users = this.state.connectedUsers.filter((user) => {
-        return user._id !== id
-      })
+    //   const users = this.state.connectedUsers.filter((user) => {
+    //     return user._id !== id
+    //   })
 
-      this.setState({
-        connectedUsers: users
-      }, () => {
-        this.props.instanceUsers(this.state.connectedUsers)
-      })
-    })
+    //   this.setState({
+    //     connectedUsers: users
+    //   }, () => {
+    //     this.props.instanceUsers(this.state.connectedUsers)
+    //   })
+    // })
 
-    socketFuncs.modifyUserStatusSubscribe(socket, (user) => {
+    // socketFuncs.modifyUserStatusSubscribe(socket, (user) => {
       
-      const users = [...this.state.connectedUsers];
+    //   const users = [...this.state.connectedUsers];
   
-      const modifyUserArrayIndex = users.findIndex(
-        specificUser => {
-          return specificUser._id === user._id;
-        }
-      );
+    //   const modifyUserArrayIndex = users.findIndex(
+    //     specificUser => {
+    //       return specificUser._id === user._id;
+    //     }
+    //   );
       
-      users[modifyUserArrayIndex].readyStatus = user.readyStatus;
+    //   users[modifyUserArrayIndex].readyStatus = user.readyStatus;
 
-      this.setState({
-        connectedUsers: users
-      }, () => {
-        this.props.instanceUsers(this.state.connectedUsers) 
-      })
-    })
+    //   this.setState({
+    //     connectedUsers: users
+    //   }, () => {
+    //     this.props.instanceUsers(this.state.connectedUsers) 
+    //   })
+    // })
 
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.state.roomId && (prevProps.userReadyStatus !== this.props.userReadyStatus)) {
-      //const {socket} = this.state
-      const user = {_id: this.props.userId, readyStatus: this.props.userReadyStatus}
-      socketFuncs.modifyUserStatusEmit(socket, user, this.state.roomId)
-    }
-  } 
+  // componentDidUpdate(prevProps) {
+  //   if (this.state.roomId && (prevProps.userReadyStatus !== this.props.userReadyStatus)) {
+  //     //const {socket} = this.state
+  //     const user = {_id: this.props.userId, readyStatus: this.props.userReadyStatus}
+  //     socketFuncs.modifyUserStatusEmit(socket, user, this.state.roomId)
+  //   }
+  // } 
 
-  componentWillUnmount() {
-    const {socket} = this.state
-    socketFuncs.unregisterUserEmit(socket, this.props.userId, this.state.roomId)
-    socket.disconnect()
-  }
+  // componentWillUnmount() {
+  //   const {socket} = this.state
+  //   socketFuncs.unregisterUserEmit(socket, this.props.userId, this.state.roomId)
+  //   //socket.disconnect()
+  // }
 
-  handleRegister = () => {
-    if(!this.state.userRegistered){
-      this.setState({
-        userRegistered: true
-      }, () => {
+  // handleRegister = () => {
+  //   if(!this.state.userRegistered){
+  //     this.setState({
+  //       userRegistered: true
+  //     }, () => {
         
-        //const {socket} = this.state
-        console.log(socket)
-        //socket.open()
-        const user = {_id: this.props.userId, readyStatus: false}
-        socketFuncs.registerUserEmit(socket, user, this.state.roomId)
-      })
-    }  
-  }
+  //       //const {socket} = this.state
+  //       console.log(socket)
+  //       //socket.open()
+  //       const user = {_id: this.props.userId, readyStatus: false}
+  //       socketFuncs.registerUserEmit(socket, user, this.state.roomId)
+  //     })
+  //   }  
+  // }
 
   findItemById = (id) => {
     return this.state.allItems.find((item) => {
@@ -278,12 +278,12 @@ export default class ExchangeArea extends React.Component {
     const item = this.findItemById(id, targetKey)
     //console.log(targetKey, item)
     const {socket} = this.state
-    socketFuncs.addItemEmit(socket, item, this.state.roomId)
+    socketFuncs.addItemEmit(socket, item, this.props.locationId)
   }
 
   deleteMissionItem = (id) => {
     const {socket} = this.state
-    socketFuncs.deleteItemEmit(socket, id, this.state.roomId)
+    socketFuncs.deleteItemEmit(socket, id, this.props.locationId)
   }
 
 

@@ -117,6 +117,10 @@ io.on("connection", socket => {
   })
 
 
+  socket.on("modifyUserStatus", data => {
+    io.to(data.roomId).emit("modifyUserStatus", data.user);
+  });
+
  // io.of("mission")
           // .to(partyId)
           // .emit("joinRoom", partyId);
@@ -142,11 +146,7 @@ io.on("connection", socket => {
 
 
 
-  socket.on("modifyUserStatus", data => {
-    io.of("mission")
-      .to(data.roomId)
-      .emit("modifyUserStatus", data.user);
-  });
+ 
 
   socket.on("disconnect", () => console.log("Client disconnected", socket.id));
 });

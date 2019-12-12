@@ -13,7 +13,7 @@ const MissionInstanceSchema = new mongoose.Schema({ //instance of ItemModel
     },
     party: {
         type: [{
-            inRoom: Boolean,
+            inInstance: Boolean,
             readyStatus: Boolean,
             profile: {
                 type: mongoose.Schema.Types.ObjectId, 

@@ -11,14 +11,16 @@ import ClearIcon from "@material-ui/icons/Clear";
 import VerificationPage from './mission/VerificationPage'
 import { Typography } from '@material-ui/core';
 import {connect} from 'react-redux'
+import {togglePresenceInInstance, toggleUserReady} from '../../../store/actions/missionInstanceActions'
+import {registerUserSubscribe, unregisterUserSubscribe, modifyUserStatusSubscribe} from '../../../socket'
 
-const getRandomInt = (min, max) => {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
+// const getRandomInt = (min, max) => {
+//     min = Math.ceil(min);
+//     max = Math.floor(max);
+//     return Math.floor(Math.random() * (max - min + 1)) + min;
+//   }
   
-const randomUserId = getRandomInt(1, 5)
+// const randomUserId = getRandomInt(1, 5)
 
 const TitleBar = styled.div`
   display: flex;
@@ -130,25 +132,15 @@ class MissionInstance extends React.Component {
         loading: true,
         roomId: null,
         missionId: null,
-        missionObject: createTempMission(),
+        missionObject: null,
         leader: randomUserId === 1,
     }
-        
 
-    componentDidMount() {
-
-        if(!this.props.location.state || (this.props.location.state.id === undefined)){
-            this.backToEvents(this.props.history)
-        }
-
-        //api backend -> in response id missionInstance
-        this.setState({
-            missionId: this.props.location.state.id,
-            loading: false
-        },)
+    componentWillUnmount() {
+        const user = {_id: this.props.auth.uid, inMission: false}
+        this.props.togglePresenceInInstance(user)
     }
-    
-    
+
     backToEvents = (history) => {
         history.push({
           pathname: '/',
@@ -159,6 +151,74 @@ class MissionInstance extends React.Component {
     handleBack = () => {
         this.backToEvents(this.props.history)
     }
+
+    async componentDidMount() {
+
+        if(!this.props.location.state || (this.props.location.state.id === undefined)){
+            this.handleBack()
+        }
+
+
+        registerUserSubscribe((user) => {
+
+            const users = [...this.state.instanceUsers, user]
+        
+            this.setState({
+                instanceUsers: users
+            })
+        })
+    
+        unregisterUserSubscribe(socket, (id) => {
+    
+            const users = this.state.instanceUsers.filter((user) => {
+                return user._id !== id
+            })
+        
+            this.setState({
+                instanceUsers: users
+            })
+        })
+    
+        modifyUserStatusSubscribe(socket, (user) => {
+        
+            const users = [...this.state.instanceUsers];
+        
+            const modifyUserArrayIndex = users.findIndex(
+                specificUser => {
+                    return specificUser._id === user._id;
+                }
+            );
+            if(user.hasOwnProperty('readyStatus')){
+                users[modifyUserArrayIndex].readyStatus = user.readyStatus;
+            }
+            if(user.hasOwnProperty('inMission')){
+                users[modifyUserArrayIndex].inMission = user.inMission;
+            }
+            
+        
+            this.setState({
+                instanceUsers: users
+            })
+        })
+        try{
+            const user = {_id: this.props.auth.uid, inMission: true}
+            const missionInstance = await this.props.togglePresenceInInstance(user)
+            this.setState({
+                instanceUsers: [...missionInstance.party],
+                missionObject: missionInstance.mission,//this.props.location.state.id,
+                loading: false
+            })
+        }catch{
+            this.handleBack()
+        }
+        
+        
+        //api backend -> in response id missionInstance
+        
+    }
+    
+    
+    
 
     handleConnection = (roomId) => {
         this.setState({
@@ -174,12 +234,12 @@ class MissionInstance extends React.Component {
         })
     }
 
-    updateInstanceUsers = (users) => {
+    // updateInstanceUsers = (users) => {
         
-        this.setState({
-            instanceUsers: users
-        })
-    }
+    //     this.setState({
+    //         instanceUsers: users
+    //     })
+    // }
 
     updatePartyCondition = (condition) => {
         this.setState({
@@ -192,9 +252,18 @@ class MissionInstance extends React.Component {
         if(this.state.leader) {
             this.setState({ showVerificationPage: true });
         }else{
+            const user = {_id: this.props.auth.uid, readyStatus: !this.state.userReadyStatus}
+            try{
+                await this.props.toggleUserReady(user, this.props.party._id)
+            }catch(e){
+                this.handleBack()
+            }
+            
+
             this.setState({
                 userReadyStatus: !this.state.userReadyStatus
             })
+            
         }
         
     };
@@ -241,8 +310,8 @@ class MissionInstance extends React.Component {
             return <Loading />
         }
 
-        const partySize = 5 //from backend by leader profile update
-        const leader = this.state.leader //from backend by leader profile update
+        const partySize = this.props.party.members.length + 1 //from backend by leader profile update
+        const leader = this.props.party.leader === this.props.auth.uid //from backend by leader profile update
         
         const requiredMissionItems = this.state.missionObject.amulets
 
@@ -283,7 +352,7 @@ class MissionInstance extends React.Component {
                 <div>
                 <TitleBar>
                     <StyledImg src={require(`../../../assets/avatar/${this.state.missionObject.avatarSrc}`)}/>
-                    <Typography style={{display: 'inline'}} variant="h6">Mission {this.state.missionId}</Typography>
+                    <Typography style={{display: 'inline'}} variant="h6">{this.state.missionObject.name}</Typography>
                     {statusIcon(isRequiredItemsCollected)}
                 </TitleBar>   
                 <MissionBar>
@@ -301,13 +370,10 @@ class MissionInstance extends React.Component {
                 
                 </MissionBar>
                 
-                <ExchangeArea userId={randomUserId} locationId={this.props.party._id/*this.props.location.state.id*/} setConnection={this.handleConnection} instanceUsers={this.updateInstanceUsers} instanceItems={this.updateInstanceItems} userReadyStatus={this.state.userReadyStatus}/>
-                {this.state.roomId ? (
+                <ExchangeArea userId={this.props.auth.uid} locationId={this.props.party._id/*this.props.location.state.id*/} setConnection={this.handleConnection} instanceItems={this.updateInstanceItems} userReadyStatus={this.state.userReadyStatus}/>
+                <PartyList userId={this.props.auth.uid} instanceUsers={this.state.instanceUsers} instanceItems={this.state.instanceItems} isUserLeader={this.state.leader} userReadyStatus={this.state.userReadyStatus} partyCondition={this.updatePartyCondition}/>
                     
-                    <PartyList userId={randomUserId} instanceUsers={this.state.instanceUsers} instanceItems={this.state.instanceItems} isUserLeader={this.state.leader} userReadyStatus={this.state.userReadyStatus} partyCondition={this.updatePartyCondition}/>
-                    ) : (
-                    null
-                )}
+                
                 <ButtonBar>
                     <Button 
                         style={{width: '36%', marginRight: '0.5rem'}} 
