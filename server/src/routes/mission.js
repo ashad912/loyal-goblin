@@ -163,14 +163,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
     
     const user = req.user;
 
-    let partyIds = []
-
-    if(user.party){
-        const party = await Party.findById(user.party)
-        partyIds = [party.leader, ...party.members]
-    }
-
-    console.log(partyIds)
+    
     
     
     try {
@@ -181,7 +174,59 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
         //         options: {}
         //     })
 
+        let partyIds = []
 
+        if(user.party){
+            const missionInstance = await MissionInstance.findOne(
+                {party: {$elemMatch: {profile: user._id}}}    
+            )
+
+            if(missionInstance){
+                const mission = await Mission.aggregate().match( //return only one mission - of which the user is a participant (as array for compatibility)
+                    {_id: missionInstance.mission }).project({ 
+                        'title': 1,
+                        'description': 1,
+                        'avatar': 1,
+                        'minPlayers': 1,
+                        'maxPlayers': 1,
+                        'level': 1,
+                        'strength': 1,
+                        'dexterity': 1,
+                        'magic': 1,
+                        'endurance': 1,
+                        'unique': 1,
+                        'amulets': 1,
+                        'awards': {
+                            $cond: {
+                                if: {
+                                    '$eq': ['$awardsAreSecret', true]
+                                },
+                                then: {     
+                                    "any": [],
+                                    "warrior": [],
+                                    "rogue": [],
+                                    "mage": [],
+                                    "cleric": [],
+                                },
+                                else: '$awards'
+                            }
+                        },
+                })
+
+                await ItemModel.populate(mission, { //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
+                    path: 'amulets.itemModel awards.any.itemModel awards.warrior.itemModel awards.rogue.itemModel awards.mage.itemModel awards.cleric.itemModel',
+                    options: {}
+                })
+                
+                res.send({missions: mission, missionInstanceId: missionInstance.mission}) //return only one mission - of which the user is a participant (as array for compatibility)
+                return
+            }
+
+            const party = await Party.findById(user.party)
+            partyIds = [party.leader, ...party.members]
+        }
+
+        console.log(partyIds)
         
         //console.log( new Date().toUTCString())
         const missions = await Mission.aggregate().match({
@@ -200,6 +245,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
         .project({ 
             'title': 1,
             'description': 1,
+            'avatar': 1,
             'minPlayers': 1,
             'maxPlayers': 1,
             'level': 1,
@@ -229,7 +275,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
         
         //population on all colection saved to missions var
         await ItemModel.populate(missions, { //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
-            path: 'amulets.itemModel',
+            path: 'amulets.itemModel awards.any.itemModel awards.warrior.itemModel awards.rogue.itemModel awards.mage.itemModel awards.cleric.itemModel',
             options: {}
         })
         
@@ -243,7 +289,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
 
         //console.log(missions)
         
-        res.send(missions)
+        res.send({missions, missionInstanceId: null})
     } catch (e) {
         console.log(e)
         res.status(500).send(e)
@@ -452,7 +498,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
 
         let partyObject = []
         await asyncForEach(partyIds, async (memberId) => {
-                const memberObject = {inInstance: false, readyStatus: false, profile: memberId}
+                const memberObject = {inMission: false, readyStatus: false, profile: memberId}
                 partyObject = [...partyObject, memberObject]
         })
         
@@ -552,7 +598,7 @@ router.patch('/leaveInstance', auth, async (req, res) => {
 
     try{
 
-        const missionInstance = await toggleUserInstanceStatus(user, 'inInstance', false, 'readyStatus', false)
+        const missionInstance = await toggleUserInstanceStatus(user, 'inMission', false, 'readyStatus', false)
         
         res.send(missionInstance)
 
@@ -565,16 +611,47 @@ router.patch('/enterInstance', auth, async (req, res) => {
     const user = req.user
 
     try{
-        const missionInstance = await toggleUserInstanceStatus(user, 'inInstance', true)
+        const missionInstance = await toggleUserInstanceStatus(user, 'inMission', true)
 
+        
         await user.populate({
-            path: 'mission',
-            populate: {path: 'amulets.itemModel'}
+            path: 'bag party',
+            populate: {path: 'bag.itemModel'}
         }).execPopulate()
 
-        res.send(missionInstance)
+
+        const party = [user.party.leader, ...user.party.members]
+    
+        let missionParty = [] 
+        await asyncForEach(missionInstance.party, async (memberObject) => {
+            const memberId = memberObject.profile
+            missionParty = [...missionParty, memberId]
+        })
+
+        if(!isEqual(missionParty, party)) {
+            throw Error('Invalid party!')
+        }
+
+        await missionInstance.populate({
+            path: 'mission party.profile items',
+            populate: {path: 'amulets.itemModel items.itemModel'}
+        }).execPopulate()
+
+        //amulets used in mission
+        const missionAmulets = missionInstance.mission.amulets.map((amulet) => {
+            return amulet.itemModel.toString()
+        })
+
+        //available amulets to use for user
+        const amulets = user.bag.filter((item) => {
+            return missionAmulets.includes(item.itemModel._id.toString())
+        })
+
+
+        res.send({missionInstance, amulets})
 
     }catch(e){
+        console.log(e.message)
         res.status(400).send(e.message)
     }
 })

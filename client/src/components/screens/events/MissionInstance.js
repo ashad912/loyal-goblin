@@ -11,7 +11,7 @@ import ClearIcon from "@material-ui/icons/Clear";
 import VerificationPage from './mission/VerificationPage'
 import { Typography } from '@material-ui/core';
 import {connect} from 'react-redux'
-import {togglePresenceInInstance, toggleUserReady} from '../../../store/actions/missionInstanceActions'
+import {togglePresenceInInstance, toggleUserReady} from '../../../store/actions/missionActions'
 import {registerUserSubscribe, unregisterUserSubscribe, modifyUserStatusSubscribe} from '../../../socket'
 
 // const getRandomInt = (min, max) => {
@@ -129,16 +129,16 @@ class MissionInstance extends React.Component {
 
     state = {
         instanceItems: [],
+        instanceUsers: [],
         loading: true,
-        roomId: null,
         missionId: null,
         missionObject: null,
-        leader: randomUserId === 1,
+        leader: null,
     }
 
-    componentWillUnmount() {
+    async componentWillUnmount() {
         const user = {_id: this.props.auth.uid, inMission: false}
-        this.props.togglePresenceInInstance(user)
+        await togglePresenceInInstance(user, this.props.party._id)
     }
 
     backToEvents = (history) => {
@@ -152,6 +152,28 @@ class MissionInstance extends React.Component {
         this.backToEvents(this.props.history)
     }
 
+    modifyUserStatus = (user, users) => {
+        console.log(user)
+        
+        console.log(users)
+        const modifyUserArrayIndex = users.findIndex(
+            specificUser => {
+                console.log(specificUser.profile._id, user._id)
+                return specificUser.profile._id === user._id;
+            }
+        );
+        console.log(modifyUserArrayIndex)
+        if(user.hasOwnProperty('readyStatus')){
+            users[modifyUserArrayIndex].readyStatus = user.readyStatus;
+        }
+        if(user.hasOwnProperty('inMission')){
+            users[modifyUserArrayIndex].inMission = user.inMission;
+        }
+    
+    
+        return users
+    }
+
     async componentDidMount() {
 
         if(!this.props.location.state || (this.props.location.state.id === undefined)){
@@ -159,61 +181,37 @@ class MissionInstance extends React.Component {
         }
 
 
-        registerUserSubscribe((user) => {
-
-            const users = [...this.state.instanceUsers, user]
-        
-            this.setState({
-                instanceUsers: users
-            })
-        })
-    
-        unregisterUserSubscribe(socket, (id) => {
-    
-            const users = this.state.instanceUsers.filter((user) => {
-                return user._id !== id
-            })
-        
-            this.setState({
-                instanceUsers: users
-            })
-        })
-    
-        modifyUserStatusSubscribe(socket, (user) => {
-        
-            const users = [...this.state.instanceUsers];
-        
-            const modifyUserArrayIndex = users.findIndex(
-                specificUser => {
-                    return specificUser._id === user._id;
-                }
-            );
-            if(user.hasOwnProperty('readyStatus')){
-                users[modifyUserArrayIndex].readyStatus = user.readyStatus;
-            }
-            if(user.hasOwnProperty('inMission')){
-                users[modifyUserArrayIndex].inMission = user.inMission;
-            }
-            
-        
-            this.setState({
-                instanceUsers: users
-            })
-        })
         try{
             const user = {_id: this.props.auth.uid, inMission: true}
-            const missionInstance = await this.props.togglePresenceInInstance(user)
+            const response = await togglePresenceInInstance(user, this.props.party._id)
+            const missionInstance = response.missionInstance
+            const amulets = response.amulets
+
+            const instanceUsers = this.modifyUserStatus(user, missionInstance.party)
             this.setState({
-                instanceUsers: [...missionInstance.party],
+                instanceUsers: [...instanceUsers],
+                instanceItems: [...missionInstance.items],
+                userItems: [...amulets],
                 missionObject: missionInstance.mission,//this.props.location.state.id,
-                loading: false
+                leader: this.props.party.leader._id === this.props.auth.uid,
+                loading: false,
+            }, () => {
+                modifyUserStatusSubscribe((user) => {
+            
+                    const instanceUsers = this.modifyUserStatus(user, this.state.instanceUsers)
+                    
+                    this.setState({
+                        instanceUsers
+                    })
+                })
             })
         }catch{
             this.handleBack()
         }
+
         
         
-        //api backend -> in response id missionInstance
+    
         
     }
     
@@ -241,28 +239,32 @@ class MissionInstance extends React.Component {
     //     })
     // }
 
-    updatePartyCondition = (condition) => {
-        this.setState({
-            partyCondition: condition
-        })
-    }
+    // updatePartyCondition = (condition) => {
+    //     this.setState({
+    //         partyCondition: condition
+    //     })
+    // }
    
 
-    handleReadyButton = () => {
+    handleReadyButton = async () => {
         if(this.state.leader) {
             this.setState({ showVerificationPage: true });
         }else{
             const user = {_id: this.props.auth.uid, readyStatus: !this.state.userReadyStatus}
             try{
-                await this.props.toggleUserReady(user, this.props.party._id)
+                await toggleUserReady(user, this.props.party._id)
+
+                const instanceUsers = this.modifyUserStatus(user, this.state.instanceUsers)
+                this.setState({
+                    instanceUsers,
+                    userReadyStatus: !this.state.userReadyStatus
+                })
             }catch(e){
                 this.handleBack()
             }
             
 
-            this.setState({
-                userReadyStatus: !this.state.userReadyStatus
-            })
+            
             
         }
         
@@ -299,7 +301,30 @@ class MissionInstance extends React.Component {
     }
 
     checkPartyCondition = () => {
-        return true//this.state.partyCondition
+
+        console.log(this.state.instanceUsers)
+        let partyCondition = true
+        this.state.instanceUsers.forEach((member) => {
+            // const userFound = props.instanceUsers.find((user)=>{
+            //     return user._id === member.profile._id
+            // })
+
+            // if(userFound) {
+            //     member.inMission = true
+            //     member.readyStatus = userFound.readyStatus  
+            // }else{
+            //     member.inMission = false
+            //     member.readyStatus = false 
+            // }
+            //check party readyCondition -> important for leader - optimize - count only for leader
+            if((member.profile._id !== this.props.auth.uid) && !member.readyStatus){
+                partyCondition = false
+            }
+        })
+        
+        
+
+        return partyCondition
     }
 
 
@@ -309,13 +334,10 @@ class MissionInstance extends React.Component {
         if(this.state.loading){
             return <Loading />
         }
-
-        const partySize = this.props.party.members.length + 1 //from backend by leader profile update
-        const leader = this.props.party.leader === this.props.auth.uid //from backend by leader profile update
         
         const requiredMissionItems = this.state.missionObject.amulets
 
-        const buttonReadyLabel = leader ? (`Wyrusz`) : (`Gotów`)
+        const buttonReadyLabel = this.state.leader ? (`Wyrusz`) : (`Gotów`)
 
         const statusIcon = (condition) => condition ? (
             <CheckIcon
@@ -340,8 +362,8 @@ class MissionInstance extends React.Component {
 
         
         const isRequiredItemsCollected = this.checkItemsCondition()
-        const isAllPartyReady = this.checkPartyCondition()
-
+        const isAllPartyReady = this.state.leader ? this.checkPartyCondition() : true
+        console.log(isAllPartyReady)
 
         
         return(
@@ -351,8 +373,8 @@ class MissionInstance extends React.Component {
             ) : (
                 <div>
                 <TitleBar>
-                    <StyledImg src={require(`../../../assets/avatar/${this.state.missionObject.avatarSrc}`)}/>
-                    <Typography style={{display: 'inline'}} variant="h6">{this.state.missionObject.name}</Typography>
+                    <StyledImg src={require(`../../../assets/avatar/${this.state.missionObject.avatar}`)}/>
+                    <Typography style={{display: 'inline'}} variant="h6">{this.state.missionObject.title}</Typography>
                     {statusIcon(isRequiredItemsCollected)}
                 </TitleBar>   
                 <MissionBar>
@@ -370,8 +392,8 @@ class MissionInstance extends React.Component {
                 
                 </MissionBar>
                 
-                <ExchangeArea userId={this.props.auth.uid} locationId={this.props.party._id/*this.props.location.state.id*/} setConnection={this.handleConnection} instanceItems={this.updateInstanceItems} userReadyStatus={this.state.userReadyStatus}/>
-                <PartyList userId={this.props.auth.uid} instanceUsers={this.state.instanceUsers} instanceItems={this.state.instanceItems} isUserLeader={this.state.leader} userReadyStatus={this.state.userReadyStatus} partyCondition={this.updatePartyCondition}/>
+                <ExchangeArea userId={this.props.auth.uid} locationId={this.props.party._id/*this.props.location.state.id*/} instanceItems={this.updateInstanceItems} initUserItems={this.state.userItems} initMissionItems={this.state.instanceItems} userReadyStatus={this.state.userReadyStatus}/>
+                <PartyList userId={this.props.auth.uid} instanceUsers={this.state.instanceUsers} instanceItems={this.state.instanceItems} party={this.props.party} userReadyStatus={this.state.userReadyStatus} />
                     
                 
                 <ButtonBar>
@@ -407,8 +429,8 @@ class MissionInstance extends React.Component {
                     
                     
                 </ButtonBar>
-                    <span style={{fontSize: 8}}>SocketIO-RoomId (temporary missionId): {this.state.roomId} ||| </span>
-                    <span style={{fontSize: 8}}>RandomUserId (1-5, can be duplicated -> refresh): {randomUserId}</span>
+                    {/* <span style={{fontSize: 8}}>SocketIO-RoomId (temporary missionId): {this.state.roomId} ||| </span>
+                    <span style={{fontSize: 8}}>RandomUserId (1-5, can be duplicated -> refresh): {randomUserId}</span> */}
                 </div>
                 )}
             </div>

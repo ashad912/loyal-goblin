@@ -68,126 +68,87 @@ const SmallAvatar = styled(Avatar)`
 // && {
 //     margin: 0.5rem 2rem 0.5rem 2rem;
 // }
-const createTempPartyList = () => {
-    return [
-        {
-            inRoom: false,
-            readyStatus: false,
-            user: {
-                _id: 1,
-                name: 'user1',
-                avatar: avatarTemp,
-                party: {
-                    leader: {
-                        _id: 1
-                    }
-                }
-            }
-        },
-        {
-            inRoom: false,
-            readyStatus: false,
-            user: {
-                _id: 2,
-                name: 'user2',
-                avatar: avatarTemp,
-                party: {
-                    leader: {
-                        _id: 1
-                    }
-                }
-            }
-        },
-        {
-            inRoom: false,
-            readyStatus: false,
-            user: {
-                _id: 3,
-                name: 'user3 halo',
-                avatar: undefined,
-                party: {
-                    leader: {
-                        _id: 1
-                    }
-                }
-            }
-        },
-        {
-            inRoom: false,
-            readyStatus: false,
-            user: {
-                _id: 4,
-                name: 'user4 halo',
-                avatar: undefined,
-                party: {
-                    leader: {
-                        _id: 1
-                    }
-                }
-            }
-        },
-        {
-            inRoom: false,
-            readyStatus: false,
-            user: {
-                _id: 5,
-                name: 'user5',
-                avatar: avatarTemp,
-                party: {
-                    leader: {
-                        _id: 1
-                    }
-                }
-            }
-        },
-    ]
-}
+// const createTempPartyList = () => {
+//     return [
+//         {
+//             inRoom: false,
+//             readyStatus: false,
+//             user: {
+//                 _id: 1,
+//                 name: 'user1',
+//                 avatar: avatarTemp,
+//                 party: {
+//                     leader: {
+//                         _id: 1
+//                     }
+//                 }
+//             }
+//         },
+//         {
+//             inRoom: false,
+//             readyStatus: false,
+//             user: {
+//                 _id: 2,
+//                 name: 'user2',
+//                 avatar: avatarTemp,
+//                 party: {
+//                     leader: {
+//                         _id: 1
+//                     }
+//                 }
+//             }
+//         },
+//         {
+//             inRoom: false,
+//             readyStatus: false,
+//             user: {
+//                 _id: 3,
+//                 name: 'user3 halo',
+//                 avatar: undefined,
+//                 party: {
+//                     leader: {
+//                         _id: 1
+//                     }
+//                 }
+//             }
+//         },
+//         {
+//             inRoom: false,
+//             readyStatus: false,
+//             user: {
+//                 _id: 4,
+//                 name: 'user4 halo',
+//                 avatar: undefined,
+//                 party: {
+//                     leader: {
+//                         _id: 1
+//                     }
+//                 }
+//             }
+//         },
+//         {
+//             inRoom: false,
+//             readyStatus: false,
+//             user: {
+//                 _id: 5,
+//                 name: 'user5',
+//                 avatar: avatarTemp,
+//                 party: {
+//                     leader: {
+//                         _id: 1
+//                     }
+//                 }
+//             }
+//         },
+//     ]
+//}
 
 
 
 const PartyList = (props) => {
 
-    const [partyList, setPartyList] = useState([])
+    const [partyList, setPartyList] = useState([...props.instanceUsers])
 
-    useEffect(() => {
-        const tempParty = createTempPartyList()
-        setPartyList(tempParty)
-        
-        
-    }, []) 
-
-    useEffect(() => {
-        if(partyList.length > 0){
-
-            console.log(props.instanceUsers)
-            console.log(partyList)
-            let partyCondition = true
-            partyList.forEach((member) => {
-                const userFound = props.instanceUsers.find((user)=>{
-                    return user._id === member.user._id
-                })
-
-                if(userFound) {
-                    member.inRoom = true
-                    member.readyStatus = userFound.readyStatus  
-                }else{
-                    member.inRoom = false
-                    member.readyStatus = false 
-                }
-                //check party readyCondition -> important for leader - optimize - count only for leader
-                if((member.user.party.leader._id === props.userId) && (member.user._id !== props.userId) && !member.readyStatus){
-                    partyCondition = false
-                }
-            })
-
-            setPartyList(party)
-            props.partyCondition(partyCondition)
-            
-        }
-        
-
-
-    }, [props.instanceUsers])
 
     const altAvatar = (user) => {
 
@@ -211,7 +172,7 @@ const PartyList = (props) => {
                 }}
                 badgeContent={<SmallAvatar alt="bag avatar" src={bagImg} />}
             >
-                {user.avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={user.avatar} /> : <Avatar style={{height: 30, width:30, backgroundColor: '#3f51b5'}}>{createAvatarPlaceholder()}</Avatar>}
+                {user.avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={'/images/user_uploads/' + user.avatar} /> : <Avatar style={{height: 30, width:30, backgroundColor: '#3f51b5'}}>{createAvatarPlaceholder()}</Avatar>}
             </Badge>
         )
         //return <img style={{height: 30, width:30}} src={user.avatar} alt='avatar'/>
@@ -244,12 +205,11 @@ const PartyList = (props) => {
     const instanceItems = props.instanceItems
 
 
-    const userAuth = props.userId; //TODO: taken from auth.uid (redux)
     //const partyList from props.partyList from socket.io methods
 
     //show only rest of the party
     const party = partyList.filter((user) => {
-        return user.user._id !== userAuth
+        return user.profile._id !== props.userId
     })
 
     const leaderIcon = () => {
@@ -278,11 +238,11 @@ const PartyList = (props) => {
                 return(
                    
                     <StyledBox border={1} borderColor="primary.main">
-                    {member.inRoom ? (
+                    {member.inMission ? (
                         
                         <ListItem>
                             <ListItemAvatar style={{minWidth: 32}}>
-                                {altAvatar(member.user)}
+                                {altAvatar(member.profile)}
                             </ListItemAvatar>
                             
 
@@ -300,8 +260,8 @@ const PartyList = (props) => {
                                             
                                             return(
                                                 <React.Fragment key={item._id}>
-                                                    {item.owner === member.user._id ? (
-                                                        <StyledImage  src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>
+                                                    {item.owner === member.profile._id ? (
+                                                        <StyledImage  src={require(`../../../../assets/icons/items/${item.itemModel.imgSrc}`)} alt='icon'/>
                                                     ) : (
                                                         null
                                                     )}
@@ -317,7 +277,7 @@ const PartyList = (props) => {
                                 </Grid>
                             
                             <ListItemIcon style={{minWidth: 32}}>
-                                    {member.user._id === member.user.party.leader._id ? (leaderIcon()) : (statusIcon(member.readyStatus))}
+                                    {member.profile._id === props.party.leader._id ? (leaderIcon()) : (statusIcon(member.readyStatus))}
                             </ListItemIcon>
                             </ListItem>
                         
@@ -329,7 +289,7 @@ const PartyList = (props) => {
                             </ListItemAvatar>
                             <Grid item xs={10}></Grid>
                             <ListItemIcon style={{minWidth: 32}}>
-                                {member.user._id === member.user.party.leader._id ? (leaderIcon()) : (statusIcon(member.readyStatus))}
+                                {member.profile._id === props.party.leader._id ? (leaderIcon()) : (statusIcon(member.readyStatus))}
                             </ListItemIcon>
                         </ListItem>
                     )}   

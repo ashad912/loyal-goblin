@@ -60,6 +60,12 @@ export const modifyUserStatusSubscribe = (data) => {
     })
 }
 
+export const instanceRefreshSubscribe = (roomId) => {
+    socket.on('instanceRefresh', roomId, () => {
+        return roomId
+    })
+}
+
 //EMIT
 export const joinRoomEmit = (roomId) => {
     socket.emit('joinRoom', roomId)
@@ -101,4 +107,8 @@ export const unregisterUserEmit = ( id, roomId) => {
 export const modifyUserStatusEmit = ( user, roomId) => {
     const data = {user: user, roomId: roomId}
     socket.emit('modifyUserStatus', data)
+}
+
+export const instanceRefreshEmit = (roomId) => {
+    socket.emit('instanceRefresh', roomId)
 }

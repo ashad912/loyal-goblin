@@ -84,7 +84,7 @@ const MissionListItem = (props) => {
                             direction="column"
                         >
                             <Grid item style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={mission.avatarSrc.avatarTemp} />
+                                <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={require(`../../../assets/avatar/${mission.avatar}`)} />
                             </Grid>
                         </Grid>
                     </Grid> 
@@ -102,7 +102,7 @@ const MissionListItem = (props) => {
                         <Button size="small" color="primary" style={{paddingLeft: '0'}} onClick={() => props.handleMissionDetailsOpen(props.index)}>Szczegóły</Button>
                     </Grid>
                     <Grid item xs={5} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                        <Button size="small" color="primary" style={{textAlign: 'right', paddingRight: '0'}} onClick={() => props.handleMissionClick(mission._id)} disabled={!props.isMissionActive || !props.leader}>Wyrusz!</Button>
+                        <Button size="small" color="primary" style={{textAlign: 'right', paddingRight: '0'}} onClick={() => props.handleMissionClick(mission._id)} disabled={!props.isMissionActive || (!props.leader && !props.activeInstanceId)}>{props.activeInstanceId ? 'Dołącz!' : 'Wyrusz!'}</Button>
                     </Grid>
                 </Grid>
                 <Divider style={{margin: '0.5rem 0'}}/>
@@ -156,24 +156,34 @@ const MissionListItem = (props) => {
                             </Typography>
                         </Grid>
                     </Grid>
-                    <Grid
-                        container
-                        direction="row"
-                        style={{margin: '0.1rem 0'}}
-                    >
-                        <Grid item xs={3}>
-                            <RequiredAttribute variant="body2" attr={props.appropriateStrength} >{`S: ${props.totalStrength}/${mission.strength}`}</RequiredAttribute>
+                    {!props.activeInstanceId ? (
+                        <Grid
+                            container
+                            direction="row"
+                            style={{margin: '0.1rem 0'}}
+                        >
+                            <Grid item xs={3}>
+                                <RequiredAttribute variant="body1" attr={props.appropriateStrength} >{`S: ${props.totalStrength}/${mission.strength}`}</RequiredAttribute>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <RequiredAttribute variant="body1" attr={props.appropriateDexterity} >{`Z: ${props.totalDexterity}/${mission.dexterity}`}</RequiredAttribute>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <RequiredAttribute variant="body1" attr={props.appropriateMagic} >{`M: ${props.totalMagic}/${mission.magic}`}</RequiredAttribute> 
+                            </Grid>
+                            <Grid item xs={3}>
+                                <RequiredAttribute variant="body1" attr={props.appropriateEndurance} >{`W: ${props.totalEndurance}/${mission.endurance}`}</RequiredAttribute>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={3}>
-                            <RequiredAttribute variant="body2" attr={props.appropriateDexterity} >{`Z: ${props.totalDexterity}/${mission.dexterity}`}</RequiredAttribute>
+                    ):(
+                        <Grid
+                            container
+                            direction="row"
+                            style={{margin: '0.1rem 0'}}
+                        >
+                        <Typography>Ta misja jest aktywna! Dołącz do reszty drużyny!</Typography>
                         </Grid>
-                        <Grid item xs={3}>
-                            <RequiredAttribute variant="body2" attr={props.appropriateMagic} >{`M: ${props.totalMagic}/${mission.magic}`}</RequiredAttribute> 
-                        </Grid>
-                        <Grid item xs={3}>
-                            <RequiredAttribute variant="body2" attr={props.appropriateEndurance} >{`W: ${props.totalEndurance}/${mission.endurance}`}</RequiredAttribute>
-                        </Grid>
-                    </Grid>
+                    )}
                     <Grid
                         container
                         direction="row"

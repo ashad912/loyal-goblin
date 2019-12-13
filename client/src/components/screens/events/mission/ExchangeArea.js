@@ -145,11 +145,11 @@ const createTempItemListMission = (userId) => {
 export default class ExchangeArea extends React.Component {
 
   state = {
-    roomId: null,
-    userRegistered: false,
+    //roomId: null,
+    //userRegistered: false,
     //connectedUsers: [/*from backend*/],
-    [userItemsName]: createTempItemListUser(this.props.userId),
-    [missionItemsName]: createTempItemListMission(this.props.userId),
+    [userItemsName]: this.props.initUserItems,
+    [missionItemsName]: this.props.initMissionItems,
     //all possible items in communication
     
   }

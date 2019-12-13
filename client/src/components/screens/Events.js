@@ -1,5 +1,6 @@
 import React, {useState}  from 'react'
 import { Redirect} from 'react-router-dom'
+import { connect } from 'react-redux'
 import VisibilitySensor from 'react-visibility-sensor'
 import MissionDetails from './events/MissionDetails'
 import RallyDetails from './events/RallyDetails'
@@ -11,7 +12,8 @@ import uuid from 'uuid/v1'
 import Typography from '@material-ui/core/Typography';
 import styled from 'styled-components'
 import moment from 'moment'
-
+import {getMissionList, createInstance} from '../../store/actions/missionActions.js'
+import {instanceRefreshSubscribe} from '../../socket'
 import Rally from './events/Rally'
 
 
@@ -815,18 +817,51 @@ const createTempRally = () => {
 
 
 
-const Events = () => {
+const Events = (props) => {
+
 
     const [missionId, setMissionId] = useState(null);
     const [activeMissionDetails, setActiveMissionDetails] = useState(null)
     const [activeRallyDetails, setActiveRallyDetails] = useState(null)
+    const [missionListData, setMissionListData] = useState([])
+    const [activeInstanceId, setActiveInstanceId] = useState(null)
     
     const rally = createTempRally() //returned from backend
-    const missionListData = createTempList() //returned from backend
+    //const missionListData = createTempList() //returned from backend
 
-    const handleMissionClick = (id) => {
-        console.log('clicked',  id) //shot to backend - verify party quantity and leader status (amulets verifed inside the mission), redirect to mission
-        setMissionId(id)
+
+    React.useEffect(() => {
+        const fetch = async () => {
+            const missionObject = await getMissionList()
+            setMissionListData(missionObject.missions)
+            setActiveInstanceId(missionObject.missionInstanceId)
+        }
+
+        fetch()
+        
+    
+        instanceRefreshSubscribe(async (roomId) => {
+            fetch()
+        })
+
+    }, []);
+
+    const handleMissionClick = async (id) => {
+        console.log('clicked',  id) 
+        if(!activeInstanceId){
+            try{
+                const response = await createInstance(id, props.party._id) //shot to backend - verify party quantity and leader status (amulets verifed inside the mission), redirect to mission
+                setMissionId(response.mission)
+            }catch(e){
+                console.log(e)
+                //window.location.reload();
+            }
+            
+            
+        }else{
+            setMissionId(id)
+        }
+        
     }
 
     const handleMissionDetailsOpen = (index) => {
@@ -856,6 +891,7 @@ const Events = () => {
                     <div>{isVisible ? ( /*inVisible defined only inside div witch is fucking kurwa crazy */
                         <MissionListItemHoc
                             index={index}
+                            activeInstanceId = {activeInstanceId}
                             handleMissionClick={handleMissionClick}
                             handleMissionDetailsOpen={handleMissionDetailsOpen}
                         />   
@@ -893,6 +929,7 @@ const Events = () => {
             {activeMissionDetails && 
                 <MissionDetailsHoc
                     open={activeMissionDetails ? 1 : 0}
+                    activeInstanceId = {activeInstanceId}
                     handleClose={handleMissionDetailsClose}
                     handleMissionClick={handleMissionClick}
                 />
@@ -915,4 +952,10 @@ const Events = () => {
     )
 }
 
-export default Events
+const mapStateToProps = state => {
+    return {
+      party: state.party
+    };
+  };
+
+export default connect(mapStateToProps)(Events)

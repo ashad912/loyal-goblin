@@ -118,7 +118,12 @@ io.on("connection", socket => {
 
 
   socket.on("modifyUserStatus", data => {
-    io.to(data.roomId).emit("modifyUserStatus", data.user);
+    console.log(`${data.roomId} for user ${data.user._id} with status ${data.user.readyStatus} or ${data.user.inMission}`)
+    socket.broadcast.to(data.roomId).emit("modifyUserStatus", data.user);
+  });
+
+  socket.on("instanceRefresh", roomId => {
+    io.to(roomId).emit("modifyUserStatus", roomId);
   });
 
  // io.of("mission")

@@ -36,7 +36,7 @@ router.get("/", auth, async (req, res, next) => {
     await user
       .populate({
         path: "party",
-        populate: { path: "leader members", select: "_id name avatar" }
+        populate: { path: "leader members", select: "_id name avatar attributes experience userPerks" }
       })
       .execPopulate();
 
@@ -115,13 +115,22 @@ router.patch("/addMember", auth, async (req, res) => {
       { _id: req.body.memberId },
       { $set: { party: req.body.partyId } }
     );
+
+    //Remove party's existing mission instance if present on user add
+    const missionInstance = await MissionInstance.findOne({
+      party: { $elemMatch: { profile: user._id } }
+    });
+
+    if (missionInstance) {
+      missionInstance.remove();
+    }
     
     party.members.push(req.body.memberId);
     await party.save();
     await party
       .populate({
         path: "leader members",
-        select: "_id name avatar bag"
+        select: "_id name avatar bag attributes experience userPerks"
       })
       .execPopulate();
       
