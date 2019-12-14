@@ -81,121 +81,117 @@ router.delete("/remove", auth, async (req, res) => {
 
 ////USER-SIDE
 
+const calculateOrder = async user => {
+  try {
+    const party = await Party.findById(user.party);
 
-const calculateOrder = async (req) => {
-    try {
-        const party = await Party.findOne({
-          leader: req.body._id
-        });
-    
-        let partyId = null;
-        let leader = null;
-        let membersIds = [];
-    
-        if (party) {
-          partyId = party._id;
-          membersIds = [...party.members];
-          leader = party.leader;
-        } else {
-          leader = req.user._id;
-        }
-    
-        const user = await User.findOne({
-          $and: [
-            { _id: req.body._id },
-            //{party: partyId},
-            { activeOrder: { $not: { $size: 0 } } } //size does not accept ranges
-          ]
-        });
-    
-        if (!user) {
-          throw Error("Nie znaleziono użytkownika!");
-        }
-        if (partyId && !user.party) {
-          throw Error("Użytkownik nie należy do żadnej drużyny!");
-        }
-    
-        const members = await verifyParty(leader, membersIds, user.activeOrder);
-    
-        // await user
-        //   .populate({
-        //     //populate after verification
-        //     path: "activeOrder.profile"
-        //   })
-        //   .populate({
-        //     path: "activeOrder.products.product",
-        //     populate: { path: "awards.itemModel" } //is necessary here?
-        //   })
-        //   .execPopulate();
+    let partyId = null;
+    let leader = null;
+    let membersIds = [];
 
-        await user.populate({path: 'activeOrder.products.product', populate: {path: 'awards.itemModel', select: 'name imgSrc'}}).execPopulate()
-        console.log(user.activeOrder[0].products[0].product.awards)
-   
+    if (party) {
+      partyId = party._id;
+      membersIds = [...party.members];
+      leader = party.leader;
+    } else {
+      leader = user._id;
+    }
+
+    if (!user) {
+      throw Error("Nie znaleziono użytkownika!");
+    }
+    if (partyId && !user.party) {
+      throw Error("Użytkownik nie należy do żadnej drużyny!");
+    }
+
+    const members = await verifyParty(leader, membersIds, user.activeOrder);
+
+    await user
+      .populate({
+        path: "activeOrder.products.product",
+        populate: { path: "awards.itemModel", select: "name imgSrc" }
+      })
+      .execPopulate();
      
-        const partyFullObject = [user, ...members];
+    const partyFullObject = [user, ...members];
 
-        const calculatedOrders = {}
+    const calculatedOrders = {};
 
-        await asyncForEach(partyFullObject, async partyMember => {
-           //HERE IMPLEMENT PRICE AND EXPERIENCE MODS - input: activeOrder, userPerks; output: object for view
-            const currentMember = user.activeOrder.find(basket => basket.profile.toString() === partyMember._id.toString())
-            let modelPerks = await designateUserPerks(partyMember)
-            currentMember.products.forEach(p => {
-                const product = p.product
-                const productId = product._id.toString()
+    await asyncForEach(partyFullObject, async partyMember => {
+      //HERE IMPLEMENT PRICE AND EXPERIENCE MODS - input: activeOrder, userPerks; output: object for view
 
-                if (modelPerks.products[productId].hasOwnProperty("experienceMod")) {
-                  product.experience = (product.price * 10) + modelPerks.products[productId].experienceMod;
-                }else{
-                  product.experience = product.price * 10
-                }
-                if (modelPerks.products[productId].hasOwnProperty("priceMod")) {
-                    product.price += modelPerks.products[productId].priceMod;
-                    if(product.price < 0){
-                      product.price = 0.0
-                    }
-                  }
-            })
-            //currentMember.products.forEach(product => console.log(product.product.price, product.product.experience))
-            if(currentMember.products.length > 0){
-                const [totalPrice, totalExperience, totalAwards] = currentMember.products.map(product => [product.product.price * product.quantity, product.product.experience * product.quantity, product.product.awards])[0]
-                currentMember.totalPrice = totalPrice
-                currentMember.totalExperience = totalExperience
-                currentMember.totalAwards = totalAwards
+      const currentMember = user.activeOrder.findIndex(
+        basket => basket.profile._id.toString() === partyMember._id.toString()
+      );
 
-            }
-            calculatedOrders[partyMember._id.toString()] = {_id: partyMember._id.toString(), totalPrice: currentMember.totalPrice, totalExperience: currentMember.totalExperience, totalAwards: currentMember.totalAwards }
+      let modelPerks = await designateUserPerks(partyMember);
+      user.activeOrder[currentMember].products.forEach(p => {
+        const product = p.product;
 
-            
-        });
+        const productId = product._id.toString();
 
-        return(calculatedOrders)
-    }catch (e) {
-        throw Error(e, "Błąd przy obliczaniu zamówienia")
+        if (modelPerks.products[productId].hasOwnProperty("experienceMod")) {
+          product.experience =
+            product.price * 10 + modelPerks.products[productId].experienceMod;
+        } else {
+          product.experience = product.price * 10;
+        }
+        if (modelPerks.products[productId].hasOwnProperty("priceMod")) {
+          product.price += modelPerks.products[productId].priceMod;
+          if (product.price < 0) {
+            product.price = 0.0;
+          }
+        }
+      });
+      //currentMember.products.forEach(product => console.log(product.product.price, product.product.experience))
+      if (user.activeOrder[currentMember].products.length > 0) {
+        const [totalPrice, totalExperience, totalAwards] = user.activeOrder[
+          currentMember
+        ].products.map(product => [
+          product.product.price * product.quantity,
+          product.product.experience * product.quantity,
+       product.product.awards
+        ])[0];
+        user.activeOrder[currentMember].price = totalPrice;
+        user.activeOrder[currentMember].experience = totalExperience;
+        user.activeOrder[currentMember].awards = totalAwards;
       }
-}
+      //calculatedOrders[partyMember._id.toString()] = {_id: partyMember._id.toString(), totalPrice: currentMember.totalPrice, totalExperience: currentMember.totalExperience, totalAwards: currentMember.totalAwards }
+      // user.activeOrder.find(basket => )
+    });
+
+
+  } catch (e) {
+    throw Error(e, "Błąd przy obliczaniu zamówienia");
+  }
+};
 
 //OK
 router.get("/shop", auth, async (req, res) => {
+  const user = req.user
   try {
     const shop = await Product.find({}).populate({
       path: "awards.itemModel"
     });
 
-    await updatePerks(req.user, false);
-
-    if (req.user.activeOrder.length) {
-      await req.user
+    await updatePerks(user, false);
+    let calculatedOrders;
+    if (user.activeOrder.length) {
+      await user
         .populate({
           path: "activeOrder.profile",
           select: "_id name avatar bag"
         })
+        .populate({
+                  path: "activeOrder.awards.itemModel", select: "name imgSrc"
+                })
         .execPopulate();
 
-        
+
+      //calculateOrder(user);
     }
 
-    await req.user
+    await user
       .populate({
         path: "party",
         populate: {
@@ -208,8 +204,9 @@ router.get("/shop", auth, async (req, res) => {
 
     res.send({
       shop,
-      party: req.user.party,
-      activeOrder: req.user.activeOrder
+      party: user.party,
+      activeOrder: user.activeOrder,
+      orderSummary: calculatedOrders
     });
   } catch (e) {
     res.status(400).send(e.message);
@@ -245,18 +242,17 @@ const verifyParty = (leader, membersIds, order) => {
       // })
 
       //checking if order profiles match party
+
       const party = [
         leader.toString(),
         ...membersIds.map(member => member.toString())
       ];
       let orderParty = [];
-
       await asyncForEach(order, async user => {
-        const memberId = user.profile;
+        const memberId = user.profile._id;
 
         orderParty = [...orderParty, memberId.toString()];
       });
-
       if (!isEqual(orderParty, party)) {
         throw Error("Invalid party!");
       }
@@ -295,10 +291,9 @@ router.patch("/activate", auth, async (req, res) => {
       //here are objectIDs - need to be string
       throw new Error("User is not the leader!");
     }
-    const party = await verifyParty(leader, membersIds, order);
+    //const party = await verifyParty(leader, membersIds, order);
 
     user.activeOrder = order;
-    await user.save();
 
     await user
       .populate({
@@ -312,13 +307,13 @@ router.patch("/activate", auth, async (req, res) => {
       })
       .execPopulate();
 
-    let modelPerks;
-    await asyncForEach(party, async user => {
-      // const userPerks = user.userPerks
-      // console.log(userPerks)
-      //HERE IMPLEMENT PRICE AND EXPERIENCE MODS - input: activeOrder, userPerks; output: object for view
-      modelPerks = await designateUserPerks(user);
-    });
+    await calculateOrder(user);
+    await user.save();
+
+    await user.populate({
+      path: "activeOrder.awards.itemModel", select: "name imgSrc"
+    })
+    .execPopulate();
 
     //WORKING! AS COMMENT FOR TESTS
     /*
@@ -328,7 +323,7 @@ router.patch("/activate", auth, async (req, res) => {
         }, 60*1000); //removing activeOrder after 60 seconds
         */
 
-    res.send(order);
+    res.send(user.activeOrder);
   } catch (e) {
     res.status(400).send(e.message);
   }
@@ -338,11 +333,23 @@ router.patch("/activate", auth, async (req, res) => {
 //OK BUT TO DEVELOP
 router.patch("/verify", auth, async (req, res) => {
   try {
-    const calculatedOrders = await calculateOrder(req)
+    const user = await User.findOne({
+      $and: [
+        { _id: req.body._id },
+        //{party: partyId},
+        { activeOrder: { $not: { $size: 0 } } } //size does not accept ranges
+      ]
+    });
+    await calculateOrder(user);
+    await user.save()
+    await user.populate({
+      path: "activeOrder.awards.itemModel", select: "name imgSrc"
+    })
+    .execPopulate();
 
     //create ArchiveOrder - save modified experience for users OR repeat function in 'finalize'
 
-    res.send(calculatedOrders);
+    res.send(user.activeOrder);
   } catch (e) {
     res.status(400).send(e.message);
   }

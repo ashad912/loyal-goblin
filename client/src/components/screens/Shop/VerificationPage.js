@@ -7,6 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Divider from "@material-ui/core/Divider";
 
@@ -91,45 +92,49 @@ const VerificationPage = props => {
         <img src={qrCode} style={{width: '80%', marginBottom: '1rem'}}/>
         <Divider />
         <List component="nav" style={{ width: "100%" }}>
-          {/* TODO: replace with back end data */}
-          {/* {props.activeOrder && props.activeOrder.map(basket => {
-            return (
-              <React.Fragment key={basket.profile._id}>
-                <ListItem style={{ flexDirection: "column"}}>
-                  <List style={{ width: "100%" }}>
-                    <ListItem>
-                      <ListItemText primary={basket.profile.name} />
-                      <ListItemText
-                        secondary={basket.price.toFixed(2) + " ZŁ"}
-                      />
-                    </ListItem>
-                  </List>
-                  <List style={{ paddingLeft: "2rem" }}>
-                    <ListItem>
-                      <ListItemText
-                        primary={"Doświadczenie: " + basket.experience}
-                      />
-                    </ListItem>
-                    {basket.amulets.map(amulet => {
-                      return (
-                        <ListItem>
-                          <ListItemText primary={amulet.itemModel.name} />
-                          <ListItemIcon>
-                            <img
-                              src={require("../../../assets/icons/items/" +
-                                amulet.itemModel.imgSrc)}
-                              width="32"
-                            />
-                          </ListItemIcon>
-                        </ListItem>
-                      );
-                    })}
-                  </List>
-                </ListItem>
-                <Divider />
-              </React.Fragment>
-            );
-          })} */}
+          {props.activeOrder && props.activeOrder.map(basket => {
+            if(basket.price || basket.experience){
+
+              return (
+                <React.Fragment key={basket.profile._id}>
+                  <ListItem style={{ flexDirection: "column"}}>
+                    <List style={{ width: "100%" }}>
+                      <ListItem>
+                        <ListItemAvatar>
+                          {basket.profile.avatar && <img src={'/images/user_uploads/'+basket.profile.avatar} width={32}/>}
+                        </ListItemAvatar>
+                        <ListItemText primary={basket.profile.name} />
+                        <ListItemText
+                          secondary={basket.price.toFixed(2) + " ZŁ"}
+                        />
+                      </ListItem>
+                    </List>
+                    <List style={{ paddingLeft: "2rem" }}>
+                      <ListItem>
+                        <ListItemText
+                          primary={"Doświadczenie: " + basket.experience + " punktów"}
+                        />
+                      </ListItem>
+                      {basket.awards.map(award => {
+                        return (
+                          <ListItem>
+                            <ListItemIcon>
+                              <img
+                                src={"/images/items/" +award.itemModel.imgSrc}
+                                width="32"
+                              />
+                            </ListItemIcon>
+                            <ListItemText primary={award.itemModel.name} secondary={award.quantity > 1 && `x${award.quantity}`}/>
+                          </ListItem>
+                        );
+                      })}
+                    </List>
+                  </ListItem>
+                  <Divider />
+                </React.Fragment>
+              );
+            }
+          })}
         </List>
       </Paper>
     </Container>
