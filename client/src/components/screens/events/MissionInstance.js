@@ -183,17 +183,18 @@ class MissionInstance extends React.Component {
 
         try{
             const user = {_id: this.props.auth.uid, inMission: true}
+            const leader = !this.props.party.leader || (this.props.party.leader._id === this.props.auth.uid)
             const response = await togglePresenceInInstance(user, this.props.party._id)
             const missionInstance = response.missionInstance
             const amulets = response.amulets
-
+            console.log(amulets)
             const instanceUsers = this.modifyUserStatus(user, missionInstance.party)
             this.setState({
                 instanceUsers: [...instanceUsers],
                 instanceItems: [...missionInstance.items],
                 userItems: [...amulets],
                 missionObject: missionInstance.mission,//this.props.location.state.id,
-                leader: this.props.party.leader._id === this.props.auth.uid,
+                leader: leader,
                 loading: false,
             }, () => {
                 modifyUserStatusSubscribe((user) => {
@@ -205,7 +206,8 @@ class MissionInstance extends React.Component {
                     })
                 })
             })
-        }catch{
+        }catch(e){
+            console.log(e)
             this.handleBack()
         }
 

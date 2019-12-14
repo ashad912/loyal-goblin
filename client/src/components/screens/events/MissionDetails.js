@@ -164,34 +164,26 @@ const MissionDetails = (props) => {
                         </Typography>
                     </Grid>
                 </Grid>
-                {!props.activeInstanceId ? (
-                    <Grid
-                        container
-                        direction="row"
-                        style={{margin: '0.1rem 0'}}
-                    >
-                        <Grid item xs={3}>
-                            <RequiredAttribute variant="body1" attr={props.appropriateStrength} >{`S: ${props.totalStrength}/${mission.strength}`}</RequiredAttribute>
-                        </Grid>
-                        <Grid item xs={3}>
-                            <RequiredAttribute variant="body1" attr={props.appropriateDexterity} >{`Z: ${props.totalDexterity}/${mission.dexterity}`}</RequiredAttribute>
-                        </Grid>
-                        <Grid item xs={3}>
-                            <RequiredAttribute variant="body1" attr={props.appropriateMagic} >{`M: ${props.totalMagic}/${mission.magic}`}</RequiredAttribute> 
-                        </Grid>
-                        <Grid item xs={3}>
-                            <RequiredAttribute variant="body1" attr={props.appropriateEndurance} >{`W: ${props.totalEndurance}/${mission.endurance}`}</RequiredAttribute>
-                        </Grid>
+                
+                <Grid
+                    container
+                    direction="row"
+                    style={{margin: '0.1rem 0'}}
+                >
+                    <Grid item xs={3}>
+                        <RequiredAttribute variant="body1" attr={props.appropriateStrength} >{`S: ${props.totalStrength}/${mission.strength}`}</RequiredAttribute>
                     </Grid>
-                ):(
-                    <Grid
-                        container
-                        direction="row"
-                        style={{margin: '0.1rem 0'}}
-                    >
-                    <Typography>Ta misja jest aktywna! Dołącz do reszty drużyny!</Typography>
+                    <Grid item xs={3}>
+                        <RequiredAttribute variant="body1" attr={props.appropriateDexterity} >{`Z: ${props.totalDexterity}/${mission.dexterity}`}</RequiredAttribute>
                     </Grid>
-                )}
+                    <Grid item xs={3}>
+                        <RequiredAttribute variant="body1" attr={props.appropriateMagic} >{`M: ${props.totalMagic}/${mission.magic}`}</RequiredAttribute> 
+                    </Grid>
+                    <Grid item xs={3}>
+                        <RequiredAttribute variant="body1" attr={props.appropriateEndurance} >{`W: ${props.totalEndurance}/${mission.endurance}`}</RequiredAttribute>
+                    </Grid>
+                </Grid>
+                
                 <Grid
                     container
                     direction="row"
@@ -304,6 +296,7 @@ const MissionDetails = (props) => {
             <Button onClick={props.handleClose} color="secondary">
                 Wróć
             </Button>
+            {props.activeInstanceId !== null && (props.leader || this.props.party.members.length === 0) && (<Button color="secondary" onClick={() => props.handleMissionLeave()}>Opuść</Button>)}
             <Button variant="contained" color="primary" onClick={() => props.handleMissionClick(mission._id)} disabled={!props.isMissionActive || (!props.leader && !props.activeInstanceId)}>{props.activeInstanceId ? 'Dołącz!' : 'Wyrusz!'}</Button>
         </DialogActions>
         </Dialog>

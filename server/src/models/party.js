@@ -43,7 +43,7 @@ PartySchema.pre('remove', async function (next){
     const allInPartyIds = [party.leader, ...party.members]
 
     //missionInstance
-    const missionInstance = await MissionInstance.findOne({party: {$elemMatch: {user: {$in: allInPartyIds}}}})
+    const missionInstance = await MissionInstance.findOne({party: {$elemMatch: {profile: {$in: allInPartyIds}}}})
     // .populate({
     //     path: "items"
     // })

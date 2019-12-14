@@ -176,55 +176,57 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
 
         let partyIds = []
 
+        const missionInstance = await MissionInstance.findOne(
+            {party: {$elemMatch: {profile: user._id}}}    
+        )
+
+        if(missionInstance){
+            const mission = await Mission.aggregate().match( //return only one mission - of which the user is a participant (as array for compatibility)
+                {_id: missionInstance.mission }).project({ 
+                    'title': 1,
+                    'description': 1,
+                    'avatar': 1,
+                    'minPlayers': 1,
+                    'maxPlayers': 1,
+                    'level': 1,
+                    'strength': 1,
+                    'dexterity': 1,
+                    'magic': 1,
+                    'endurance': 1,
+                    'unique': 1,
+                    'amulets': 1,
+                    'awards': {
+                        $cond: {
+                            if: {
+                                '$eq': ['$awardsAreSecret', true]
+                            },
+                            then: {     
+                                "any": [],
+                                "warrior": [],
+                                "rogue": [],
+                                "mage": [],
+                                "cleric": [],
+                            },
+                            else: '$awards'
+                        }
+                    },
+            })
+
+            await ItemModel.populate(mission, { //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
+                path: 'amulets.itemModel awards.any.itemModel awards.warrior.itemModel awards.rogue.itemModel awards.mage.itemModel awards.cleric.itemModel',
+                options: {}
+            })
+            
+            res.send({missions: mission, missionInstanceId: missionInstance.mission}) //return only one mission - of which the user is a participant (as array for compatibility)
+            return
+        }
+
         if(user.party){
-            const missionInstance = await MissionInstance.findOne(
-                {party: {$elemMatch: {profile: user._id}}}    
-            )
-
-            if(missionInstance){
-                const mission = await Mission.aggregate().match( //return only one mission - of which the user is a participant (as array for compatibility)
-                    {_id: missionInstance.mission }).project({ 
-                        'title': 1,
-                        'description': 1,
-                        'avatar': 1,
-                        'minPlayers': 1,
-                        'maxPlayers': 1,
-                        'level': 1,
-                        'strength': 1,
-                        'dexterity': 1,
-                        'magic': 1,
-                        'endurance': 1,
-                        'unique': 1,
-                        'amulets': 1,
-                        'awards': {
-                            $cond: {
-                                if: {
-                                    '$eq': ['$awardsAreSecret', true]
-                                },
-                                then: {     
-                                    "any": [],
-                                    "warrior": [],
-                                    "rogue": [],
-                                    "mage": [],
-                                    "cleric": [],
-                                },
-                                else: '$awards'
-                            }
-                        },
-                })
-
-                await ItemModel.populate(mission, { //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
-                    path: 'amulets.itemModel awards.any.itemModel awards.warrior.itemModel awards.rogue.itemModel awards.mage.itemModel awards.cleric.itemModel',
-                    options: {}
-                })
-                
-                res.send({missions: mission, missionInstanceId: missionInstance.mission}) //return only one mission - of which the user is a participant (as array for compatibility)
-                return
-            }
-
             const party = await Party.findById(user.party)
             partyIds = [party.leader, ...party.members]
         }
+        
+        
 
         console.log(partyIds)
         
@@ -512,7 +514,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
         res.status(200).send(missionInstance)
   
     } catch (e) {
-        //console.log(e.message)
+        console.log(e.message)
         res.status(400).send(e.message)
     }
     
@@ -599,6 +601,8 @@ router.patch('/leaveInstance', auth, async (req, res) => {
     try{
 
         const missionInstance = await toggleUserInstanceStatus(user, 'inMission', false, 'readyStatus', false)
+
+
         
         res.send(missionInstance)
 
@@ -616,20 +620,23 @@ router.patch('/enterInstance', auth, async (req, res) => {
         
         await user.populate({
             path: 'bag party',
-            populate: {path: 'bag.itemModel'}
+            populate: {path: 'itemModel'}
         }).execPopulate()
 
-
-        const party = [user.party.leader, ...user.party.members]
+        if(user.party){
+            const party = [user.party.leader, ...user.party.members]
     
-        let missionParty = [] 
-        await asyncForEach(missionInstance.party, async (memberObject) => {
-            const memberId = memberObject.profile
-            missionParty = [...missionParty, memberId]
-        })
+            let missionParty = [] 
+            await asyncForEach(missionInstance.party, async (memberObject) => {
+                const memberId = memberObject.profile
+                missionParty = [...missionParty, memberId]
+            })
+    
+            if(!isEqual(missionParty, party)) {
+                throw Error('Invalid party!')
+            }
+    
 
-        if(!isEqual(missionParty, party)) {
-            throw Error('Invalid party!')
         }
 
         await missionInstance.populate({
@@ -639,13 +646,16 @@ router.patch('/enterInstance', auth, async (req, res) => {
 
         //amulets used in mission
         const missionAmulets = missionInstance.mission.amulets.map((amulet) => {
-            return amulet.itemModel.toString()
+            return amulet.itemModel._id.toString()
         })
+
+        console.log(missionAmulets)
 
         //available amulets to use for user
         const amulets = user.bag.filter((item) => {
             return missionAmulets.includes(item.itemModel._id.toString())
         })
+
 
 
         res.send({missionInstance, amulets})

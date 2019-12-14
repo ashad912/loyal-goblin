@@ -864,6 +864,10 @@ const Events = (props) => {
         
     }
 
+    const handleMissionLeave = () => {
+        console.log('leave')
+    }
+
     const handleMissionDetailsOpen = (index) => {
         setActiveMissionDetails(missionListData[index])
     }
@@ -894,6 +898,7 @@ const Events = (props) => {
                             activeInstanceId = {activeInstanceId}
                             handleMissionClick={handleMissionClick}
                             handleMissionDetailsOpen={handleMissionDetailsOpen}
+                            handleMissionLeave={handleMissionLeave}
                         />   
                     ) : (<div style={{height: itemLabelHeight}}></div>)   /*empty div with the same height - IMPORTANT */
                     }
@@ -918,7 +923,7 @@ const Events = (props) => {
             <Rally rally={rally} handleRallyDetailsOpen={handleRallyDetailsOpen} handleRallyDetailsClose={handleRallyDetailsClose}/>
 
             <Typography variant="h6">
-                Dostępne misje
+                {activeInstanceId ? 'Aktywna misja' : 'Dostępne misje'}
             </Typography>
 
             <StyledList> 
@@ -932,6 +937,7 @@ const Events = (props) => {
                     activeInstanceId = {activeInstanceId}
                     handleClose={handleMissionDetailsClose}
                     handleMissionClick={handleMissionClick}
+                    handleMissionLeave={handleMissionLeave}
                 />
             }
             {activeRallyDetails && 

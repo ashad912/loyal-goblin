@@ -31,6 +31,7 @@ const StyledList = styled(List)`
 `
 const StyledBox = styled(Box)`
     margin: 0.5rem 0;
+    background: ${props => props.active === '1' ? '#e6dc8d' : 'none'} 
 
 `
 
@@ -40,7 +41,7 @@ const MissionListItem = (props) => {
 
     const mission = props.mission
     return(
-        <StyledBox border={1} borderColor="primary.main">
+        <StyledBox border={1} borderColor="primary.main" active={props.activeInstanceId ? "1" : "0"}>
 
             <Grid
                 container
@@ -95,13 +96,17 @@ const MissionListItem = (props) => {
                     display="flex"
                     style={{marginTop: '0.5rem'}}
                 >
-                    <Grid item xs={0}>
-
-                    </Grid>
+                    
                     <Grid item xs={4}>
                         <Button size="small" color="primary" style={{paddingLeft: '0'}} onClick={() => props.handleMissionDetailsOpen(props.index)}>Szczegóły</Button>
                     </Grid>
-                    <Grid item xs={5} style={{display: 'flex', justifyContent: 'flex-end'}}>
+                    
+                    <Grid item xs={2}>
+                        {props.activeInstanceId !== null && (props.leader || this.props.party.members.length === 0) && (<Button size="small" color="primary" style={{paddingLeft: '0', justifyContent: 'flex-start'}} onClick={() => props.handleMissionLeave()}>Opuść</Button>)}
+                    </Grid>
+                    
+                    
+                    <Grid item xs={3} style={{display: 'flex', justifyContent: 'flex-end'}}>
                         <Button size="small" color="primary" style={{textAlign: 'right', paddingRight: '0'}} onClick={() => props.handleMissionClick(mission._id)} disabled={!props.isMissionActive || (!props.leader && !props.activeInstanceId)}>{props.activeInstanceId ? 'Dołącz!' : 'Wyrusz!'}</Button>
                     </Grid>
                 </Grid>
@@ -156,34 +161,26 @@ const MissionListItem = (props) => {
                             </Typography>
                         </Grid>
                     </Grid>
-                    {!props.activeInstanceId ? (
-                        <Grid
-                            container
-                            direction="row"
-                            style={{margin: '0.1rem 0'}}
-                        >
-                            <Grid item xs={3}>
-                                <RequiredAttribute variant="body1" attr={props.appropriateStrength} >{`S: ${props.totalStrength}/${mission.strength}`}</RequiredAttribute>
-                            </Grid>
-                            <Grid item xs={3}>
-                                <RequiredAttribute variant="body1" attr={props.appropriateDexterity} >{`Z: ${props.totalDexterity}/${mission.dexterity}`}</RequiredAttribute>
-                            </Grid>
-                            <Grid item xs={3}>
-                                <RequiredAttribute variant="body1" attr={props.appropriateMagic} >{`M: ${props.totalMagic}/${mission.magic}`}</RequiredAttribute> 
-                            </Grid>
-                            <Grid item xs={3}>
-                                <RequiredAttribute variant="body1" attr={props.appropriateEndurance} >{`W: ${props.totalEndurance}/${mission.endurance}`}</RequiredAttribute>
-                            </Grid>
+                    
+                    <Grid
+                        container
+                        direction="row"
+                        style={{margin: '0.1rem 0'}}
+                    >
+                        <Grid item xs={3}>
+                            <RequiredAttribute variant="body1" attr={props.appropriateStrength} >{`S: ${props.totalStrength}/${mission.strength}`}</RequiredAttribute>
                         </Grid>
-                    ):(
-                        <Grid
-                            container
-                            direction="row"
-                            style={{margin: '0.1rem 0'}}
-                        >
-                        <Typography>Ta misja jest aktywna! Dołącz do reszty drużyny!</Typography>
+                        <Grid item xs={3}>
+                            <RequiredAttribute variant="body1" attr={props.appropriateDexterity} >{`Z: ${props.totalDexterity}/${mission.dexterity}`}</RequiredAttribute>
                         </Grid>
-                    )}
+                        <Grid item xs={3}>
+                            <RequiredAttribute variant="body1" attr={props.appropriateMagic} >{`M: ${props.totalMagic}/${mission.magic}`}</RequiredAttribute> 
+                        </Grid>
+                        <Grid item xs={3}>
+                            <RequiredAttribute variant="body1" attr={props.appropriateEndurance} >{`W: ${props.totalEndurance}/${mission.endurance}`}</RequiredAttribute>
+                        </Grid>
+                    </Grid>
+                    
                     <Grid
                         container
                         direction="row"

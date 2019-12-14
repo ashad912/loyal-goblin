@@ -43,7 +43,7 @@ const withMissionItemCommon = (WrappedComponent, mission) => {
         
             
             const currentPlayersInParty = this.props.party.members.length + 1; //returned from backend (read from user profile -> user.party.members.length + 1 [1 for leader] EXPERIMENTAL)
-            const leader = !this.props.party.leader._id  || (this.props.auth.uid === this.props.party.leader._id) //only leader can enter mission - from backend as above
+            const leader = !this.props.party.leader  || (this.props.auth.uid === this.props.party.leader._id) //only leader can enter mission - from backend as above
             
             
             //one shot to events can be separated (rally, missions) on back/front
