@@ -6,13 +6,14 @@ import Box from './Box';
 import uuid from 'uuid/v1'
 import Loading from '../../../layout/Loading';
 import Grid from '@material-ui/core/Grid';
-import * as socketFuncs from '../../../../socket'
+import {addItemSubscribe, deleteItemSubscribe} from '../../../../socket'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components'
 import avatarTemp from '../../../../assets/avatar/moose.png'
 import bagImg from '../../../../assets/avatar/bag.png'
 import Cookies from 'js-cookie';
 import {socket} from '../../../../socket'
+import { sendItemToMission, sendItemToUser } from '../../../../store/actions/missionActions';
 
 // import io from 'socket.io-client'
 // export const socket =  io('/mission', {
@@ -184,11 +185,11 @@ export default class ExchangeArea extends React.Component {
     //   })
     //}
     
-    socketFuncs.addItemSubscribe((item) => {
+    addItemSubscribe((item) => {
       this.addItemToState(item, missionItemsName)
     })
 
-    socketFuncs.deleteItemSubscribe((id) => {
+    deleteItemSubscribe((id) => {
       this.deleteItemFromState(id, missionItemsName)
     })
 
@@ -273,17 +274,28 @@ export default class ExchangeArea extends React.Component {
     
 
   }
-  addMissionItem = (id, targetKey) => {
+  addMissionItem = async (id, targetKey) => {
     
     const item = this.findItemById(id, targetKey)
     //console.log(targetKey, item)
-    const {socket} = this.state
-    socketFuncs.addItemEmit(socket, item, this.props.locationId)
+    try{
+      await sendItemToMission(item, this.props.locationId)
+      this.addItemToState(item, targetKey)
+    }catch(e){
+      console.log(e)
+    }
+    
+    //addItemEmit(socket, item, this.props.locationId)
   }
 
-  deleteMissionItem = (id) => {
-    const {socket} = this.state
-    socketFuncs.deleteItemEmit(socket, id, this.props.locationId)
+  deleteMissionItem = async (id, targetKey) => {
+    try{
+      await sendItemToUser(id, this.props.locationId)
+      this.deleteItemFromState(id, targetKey)
+    }catch(e){
+      console.log(e)
+    }
+    //deleteItemEmit(socket, id, this.props.locationId)
   }
 
 

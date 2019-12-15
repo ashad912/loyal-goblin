@@ -640,8 +640,8 @@ router.patch('/enterInstance', auth, async (req, res) => {
         }
 
         await missionInstance.populate({
-            path: 'mission party.profile items',
-            populate: {path: 'amulets.itemModel items.itemModel'}
+            path: 'mission items party.profile ',
+            populate: {path: 'amulets.itemModel itemModel'}
         }).execPopulate()
 
         //amulets used in mission

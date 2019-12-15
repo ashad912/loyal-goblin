@@ -92,7 +92,7 @@ const Box = (props) => {
     
     //convert client items to stack view
     const items = convertToStack(props.items) //from backend
-
+    console.log(items)
     return (
       <RootDiv >
         <Grid

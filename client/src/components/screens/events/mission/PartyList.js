@@ -277,7 +277,7 @@ const PartyList = (props) => {
                                 </Grid>
                             
                             <ListItemIcon style={{minWidth: 32}}>
-                                    {member.profile._id === props.party.leader._id ? (leaderIcon()) : (statusIcon(member.readyStatus))}
+                                    {props.party.leader && (member.profile._id === props.party.leader._id) ? (leaderIcon()) : (statusIcon(member.readyStatus))}
                             </ListItemIcon>
                             </ListItem>
                         
@@ -289,7 +289,7 @@ const PartyList = (props) => {
                             </ListItemAvatar>
                             <Grid item xs={10}></Grid>
                             <ListItemIcon style={{minWidth: 32}}>
-                                {member.profile._id === props.party.leader._id ? (leaderIcon()) : (statusIcon(member.readyStatus))}
+                                {props.party.leader && (member.profile._id === props.party.leader._id) ? (leaderIcon()) : (statusIcon(member.readyStatus))}
                             </ListItemIcon>
                         </ListItem>
                     )}   

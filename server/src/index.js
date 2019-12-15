@@ -99,6 +99,7 @@ io.on("connection", socket => {
   socket.on("leaveRoom", data => {
     console.log(`User ${data.id} left the room ${data.roomId}`)
     socket.broadcast.to(data.roomId).emit("leaveRoom", data.id);
+    socket.broadcast.to(data.roomId).emit("instanceRefresh", data.roomId);
   });
 
 
@@ -114,6 +115,7 @@ io.on("connection", socket => {
   socket.on("deleteRoom", roomId => {
     console.log('Party has been removed!');
     socket.broadcast.to(roomId).emit("deleteRoom", roomId);
+    socket.broadcast.to(roomId).emit("instanceRefresh", roomId);
   })
 
 
@@ -123,7 +125,7 @@ io.on("connection", socket => {
   });
 
   socket.on("instanceRefresh", roomId => {
-    io.to(roomId).emit("modifyUserStatus", roomId);
+    io.to(roomId).emit("instanceRefresh", roomId);
   });
 
  // io.of("mission")
@@ -132,14 +134,12 @@ io.on("connection", socket => {
 
   /////////
   socket.on("addItem", data => {
-    io.of("mission")
-      .to(data.roomId)
+    socket.broadcast.to(data.roomId)
       .emit("addItem", data.item);
   });
 
   socket.on("deleteItem", data => {
-    io.of("mission")
-      .to(data.roomId)
+    socket.broadcast.to(data.roomId)
       .emit("deleteItem", data.id);
   });
 

@@ -279,7 +279,7 @@ class MissionInstance extends React.Component {
         let overallReadyStatus = true
         for(let index = 0; index < amulets.length; index++) {
             const specificAmuletInstances = this.state.instanceItems.filter((item) => {
-                return item.model._id === amulets[index].itemModel._id
+                return item.itemModel._id === amulets[index].itemModel._id
             })
 
             console.log(amulets[index].itemModel.name, amulets[index].quantity)

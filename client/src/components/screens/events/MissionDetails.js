@@ -296,7 +296,7 @@ const MissionDetails = (props) => {
             <Button onClick={props.handleClose} color="secondary">
                 Wróć
             </Button>
-            {props.activeInstanceId !== null && (props.leader || this.props.party.members.length === 0) && (<Button color="secondary" onClick={() => props.handleMissionLeave()}>Opuść</Button>)}
+            {props.activeInstanceId !== null && (props.leader || props.party.members.length === 0) && (<Button color="secondary" onClick={() => props.handleMissionLeave()}>Opuść</Button>)}
             <Button variant="contained" color="primary" onClick={() => props.handleMissionClick(mission._id)} disabled={!props.isMissionActive || (!props.leader && !props.activeInstanceId)}>{props.activeInstanceId ? 'Dołącz!' : 'Wyrusz!'}</Button>
         </DialogActions>
         </Dialog>

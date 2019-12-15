@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { modifyUserStatusEmit, instanceRefreshEmit} from '../../socket'
+import { modifyUserStatusEmit, instanceRefreshEmit, addItemEmit, deleteItemEmit} from '../../socket'
 
 
 export const getMissionList = () => {
@@ -21,6 +21,43 @@ export const createInstance = (missionId, partyId) => {
             const res = await axios.post('/mission/createInstance', {_id: missionId})
             instanceRefreshEmit(partyId)
             resolve(res.data)
+        }catch (e) {
+            reject(e)     
+        } 
+    })
+}
+
+export const deleteInstance = (partyId) => {
+    return new Promise (async (resolve, reject) => {
+        try {
+            const res = await axios.delete('/mission/deleteInstance')
+            instanceRefreshEmit(partyId)
+            resolve()
+        }catch (e) {
+            reject(e)     
+        } 
+    })
+}
+
+
+export const sendItemToMission = (item, partyId) => {
+    return new Promise (async (resolve, reject) => {
+        try {
+            await axios.patch('/mission/sendItem/mission', {item: item._id})
+            addItemEmit(item, partyId)
+            resolve()
+        }catch (e) {
+            reject(e)     
+        } 
+    })
+}
+
+export const sendItemToUser = (id, partyId) => {
+    return new Promise (async (resolve, reject) => {
+        try {
+            await axios.patch('/mission/sendItem/user', {item: id})
+            deleteItemEmit(id, partyId)
+            resolve()
         }catch (e) {
             reject(e)     
         } 

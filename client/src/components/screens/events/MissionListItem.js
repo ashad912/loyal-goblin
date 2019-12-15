@@ -102,7 +102,7 @@ const MissionListItem = (props) => {
                     </Grid>
                     
                     <Grid item xs={2}>
-                        {props.activeInstanceId !== null && (props.leader || this.props.party.members.length === 0) && (<Button size="small" color="primary" style={{paddingLeft: '0', justifyContent: 'flex-start'}} onClick={() => props.handleMissionLeave()}>Opuść</Button>)}
+                        {props.activeInstanceId !== null && (props.leader || props.party.members.length === 0) && (<Button size="small" color="primary" style={{paddingLeft: '0', justifyContent: 'flex-start'}} onClick={() => props.handleMissionLeave()}>Opuść</Button>)}
                     </Grid>
                     
                     

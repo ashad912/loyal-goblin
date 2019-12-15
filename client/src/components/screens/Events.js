@@ -12,7 +12,7 @@ import uuid from 'uuid/v1'
 import Typography from '@material-ui/core/Typography';
 import styled from 'styled-components'
 import moment from 'moment'
-import {getMissionList, createInstance} from '../../store/actions/missionActions.js'
+import {getMissionList, createInstance, deleteInstance} from '../../store/actions/missionActions.js'
 import {instanceRefreshSubscribe} from '../../socket'
 import Rally from './events/Rally'
 
@@ -841,6 +841,7 @@ const Events = (props) => {
         
     
         instanceRefreshSubscribe(async (roomId) => {
+            console.log('mission refreshed')
             fetch()
         })
 
@@ -864,7 +865,8 @@ const Events = (props) => {
         
     }
 
-    const handleMissionLeave = () => {
+    const handleMissionLeave = async () => {
+        await deleteInstance(props.party._id)
         console.log('leave')
     }
 

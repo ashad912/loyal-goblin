@@ -42,17 +42,17 @@ export const deleteItemSubscribe = (id) => {
     })
 }
 
-export const registerUserSubscribe = (user) => {
-    socket.on('registerUser', user, () => {
-        return user
-    })
-}
+// export const registerUserSubscribe = (user) => {
+//     socket.on('registerUser', user, () => {
+//         return user
+//     })
+// }
 
-export const unregisterUserSubscribe = (id) => {
-    socket.on('unregisterUser', id, () => {
-        return id
-    })
-}
+// export const unregisterUserSubscribe = (id) => {
+//     socket.on('unregisterUser', id, () => {
+//         return id
+//     })
+// }
 
 export const modifyUserStatusSubscribe = (data) => {
     socket.on('modifyUserStatus', data, () => {
@@ -84,25 +84,25 @@ export const deleteRoomEmit = (roomId) => {
     socket.emit('deleteRoom', roomId)
 }
 
-export const addItemEmit = ( item, roomId) => {
+export const addItemEmit = (item, roomId) => {
     const data = {item: item, roomId: roomId}
     socket.emit('addItem', data)
 }
 
-export const deleteItemEmit = ( id, roomId) => {
+export const deleteItemEmit = (id, roomId) => {
     const data = {id: id, roomId: roomId}
     socket.emit('deleteItem', data)
 }
 
-export const registerUserEmit = ( user, roomId) => {
-    const data = {user: user, roomId: roomId}
-    socket.emit('registerUser', data)
-}
+// export const registerUserEmit = ( user, roomId) => {
+//     const data = {user: user, roomId: roomId}
+//     socket.emit('registerUser', data)
+// }
 
-export const unregisterUserEmit = ( id, roomId) => {
-    const data = {id: id, roomId: roomId}
-    socket.emit('unregisterUser', data)
-}
+// export const unregisterUserEmit = ( id, roomId) => {
+//     const data = {id: id, roomId: roomId}
+//     socket.emit('unregisterUser', data)
+// }
 
 export const modifyUserStatusEmit = ( user, roomId) => {
     const data = {user: user, roomId: roomId}
