@@ -63,10 +63,15 @@ const server = app.listen(port, () => {
 
 var io = socket(server); //param is a server, defined upper
 
+
+var allClients = [];
+
 io.use(async (socket, next) => {
 
   try{
-    await socketConnectAuth(socket)
+    await socketConnectAuth(socket, allClients)
+
+    allClients.push(socket);
     
   }catch(e){
     console.log(e)
@@ -79,7 +84,11 @@ io.use(async (socket, next) => {
 
 //const mission = io.of("/mission");
 
+
+
+
 io.on("connection", socket => {
+  
   
   console.log("New client connected", socket.id);
 
@@ -134,11 +143,17 @@ io.on("connection", socket => {
 
   /////////
   socket.on("addItem", data => {
-    socket.broadcast.to(data.roomId)
-      .emit("addItem", data.item);
+    
+      await socketJoinRoomAuth(socket, roomId)
+
+      socket.broadcast.to(data.roomId).emit("addItem", data.item);
+    
+    
   });
 
   socket.on("deleteItem", data => {
+    await socketJoinRoomAuth(socket, roomId)
+
     socket.broadcast.to(data.roomId)
       .emit("deleteItem", data.id);
   });
@@ -153,7 +168,13 @@ io.on("connection", socket => {
 
  
 
-  socket.on("disconnect", () => console.log("Client disconnected", socket.id));
+socket.on("disconnect", () => {
+  console.log("Client disconnected", socket.id)
+  var i = allClients.indexOf(socket);
+  allClients.splice(i, 1);
+});
+
+
 });
 
 //api -> create event instance

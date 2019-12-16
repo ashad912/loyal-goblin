@@ -394,7 +394,7 @@ class MissionInstance extends React.Component {
                 
                 </MissionBar>
                 
-                <ExchangeArea userId={this.props.auth.uid} locationId={this.props.party._id/*this.props.location.state.id*/} instanceItems={this.updateInstanceItems} initUserItems={this.state.userItems} initMissionItems={this.state.instanceItems} userReadyStatus={this.state.userReadyStatus}/>
+                <ExchangeArea userId={this.props.auth.uid} locationId={this.props.party._id/*this.props.location.state.id*/} instanceItems={this.updateInstanceItems} initUserItems={this.state.userItems} initMissionItems={this.state.instanceItems} userReadyStatus={this.state.userReadyStatus} handleBack={this.handleBack}/>
                 <PartyList userId={this.props.auth.uid} instanceUsers={this.state.instanceUsers} instanceItems={this.state.instanceItems} party={this.props.party} userReadyStatus={this.state.userReadyStatus} />
                     
                 

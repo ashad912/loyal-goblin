@@ -283,6 +283,7 @@ export default class ExchangeArea extends React.Component {
       this.addItemToState(item, targetKey)
     }catch(e){
       console.log(e)
+      this.props.handleBack()
     }
     
     //addItemEmit(socket, item, this.props.locationId)
@@ -294,6 +295,7 @@ export default class ExchangeArea extends React.Component {
       this.deleteItemFromState(id, targetKey)
     }catch(e){
       console.log(e)
+      this.props.handleBack()
     }
     //deleteItemEmit(socket, id, this.props.locationId)
   }
@@ -348,14 +350,22 @@ export default class ExchangeArea extends React.Component {
     }
     const id = result.draggableId
     console.log(id)
+    //console.log(this.state.missionItems.filter((item) => item._id !== id).length)
+    //console.log(this.state.userItems.filter((item) => item._id !== id))
  
     if (source.droppableId !== destination.droppableId) {
       if(source.droppableId === userItemsName){
-        this.addMissionItem(id, destination.droppableId)
-        this.deleteItemFromState(id, source.droppableId)
+        
+          this.addMissionItem(id, destination.droppableId)
+          this.deleteItemFromState(id, source.droppableId)
+        
+        
       }else if(source.droppableId === missionItemsName){
-        this.addUserItem(id, destination.droppableId)
-        this.deleteMissionItem(id, source.droppableId)
+        
+          this.addUserItem(id, destination.droppableId)
+          this.deleteMissionItem(id, source.droppableId)
+        
+   
       }
       
     }
