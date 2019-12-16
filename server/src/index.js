@@ -13,7 +13,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import cookie from "cookie";
 import socket from "socket.io";
-import { socketJoinRoomAuth, socketConnectAuth } from "./middleware/auth";
+import { socketRoomAuth, socketConnectAuth } from "./middleware/auth";
 import _ from "lodash";
 
 //TO-START: npm run-script dev
@@ -69,13 +69,22 @@ var allClients = [];
 io.use(async (socket, next) => {
 
   try{
-    await socketConnectAuth(socket, allClients)
+    const user = await socketConnectAuth(socket)
 
-    allClients.push(socket);
+  
+    if(allClients.length && allClients.filter((client) => client.userId === user._id.toString()).length > 0){
+      throw new Error('Multiple session error') 
+    }
+
+    //console.log(socket.id, user._id)
+    const newClient = {socketId: socket.id, userId: user._id.toString()}
+
+    allClients.push(newClient);
     
   }catch(e){
     console.log(e)
-    return next(new Error('authentication error'));
+    socket.disconnect()
+    return next(new Error('Socket authentication error'));
   }
 
   return next();
@@ -89,12 +98,13 @@ io.use(async (socket, next) => {
 
 io.on("connection", socket => {
   
+  //console.log(allClients)
   
   console.log("New client connected", socket.id);
 
   socket.on("joinRoom", async (roomId) => {
     try{
-      await socketJoinRoomAuth(socket, roomId)
+      await socketRoomAuth(socket, roomId)
 
       socket.join(roomId, () => {
         console.log(socket.id, "joined the room", roomId);
@@ -142,17 +152,17 @@ io.on("connection", socket => {
           // .emit("joinRoom", partyId);
 
   /////////
-  socket.on("addItem", data => {
+  socket.on("addItem", async data => {
     
-      await socketJoinRoomAuth(socket, roomId)
+      await socketRoomAuth(socket, roomId)
 
       socket.broadcast.to(data.roomId).emit("addItem", data.item);
     
     
   });
 
-  socket.on("deleteItem", data => {
-    await socketJoinRoomAuth(socket, roomId)
+  socket.on("deleteItem", async data => {
+    await socketRoomAuth(socket, roomId)
 
     socket.broadcast.to(data.roomId)
       .emit("deleteItem", data.id);
@@ -169,9 +179,15 @@ io.on("connection", socket => {
  
 
 socket.on("disconnect", () => {
-  console.log("Client disconnected", socket.id)
-  var i = allClients.indexOf(socket);
-  allClients.splice(i, 1);
+  
+  let i = allClients.findIndex((client) => client.socketId === socket.id);
+  if(i < 0){
+    console.log("Client not found")
+  }else{
+    allClients.splice(i, 1);
+    console.log("Client disconnected", socket.id)
+  }
+  
 });
 
 

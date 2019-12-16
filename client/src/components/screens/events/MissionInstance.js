@@ -12,7 +12,7 @@ import VerificationPage from './mission/VerificationPage'
 import { Typography } from '@material-ui/core';
 import {connect} from 'react-redux'
 import {togglePresenceInInstance, toggleUserReady} from '../../../store/actions/missionActions'
-import {registerUserSubscribe, unregisterUserSubscribe, modifyUserStatusSubscribe} from '../../../socket'
+import {registerUserSubscribe, unregisterUserSubscribe, modifyUserStatusSubscribe, socket} from '../../../socket'
 
 // const getRandomInt = (min, max) => {
 //     min = Math.ceil(min);
@@ -177,6 +177,12 @@ class MissionInstance extends React.Component {
     async componentDidMount() {
 
         if(!this.props.location.state || (this.props.location.state.id === undefined)){
+            this.handleBack()
+        }
+
+        console.log('Socket connection: ' + socket.connected)
+
+        if(this.props.party.leader && !socket.connected){
             this.handleBack()
         }
 

@@ -389,7 +389,7 @@ export default class ExchangeArea extends React.Component {
     //   return <Loading/>
     // }
     
-    const registerLabel = this.state.userRegistered ? ('User registered!') : ('Register user in SocketIO!')
+    //const registerLabel = this.state.userRegistered ? ('User registered!') : ('Register user in SocketIO!')
 
 
     return (
@@ -423,7 +423,7 @@ export default class ExchangeArea extends React.Component {
         
         
         </DragDropContext>
-        <StyledP onClick={this.handleRegister} userRegistered={this.state.userRegistered}>{registerLabel}</StyledP>
+        {/* <StyledP onClick={this.handleRegister} userRegistered={this.state.userRegistered}>{registerLabel}</StyledP> */}
       </div>
     )
   }

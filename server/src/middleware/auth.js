@@ -45,7 +45,7 @@ const socketBasicAuth = (socket) => {
             if(!token){
                 throw new Error()
             }
-        
+           
             const user = await decodeTokenAndGetUser(token)
         
             const party = await Party.findOne({
@@ -68,7 +68,7 @@ const socketBasicAuth = (socket) => {
 }
 
 
-export const socketJoinRoomAuth = (socket, partyId) => {
+export const socketRoomAuth = (socket, partyId) => {
     return new Promise(async (resolve, reject) => {
         try{
             const user = await socketBasicAuth(socket)
@@ -89,8 +89,8 @@ export const socketJoinRoomAuth = (socket, partyId) => {
 export const socketConnectAuth = (socket) => {
     return new Promise(async (resolve, reject) => {
         try{
-            await socketBasicAuth(socket)
-            resolve()
+            const user = await socketBasicAuth(socket)
+            resolve(user)
         }catch(e){
             //console.log(e)
             reject(e)

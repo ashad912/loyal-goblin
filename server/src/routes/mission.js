@@ -228,7 +228,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
         
         
 
-        console.log(partyIds)
+        //console.log(partyIds)
         
         //console.log( new Date().toUTCString())
         const missions = await Mission.aggregate().match({

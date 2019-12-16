@@ -13,7 +13,8 @@ import Typography from '@material-ui/core/Typography';
 import styled from 'styled-components'
 import moment from 'moment'
 import {getMissionList, createInstance, deleteInstance} from '../../store/actions/missionActions.js'
-import {instanceRefreshSubscribe} from '../../socket'
+import {instanceRefreshSubscribe, socket} from '../../socket'
+import Snackbar from "@material-ui/core/Snackbar";
 import Rally from './events/Rally'
 
 
@@ -871,6 +872,7 @@ const Events = (props) => {
     }
 
     const handleMissionDetailsOpen = (index) => {
+        console.log(props.party.leader, socket.connected)
         setActiveMissionDetails(missionListData[index])
     }
 
@@ -913,6 +915,7 @@ const Events = (props) => {
 
 
     const MissionDetailsHoc = activeMissionDetails ? (withMissionItemCommon(MissionDetails, activeMissionDetails)) : (null)
+    console.log(props.party.leader, socket.connected)
     return (
         
         <React.Fragment>
@@ -949,6 +952,18 @@ const Events = (props) => {
                     handleClose={handleRallyDetailsClose}
                 />
             }    
+
+
+            <Snackbar
+                anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left"
+                }}
+                open={props.party.leader && p &&  !socket.connected}
+                //onClose={}
+                autoHideDuration={10000}
+                message={<span>Wielokrotna sesja. Zamknij inne karty, a następnie odśwież, aby dołączyć do misji.</span>}
+            />
             
                     
                 
