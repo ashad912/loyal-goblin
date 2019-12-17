@@ -111,7 +111,7 @@ class App extends React.Component {
             </div>
           )}
 
-         <ConnectionSnackbar />
+         {/* <ConnectionSnackbar /> */}
           <ConnectionSpinnerDialog />
          
         </StylesProvider>

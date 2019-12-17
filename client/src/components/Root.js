@@ -13,6 +13,8 @@ import Events from "./screens/Events";
 import Loyal from "./screens/Loyal";
 import CharacterCreation from "./screens/CharacterCreation";
 import Booking from "./screens/Booking";
+import Snackbar from "@material-ui/core/Snackbar";
+import MissionSnackbar from "./screens/events/MissionSnackbar";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -58,6 +60,8 @@ function Root(props) {
     setShowCharacterCreationModal
   ] = React.useState(!Boolean(localStorage.getItem("characterCreated")));
   const [fullHeightCorrection, setFullHeightCorrection] = React.useState(0);
+
+  const [activeInstanceId, setActiveInstanceId] = React.useState(null)
   useEffect(() => {
     //change tab, when returing from specific event
     if (props.location.state && props.location.state.indexRedirect !== null) {
@@ -97,6 +101,9 @@ function Root(props) {
     localStorage.setItem("characterCreated", 1);
   };
 
+  const updateActiveInstanceId = (id) => {
+    setActiveInstanceId(id)
+  }
   return (
     <div className={classes.root}>
       {showCharacterCreationModal ? (
@@ -134,7 +141,7 @@ function Root(props) {
               <Profile />
             </TabPanel>
             <TabPanel value={value} index={1} dir={theme.direction}>
-              <Events />
+              <Events updateActiveInstanceId={updateActiveInstanceId}/>
             </TabPanel>
             <TabPanel value={value} index={2} dir={theme.direction}>
               <Loyal />
@@ -145,6 +152,8 @@ function Root(props) {
           </SwipeableViews>
         </React.Fragment>
       )}
+
+    <MissionSnackbar screen={value} activeInstanceId={activeInstanceId}/>
     </div>
   );
 }

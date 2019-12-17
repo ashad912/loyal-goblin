@@ -14,7 +14,7 @@ import styled from 'styled-components'
 import moment from 'moment'
 import {getMissionList, createInstance, deleteInstance} from '../../store/actions/missionActions.js'
 import {instanceRefreshSubscribe, socket} from '../../socket'
-import Snackbar from "@material-ui/core/Snackbar";
+
 import Rally from './events/Rally'
 
 
@@ -836,6 +836,7 @@ const Events = (props) => {
             const missionObject = await getMissionList()
             setMissionListData(missionObject.missions)
             setActiveInstanceId(missionObject.missionInstanceId)
+            updateActiveInstanceId(missionObject.missionInstanceId)
         }
 
         fetch()
@@ -864,6 +865,10 @@ const Events = (props) => {
             setMissionId(id)
         }
         
+    }
+
+    const updateActiveInstanceId = (id) => {
+        props.updateActiveInstanceId(id)
     }
 
     const handleMissionLeave = async () => {
@@ -903,6 +908,7 @@ const Events = (props) => {
                             handleMissionClick={handleMissionClick}
                             handleMissionDetailsOpen={handleMissionDetailsOpen}
                             handleMissionLeave={handleMissionLeave}
+                            socket={socket}
                         />   
                     ) : (<div style={{height: itemLabelHeight}}></div>)   /*empty div with the same height - IMPORTANT */
                     }
@@ -915,10 +921,14 @@ const Events = (props) => {
 
 
     const MissionDetailsHoc = activeMissionDetails ? (withMissionItemCommon(MissionDetails, activeMissionDetails)) : (null)
-    console.log(props.party.leader, socket.connected)
+    const result = props.party.leader && !socket.connected
+    console.log(props.party.leader, !socket.connected)
+    console.log('Result', result)
     return (
         
         <React.Fragment>
+           
+
             {missionId != null ?
              <Redirect to={{
                   pathname: '/mission',
@@ -943,6 +953,7 @@ const Events = (props) => {
                     handleClose={handleMissionDetailsClose}
                     handleMissionClick={handleMissionClick}
                     handleMissionLeave={handleMissionLeave}
+                    socket={socket}
                 />
             }
             {activeRallyDetails && 
@@ -954,16 +965,7 @@ const Events = (props) => {
             }    
 
 
-            <Snackbar
-                anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left"
-                }}
-                open={props.party.leader && p &&  !socket.connected}
-                //onClose={}
-                autoHideDuration={10000}
-                message={<span>Wielokrotna sesja. Zamknij inne karty, a następnie odśwież, aby dołączyć do misji.</span>}
-            />
+           
             
                     
                 

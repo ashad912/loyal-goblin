@@ -7,7 +7,6 @@ import Divider from '@material-ui/core/Divider';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import styled from 'styled-components'
-
 import { classLabelsAny } from '../../../utils/labels';
 
 const ShortDescription = styled(Typography)`
@@ -40,6 +39,7 @@ const StyledBox = styled(Box)`
 const MissionListItem = (props) => {
 
     const mission = props.mission
+    const multipleSession = props.party.leader.hasOwnProperty('_id') && (props.socket.connected === false)
     return(
         <StyledBox border={1} borderColor="primary.main" active={props.activeInstanceId ? "1" : "0"}>
 
@@ -107,7 +107,7 @@ const MissionListItem = (props) => {
                     
                     
                     <Grid item xs={3} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                        <Button size="small" color="primary" style={{textAlign: 'right', paddingRight: '0'}} onClick={() => props.handleMissionClick(mission._id)} disabled={!props.isMissionActive || (!props.leader && !props.activeInstanceId)}>{props.activeInstanceId ? 'Dołącz!' : 'Wyrusz!'}</Button>
+                        <Button size="small" color="primary" style={{textAlign: 'right', paddingRight: '0'}} onClick={() => props.handleMissionClick(mission._id)} disabled={multipleSession || !props.isMissionActive || (!props.leader && !props.activeInstanceId)}>{props.activeInstanceId ? 'Dołącz!' : 'Wyrusz!'}</Button>
                     </Grid>
                 </Grid>
                 <Divider style={{margin: '0.5rem 0'}}/>
