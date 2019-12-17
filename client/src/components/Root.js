@@ -13,8 +13,8 @@ import Events from "./screens/Events";
 import Loyal from "./screens/Loyal";
 import CharacterCreation from "./screens/CharacterCreation";
 import Booking from "./screens/Booking";
-import Snackbar from "@material-ui/core/Snackbar";
-import MissionSnackbar from "./screens/events/MissionSnackbar";
+import RootSnackbar from "./layout/RootSnackbar";
+import {socket, multipleSessionSubscribe} from '../socket'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -69,6 +69,10 @@ function Root(props) {
       props.history.replace("", null);
       setValue(redirectToIndex);
     }
+
+    multipleSessionSubscribe((socketId) => {
+      console.log('multipe session', socketId)
+    })
 
     
   }, []);
@@ -153,7 +157,7 @@ function Root(props) {
         </React.Fragment>
       )}
 
-    <MissionSnackbar screen={value} activeInstanceId={activeInstanceId}/>
+    <RootSnackbar socket={socket} screen={value} activeInstanceId={activeInstanceId}/>
     </div>
   );
 }

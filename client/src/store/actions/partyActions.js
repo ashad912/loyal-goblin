@@ -2,7 +2,6 @@ import axios from 'axios'
 import {socket, joinRoomEmit, leaveRoomEmit, addMemberToRoomEmit, deleteRoomEmit} from '../../socket'
 
 
-
 export const updateParty = () => {
     return async dispatch => {
         

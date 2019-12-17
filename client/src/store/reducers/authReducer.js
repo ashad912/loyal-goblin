@@ -5,6 +5,7 @@ const initState = {
   uid: null,
   profile: {},
   authError: null,
+  multipleSession: false,
 };
 
 const authReducer = (state = initState, action) => {
@@ -54,15 +55,19 @@ const authReducer = (state = initState, action) => {
         profile: action.profile,
         init: false
       };
-      case "UPDATE_ACTIVE_ORDER":
-        const profile = {...state.profile}
-        profile.activeOrder = action.activeOrder
-        return {
-          ...state,
-          profile: {...profile},
-          init: false
-        };
-
+    case "UPDATE_ACTIVE_ORDER":
+      const profile = {...state.profile}
+      profile.activeOrder = action.activeOrder
+      return {
+        ...state,
+        profile: {...profile},
+        init: false
+      };
+    case 'MULTIPLE_SESSION':
+      return{
+        ...state,
+        multipleSession: true
+      }
     default:
       return state;
   }

@@ -39,7 +39,6 @@ const StyledBox = styled(Box)`
 const MissionListItem = (props) => {
 
     const mission = props.mission
-    const multipleSession = props.party.leader.hasOwnProperty('_id') && (props.socket.connected === false)
     return(
         <StyledBox border={1} borderColor="primary.main" active={props.activeInstanceId ? "1" : "0"}>
 
@@ -98,16 +97,16 @@ const MissionListItem = (props) => {
                 >
                     
                     <Grid item xs={4}>
-                        <Button size="small" color="primary" style={{paddingLeft: '0'}} onClick={() => props.handleMissionDetailsOpen(props.index)}>Szczegóły</Button>
+                        <Button disabled={props.multipleSession} size="small" color="primary" style={{paddingLeft: '0'}} onClick={() => props.handleMissionDetailsOpen(props.index)}>Szczegóły</Button>
                     </Grid>
                     
                     <Grid item xs={2}>
-                        {props.activeInstanceId !== null && (props.leader || props.party.members.length === 0) && (<Button size="small" color="primary" style={{paddingLeft: '0', justifyContent: 'flex-start'}} onClick={() => props.handleMissionLeave()}>Opuść</Button>)}
+                        {props.activeInstanceId !== null && (props.leader || props.party.members.length === 0) && (<Button size="small" color="primary" style={{paddingLeft: '0', justifyContent: 'flex-start'}} disabled={props.multipleSession} onClick={() => props.handleMissionLeave()}>Opuść</Button>)}
                     </Grid>
                     
                     
                     <Grid item xs={3} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                        <Button size="small" color="primary" style={{textAlign: 'right', paddingRight: '0'}} onClick={() => props.handleMissionClick(mission._id)} disabled={multipleSession || !props.isMissionActive || (!props.leader && !props.activeInstanceId)}>{props.activeInstanceId ? 'Dołącz!' : 'Wyrusz!'}</Button>
+                        <Button size="small" color="primary" style={{textAlign: 'right', paddingRight: '0'}} onClick={() => props.handleMissionClick(mission._id)} disabled={props.multipleSession || !props.isMissionActive || (!props.leader && !props.activeInstanceId)}>{props.activeInstanceId ? 'Dołącz!' : 'Wyrusz!'}</Button>
                     </Grid>
                 </Grid>
                 <Divider style={{margin: '0.5rem 0'}}/>

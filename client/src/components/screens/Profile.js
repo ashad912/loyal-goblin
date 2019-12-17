@@ -602,6 +602,7 @@ const Profile = props => {
     props.onRemoveMember(props.party._id, props.auth.uid);
   };
 
+  
   return (
     <Grid
       container
@@ -751,6 +752,7 @@ const Profile = props => {
               variant="contained"
               color="primary"
               onClick={() => setIsCreatingParty(prev => !prev)}
+              disabled={props.auth.multipleSession}
             >
               Zarządzaj drużyną
             </Button>
@@ -759,6 +761,7 @@ const Profile = props => {
               variant="contained"
               color="secondary"
               onClick={handleLeaveParty}
+              disabled={props.auth.multipleSession}
             >
               Opuść drużynę
             </Button>

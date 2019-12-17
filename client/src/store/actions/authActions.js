@@ -104,6 +104,12 @@ export const changePassword = (password, repeatedPassword) => {
     }
 }
 
+
+export const setMultipleSession = () => {
+    return dispatch => {
+        dispatch( {type: "MULTIPLE_SESSION"})   
+    }
+}
     
 
 

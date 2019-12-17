@@ -13,7 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import styled from 'styled-components'
 import moment from 'moment'
 import {getMissionList, createInstance, deleteInstance} from '../../store/actions/missionActions.js'
-import {instanceRefreshSubscribe, socket} from '../../socket'
+import {instanceRefreshSubscribe} from '../../socket'
 
 import Rally from './events/Rally'
 
@@ -877,7 +877,6 @@ const Events = (props) => {
     }
 
     const handleMissionDetailsOpen = (index) => {
-        console.log(props.party.leader, socket.connected)
         setActiveMissionDetails(missionListData[index])
     }
 
@@ -908,7 +907,7 @@ const Events = (props) => {
                             handleMissionClick={handleMissionClick}
                             handleMissionDetailsOpen={handleMissionDetailsOpen}
                             handleMissionLeave={handleMissionLeave}
-                            socket={socket}
+                            multipleSession={props.multipleSession}
                         />   
                     ) : (<div style={{height: itemLabelHeight}}></div>)   /*empty div with the same height - IMPORTANT */
                     }
@@ -921,9 +920,7 @@ const Events = (props) => {
 
 
     const MissionDetailsHoc = activeMissionDetails ? (withMissionItemCommon(MissionDetails, activeMissionDetails)) : (null)
-    const result = props.party.leader && !socket.connected
-    console.log(props.party.leader, !socket.connected)
-    console.log('Result', result)
+  
     return (
         
         <React.Fragment>
@@ -953,7 +950,7 @@ const Events = (props) => {
                     handleClose={handleMissionDetailsClose}
                     handleMissionClick={handleMissionClick}
                     handleMissionLeave={handleMissionLeave}
-                    socket={socket}
+                    multipleSession={props.multipleSession}
                 />
             }
             {activeRallyDetails && 
@@ -979,7 +976,8 @@ const Events = (props) => {
 
 const mapStateToProps = state => {
     return {
-      party: state.party
+        multipleSession: state.auth.multipleSession,
+        party: state.party
     };
   };
 

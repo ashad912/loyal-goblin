@@ -26,7 +26,6 @@ const MissionInstanceSchema = new mongoose.Schema({ //instance of ItemModel
     items: [{
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'item',
-        unique: true
     }]
 
 

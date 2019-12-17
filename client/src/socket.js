@@ -66,6 +66,12 @@ export const instanceRefreshSubscribe = (roomId) => {
     })
 }
 
+export const multipleSessionSubscribe = (socketId) => {
+    socket.on('multipleSession', socketId, () => {
+        return socketId
+    })
+}
+
 //EMIT
 export const joinRoomEmit = (roomId) => {
     socket.emit('joinRoom', roomId)

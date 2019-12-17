@@ -17,7 +17,7 @@ import { resetConnectionError } from "./store/actions/connectionActions";
 
 import withAuth from "./hoc/withAuth";
 import withNoAuth from "./hoc/withNoAuth";
-import { authCheck, registerForEvents } from "./store/actions/authActions";
+import { authCheck, setMultipleSession } from "./store/actions/authActions";
 import { updateParty } from "./store/actions/partyActions";
 import ConnectionSpinnerDialog from "./components/layout/ConnectionSpinnerDialog";
 import ConnectionSnackbar from "./components/layout/ConnectionSnackbar";
@@ -37,6 +37,14 @@ class App extends React.Component {
 
     //CHECK AUTH ON APP LOAD
     const uid = await this.props.authCheck();
+
+    socket.emit('authentication', {username: "John", password: "secret"});
+    socket.on('unauthorized', (err) => {
+      if(err.message === "multipleSession"){
+        this.props.setMultipleSession()
+      }
+      console.log('Socket auth failed: ' + err.message)
+    });
 
     joinRoomSubscribe((roomId) => {
       console.log("New member is now visible in socket - party: " + roomId)
@@ -111,7 +119,7 @@ class App extends React.Component {
             </div>
           )}
 
-         {/* <ConnectionSnackbar /> */}
+         <ConnectionSnackbar resetConnectionError = {() => this.props.resetConnectionError()}/>
           <ConnectionSpinnerDialog />
          
         </StylesProvider>
@@ -124,6 +132,7 @@ class App extends React.Component {
 
 const mapDispatchToProps = dispatch => {
   return {
+    setMultipleSession: () => dispatch(setMultipleSession()),
     resetConnectionError: () => dispatch(resetConnectionError()),
     authCheck: () => dispatch(authCheck()),
     onPartyUpdate: () => dispatch(updateParty())

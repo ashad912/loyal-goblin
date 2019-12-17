@@ -64,40 +64,64 @@ const server = app.listen(port, () => {
 var io = socket(server); //param is a server, defined upper
 
 
+
 var allClients = [];
 
-io.use(async (socket, next) => {
 
+
+
+async function authenticate(socket, data, callback) {
+  let multipleSession = false
   try{
     const user = await socketConnectAuth(socket)
 
   
     if(allClients.length && allClients.filter((client) => client.userId === user._id.toString()).length > 0){
-      throw new Error('Multiple session error') 
+      multipleSession = true
+      throw new Error('Multiple session error')  
     }
-
+  
     //console.log(socket.id, user._id)
     const newClient = {socketId: socket.id, userId: user._id.toString()}
-
-    allClients.push(newClient);
-    
-  }catch(e){
-    console.log(e)
-    socket.disconnect()
-    return next(new Error('Socket authentication error'));
-  }
-
-  return next();
   
-});
+    allClients.push(newClient);
+    return callback(null, true)
+  }catch(e){
+    if(multipleSession){
+      return callback(new Error("multipleSession")); 
+    }else{
+      return callback(new Error("Invalid party conditions")); 
+    }
+    
+    //return callback(new Error("Socket Auth failed"));
+  }
+  
+
+}
+
+// io.use(async (socket, next) => {
+
+//   try{
+    
+    
+//   }catch(e){
+//     console.log(e)
+//     await asyncEmit("multipleSession", socket)
+//     socket.disconnect()
+//     return next(new Error('Socket authentication error'));
+//   }
+
+//   return next();
+  
+// });
 
 //const mission = io.of("/mission");
 
 
 
 
-io.on("connection", socket => {
-  
+//io.on("connection", socket => {
+const postAuthenticate = socket => {
   //console.log(allClients)
   
   console.log("New client connected", socket.id);
@@ -178,7 +202,24 @@ io.on("connection", socket => {
 
  
 
-socket.on("disconnect", () => {
+//socket.on("disconnect", () => {
+  
+  // let i = allClients.findIndex((client) => client.socketId === socket.id);
+  // if(i < 0){
+  //   console.log("Client not found")
+  // }else{
+  //   allClients.splice(i, 1);
+  //   console.log("Client disconnected", socket.id)
+  // }
+  
+//});
+
+
+
+
+};
+
+function disconnect(socket) {
   
   let i = allClients.findIndex((client) => client.socketId === socket.id);
   if(i < 0){
@@ -187,13 +228,11 @@ socket.on("disconnect", () => {
     allClients.splice(i, 1);
     console.log("Client disconnected", socket.id)
   }
-  
+}
+
+require('socketio-auth')(io, {
+  authenticate: authenticate,
+  postAuthenticate: postAuthenticate,
+  disconnect: disconnect,
+  timeout: 1000
 });
-
-
-});
-
-//api -> create event instance
-//-> promise -> authMiddleware + authEventMiddleware -> load component with id of instance (!!!) -> socket emit connection
-//==io.use -> query being in party by token->user->party //additional eventToken
-//-> joining room refs by instance id
