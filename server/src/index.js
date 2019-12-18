@@ -14,6 +14,7 @@ import cookieParser from "cookie-parser";
 import cookie from "cookie";
 import socket from "socket.io";
 import { socketRoomAuth, socketConnectAuth } from "./middleware/auth";
+import { validateInMissionInstanceStatus } from './utils/methods' 
 import _ from "lodash";
 
 //TO-START: npm run-script dev
@@ -219,13 +220,23 @@ const postAuthenticate = socket => {
 
 };
 
-function disconnect(socket) {
+async function disconnect(socket) {
   
   let i = allClients.findIndex((client) => client.socketId === socket.id);
   if(i < 0){
     console.log("Client not found")
   }else{
+    const userId = allClients[i].userId
+    const roomId = await validateInMissionInstanceStatus(userId)
+    if(roomId){
+      console.log(`${roomId} for user ${userId} with status inMission: false`)
+      socket.broadcast.to(roomId).emit("modifyUserStatus", {_id: userId, inMission: false});
+      console.log(`User ${userId} left the room ${roomId}`)
+      socket.broadcast.to(roomId).emit("leaveRoom", userId);
+      socket.broadcast.to(roomId).emit("instanceRefresh", roomId);
+    }
     allClients.splice(i, 1);
+    
     console.log("Client disconnected", socket.id)
   }
 }

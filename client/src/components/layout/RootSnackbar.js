@@ -30,7 +30,7 @@ const RootSnackbar = props => {
     const multipleSession = props.auth.multipleSession
     return (
         <React.Fragment>
-            {delay && (
+            {delay && ((props.screen === 1) || (props.screen === 0)) && (
                 <Snackbar
                     anchorOrigin={{
                     vertical: "bottom",

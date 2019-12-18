@@ -32,7 +32,7 @@ const Background = styled.div`
 const MissionDetails = (props) => {
 
     const mission = props.mission
-    const multipleSession = props.party.leader.hasOwnProperty('_id') && (props.socket.connected === false)
+    
     const [openList, setOpenList] = React.useState("");
 
     const handleOpenList = (event) => {
@@ -52,7 +52,7 @@ const MissionDetails = (props) => {
             open={props.open}
             onClose={props.handleClose}
             fullWidth
-            style={{margin: '-40px'}}
+            style={{margin: '-40px -40px 10px -40px'}}
             maxWidth="lg"
         >
         <Background>
@@ -298,7 +298,7 @@ const MissionDetails = (props) => {
                 Wróć
             </Button>
             {props.activeInstanceId !== null && (props.leader || props.party.members.length === 0) && (<Button color="secondary" onClick={() => props.handleMissionLeave()}>Opuść</Button>)}
-            <Button variant="contained" color="primary" onClick={() => props.handleMissionClick(mission._id)} disabled={multipleSession || !props.isMissionActive || (!props.leader && !props.activeInstanceId)}>{props.activeInstanceId ? 'Dołącz!' : 'Wyrusz!'}</Button>
+            <Button variant="contained" color="primary" onClick={() => props.handleMissionClick(mission._id)} disabled={props.multipleSession || !props.isMissionActive || (!props.leader && !props.activeInstanceId)}>{props.activeInstanceId ? 'Dołącz!' : 'Wyrusz!'}</Button>
         </DialogActions>
         </Dialog>
     )

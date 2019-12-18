@@ -4,6 +4,7 @@ import {Product} from '../models/product'
 import moment from 'moment'
 import { levelingEquation } from './definitions';
 import { Party } from '../models/party';
+import { MissionInstance } from '../models/missionInstance';
 
 export async function asyncForEach(array, callback) {
     for (let index = 0; index < array.length; index++) {
@@ -347,4 +348,27 @@ export const designateUserLevel = (points) => {
         }
         previousThreshold = topThreshold;
     }
+}
+
+export const validateInMissionInstanceStatus = (userId) => {
+    return new Promise (async (resolve, reject) => {
+        const missionInstance = await MissionInstance.findOne( 
+            {party: {$elemMatch: {profile: userId}}},     
+        )
+    
+        if(missionInstance){
+            const index = missionInstance.party.findIndex((user) => user.profile.toString() === userId)
+            if(index){
+                if(missionInstance.party[index].inMission){
+                    missionInstance.party[index].inMission = false
+                    await missionInstance.save()
+                    const user = await User.findById(userId)
+                    const partyId = user.party.toString()
+                    return resolve(partyId)
+                }
+            }
+        }
+        resolve(null)
+    })
+    
 }
