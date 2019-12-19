@@ -3,114 +3,44 @@ import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import Divider from "@material-ui/core/Divider";
+import AwardListItem from '../AwardListItem'
+import styled from 'styled-components'
 
-//Info z backendu
-const baskets = [
-  {
-    user: {
-      id: 1,
-      name: "Ancymon Bobrzyn"
-    },
-    price: 26.0,
-    experience: 2600,
-    amulets: [
-      {
-        itemModel: {
-          id: 101,
-          type: {
-            id: 201,
-            type: "amulet"
-          },
-          name: "Diament",
-          imgSrc: "diamond-amulet.png"
-        }
-      }
-    ]
-  },
-  {
-    user: {
-      id: 2,
-      name: "Cecylia Dedoles"
-    },
-    price: 7.0,
-    experience: 700,
-    amulets: []
-  },
-  {
-    user: {
-      id: 3,
-      name: "Ewelina"
-    },
-    price: 13.0,
-    experience: 1300,
-    amulets: [
-      {
-        itemModel: {
-          id: 101,
-          type: {
-            id: 201,
-            type: "amulet"
-          },
-          name: "Perła",
-          imgSrc: "pearl-amulet.png"
-        }
-      }
-    ]
-  }
-];
+const AwardsContainer = styled(Container)`
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin: 6rem 0 6rem 0;
+`
+
+const StyledPaper = styled(Paper)`
+    padding: 1rem;
+    border: 1px solid #eeeeee;
+`
 
 const VerificationPage = props => {
-  //CZY DZIELIMY EXPA PO RÓWNO W DRUŻYNIE, CZY KAŻDY DOSTAJE SWOJE EXPY?
-
+  
+  let missionAwards = []
+  Object.keys(props.missionAwards).forEach((category)=> {
+    if(category === 'any' || category === props.userClass){
+      missionAwards = [...missionAwards, ...props.missionAwards[category]]
+    }
+  })
+ 
   return (
-    <Container maxWidth="sm">
-      <Paper style={{ width: "100%" }}>
-        <Typography>Pokaż ten kod przy barze, by otrzymać nagrody!</Typography>
-        <img src={require("../../../../assets/mocks/mock-qr.png")} />
-        <Divider />
+    <AwardsContainer maxWidth="xs">
+      <StyledPaper>
+        <Typography variant="h5" style={{marginBottom: '1rem'}}>Misja ukończona!</Typography>
+        <Typography>Zdobyte przedmioty:</Typography>
         <List component="nav" style={{ width: "100%" }}>
-          {baskets.map(basket => {
+          {missionAwards.map(award => {
             return (
-              <React.Fragment key={basket.user.id}>
-                <ListItem style={{ flexDirection: "column"}}>
-                  <List style={{ width: "100%" }}>
-                    <ListItem>
-                      <ListItemText primary={basket.user.name} />
-                    </ListItem>
-                  </List>
-                  <List style={{ paddingLeft: "2rem" }}>
-                    <ListItem>
-                      <ListItemText
-                        primary={"Doświadczenie: " + basket.experience}
-                      />
-                    </ListItem>
-                    {basket.amulets.map(amulet => {
-                      return (
-                        <ListItem>
-                          <ListItemText primary={amulet.itemModel.name} />
-                          <ListItemIcon>
-                            <img
-                              src={require("../../../../assets/icons/items/" +
-                                amulet.itemModel.imgSrc)}
-                              width="32"
-                            />
-                          </ListItemIcon>
-                        </ListItem>
-                      );
-                    })}
-                  </List>
-                </ListItem>
-                <Divider />
-              </React.Fragment>
+              <AwardListItem key={award.itemModel._id} item={award} />
             );
           })}
         </List>
-      </Paper>
-    </Container>
+      </StyledPaper>
+    </AwardsContainer>
   );
 };
 

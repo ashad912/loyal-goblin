@@ -38,7 +38,12 @@ class App extends React.Component {
     //CHECK AUTH ON APP LOAD
     const uid = await this.props.authCheck();
 
-    socket.emit('authentication', {username: "John", password: "secret"});
+    
+
+    socket.emit('authentication', {});
+
+
+  
     socket.on('unauthorized', (err) => {
       if(err.message === "multipleSession"){
         this.props.setMultipleSession()

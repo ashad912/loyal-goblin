@@ -50,7 +50,7 @@ router.post("/login", async (req, res) => {
     const token = await user.generateAuthToken(); //on instancegenerateAuthToken
     user = await userPopulateBag(user)
     user.userPerks = await updatePerks(user, true)
-    res.cookie("token", token, { httpOnly: true }).send(user);
+    res.cookie("token", token, { maxAge: 2592000000, httpOnly: true }).send(user); //cookie lifetime: 30 days (maxAge in msc)
   } catch (e) {
     res.status(400).send(e);
   }

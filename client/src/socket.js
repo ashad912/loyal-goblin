@@ -6,6 +6,14 @@ export const socket =  io({
 
 
 //SUBSCRIBE
+
+// export const socketUnauthorizedSubscribe = (err) => {
+//     socket.on('unregisterUser', err, () => {
+//         return err
+//     })
+// }
+
+
 export const joinRoomSubscribe = (roomId) => {
     socket.on('joinRoom', roomId, () => {
         return  roomId
@@ -42,17 +50,11 @@ export const deleteItemSubscribe = (id) => {
     })
 }
 
-// export const registerUserSubscribe = (user) => {
-//     socket.on('registerUser', user, () => {
-//         return user
-//     })
-// }
-
-// export const unregisterUserSubscribe = (id) => {
-//     socket.on('unregisterUser', id, () => {
-//         return id
-//     })
-// }
+export const finishMissionSubscribe = (awards) => {
+    socket.on('finishMission', awards, () => {
+        return awards
+    })
+}
 
 export const modifyUserStatusSubscribe = (data) => {
     socket.on('modifyUserStatus', data, () => {
@@ -73,6 +75,11 @@ export const multipleSessionSubscribe = (socketId) => {
 }
 
 //EMIT
+
+// export const socketAuthenticateEmit = () => {
+//     socket.emit('authentication', {});
+// }
+
 export const joinRoomEmit = (roomId) => {
     socket.emit('joinRoom', roomId)
 }
@@ -100,15 +107,10 @@ export const deleteItemEmit = (id, roomId) => {
     socket.emit('deleteItem', data)
 }
 
-// export const registerUserEmit = ( user, roomId) => {
-//     const data = {user: user, roomId: roomId}
-//     socket.emit('registerUser', data)
-// }
-
-// export const unregisterUserEmit = ( id, roomId) => {
-//     const data = {id: id, roomId: roomId}
-//     socket.emit('unregisterUser', data)
-// }
+export const finishMissionEmit = (awards, roomId) => {
+    const data = {awards: awards, roomId: roomId}
+    socket.emit('finishMission', data)
+}
 
 export const modifyUserStatusEmit = ( user, roomId) => {
     const data = {user: user, roomId: roomId}

@@ -697,12 +697,12 @@ const addAwards = async (user, awards) => {
          
     await asyncForEach(Object.keys(awards.toJSON()), async (className) => {
         
-        if(user.profile.class === className || className === 'any') {
+        if(user.class === className || className === 'any') {
             
             await asyncForEach(awards[className], async (item) => {
 
                 for(let i=0; i < item.quantity; i++) {
-                    const newItem = new Item({itemModel: item.itemModel, owner: user.profile._id})
+                    const newItem = new Item({itemModel: item.itemModel, owner: user._id})
                     await newItem.save()
                     items = [...items, newItem._id]
                 }
@@ -761,6 +761,7 @@ router.delete('/finishInstance', auth, async (req,res) => {
             path: 'items'
         })
 
+
         if(!missionInstance){
             throw Error('No matching mission instance found!')
         }
@@ -771,7 +772,7 @@ router.delete('/finishInstance', auth, async (req,res) => {
         await asyncForEach(missionInstance.party, async (memberObject) => {
             const memberId = memberObject.profile
             missionParty = [...missionParty, memberId]
-            if(memberObject.profile.toString() === user._id.toString() && memberObject.inInstance === false){
+            if(memberId === user._id.toString() && memberObject.inInstance === false){
                 throw Error('User is not in the mission instance!')
             }
         })
@@ -808,9 +809,9 @@ router.delete('/finishInstance', auth, async (req,res) => {
             const user = await User.findById(member.profile).populate({
                 path: 'activeMission'
             }) //recoginized as an array
-            console.log(user.activeMission)
+
             if(user.activeMission.length && (user.activeMission[0]._id.toString() === missionInstance._id.toString())){
-                const items = await addAwards(member, missionInstance.mission.awards)
+                const items = await addAwards(user, missionInstance.mission.awards)
                 
                 await User.updateOne(
                     {_id: user._id},
@@ -830,11 +831,16 @@ router.delete('/finishInstance', auth, async (req,res) => {
             await item.remove() //pre removing middleware (item) clear missionInstance items array!
         })
 
+        await missionInstance.populate({
+            path: 'mission',
+            populate: {path: 'awards.any.itemModel awards.warrior.itemModel awards.rogue.itemModel awards.mage.itemModel awards.cleric.itemModel'}
+        }).execPopulate()
        
         await missionInstance.remove() //remove middleware trigger method returning instance items to owner bags (in this case instance items array is empty)
 
-        res.send()
+        res.send(missionInstance.mission.awards)
     }catch(e){
+        console.log(e.message)
         res.status(400).send(e.message)
     }  
 })

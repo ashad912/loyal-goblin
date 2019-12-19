@@ -11,8 +11,8 @@ import ClearIcon from "@material-ui/icons/Clear";
 import VerificationPage from './mission/VerificationPage'
 import { Typography } from '@material-ui/core';
 import {connect} from 'react-redux'
-import {togglePresenceInInstance, toggleUserReady} from '../../../store/actions/missionActions'
-import {registerUserSubscribe, unregisterUserSubscribe, modifyUserStatusSubscribe, socket} from '../../../socket'
+import {togglePresenceInInstance, toggleUserReady, finishInstance} from '../../../store/actions/missionActions'
+import {socket, modifyUserStatusSubscribe, finishMissionSubscribe} from '../../../socket'
 
 // const getRandomInt = (min, max) => {
 //     min = Math.ceil(min);
@@ -180,17 +180,16 @@ class MissionInstance extends React.Component {
             this.handleBack()
         }
 
-        console.log('Socket connection: ' + socket.connected)
+        const socketConnectedStatus = socket.connected
 
-        if(this.props.party.leader && !socket.connected){
-            this.handleBack()
-        }
-
+        const navbar = document.getElementById("navbar").offsetHeight;
+        const footer = document.getElementById("footer").offsetHeight;
+      
 
         try{
             const user = {_id: this.props.auth.uid, inMission: true}
             const leader = !this.props.party.leader || (this.props.party.leader._id === this.props.auth.uid)
-            const response = await togglePresenceInInstance(user, this.props.party._id)
+            const response = await togglePresenceInInstance(user, this.props.party._id, socketConnectedStatus)
             const missionInstance = response.missionInstance
             const amulets = response.amulets
             console.log(amulets)
@@ -202,6 +201,7 @@ class MissionInstance extends React.Component {
                 missionObject: missionInstance.mission,//this.props.location.state.id,
                 leader: leader,
                 loading: false,
+                fullHeightCorrection: navbar+footer,
             }, () => {
                 modifyUserStatusSubscribe((user) => {
             
@@ -210,6 +210,17 @@ class MissionInstance extends React.Component {
                     this.setState({
                         instanceUsers
                     })
+                })
+
+                finishMissionSubscribe((awards) => {
+                    console.log('finishMission sub')
+                    this.setState({ 
+                        missionAwards: awards
+                    }, () => {
+                        this.setState({ 
+                            showVerificationPage: true,
+                        })
+                    });
                 })
             })
         }catch(e){
@@ -222,15 +233,17 @@ class MissionInstance extends React.Component {
     
         
     }
+
+    componentDidUpdate = (prevProps) => {
+        if((!prevProps.party.hasOwnProperty('leader') && this.props.party.hasOwnProperty('leader')) && !socket.connected){
+            this.handleBack()
+        }
+    }
     
     
     
 
-    handleConnection = (roomId) => {
-        this.setState({
-            roomId: roomId
-        })
-    }
+
 
 
     updateInstanceItems = (items) => {
@@ -240,23 +253,25 @@ class MissionInstance extends React.Component {
         })
     }
 
-    // updateInstanceUsers = (users) => {
-        
-    //     this.setState({
-    //         instanceUsers: users
-    //     })
-    // }
-
-    // updatePartyCondition = (condition) => {
-    //     this.setState({
-    //         partyCondition: condition
-    //     })
-    // }
    
 
     handleReadyButton = async () => {
         if(this.state.leader) {
-            this.setState({ showVerificationPage: true });
+            try{
+                const user = {_id: this.props.auth.uid, readyStatus: !this.state.userReadyStatus}
+                await toggleUserReady(user, this.props.party._id)
+                const awards = await finishInstance(this.props.party._id)
+                this.setState({ 
+                    missionAwards: awards
+                }, () => {
+                    this.setState({ 
+                        showVerificationPage: true,
+                    })
+                });
+            }catch(e){
+                console.log(e)
+                this.handleBack()
+            }   
         }else{
             const user = {_id: this.props.auth.uid, readyStatus: !this.state.userReadyStatus}
             try{
@@ -313,25 +328,11 @@ class MissionInstance extends React.Component {
         console.log(this.state.instanceUsers)
         let partyCondition = true
         this.state.instanceUsers.forEach((member) => {
-            // const userFound = props.instanceUsers.find((user)=>{
-            //     return user._id === member.profile._id
-            // })
-
-            // if(userFound) {
-            //     member.inMission = true
-            //     member.readyStatus = userFound.readyStatus  
-            // }else{
-            //     member.inMission = false
-            //     member.readyStatus = false 
-            // }
-            //check party readyCondition -> important for leader - optimize - count only for leader
             if((member.profile._id !== this.props.auth.uid) && !member.readyStatus){
                 partyCondition = false
             }
         })
         
-        
-
         return partyCondition
     }
 
@@ -375,71 +376,70 @@ class MissionInstance extends React.Component {
 
         
         return(
-            <div style={{fontFamily: '"Roboto", sans-serif'}}>
+            <div style={{display: 'flex', flexDirection: 'column', alignContent: 'center', fontFamily: '"Roboto", sans-serif', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`}}>
             {this.state.showVerificationPage ? (
-                <VerificationPage />
+                <VerificationPage missionAwards={this.state.missionAwards} userClass={this.props.auth.profile.class}/>
             ) : (
-                <div>
-                <TitleBar>
-                    <StyledImg src={require(`../../../assets/avatar/${this.state.missionObject.avatar}`)}/>
-                    <Typography style={{display: 'inline'}} variant="h6">{this.state.missionObject.title}</Typography>
-                    {statusIcon(isRequiredItemsCollected)}
-                </TitleBar>   
-                <MissionBar>
+                <React.Fragment>
                     
-                    {requiredMissionItems.map((amulet) => {
-                        return (
-                            <React.Fragment key={amulet.itemModel.id}>
-                                
-                                <StyledItemIcon src={require(`../../../assets/icons/items/${amulet.itemModel.imgSrc}`)}/>
-                                <StyledItemsIndicator required={amulet.quantity} inBox={amulet.inBox}>{` ${amulet.inBox}/${amulet.quantity}`}</StyledItemsIndicator>
-                                {statusIcon(amulet.readyStatus)}
-                            </React.Fragment>
-                        )
-                    })}
-                
-                </MissionBar>
-                
-                <ExchangeArea userId={this.props.auth.uid} locationId={this.props.party._id/*this.props.location.state.id*/} instanceItems={this.updateInstanceItems} initUserItems={this.state.userItems} initMissionItems={this.state.instanceItems} userReadyStatus={this.state.userReadyStatus} handleBack={this.handleBack}/>
-                <PartyList userId={this.props.auth.uid} instanceUsers={this.state.instanceUsers} instanceItems={this.state.instanceItems} party={this.props.party} userReadyStatus={this.state.userReadyStatus} />
-                    
-                
-                <ButtonBar>
-                    <Button 
-                        style={{width: '36%', marginRight: '0.5rem'}} 
-                        onClick={this.handleBack} 
-                        variant="contained" 
-                        color="primary" >
-                            <KeyboardArrowLeftIcon
-                            style={{
-                                fontSize: "2rem",
-                                transition: "transform 500ms ease-out",
-                                transform: this.state.backButtonMouseOver ? "rotate(540deg)" : "rotate(0deg)"
-                            }}
-                        />
-                        Wyjdź
+                    <TitleBar>
+                        <StyledImg src={require(`../../../assets/avatar/${this.state.missionObject.avatar}`)}/>
+                        <Typography style={{display: 'inline'}} variant="h6">{this.state.missionObject.title}</Typography>
+                        {statusIcon(isRequiredItemsCollected)}
+                    </TitleBar>   
+                    <MissionBar>
                         
-                    </Button>
-                    <Button style={{width: '52%'}} onClick={this.handleReadyButton} disabled={this.state.leader && (!isRequiredItemsCollected || !isAllPartyReady)} variant="contained" color="primary">
-                        {buttonReadyLabel}
-                        <ColorizeIcon
-                        style={{
-                            margin: '0 0 0 0.2rem',
-                            fontSize: "2rem",
-                            transition: "transform 500ms ease-out",
-                            transform: this.state.userReadyStatus ? "rotate(540deg)" : "rotate(0deg)"
+                        {requiredMissionItems.map((amulet) => {
+                            return (
+                                <React.Fragment key={amulet.itemModel.id}>
+                                    
+                                    <StyledItemIcon src={require(`../../../assets/icons/items/${amulet.itemModel.imgSrc}`)}/>
+                                    <StyledItemsIndicator required={amulet.quantity} inBox={amulet.inBox}>{` ${amulet.inBox}/${amulet.quantity}`}</StyledItemsIndicator>
+                                    {statusIcon(amulet.readyStatus)}
+                                </React.Fragment>
+                            )
+                        })}
+                    
+                    </MissionBar>
+                    
+                    <ExchangeArea userId={this.props.auth.uid} locationId={this.props.party._id/*this.props.location.state.id*/} instanceItems={this.updateInstanceItems} initUserItems={this.state.userItems} initMissionItems={this.state.instanceItems} userReadyStatus={this.state.userReadyStatus} handleBack={this.handleBack}/>
+                    <PartyList userId={this.props.auth.uid} instanceUsers={this.state.instanceUsers} instanceItems={this.state.instanceItems} party={this.props.party} userReadyStatus={this.state.userReadyStatus} />
+                        
+                    
+                        <ButtonBar>
+                            <Button 
+                                style={{width: '36%', marginRight: '0.5rem'}} 
+                                onClick={this.handleBack} 
+                                variant="contained" 
+                                color="primary" >
+                                    <KeyboardArrowLeftIcon
+                                    style={{
+                                        fontSize: "2rem",
+                                        transition: "transform 500ms ease-out",
+                                        transform: this.state.backButtonMouseOver ? "rotate(540deg)" : "rotate(0deg)"
+                                    }}
+                                />
+                                Wyjdź
+                                
+                            </Button>
+                            <Button style={{width: '52%'}} onClick={this.handleReadyButton} disabled={this.state.leader && (!isRequiredItemsCollected || !isAllPartyReady)} variant="contained" color="primary">
+                                {buttonReadyLabel}
+                                <ColorizeIcon
+                                style={{
+                                    margin: '0 0 0 0.2rem',
+                                    fontSize: "2rem",
+                                    transition: "transform 500ms ease-out",
+                                    transform: this.state.userReadyStatus ? "rotate(540deg)" : "rotate(0deg)"
+                                    
+                                }}
+                                />
+                            </Button>
                             
-                        }}
-                        />
-                    </Button>
-                    
-                    {statusIcon(this.state.userReadyStatus)}
-                    
-                    
-                </ButtonBar>
-                    {/* <span style={{fontSize: 8}}>SocketIO-RoomId (temporary missionId): {this.state.roomId} ||| </span>
-                    <span style={{fontSize: 8}}>RandomUserId (1-5, can be duplicated -> refresh): {randomUserId}</span> */}
-                </div>
+                            {statusIcon(this.state.userReadyStatus)}
+                            
+                            
+                        </ButtonBar>
+                </React.Fragment>
                 )}
             </div>
         )

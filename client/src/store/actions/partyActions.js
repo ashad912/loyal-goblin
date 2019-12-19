@@ -5,31 +5,32 @@ import {socket, joinRoomEmit, leaveRoomEmit, addMemberToRoomEmit, deleteRoomEmit
 export const updateParty = () => {
     return async dispatch => {
         
-        try {
-            console.log('updateParty')
-            const res = await axios.get('/party')
-            
-            if(res.data && res.status === 200){
-                dispatch({type: "UPDATE_PARTY", party: res.data})
-                const party = res.data
+            try {
+                console.log('updateParty')
+                const res = await axios.get('/party')
                 
-                if(!socket.connected){
-                    socket.open()
-                    joinRoomEmit(party._id)
+                if(res.data && res.status === 200){
+                    dispatch({type: "UPDATE_PARTY", party: res.data})
+                    const party = res.data
+                    
+                    if(!socket.connected){
+                        socket.open()
+                        joinRoomEmit(party._id)
+                    }
+                    
+                }else{
+                    dispatch({type: "DELETE_PARTY"})
                 }
-                
-            }else{
-                dispatch({type: "DELETE_PARTY"})
+               
             }
-        }
-
-        catch (e) {
-            console.log(e)
-            dispatch( {type: "NO_CONNECTION", error: e})
+    
+            catch (e) {
+                console.log(e)
+                dispatch( {type: "NO_CONNECTION", error: e})
                 
-        }
-        
-        
+                    
+            }
+          
     }
 }
 

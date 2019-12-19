@@ -32,6 +32,7 @@ const StyledImage = styled.img`
 `
 
 const StyledRoot = styled.div`
+    flex-grow: 3;
     margin-left: 1.5rem;
     margin-right: 1.5rem;
     margin-top: 1rem;
@@ -230,77 +231,79 @@ const PartyList = (props) => {
 
     return (
         <StyledRoot>
-            <Paper>
-            <StyledTypo variant="h5">Drużyna</StyledTypo>
-            
-            <StyledList >
-            {party.map((member) => {
-                return(
-                   
-                    <StyledBox border={1} borderColor="primary.main">
-                    {member.inMission ? (
-                        
-                        <ListItem>
-                            <ListItemAvatar style={{minWidth: 32}}>
-                                {altAvatar(member.profile)}
-                            </ListItemAvatar>
-                            
-
-                            
-                                <Grid item xs={10}>
-                                    
-                                        <StyledGrid
-                                            container
-                                            direction="row"
-                                            justify="flex-start"
-                                            alignItems="flex-start"
-                                            spacing={1}
-                                        >
-                                        {instanceItems.map((item) => {
-                                            
-                                            return(
-                                                <React.Fragment key={item._id}>
-                                                    {item.owner === member.profile._id ? (
-                                                        <StyledImage  src={require(`../../../../assets/icons/items/${item.itemModel.imgSrc}`)} alt='icon'/>
-                                                    ) : (
-                                                        null
-                                                    )}
-                                                </React.Fragment>
-                                            )
-                                            
-                                                
-                                                /*<img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>*/
-                                            
-                                        })}
-                                        </StyledGrid>
-                                    
-                                </Grid>
-                            
-                            <ListItemIcon style={{minWidth: 32}}>
-                                    {props.party.leader && (member.profile._id === props.party.leader._id) ? (leaderIcon()) : (statusIcon(member.readyStatus))}
-                            </ListItemIcon>
-                            </ListItem>
-                        
-                        
-                    ) : (
-                        <ListItem>
-                            <ListItemAvatar style={{minWidth: 32}}>
-                                    <CircularProgress style={{height: 50, width: 50}}/>
-                            </ListItemAvatar>
-                            <Grid item xs={10}></Grid>
-                            <ListItemIcon style={{minWidth: 32}}>
-                                {props.party.leader && (member.profile._id === props.party.leader._id) ? (leaderIcon()) : (statusIcon(member.readyStatus))}
-                            </ListItemIcon>
-                        </ListItem>
-                    )}   
-                    
-                    </StyledBox>
-                )
-            })}
-            </StyledList>
-            
+            {party.length > 0 && (
+                <Paper>
+                <StyledTypo variant="h5">Drużyna</StyledTypo>
                 
-            </Paper>
+                <StyledList >
+                {party.map((member) => {
+                    return(
+                    
+                        <StyledBox border={1} borderColor="primary.main">
+                        {member.inMission ? (
+                            
+                            <ListItem>
+                                <ListItemAvatar style={{minWidth: 32}}>
+                                    {altAvatar(member.profile)}
+                                </ListItemAvatar>
+                                
+
+                                
+                                    <Grid item xs={10}>
+                                        
+                                            <StyledGrid
+                                                container
+                                                direction="row"
+                                                justify="flex-start"
+                                                alignItems="flex-start"
+                                                spacing={1}
+                                            >
+                                            {instanceItems.map((item) => {
+                                                
+                                                return(
+                                                    <React.Fragment key={item._id}>
+                                                        {item.owner === member.profile._id ? (
+                                                            <StyledImage  src={require(`../../../../assets/icons/items/${item.itemModel.imgSrc}`)} alt='icon'/>
+                                                        ) : (
+                                                            null
+                                                        )}
+                                                    </React.Fragment>
+                                                )
+                                                
+                                                    
+                                                    /*<img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>*/
+                                                
+                                            })}
+                                            </StyledGrid>
+                                        
+                                    </Grid>
+                                
+                                <ListItemIcon style={{minWidth: 32}}>
+                                        {props.party.leader && (member.profile._id === props.party.leader._id) ? (leaderIcon()) : (statusIcon(member.readyStatus))}
+                                </ListItemIcon>
+                                </ListItem>
+                            
+                            
+                        ) : (
+                            <ListItem>
+                                <ListItemAvatar style={{minWidth: 32}}>
+                                        <CircularProgress style={{height: 50, width: 50}}/>
+                                </ListItemAvatar>
+                                <Grid item xs={10}></Grid>
+                                <ListItemIcon style={{minWidth: 32}}>
+                                    {props.party.leader && (member.profile._id === props.party.leader._id) ? (leaderIcon()) : (statusIcon(member.readyStatus))}
+                                </ListItemIcon>
+                            </ListItem>
+                        )}   
+                        
+                        </StyledBox>
+                    )
+                })}
+                </StyledList>
+                
+                    
+                </Paper>
+            )}
             </StyledRoot>
     )
 }

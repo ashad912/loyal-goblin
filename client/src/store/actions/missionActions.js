@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { modifyUserStatusEmit, instanceRefreshEmit, addItemEmit, deleteItemEmit} from '../../socket'
+import { modifyUserStatusEmit, instanceRefreshEmit, addItemEmit, deleteItemEmit, finishMissionEmit} from '../../socket'
 
 
 export const getMissionList = () => {
@@ -30,9 +30,22 @@ export const createInstance = (missionId, partyId) => {
 export const deleteInstance = (partyId) => {
     return new Promise (async (resolve, reject) => {
         try {
-            const res = await axios.delete('/mission/deleteInstance')
+            await axios.delete('/mission/deleteInstance')
             instanceRefreshEmit(partyId)
             resolve()
+        }catch (e) {
+            reject(e)     
+        } 
+    })
+}
+
+export const finishInstance = (partyId) => {
+    return new Promise (async (resolve, reject) => {
+        try {
+            const res = await axios.delete('/mission/finishInstance')
+            console.log(res.data)
+            finishMissionEmit(res.data, partyId)
+            resolve(res.data)
         }catch (e) {
             reject(e)     
         } 
@@ -64,12 +77,17 @@ export const sendItemToUser = (id, partyId) => {
     })
 }
 
-export const togglePresenceInInstance = (user, partyId) => {
+export const togglePresenceInInstance = (user, partyId, socketStatusConnection) => {
     return new Promise (async (resolve, reject) => {
         try {
             if(user.inMission){
                 console.log('enterInstance')
                 const res = await axios.patch('/mission/enterInstance')
+                if(socketStatusConnection !== undefined){
+                    if(res.data.missionInstance.party.length > 1 && !socketStatusConnection){ //if client of multiplayer mission is not connected to socket
+                        reject()
+                    }
+                }
                 modifyUserStatusEmit(user, partyId)
                 resolve(res.data)
             }else{

@@ -82,8 +82,7 @@ async function authenticate(socket, data, callback) {
       throw new Error('Multiple session error')  
     }
   
-    //console.log(socket.id, user._id)
-    const newClient = {socketId: socket.id, userId: user._id.toString()}
+    const newClient = {socketId: socket.id, userId: user._id.toString(), roomId: user.party.toString()}
   
     allClients.push(newClient);
     return callback(null, true)
@@ -93,31 +92,10 @@ async function authenticate(socket, data, callback) {
     }else{
       return callback(new Error("Invalid party conditions")); 
     }
-    
-    //return callback(new Error("Socket Auth failed"));
   }
   
 
 }
-
-// io.use(async (socket, next) => {
-
-//   try{
-    
-    
-//   }catch(e){
-//     console.log(e)
-//     await asyncEmit("multipleSession", socket)
-//     socket.disconnect()
-//     return next(new Error('Socket authentication error'));
-//   }
-
-//   return next();
-  
-// });
-
-//const mission = io.of("/mission");
-
 
 
 
@@ -164,7 +142,7 @@ const postAuthenticate = socket => {
 
 
   socket.on("modifyUserStatus", data => {
-    console.log(`${data.roomId} for user ${data.user._id} with status ${data.user.readyStatus} or ${data.user.inMission}`)
+    //console.log(`${data.roomId} for user ${data.user._id} with status ${data.user.readyStatus} or ${data.user.inMission}`)
     socket.broadcast.to(data.roomId).emit("modifyUserStatus", data.user);
   });
 
@@ -172,35 +150,34 @@ const postAuthenticate = socket => {
     io.to(roomId).emit("instanceRefresh", roomId);
   });
 
- // io.of("mission")
-          // .to(partyId)
-          // .emit("joinRoom", partyId);
 
-  /////////
   socket.on("addItem", async data => {
-    
-      await socketRoomAuth(socket, roomId)
-
-      socket.broadcast.to(data.roomId).emit("addItem", data.item);
-    
-    
+    await socketRoomAuth(socket, data.roomId)
+    socket.broadcast.to(data.roomId).emit("addItem", data.item);
   });
 
   socket.on("deleteItem", async data => {
-    await socketRoomAuth(socket, roomId)
+    await socketRoomAuth(socket, data.roomId)
 
     socket.broadcast.to(data.roomId)
       .emit("deleteItem", data.id);
   });
 
-  // socket.on("registerUser", data => {
-  //   io.of("mission")
-  //     .to(data.roomId)
-  //     .emit("registerUser", data.user);
-  // });
+  socket.on("finishMission", async data => {
+    await socketRoomAuth(socket, data.roomId)
+    console.log('Mission is going to end!')
+  
+    socket.broadcast
+      .to(data.roomId)
+      .emit("finishMission", data.awards);
+  });
 
 
+ // io.of("mission")
+          // .to(partyId)
+          // .emit("joinRoom", partyId);
 
+  /////////
  
 
 //socket.on("disconnect", () => {
@@ -227,8 +204,10 @@ async function disconnect(socket) {
     console.log("Client not found")
   }else{
     const userId = allClients[i].userId
-    const roomId = await validateInMissionInstanceStatus(userId)
-    if(roomId){
+    const roomId = allClients[i].roomId
+  
+    const updateClients = await validateInMissionInstanceStatus(userId, false)
+    if(updateClients){
       console.log(`${roomId} for user ${userId} with status inMission: false`)
       socket.broadcast.to(roomId).emit("modifyUserStatus", {_id: userId, inMission: false});
       console.log(`User ${userId} left the room ${roomId}`)

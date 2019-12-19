@@ -350,7 +350,7 @@ export const designateUserLevel = (points) => {
     }
 }
 
-export const validateInMissionInstanceStatus = (userId) => {
+export const validateInMissionInstanceStatus = (userId, newStatus) => {
     return new Promise (async (resolve, reject) => {
         const missionInstance = await MissionInstance.findOne( 
             {party: {$elemMatch: {profile: userId}}},     
@@ -358,17 +358,16 @@ export const validateInMissionInstanceStatus = (userId) => {
     
         if(missionInstance){
             const index = missionInstance.party.findIndex((user) => user.profile.toString() === userId)
-            if(index){
-                if(missionInstance.party[index].inMission){
-                    missionInstance.party[index].inMission = false
+            
+            if(index > -1){
+                if(missionInstance.party[index].inMission !== newStatus){
+                    missionInstance.party[index].inMission = newStatus
                     await missionInstance.save()
-                    const user = await User.findById(userId)
-                    const partyId = user.party.toString()
-                    return resolve(partyId)
+                    return resolve(true)
                 }
             }
         }
-        resolve(null)
+        resolve(false)
     })
     
 }
