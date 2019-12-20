@@ -6,6 +6,7 @@ import {Item} from './item'
 import {Party} from './party'
 import {Rally} from './rally'
 import {ProductsOrderSchema} from '../schemas/ProductsOrderSchema'
+import {ClassAwardsSchema} from '../schemas/ClassAwardsSchema'
 import {LoyalSchema} from '../schemas/LoyalSchema'
 
 import arrayUniquePlugin from 'mongoose-unique-array'
@@ -211,6 +212,7 @@ export const UserSchema = new mongoose.Schema({
         }]
 
     },
+    newRallyAwards: [ClassAwardsSchema],
     perksUpdatedAt: Date,
     userPerks: {
         attrStrength: {

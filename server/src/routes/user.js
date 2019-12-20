@@ -330,6 +330,21 @@ router.patch("/myItems/equip", auth, async (req, res) => {
   }
 })
 
+//CHECK
+router.patch('/clearAwards', auth, async (req, res) => {
+  let user = req.user;
+
+  try{
+      user.newRallyAwards = []
+      await user.save()
+      user = await userPopulateBag(user)
+      res.send(user)
+  }catch(e){
+      res.status(500).send(e.message)
+  }    
+
+})
+
 const allFieldsTrue = (loyal) => {
   for (var field in loyal){
     if(!loyal[field]){

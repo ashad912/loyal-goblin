@@ -16,9 +16,12 @@ var rallyFinishTask
 var rallyTestTask
 
 //OK
-const addAwards = async (user, awardsLevels) => {
+const addAwards = async (user, awardsLevels, prevNewRallyAwards) => {
     let items = []
-    
+    let newRallyAwards = []
+    if(prevNewRallyAwards && prevNewRallyAwards.length){
+        newRallyAwards = [...prevNewRallyAwards]
+    }
     await asyncForEach(awardsLevels, async (awardsLevel) => {
         
         if(user.experience >= awardsLevel.level){
@@ -26,8 +29,9 @@ const addAwards = async (user, awardsLevels) => {
             await asyncForEach(Object.keys(awardsLevel.awards.toJSON()), async (className) => {
                 
                 if(user.profile.class === className || className === 'any') {
-                    
+                       
                     await asyncForEach(awardsLevel.awards[className], async (item) => {
+                        newRallyAwards = [...newRallyAwards, {quantity: item.quantity, itemModel: item.itemModel}] 
                         //UPDATE TO CHECK
                         for(let i=0; i < item.quantity; i++) {
                             const newItem = new Item({itemModel: item.itemModel, owner: user.profile._id})
@@ -42,25 +46,15 @@ const addAwards = async (user, awardsLevels) => {
     })
     
     
-    return items  
+    return {items, newRallyAwards} 
 }
 
 //OK - CHECK PARTLY
 const finishRally = async (rally) => {
     
 
-
+ //CHECK: IS IT POPULATING?
     await rally.populate({
-        path: 'awardsLevels.awards.any.itemModel'
-    }).populate({
-        path: 'awardsLevels.awards.warrior.itemModel'
-    }).populate({
-        path: 'awardsLevels.awards.rogue.itemModel'
-    }).populate({
-        path: 'awardsLevels.awards.mage.itemModel'
-    }).populate({
-        path: 'awardsLevels.awards.cleric.itemModel'
-    }).populate({
         path: 'users.profile'
     }).execPopulate()
 
@@ -77,14 +71,16 @@ const finishRally = async (rally) => {
             console.log(user.userRallies, rallyUser.experience)
 
             //UPDATE TO CHECK
-            const index = user.userRallies.findIndex((activeRally) => activeRally._id === rally._id)
+            const index = user.userRallies.findIndex((activeRally) => activeRally._id.toString() === rally._id.toString())
 
             if((user.userRallies.length) && (index >= 0) && (rallyUser.experience > 0)){ 
-                const items = await addAwards(rallyUser, rally.awardsLevels)
+                const data = await addAwards(rallyUser, rally.awardsLevels, user.newRallyAwards)
+                const items = data.items
+                const newRallyAwards = data.newRallyAwards
                 
                 await User.updateOne(
                     {_id: user._id},
-                    { $addToSet: { bag: { $each: items } } }
+                    { $addToSet: { bag: { $each: items } }, $set: {newRallyAwards: newRallyAwards}, $inc: {experience: rally.experience} }
                 )
                 
             }
@@ -271,12 +267,23 @@ router.delete('/remove', auth, async (req, res) =>{
 router.get('/first', auth, async (req, res)=> {
     try{
         const rallyArray = await Rally.find({ $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }]}).sort({"startDate": 1 }).limit(1)
+        if(!rallyArray.length){
+            res.send("")
+            return
+        }
         const rally = rallyArray[0]
+
+        await rally.populate({
+            path: 'awardsLevels.awards.any.itemModel awardsLevels.awards.warrior.itemModel awardsLevels.awards.rogue.itemModel awardsLevels.awards.mage.itemModel awardsLevels.awards.cleric.itemModel'
+        }).execPopulate()
+
         res.send(rally) //can send undefined, what have to be supported by frontend
     }catch (e) {
         res.status(500).send(e.message)
     }
 })
+
+
 
 
 

@@ -330,6 +330,11 @@ export const userPopulateBag = async (user) => {
         populate: {path: 'itemModel'}
       }).execPopulate();
     
+    if(user.newRallyAwards && user.newRallyAwards.length){
+        await user.populate({
+            path: 'newRallyAwards.itemModel'
+        }).execPopulate();
+    }
     return user //CONSIDER: return user.bag -> props: const user declaration
 }
 
