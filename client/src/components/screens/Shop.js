@@ -668,20 +668,18 @@ class Shop extends React.Component {
       window.addEventListener("scroll", this.handleScrollPosition);
     });
 
-    //this.props.onGetShop()
     await this.props.onGetShop();
     
 
     //backend call for players in party
-    await this.props.onUpdateParty();
+    //await this.props.onUpdateParty();
     const baskets = {};
-    if (this.props.party.length > 0) {
+    baskets[this.props.auth.uid] = [];
+    if (this.props.party.length > 1) {
       this.props.party.forEach(player => {
         baskets[player._id] = [];
       });
-    } else {
-      baskets[this.props.auth.uid] = [];
-    }
+    } 
 
     this.setState({ baskets, products: [...this.props.products] });
 
@@ -715,7 +713,7 @@ class Shop extends React.Component {
       baskets[this.state.activeUser][idOfProductAlreadyInBasket].quantity += 1;
     } else {
       baskets[this.state.activeUser].push({
-        ...this.props.products.find(product => product._id === id),
+        ...this.state.products.find(product => product._id === id),
         quantity: 1
       });
     }
@@ -743,10 +741,13 @@ class Shop extends React.Component {
   handleChangeactiveUser = (e, id) => {
     //CALL BACKEND FOR PRODUCT MODIFIERS EACH TIME ACTIVE USER CHANGES
     this.setState({ activeUser: id }, () => {
-      const products = [...this.props.products];
-      products.forEach(product => {
-        product.priceModified = false;
-        product.experienceModified = false;
+      let products = [...this.props.products];
+      products = products.map(product => {
+        return {
+          ...product,
+          priceModified: false,
+          experienceModified: false
+        }
       });
       const activeUser = this.props.party.length > 0 ? this.props.party.find(
         user => user._id === this.state.activeUser
@@ -761,6 +762,13 @@ class Shop extends React.Component {
           );
           
           if (modifyIndex > -1) {
+            if (
+              activeUser.userPerks.products[modifiedProduct].hasOwnProperty("experienceMod")
+            ) {
+              products[modifyIndex].experience =
+              activeUser.userPerks.products[modifiedProduct].experienceMod;
+              products[modifyIndex].experienceModified = activeUser.userPerks.products[modifiedProduct].experienceMod > 0 ? "#28a52e" : "#c10000";
+            }
             if (activeUser.userPerks.products[modifiedProduct].hasOwnProperty("priceMod")) {
               products[modifyIndex].price +=
               activeUser.userPerks.products[modifiedProduct].priceMod;
@@ -768,13 +776,6 @@ class Shop extends React.Component {
               if(products[modifyIndex].price < 0){
                 products[modifyIndex].price = 0.0
               }
-            }
-            if (
-              activeUser.userPerks.products[modifiedProduct].hasOwnProperty("experienceMod")
-            ) {
-              products[modifyIndex].experience =
-              activeUser.userPerks.products[modifiedProduct].experienceMod;
-              products[modifyIndex].experienceModified = activeUser.userPerks.products[modifiedProduct].experienceMod > 0 ? "#28a52e" : "#c10000";
             }
           }
         });
@@ -790,6 +791,12 @@ class Shop extends React.Component {
   };
 
   handleFinalizeOrder = () => {
+    const tempBaskets = {...this.state.baskets}
+    // Object.keys(tempBaskets).forEach(owner => {
+    //   if(tempBaskets[owner].length === 0){
+    //     tempBaskets[owner].push(null)
+    //   }
+    // })
     this.props.onActivateOrder(this.state.baskets)
     //this.setState({ showVerificationPage: true });
   };
@@ -831,8 +838,7 @@ class Shop extends React.Component {
     const foodList = this.state.products.filter(product => {
       return product.category === "food";
     });
-
-    console.log(this.state.activeUser, this.props.auth.uid )
+    
     const activeUser = this.state.activeUser&& this.props.party.length > 0 && this.state.activeUser !== this.props.auth.uid ? this.props.party.find(
       user => user._id === this.state.activeUser
     ) : this.props.auth.profile
@@ -846,11 +852,11 @@ class Shop extends React.Component {
     }
     return (
       <div>
-        {this.props.activeOrder.length > 0 ? (
+        {this.props.activeOrder.length > 0 && this.state.activeUser ? (
           <VerificationPage user={this.props.auth} party={this.props.party}/>
         ) : (
           <ScrollingProvider>
-            {this.props.party.length > 0 && (
+            {this.props.party.length > 1 && (
               <PlayerShopButtons
                 users={this.props.party}
                 activeUser={this.state.activeUser}
@@ -1019,7 +1025,7 @@ class Shop extends React.Component {
               open={this.state.basketDrawerOpen}
               toggle={this.handleToggleBasketDrawer}
               baskets={this.state.baskets}
-              users={this.props.party.length > 0 ? this.props.party : [this.props.auth.profile]}
+              users={this.props.party.length > 1 ? this.props.party : [this.props.auth.profile]}
               activeUser={this.state.activeUser}
               handleRemoveItem={this.handleRemoveItemFromCart}
               finalizeOrder={this.handleFinalizeOrder}
@@ -1029,7 +1035,7 @@ class Shop extends React.Component {
         <ScrollModal
           open={this.state.showScrollModal}
           handleClose={this.handleScrollModalToggle}
-          scrolls={activeUser.bag}
+          scrolls={activeUser.bag.filter(item => item.itemModel.type === 'scroll')}
           equippedScrollId={activeUser.equipped.scroll}
           handleScrollSelect={this.handleScrollSelect}
         />
@@ -1043,14 +1049,13 @@ const mapStateToProps = state => {
     auth: state.auth,
     activeOrder: state.auth.profile.activeOrder,
     products: state.shop.products,
-    party:  state.party.leader ? [state.party.leader, ...state.party.members] : []
+    party:  state.party.leader ? [{...state.auth.profile, _id: state.auth.uid}, ...state.party.members] : []
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     onGetShop: () => dispatch(getShop()),
-    onUpdateParty: () => dispatch(updateParty()),
     onActivateOrder: (baskets) => dispatch(activateOrder(baskets))
   };
 };

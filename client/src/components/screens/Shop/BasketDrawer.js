@@ -38,9 +38,7 @@ const BasketDrawer = ({ open, toggle, baskets, users, activeUser, handleRemoveIt
         <Divider />
         <List component="nav" style={{ width: "75vw" }}>
           {Object.keys(baskets).map(user => {
-            const userName = users.length > 1 ? users.find(
-              u => u._id === user
-            ).name : users[0].name;
+            const userName = users.length > 0 && users[0] && user.name 
             let summedPrice = 0.0;
 
             if (baskets[user].length > 0) {

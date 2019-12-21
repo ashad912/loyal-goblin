@@ -4,7 +4,7 @@ import Chip from '@material-ui/core/Chip';
 
 const PlayerShopButton = ({id, avatar, name, active, handleClick}) => {
 
-    let initials = name && name.split(" ").map(word => {
+    let initials = name.split(" ").map(word => {
         return word.charAt(0)
     })
   return (

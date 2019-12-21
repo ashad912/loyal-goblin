@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { Mongoose } from 'mongoose'
 import validator from 'validator'
 import bcrypt from 'bcryptjs'
 import jwt from "jsonwebtoken"
@@ -187,7 +187,10 @@ export const UserSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'user',
         },
-        products: [ProductsOrderSchema]
+        products: [ProductsOrderSchema],
+        price: {type: Number, default: 0},
+        experience: {type: Number, default: 0},
+        awards: [{quantity: {type: Number, default: 0 }, itemModel: {type: mongoose.Schema.Types.ObjectId, ref: 'itemModel'}}]
     }],
     statistics: {
         missionCounter: {
