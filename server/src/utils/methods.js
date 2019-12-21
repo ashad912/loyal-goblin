@@ -354,7 +354,6 @@ export const designateUserLevel = (points) => {
         previousThreshold = topThreshold;
     }
 }
-<<<<<<< HEAD
 
 export const validateInMissionInstanceStatus = (userId, newStatus) => {
     return new Promise (async (resolve, reject) => {
@@ -377,5 +376,3 @@ export const validateInMissionInstanceStatus = (userId, newStatus) => {
     })
     
 }
-=======
->>>>>>> origin/master
