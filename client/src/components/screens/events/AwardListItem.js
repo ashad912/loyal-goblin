@@ -53,7 +53,7 @@ const AwardListItem = props => {
             </ListItemAvatar>
         </Badge>
         </Grid>
-        <Grid item xs={9}>
+        <Grid item xs={9} style={{paddingLeft: '0.5rem'}}>
         <Grid container direction="column">
             <Grid item container>
             <Grid item xs={12}>

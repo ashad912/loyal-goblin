@@ -61,6 +61,7 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
     return {
+        activeInstanceId: state.mission.activeInstanceId,
         auth: state.auth,
         party: state.party,
     };

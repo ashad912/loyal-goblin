@@ -145,7 +145,7 @@ function Root(props) {
               <Profile />
             </TabPanel>
             <TabPanel value={value} index={1} dir={theme.direction}>
-              <Events updateActiveInstanceId={updateActiveInstanceId}/>
+              <Events/>
             </TabPanel>
             <TabPanel value={value} index={2} dir={theme.direction}>
               <Loyal />
@@ -157,7 +157,8 @@ function Root(props) {
         </React.Fragment>
       )}
 
-    <RootSnackbar socket={socket} screen={value} activeInstanceId={activeInstanceId}/>
+        
+    <RootSnackbar socket={socket} screen={value} />
     </div>
   );
 }

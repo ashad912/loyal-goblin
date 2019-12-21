@@ -405,7 +405,9 @@ export default class ExchangeArea extends React.Component {
                     items={this.state.userItems} 
                     draggableProperty={this.state.draggableProperty}
                     boxname={userItemsName}
-                    boxIcon={avatarTemp}/>
+                    userName ={this.props.userName}
+                    boxIcon={this.props.avatar}/>
+                    
             
              
                 <Box 

@@ -31,14 +31,21 @@ const addAwards = async (user, awardsLevels, prevNewRallyAwards) => {
                 if(user.profile.class === className || className === 'any') {
                        
                     await asyncForEach(awardsLevel.awards[className], async (item) => {
-                        newRallyAwards = [...newRallyAwards, {quantity: item.quantity, itemModel: item.itemModel}] 
-                        //UPDATE TO CHECK
+
+                        const index = newRallyAwards.findIndex((award) => award.itemModel.toString() === item.itemModel.toString())
+                        if(index > -1){
+                            newRallyAwards[index].quantity += item.quantity
+                        }else{
+                            newRallyAwards = [...newRallyAwards, {quantity: item.quantity, itemModel: item.itemModel}] 
+                        }
+                        
+                        
                         for(let i=0; i < item.quantity; i++) {
                             const newItem = new Item({itemModel: item.itemModel, owner: user.profile._id})
                             await newItem.save()
                             items = [...items, newItem._id]
                         }
-                        //
+                        
                     })
                 }
             }) 
@@ -277,6 +284,9 @@ router.get('/first', auth, async (req, res)=> {
             path: 'awardsLevels.awards.any.itemModel awardsLevels.awards.warrior.itemModel awardsLevels.awards.rogue.itemModel awardsLevels.awards.mage.itemModel awardsLevels.awards.cleric.itemModel'
         }).execPopulate()
 
+        rally.users = rally.users.filter((user) => { //return only user whoes fetched request
+            return user.profile.toString() === req.user._id.toString()
+        })
         res.send(rally) //can send undefined, what have to be supported by frontend
     }catch (e) {
         res.status(500).send(e.message)

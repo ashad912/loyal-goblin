@@ -12,10 +12,12 @@ import uuid from 'uuid/v1'
 import Typography from '@material-ui/core/Typography';
 import styled from 'styled-components'
 import moment from 'moment'
-import {getMissionList, createInstance, deleteInstance} from '../../store/actions/missionActions.js'
-import {instanceRefreshSubscribe} from '../../socket'
+import {getMissionList, createInstance, deleteInstance, setActiveInstanceId} from '../../store/actions/missionActions.js'
+import {socket, instanceRefreshSubscribe} from '../../socket'
 
 import Rally from './events/Rally'
+import { getFirstRally } from '../../store/actions/rallyActions'
+import { authCheck } from "../../store/actions/authActions";
 
 
 const pathToIcons = '../../assets/icons/items'
@@ -825,33 +827,42 @@ const Events = (props) => {
     const [activeMissionDetails, setActiveMissionDetails] = useState(null)
     const [activeRallyDetails, setActiveRallyDetails] = useState(null)
     const [missionListData, setMissionListData] = useState([])
-    const [activeInstanceId, setActiveInstanceId] = useState(null)
+   // const [activeInstanceId, setActiveInstanceId] = useState(null)
+    const [rally, setRally] = useState(null)
     
-    const rally = createTempRally() //returned from backend
+    //const rally = createTempRally() //returned from backend
     //const missionListData = createTempList() //returned from backend
+
+    const fetchMissions = async () => {
+        const missionObject = await getMissionList()
+        setMissionListData(missionObject.missions)
+        
+        props.setActiveInstanceId(missionObject.missionInstanceId)
+        //updateActiveInstanceId(missionObject.missionInstanceId)
+    }
+
+    const fetchRally = async () => {
+        const rally = await getFirstRally() //return Object or 'undefined'
+        setRally(rally) 
+    }
 
 
     React.useEffect(() => {
-        const fetch = async () => {
-            const missionObject = await getMissionList()
-            setMissionListData(missionObject.missions)
-            setActiveInstanceId(missionObject.missionInstanceId)
-            updateActiveInstanceId(missionObject.missionInstanceId)
-        }
-
-        fetch()
+        
+        fetchMissions()
+        fetchRally()
         
     
         instanceRefreshSubscribe(async (roomId) => {
             console.log('mission refreshed')
-            fetch()
+            fetchMissions()
         })
 
     }, []);
 
     const handleMissionClick = async (id) => {
         console.log('clicked',  id) 
-        if(!activeInstanceId){
+        if(!props.activeInstanceId){
             try{
                 const response = await createInstance(id, props.party._id) //shot to backend - verify party quantity and leader status (amulets verifed inside the mission), redirect to mission
                 setMissionId(response.mission)
@@ -867,12 +878,15 @@ const Events = (props) => {
         
     }
 
-    const updateActiveInstanceId = (id) => {
-        props.updateActiveInstanceId(id)
-    }
+    // const updateActiveInstanceId = (id) => {
+    //     props.updateActiveInstanceId(id)
+    // }
 
     const handleMissionLeave = async () => {
         await deleteInstance(props.party._id)
+        if(!socket.connected){
+            fetchMissions()
+        }
         console.log('leave')
     }
 
@@ -903,7 +917,7 @@ const Events = (props) => {
                     <div>{isVisible ? ( /*inVisible defined only inside div witch is fucking kurwa crazy */
                         <MissionListItemHoc
                             index={index}
-                            activeInstanceId = {activeInstanceId}
+                            activeInstanceId = {props.activeInstanceId}
                             handleMissionClick={handleMissionClick}
                             handleMissionDetailsOpen={handleMissionDetailsOpen}
                             handleMissionLeave={handleMissionLeave}
@@ -932,10 +946,10 @@ const Events = (props) => {
                   state: { id: missionId}                                      
             }} /> : null}
 
-            <Rally rally={rally} handleRallyDetailsOpen={handleRallyDetailsOpen} handleRallyDetailsClose={handleRallyDetailsClose}/>
+            {rally !== null && (<Rally rally={rally} handleRallyDetailsOpen={handleRallyDetailsOpen} handleRallyDetailsClose={handleRallyDetailsClose} refreshProfile={() => props.authCheck()}/>)}
 
             <Typography variant="h6">
-                {activeInstanceId ? 'Aktywna misja' : 'Dostępne misje'}
+                {props.activeInstanceId ? 'Aktywna misja' : 'Dostępne misje'}
             </Typography>
 
             <StyledList> 
@@ -946,7 +960,7 @@ const Events = (props) => {
             {activeMissionDetails && 
                 <MissionDetailsHoc
                     open={activeMissionDetails ? 1 : 0}
-                    activeInstanceId = {activeInstanceId}
+                    activeInstanceId = {props.activeInstanceId}
                     handleClose={handleMissionDetailsClose}
                     handleMissionClick={handleMissionClick}
                     handleMissionLeave={handleMissionLeave}
@@ -976,9 +990,17 @@ const Events = (props) => {
 
 const mapStateToProps = state => {
     return {
+        activeInstanceId: state.mission.activeInstanceId,
         multipleSession: state.auth.multipleSession,
         party: state.party
     };
   };
 
-export default connect(mapStateToProps)(Events)
+const mapDispatchToProps = dispatch => {
+    return {
+        authCheck: () => dispatch(authCheck()),
+        setActiveInstanceId: (id) => dispatch(setActiveInstanceId(id))
+    };
+};
+  
+export default connect(mapStateToProps, mapDispatchToProps)(Events)

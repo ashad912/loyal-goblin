@@ -1,6 +1,12 @@
 import axios from 'axios'
 import { modifyUserStatusEmit, instanceRefreshEmit, addItemEmit, deleteItemEmit, finishMissionEmit} from '../../socket'
 
+export const setActiveInstanceId = (id) => {
+    return (dispatch) => {
+        dispatch( {type: "SET_INSTANCE_ID", id})
+    }
+}
+
 
 export const getMissionList = () => {
     return new Promise (async (resolve, reject) => {

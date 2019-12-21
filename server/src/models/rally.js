@@ -11,6 +11,9 @@ export const RallySchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    avatar: {
+        type: String
+    },
     activationDate: {
         type: Date
     },

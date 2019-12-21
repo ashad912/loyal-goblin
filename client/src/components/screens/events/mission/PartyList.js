@@ -240,15 +240,16 @@ const PartyList = (props) => {
                     return(
                     
                         <StyledBox border={1} borderColor="primary.main">
-                        {member.inMission ? (
-                            
                             <ListItem>
+                            {member.inMission ? (
                                 <ListItemAvatar style={{minWidth: 32}}>
                                     {altAvatar(member.profile)}
                                 </ListItemAvatar>
-                                
-
-                                
+                            ) :(  
+                                <ListItemAvatar style={{minWidth: 32}}>
+                                    <CircularProgress style={{height: 30, width: 30}}/>
+                                </ListItemAvatar>
+                            )}       
                                     <Grid item xs={10}>
                                         
                                             <StyledGrid
@@ -276,26 +277,26 @@ const PartyList = (props) => {
                                             })}
                                             </StyledGrid>
                                         
-                                    </Grid>
-                                
+                                </Grid>
+                            
                                 <ListItemIcon style={{minWidth: 32}}>
                                         {props.party.leader && (member.profile._id === props.party.leader._id) ? (leaderIcon()) : (statusIcon(member.readyStatus))}
                                 </ListItemIcon>
-                                </ListItem>
-                            
-                            
-                        ) : (
-                            <ListItem>
-                                <ListItemAvatar style={{minWidth: 32}}>
-                                        <CircularProgress style={{height: 50, width: 50}}/>
-                                </ListItemAvatar>
-                                <Grid item xs={10}></Grid>
-                                <ListItemIcon style={{minWidth: 32}}>
-                                    {props.party.leader && (member.profile._id === props.party.leader._id) ? (leaderIcon()) : (statusIcon(member.readyStatus))}
-                                </ListItemIcon>
                             </ListItem>
-                        )}   
                         
+                                
+                            
+                                {/* <ListItem>
+                                    <ListItemAvatar style={{minWidth: 32}}>
+                                            <CircularProgress style={{height: 50, width: 50}}/>
+                                    </ListItemAvatar>
+                                    <Grid item xs={10}></Grid>
+                                    <ListItemIcon style={{minWidth: 32}}>
+                                        {props.party.leader && (member.profile._id === props.party.leader._id) ? (leaderIcon()) : (statusIcon(member.readyStatus))}
+                                    </ListItemIcon>
+                                </ListItem> */}
+                            
+                            
                         </StyledBox>
                     )
                 })}

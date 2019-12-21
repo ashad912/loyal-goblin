@@ -120,12 +120,6 @@ const Navbar = (props) => {
         return initials
     }
 
-    const arrayBufferToBase64 = (buffer) =>{
-        var binary = '';
-        var bytes = [].slice.call(new Uint8Array(buffer));
-        bytes.forEach((b) => binary += String.fromCharCode(b));
-        return window.btoa(binary);
-    };
 
     const togglePasswordChangeModal = () => {
         setShowPasswordChangeModal(prev => !prev)
@@ -147,7 +141,7 @@ const Navbar = (props) => {
                             horizontal: 'right',
                         }}
                     >
-                        {props.auth.profile.avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={'/images/user_uploads/'+props.auth.profile.avatar} /> : <Avatar style={{height: 30, width: 30}}>{createAvatarPlaceholder(props.auth.profile.name)}</Avatar>}
+                        {props.auth.profile.avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={'/images/user_uploads/'+ props.auth.profile.avatar} /> : <Avatar style={{height: 30, width: 30}}>{createAvatarPlaceholder(props.auth.profile.name)}</Avatar>}
                     </Badge>
                     <Typography variant="h6" style={{flexGrow: 1, textAlign: 'left'}}>
                         {props.auth.profile.name}

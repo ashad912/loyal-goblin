@@ -1458,3 +1458,62 @@ export default NewPerkModal;
                             </Grid>
                         </Grid>
                         </StyledBox>
+
+
+
+
+
+
+"awardsLevels":[
+		{
+			"level": 500,
+			"awards": {
+				"any": [
+					{
+						"quantity": 2,
+						"itemModel": "5d9ef62c2e4b14508475a105"
+					}
+				],
+				"warrior": [],
+				"rogue": [],
+				"mage": [],
+				"cleric": []
+			}
+		},
+		{
+			"level": 1000,
+			"awards": {
+				"any": [
+					{
+						"quantity": 1,
+						"itemModel": "5db2df35267e338cac5e5e64"
+					}
+				],
+				"warrior": [
+					{
+						"quantity": 2,
+						"itemModel": "5dd80db5c3aad45a5c89083a"
+					}
+				],
+				"rogue": [],
+				"mage": [],
+				"cleric": []
+			}
+		},
+		{
+			"level": 2000,
+			"awards": {
+				"any": [],
+				"warrior": [
+					{
+						"quantity": 2,
+						"itemModel": "5dd80df4c3aad45a5c89083b"
+					}
+				],
+				"rogue": [],
+				"mage": [],
+				"cleric": []
+			}
+		}
+		
+	]

@@ -30,7 +30,7 @@ const StyledList = styled(List)`
 `
 const StyledBox = styled(Box)`
     margin: 0.5rem 0;
-    background: ${props => props.active === '1' ? '#e6dc8d' : 'none'} 
+    background: ${props => props.active === '1' ? '#e6dc8d' : '#eeeeee'} 
 
 `
 
@@ -40,7 +40,7 @@ const MissionListItem = (props) => {
 
     const mission = props.mission
     return(
-        <StyledBox border={1} borderColor="primary.main" active={props.activeInstanceId ? "1" : "0"}>
+        <StyledBox border={0} borderColor="primary.main" active={props.activeInstanceId ? "1" : "0"}>
 
             <Grid
                 container

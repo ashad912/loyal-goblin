@@ -32,7 +32,9 @@ import PartyCreationDialog from "./profile/PartyCreationDialog";
 import PartyJoiningDialog from "./profile/PartyJoiningDialog";
 import RankDialog from "./profile/RankDialog";
 import StatsDialog from "./profile/StatsDialog";
-import { toggleItem, deleteItem } from "../../store/actions/profileActions";
+import NewRallyAwardsDialog from "./profile/NewRallyAwardsDialog";
+
+import { toggleItem, deleteItem, clearRallyAwards } from "../../store/actions/profileActions";
 import { updateParty, removeMember } from "../../store/actions/partyActions";
 import createAvatarPlaceholder from "../../utils/createAvatarPlaceholder";
 import {socket} from '../../socket'
@@ -898,6 +900,12 @@ const Profile = props => {
         profile={props.auth.profile}
         handleClose={() => setShowStatsDialog(prev => !prev)}
       />
+
+      <NewRallyAwardsDialog
+        open={props.auth.profile.newRallyAwards.length > 0}
+        clearRallyAwards = {() => props.clearRallyAwards()}
+        profile={props.auth.profile}
+      />
     </Grid>
   );
 };
@@ -916,7 +924,8 @@ const mapDispatchToProps = dispatch => {
     onItemDelete: id => dispatch(deleteItem(id)),
     onPartyUpdate: () => dispatch(updateParty()),
     onRemoveMember: (partyId, memberId) =>
-      dispatch(removeMember(partyId, memberId))
+      dispatch(removeMember(partyId, memberId)),
+    clearRallyAwards: () => dispatch(clearRallyAwards())
   };
 };
 

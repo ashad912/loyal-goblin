@@ -3,6 +3,7 @@ import { Droppable, Draggable } from 'react-beautiful-dnd';
 import Grid from '@material-ui/core/Grid';
 import styled from 'styled-components'
 import { Paper } from '@material-ui/core';
+import Avatar from '@material-ui/core/Avatar';
 
 
 
@@ -82,6 +83,18 @@ const convertToStack = (itemsToConvert) => {
   return itemObjects
 }
 
+const createAvatarPlaceholder = (name) => {
+
+  if (!(/\s/.test(name))) {
+      return name.charAt(0).toUpperCase()
+  }
+  
+  const initials = name.split(" ").map(word => {
+      return word.charAt(0)
+  }).join('').toUpperCase()
+
+  return initials
+}
 
 const Box = (props) => {
 
@@ -103,7 +116,14 @@ const Box = (props) => {
           spacing={1}
         >
           <Grid item xs={3}>
-            <img style={{height: 70, width: 70}} src={props.boxIcon}/>
+            {props.boxname === "userItems" ? (
+              <React.Fragment>
+                {props.boxIcon ? <Avatar style={{height: 70, width: 70}} alt="avatar" src={'/images/user_uploads/'+ props.boxIcon} /> : <Avatar style={{height: 70, width: 70, fontSize: '2.5rem'}}>{createAvatarPlaceholder(props.userName)}</Avatar>}
+              </React.Fragment>
+            ) : (
+              <Avatar style={{height: 70, width: 70}} alt="avatar" src={props.boxIcon} />
+            )}
+            
           </Grid>
 
           <Grid item xs={9}>
