@@ -226,12 +226,18 @@ router.get("/shop", auth, async (req, res) => {
 
 router.patch("/leave", auth, async (req, res) => {
   const user = req.user
-  if(user.party){
-    await user.populate({path: "party"}).execPopulate()
-    user.party.inShop = false
-    await user.party.save()
+  try{
+    
+    if(user.party){
+      await user.populate({path: "party"}).execPopulate()
+      user.party.inShop = false
+      await user.party.save()
+    }
+    res.send(user.party._id)
+  }catch(e){
+    res.status(400).send(e.message);
   }
-  res.sendStatus(200)
+  
 })
 
 const verifyParty = (leader, membersIds, order) => {

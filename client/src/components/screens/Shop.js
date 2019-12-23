@@ -667,7 +667,30 @@ class Shop extends React.Component {
     this.menuRef = React.createRef();
   }
 
+  backToEvents = (history) => {
+    history.push({
+      pathname: '/',
+      state: {indexRedirect: 0}
+    }) 
+  }
+
+  handleBack = () => {
+    this.backToEvents(this.props.history)
+  }
+
+
   async componentDidMount() {
+
+    if(!this.props.location.state || (this.props.location.state.id === undefined)){
+      this.handleBack()
+    }
+
+    const leader = !this.props.party.length || (this.props.party[0]._id === this.props.auth.uid)
+
+    if(!leader){
+      this.handleBack()
+    }
+
     let menuTopOffset = this.menuRef.current && this.menuRef.current.offsetTop;
     this.setState({ menuTopOffset }, () => {
       window.addEventListener("scroll", this.handleScrollPosition);
@@ -685,7 +708,9 @@ class Shop extends React.Component {
       });
     }
 
-    this.setState({ baskets, products: [...this.props.products] });
+    this.setState({ baskets, products: [...this.props.products] }, () => {
+      
+    });
 
     this.handleChangeactiveUser(
       null,
@@ -693,6 +718,8 @@ class Shop extends React.Component {
         ? this.props.party[0]._id
         : this.props.auth.uid
     );
+
+
   }
 
   async componentDidUpdate(prevProps, prevState) {
