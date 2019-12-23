@@ -62,86 +62,90 @@ const ScrollListItem = props => {
   const classes = useStyles();
 
   const scroll = props.scroll;
+  if(scroll){
 
-  return (
-    <ListItem
-      button
-      alignItems="flex-start"
-      className={classes.listItem}
-      style={{ background: props.equipped ? "#e6dc8d" : "" }}
-      equipped={props.equipped ? 1 : 0}
-      onClick={() =>props.inactive ? ()=> {} : props.handleScrollSelect(scroll._id)}
-    >
-      <ListItemAvatar>
-        <img
-          style={{ width: "32px", height: "32px" }}
-          alt={scroll.itemModel.name}
-          src={require(`../../../assets/icons/items/${scroll.itemModel.imgSrc}`)}
-        />
-      </ListItemAvatar>
-      <Grid container direction="column">
-        <Grid item container>
-          <Grid item xs={12}>
-            <ListItemText
-              disableTypography
-              primary={scroll.itemModel.name}
-              secondary={
-                <div>
-                  <Typography variant="caption">
-                    {scroll.itemModel.fluff}
-                  </Typography>
-                </div>
-              }
-            />
+    return (
+      <ListItem
+        button
+        alignItems="flex-start"
+        className={classes.listItem}
+        style={{ background: props.equipped ? "#e6dc8d" : "" }}
+        equipped={props.equipped ? 1 : 0}
+        onClick={() =>props.inactive ? ()=> {} : props.handleScrollSelect(scroll._id)}
+      >
+        <ListItemAvatar>
+          <img
+            style={{ width: "32px", height: "32px" }}
+            alt={scroll.itemModel.name}
+            src={`/images/items/${scroll.itemModel.imgSrc}`}
+          />
+        </ListItemAvatar>
+        <Grid container direction="column">
+          <Grid item container>
+            <Grid item xs={12}>
+              <ListItemText
+                disableTypography
+                primary={scroll.itemModel.name}
+                secondary={
+                  <div>
+                    <Typography variant="caption">
+                      {scroll.itemModel.fluff}
+                    </Typography>
+                  </div>
+                }
+              />
+            </Grid>
+          </Grid>
+          <Grid item >
+            {scroll.itemModel.perks.length > 0 && (
+              <List
+                dense
+                style={{
+                  maxHeight: "8rem",
+                  overflow: "auto",
+                  width: "100%",
+                  border: "1px solid grey",
+                  padding: "0.5rem",
+                  boxSizing: "border-box",
+                  background: "rgba(255, 255, 255, 0.198)"
+                }}
+              >
+                {scroll.itemModel.perks.map((perk, index) => {
+                  return (
+                    <Box
+                    key={perk.perkType+index}
+                      border={1}
+                      borderColor="primary.main"
+                      style={{ margin: "0.2rem 0", fontSize: "0.8rem" }}
+                    >
+                      <ListItem>
+                        <Grid container justify="space-around">
+                          <Grid item>{perkLabels[perk.perkType]}</Grid>
+                          <Grid item>{perk.value}</Grid>
+                          <Grid item>
+                            {perk.target
+                              ? perk.target.name
+                                ? perk.target.name
+                                : categoryLabels[perk.target]
+                              : null}
+                          </Grid>
+                          
+                        </Grid>
+                      </ListItem>
+                    </Box>
+                  );
+                })}
+              </List>
+            )}
           </Grid>
         </Grid>
-        <Grid item >
-          {scroll.itemModel.perks.length > 0 && (
-            <List
-              dense
-              style={{
-                maxHeight: "8rem",
-                overflow: "auto",
-                width: "100%",
-                border: "1px solid grey",
-                padding: "0.5rem",
-                boxSizing: "border-box",
-                background: "rgba(255, 255, 255, 0.198)"
-              }}
-            >
-              {scroll.itemModel.perks.map((perk, index) => {
-                return (
-                  <Box
-                  key={perk.perkType+index}
-                    border={1}
-                    borderColor="primary.main"
-                    style={{ margin: "0.2rem 0", fontSize: "0.8rem" }}
-                  >
-                    <ListItem>
-                      <Grid container justify="space-around">
-                        <Grid item>{perkLabels[perk.perkType]}</Grid>
-                        <Grid item>{perk.value}</Grid>
-                        <Grid item>
-                          {perk.target
-                            ? perk.target.name
-                              ? perk.target.name
-                              : categoryLabels[perk.target]
-                            : null}
-                        </Grid>
-                        
-                      </Grid>
-                    </ListItem>
-                  </Box>
-                );
-              })}
-            </List>
-          )}
-        </Grid>
-      </Grid>
-
-      
-    </ListItem>
-  );
+  
+        
+      </ListItem>
+    );
+  }else{
+    return null
+  }
 };
 
 export default ScrollListItem;

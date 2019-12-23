@@ -13,10 +13,10 @@ const ArchiveOrderSchema = new mongoose.Schema({ //instance of ItemModel
         required: true
     },
     users: [{
-        user: {
+        profile: {
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'user',
-            unique: true
+            //unique: true
         },
         experience: {
             type: Number,

@@ -112,9 +112,9 @@ const handleCloseCancelDialog = () => {
 }
 
 const handleCancelOrder = async () => {
-  history.push("/");
   await props.onCancelOrder()
   await props.onLeaveShop()
+  history.push("/");
 }
 
 

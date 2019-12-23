@@ -724,7 +724,7 @@ const Profile = props => {
             attributeModifier={props.auth.profile.userPerks.attrEndurance}
           />
 
-          {(props.party && props.party.leader && props.party.leader._id === props.auth.uid) || !props.party.leader && !props.party.members.length ? 
+          {(props.party && props.party.leader && (props.party.leader._id === props.auth.uid || props.party.leader === props.auth.uid)) || !props.party.leader && !props.party.members.length ? 
           
           <Link to={{pathname: '/shop', state: { id: props.auth.uid} }} style={{ marginTop: "1rem" }} >
             <Button variant="contained" color="primary" >
@@ -738,7 +738,18 @@ const Profile = props => {
               />
             </Button>
           </Link> :
-          <Typography variant="caption" style={{marginTop: '1rem'}}>{props.party.inShop ? "Lider aktualnie ma otwarty sklep" : "Sklep dostępny jest tylko dla lidera drużyny"}</Typography>
+                      <Button variant="contained" color="primary" disabled style={{ marginTop: "1rem" }}>
+                      Idziemy expić!
+                      <ColorizeIcon
+                        style={{
+                          fontSize: "2rem",
+                          transition: "transform 500ms ease-out",
+                          transform: goExp ? "rotate(540deg)" : "rotate(180deg)"
+                        }}
+                      />
+                    </Button>
+
+          
         }
         </Grid>
       </Grid>
@@ -762,7 +773,7 @@ const Profile = props => {
         }
         handleItemToggle={handleItemToggle}
         handleItemDelete={handleItemDelete}
-        leaderInShop={props.party && props.party.inShop}
+        leaderInShop={(props.party && props.party.leader && (props.party.leader._id !== props.auth.uid || props.party.leader !== props.auth.uid) && props.party.inShop ) || !props.party.leader && !props.party.members.length}
       />
       <Typography variant="h5" className={classes.eqHeading}></Typography>
       {props.party && props.party.leader && props.party.leader._id && (

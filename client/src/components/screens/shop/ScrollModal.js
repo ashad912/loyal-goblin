@@ -8,6 +8,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import ScrollListItem from "./ScrollListItem";
 
 const ScrollModal = ({open, handleClose, scrolls, equippedScrollId, handleScrollSelect}) => {
+
   return (
     <Dialog
       open={open}
@@ -17,11 +18,9 @@ const ScrollModal = ({open, handleClose, scrolls, equippedScrollId, handleScroll
         Zarządzaj zwojami
       </DialogTitle>
       <DialogContent>
-        {scrolls.length>0 ? 
+        {scrolls.length > 0 ? scrolls.map(scroll => {
 
-        
-scrolls.map(scroll => {
-    return (
+          return (
         <ScrollListItem key={scroll._id} scroll= {scroll} equipped={scroll._id === equippedScrollId} handleScrollSelect={handleScrollSelect}/>
     )
 }) :

@@ -683,6 +683,7 @@ class Shop extends React.Component {
 
     if(!this.props.location.state || (this.props.location.state.id === undefined)){
       this.handleBack()
+      return
     }
 
     const leader = !this.props.party.length || (this.props.party[0]._id === this.props.auth.uid)
@@ -804,10 +805,9 @@ class Shop extends React.Component {
                 "experienceMod"
               )
             ) {
-              const expMod =
-                activeUser.userPerks.products[modifiedProduct].experienceMod >
-                0;
-              products[modifyIndex].experience = expMod;
+              const expMod = activeUser.userPerks.products[modifiedProduct].experienceMod;
+              const exp = parseInt(activeUser.userPerks.products[modifiedProduct].experienceMod) + products[modifyIndex].price*10
+              products[modifyIndex].experience = exp;
               if (expMod > 0) {
                 products[modifyIndex].experienceModified =
                   expMod > 0 ? "#28a52e" : "#c10000";
@@ -1124,6 +1124,7 @@ class Shop extends React.Component {
             />
           </ScrollingProvider>
         )}
+        
         <ScrollModal
           open={this.state.showScrollModal}
           handleClose={this.handleScrollModalToggle}

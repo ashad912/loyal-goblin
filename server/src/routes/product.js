@@ -400,17 +400,26 @@ router.patch("/verify", auth, async (req, res) => {
 
     asyncForEach(user.activeOrder, async order => {
       if(order.products.length && order.profile.equipped.scroll){
-        await Item.findOneAndDelete({_id: order.profile.equipped.scroll})
+        const scroll = await Item.findById(order.profile.equipped.scroll)
+        scroll.remove()
       }
     })
 
-    //1 add leader filed 
-    //2 calc totalPrice
-    //3 set each user data
 
-    //TODO: create ArchiveOrder - save modified experience for users OR repeat function in 'finalize'
+    const archive = {leader: req.body._id, totalPrice: 0, users: []} 
+    user.activeOrder.forEach(order => {
+      archive.totalPrice += order.price
+      archive.users.push(order)
+    })
+ 
 
-    res.send(user.activeOrder);
+    const newArchiveOrder = new ArchiveOrder(archive)
+    await newArchiveOrder.save()
+    
+    user.activeOrder = []
+    await user.save()
+
+    res.sendStatus(200);
   } catch (e) {
     res.status(400).send(e.message);
   }
