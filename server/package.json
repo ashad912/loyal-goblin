@@ -40,7 +40,7 @@
     "mongoose-unique-array": "^0.3.3",
     "multer": "^1.4.2",
     "node-cron": "^2.0.3",
-    "sharp": "^0.23.0",
+    "sharp": "^0.23.4",
     "simple-sse": "0.0.3",
     "socket.io": "^2.3.0",
     "socketio-auth": "^0.1.1",

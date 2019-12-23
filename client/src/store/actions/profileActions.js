@@ -10,7 +10,7 @@ export const updateAvatar = (avatar) => {
             
             try {
                 console.log(avatar)
-                window.location.reload();
+                
                 let res
                 if(avatar){
                     res = await axios.post('/user/me/avatar', avatar, {

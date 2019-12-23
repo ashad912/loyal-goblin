@@ -21,24 +21,30 @@ const FinalizeButton = styled(Button)`
   margin-top: 2rem;
 `;
 
-const BasketDrawer = ({ open, toggle, baskets, users, activeUser, handleRemoveItem, finalizeOrder }) => {
+const BasketDrawer = ({ open, toggle, baskets, users, activeUser, handleRemoveItem, finalizeOrder, leader }) => {
  
   let totalPrice = 0.0;
   const allBaskets = Object.values(baskets)
-  let disableFinalize = true
+  let emptyOrder = true
   if(allBaskets.length > 0){
-    disableFinalize = Object.values(baskets).reduce((a,b)=>a.concat(b)).length <= 0
+    emptyOrder = Object.values(baskets).reduce((a,b)=>a.concat(b)).length <= 0
+  }
+  let notLeader = true
+  if(activeUser === leader){
+    notLeader = false
   }
 
 
   return (
-    <Drawer open={open} onClose={toggle}>
-      <DrawerContents>
+    <Drawer open={open} onClose={toggle} >
+      <DrawerContents style={{maxWidth: '80vw'}}>
         <Typography variant="h6">Zamówienie</Typography>
         <Divider />
         <List component="nav" style={{ width: "75vw" }}>
           {Object.keys(baskets).map(user => {
-            const userName = users.length > 0 && users[0] && user.name 
+
+            //const userName = users.length > 0 && users[0] && user.name 
+            const userName = users.length > 1 ? users.find(u => u._id === user).name : users[0].name
             let summedPrice = 0.0;
 
             if (baskets[user].length > 0) {
@@ -54,7 +60,7 @@ const BasketDrawer = ({ open, toggle, baskets, users, activeUser, handleRemoveIt
               return (
                 <BasketListItem
                 noParty={users.length <= 1}
-                  activeUsersBasket = {Number(user) === activeUser}
+                  activeUsersBasket = {user === activeUser}
                   key={user}
                   name={userName}
                   summedPrice={summedPrice.toFixed(2)}
@@ -69,9 +75,12 @@ const BasketDrawer = ({ open, toggle, baskets, users, activeUser, handleRemoveIt
         <TotalPriceText variant="body1">
           Całkowity koszt zamówienia: {totalPrice.toFixed(2) + " ZŁ"}
         </TotalPriceText>
-        <FinalizeButton variant="contained" color="primary" disabled={disableFinalize} onClick={finalizeOrder}>
-          Zrealizuj
+        {!emptyOrder && 
+        <FinalizeButton variant="contained" color="primary" disabled={emptyOrder || notLeader} onClick={finalizeOrder}>
+          {notLeader ? 'Tylko lider może zrealizować zamówienie' : 'Zrealizuj'}
         </FinalizeButton>
+        
+        }
       </DrawerContents>
     </Drawer>
   );

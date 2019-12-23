@@ -14,6 +14,10 @@ const initState = {
           ...state,
           products: [...action.shop]
         };
+        case "LEAVE_SHOP":
+          return {
+            ...state
+          };
       default:
         return state;
     }

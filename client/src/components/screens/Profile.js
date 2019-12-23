@@ -34,12 +34,17 @@ import RankDialog from "./profile/RankDialog";
 import StatsDialog from "./profile/StatsDialog";
 import NewRallyAwardsDialog from "./profile/NewRallyAwardsDialog";
 
-import { toggleItem, deleteItem, clearRallyAwards } from "../../store/actions/profileActions";
+import {
+  toggleItem,
+  deleteItem,
+  clearRallyAwards
+} from "../../store/actions/profileActions";
 import { updateParty, removeMember } from "../../store/actions/partyActions";
 import createAvatarPlaceholder from "../../utils/createAvatarPlaceholder";
-import {socket} from '../../socket'
+import { socket } from "../../socket";
 
-import * as socketFuncs from '../../socket'
+import * as socketFuncs from "../../socket";
+import { authCheck } from "../../store/actions/authActions";
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -371,7 +376,7 @@ const Profile = props => {
 
   React.useEffect(() => {
     setEquippedItems(props.auth.profile.equipped);
-    updateEquippedItems()
+    updateEquippedItems();
   }, [props.auth.profile.equipped]);
 
   const [activePerks, setActivePerks] = React.useState([]);
@@ -386,10 +391,10 @@ const Profile = props => {
   React.useEffect(() => {
     updateEquippedItems();
     handleJoinOrCreateParty();
-    props.onPartyUpdate()
-
+    props.onPartyUpdate();
+    
+    
   }, []);
-
 
   const updateEquippedItems = () => {
     const equipment = {
@@ -427,7 +432,7 @@ const Profile = props => {
             item => item._id === props.auth.profile.equipped[category]
           );
       }
-      
+
       if (loadedEquippedItem) {
         equipment[category] = loadedEquippedItem.itemModel.imgSrc;
         if (
@@ -447,94 +452,98 @@ const Profile = props => {
 
   const handleItemToggle = (id, isEquipped, category, twoHanded) => {
     const tempPlayer = { ...props.auth.profile };
+    if(props.party && props.party.inShop){
+      return
+    }else{
 
-    if (category === "weapon") {
-      if (twoHanded) {
-        tempPlayer.equipped.weaponRight = id;
-        tempPlayer.equipped.weaponLeft = null;
-      } else {
-        const rightHandItem =
-          tempPlayer.equipped.weaponRight &&
-          bag.weapon.find(item => item._id === tempPlayer.equipped.weaponRight)
-            .itemModel;
-        if (
-          rightHandItem &&
-          rightHandItem.hasOwnProperty("twoHanded") &&
-          rightHandItem.twoHanded
-        ) {
-          tempPlayer.equipped.weaponRight = null;
-        }
-
-        if (
-          !tempPlayer.equipped.weaponRight &&
-          !tempPlayer.equipped.weaponLeft
-        ) {
+      if (category === "weapon") {
+        if (twoHanded) {
           tempPlayer.equipped.weaponRight = id;
-        } else if (
-          tempPlayer.equipped.weaponRight &&
-          !tempPlayer.equipped.weaponLeft
-        ) {
-          if (tempPlayer.equipped.weaponRight === id) {
+          tempPlayer.equipped.weaponLeft = null;
+        } else {
+          const rightHandItem =
+            tempPlayer.equipped.weaponRight &&
+            bag.weapon.find(item => item._id === tempPlayer.equipped.weaponRight)
+              .itemModel;
+          if (
+            rightHandItem &&
+            rightHandItem.hasOwnProperty("twoHanded") &&
+            rightHandItem.twoHanded
+          ) {
             tempPlayer.equipped.weaponRight = null;
-          } else {
-            tempPlayer.equipped.weaponLeft = id;
           }
-        } else if (
-          !tempPlayer.equipped.weaponRight &&
-          tempPlayer.equipped.weaponLeft
-        ) {
-          if (tempPlayer.equipped.weaponLeft === id) {
-            tempPlayer.equipped.weaponLeft = null;
-          } else {
+  
+          if (
+            !tempPlayer.equipped.weaponRight &&
+            !tempPlayer.equipped.weaponLeft
+          ) {
             tempPlayer.equipped.weaponRight = id;
+          } else if (
+            tempPlayer.equipped.weaponRight &&
+            !tempPlayer.equipped.weaponLeft
+          ) {
+            if (tempPlayer.equipped.weaponRight === id) {
+              tempPlayer.equipped.weaponRight = null;
+            } else {
+              tempPlayer.equipped.weaponLeft = id;
+            }
+          } else if (
+            !tempPlayer.equipped.weaponRight &&
+            tempPlayer.equipped.weaponLeft
+          ) {
+            if (tempPlayer.equipped.weaponLeft === id) {
+              tempPlayer.equipped.weaponLeft = null;
+            } else {
+              tempPlayer.equipped.weaponRight = id;
+            }
+          } else if (
+            tempPlayer.equipped.weaponRight &&
+            tempPlayer.equipped.weaponLeft
+          ) {
+            if (tempPlayer.equipped.weaponRight === id) {
+              tempPlayer.equipped.weaponRight = null;
+            } else {
+              tempPlayer.equipped.weaponLeft = null;
+            }
+          }
+        }
+      } else if (category === "ring") {
+        if (!tempPlayer.equipped.ringRight && !tempPlayer.equipped.ringLeft) {
+          tempPlayer.equipped.ringRight = id;
+        } else if (
+          tempPlayer.equipped.ringRight &&
+          !tempPlayer.equipped.ringLeft
+        ) {
+          if (tempPlayer.equipped.ringRight === id) {
+            tempPlayer.equipped.ringRight = null;
+          } else {
+            tempPlayer.equipped.ringLeft = id;
           }
         } else if (
-          tempPlayer.equipped.weaponRight &&
-          tempPlayer.equipped.weaponLeft
+          !tempPlayer.equipped.ringRight &&
+          tempPlayer.equipped.ringLeft
         ) {
-          if (tempPlayer.equipped.weaponRight === id) {
-            tempPlayer.equipped.weaponRight = null;
+          if (tempPlayer.equipped.ringLeft === id) {
+            tempPlayer.equipped.ringLeft = null;
           } else {
-            tempPlayer.equipped.weaponLeft = null;
+            tempPlayer.equipped.ringRight = id;
+          }
+        } else if (
+          tempPlayer.equipped.ringRight &&
+          tempPlayer.equipped.ringLeft
+        ) {
+          if (tempPlayer.equipped.ringRight === id) {
+            tempPlayer.equipped.ringRight = null;
+          } else {
+            tempPlayer.equipped.ringLeft = null;
           }
         }
+      } else {
+        tempPlayer.equipped[category] = isEquipped ? null : id;
       }
-    } else if (category === "ring") {
-      if (!tempPlayer.equipped.ringRight && !tempPlayer.equipped.ringLeft) {
-        tempPlayer.equipped.ringRight = id;
-      } else if (
-        tempPlayer.equipped.ringRight &&
-        !tempPlayer.equipped.ringLeft
-      ) {
-        if (tempPlayer.equipped.ringRight === id) {
-          tempPlayer.equipped.ringRight = null;
-        } else {
-          tempPlayer.equipped.ringLeft = id;
-        }
-      } else if (
-        !tempPlayer.equipped.ringRight &&
-        tempPlayer.equipped.ringLeft
-      ) {
-        if (tempPlayer.equipped.ringLeft === id) {
-          tempPlayer.equipped.ringLeft = null;
-        } else {
-          tempPlayer.equipped.ringRight = id;
-        }
-      } else if (
-        tempPlayer.equipped.ringRight &&
-        tempPlayer.equipped.ringLeft
-      ) {
-        if (tempPlayer.equipped.ringRight === id) {
-          tempPlayer.equipped.ringRight = null;
-        } else {
-          tempPlayer.equipped.ringLeft = null;
-        }
-      }
-    } else {
-      tempPlayer.equipped[category] = isEquipped ? null : id;
+  
+      props.onItemToggle(id, category, tempPlayer.equipped);
     }
-   
-    props.onItemToggle(id, category, tempPlayer.equipped);
   };
 
   const handleItemDelete = id => {
@@ -549,8 +558,12 @@ const Profile = props => {
     //   delete tempPlayer.bag[category];
     // }
     // setPlayer({ ...tempPlayer });
-    props.onItemDelete(id);
-    updateEquippedItems();
+    if(props.party && props.party.inShop){
+      return
+    }else{
+      props.onItemDelete(id);
+      updateEquippedItems();
+    }
   };
 
   // const handleAddExperience = newExp => {
@@ -604,7 +617,7 @@ const Profile = props => {
     props.onRemoveMember(props.party._id, props.auth.uid);
   };
 
-  
+
   return (
     <Grid
       container
@@ -661,12 +674,14 @@ const Profile = props => {
             />
           )}
           {/* head */}
-          {equippedItems && equippedItems.head && equippedItems.head.includes(".") && (
-            <img
-              className={classes.avatarImage}
-              src={require(`../../assets/avatar/items/${equippedItems.head}`)}
-            />
-          )}
+          {equippedItems &&
+            equippedItems.head &&
+            equippedItems.head.includes(".") && (
+              <img
+                className={classes.avatarImage}
+                src={require(`../../assets/avatar/items/${equippedItems.head}`)}
+              />
+            )}
           {/* Main-hand weapon */}
           {equippedItems && equippedItems.weaponRight && (
             <img
@@ -712,8 +727,10 @@ const Profile = props => {
             attributeModifier={props.auth.profile.userPerks.attrEndurance}
           />
 
-          <Link to="/shop" style={{ marginTop: "1rem" }}>
-            <Button variant="contained" color="primary">
+          {(props.party && props.party.leader && props.party.leader._id === props.auth.uid) || !props.party.leader && !props.party.members.length ? 
+          
+          <Link to="/shop" style={{ marginTop: "1rem" }} >
+            <Button variant="contained" color="primary" >
               Idziemy expić!
               <ColorizeIcon
                 style={{
@@ -723,7 +740,9 @@ const Profile = props => {
                 }}
               />
             </Button>
-          </Link>
+          </Link> :
+          <Typography variant="caption" style={{marginTop: '1rem'}}>{props.party.inShop ?"Lider aktualnie ma otwarty sklep" : "Sklep dostępny jest tylko dla lidera drużyny"}</Typography>
+        }
         </Grid>
       </Grid>
       {activePerks.length > 0 && (
@@ -737,6 +756,7 @@ const Profile = props => {
       <Typography variant="h5" className={classes.eqHeading}>
         Ekwipunek
       </Typography>
+
       <Equipment
         items={bag}
         equipped={
@@ -745,9 +765,10 @@ const Profile = props => {
         }
         handleItemToggle={handleItemToggle}
         handleItemDelete={handleItemDelete}
+        leaderInShop={props.party && props.party.inShop}
       />
       <Typography variant="h5" className={classes.eqHeading}></Typography>
-      {props.party && props.party.leader && (
+      {props.party && props.party.leader && props.party.leader._id && (
         <div>
           {props.party.leader._id === props.auth.uid ? (
             <Button
@@ -771,7 +792,7 @@ const Profile = props => {
         </div>
       )}
 
-      {props.party && props.party.leader ? (
+      {props.party && props.party.leader  && props.party.leader._id ? (
         <List
           style={{ width: "80%", marginTop: "2rem", border: "1px solid grey" }}
         >
@@ -882,7 +903,7 @@ const Profile = props => {
         open={isCreatingParty}
         isManagingParty={
           props.party &&
-          props.party.leader &&
+          props.party.leader  && props.party.leader._id && 
           props.party.leader._id === props.auth.uid
         }
         partyName={props.party && props.party.name}
@@ -903,9 +924,11 @@ const Profile = props => {
 
       <NewRallyAwardsDialog
         open={props.auth.profile.newRallyAwards.length > 0}
-        clearRallyAwards = {() => props.clearRallyAwards()}
+        clearRallyAwards={() => props.clearRallyAwards()}
         profile={props.auth.profile}
       />
+
+
     </Grid>
   );
 };
@@ -925,7 +948,8 @@ const mapDispatchToProps = dispatch => {
     onPartyUpdate: () => dispatch(updateParty()),
     onRemoveMember: (partyId, memberId) =>
       dispatch(removeMember(partyId, memberId)),
-    clearRallyAwards: () => dispatch(clearRallyAwards())
+    clearRallyAwards: () => dispatch(clearRallyAwards()),
+    onAuthCheck: () => dispatch(authCheck())
   };
 };
 

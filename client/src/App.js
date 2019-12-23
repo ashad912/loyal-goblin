@@ -38,7 +38,6 @@ class App extends React.Component {
     //CHECK AUTH ON APP LOAD
     const uid = await this.props.authCheck();
 
-    
 
     socket.emit('authentication', {});
 
@@ -74,7 +73,23 @@ class App extends React.Component {
       }
       this.props.onPartyUpdate()
     })
+
+    //Update profile data on first full hour and after next 60 minutes
+    this.firstUpdate = setTimeout(() => {
+      this.props.authCheck();
+      this.props.onPartyUpdate()
+      this.nextUpdates = setInterval(() => {
+        this.props.authCheck();
+        this.props.onPartyUpdate()
+      }, 3600000)
+    }, 3601000 - (new Date().getTime() % 3600000));
+
      
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.firstUpdate);
+      clearInterval(this.nextUpdates);
   }
 
   componentDidUpdate(prevProps, prevState) {

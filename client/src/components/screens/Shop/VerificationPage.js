@@ -1,4 +1,5 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 import {connect} from 'react-redux'
 import QRCode from 'qrcode'
 import Container from "@material-ui/core/Container";
@@ -10,7 +11,14 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Divider from "@material-ui/core/Divider";
-
+import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import { cancelOrder, leaveShop } from "../../../store/actions/shopActions";
 
 
 //Info z backendu
@@ -69,6 +77,8 @@ const baskets = [
 ];
 
 const VerificationPage = props => {
+  const history = useHistory();
+  const [showCancelDialog, setShowCancelDialog] = React.useState(false)
   const [qrCode, setQrCode] = React.useState(null)
   var opts = {
     errorCorrectionLevel: 'H',
@@ -83,6 +93,29 @@ const VerificationPage = props => {
       setQrCode(url)
     })
   }, [])
+
+  const createAvatarPlaceholder = (name) => {
+
+    if (!(/\s/.test(name))) {
+        return name.charAt(0).toUpperCase()
+    }
+    
+    const initials = name.split(" ").map(word => {
+        return word.charAt(0)
+    }).join('').toUpperCase()
+
+    return initials
+}
+
+const handleCloseCancelDialog = () => {
+  setShowCancelDialog(prev => !prev)
+}
+
+const handleCancelOrder = async () => {
+  history.push("/");
+  await props.onCancelOrder()
+  await props.onLeaveShop()
+}
 
 
   return (
@@ -101,7 +134,8 @@ const VerificationPage = props => {
                     <List style={{ width: "100%" }}>
                       <ListItem>
                         <ListItemAvatar>
-                          {basket.profile.avatar && <img src={'/images/user_uploads/'+basket.profile.avatar} width={32}/>}
+                          {basket.profile.avatar ? <img src={'/images/user_uploads/'+basket.profile.avatar} width={32}/> : 
+                          <Avatar style={{height: 30, width: 30}}>{createAvatarPlaceholder(basket.profile.name)}</Avatar>}
                         </ListItemAvatar>
                         <ListItemText primary={basket.profile.name} />
                         <ListItemText
@@ -117,7 +151,7 @@ const VerificationPage = props => {
                       </ListItem>
                       {basket.awards.map(award => {
                         return (
-                          <ListItem>
+                          <ListItem key={award._id}>
                             <ListItemIcon>
                               <img
                                 src={"/images/items/" +award.itemModel.imgSrc}
@@ -137,6 +171,26 @@ const VerificationPage = props => {
           })}
         </List>
       </Paper>
+      <Button style={{marginTop: '1rem'}} color="secondary" onClick={handleCloseCancelDialog}>Anuluj zamówienie</Button>
+      <Dialog
+        open={showCancelDialog}
+        onClose={handleCloseCancelDialog}
+      >
+        <DialogTitle id="alert-dialog-title">Anulować zamówienie?</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Anulowane zamówienie zostanie utracone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseCancelDialog} >
+            Wróć
+          </Button>
+          <Button onClick={handleCancelOrder} color="secondary" variant="contained">
+            Zatwierdź
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
@@ -151,7 +205,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-
+    onCancelOrder: () => dispatch(cancelOrder()),
+    onLeaveShop: () => dispatch(leaveShop())
   };
 };
 

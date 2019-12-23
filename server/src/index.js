@@ -32,7 +32,10 @@ const port = process.env.PORT || 4000;
 
 app.use(
   fileUpload({
-    createParentPath: true
+    createParentPath: true,
+    useTempFiles: true,
+    //4 mb file upload limit
+    limits: {fileSize: 4 * 1024 * 1024}
   })
 );
 
@@ -54,6 +57,12 @@ app.use("/party", partyRouter);
 app.use((err, req, res, next) => {
   res.status(422).send({ error: err.message });
 });
+
+// app.get('*', (req, res) => {
+
+//   res.sendFile(path.join(__dirname, '../../client/build/index.html'));
+ 
+// })
 
 const server = app.listen(port, () => {
   console.log(`Listening at ${port}`);

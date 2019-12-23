@@ -21,7 +21,7 @@ import BasketDrawer from "./shop/BasketDrawer";
 import VerificationPage from "./shop/VerificationPage";
 import ScrollModal from "./shop/ScrollModal";
 import ScrollListItem from "./shop/ScrollListItem";
-import { getShop, activateOrder } from "../../store/actions/shopActions";
+import { getShop, activateOrder, leaveShop } from "../../store/actions/shopActions";
 import { updateParty } from "../../store/actions/partyActions";
 
 const Menu = styled(Paper)`
@@ -692,6 +692,13 @@ class Shop extends React.Component {
 
   }
 
+  async componentDidUpdate(prevProps, prevState) {
+    if(prevProps.party !== this.props.party && this.state.activeUser){
+      this.handleChangeactiveUser(null, this.state.activeUser)
+    }
+  }
+  
+
   componentWillUnmount() {
     window.removeEventListener("scroll", this.handleScrollPosition);
   }
@@ -765,9 +772,12 @@ class Shop extends React.Component {
             if (
               activeUser.userPerks.products[modifiedProduct].hasOwnProperty("experienceMod")
             ) {
-              products[modifyIndex].experience =
-              activeUser.userPerks.products[modifiedProduct].experienceMod;
-              products[modifyIndex].experienceModified = activeUser.userPerks.products[modifiedProduct].experienceMod > 0 ? "#28a52e" : "#c10000";
+              const expMod = activeUser.userPerks.products[modifiedProduct].experienceMod > 0
+              products[modifyIndex].experience = expMod;
+              if(expMod > 0 ){
+
+                products[modifyIndex].experienceModified = expMod > 0 ? "#28a52e" : "#c10000";
+              }
             }
             if (activeUser.userPerks.products[modifiedProduct].hasOwnProperty("priceMod")) {
               products[modifyIndex].price +=
@@ -818,6 +828,11 @@ class Shop extends React.Component {
     //TODO: call to backend for new productModifiers
   };
 
+  handleLeaveShop = async () => {
+    await this.props.onLeaveShop()
+    this.props.history.push("/");
+  }
+
   render() {
     const shotList = this.state.products.filter(product => {
       return product.category === "shot";
@@ -856,6 +871,7 @@ class Shop extends React.Component {
           <VerificationPage user={this.props.auth} party={this.props.party}/>
         ) : (
           <ScrollingProvider>
+            <Button variant="contained" style={{marginTop: '1rem'}} onClick={this.handleLeaveShop}>{`< Wyjście`}</Button>
             {this.props.party.length > 1 && (
               <PlayerShopButtons
                 users={this.props.party}
@@ -1029,6 +1045,7 @@ class Shop extends React.Component {
               activeUser={this.state.activeUser}
               handleRemoveItem={this.handleRemoveItemFromCart}
               finalizeOrder={this.handleFinalizeOrder}
+              leader = {this.props.leader}
             />
           </ScrollingProvider>
         )}
@@ -1049,14 +1066,16 @@ const mapStateToProps = state => {
     auth: state.auth,
     activeOrder: state.auth.profile.activeOrder,
     products: state.shop.products,
-    party:  state.party.leader ? [{...state.auth.profile, _id: state.auth.uid}, ...state.party.members] : []
+    party:  state.party.leader ? [{...state.auth.profile, _id: state.auth.uid}, ...state.party.members] : [],
+    leader: state.party.leader
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     onGetShop: () => dispatch(getShop()),
-    onActivateOrder: (baskets) => dispatch(activateOrder(baskets))
+    onActivateOrder: (baskets) => dispatch(activateOrder(baskets)),
+    onLeaveShop: () => dispatch(leaveShop())
   };
 };
 

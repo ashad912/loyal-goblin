@@ -177,7 +177,7 @@ const Navbar = (props) => {
                                 <AccountBoxIcon />
                             </ListItemIcon>
                             <ListItemText>
-                                <FileInputButton variant="contained" color="primary">
+                                <FileInputButton color="primary">
                                     {props.auth.profile.avatar ? "Zmień avatar" : "Dodaj avatar"}
                                 </FileInputButton>
                                 <HiddenFileInput
@@ -247,7 +247,6 @@ const Navbar = (props) => {
                     </Typography> */}
                 </React.Fragment>
             )}
-            
         </Toolbar>
         <ChangePasswordModal open={showPasswordChangeModal} handleClose={togglePasswordChangeModal}/>
         </StyledAppBar>

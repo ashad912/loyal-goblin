@@ -10,6 +10,7 @@ import {
 import { Rally } from "../models/rally";
 import { User } from "../models/user";
 import { Party } from "../models/party";
+import { ArchiveOrder } from "../models/archiveOrder";
 
 const router = new express.Router();
 
@@ -145,13 +146,19 @@ const calculateOrder = async user => {
       });
       //currentMember.products.forEach(product => console.log(product.product.price, product.product.experience))
       if (user.activeOrder[currentMember].products.length > 0) {
-        const [totalPrice, totalExperience, totalAwards] = user.activeOrder[
-          currentMember
-        ].products.map(product => [
-          product.product.price * product.quantity,
-          product.product.experience * product.quantity,
-       product.product.awards
-        ])[0];
+        let totalPrice = 0
+         let totalExperience = 0
+        let totalAwards = []
+        user.activeOrder[currentMember].products.forEach(product => {
+           totalPrice += product.product.price * product.quantity
+
+           totalExperience += product.product.experience * product.quantity
+
+           totalAwards = totalAwards.concat(product.product.awards)
+           
+        })
+        console.log(totalPrice, totalExperience, totalAwards)
+
         user.activeOrder[currentMember].price = totalPrice;
         user.activeOrder[currentMember].experience = totalExperience;
         user.activeOrder[currentMember].awards = totalAwards;
@@ -175,7 +182,7 @@ router.get("/shop", auth, async (req, res) => {
     });
 
     await updatePerks(user, false);
-    let calculatedOrders;
+
     if (user.activeOrder.length) {
       await user
         .populate({
@@ -187,8 +194,6 @@ router.get("/shop", auth, async (req, res) => {
                 })
         .execPopulate();
 
-
-      //calculateOrder(user);
     }
 
     await user
@@ -201,17 +206,30 @@ router.get("/shop", auth, async (req, res) => {
         }
       })
       .execPopulate();
+    if(user.party && !user.party.inShop){
+      user.party.inShop = true
+      await user.party.save()
+    }
 
     res.send({
       shop,
       party: user.party,
-      activeOrder: user.activeOrder,
-      orderSummary: calculatedOrders
+      activeOrder: user.activeOrder
     });
   } catch (e) {
     res.status(400).send(e.message);
   }
 });
+
+router.patch("/leave", auth, async (req, res) => {
+  const user = req.user
+  if(user.party){
+    await user.populate({path: "party"}).execPopulate()
+    user.party.inShop = false
+    await user.party.save()
+  }
+  res.sendStatus(200)
+})
 
 const verifyParty = (leader, membersIds, order) => {
   return new Promise(async (resolve, reject) => {
@@ -328,6 +346,27 @@ router.patch("/activate", auth, async (req, res) => {
     res.status(400).send(e.message);
   }
 });
+
+router.patch("/cancel", auth, async (req, res) => {
+  const user = req.user
+  if (user.activeOrder.length <= 0) {
+    throw new Error(`No active order exists (user: ${user._id})!`);
+  }
+  try {
+    const orderArchived = await ArchiveOrder.findById(user.activeOrder._id)
+    if(orderArchived){
+      throw new Error(`Order ${user.activeOrder._id} was already verified!`);
+    }
+
+    user.activeOrder = []
+    await user.save()
+    res.sendStatus(200)
+
+  } catch (error) {
+    res.status(400).send(e.message);
+  }
+
+})
 
 //triggered by ADMIN
 //OK BUT TO DEVELOP

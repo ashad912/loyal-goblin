@@ -16,6 +16,20 @@ export const getShop = () => {
     }
 }
 
+export const leaveShop = () => {
+    return async dispatch => {
+        try {
+            await axios.patch('/product/leave')
+
+            dispatch({type: 'LEAVE_SHOP'})
+
+        } catch (e) {
+            console.log(e)
+            dispatch( {type: "NO_CONNECTION", error: e})     
+        }
+    }
+}
+
 export const activateOrder = (order) => {
     return async dispatch => {
         try {
@@ -30,6 +44,20 @@ export const activateOrder = (order) => {
             })
             const res = await axios.patch('/product/activate', {order: arrayOrder})
             dispatch({type: 'UPDATE_ACTIVE_ORDER', activeOrder: res.data })
+
+        } catch (e) {
+            console.log(e)
+            dispatch( {type: "NO_CONNECTION", error: e})     
+        }
+    }
+}
+
+export const cancelOrder = () => {
+    return async dispatch => {
+        try {
+            
+            await axios.patch('/product/cancel')
+            dispatch({type: 'UPDATE_ACTIVE_ORDER', activeOrder: [] })
 
         } catch (e) {
             console.log(e)

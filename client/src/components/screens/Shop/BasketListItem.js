@@ -11,6 +11,7 @@ import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 const BasketListItem = ({activeUsersBasket, name, summedPrice, basket, handleRemoveItem, noParty}) => {
   const [open, setOpen] = React.useState(false);
 
+ 
 
   const handleToggleOpen = () => {
     setOpen(prev => !prev)
@@ -19,7 +20,7 @@ const BasketListItem = ({activeUsersBasket, name, summedPrice, basket, handleRem
 
   const removeItem = (e, id) => {
     e.stopPropagation()
-    handleRemoveItem(id)
+   handleRemoveItem(id)
   }
 
  
@@ -33,9 +34,9 @@ const BasketListItem = ({activeUsersBasket, name, summedPrice, basket, handleRem
           <List component="div" disablePadding>
             {basket.map(product => {
               return (
-                <ListItem key={product.id} style={{ paddingLeft: "2rem" }}>
+                <ListItem key={product._id} style={{ paddingLeft: "2rem" }}>
                   {activeUsersBasket && 
-                  <DeleteForeverIcon style={{width: '2rem', height: '2rem', color: "#b40000"}} onClick={(e) => removeItem(e, product.id)}/>
+                  <DeleteForeverIcon style={{width: '2rem', height: '2rem', color: "#b40000"}} onClick={(e) => removeItem(e, product._id)}/>
                   }
                   <ListItemText secondary={product.name} style={{flexBasis: '30%'}} />
                   <ListItemText secondary={product.quantity+"x"}  style={{flexBasis: '10%'}}/>
@@ -59,9 +60,9 @@ const BasketListItem = ({activeUsersBasket, name, summedPrice, basket, handleRem
           <List component="div" disablePadding>
             {basket.map(product => {
               return (
-                <ListItem key={product.id} style={{ paddingLeft: "2rem" }}>
+                <ListItem key={product._id} style={{ paddingLeft: "2rem" }}>
                   {activeUsersBasket && 
-                  <DeleteForeverIcon style={{width: '2rem', height: '2rem', color: "#b40000"}} onClick={(e) => removeItem(e, product.id)}/>
+                  <DeleteForeverIcon style={{width: '2rem', height: '2rem', color: "#b40000"}} onClick={(e) => removeItem(e, product._id)}/>
                   }
                   <ListItemText secondary={product.name} style={{flexBasis: '30%'}} />
                   <ListItemText secondary={product.quantity+"x"}  style={{flexBasis: '10%'}}/>
