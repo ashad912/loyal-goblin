@@ -22,7 +22,7 @@ import { updateParty } from "./store/actions/partyActions";
 import ConnectionSpinnerDialog from "./components/layout/ConnectionSpinnerDialog";
 import ConnectionSnackbar from "./components/layout/ConnectionSnackbar";
 
-import {socket, joinRoomSubscribe, leaveRoomSubscribe, addMemberToRoomSubscribe, deleteRoomSubscribe} from './socket'
+import {socket, joinRoomSubscribe, leaveRoomSubscribe, partyRefreshSubscribe, deleteRoomSubscribe} from './socket'
 
 class App extends React.Component {
   state = {
@@ -63,7 +63,7 @@ class App extends React.Component {
       this.props.onPartyUpdate()
     })
 
-    addMemberToRoomSubscribe((roomId) => {
+    partyRefreshSubscribe((roomId) => {
       this.props.onPartyUpdate()
     })
 

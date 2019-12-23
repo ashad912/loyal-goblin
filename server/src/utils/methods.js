@@ -376,3 +376,19 @@ export const validateInMissionInstanceStatus = (userId, newStatus) => {
     })
     
 }
+
+export const validateInShopPartyStatus = (userId, newStatus) => {
+    return new Promise (async (resolve, reject) => {
+        const party = await Party.findOne( 
+            {leader: userId},     
+        ) //only if leader going to be disconnected
+    
+        if(party && party.inShop !== newStatus){
+            party.inShop = newStatus
+            await party.save()
+            return resolve(true)
+        }
+        resolve(false)
+    })
+    
+}

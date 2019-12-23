@@ -392,8 +392,6 @@ const Profile = props => {
     updateEquippedItems();
     handleJoinOrCreateParty();
     props.onPartyUpdate();
-    
-    
   }, []);
 
   const updateEquippedItems = () => {
@@ -728,7 +726,7 @@ const Profile = props => {
 
           {(props.party && props.party.leader && props.party.leader._id === props.auth.uid) || !props.party.leader && !props.party.members.length ? 
           
-          <Link to="/shop" style={{ marginTop: "1rem" }} >
+          <Link to={{pathname: '/shop', state: { id: props.auth.uid} }} style={{ marginTop: "1rem" }} >
             <Button variant="contained" color="primary" >
               Idziemy expić!
               <ColorizeIcon
@@ -740,7 +738,7 @@ const Profile = props => {
               />
             </Button>
           </Link> :
-          <Typography variant="caption" style={{marginTop: '1rem'}}>{props.party.inShop ?"Lider aktualnie ma otwarty sklep" : "Sklep dostępny jest tylko dla lidera drużyny"}</Typography>
+          <Typography variant="caption" style={{marginTop: '1rem'}}>{props.party.inShop ? "Lider aktualnie ma otwarty sklep" : "Sklep dostępny jest tylko dla lidera drużyny"}</Typography>
         }
         </Grid>
       </Grid>

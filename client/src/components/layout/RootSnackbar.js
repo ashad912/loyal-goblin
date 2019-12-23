@@ -24,7 +24,7 @@ const RootSnackbar = props => {
     //     }   
     // }, [delay])
     
-    const notTheLeader = (props.screen === 1) && (!props.activeInstanceId)
+    const notTheLeader = (!props.activeInstanceId)
          && props.party.members.length && props.party.leader.hasOwnProperty('_id') && (props.party.leader._id !== props.auth.uid)
  
     const multipleSession = props.auth.multipleSession
@@ -41,7 +41,8 @@ const RootSnackbar = props => {
                 //autoHideDuration={10000}
                 message={
                     <React.Fragment>
-                        {notTheLeader === true && (<p style={{margin: '0'}}>Tylko lider drużyny, może rozpocząć nową misję.</p>)}
+                        {notTheLeader === true && (props.screen === 1) && (<p style={{margin: '0'}}>Tylko lider drużyny, może rozpocząć nową misję.</p>)}
+                        {notTheLeader === true && (props.screen === 0) && (<p style={{margin: '0'}}>Tylko lider drużyny, może rozpocząć zakupy.</p>)}
                         {(props.screen === 1) && multipleSession === true && (<p style={{margin: '0'}}>Wielokrotna sesja. Zamknij inne karty, a następnie odśwież, aby zarządzać misjami.</p>)}
                         {(props.screen === 0) && multipleSession === true && (<p style={{margin: '0'}}>Wielokrotna sesja. Zamknij inne karty, a następnie odśwież, aby zarządzać drużyną.</p>)}
                     </React.Fragment>

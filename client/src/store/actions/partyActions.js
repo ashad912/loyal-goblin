@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {socket, joinRoomEmit, leaveRoomEmit, addMemberToRoomEmit, deleteRoomEmit} from '../../socket'
+import {socket, joinRoomEmit, leaveRoomEmit, partyRefreshEmit, deleteRoomEmit} from '../../socket'
 
 
 export const updateParty = () => {
@@ -75,7 +75,7 @@ export const addMember =  (partyId, memberId) => {
         try {
             const res = await axios.patch('/party/addMember', {partyId, memberId})
             dispatch({type: "ADD_MEMBER", party: res.data})
-            addMemberToRoomEmit(res.data._id)
+            partyRefreshEmit(res.data._id)
                 
         }catch (e) {
             console.log(e)

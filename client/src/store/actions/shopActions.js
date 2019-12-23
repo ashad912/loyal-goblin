@@ -1,4 +1,5 @@
 import axios from 'axios'
+import {partyRefreshEmit} from '../../socket'
 
 export const getShop = () => {
     return async dispatch => {
@@ -8,6 +9,8 @@ export const getShop = () => {
             dispatch({type: 'GET_SHOP', shop:res.data.shop})
             dispatch({type: 'UPDATE_ACTIVE_ORDER', activeOrder: res.data.activeOrder})
             dispatch({type: "UPDATE_PARTY", party: res.data.party})
+
+            partyRefreshEmit(res.data.party._id)
 
         } catch (e) {
             console.log(e)
@@ -19,9 +22,10 @@ export const getShop = () => {
 export const leaveShop = () => {
     return async dispatch => {
         try {
-            await axios.patch('/product/leave')
+            const res = await axios.patch('/product/leave')
 
             dispatch({type: 'LEAVE_SHOP'})
+            partyRefreshEmit(res.data)
 
         } catch (e) {
             console.log(e)

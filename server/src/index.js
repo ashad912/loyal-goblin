@@ -14,7 +14,7 @@ import cookieParser from "cookie-parser";
 import cookie from "cookie";
 import socket from "socket.io";
 import { socketRoomAuth, socketConnectAuth } from "./middleware/auth";
-import { validateInMissionInstanceStatus } from './utils/methods' 
+import { validateInMissionInstanceStatus, validateInShopPartyStatus } from './utils/methods' 
 import _ from "lodash";
 
 //TO-START: npm run-script dev
@@ -134,10 +134,10 @@ const postAuthenticate = socket => {
   });
 
 
-  socket.on("addMemberToRoom", async (roomId) => {
+  socket.on("partyRefresh", async (roomId) => {
     try{
         console.log('Party has been changed!');
-        socket.broadcast.to(roomId).emit("addMemberToRoom", roomId);
+        socket.broadcast.to(roomId).emit("partyRefresh", roomId);
     }catch(e){
       console.log(e)
     }
@@ -214,9 +214,13 @@ async function disconnect(socket) {
   }else{
     const userId = allClients[i].userId
     const roomId = allClients[i].roomId
+
+    if(await validateInShopPartyStatus(userId, false)){
+      socket.broadcast.to(roomId).emit("partyRefresh", roomId);
+    }
   
-    const updateClients = await validateInMissionInstanceStatus(userId, false)
-    if(updateClients){
+     
+    if(await validateInMissionInstanceStatus(userId, false)){
       console.log(`${roomId} for user ${userId} with status inMission: false`)
       socket.broadcast.to(roomId).emit("modifyUserStatus", {_id: userId, inMission: false});
       console.log(`User ${userId} left the room ${roomId}`)
