@@ -84,7 +84,7 @@ const EquipmentListItem = props => {
     }else{
       itemId = item._id
     }
-    console.log(itemId, item.itemModel.name, props.itemCategory)
+    //console.log(itemId, item.itemModel.name, props.itemCategory)
     props.handleItemDelete(itemId, item.itemModel.name, props.itemCategory);
     setAnchorEl(null);
   };
@@ -92,13 +92,13 @@ const EquipmentListItem = props => {
   const quantity = item.instancesIds && item.instancesIds.length > 1 ? item.instancesIds.length : null
   return (
     <ListItem
-      button={props.itemCategory !== "amulet" && props.itemCategory !== "scroll"}
+      button={props.itemCategory !== "amulet" }
       alignItems="flex-start"
       className={classes.listItem}
       style={{ background: props.equipped ? "#e6dc8d" : "" }}
       equipped={props.equipped ? 1 : 0}
       onClick={() =>
-        props.itemCategory !== "amulet" && props.itemCategory !== "scroll" &&
+        props.itemCategory !== "amulet" && 
         props.handleItemToggle(
           item._id,
           props.equipped,
@@ -138,7 +138,7 @@ const EquipmentListItem = props => {
               }
             />
           </Grid>
-          {props.itemCategory !== "amulet" && props.itemCategory !== "scroll" && 
+          {props.itemCategory !== "amulet" && 
           <Grid item xs={1}>
             <TouchAppIcon/>
           </Grid>
@@ -169,6 +169,7 @@ const EquipmentListItem = props => {
               {item.itemModel.perks.map((perk, index) => {
                 return (
                   <Box
+                  key={perk._id}
                     border={1}
                     borderColor="primary.main"
                     style={{ margin: "0.2rem 0", fontSize: "0.8rem" }}
@@ -193,6 +194,7 @@ const EquipmentListItem = props => {
                                 .map(period => (
                                   <Grid
                                     container
+                                    key={JSON.stringify(period)}
                                     style={{ justifyContent: "center" }}
                                   >
                                     <Grid item>

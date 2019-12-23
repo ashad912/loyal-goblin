@@ -90,7 +90,7 @@ const Equipment = props => {
     <Paper className={classes.root}>
       <List component="nav" className={classes.root}>
         {Object.keys(items).map(itemCategory => {
-          const chest = itemCategory === 'amulet' || itemCategory === 'scroll'
+          const chest = itemCategory === 'amulet'
           const torpedo = itemCategory === 'torpedo'
           if(torpedo){
             return null
@@ -145,7 +145,7 @@ const Equipment = props => {
                     <List component="div" disablePadding>
                         {stackedItems.map(item => (
                         <EquipmentItem
-                            key={item.itemModel._id}
+                            key={item._id}
                             stacked={true}
                             item={item}
                             handleItemToggle={props.handleItemToggle}

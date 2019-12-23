@@ -199,7 +199,7 @@ const mapStateToProps = state => {
   return {
     auth: state.auth,
     activeOrder: state.auth.profile.activeOrder,
-    party: state.party.members.unshift(state.party.leader)
+    party: [state.party.leader, ...state.party.members]
   };
 };
 

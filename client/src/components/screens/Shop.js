@@ -6,7 +6,7 @@ import { ScrollingProvider, Section } from "react-scroll-section";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
-
+import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
 import Badge from "@material-ui/core/Badge";
 import Snackbar from "@material-ui/core/Snackbar";
@@ -21,8 +21,13 @@ import BasketDrawer from "./shop/BasketDrawer";
 import VerificationPage from "./shop/VerificationPage";
 import ScrollModal from "./shop/ScrollModal";
 import ScrollListItem from "./shop/ScrollListItem";
-import { getShop, activateOrder, leaveShop } from "../../store/actions/shopActions";
+import {
+  getShop,
+  activateOrder,
+  leaveShop
+} from "../../store/actions/shopActions";
 import { updateParty } from "../../store/actions/partyActions";
+import { toggleItem } from "../../store/actions/profileActions";
 
 const Menu = styled(Paper)`
   flex-grow: 1;
@@ -669,7 +674,6 @@ class Shop extends React.Component {
     });
 
     await this.props.onGetShop();
-    
 
     //backend call for players in party
     //await this.props.onUpdateParty();
@@ -679,7 +683,7 @@ class Shop extends React.Component {
       this.props.party.forEach(player => {
         baskets[player._id] = [];
       });
-    } 
+    }
 
     this.setState({ baskets, products: [...this.props.products] });
 
@@ -689,15 +693,13 @@ class Shop extends React.Component {
         ? this.props.party[0]._id
         : this.props.auth.uid
     );
-
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    if(prevProps.party !== this.props.party && this.state.activeUser){
-      this.handleChangeactiveUser(null, this.state.activeUser)
+    if (prevProps.party !== this.props.party && this.state.activeUser) {
+      this.handleChangeactiveUser(null, this.state.activeUser);
     }
   }
-  
 
   componentWillUnmount() {
     window.removeEventListener("scroll", this.handleScrollPosition);
@@ -754,11 +756,12 @@ class Shop extends React.Component {
           ...product,
           priceModified: false,
           experienceModified: false
-        }
+        };
       });
-      const activeUser = this.props.party.length > 0 ? this.props.party.find(
-        user => user._id === this.state.activeUser
-      ) : this.props.auth.profile;
+      const activeUser =
+        this.props.party.length > 0
+          ? this.props.party.find(user => user._id === this.state.activeUser)
+          : this.props.auth.profile;
       if (
         activeUser.hasOwnProperty("userPerks") &&
         Object.keys(activeUser.userPerks.products).length > 0
@@ -767,24 +770,35 @@ class Shop extends React.Component {
           const modifyIndex = products.findIndex(
             product => product._id === modifiedProduct
           );
-          
+
           if (modifyIndex > -1) {
             if (
-              activeUser.userPerks.products[modifiedProduct].hasOwnProperty("experienceMod")
+              activeUser.userPerks.products[modifiedProduct].hasOwnProperty(
+                "experienceMod"
+              )
             ) {
-              const expMod = activeUser.userPerks.products[modifiedProduct].experienceMod > 0
+              const expMod =
+                activeUser.userPerks.products[modifiedProduct].experienceMod >
+                0;
               products[modifyIndex].experience = expMod;
-              if(expMod > 0 ){
-
-                products[modifyIndex].experienceModified = expMod > 0 ? "#28a52e" : "#c10000";
+              if (expMod > 0) {
+                products[modifyIndex].experienceModified =
+                  expMod > 0 ? "#28a52e" : "#c10000";
               }
             }
-            if (activeUser.userPerks.products[modifiedProduct].hasOwnProperty("priceMod")) {
+            if (
+              activeUser.userPerks.products[modifiedProduct].hasOwnProperty(
+                "priceMod"
+              )
+            ) {
               products[modifyIndex].price +=
-              activeUser.userPerks.products[modifiedProduct].priceMod;
-              products[modifyIndex].priceModified = activeUser.userPerks.products[modifiedProduct].priceMod > 0 ? "#c10000" : "#28a52e";
-              if(products[modifyIndex].price < 0){
-                products[modifyIndex].price = 0.0
+                activeUser.userPerks.products[modifiedProduct].priceMod;
+              products[modifyIndex].priceModified =
+                activeUser.userPerks.products[modifiedProduct].priceMod > 0
+                  ? "#c10000"
+                  : "#28a52e";
+              if (products[modifyIndex].price < 0) {
+                products[modifyIndex].price = 0.0;
               }
             }
           }
@@ -801,13 +815,13 @@ class Shop extends React.Component {
   };
 
   handleFinalizeOrder = () => {
-    const tempBaskets = {...this.state.baskets}
+    const tempBaskets = { ...this.state.baskets };
     // Object.keys(tempBaskets).forEach(owner => {
     //   if(tempBaskets[owner].length === 0){
     //     tempBaskets[owner].push(null)
     //   }
     // })
-    this.props.onActivateOrder(this.state.baskets)
+    this.props.onActivateOrder(this.state.baskets);
     //this.setState({ showVerificationPage: true });
   };
 
@@ -817,21 +831,38 @@ class Shop extends React.Component {
     });
   };
 
-  handleScrollSelect = id => {
-    const tempUsers = [...this.props.party];
-    const activeUser = tempUsers.findIndex(
-      user => user._id === this.state.activeUser
-    );
-    tempUsers[activeUser].equipped.scroll =
-      tempUsers[activeUser].equipped.scroll === id ? "" : id;
-    this.setState({ users: tempUsers });
-    //TODO: call to backend for new productModifiers
+  handleScrollSelect = async (id) => {
+    if (this.state.activeUser === this.props.auth.uid) {
+      //Leader equip
+      const tempPlayer = { ...this.props.auth.profile };
+      tempPlayer.equipped.scroll =
+        tempPlayer.equipped.scroll === id ? null : id;
+      await this.props.onLeaderScrollToggle(id, "scroll", this.props.auth.profile.equipped);
+    } else {
+      //Party member equip
+
+      const tempUsers = [...this.props.party];
+      const activeUser = tempUsers.findIndex(
+        user => user._id === this.state.activeUser
+      );
+      tempUsers[activeUser].equipped.scroll =
+        tempUsers[activeUser].equipped.scroll === id ? null : id;
+      //this.setState({ users: tempUsers });
+      //TODO: call to backend for new productModifiers
+      await this.props.onPartyMemberScrollToggle(
+        id,
+        "scroll",
+        tempUsers[activeUser].equipped,
+        this.state.activeUser
+      );
+    }
+    this.handleChangeactiveUser(null, this.state.activeUser)
   };
 
   handleLeaveShop = async () => {
-    await this.props.onLeaveShop()
+    await this.props.onLeaveShop();
     this.props.history.push("/");
-  }
+  };
 
   render() {
     const shotList = this.state.products.filter(product => {
@@ -853,25 +884,31 @@ class Shop extends React.Component {
     const foodList = this.state.products.filter(product => {
       return product.category === "food";
     });
-    
-    const activeUser = this.state.activeUser&& this.props.party.length > 0 && this.state.activeUser !== this.props.auth.uid ? this.props.party.find(
-      user => user._id === this.state.activeUser
-    ) : this.props.auth.profile
 
-    let equippedScroll 
-    if(activeUser.bag){
-      equippedScroll  = activeUser.bag.find(
+    const activeUser =
+      this.state.activeUser &&
+      this.props.party.length > 0 &&
+      this.state.activeUser !== this.props.auth.uid
+        ? this.props.party.find(user => user._id === this.state.activeUser)
+        : this.props.auth.profile;
+
+    let equippedScroll;
+    if (activeUser.bag) {
+      equippedScroll = activeUser.bag.find(
         item => item._id === activeUser.equipped.scroll
       );
-
     }
     return (
       <div>
         {this.props.activeOrder.length > 0 && this.state.activeUser ? (
-          <VerificationPage user={this.props.auth} party={this.props.party}/>
+          <VerificationPage user={this.props.auth} party={this.props.party} />
         ) : (
           <ScrollingProvider>
-            <Button variant="contained" style={{marginTop: '1rem'}} onClick={this.handleLeaveShop}>{`< Wyjście`}</Button>
+            <Button
+              variant="contained"
+              style={{ marginTop: "1rem" }}
+              onClick={this.handleLeaveShop}
+            >{`< Wyjście`}</Button>
             {this.props.party.length > 1 && (
               <PlayerShopButtons
                 users={this.props.party}
@@ -880,6 +917,8 @@ class Shop extends React.Component {
               />
             )}
             {!activeUser.equipped.scroll && activeUser.bag.length > 0 ? (
+              <Box>
+
               <Button
                 style={{ margin: "1rem 0" }}
                 variant="contained"
@@ -888,6 +927,7 @@ class Shop extends React.Component {
               >
                 Dodaj zwój z ekwipunku
               </Button>
+              </Box>
             ) : (
               activeUser.bag.length > 0 && (
                 <Grid
@@ -998,25 +1038,29 @@ class Shop extends React.Component {
                     onClose={this.handleSnackbarClose}
                     autoHideDuration={1000}
                     message={
-                      this.props.party.length > 0 ?
-                      <span>
-                        Dodano{" "}
-                        {
-                          this.state.baskets[this.state.activeUser][
-                            this.state.baskets[this.state.activeUser].length - 1
-                          ].name
-                        }{" "}
-                        do koszyka {activeUser.name}
-                      </span> :
-                      <span>
-                      Dodano{" "}
-                      {
-                        this.state.baskets[this.state.activeUser][
-                          this.state.baskets[this.state.activeUser].length - 1
-                        ].name
-                      }{" "}
-                      do Twojego koszyka
-                    </span> 
+                      this.props.party.length > 0 ? (
+                        <span>
+                          Dodano{" "}
+                          {
+                            this.state.baskets[this.state.activeUser][
+                              this.state.baskets[this.state.activeUser].length -
+                                1
+                            ].name
+                          }{" "}
+                          do koszyka {activeUser.name}
+                        </span>
+                      ) : (
+                        <span>
+                          Dodano{" "}
+                          {
+                            this.state.baskets[this.state.activeUser][
+                              this.state.baskets[this.state.activeUser].length -
+                                1
+                            ].name
+                          }{" "}
+                          do Twojego koszyka
+                        </span>
+                      )
                     }
                   />
                 </React.Fragment>
@@ -1041,18 +1085,24 @@ class Shop extends React.Component {
               open={this.state.basketDrawerOpen}
               toggle={this.handleToggleBasketDrawer}
               baskets={this.state.baskets}
-              users={this.props.party.length > 1 ? this.props.party : [this.props.auth.profile]}
+              users={
+                this.props.party.length > 1
+                  ? this.props.party
+                  : [this.props.auth.profile]
+              }
               activeUser={this.state.activeUser}
               handleRemoveItem={this.handleRemoveItemFromCart}
               finalizeOrder={this.handleFinalizeOrder}
-              leader = {this.props.leader}
+              leader={this.props.leader}
             />
           </ScrollingProvider>
         )}
         <ScrollModal
           open={this.state.showScrollModal}
           handleClose={this.handleScrollModalToggle}
-          scrolls={activeUser.bag.filter(item => item.itemModel.type === 'scroll')}
+          scrolls={activeUser.bag.filter(
+            item => item.itemModel.type === "scroll"
+          )}
           equippedScrollId={activeUser.equipped.scroll}
           handleScrollSelect={this.handleScrollSelect}
         />
@@ -1066,16 +1116,20 @@ const mapStateToProps = state => {
     auth: state.auth,
     activeOrder: state.auth.profile.activeOrder,
     products: state.shop.products,
-    party:  state.party.leader ? [{...state.auth.profile, _id: state.auth.uid}, ...state.party.members] : [],
-    leader: state.party.leader
+    party: state.party.leader
+      ? [{ ...state.auth.profile, _id: state.auth.uid }, ...state.party.members]
+      : [],
+    leader: state.party.leader ? state.party.leader : state.auth.uid
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     onGetShop: () => dispatch(getShop()),
-    onActivateOrder: (baskets) => dispatch(activateOrder(baskets)),
-    onLeaveShop: () => dispatch(leaveShop())
+    onActivateOrder: baskets => dispatch(activateOrder(baskets)),
+    onLeaveShop: () => dispatch(leaveShop()),
+    onLeaderScrollToggle: (id, category, equipped) => dispatch(toggleItem(id, category, equipped, false)),
+    onPartyMemberScrollToggle: (id, category, equipped, memberId) => dispatch(toggleItem(id, category, equipped, memberId))
   };
 };
 

@@ -59,14 +59,18 @@ export const shootShip = (fieldName) => {
 }
 
 
-export const toggleItem = (id, category, equipped) => {
+export const toggleItem = (id, category, equipped, memberId) => {
     return async dispatch => {
         try {
-            const res = await axios.patch('/user/myItems/equip', {id, category, equipped})
-            const profile = res.data
+            const res = await axios.patch('/user/myItems/equip', {id, category, equipped, memberId})
             
-            delete profile._id
-            dispatch({type: 'UPDATE_PROFILE_DATA', profile})
+            if(memberId){
+                dispatch({type: "UPDATE_PARTY", party: res.data})
+            }else{
+                const profile = res.data
+                delete profile._id
+                dispatch({type: 'UPDATE_PROFILE_DATA', profile})
+            }
 
         } catch (e) {
             console.log(e)

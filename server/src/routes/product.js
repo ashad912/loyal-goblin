@@ -187,7 +187,7 @@ router.get("/shop", auth, async (req, res) => {
       await user
         .populate({
           path: "activeOrder.profile",
-          select: "_id name avatar bag"
+          select: "_id name avatar bag equipped userPerks"
         })
         .populate({
                   path: "activeOrder.awards.itemModel", select: "name imgSrc"
@@ -196,16 +196,19 @@ router.get("/shop", auth, async (req, res) => {
 
     }
 
-    await user
-      .populate({
-        path: "party",
-        populate: {
-          path: "members",
-          select: "bag equipped name _id avatar",
-          populate: { path: "bag", populate: { path: "itemModel" } }
-        }
-      })
-      .execPopulate();
+    if(user.party){
+
+      await user
+        .populate({
+          path: "party",
+          populate: {
+            path: "members",
+            select: "bag equipped name _id avatar bag equipped userPerks",
+            populate: { path: "bag", populate: { path: "itemModel" } }
+          }
+        })
+        .execPopulate();
+    }
     if(user.party && !user.party.inShop){
       user.party.inShop = true
       await user.party.save()

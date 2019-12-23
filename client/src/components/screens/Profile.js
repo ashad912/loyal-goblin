@@ -455,7 +455,6 @@ const Profile = props => {
     if(props.party && props.party.inShop){
       return
     }else{
-
       if (category === "weapon") {
         if (twoHanded) {
           tempPlayer.equipped.weaponRight = id;

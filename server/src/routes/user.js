@@ -107,9 +107,11 @@ router.get("/me", auth, async (req, res, next) => {
 
     user.userPerks = await updatePerks(user, false);
 
-    await user.populate({
-      path: "party"
-    });
+    if(user.party){
+      await user.populate({
+        path: "party"
+      });
+    }
 
     res.send(user);
   } catch (e) {
@@ -323,11 +325,17 @@ router.get("/myItems", auth, async (req, res) => {
 });
 
 router.patch("/myItems/equip", auth, async (req, res) => {
+
   let user = req.user;
+  if(req.body.memberId){
+    user = await User.findById(req.body.memberId)
+  }
+  console.log(user)
   const itemId = req.body.id;
   const category = req.body.category;
 
   const equipped = req.body.equipped;
+  
   try {
     const itemToEquip = user.bag.find(item => {
       return item.toString() === itemId;
@@ -336,11 +344,35 @@ router.patch("/myItems/equip", auth, async (req, res) => {
     if (itemToEquip) {
       user.equipped = { ...equipped };
       user.userPerks = await designateUserPerks(user);
+      user.userPerks = await updatePerks(user, true);
       await user.save();
       user = await userPopulateBag(user);
       //Depopulate equipped key
       user.equipped = { ...equipped };
-      res.status(200).send(user);
+
+      if(req.body.memberId){
+        
+          if(!user.party){
+            res.status(204).send(null)
+            return
+          }
+          
+          await user
+            .populate({
+              path: "party",
+              populate: { path: "leader members", select: "_id name avatar attributes experience userPerks bag equipped", 
+            populate: { path: "bag", populate: { path: "itemModel" } } }
+            })
+            .execPopulate();
+      
+          res.send(user.party);
+          
+        
+      }else{
+        res.status(200).send(user);
+
+      }
+
     } else {
       // console.log("item not found")
       res.sendStatus(400);
