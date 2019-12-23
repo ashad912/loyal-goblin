@@ -84,6 +84,11 @@ class App extends React.Component {
       }, 3600000)
     }, 3601000 - (new Date().getTime() % 3600000));
 
+    //For testing
+    // setTimeout(() => {
+    //   this.props.authCheck();
+    //   this.props.onPartyUpdate()
+    // }, 5000);
      
   }
 

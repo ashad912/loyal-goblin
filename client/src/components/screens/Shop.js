@@ -1119,7 +1119,7 @@ const mapStateToProps = state => {
     party: state.party.leader
       ? [{ ...state.auth.profile, _id: state.auth.uid }, ...state.party.members]
       : [],
-    leader: state.party.leader ? state.party.leader : state.auth.uid
+    leader: state.auth.uid
   };
 };
 

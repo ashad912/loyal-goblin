@@ -113,6 +113,20 @@ router.get("/me", auth, async (req, res, next) => {
       });
     }
 
+    if (user.activeOrder.length) {
+      await user
+        .populate({
+          path: "activeOrder.profile",
+          select: "_id name avatar bag equipped userPerks"
+        })
+        .populate({
+                  path: "activeOrder.awards.itemModel", select: "name imgSrc"
+                })
+        .execPopulate();
+
+    }
+
+
     res.send(user);
   } catch (e) {
     res.status(400).send(e.message);

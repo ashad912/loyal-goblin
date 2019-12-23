@@ -10,6 +10,7 @@ import {
 import { Rally } from "../models/rally";
 import { User } from "../models/user";
 import { Party } from "../models/party";
+import {Item} from '../models/item'
 import { ArchiveOrder } from "../models/archiveOrder";
 
 const router = new express.Router();
@@ -386,10 +387,22 @@ router.patch("/verify", auth, async (req, res) => {
     await user.save()
     await user.populate({
       path: "activeOrder.awards.itemModel", select: "name imgSrc"
-    })
+    }).populate({path: 'activeOrder.profile', select: 'equipped'})
     .execPopulate();
 
-    //create ArchiveOrder - save modified experience for users OR repeat function in 'finalize'
+
+
+    asyncForEach(user.activeOrder, async order => {
+      if(order.products.length && order.profile.equipped.scroll){
+        await Item.findOneAndDelete({_id: order.profile.equipped.scroll})
+      }
+    })
+
+    //1 add leader filed 
+    //2 calc totalPrice
+    //3 set each user data
+
+    //TODO: create ArchiveOrder - save modified experience for users OR repeat function in 'finalize'
 
     res.send(user.activeOrder);
   } catch (e) {
