@@ -849,6 +849,7 @@ class Shop extends React.Component {
     //   }
     // })
     this.props.onActivateOrder(this.state.baskets);
+    this.handleToggleBasketDrawer()
     //this.setState({ showVerificationPage: true });
   };
 

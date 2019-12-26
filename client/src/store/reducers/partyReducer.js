@@ -29,6 +29,11 @@ const partyReducer = (state = initState, action) => {
         ...state,
         ...action.party
       };
+      case "GIVE_LEADER":
+        return {
+          ...state,
+          ...action.party
+        };
     case "DELETE_PARTY":
       return {
         ...initState

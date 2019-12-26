@@ -190,7 +190,8 @@ export const UserSchema = new mongoose.Schema({
         products: [ProductsOrderSchema],
         price: {type: Number, default: 0},
         experience: {type: Number, default: 0},
-        awards: [{quantity: {type: Number, default: 0 }, itemModel: {type: mongoose.Schema.Types.ObjectId, ref: 'itemModel'}}]
+        awards: [{quantity: {type: Number, default: 0 }, itemModel: {type: mongoose.Schema.Types.ObjectId, ref: 'itemModel'}}],
+        createdAt: {type: Date}
     }],
     statistics: {
         missionCounter: {

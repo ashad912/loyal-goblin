@@ -17,7 +17,7 @@ const StyledCard = styled(Card)`
 `
 
 const ActiveRallyTypo = styled(Typography)`
-    color: ${props => props.active ? ('red') : ('#3f51b5')}
+    color: ${props => props.active ? ('red') : ('#3f51b5')};
 `
 
 const RallyPlaceholder = styled.div`

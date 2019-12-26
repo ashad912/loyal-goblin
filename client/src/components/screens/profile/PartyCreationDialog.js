@@ -1,4 +1,5 @@
 import React from "react";
+import styled from 'styled-components'
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
@@ -11,8 +12,48 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import { createParty, deleteParty, addMember, removeMember } from "../../../store/actions/partyActions";
+import { createParty, deleteParty, addMember, removeMember, giveLeader } from "../../../store/actions/partyActions";
 import QRreaderView from "./QRreaderView";
+import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
+import TransferWithinAStationIcon from '@material-ui/icons/TransferWithinAStation';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+
+const StyledSwipeableListItem = styled.div`
+    background: rgba(0, 0, 0, 0.137);
+    height: 32px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 4px 8px;
+    user-select: none;
+    cursor: pointer;
+    margin-bottom: 0.2rem;
+`
+const TransferLeaderButton = styled.div`
+    height: 32px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+        padding: 4px 8px;
+background: rgb(55, 112, 194);
+color: white;
+`
+
+const RemoveMemberButton = styled.div`
+    height: 32px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+        padding: 4px 8px;
+background: rgb(173, 49, 49);
+color: white;
+`
 
 const PartyCreationDialog = props => {
   const [partyName, setPartyName] = React.useState(props.partyName);
@@ -67,6 +108,11 @@ const PartyCreationDialog = props => {
     props.onRemoveMember(props.party._id, id)
   };
 
+  const handleGiveLeader = id => {
+    props.onGiveLeader(props.party._id, id)
+    props.handleClose();
+  }
+
   const handlePartyDisband = () => {
     // setParty([]);
     // setPartyName("");
@@ -111,23 +157,42 @@ const PartyCreationDialog = props => {
             </Grid>
           )}
           <Grid item style={{ width: "100%" }}>
-            <List>
+          <SwipeableList threshold={0.75}>
               {props.party.members.map(partyMember => {
                 return (
-                  <ListItem key={partyMember._id}>
-                    <ListItemText primary={partyMember.name} />
-                    <ListItemSecondaryAction>
-                      <Button
-                        color="secondary"
-                        onClick={e => handleRemoveFromParty(partyMember._id)}
-                      >
-                        Wyrzuć
-                      </Button>
-                    </ListItemSecondaryAction>
-                  </ListItem>
+                  <SwipeableListItem key={partyMember._id}
+
+    swipeLeft={{
+      content: <RemoveMemberButton>Wyrzuć osobę z drużyny</RemoveMemberButton>,
+      action: () => handleRemoveFromParty(partyMember._id)
+    }}
+    swipeRight={{
+      content: <TransferLeaderButton>Przekaż stanowisko lidera drużyny</TransferLeaderButton>,
+      action: () => handleGiveLeader(partyMember._id)
+    }}
+  >
+    <StyledSwipeableListItem >
+      <div style={{flexBasis: '20%', textAlign:'center'}}>
+<ArrowBackIosIcon/>
+              <TransferWithinAStationIcon style={{color: 'rgb(55, 112, 194)'}}/>
+      </div>
+              <p style={{flexBasis: '60%', maxWidth: '40vw', whiteSpace:'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 'bolder', textAlign: 'center'}}>{partyMember.name}</p>
+              <div style={{flexBasis: '20%', textAlign:'center'}}>
+              <HighlightOffIcon style={{color: 'rgb(173, 49, 49)'}}/>
+                <ArrowForwardIosIcon/>
+
+              </div>
+
+                   
+
+    </StyledSwipeableListItem>
+
+
+    
+  </SwipeableListItem>
                 );
               })}
-            </List>
+            </SwipeableList>
           </Grid>
           {!isManagingParty && (
             <Grid item>
@@ -173,7 +238,7 @@ const PartyCreationDialog = props => {
         </Button>
       </DialogActions>
       {showScanner &&
-      <QRreaderView handleAddMember={handleAddMember}/>
+      <QRreaderView handleAddMember={handleAddMember} handleReturn={handleQRscanStart}/>
       }
     </Dialog>
   );
@@ -191,7 +256,8 @@ const mapDispatchToProps = dispatch => {
     onPartyCreate: (name, leader) => dispatch(createParty(name, leader)),
     onPartyDelete: () => dispatch(deleteParty()),
     onAddMember: (partyId, memberId) => dispatch(addMember(partyId, memberId)),
-    onRemoveMember: (partyId, memberId) => dispatch(removeMember(partyId, memberId))
+    onRemoveMember: (partyId, memberId) => dispatch(removeMember(partyId, memberId)),
+    onGiveLeader: (partyId, memberId) => dispatch(giveLeader(partyId, memberId)),
   };
 };
 

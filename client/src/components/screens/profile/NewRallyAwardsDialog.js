@@ -24,7 +24,7 @@ const NewRallyAwardsDialog = props => {
       <DialogTitle>Rajd zakończony!</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          O to Twoje nagrody!
+          Oto Twoje nagrody!
         </DialogContentText>
         <List component="nav" style={{ width: "100%" }}>
           {props.profile.newRallyAwards.map(award => {

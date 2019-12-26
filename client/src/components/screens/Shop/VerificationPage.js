@@ -1,6 +1,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import {connect} from 'react-redux'
+import moment from 'moment'
 import QRCode from 'qrcode'
 import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
@@ -79,6 +80,7 @@ const baskets = [
 const VerificationPage = props => {
   const history = useHistory();
   const [showCancelDialog, setShowCancelDialog] = React.useState(false)
+  const [timer, setTimer] = React.useState('')
   const [qrCode, setQrCode] = React.useState(null)
   var opts = {
     errorCorrectionLevel: 'H',
@@ -92,7 +94,30 @@ const VerificationPage = props => {
       if (err) throw err
       setQrCode(url)
     })
+    calculateTimeLeft()
+    const orderTimeout = setInterval(() => {
+      calculateTimeLeft()
+    }, 1000);
+    return () => {
+      clearInterval(orderTimeout)
+    }
   }, [])
+
+
+
+  const calculateTimeLeft = () => {
+    const utcDateNow = moment.utc(new Date())
+    const orderTimeMax = moment(props.activeOrder[0].createdAt)
+    const difference = orderTimeMax.diff(utcDateNow)
+    if(difference > 0 ){
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+      const formatted = moment(`${minutes}:${seconds}`, "mm:ss").format('mm:ss')
+      setTimer(`Zamówienie wygaśnie za ${formatted}`)
+    }else{
+      handleCancelOrder()
+    }
+  }
 
   const createAvatarPlaceholder = (name) => {
 
@@ -123,6 +148,7 @@ const handleCancelOrder = async () => {
       <Paper style={{ width: "100%", paddingTop: '1rem' }}>
         <Typography variant="h5" style={{marginBottom: '1rem'}}>Pokaż ten kod przy barze, by otrzymać nagrody!</Typography>
         <img src={qrCode} style={{width: '80%', marginBottom: '1rem'}}/>
+  <Typography variant="h6" style={{width: '100%', marginBottom: '1rem', color: 'rgb(184, 47, 47)'}}>{timer}</Typography>
         <Divider />
         <List component="nav" style={{ width: "100%" }}>
           {props.activeOrder && props.activeOrder.map(basket => {

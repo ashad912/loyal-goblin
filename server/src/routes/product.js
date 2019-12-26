@@ -2,6 +2,7 @@ import express from "express";
 import { Product } from "../models/product";
 import { auth } from "../middleware/auth";
 import isEqual from "lodash/isEqual";
+import moment from 'moment'
 import {
   asyncForEach,
   updatePerks,
@@ -233,9 +234,12 @@ router.patch("/leave", auth, async (req, res) => {
       await user.populate({path: "party"}).execPopulate()
       user.party.inShop = false
       await user.party.save()
+      res.send(user.party._id)
+    }else{
+      res.sendStatus(200)
     }
-    res.send(user.party._id)
   }catch(e){
+    console.log(e)
     res.status(400).send(e.message);
   }
   
@@ -320,7 +324,9 @@ router.patch("/activate", auth, async (req, res) => {
       throw new Error("User is not the leader!");
     }
     //const party = await verifyParty(leader, membersIds, order);
-
+    const momentDate = moment.utc(new Date()).add('5', 'minutes').toDate()
+    
+    order[0].createdAt = momentDate
     user.activeOrder = order;
 
     await user

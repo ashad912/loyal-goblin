@@ -823,7 +823,7 @@ const Profile = props => {
                 )}
               </ListItemAvatar>
             </Badge>
-            <ListItemText primary={props.party.leader.name} />
+            <ListItemText primary={props.party.leader.name} style={{maxWidth: '40vw', whiteSpace:'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',}}/>
           </ListItem>
 
           {props.party.members.length > 0 &&
@@ -842,7 +842,7 @@ const Profile = props => {
                       </Avatar>
                     )}
                   </ListItemAvatar>
-                  <ListItemText primary={partyMember.name} />
+                  <ListItemText primary={partyMember.name} style={{maxWidth: '40vw', whiteSpace:'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}/>
                 </ListItem>
               );
             })}

@@ -9,6 +9,7 @@
     "@material-ui/icons": "^4.4.1",
     "@material-ui/lab": "^4.0.0-alpha.25",
     "@material-ui/pickers": "^3.2.7",
+    "@sandstreamdev/react-swipeable-list": "github:sandstreamdev/react-swipeable-list",
     "aphrodite": "^2.4.0",
     "axios": "^0.19.0",
     "js-cookie": "^2.2.1",

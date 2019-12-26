@@ -107,6 +107,38 @@ export const removeMember =  (partyId, memberId) => {
                 
         }catch (e) {
             console.log(e)
+            
+            dispatch( {type: "NO_CONNECTION", error: e})     
+        }
+    }
+}
+
+
+export const giveLeader =  (partyId, memberId) => {
+    return async dispatch => {
+        try {
+                const res = await axios.patch('/party/leader', {partyId, memberId})
+                console.log(res.data, res.data.length) //res.data returns string -> if null string length:0
+                
+                if(res.data){ //check also string length
+                    
+                    
+                    dispatch({type: "GIVE_LEADER", party: res.data}) //updating leader redux - he has just dropped the member
+                    //leaveRoomEmit(memberId, partyId)  //from party point of view - some user left the party with success - take his id and trigger leave event
+                }
+                // else{
+                    
+                //     //leaveRoomEmit(memberId, partyId)
+                //     // if(socket.connected){
+                //     //     socket.disconnect()
+                //     // }
+                //     dispatch({type: "DELETE_PARTY"}) //clearing member redux - he has just left (only for member!)
+                // }
+
+                
+        }catch (e) {
+            console.log(e)
+            
             dispatch( {type: "NO_CONNECTION", error: e})     
         }
     }
