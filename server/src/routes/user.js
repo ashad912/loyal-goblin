@@ -228,7 +228,6 @@ router.post("/forgotPassword", async (req, res) => {
     if(user.passwordChangeToken){
       
       if(!user.checkPasswordChangeTokenExpired(user.passwordChangeToken)){
-        console.log('here')
         throw new Error("jwt not expired")
       }
     }
