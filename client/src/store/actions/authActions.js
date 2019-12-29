@@ -85,15 +85,55 @@ export const authCheck =  () => {
     }
 }
 
-            
 
-export const changePassword = (password, repeatedPassword) => {
+
+export const forgotPassword = (email) => {
     return async dispatch => {
         try {
-            if(password === repeatedPassword){
-                const res = await axios.patch('/user/me', {password})
+            if(email){
+                const res = await axios.post('/user/forgotPassword', {email})
+
+            }
+
+        } catch (e) {
+            console.log(e)
+            
+            if(e.response.data === 'jwt not expired'){
+                return e.response.data
+            }else{
+                dispatch( {type: "NO_CONNECTION", error: e})     
+            }
+        }
+    }
+}
+            
+
+export const changePassword = (oldPassword, password, confirmPassword) => {
+    return async dispatch => {
+        try {
+            if(password === confirmPassword){
+                const res = await axios.patch('/user/changePassword', {oldPassword, password, confirmPassword})
                 if(res){
                     signOut()
+                }
+            }
+
+        } catch (e) {
+            console.log(e)
+            dispatch( {type: "NO_CONNECTION", error: e})     
+        }
+    }
+}
+
+
+
+export const resetPassword = (token, password, confirmPassword) => {
+    return async dispatch => {
+        try {
+            if(password === confirmPassword){
+                const res = await axios.patch('/user/reset', {token, password, confirmPassword})
+                if(res){
+                    //signOut()
                 }
             }
 

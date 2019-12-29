@@ -48,6 +48,9 @@ export const UserSchema = new mongoose.Schema({
             required: true
         }
     }],
+    passwordChangeToken: {
+        type: String
+    },
     active: {
         type: Boolean,
         default: false
@@ -311,6 +314,16 @@ UserSchema.methods.generateAuthToken = async function () { //on instances
     return token
 }
 
+UserSchema.methods.generatePasswordResetToken = async function () { //on instances
+    const user = this
+    const token = jwt.sign({_id: user._id.toString()}, process.env.JWT_SECRET, { expiresIn: '1h' })
+
+    user.passwordChangeToken = token
+    await user.save()
+
+    return token
+}
+
 UserSchema.methods.updatePassword = async function(oldPassword, newPassword) {
     const user = this;
   
@@ -342,6 +355,17 @@ UserSchema.methods.toJSON = function () { //like a middleware from express, we c
     return userObject
 }
 
+UserSchema.methods.checkPasswordChangeTokenExpired = (token) => {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if(err && err.message === 'jwt expired'){
+            return true
+        }else{
+            return false
+        }
+    })
+   
+}
+
 
 UserSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne( {email: email})
@@ -360,6 +384,17 @@ UserSchema.statics.findByCredentials = async (email, password) => {
 
     return user
 }
+
+UserSchema.statics.findByPasswordChangeToken = async (token) => {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const user = await User.findOne( {passwordChangeToken: token})
+    if(!user) {
+        throw new Error('Nie znaleziono użytkownika')
+    }
+    return user
+}
+
+
 
 UserSchema.pre('save', async function(next){//middleware, working with static User.create!!
 

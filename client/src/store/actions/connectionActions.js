@@ -13,3 +13,7 @@ export const resetConnectionError = () => {
 export const setLoading = (isLoading) => {
     return {type: "LOADING", loading: isLoading}
 }
+
+export const setConnectionError = (error) => {
+    return {type: "NO_CONNECTION", error}
+}

@@ -13,9 +13,14 @@ import { changePassword, signOut } from "../../store/actions/authActions";
 const ChangePasswordModal = (props) => {
     const open = props.open
     const handleClose = props.handleClose
+    const [oldPassword, setOldPassword] = useState("");
   const [password, setPassword] = useState("");
   const [repeatedPassword, setRepeatedPassword] = useState("");
   const [showError, setShowError] = useState(false);
+
+  const handleOldPasswordChange = e => {
+    setOldPassword(e.target.value);
+  };
 
   const handlePasswordChange = e => {
     setPassword(e.target.value);
@@ -33,11 +38,14 @@ const ChangePasswordModal = (props) => {
       }
     }
   };
-  const handleSubmit = e => {
-    if (password === repeatedPassword) {
+  const handleSubmit = async e => {
+    if (password === repeatedPassword && oldPassword && password.length >= 7 && repeatedPassword.length >= 7) {
       setShowError(false);
-      props.onChangePassword(password, repeatedPassword);
+     await props.onChangePassword(oldPassword, password, repeatedPassword);
       handleClose()
+      setOldPassword('')
+      setPassword('')
+      setRepeatedPassword('')
       props.signOut()
     } else {
       setShowError(true);
@@ -53,7 +61,7 @@ const ChangePasswordModal = (props) => {
       <DialogTitle id="form-dialog-title">Zmiana hasła</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Wpisz nowe hasło, majace minimum 7 znaków i różniące się od
+          Wpisz aktualne hasło oraz nowe hasło, majace minimum 7 znaków i różniące się od
           aktualnego. Po zatwierdzeniu nastąpi wylogowanie.
         </DialogContentText>
         {showError && (
@@ -62,11 +70,19 @@ const ChangePasswordModal = (props) => {
           </Typography>
         )}
         <TextField
-          value={password}
-          onChange={handlePasswordChange}
+          value={oldPassword}
+          onChange={handleOldPasswordChange}
           autoFocus
           margin="dense"
-          label="Hasło"
+          label="Aktualne hasło"
+          type="password"
+          fullWidth
+        />
+        <TextField
+          value={password}
+          onChange={handlePasswordChange}
+          margin="dense"
+          label="Nowe hasło"
           type="password"
           fullWidth
         />
@@ -74,7 +90,7 @@ const ChangePasswordModal = (props) => {
           value={repeatedPassword}
           onChange={handleRepeatedPasswordChange}
           margin="dense"
-          label="Powtórz hasło"
+          label="Powtórz nowe hasło"
           type="password"
           fullWidth
         />
@@ -99,8 +115,8 @@ const ChangePasswordModal = (props) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onChangePassword: (password, repeatedPassword) =>
-      dispatch(changePassword(password, repeatedPassword)),
+    onChangePassword: (oldPassword, password, repeatedPassword) =>
+      dispatch(changePassword(oldPassword, password, repeatedPassword)),
     signOut: () => dispatch(signOut())
   };
 };

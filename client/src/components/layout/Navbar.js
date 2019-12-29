@@ -123,6 +123,7 @@ const Navbar = (props) => {
 
     const togglePasswordChangeModal = () => {
         setShowPasswordChangeModal(prev => !prev)
+        setAnchorEl(null)
     }
 
     const avatar = true

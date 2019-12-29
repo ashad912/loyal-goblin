@@ -23,6 +23,7 @@ import ConnectionSpinnerDialog from "./components/layout/ConnectionSpinnerDialog
 import ConnectionSnackbar from "./components/layout/ConnectionSnackbar";
 
 import {socket, joinRoomSubscribe, leaveRoomSubscribe, partyRefreshSubscribe, deleteRoomSubscribe} from './socket'
+import ResetPassword from "./components/auth/ResetPassword";
 
 class App extends React.Component {
   state = {
@@ -137,6 +138,11 @@ class App extends React.Component {
                   exact
                   path="/lost-password"
                   component={withNoAuth(ForgotPassword)}
+                />
+                <Route
+                  exact
+                  path="/reset/:token"
+                  component={withNoAuth(ResetPassword)}
                 />
                 <Route exact path="/admin" component={Admin} />
               </Switch>

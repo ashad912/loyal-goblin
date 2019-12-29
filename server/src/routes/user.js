@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import multer from "multer";
 import sharp from "sharp";
 import fs from 'fs'
+import validator from 'validator'
 
 import { User } from "../models/user";
 import { Item } from "../models/item";
@@ -16,6 +17,7 @@ import {
 } from "../utils/methods";
 import moment from "moment";
 import { resolve } from "url";
+import createEmail from '../emails/createEmail'
 
 const router = express.Router();
 
@@ -56,6 +58,10 @@ router.post("/login", async (req, res) => {
     const token = await user.generateAuthToken(); //on instancegenerateAuthToken
     user = await userPopulateBag(user);
     user.userPerks = await updatePerks(user, true);
+    if(user.passwordChangeToken){
+      user.passwordChangeToken = null
+      await user.save()
+    }
     res
       .cookie("token", token, { maxAge: 2592000000, httpOnly: true })
       .send(user); //cookie lifetime: 30 days (maxAge in msc)
@@ -107,6 +113,10 @@ router.get("/me", auth, async (req, res, next) => {
 
     user.userPerks = await updatePerks(user, false);
 
+    if(user.passwordChangeToken){
+      user.passwordChangeToken = null
+      await user.save()
+    }
     if(user.party){
       await user.populate({
         path: "party"
@@ -169,35 +179,117 @@ router.get("/me", auth, async (req, res, next) => {
 router.patch("/changePassword", auth, async (req, res, next) => {
   let user = req.user;
   const oldPassword = req.body.oldPassword;
-  const newPassword = req.body.newPassword;
-  if (oldPassword === newPassword) {
-    res.sendStatus(400);
-  } else {
-    try {
+  const newPassword = req.body.password;
+  const repeatedNewPassword = req.body.confirmPassword
+  console.log(oldPassword, newPassword, repeatedNewPassword)
+  try {
+    if (oldPassword === newPassword) {
+      throw new Error("Nowe i stare hasła nie mogą być takie same");
+    } 
+    if(newPassword !== repeatedNewPassword){
+      throw new Error("Hasła nie zgadzają się")
+    }
       user = await req.user.updatePassword(oldPassword, newPassword);
       await user.save();
       res.send(user);
     } catch (e) {
       res.status(400).send(e);
     }
-  }
-});
+  });
 
-const upload = multer({
-  //dest: 'public/avatars',
-  limits: {
-    fileSize: 10485760
-  },
-  fileFilter(req, file, cb) {
-    //cb means callback
+// const upload = multer({
+//   //dest: 'public/avatars',
+//   limits: {
+//     fileSize: 10485760
+//   },
+//   fileFilter(req, file, cb) {
+//     //cb means callback
 
-    if (!file.originalname.match(/\.(jpg|jpeg|png|bmp)$/)) {
-      return cb(new Error("Please upload an image."));
+//     if (!file.originalname.match(/\.(jpg|jpeg|png|bmp)$/)) {
+//       return cb(new Error("Please upload an image."));
+//     }
+
+//     cb(undefined, true);
+//   }
+// });
+
+router.post("/forgotPassword", async (req, res) => {
+  try {
+    
+    const email = req.body.email
+    if(!validator.isEmail(email)){
+      throw new Error("Nieprawidłowy adres email")
+    }
+    const user = await User.findOne({email})
+    if(!user){
+      throw new Error("Podany adres email nie widnieje w bazie")
     }
 
-    cb(undefined, true);
+    if(user.passwordChangeToken){
+      
+      if(!user.checkPasswordChangeTokenExpired(user.passwordChangeToken)){
+        console.log('here')
+        throw new Error("jwt not expired")
+      }
+    }
+
+    const token = await user.generatePasswordResetToken()
+    createEmail(res, user.email, "Reset hasła", 'passwordReset',
+    { locale: 'pl', token: `http://${req.headers.host}/reset/${token}`, userName: user.name })
+
+  } catch (error) {
+    console.log(error)
+    res.status(400).send(error.message)
   }
-});
+})
+
+router.post("/validatePasswordChangeToken", async(req, res) => {
+  const token = req.body.token
+  try {
+    if (!token) {
+        throw new Error("Brak tokena resetu hasła")
+    }
+  
+    const user = await User.findByPasswordChangeToken(token)
+    if(!user){
+      throw new Error("Błąd danych użytkownika")
+    }
+
+    res.sendStatus(200)
+    
+  } catch (e) {
+    console.log(e)
+
+    res.status(401).send(e.message)
+  }
+  
+})
+
+
+router.patch('/reset', async (req, res) => {
+  try {
+    const token = req.body.token
+    if (!token) {
+        throw new Error("Brak tokena resetu hasła")
+    }
+    if(req.body.password !== req.body.confirmPassword){
+      throw new Error("Hasła się nie zgadzają")
+    }
+      const user = await User.findByPasswordChangeToken(token)
+      if (!user) {
+        throw new Error('Nie znaleziono użytkownika')
+      }
+      user.passwordChangeToken = null
+      user.password = req.body.password
+
+          user.save()
+          res.sendStatus(200)
+      } 
+   catch (error) {
+      console.log(error)
+      res.status(400).send(error)
+  }
+})
 
 // router.post("/me/avatar", auth, upload.single("avatar"), async (req, res) => {
 //     //to have access to file here, we have to delete 'dest' prop from multer
