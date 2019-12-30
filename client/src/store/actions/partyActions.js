@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {socket, joinRoomEmit, leaveRoomEmit, partyRefreshEmit, deleteRoomEmit} from '../../socket'
+import {socket, joinRoomEmit, leaveRoomEmit, partyRefreshEmit, deleteRoomEmit, instanceRefreshEmit} from '../../socket'
 
 
 export const updateParty = () => {
@@ -76,6 +76,7 @@ export const addMember =  (partyId, memberId) => {
             const res = await axios.patch('/party/addMember', {partyId, memberId})
             dispatch({type: "ADD_MEMBER", party: res.data})
             partyRefreshEmit(res.data._id)
+            instanceRefreshEmit(res.data._id)
                 
         }catch (e) {
             console.log(e)
@@ -95,6 +96,7 @@ export const removeMember =  (partyId, memberId) => {
                     
                     dispatch({type: "REMOVE_MEMBER", party: res.data}) //updating leader redux - he has just dropped the member
                     leaveRoomEmit(memberId, partyId)  //from party point of view - some user left the party with success - take his id and trigger leave event
+                    instanceRefreshEmit(partyId)
                 }else{
                     
                     leaveRoomEmit(memberId, partyId)
@@ -120,21 +122,15 @@ export const giveLeader =  (partyId, memberId) => {
                 const res = await axios.patch('/party/leader', {partyId, memberId})
                 console.log(res.data, res.data.length) //res.data returns string -> if null string length:0
                 
-                if(res.data){ //check also string length
+                if(res.data){ 
                     
                     
                     dispatch({type: "GIVE_LEADER", party: res.data}) //updating leader redux - he has just dropped the member
-                    //leaveRoomEmit(memberId, partyId)  //from party point of view - some user left the party with success - take his id and trigger leave event
-                }
-                // else{
+                    partyRefreshEmit(res.data._id)
+                    instanceRefreshEmit(res.data._id)
                     
-                //     //leaveRoomEmit(memberId, partyId)
-                //     // if(socket.connected){
-                //     //     socket.disconnect()
-                //     // }
-                //     dispatch({type: "DELETE_PARTY"}) //clearing member redux - he has just left (only for member!)
-                // }
-
+                }
+               
                 
         }catch (e) {
             console.log(e)

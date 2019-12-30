@@ -387,7 +387,7 @@ UserSchema.statics.findByCredentials = async (email, password) => {
 
 UserSchema.statics.findByPasswordChangeToken = async (token) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    const user = await User.findOne( {passwordChangeToken: token})
+    const user = await User.findOne( {_id: decoded._id, passwordChangeToken: token})
     if(!user) {
         throw new Error('Nie znaleziono użytkownika')
     }
@@ -415,17 +415,7 @@ UserSchema.pre('save', async function(next){//middleware, working with static Us
 UserSchema.pre('remove', async function(next){
     const user = this
     await Item.deleteMany({owner: user._id})
-    //what else - party logic? ->
-    // await User.updateMany(
-    //     {$or: [
-    //         {'party.leader': user._id}, 
-    //         {'party.members': { $elemMatch: {$eq: user._id}}}
-    //     ]},
-    //     {$set: {
-    //         party: {members: []},
-    //         activeOrder : {}
-    //     }}
-    // )
+   
 
     const party = await Party.findById(user.party)
 

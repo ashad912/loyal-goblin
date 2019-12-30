@@ -773,7 +773,7 @@ const Profile = props => {
         }
         handleItemToggle={handleItemToggle}
         handleItemDelete={handleItemDelete}
-        leaderInShop={(props.party && props.party.leader && (props.party.leader._id !== props.auth.uid || props.party.leader !== props.auth.uid) && props.party.inShop ) || !props.party.leader && !props.party.members.length}
+        leaderInShop={props.party && props.party._id && props.party.inShop/*(props.party && props.party.leader && (props.party.leader._id !== props.auth.uid || props.party.leader !== props.auth.uid) && props.party.inShop ) || !props.party.leader && !props.party.members.length*/}
       />
       <Typography variant="h5" className={classes.eqHeading}></Typography>
       {props.party && props.party.leader && props.party.leader._id && (

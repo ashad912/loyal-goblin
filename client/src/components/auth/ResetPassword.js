@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import {
-  signIn,
   resetPassword,
 } from "../../store/actions/authActions";
 import {
@@ -24,6 +23,8 @@ import ErrorIcon from "@material-ui/icons/Error";
 import { asyncForEach } from "../../utils/methods";
 
 //import {labels} from '../strings/labels'
+
+import {validatePasswordChangeToken} from "../../store/actions/authActions";
 
 const FormContainer = styled(Container)`
   display: flex;
@@ -90,7 +91,7 @@ class ResetPassword extends Component {
 
     //validate link token for password change
     try {
-        await axios.post('/user/validatePasswordChangeToken', {token: this.props.match.params.token})
+        await validatePasswordChangeToken(this.props.match.params.token) 
     } catch (error) {
         if(error.response.data === 'jwt expired'){
             this.setState({tokenExpired: true})
@@ -270,9 +271,7 @@ class ResetPassword extends Component {
                   </ErrorPaper>
                 ) : null}
 
-                <Typography style={{ textAlign: "left" }}>
-                  Wpisz nowe hasło:
-                </Typography>
+                
                 <FormControl
                   fullWidth
                   style={{ marginTop: "1rem", marginBottom: "0.5rem" }}
@@ -349,8 +348,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
       onConnectionErrorSet: (error) => dispatch(setConnectionError(error)),
-    onConfirm: (token, password, confirmPassword) =>
-      dispatch(resetPassword(token, password, confirmPassword))
+      onConfirm: (token, password, confirmPassword) =>
+        dispatch(resetPassword(token, password, confirmPassword))
   };
 };
 

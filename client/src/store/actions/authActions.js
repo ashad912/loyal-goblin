@@ -1,5 +1,16 @@
 import axios from 'axios'
 
+export const validatePasswordChangeToken = (token) => {
+    return new Promise (async (resolve, reject) => {
+        try{
+            await axios.post('/user/validatePasswordChangeToken', {token: token})
+            resolve()
+        }catch(e){
+            reject(e)
+        }
+    })
+}
+
 export const signIn = (credentials) => {
     return (dispatch, getState) => {
         return new Promise( async (resolve, reject) => {
@@ -145,11 +156,15 @@ export const resetPassword = (token, password, confirmPassword) => {
 }
 
 
+
+
 export const setMultipleSession = () => {
     return dispatch => {
         dispatch( {type: "MULTIPLE_SESSION"})   
     }
 }
     
+
+
 
 

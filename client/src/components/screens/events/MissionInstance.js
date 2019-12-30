@@ -178,6 +178,7 @@ class MissionInstance extends React.Component {
 
         if(!this.props.location.state || (this.props.location.state.id === undefined)){
             this.handleBack()
+            return
         }
 
         const socketConnectedStatus = socket.connected
