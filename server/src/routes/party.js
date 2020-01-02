@@ -17,27 +17,26 @@ import moment from "moment";
 import { Rally } from "../models/rally";
 import { Party } from "../models/party";
 import _ from "lodash";
-var ObjectId = require('mongoose').Types.ObjectId
+var ObjectId = require("mongoose").Types.ObjectId;
 
 const router = new express.Router();
-
-
-
-
 
 router.get("/", auth, async (req, res, next) => {
   const user = req.user;
 
   try {
-    if(!user.party){
-      res.status(204).send(null)
-      return
+    if (!user.party) {
+      res.status(204).send(null);
+      return;
     }
-    
+
     await user
       .populate({
         path: "party",
-        populate: { path: "leader members", select: "_id name avatar attributes experience userPerks" }
+        populate: {
+          path: "leader members",
+          select: "_id name avatar attributes experience userPerks"
+        }
       })
       .execPopulate();
 
@@ -46,7 +45,6 @@ router.get("/", auth, async (req, res, next) => {
     console.log(e);
     res.status(400).send();
   }
-  
 });
 
 //Called when party leader names party and can qr-scan new members
@@ -54,31 +52,28 @@ router.post("/create", auth, async (req, res) => {
   //Leader is User model
   const leader = req.user;
   try {
-
     //Forbid party creation if user is in another party
     const oldParty = await Party.findOne({
       $or: [
-        {leader: leader._id},
-        {members: {$elemMatch: {$eq: leader._id}}}
+        { leader: leader._id },
+        { members: { $elemMatch: { $eq: leader._id } } }
       ]
-    })
+    });
 
-    if(oldParty){
-      throw new Error('User is in another party!')
+    if (oldParty) {
+      throw new Error("User is in another party!");
     }
-    
+
     if (leader.party) {
-      
-        const oldParty = await Party.findById(leader.party);
-        if(oldParty){
-          throw new Error('User is in another party!')
-        }    
+      const oldParty = await Party.findById(leader.party);
+      if (oldParty) {
+        throw new Error("User is in another party!");
+      }
     }
 
     //Create new party with name from request and leader from auth
     const party = new Party({ name: req.body.name, leader: leader._id });
 
-  
     await party.save();
     leader.party = party._id;
     await leader.save();
@@ -95,27 +90,25 @@ router.patch("/addMember", auth, async (req, res) => {
   try {
     const party = await Party.findById(req.body.partyId);
 
-    if (party.members.length  >= 7){
+    if (party.members.length >= 7) {
       throw new Error("Maksymalna wielkość drużyny została osiągnięta!");
     }
 
-    if(!ObjectId.isValid(req.body.memberId)){
-      throw new Error("Nieprawidłowy identyfikator użytkownika")
+    if (!ObjectId.isValid(req.body.memberId)) {
+      throw new Error("Nieprawidłowy identyfikator użytkownika");
     }
 
     const user = await User.findById(req.body.memberId);
     if (user.party) {
-      let errMssg = ""
+      let errMssg = "";
       if (user.party === req.body.partyId) {
-        errMssg = "Użytkownik jest już w tej drużynie!"
+        errMssg = "Użytkownik jest już w tej drużynie!";
       } else {
-        errMssg = "Użytkownik jest już w innej drużynie!"
+        errMssg = "Użytkownik jest już w innej drużynie!";
       }
 
-      throw new Error(errMssg)
-      
+      throw new Error(errMssg);
     }
-
 
     await User.updateOne(
       { _id: req.body.memberId },
@@ -130,9 +123,9 @@ router.patch("/addMember", auth, async (req, res) => {
     if (missionInstance) {
       missionInstance.remove();
     }
-    
-    await Party.updateOne({_id: req.body.partyId}, {$addToSet: {members: req.body.memberId}})
-    
+
+    party.members.push(req.body.memberId);
+    console.log(party.members);
     await party.save();
     await party
       .populate({
@@ -140,9 +133,9 @@ router.patch("/addMember", auth, async (req, res) => {
         select: "_id name avatar bag attributes experience userPerks"
       })
       .execPopulate();
-      
+    console.log(party);
+
     res.status(200).send(party);
-    
   } catch (e) {
     console.log(e);
     res.sendStatus(400);
@@ -153,35 +146,35 @@ router.patch("/leader", auth, async (req, res) => {
   try {
     const party = await Party.findById(req.body.partyId);
 
-    
-    if(!ObjectId.isValid(req.body.memberId)){
-      throw new Error("Nieprawidłowy identyfikator użytkownika")
+    if (!ObjectId.isValid(req.body.memberId)) {
+      throw new Error("Nieprawidłowy identyfikator użytkownika");
     }
 
     const user = await User.findById(req.body.memberId);
 
     if (!user.party) {
-      throw new Error('Użytkownik nie należy do żadnej drużyny')
+      throw new Error("Użytkownik nie należy do żadnej drużyny");
     }
 
-    if(req.user.party.toString() !== user.party.toString()){
-      throw new Error('Aktualny lider i użytkownik nie należą do tej samej drużyny')
+    if (req.user.party.toString() !== user.party.toString()) {
+      throw new Error(
+        "Aktualny lider i użytkownik nie należą do tej samej drużyny"
+      );
     }
 
     if (user.party.toString() !== req.body.partyId) {
+      throw new Error(
+        "Użytkownik nie należy do drużyny, z której otrzymuje stanowisko lidera"
+      );
+    }
 
-        throw new Error("Użytkownik nie należy do drużyny, z której otrzymuje stanowisko lidera")
-    } 
-
-
-    await Party.updateOne({_id: req.body.partyId},
+    await Party.updateOne(
+      { _id: req.body.partyId },
       { $set: { "members.$[elem]": party.leader } },
-      { arrayFilters: [ { "elem": { $eq: req.body.memberId } } ], "multi": false })
+      { arrayFilters: [{ elem: { $eq: req.body.memberId } }], multi: false }
+    );
 
- 
-    party.leader = req.body.memberId
-
-
+    party.leader = req.body.memberId;
 
     // await User.updateOne(
     //   { _id: req.body.memberId },
@@ -196,8 +189,7 @@ router.patch("/leader", auth, async (req, res) => {
     if (missionInstance) {
       missionInstance.remove();
     }
-    
-    
+
     await party.save();
     await party
       .populate({
@@ -205,15 +197,13 @@ router.patch("/leader", auth, async (req, res) => {
         select: "_id name avatar bag attributes experience userPerks"
       })
       .execPopulate();
-      
+
     res.status(200).send(party);
-    
   } catch (e) {
     console.log(e);
     res.sendStatus(400);
   }
 });
-
 
 //Called when party member leaves party
 //TODO: Send info to party members and leader
@@ -221,11 +211,9 @@ router.patch("/leave", auth, async (req, res) => {
   try {
     let party = await Party.findById(req.body.partyId);
 
-    if(req.body.memberId === party.leader.toString()){
-      throw new Error('Leader cannot leave the party!')
+    if (req.body.memberId === party.leader.toString()) {
+      throw new Error("Leader cannot leave the party!");
     }
-    
-    
 
     party.members.pull({ _id: req.body.memberId });
     await party.save();
@@ -247,14 +235,12 @@ router.patch("/leave", auth, async (req, res) => {
         select: "_id name avatar"
       })
       .execPopulate();
-    
-    if(req.body.memberId !== req.user._id.toString()){
-      res.status(200).send(party)  //send by leader to drop a member
-      
-    }else{
-      res.send(null) //send by member to leave - clean redux
+
+    if (req.body.memberId !== req.user._id.toString()) {
+      res.status(200).send(party); //send by leader to drop a member
+    } else {
+      res.send(null); //send by member to leave - clean redux
     }
-    
   } catch (e) {
     console.log(e);
     res.sendStatus(400);
@@ -301,6 +287,15 @@ router.delete("/remove", auth, async (req, res) => {
 
     if (user._id.toString() !== party.leader.toString()) {
       throw new Error("You are not the leader!");
+    }
+
+    //Remove party's existing mission instance if present on user add
+    const missionInstance = await MissionInstance.findOne({
+      party: { $elemMatch: { profile: user._id } }
+    });
+
+    if (missionInstance) {
+      missionInstance.remove();
     }
 
     await party.remove(); //look at middleware

@@ -60,6 +60,10 @@ const Equipment = props => {
     handleDeleteDialogClose();
   };
 
+  React.useEffect(() => {
+    setOpenList("")
+  }, [props.leaderInShop])
+
   const convertToStack = (itemsToConvert) => {
       let itemModels = []
       itemsToConvert.forEach((itemToConvert) => {

@@ -21,6 +21,8 @@ import createEmail from '../emails/createEmail'
 
 const router = express.Router();
 
+import {testMiddleware} from '../middleware/imageSave'
+
 const uploadPath = "../client/public/images/user_uploads/"
 
 router.post("/create", async (req, res) => {
@@ -355,7 +357,19 @@ router.post("/me/avatar", auth, async (req, res) => {
 });
 
 router.delete("/me/avatar", auth, async (req, res) => {
-    if(req.user.avatar){
+  try {
+    if(!req.user.avatar){
+      throw new Error("Użytkownik nie posiada avatara")
+    }
+
+    fs.access(uploadPath+req.user.avatar, fs.F_OK, async (err) => {
+      if (err) {
+        //erase user avatar if bad file
+        req.user.avatar = null;
+        await req.user.save();
+        throw new Error("Podany plik nie istnieje")
+      }
+
       fs.unlink(uploadPath+req.user.avatar, async function (err) {
         if (err) throw err;
         console.log('File deleted!');
@@ -364,13 +378,13 @@ router.delete("/me/avatar", auth, async (req, res) => {
         const user = await userPopulateBag(req.user);
         res.send(user);
       });
-    }
+    
 
-  },
-  (err, req, res, next) => {
+    })}
+   catch (error) {
     res.status(400).send({ error: err.message }); //before app.use middleware with 422
   }
-);
+});
 
 router.patch("/addUserItem", auth, async (req, res) => {
   try {

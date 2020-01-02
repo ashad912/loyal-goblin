@@ -74,6 +74,7 @@ export const addMember =  (partyId, memberId) => {
     return async dispatch => {
         try {
             const res = await axios.patch('/party/addMember', {partyId, memberId})
+            console.log(res.data)
             dispatch({type: "ADD_MEMBER", party: res.data})
             partyRefreshEmit(res.data._id)
             instanceRefreshEmit(res.data._id)

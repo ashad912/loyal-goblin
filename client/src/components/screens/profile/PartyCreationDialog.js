@@ -1,5 +1,5 @@
 import React from "react";
-import styled from 'styled-components'
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
@@ -12,56 +12,83 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import { createParty, deleteParty, addMember, removeMember, giveLeader } from "../../../store/actions/partyActions";
+import Menu from "@material-ui/core/Menu";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import MenuItem from "@material-ui/core/MenuItem";
+import {
+  createParty,
+  deleteParty,
+  addMember,
+  removeMember,
+  giveLeader
+} from "../../../store/actions/partyActions";
 import QRreaderView from "./QRreaderView";
-import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
-import TransferWithinAStationIcon from '@material-ui/icons/TransferWithinAStation';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+import {
+  SwipeableList,
+  SwipeableListItem
+} from "@sandstreamdev/react-swipeable-list";
+import TransferWithinAStationIcon from "@material-ui/icons/TransferWithinAStation";
+import HighlightOffIcon from "@material-ui/icons/HighlightOff";
+import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 
-const StyledSwipeableListItem = styled.div`
-    background: rgba(0, 0, 0, 0.137);
-    height: 32px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    padding: 4px 8px;
-    user-select: none;
-    cursor: pointer;
-    margin-bottom: 0.2rem;
-`
-const TransferLeaderButton = styled.div`
-    height: 32px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-        padding: 4px 8px;
-background: rgb(55, 112, 194);
-color: white;
-`
+import PartyMissionInstanceWarningDialog from "./PartyMissionInstanceWarningDialog"
 
-const RemoveMemberButton = styled.div`
-    height: 32px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-        padding: 4px 8px;
-background: rgb(173, 49, 49);
-color: white;
-`
+
+
+const StyledMenu = withStyles({
+  paper: {
+    border: "1px solid #d3d4d5"
+  }
+})(props => (
+  <Menu
+    elevation={1}
+    getContentAnchorEl={null}
+    anchorOrigin={{
+      vertical: "bottom",
+      horizontal: "center"
+    }}
+    transformOrigin={{
+      vertical: "top",
+      horizontal: "center"
+    }}
+    {...props}
+  />
+));
+
+const StyledMenuItem = withStyles(theme => ({
+  root: {
+    "&:focus": {
+      backgroundColor: theme.palette.primary.main,
+      "& .MuiListItemIcon-root, & .MuiListItemText-primary": {
+        color: theme.palette.common.white
+      }
+    }
+  }
+}))(MenuItem);
+
+const useStyles = makeStyles(theme => ({
+  listItem: {
+    borderTop: "1px solid grey",
+    borderBottom: "1px solid grey",
+    marginBottom: "0.2rem"
+  },
+  optionsIcon: {
+    margin: "0 auto"
+  }
+}));
 
 const PartyCreationDialog = props => {
+  const classes = useStyles();
   const [partyName, setPartyName] = React.useState(props.partyName);
   const [party, setParty] = React.useState([]);
   const [isManagingParty, setIsManagingParty] = React.useState(
     props.isManagingParty
   );
-  const [showScanner, setShowScanner] = React.useState(false)
+  const [showScanner, setShowScanner] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [activePartyMember, setActivePartyMember] = React.useState("");
+  const [warningOpen, setWarningOpen] = React.useState(false)
+  const [warningAction, setWarningAction] = React.useState(()=> null)
   React.useEffect(() => {
     setIsManagingParty(props.isManagingParty);
   }, [props.isManagingParty]);
@@ -76,48 +103,44 @@ const PartyCreationDialog = props => {
   };
 
   const handleQRscanStart = () => {
-
-    setShowScanner(prev =>!prev )
-   
+    setShowScanner(prev => !prev);
+    console.log(props.activeMission)
   };
 
+  const handleMoreClick = (event, memberId) => {
+    event.stopPropagation();
+    if(memberId){
+      setActivePartyMember(memberId)
+    }
+    setAnchorEl(event.currentTarget);
+  };
+  
+  const handleMoreClose = event => {
+    event.stopPropagation();
+    setActivePartyMember("")
+    setAnchorEl(null);
+  };
+  
   const handleAddMember = id => {
-    setShowScanner(false)
-    props.onAddMember(props.party._id, id)
-  }
-
-  // const handlePartySave = () => {
-  //   //replace with backend call
-  //   if (party.length > 0) {
-  //     const finalParty = {
-  //       name: partyName,
-  //       leader: {
-  //         _id: props.auth.uid,
-  //         name: props.auth.profile.name,
-  //         avatar: props.auth.profile.avatar || "moose.png"
-  //       },
-  //       members: [...party]
-  //     };
-  //     localStorage.setItem("party", JSON.stringify(finalParty));
-  //     props.handleCreateParty();
-  //     props.handleClose();
-  //   }
-  // };
-
-  const handleRemoveFromParty = id => {
-    props.onRemoveMember(props.party._id, id)
+    setShowScanner(false);
+    props.onAddMember(props.party._id, id);
+  };
+  
+  const handleRemoveFromParty = () => {
+    props.onRemoveMember(props.party._id, activePartyMember);
+    setActivePartyMember("")
+    setAnchorEl(null);
   };
 
-  const handleGiveLeader = id => {
-    props.onGiveLeader(props.party._id, id)
+  const handleGiveLeader = () => {
+    props.onGiveLeader(props.party._id, activePartyMember);
+    setActivePartyMember("")
+    setAnchorEl(null);
     props.handleClose();
-  }
+
+  };
 
   const handlePartyDisband = () => {
-    // setParty([]);
-    // setPartyName("");
-    // localStorage.removeItem("party");
-    // props.handleCreateParty();
     props.onPartyDelete();
     props.handleClose();
   };
@@ -130,6 +153,11 @@ const PartyCreationDialog = props => {
     });
     setIsManagingParty(true);
   };
+
+  const handleWarningDialogAction = (action) => {
+    setWarningAction(action)
+    setWarningOpen(true)
+  }
 
   return (
     <Dialog
@@ -157,42 +185,20 @@ const PartyCreationDialog = props => {
             </Grid>
           )}
           <Grid item style={{ width: "100%" }}>
-          <SwipeableList threshold={0.75}>
+            <List>
               {props.party.members.map(partyMember => {
                 return (
-                  <SwipeableListItem key={partyMember._id}
-
-    swipeLeft={{
-      content: <RemoveMemberButton>Wyrzuć osobę z drużyny</RemoveMemberButton>,
-      action: () => handleRemoveFromParty(partyMember._id)
-    }}
-    swipeRight={{
-      content: <TransferLeaderButton>Przekaż stanowisko lidera drużyny</TransferLeaderButton>,
-      action: () => handleGiveLeader(partyMember._id)
-    }}
-  >
-    <StyledSwipeableListItem >
-      <div style={{flexBasis: '20%', textAlign:'center'}}>
-<ArrowBackIosIcon/>
-              <TransferWithinAStationIcon style={{color: 'rgb(55, 112, 194)'}}/>
-      </div>
-              <p style={{flexBasis: '60%', maxWidth: '40vw', whiteSpace:'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 'bolder', textAlign: 'center'}}>{partyMember.name}</p>
-              <div style={{flexBasis: '20%', textAlign:'center'}}>
-              <HighlightOffIcon style={{color: 'rgb(173, 49, 49)'}}/>
-                <ArrowForwardIosIcon/>
-
-              </div>
-
-                   
-
-    </StyledSwipeableListItem>
-
-
-    
-  </SwipeableListItem>
+                  <ListItem key={partyMember._id}>
+                    <ListItemText primary={partyMember.name} />
+                    <ListItemIcon onClick={e=>handleMoreClick(e, partyMember._id)}>
+                      <Button>
+                        <MoreHorizIcon  />
+                      </Button>
+                    </ListItemIcon>
+                  </ListItem>
                 );
               })}
-            </SwipeableList>
+            </List>
           </Grid>
           {!isManagingParty && (
             <Grid item>
@@ -207,39 +213,63 @@ const PartyCreationDialog = props => {
             </Grid>
           )}
           {party.length <= 8 && isManagingParty && (
-
-
             <Grid item>
               <Button
                 variant="contained"
                 color="primary"
-                onClick={handleQRscanStart}
+                onClick={props.activeMission ? ()=>handleWarningDialogAction(()=>handleQRscanStart) : handleQRscanStart}
               >
                 Dodaj osobę
               </Button>
             </Grid>
-
-
           )}
         </Grid>
+        <StyledMenu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMoreClose}
+        style={{zIndex: 3000}}
+      >
+        <StyledMenuItem onClick={props.activeMission ? ()=>handleWarningDialogAction(()=>handleRemoveFromParty) : handleRemoveFromParty} >
+          <ListItemIcon>
+            <HighlightOffIcon color="secondary"/>
+          </ListItemIcon>
+          <ListItemText primary="Wyrzuć z drużyny" />
+        </StyledMenuItem>
+        <StyledMenuItem onClick={props.activeMission ? ()=>handleWarningDialogAction(()=>handleGiveLeader) : handleGiveLeader} >
+          <ListItemIcon >
+            <TransferWithinAStationIcon color="primary"/>
+          </ListItemIcon>
+          <ListItemText primary="Przekaż stanowisko lidera" />
+        </StyledMenuItem>
+      </StyledMenu>
       </DialogContent>
+      
       <DialogActions>
         {props.isManagingParty && (
           <Button
             color="secondary"
             variant="contained"
-            onClick={handlePartyDisband}
+            onClick={props.activeMission ? ()=>handleWarningDialogAction(()=>handlePartyDisband ) : handlePartyDisband }
           >
             Rozwiąż drużynę
           </Button>
-        ) }
-        <Button variant="contained" onClick={props.handleClose} >
+        )}
+        <Button variant="contained" onClick={props.handleClose}>
           Zamknij
         </Button>
       </DialogActions>
-      {showScanner &&
-      <QRreaderView handleAddMember={handleAddMember} handleReturn={handleQRscanStart}/>
-      }
+      {showScanner && (
+        <QRreaderView
+          handleAddMember={handleAddMember}
+          handleReturn={handleQRscanStart}
+        />
+      )}
+      <PartyMissionInstanceWarningDialog
+      open={warningOpen}
+      handleClose={() => setWarningOpen(false)}
+      confirmAction={warningAction}
+      />
     </Dialog>
   );
 };
@@ -247,7 +277,8 @@ const PartyCreationDialog = props => {
 const mapStateToProps = state => {
   return {
     auth: state.auth,
-    party: state.party
+    party: state.party,
+    activeMission: state.mission.activeInstanceId
   };
 };
 
@@ -256,8 +287,9 @@ const mapDispatchToProps = dispatch => {
     onPartyCreate: (name, leader) => dispatch(createParty(name, leader)),
     onPartyDelete: () => dispatch(deleteParty()),
     onAddMember: (partyId, memberId) => dispatch(addMember(partyId, memberId)),
-    onRemoveMember: (partyId, memberId) => dispatch(removeMember(partyId, memberId)),
-    onGiveLeader: (partyId, memberId) => dispatch(giveLeader(partyId, memberId)),
+    onRemoveMember: (partyId, memberId) =>
+      dispatch(removeMember(partyId, memberId)),
+    onGiveLeader: (partyId, memberId) => dispatch(giveLeader(partyId, memberId))
   };
 };
 

@@ -1054,6 +1054,7 @@ class Shop extends React.Component {
               </StyledSection>
               <Divider />
             </ListContainer>
+            <div style={{marginTop: '3rem'}}></div>
             {this.state.baskets[this.state.activeUser] &&
               this.state.baskets[this.state.activeUser].length > 0 && (
                 <React.Fragment>
