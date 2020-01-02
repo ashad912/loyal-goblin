@@ -4,7 +4,7 @@ import { signUp } from "../../store/actions/authActions";
 import { Redirect, Link } from "react-router-dom";
 import Container from "@material-ui/core/Container";
 import { Typography } from "@material-ui/core";
-import { TextField } from "@material-ui/core";
+import Recaptcha from 'react-google-invisible-recaptcha';
 import { Button } from "@material-ui/core";
 import { Paper } from "@material-ui/core";
 import styled from "styled-components";
@@ -221,9 +221,16 @@ class SignUp extends Component {
       !this.state.error.password &&
       !this.state.error.confirmPassword
     ) {
-      console.log("sign up");
+      this.recaptcha.execute();
+    }else{
+      this.recaptcha.reset();
     }
-  };
+  }
+
+  onResolved = () => {
+    console.log("sign up");
+    this.props.signUp({email: this.state.email, password: this.state.password, token: this.recaptcha.getResponse()})
+  }
 
   render() {
     
@@ -237,7 +244,7 @@ class SignUp extends Component {
               variant="h5"
               style={{ textAlign: "left", marginBottom: "1rem" }}
             >
-              Stwórz konto
+              Utwórz konto
             </Typography>
             <StyledPaper elevation={0}>
               <FormControl
@@ -342,6 +349,11 @@ class SignUp extends Component {
                   </StyledLink>
                 </Typography>
               </ActionBar>
+              <Recaptcha
+                  ref={ ref => this.recaptcha = ref }
+                  sitekey="6Ldy0ssUAAAAAKSZNuXULGv4U1PBI35BbvbWhT9x"
+                  onResolved={ this.onResolved }
+              />
             </StyledPaper>
           </form>
         </FormContainer>
