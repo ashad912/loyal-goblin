@@ -6,13 +6,16 @@ import { auth } from '../middleware/auth';
 import { MissionInstance } from '../models/missionInstance';
 import { Item } from '../models/item'
 import { ItemModel } from '../models/itemModel'
-import { asyncForEach, designateUserPerks, isNeedToPerksUpdate, designateUserLevel } from '../utils/methods'
+import { asyncForEach, designateUserPerks, isNeedToPerksUpdate, designateUserLevel, saveImage, removeImage } from '../utils/methods'
 
 import isEqual from 'lodash/isEqual'
 import moment from 'moment'
 import {Rally} from '../models/rally'
 import { Party } from '../models/party';
 
+
+
+const uploadPath = "../client/public/images/missions/"
 
 const router = new express.Router
 
@@ -43,7 +46,9 @@ router.get('/events', auth, async (req,res) => {
 router.post('/create', auth, async (req, res) =>{
 
     const mission = new Mission(req.body)
-
+    let icon = req.files.icon
+    const imgSrc = await saveImage(icon, mission._id, uploadPath, null)
+    mission.imgSrc = imgSrc
     try {
         await mission.save() 
         res.status(201).send(mission)
@@ -62,6 +67,8 @@ router.delete('/remove', auth, async(req, res) => {
             res.status(404).send()
         }
         
+        await removeImage(uploadPath, mission.imgSrc)
+
         await mission.remove()
 
         res.send()
@@ -78,7 +85,7 @@ router.patch("/update", auth, async (req, res, next) => {
 
 
     updates = updates.filter((update) => {
-        return update !== '_id'
+        return update !== '_id' || update !== "imgSrc"
     })
 
     const forbiddenUpdates = [""];
@@ -101,6 +108,12 @@ router.patch("/update", auth, async (req, res, next) => {
       updates.forEach(update => {
         mission[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.
       });
+
+      if(req.files){
+        let icon = req.files.icon
+        const imgSrc = await saveImage(icon, mission._id, uploadPath, mission.imgSrc)
+        mission.imgSrc = imgSrc
+      }
   
       await mission.save();
 

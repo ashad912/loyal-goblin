@@ -51,8 +51,7 @@ const ItemModelSchema = new mongoose.Schema({
     required: true
   },
   imgSrc: {
-    type: String,
-    required: true
+    type: String
   },
   class: { type: String, required: true },
   twoHanded: {type: Boolean},
