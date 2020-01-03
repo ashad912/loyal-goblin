@@ -54,6 +54,7 @@ export const finishInstance = (partyId) => {
             const res = await axios.delete('/mission/finishInstance')
             console.log(res.data)
             finishMissionEmit(res.data, partyId)
+            //instanceRefreshEmit(partyId)
             resolve(res.data)
         }catch (e) {
             reject(e)     

@@ -8,7 +8,7 @@ export const socket =  io({
 //SUBSCRIBE
 
 // export const socketUnauthorizedSubscribe = (err) => {
-//     socket.on('unregisterUser', err, () => {
+//     socket.on('unauthorized', err, () => {
 //         return err
 //     })
 // }
@@ -51,7 +51,7 @@ export const deleteItemSubscribe = (id) => {
 }
 
 export const finishMissionSubscribe = (awards) => {
-    socket.on('finishMissithis.recaptcha.getResponse()on', awards, () => {
+    socket.on('finishMission', awards, () => {
         return awards
     })
 }

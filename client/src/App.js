@@ -95,7 +95,7 @@ class App extends React.Component {
 
   componentWillUnmount() {
     clearTimeout(this.firstUpdate);
-      clearInterval(this.nextUpdates);
+    clearInterval(this.nextUpdates);
   }
 
   componentDidUpdate(prevProps, prevState) {

@@ -223,9 +223,9 @@ async function disconnect(socket) {
     }
   
      
-    if(await validateInMissionInstanceStatus(userId, false)){
+    if(await validateInMissionInstanceStatus(userId, false, false)){
       console.log(`${roomId} for user ${userId} with status inMission: false`)
-      socket.broadcast.to(roomId).emit("modifyUserStatus", {_id: userId, inMission: false});
+      socket.broadcast.to(roomId).emit("modifyUserStatus", {_id: userId, inMission: false, readyStatus: false});
       console.log(`User ${userId} left the room ${roomId}`)
       socket.broadcast.to(roomId).emit("leaveRoom", userId);
       socket.broadcast.to(roomId).emit("instanceRefresh", roomId);

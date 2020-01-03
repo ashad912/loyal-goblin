@@ -11,6 +11,7 @@ import ClearIcon from "@material-ui/icons/Clear";
 import VerificationPage from './mission/VerificationPage'
 import { Typography } from '@material-ui/core';
 import {connect} from 'react-redux'
+import { authCheck } from "../../../store/actions/authActions";
 import {togglePresenceInInstance, toggleUserReady, finishInstance} from '../../../store/actions/missionActions'
 import {socket, modifyUserStatusSubscribe, finishMissionSubscribe} from '../../../socket'
 
@@ -137,7 +138,7 @@ class MissionInstance extends React.Component {
     }
 
     async componentWillUnmount() {
-        const user = {_id: this.props.auth.uid, inMission: false}
+        const user = {_id: this.props.auth.uid, inMission: false, readyStatus: false}
         await togglePresenceInInstance(user, this.props.party._id)
     }
 
@@ -379,7 +380,7 @@ class MissionInstance extends React.Component {
         return(
             <div style={{display: 'flex', flexDirection: 'column', alignContent: 'center', fontFamily: '"Roboto", sans-serif', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`}}>
             {this.state.showVerificationPage ? (
-                <VerificationPage missionAwards={this.state.missionAwards} userClass={this.props.auth.profile.class}/>
+                <VerificationPage missionAwards={this.state.missionAwards} userClass={this.props.auth.profile.class} authCheck={() => this.props.authCheck()}/>
             ) : (
                 <React.Fragment>
                     
@@ -457,4 +458,10 @@ const mapStateToProps = state => {
     };
   };
 
-export default connect(mapStateToProps)(MissionInstance)
+const mapDispatchToProps = dispatch => {
+    return {
+        authCheck: () => {dispatch(authCheck())}
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MissionInstance)

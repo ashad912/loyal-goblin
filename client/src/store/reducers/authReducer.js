@@ -16,13 +16,23 @@ const authReducer = (state = initState, action) => {
       console.log("login error");
       return {
         ...state,
-        authError: "Login failed"
+        authError: "Logowanie nieudane"
       };
     case "SIGNUP_ERROR":
       console.log("signup error");
+      let message = "Błąd rejestracji"
+
+      switch (action.messageCode) {
+        case 11000:
+          message = "Podany adres e-mail już istnieje"
+          break;
+        default: 
+          break;
+      }
+
       return {
         ...state,
-        authError: "Sign up failed"
+        authError: message
       };
     case "LOGIN_SUCCESS":
       console.log("login success");
