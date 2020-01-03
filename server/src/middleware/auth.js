@@ -23,7 +23,13 @@ const decodeTokenAndGetUser = (token) => {
 export const auth = async (req, res, next) => {
     //console.log('auth middleware')
     try{
-        const token = req.cookies.token || req.header('Authorization').replace('Bearer ', '')
+        
+        const token = req.cookies.token || (req.header('Authorization') && req.header('Authorization').replace('Bearer ', ''))
+
+        if(!token){
+            throw new Error()
+        }
+        
         const user = await decodeTokenAndGetUser(token)
 
         req.token = token //specified token - u can logout from specific device!

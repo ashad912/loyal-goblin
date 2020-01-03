@@ -1,6 +1,9 @@
 import axios from 'axios'
 import { modifyUserStatusEmit, instanceRefreshEmit, addItemEmit, deleteItemEmit, finishMissionEmit} from '../../socket'
 
+const axiosInstance = axios.create({}); //to avoid interceptors "index.js"
+
+
 export const setActiveInstanceId = (id) => {
     return (dispatch) => {
         dispatch( {type: "SET_INSTANCE_ID", id})
@@ -62,7 +65,7 @@ export const finishInstance = (partyId) => {
 export const sendItemToMission = (item, partyId) => {
     return new Promise (async (resolve, reject) => {
         try {
-            await axios.patch('/mission/sendItem/mission', {item: item._id})
+            await axiosInstance.patch('/mission/sendItem/mission', {item: item._id})
             addItemEmit(item, partyId)
             resolve()
         }catch (e) {
@@ -74,7 +77,7 @@ export const sendItemToMission = (item, partyId) => {
 export const sendItemToUser = (id, partyId) => {
     return new Promise (async (resolve, reject) => {
         try {
-            await axios.patch('/mission/sendItem/user', {item: id})
+            await axiosInstance.patch('/mission/sendItem/user', {item: id})
             deleteItemEmit(id, partyId)
             resolve()
         }catch (e) {
@@ -88,7 +91,7 @@ export const togglePresenceInInstance = (user, partyId, socketStatusConnection) 
         try {
             if(user.inMission){
                 console.log('enterInstance')
-                const res = await axios.patch('/mission/enterInstance')
+                const res = await axiosInstance.patch('/mission/enterInstance')
                 if(socketStatusConnection !== undefined){
                     if(res.data.missionInstance.party.length > 1 && !socketStatusConnection){ //if client of multiplayer mission is not connected to socket
                         reject()
@@ -99,7 +102,7 @@ export const togglePresenceInInstance = (user, partyId, socketStatusConnection) 
             }else{
                 console.log('leaveInstance')
                 modifyUserStatusEmit(user, partyId)
-                await axios.patch('/mission/leaveInstance')
+                await axiosInstance.patch('/mission/leaveInstance')
                 resolve()
             }
         }catch (e) {
@@ -116,9 +119,9 @@ export const toggleUserReady = async (user, partyId) => {
         try{
             console.log('toggleUserReady ' + !user.readyStatus + " to " + user.readyStatus)
             if(user.readyStatus){
-                await axios.patch('/mission/ready')
+                await axiosInstance.patch('/mission/ready')
             }else{
-                await axios.patch('/mission/notReady')
+                await axiosInstance.patch('/mission/notReady')
             }
             modifyUserStatusEmit(user, partyId)
             resolve()
