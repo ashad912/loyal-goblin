@@ -9,7 +9,8 @@ import { auth } from '../middleware/auth';
 import { Item } from '../models/item';
 
 
-const uploadPath = "../client/public/images/items/"
+const uploadIconPath = "../client/public/images/items/"
+const uploadAppearancePath = "../client/public/images/appearance/"
 
 const router = new express.Router
 
@@ -34,20 +35,52 @@ router.get('/modelList', auth, async(req,res) => {
 
 //OK
 router.post('/createModel', auth, async (req, res) =>{
-    if (!req.files) {
-        throw new Error("Brak ikony przedmiotu")
-    }
+    
 
     const itemModel = new ItemModel(req.body)
-    let icon = req.files.icon
-    const imgSrc = await saveImage(icon, itemModel._id, uploadPath, null)
-    itemModel.imgSrc = imgSrc
+    
     try {
         await itemModel.save() //this method holds updated user!
-        res.status(201).send(itemModel)
+        console.log(itemModel)
+        res.status(201).send(itemModel._id)
     } catch (e) {
-        res.status(400).send(e)
+        console.log(e.message)
+        res.status(400).send(e.message)
     }
+})
+
+router.patch('/uploadModelImages/:id', auth, async (req, res) => {
+    try{
+        if (!req.files) {
+            throw new Error("Brak ikony przedmiotu")
+        }
+
+        const itemModel = await ItemModel.findById(req.params.id)
+        if(!itemModel){
+            throw new Error('Item model does not exist!')
+        }
+
+        if(req.files.icon){
+            let icon = req.files.icon.data
+            const imgSrc = await saveImage(icon, itemModel._id, uploadIconPath, itemModel.imgSrc)
+            itemModel.imgSrc = imgSrc
+        }
+        
+        if(req.files.appearance){
+            let appearance = req.files.appearance.data
+            const appearanceSrc = await saveImage(appearance, itemModel._id, uploadAppearancePath, itemModel.appearanceSrc)
+            itemModel.appearanceSrc = appearanceSrc
+        }
+        
+
+        await itemModel.save()
+
+        res.status(200).send()
+    }catch(e){
+        console.log(e.message)
+        res.status(400).send(e.message)
+    }
+  
 })
 
 //OK
@@ -57,7 +90,7 @@ router.patch("/updateModel", auth, async (req, res, next) => {
 
 
     updates = updates.filter((update) => {
-        return update !== '_id' || update !=="imgSrc"
+        return update !== '_id' || update !== "imgSrc"
     })
 
     const forbiddenUpdates = [""];
@@ -81,15 +114,15 @@ router.patch("/updateModel", auth, async (req, res, next) => {
             itemModel[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.
       });
 
-      if(req.files){
-        let icon = req.files.icon
-        const imgSrc = await saveImage(icon, itemModel._id, uploadPath, itemModel.imgSrc)
-        itemModel.imgSrc = imgSrc
-      }
+    //   if(req.files){
+    //     let icon = req.files.icon
+    //     const imgSrc = await saveImage(icon, itemModel._id, uploadPath, itemModel.imgSrc)
+    //     itemModel.imgSrc = imgSrc
+    //   }
   
       await itemModel.save();
 
-      res.send(itemModel);
+      res.send(itemModel._id);
     } catch (e) {
       res.status(500).send(e.message);
     }
