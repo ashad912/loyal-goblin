@@ -26,7 +26,7 @@ const router = new express.Router();
 router.post("/create", auth, async (req, res) => {
   const product = new Product(req.body);
 
-  let icon = req.files.icon
+  let icon = req.files.icon.data
   const imgSrc = await saveImage(icon, product._id, uploadPath, null)
   product.imgSrc = imgSrc
 
@@ -69,7 +69,7 @@ router.patch("/update", auth, async (req, res, next) => {
     });
 
     if(req.files){
-      let icon = req.files.icon
+      let icon = req.files.icon.data
       const imgSrc = await saveImage(icon, product._id, uploadPath, product.imgSrc)
       product.imgSrc = imgSrc
     }

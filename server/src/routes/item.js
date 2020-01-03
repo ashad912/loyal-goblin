@@ -26,7 +26,7 @@ router.post('/createModel', auth, async (req, res) =>{
     }
 
     const itemModel = new ItemModel(req.body)
-    let icon = req.files.icon
+    let icon = req.files.icon.data
     const imgSrc = await saveImage(icon, itemModel._id, uploadPath, null)
     itemModel.imgSrc = imgSrc
     try {
@@ -69,7 +69,7 @@ router.patch("/updateModel", auth, async (req, res, next) => {
       });
 
       if(req.files){
-        let icon = req.files.icon
+        let icon = req.files.icon.data
         const imgSrc = await saveImage(icon, itemModel._id, uploadPath, itemModel.imgSrc)
         itemModel.imgSrc = imgSrc
       }

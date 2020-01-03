@@ -202,7 +202,7 @@ router.post('/create', auth, async (req, res) =>{
 
     const rally = new Rally(req.body)
 
-    let icon = req.files.icon
+    let icon = req.files.icon.data
     const imgSrc = await saveImage(icon, rally._id, uploadPath, null)
     rally.imgSrc = imgSrc
 
@@ -248,7 +248,7 @@ router.patch("/update", auth, async (req, res, next) => {
       });
 
       if(req.files){
-        let icon = req.files.icon
+        let icon = req.files.icon.data
         const imgSrc = await saveImage(icon, rally._id, uploadPath, rally.imgSrc)
         rally.imgSrc = imgSrc
       }
