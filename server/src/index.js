@@ -32,8 +32,11 @@ const port = process.env.PORT || 4000;
 
 app.use(
   fileUpload({
+    safeFileNames: true,
+    preserveExtension: true,
     createParentPath: true,
-    useTempFiles: true,
+    useTempFiles: false,
+    abortOnLimit: true,
     //4 mb file upload limit
     limits: {fileSize: 4 * 1024 * 1024}
   })

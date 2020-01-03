@@ -18,7 +18,7 @@ export const MissionSchema = new mongoose.Schema({
     expiryDate: { 
         type: Date
     },
-    avatar: {
+    imgSrc: {
         type: String
     },
     minPlayers: {

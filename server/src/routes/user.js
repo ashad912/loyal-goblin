@@ -14,7 +14,9 @@ import {
   asyncForEach,
   designateUserPerks,
   userPopulateBag,
-  updatePerks
+  updatePerks,
+  saveImage,
+  removeImage
 } from "../utils/methods";
 import moment from "moment";
 import { resolve } from "url";
@@ -22,7 +24,7 @@ import createEmail from '../emails/createEmail'
 
 const router = express.Router();
 
-import {testMiddleware} from '../middleware/imageSave'
+
 
 const uploadPath = "../client/public/images/user_uploads/"
 
@@ -349,44 +351,18 @@ router.patch('/reset', async (req, res) => {
 router.post("/me/avatar", auth, async (req, res) => {
   try {
     if (!req.files) {
-      res.send({
-        status: false,
-        message: "Brak pliku"
-      });
-    } else {
-      //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
-      let avatar = req.files.avatar;
-
-      //Use the mv() method to place the file in upload directory (i.e. "uploads")
-      
-      const avatarName = req.user._id + Date.now() + ".jpg"
-      //avatar.mv("../client/public/images/user_uploads/" + avatar.name);
-      sharp(avatar.tempFilePath)
-        .resize({ width: 124 })
-        .toFile(uploadPath + avatarName)
-        .then(function(newFileInfo) {
-          //console.log("Success");
-        })
-        .catch(function(err) {
-          console.log(err);
-        });
-        if(req.user.avatar){
-          fs.unlink(uploadPath+req.user.avatar, async function (err) {
-            if (err) throw err;
-            console.log('File deleted!');
-            req.user.avatar = avatarName;
-            let user = await req.user.save();
-            user = await userPopulateBag(user);
-            res.send(user);
-          });
-        }else{
-          req.user.avatar = avatarName;
-          let user = await req.user.save();
-          user = await userPopulateBag(user);
-          res.send(user);
-        }
-
+      throw new Error("Brak pliku")
     }
+      //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
+      let avatar = await req.files.avatar.data;
+
+      const avatarName = await saveImage(avatar, req.user._id, uploadPath, req.user.avatar)
+      req.user.avatar = avatarName;
+      let user = await req.user.save();
+      user = await userPopulateBag(user);
+      res.send(user);
+
+    
   } catch (err) {
     res.status(500).send(err);
   }
@@ -398,25 +374,13 @@ router.delete("/me/avatar", auth, async (req, res) => {
       throw new Error("Użytkownik nie posiada avatara")
     }
 
-    fs.access(uploadPath+req.user.avatar, fs.F_OK, async (err) => {
-      if (err) {
-        //erase user avatar if bad file
-        req.user.avatar = null;
-        await req.user.save();
-        throw new Error("Podany plik nie istnieje")
-      }
+    await removeImage(uploadPath+req.user.avatar)
+    req.user.avatar = null;
+    await req.user.save();
+    const user = await userPopulateBag(req.user);
+    res.send(user);
 
-      fs.unlink(uploadPath+req.user.avatar, async function (err) {
-        if (err) throw err;
-        console.log('File deleted!');
-        req.user.avatar = null;
-        await req.user.save();
-        const user = await userPopulateBag(req.user);
-        res.send(user);
-      });
-    
-
-    })}
+  }
    catch (error) {
     res.status(400).send({ error: err.message }); //before app.use middleware with 422
   }

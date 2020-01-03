@@ -6,13 +6,17 @@ import moment from 'moment'
 import {
   asyncForEach,
   updatePerks,
-  designateUserPerks
+  designateUserPerks,
+  removeImage,
+  saveImage
 } from "../utils/methods";
 import { Rally } from "../models/rally";
 import { User } from "../models/user";
 import { Party } from "../models/party";
 import {Item} from '../models/item'
 import { ArchiveOrder } from "../models/archiveOrder";
+
+const uploadPath = "../client/public/images/products/"
 
 const router = new express.Router();
 
@@ -21,6 +25,10 @@ const router = new express.Router();
 //OK
 router.post("/create", auth, async (req, res) => {
   const product = new Product(req.body);
+
+  let icon = req.files.icon
+  const imgSrc = await saveImage(icon, product._id, uploadPath, null)
+  product.imgSrc = imgSrc
 
   try {
     await product.save();
@@ -36,7 +44,7 @@ router.patch("/update", auth, async (req, res, next) => {
   const id = req.body._id;
 
   updates = updates.filter(update => {
-    return update !== "_id";
+    return update !== "_id"  || update !== "imgSrc"
   });
 
   const forbiddenUpdates = [""];
@@ -60,6 +68,12 @@ router.patch("/update", auth, async (req, res, next) => {
       product[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.
     });
 
+    if(req.files){
+      let icon = req.files.icon
+      const imgSrc = await saveImage(icon, product._id, uploadPath, product.imgSrc)
+      product.imgSrc = imgSrc
+    }
+
     await product.save();
 
     res.send(product);
@@ -76,6 +90,7 @@ router.delete("/remove", auth, async (req, res) => {
     if (!product) {
       res.status(404).send();
     }
+    await removeImage(uploadPath, product.imgSrc)
     res.send();
   } catch (e) {
     res.status(500).send(e.message);

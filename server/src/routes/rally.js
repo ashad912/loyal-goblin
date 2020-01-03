@@ -5,7 +5,10 @@ import { Rally } from '../models/rally';
 import { User } from '../models/user'
 import { auth } from '../middleware/auth';
 import { Item } from '../models/item';
-import { asyncForEach, designateUserPerks } from '../utils/methods'
+import { asyncForEach, designateUserPerks, removeImage, saveImage } from '../utils/methods'
+
+
+const uploadPath = "../client/public/images/rallies/"
 
 const router = new express.Router
 
@@ -199,6 +202,10 @@ router.post('/create', auth, async (req, res) =>{
 
     const rally = new Rally(req.body)
 
+    let icon = req.files.icon
+    const imgSrc = await saveImage(icon, rally._id, uploadPath, null)
+    rally.imgSrc = imgSrc
+
     try {
         await rally.save()
         
@@ -216,7 +223,7 @@ router.patch("/update", auth, async (req, res, next) => {
     const id = req.body._id
 
     updates = updates.filter((update) => {
-        return update !== '_id'
+        return update !== '_id'  || update !== "imgSrc"
     })
 
     const forbiddenUpdates = [""];
@@ -239,6 +246,12 @@ router.patch("/update", auth, async (req, res, next) => {
       updates.forEach(update => {
         rally[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.
       });
+
+      if(req.files){
+        let icon = req.files.icon
+        const imgSrc = await saveImage(icon, rally._id, uploadPath, rally.imgSrc)
+        rally.imgSrc = imgSrc
+      }
   
       await rally.save();
 
@@ -257,11 +270,15 @@ router.delete('/remove', auth, async (req, res) =>{
 
     try {
         const rally = await Rally.findOneAndDelete({_id: req.body._id})
-
+        
         if(!rally){
             res.status(404).send()
         }
+
+        await removeImage(uploadPath, rally.imgSrc)
+
         await updateRallyQueue()
+        
         res.send()
     } catch (e) {
         res.status(500).send(e.message)

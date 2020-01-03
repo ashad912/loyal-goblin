@@ -1,5 +1,5 @@
 import express from 'express'
-import { asyncForEach } from '../utils/methods'
+import { asyncForEach, saveImage, removeImage } from '../utils/methods'
 import { ItemModel } from '../models/itemModel';
 import { Mission } from '../models/mission';
 import { MissionInstance } from '../models/missionInstance';
@@ -8,7 +8,12 @@ import { User } from '../models/user';
 import { auth } from '../middleware/auth';
 import { Item } from '../models/item';
 
+
+const uploadPath = "../client/public/images/items/"
+
 const router = new express.Router
+
+
 
 ////ADMIN-SIDE
 
@@ -16,9 +21,14 @@ const router = new express.Router
 
 //OK
 router.post('/createModel', auth, async (req, res) =>{
+    if (!req.files) {
+        throw new Error("Brak ikony przedmiotu")
+    }
 
     const itemModel = new ItemModel(req.body)
-
+    let icon = req.files.icon
+    const imgSrc = await saveImage(icon, itemModel._id, uploadPath, null)
+    itemModel.imgSrc = imgSrc
     try {
         await itemModel.save() //this method holds updated user!
         res.status(201).send(itemModel)
@@ -34,7 +44,7 @@ router.patch("/updateModel", auth, async (req, res, next) => {
 
 
     updates = updates.filter((update) => {
-        return update !== '_id'
+        return update !== '_id' || update !=="imgSrc"
     })
 
     const forbiddenUpdates = [""];
@@ -54,9 +64,15 @@ router.patch("/updateModel", auth, async (req, res, next) => {
         res.status(404).send()
       }
   
-      updates.forEach(update => {
-        itemModel[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.
+      updates.forEach(async (update) => {
+            itemModel[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.
       });
+
+      if(req.files){
+        let icon = req.files.icon
+        const imgSrc = await saveImage(icon, itemModel._id, uploadPath, itemModel.imgSrc)
+        itemModel.imgSrc = imgSrc
+      }
   
       await itemModel.save();
 
@@ -75,8 +91,10 @@ router.delete('/removeModel', auth, async (req, res) =>{
         const itemModel = await ItemModel.findOne({_id: req.body._id})
 
         if(!itemModel){
-            res.status(404).send()
+            return res.status(404).send()
         }
+
+        await removeImage(uploadPath, itemModel.imgSrc)
 
         await itemModel.remove()
 
