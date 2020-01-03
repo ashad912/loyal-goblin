@@ -46,9 +46,12 @@ router.get('/events', auth, async (req,res) => {
 router.post('/create', auth, async (req, res) =>{
 
     const mission = new Mission(req.body)
-    let icon = req.files.icon
-    const imgSrc = await saveImage(icon, mission._id, uploadPath, null)
-    mission.imgSrc = imgSrc
+    if(!req.body.postman){
+        let icon = req.files.icon
+        const imgSrc = await saveImage(icon, mission._id, uploadPath, null)
+        mission.imgSrc = imgSrc
+    }
+    
     try {
         await mission.save() 
         res.status(201).send(mission)

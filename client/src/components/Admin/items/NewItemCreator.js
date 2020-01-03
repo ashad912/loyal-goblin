@@ -13,8 +13,8 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
-import List from "@material-ui/core/List";
-import Box from "@material-ui/core/Box";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
 import Paper from "@material-ui/core/Paper";
 import ListItem from "@material-ui/core/ListItem";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
@@ -29,7 +29,7 @@ import MomentUtils from "@date-io/moment";
 
 import PerkModal from "./PerkModal";
 import {asyncForEach} from '../../../utils/methods'
-import {classLabels, itemTypeLabels} from '../../../utils/labels'
+import {classLabels, itemTypeLabels, equippableItems} from '../../../utils/labels'
 import {torpedoFields, userClasses, itemModelTypes} from '../../../utils/modelArrays'
 
 
@@ -72,7 +72,7 @@ const AddIcon = styled(AddCircleIcon)`
 `;
 
 
-const validatedFields = ['type', 'name', 'description', 'icon']
+const validatedFields = ['type', 'name', 'description', 'icon', 'appearance']
 
 
             
@@ -81,6 +81,8 @@ class NewItemCreator extends Component {
     name: '',
     description: '',
     icon: "",
+    appearance: "",
+    loyalAward: false,
     class: null,
     modifyingIndex: null,
     showPerkModal: false,
@@ -88,7 +90,8 @@ class NewItemCreator extends Component {
     formError: {
       name: null,
       description: null,
-      icon: null
+      icon: null,
+      appearance: null,
     }
   };
 
@@ -102,8 +105,10 @@ class NewItemCreator extends Component {
         description: item.description,
         type: item.type ? (item.type) : (Object.keys(itemTypeLabels)[0]),
         class: item.class,
+        loyalAward: item.loyalAward ? true : false,
         perks: item.perks,
-        icon: item.imgSrc ? ((item.imgSrc.includes('blob') || item.imgSrc.includes('data:image')) ? (item.imgSrc) : (require("../../../assets/icons/items/" + item.imgSrc))) : (null),
+        icon: '/images/items/' + item.imgSrc, //? ((item.imgSrc.includes('blob') || item.imgSrc.includes('data:image')) ? (item.imgSrc) : (require("../../../assets/icons/items/" + item.imgSrc))) : (null), 
+        appearance: item.appearanceSrc ? ((item.appearanceSrc.includes('blob') || item.appearanceSrc.includes('data:image')) ? (item.appearanceSrc) : (require("../../../assets/icons/items/" + item.appearanceSrc))) : (null),
         twoHanded: item.twoHanded
       }, () => {
         this.setState({
@@ -114,6 +119,21 @@ class NewItemCreator extends Component {
 
   componentDidUpdate = (prevProps, prevState) => {
     if(this.state.componentMounted){
+      
+      if(equippableItems.includes(prevState.type) && !equippableItems.includes(this.state.type) ){
+        console.log('halo123')
+        this.setState({
+          appearance: ""
+        }, () => {
+          this.setState({
+            formError: {
+              ...this.state.formError,
+              appearance: null
+            }
+          })
+        })
+      }
+
       let torpedo = 'torpedo'
       if((prevState.type === torpedo && this.state.type !== torpedo)){
         this.setState({
@@ -189,6 +209,17 @@ class NewItemCreator extends Component {
     this.setState({ icon: url}, () => this.callbacksAndValidation('icon', url));
   };
 
+  handleAppearanceChange = e => {
+    const url = URL.createObjectURL(e.target.files[0])
+    this.setState({ appearance: url}, () => this.callbacksAndValidation('appearance', url));
+  };
+
+  handleToggleLoyalAward = () => {
+    this.setState(prevState => {
+      return{ loyalAward: !prevState.loyalAward}
+    })
+  }
+
   handleToggleClassItem = e => {
     
     this.setState(prevState => {
@@ -255,17 +286,17 @@ class NewItemCreator extends Component {
     if(validatedFields.includes(fieldName)){
       let error = ''
 
-        if(fieldValue.length === 0){
-          error = fieldName === 'icon' ? ('Ikona wymagana!') : ('Pole wymagane!')
-        }
+      if(fieldValue.length === 0){
+        error = (fieldName === 'icon' || fieldName === 'appearance') ? ('Obraz wymagany!') : ('Pole wymagane!')
+      }
 
-        this.setState({
-          formError: {
-              ...this.state.formError,
-              [fieldName]: error
-          },
-          
-        });
+      this.setState({
+        formError: {
+            ...this.state.formError,
+            [fieldName]: error
+        },
+        
+      });
     }
         
   }
@@ -274,15 +305,18 @@ class NewItemCreator extends Component {
       
 
       await asyncForEach(validatedFields, (fieldName) => {
+        console.log(fieldName)
         if(!this.state[fieldName] || !this.state[fieldName].length){
-          console.log('halo', fieldName)
-          this.setState({
-            formError: {
-                ...this.state.formError,
-                [fieldName]: fieldName === 'icon' ? ('Ikona wymagana!') : ('Pole wymagane!')
-            },
-            
-          });
+          if(fieldName !== 'appearance' || (fieldName === 'appearance' && equippableItems.includes(this.state.type))){
+            console.log(fieldName, this.state[fieldName] === 'appearance', this.state.type, equippableItems.includes(this.state.type))
+            this.setState({
+              formError: {
+                  ...this.state.formError,
+                  [fieldName]: (fieldName === 'icon' || fieldName === 'appearance') ? ('Obraz wymagany!') : ('Pole wymagane!')
+              },
+              
+            });
+          }
         }
       })
 
@@ -305,12 +339,18 @@ class NewItemCreator extends Component {
         description: this.state.description,
         type: this.state.type,
         class: this.state.class,
+        loyalAward: this.state.loyalAward,
         perks: this.state.perks,
-        imgSrc: this.state.icon,
+        icon: this.state.icon,
+        appearance: this.state.appearance,
         twoHanded: this.state.twoHanded
       }
       if(item.twoHanded === undefined){
         delete item.twoHanded
+      }
+
+      if(!equippableItems.includes(item.type)){
+        delete item.appearance
       }
 
       this.props.updateItems(item)
@@ -347,33 +387,65 @@ class NewItemCreator extends Component {
             </Grid>
             <Grid item xs={1}>
             </Grid>
-            <Grid item xs={5} style={{textAlign: 'left'}}>
-            {this.state.type === 'weapon' && 
-              <div style={{display: 'flex'}}>
-                <Typography component="div" style={{width: 'auto'}}>
-                <Typography style={{textAlign: 'left', color: 'rgba(0, 0, 0, 0.54)', fontSize: '0.75rem'}}>Rodzaj broni</Typography>
-                
-                    <Grid component="label" container alignItems="center" spacing={1} >
-                    <Grid item>Jednoręczna</Grid>
-                    <Grid item>
-                    <FormControl >
-                        <Switch
-                            checked={this.state.twoHanded}
-                            onChange={this.handleToggleWeaponHanded}
-                        />
-                        </FormControl>
-                    </Grid>
-                    <Grid item>Dwuręczna</Grid>
+            
+            {equippableItems.includes(this.state.type) && (
+              <Grid item xs={5} >
+                <Grid container spacing={2}>
+                  <Grid item>
+                  <FileInputWrapper>
+                    <FileInputButton variant="contained" color="primary">
+                      {this.state.appearance ? "Zmień wygląd" : "Dodaj wygląd"}
+                    </FileInputButton>
+                    <HiddenFileInput
+                      type="file"
+                      accept=".svg"
+                      onChange={this.handleAppearanceChange}
+                    />
                     
-                    </Grid>
-                    
-                
-                    
-                </Typography>
-                
-              </div>}
-            </Grid>
-          <Grid item xs={6} >
+                  </FileInputWrapper>
+                  {this.state.formError.appearance && <Typography style={{color: 'red', fontSize: '0.8rem'}}>{this.state.formError.appearance}</Typography>}
+                </Grid>
+                <Grid
+                  item
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center"
+                  }}
+                >
+                  <img src={this.state.appearance} style={{ width: "64px" }} />
+                </Grid>
+              </Grid>
+            </Grid>)}
+
+          <Grid item xs={12} style={{paddingTop: '0rem', paddingBottom: '0rem'}}>
+          {this.state.type === 'weapon' && 
+            <div style={{display: 'flex'}}>
+              <Typography component="div" style={{width: 'auto'}}>
+              <Typography style={{textAlign: 'left', color: 'rgba(0, 0, 0, 0.54)', fontSize: '0.75rem'}}>Rodzaj broni</Typography>
+              
+                  <Grid component="label" container alignItems="center" spacing={1} >
+                  <Grid item>Jednoręczna</Grid>
+                  <Grid item>
+                  <FormControl >
+                      <Switch
+                          checked={this.state.twoHanded}
+                          onChange={this.handleToggleWeaponHanded}
+                      />
+                      </FormControl>
+                  </Grid>
+                  <Grid item>Dwuręczna</Grid>
+                  
+                  </Grid>
+                  
+              
+                  
+              </Typography>
+              
+            </div>}
+          </Grid>
+
+          <Grid item xs={6} style={{display: 'flex', flexDirection: 'column'}}>
             {this.state.type !== 'torpedo' ? (
               <TextField
                 value={this.state.name}
@@ -420,6 +492,16 @@ class NewItemCreator extends Component {
               onChange={this.handleChangeNameValue}
               error={this.state.formError.description ? true : false}
               helperText={this.state.formError.description ? (this.state.formError.description) : (null)}
+            />
+            <FormControlLabel
+              
+              control={
+                <Checkbox
+                  checked={this.state.loyalAward}
+                  onChange={this.handleToggleLoyalAward}
+                />
+              }
+              label="Nagroda lojalnościowa"
             />
           </Grid>
           <Grid item xs={1} >
@@ -500,7 +582,11 @@ class NewItemCreator extends Component {
             
           </div>}
           </Grid>
+          <Grid item style={{ paddingTop: "0rem", paddingBottom: '0rem' }}>
+            
           </Grid>
+          </Grid>
+          
           <Grid container spacing={2} style={{marginTop: '1.5rem'}}>
            <Grid item xs={12} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
           

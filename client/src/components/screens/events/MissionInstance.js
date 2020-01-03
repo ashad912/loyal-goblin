@@ -140,6 +140,7 @@ class MissionInstance extends React.Component {
     async componentWillUnmount() {
         const user = {_id: this.props.auth.uid, inMission: false, readyStatus: false}
         await togglePresenceInInstance(user, this.props.party._id)
+        await this.props.authCheck()
     }
 
     backToEvents = (history) => {
@@ -196,6 +197,7 @@ class MissionInstance extends React.Component {
             const amulets = response.amulets
             console.log(amulets)
             const instanceUsers = this.modifyUserStatus(user, missionInstance.party)
+            console.log(instanceUsers)
             this.setState({
                 instanceUsers: [...instanceUsers],
                 instanceItems: [...missionInstance.items],

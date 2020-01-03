@@ -20,6 +20,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {mockItemModels} from "../../../utils/mocks"
 import {itemTypeLabelsPlural} from '../../../utils/labels'
+import {getItemModels} from '../../../store/adminActions/itemActions'
 
 
 
@@ -42,9 +43,20 @@ const AdminItems = () => {
       name: null,
       class: null,
       description: null,
+      loyalAward: null,
       imgSrc: null,
+      appearanceSrc: null,
       perks: [],
   })
+
+  const fetchItemModels = async () => {
+    const itemModels = await getItemModels()
+    setItems(itemModels)
+  }
+
+  React.useEffect(() => {
+    fetchItemModels()
+  }, [])
 
   const toggleItemCreator = e => {
     if(showNewItemCreator){
@@ -102,7 +114,9 @@ const AdminItems = () => {
       name: '',
       class: null,
       description: '',
+      loyalAward: false,
       imgSrc: null,
+      appearanceSrc: null,
       perks: [],
     })
     toggleItemCreator()  

@@ -1284,6 +1284,7 @@ export const mockItemModels = [
         type: "amulet",
         name: "Diament",
         class: null,
+        loyalAward: true,
         description: "Najlepszy przyjaciel dziewyczyny",
         imgSrc: "diamond-amulet.png",
         perks: []

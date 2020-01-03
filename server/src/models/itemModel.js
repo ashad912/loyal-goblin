@@ -53,6 +53,7 @@ const ItemModelSchema = new mongoose.Schema({
   imgSrc: {
     type: String
   },
+  appearanceSrc: String,
   class: { type: String, required: true },
   twoHanded: {type: Boolean},
   loyalAward: Boolean,

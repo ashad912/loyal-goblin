@@ -19,6 +19,19 @@ const router = new express.Router
 
 ///MODEL
 
+
+router.get('/modelList', auth, async(req,res) => {
+    try{
+        const itemModels = await ItemModel.find({})
+        res.status(200).send(itemModels)
+    }catch(e){
+        console.log(e.message)
+        res.status(500).send(e.message)
+    }
+    
+
+})
+
 //OK
 router.post('/createModel', auth, async (req, res) =>{
     if (!req.files) {
