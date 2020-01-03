@@ -90,8 +90,7 @@ export const UserSchema = new mongoose.Schema({
     },
     experience: {
         type: Number,
-        default: 0,
-        required: true
+        default: 0
     },
     bag: {
         type: [{  //for plugin proper work - bag field is required while user is being created
@@ -200,12 +199,12 @@ export const UserSchema = new mongoose.Schema({
         missionCounter: {
             type: Number,
             default: 0,
-            required: true,
+            
         },
         rallyCounter: {
             type: Number,
             default: 0,
-            required: true,
+            
         },
         amuletCounters: [{
             counter: {

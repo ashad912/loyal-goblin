@@ -36,7 +36,27 @@ export const signIn = (credentials) => {
 }
 
 export const signUp = (credentials) => {
-    return null
+    return (dispatch) => {
+        return new Promise( async (resolve, reject) => {
+
+            try {
+                const res = await axios.post('/user/create', credentials)
+                const profile = res.data
+                const uid = profile._id
+                profile.avatar = profile.avatar ? ( profile.avatar) : (undefined)
+                delete profile._id
+                dispatch( {type: "LOGIN_SUCCESS", profile, uid})
+
+                resolve()
+            } catch (e) {
+                const language = null
+                console.log(e)
+                dispatch( {type: "SIGNUP_ERROR", language})
+
+                reject(e)
+            }
+        })
+    }
 }
 
 /* req with using fetch instead axios - u have stringify data

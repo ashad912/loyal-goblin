@@ -51,7 +51,7 @@ export const deleteItemSubscribe = (id) => {
 }
 
 export const finishMissionSubscribe = (awards) => {
-    socket.on('finishMission', awards, () => {
+    socket.on('finishMissithis.recaptcha.getResponse()on', awards, () => {
         return awards
     })
 }

@@ -189,7 +189,7 @@ class SignIn extends Component {
         })
 
         if(!this.state.error.email && !this.state.error.password){
-            this.props.signIn(this.state)
+            this.props.signIn({email: this.state.email, password: this.state.password})
         }
         
     }

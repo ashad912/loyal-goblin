@@ -4,6 +4,7 @@ import multer from "multer";
 import sharp from "sharp";
 import fs from 'fs'
 import validator from 'validator'
+import axios from 'axios'
 
 import { User } from "../models/user";
 import { Item } from "../models/item";
@@ -30,31 +31,66 @@ const uploadPath = "../client/public/images/user_uploads/"
 router.post("/create", async (req, res) => {
   //registerKey used in biometrica, hwvr we may allow registration for ppl with key from qrcode - i left it
 
-  if (!req.body.registerKey) {
+  if (!req.body.token) {
     res.status(400).send();
   }
 
-  const isMatch = await bcrypt.compare(
-    req.body.registerKey,
-    process.env.REGISTER_KEY
-  );
+  if(req.body.registerKey){
+    const isMatch = await bcrypt.compare(
+      req.body.registerKey,
+      process.env.REGISTER_KEY
+    );
 
-  if (!isMatch) {
-    res.status(401).send({ error: "Please authenticate." });
+    if (!isMatch) {
+      res.status(401).send({ error: "Please authenticate." });
+    }
+  }else{
+    const secretKey = process.env.SECRET_RECAPTCHA_KEY;
+    const recaptchaToken = req.body.token;
+    const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
+
+    try{
+      await verifyCaptcha(url)
+    }catch(e){
+      console.log(e);
+      res.status(400).send(e);
+    }
   }
 
-  delete req.body.registerKey;
-  req.body.perksUpdatedAt = moment().toISOString();
-  const user = new User(req.body);
+  
+  
 
   try {
+    const user = new User({
+      email: req.body.email,
+      password: req.body.password,
+      perksUpdatedAt: moment().toISOString(),
+      activeOrder: [],
+      loyal: {}
+  
+    });
+  
+    const token = await user.generateAuthToken(); //on instancegenerateAuthToken
+
     await user.save(); //this method holds updated user!
-    res.status(201).send({ user });
+    res.cookie("token", token, { maxAge: 2592000000, httpOnly: true }).status(201).send(user);
   } catch (e) {
     console.log(e);
     res.status(400).send(e);
   }
 });
+
+const verifyCaptcha = (url) => {
+  return new Promise (async (resolve, reject) => {
+    try{
+      await axios.post(url)
+      resolve()
+    }catch(e){
+      reject(e)
+    }
+    
+  })
+}
 
 router.post("/login", async (req, res) => {
   try {
