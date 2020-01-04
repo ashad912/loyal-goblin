@@ -434,14 +434,19 @@ export const saveImage = async (
   imageFile,
   ownerId,
   uploadPath,
-  previousFileName
+  previousFileName,
+  date
 ) => {
-  const imageName = ownerId + Date.now() + ".jpg";
+  let imageName
+  if(date){
+    imageName = ownerId + date + ".png"
+  }else{
+    imageName = ownerId + Date.now() + ".png";
+  }
   await mkdirp(uploadPath);
   sharp(imageFile)
     .resize({ width: 124 })
-    .toFormat('jpeg')
-    .jpeg({quality: 90})
+    .toFormat('png')
     .toFile(uploadPath + imageName)
     .then(function(newFileInfo) {
       if (previousFileName) {
