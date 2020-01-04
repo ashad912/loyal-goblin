@@ -100,6 +100,33 @@ const verifyCaptcha = (url) => {
   })
 }
 
+router.patch("/character", auth, async (req, res) => {
+  try {
+    const user = req.user
+    const name = req.body.name
+    const sex = req.body.sex
+    const characterClass = req.body.characterClass
+    const attributes = req.body.attributes
+
+    if(!name || !sex || !characterClass || !attributes){
+      throw new Error("Niepełne dane tworzenia postaci")
+    }
+
+    user.name = name
+    user.sex = sex
+    user.class = characterClass
+    user.attributes = {...attributes}
+    await user.save()
+
+
+
+    res.status(201).send(user)
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+
 router.post("/login", async (req, res) => {
   try {
     let user = await User.findByCredentials(req.body.email, req.body.password);

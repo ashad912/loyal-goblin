@@ -7,7 +7,7 @@ const AttributeBox = props => {
   return (
     <Grid item container direction="row" justify="center" alignItems="center">
       <Grid item xs={7}>
-        <Typography variant="h6">{props.attributeName}</Typography>
+        <Typography variant="h6" style={{fontSize: '1.1rem'}}>{props.attributeName}</Typography>
       </Grid>
       <Grid item xs={2}>
         <Button

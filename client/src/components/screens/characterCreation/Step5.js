@@ -32,7 +32,7 @@ const Step5 = props => {
       <Typography variant="h4">Podsumowanie</Typography>
       <Typography variant="h6">
         {props.name}{" "}
-        {props.gender === "female" ? (
+        {props.sex === "female" ? (
           <RadioButtonUncheckedIcon />
         ) : (
           <DetailsIcon />
@@ -59,28 +59,28 @@ const Step5 = props => {
           </Grid>
 
           <Grid item xs={2}>
-            <Typography variant="h6">{props.attributes.str}</Typography>
+            <Typography variant="h6">{props.attributes.strength}</Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography variant="h6">Zręczność</Typography>
           </Grid>
 
           <Grid item xs={2}>
-            <Typography variant="h6">{props.attributes.dex}</Typography>
+            <Typography variant="h6">{props.attributes.dexterity}</Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography variant="h6">Magia</Typography>
           </Grid>
 
           <Grid item xs={2}>
-            <Typography variant="h6">{props.attributes.mag}</Typography>
+            <Typography variant="h6">{props.attributes.magic}</Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography variant="h6">Wytrzymałość</Typography>
           </Grid>
 
           <Grid item xs={2}>
-            <Typography variant="h6">{props.attributes.end}</Typography>
+            <Typography variant="h6">{props.attributes.endurance}</Typography>
           </Grid>
         </Grid>
       </Grid>

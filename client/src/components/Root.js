@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
@@ -15,6 +16,8 @@ import CharacterCreation from "./screens/CharacterCreation";
 import Booking from "./screens/Booking";
 import RootSnackbar from "./layout/RootSnackbar";
 import {socket, multipleSessionSubscribe} from '../socket'
+import { createCharacter } from "../store/actions/profileActions";
+import { authCheck } from "../store/actions/authActions";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -58,7 +61,7 @@ function Root(props) {
   const [
     showCharacterCreationModal,
     setShowCharacterCreationModal
-  ] = React.useState(!Boolean(localStorage.getItem("characterCreated")));
+  ] = React.useState(true);
   const [fullHeightCorrection, setFullHeightCorrection] = React.useState(0);
 
   const [activeInstanceId, setActiveInstanceId] = React.useState(null)
@@ -74,6 +77,9 @@ function Root(props) {
       console.log('multipe session', socketId)
     })
 
+    if(props.auth.profile.name && props.auth.profile.class){
+      setShowCharacterCreationModal(false)
+    }
     
   }, []);
 
@@ -100,9 +106,10 @@ function Root(props) {
     setValue(index);
   };
 
-  const handleCharacterCreationFinish = () => {
+  const handleCharacterCreationFinish = async (name, sex, charClass, attributes) => {
+    await props.onCreateCharacter(name, sex, charClass, attributes)
+    await props.onAuthCheck()
     setShowCharacterCreationModal(false);
-    localStorage.setItem("characterCreated", 1);
   };
 
   const updateActiveInstanceId = (id) => {
@@ -164,5 +171,17 @@ function Root(props) {
 }
 
 
+const mapStateToProps = state => {
+  return {
+    auth: state.auth
+  };
+};
 
-export default Root
+const mapDispatchToProps = dispatch => {
+  return {
+    onCreateCharacter: (name, sex, charClass, attributes) => dispatch(createCharacter(name, sex, charClass, attributes)),
+    onAuthCheck: () => dispatch(authCheck())
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Root);

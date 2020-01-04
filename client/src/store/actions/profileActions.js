@@ -111,3 +111,19 @@ export const clearRallyAwards = () => {
     }
 }
 
+
+export const createCharacter = (name, sex, characterClass, attributes) => {
+    return async dispatch => {
+        try {
+           
+            const res = await axios.patch('/user/character', {name, sex, characterClass, attributes})
+            const profile = res.data
+            
+            delete profile._id
+            dispatch({type: 'UPDATE_PROFILE_DATA', profile})
+            
+        }catch (e) {
+            dispatch( {type: "NO_CONNECTION", error: e})      
+        } 
+    }
+}

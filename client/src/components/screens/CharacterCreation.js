@@ -34,18 +34,18 @@ const useStyles = makeStyles(theme => ({
 
 const CharacterCreation = props => {
   const classes = useStyles();
-  const [stepperHeight, setStepperHeight] = React.useState(0)
+  const [stepperHeight, setStepperHeight] = React.useState(0);
   const [activeStep, setActiveStep] = React.useState(0);
   const [nextDisabled, setNextDisabled] = React.useState(true);
   const [name, setName] = React.useState("");
-  const [gender, setGender] = React.useState("");
+  const [sex, setSex] = React.useState("");
   const [characterClass, setCharacterClass] = React.useState("");
   const [attributePool, setAttributePool] = React.useState(3);
   const [attributes, setAttributes] = React.useState({
-    str: 1,
-    dex: 1,
-    mag: 1,
-    end: 1
+    strength: 1,
+    dexterity: 1,
+    magic: 1,
+    endurance: 1
   });
 
   const handleNameChange = event => {
@@ -54,12 +54,40 @@ const CharacterCreation = props => {
     }
   };
 
-  const handleGenderChange = event => {
-    setGender(event.target.value);
+  const handleSexChange = event => {
+    setSex(event.target.value);
   };
 
   const handleCharacterClassChange = event => {
     setCharacterClass(event.target.value);
+    const attributesTemp = {
+      strength: 1,
+      dexterity: 1,
+      magic: 1,
+      endurance: 1
+    };
+    switch (event.target.value) {
+      case "warrior":
+        attributesTemp.strength = 2;
+
+        break;
+      case "mage":
+        attributesTemp.magic = 2;
+
+        break;
+      case "rogue":
+        attributesTemp.dexterity = 2;
+
+        break;
+      case "cleric":
+        attributesTemp.endurance = 2;
+
+        break;
+
+      default:
+        break;
+    }
+    setAttributes(attributesTemp);
   };
 
   const handleAttributeChange = (event, attributeName, value) => {
@@ -77,7 +105,7 @@ const CharacterCreation = props => {
 
   const steps = [
     <Step1 handleChange={handleNameChange} value={name} />,
-    <Step2 handleChange={handleGenderChange} value={gender} />,
+    <Step2 handleChange={handleSexChange} value={sex} />,
     <Step3 handleChange={handleCharacterClassChange} value={characterClass} />,
     <Step4
       handleChange={handleAttributeChange}
@@ -86,7 +114,7 @@ const CharacterCreation = props => {
     />,
     <Step5
       name={name}
-      gender={gender}
+      sex={sex}
       characterClass={characterClass}
       attributes={attributes}
     />
@@ -96,7 +124,7 @@ const CharacterCreation = props => {
 
   const handleNext = () => {
     if (activeStep === maxSteps - 1) {
-      props.onFinish();
+      props.onFinish(name, sex, characterClass, attributes);
     }
 
     setActiveStep(prevActiveStep => prevActiveStep + 1);
@@ -111,22 +139,25 @@ const CharacterCreation = props => {
     if (name.length > 1 && activeStep === 0) {
       buttonDisabled = false;
     }
-    if (gender !== "" && activeStep === 1) {
+    if (sex !== "" && activeStep === 1) {
       buttonDisabled = false;
     }
     if (characterClass !== "" && activeStep === 2) {
       buttonDisabled = false;
     }
-    if (activeStep === 3 || activeStep === 4) {
+    if (attributePool === 0 && activeStep === 3) {
+      buttonDisabled = false;
+    }
+    if ( activeStep === 4) {
       buttonDisabled = false;
     }
 
     setNextDisabled(buttonDisabled);
-  }, [activeStep, name, gender, characterClass]);
+  }, [activeStep, name, sex, characterClass, attributePool]);
 
   React.useEffect(() => {
-setStepperHeight( document.getElementById("stepper").offsetHeight)
-  }, [])
+    setStepperHeight(document.getElementById("stepper").offsetHeight);
+  }, []);
 
   return (
     <div className={classes.root}>
