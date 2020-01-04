@@ -856,6 +856,8 @@ const Events = (props) => {
         instanceRefreshSubscribe(async (roomId) => {
             console.log('mission refreshed')
             fetchMissions()
+            await props.authCheck()
+            
         })
 
     }, []);

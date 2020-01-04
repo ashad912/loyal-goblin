@@ -394,7 +394,7 @@ export const designateUserLevel = points => {
   }
 };
 
-export const validateInMissionInstanceStatus = (userId, newStatus) => {
+export const validateInMissionInstanceStatus = (userId, newStatus, secondNewStatus) => {
   return new Promise(async (resolve, reject) => {
     const missionInstance = await MissionInstance.findOne({
       party: { $elemMatch: { profile: userId } }
@@ -408,6 +408,9 @@ export const validateInMissionInstanceStatus = (userId, newStatus) => {
       if (index > -1) {
         if (missionInstance.party[index].inMission !== newStatus) {
           missionInstance.party[index].inMission = newStatus;
+          if(secondNewStatus){
+            missionInstance.party[index].readyStatus = secondNewStatus
+          }
           await missionInstance.save();
           return resolve(true);
         }

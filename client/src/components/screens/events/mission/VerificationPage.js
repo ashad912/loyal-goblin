@@ -30,7 +30,12 @@ const VerificationPage = props => {
       missionAwards = [...missionAwards, ...props.missionAwards[category]]
     }
   })
- 
+
+  const handleBackToMainScreen = async () => {
+    await props.authCheck()
+    setBackToMainScreen(true)
+  }
+  
   
   return (
     <React.Fragment>
@@ -54,7 +59,7 @@ const VerificationPage = props => {
             style={{ justifyContent: 'center', marginTop: '1.5rem'}}
             variant="contained"
             fullWidth
-            onClick={() => setBackToMainScreen(true)} 
+            onClick={handleBackToMainScreen} 
             color="primary" 
           >
             Dzięki

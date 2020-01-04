@@ -20,6 +20,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {mockItemModels} from "../../../utils/mocks"
 import {itemTypeLabelsPlural} from '../../../utils/labels'
+import {getItemModels} from '../../../store/adminActions/itemActions'
 
 
 
@@ -27,7 +28,7 @@ const AdminItems = () => {
   const [showNewItemCreator, setShowNewItemCreator] = React.useState(false);
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [nameFilter, setNameFilter] = React.useState("");
-  const [items, setItems] = React.useState(mockItemModels);
+  const [items, setItems] = React.useState([]);
   const [filteredItems, setFilteredItems] = React.useState(items);
   const [modifyingIndex, setModifyingIndex] = React.useState(null)
 
@@ -40,11 +41,22 @@ const AdminItems = () => {
       _id: null,
       type: null,
       name: null,
-      class: null,
+      class: 'any',
       description: null,
+      loyalAward: null,
       imgSrc: null,
+      appearanceSrc: null,
       perks: [],
   })
+
+  const fetchItemModels = async () => {
+    const itemModels = await getItemModels()
+    setItems(itemModels)
+  }
+
+  React.useEffect(() => {
+    fetchItemModels()
+  }, [])
 
   const toggleItemCreator = e => {
     if(showNewItemCreator){
@@ -100,9 +112,11 @@ const AdminItems = () => {
       _id: null,
       type: null,
       name: '',
-      class: null,
+      class: 'any',
       description: '',
+      loyalAward: false,
       imgSrc: null,
+      appearanceSrc: null,
       perks: [],
     })
     toggleItemCreator()  
@@ -119,16 +133,20 @@ const AdminItems = () => {
 
   const updateItems = (item) => {
     console.log(item)
+
+    fetchItemModels()
+
     if(modifyingIndex != null){
-      const tempItems = [...items]
+      //const tempItems = [...items]
 
-      tempItems[modifyingIndex] = item
+      //tempItems[modifyingIndex] = item
 
-      setItems(tempItems)
+      //setItems(tempItems)
+      
       toggleItemCreator()
       
     }else{
-      setItems([...items, item])
+      //setItems([...items, item])
       toggleItemCreator()
     }
     
@@ -165,6 +183,7 @@ const AdminItems = () => {
           open={showNewItemCreator}
           handleClose={toggleItemCreator}
           item={itemToPass}
+          modifyingItemIndex={modifyingIndex}
           updateItems={updateItems}
         />
       ) : (

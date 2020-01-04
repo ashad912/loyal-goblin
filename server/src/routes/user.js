@@ -35,6 +35,7 @@ router.post("/create", async (req, res) => {
     res.status(400).send();
   }
 
+  
   if(req.body.registerKey){
     const isMatch = await bcrypt.compare(
       req.body.registerKey,
@@ -45,15 +46,18 @@ router.post("/create", async (req, res) => {
       res.status(401).send({ error: "Please authenticate." });
     }
   }else{
+    
     const secretKey = process.env.SECRET_RECAPTCHA_KEY;
     const recaptchaToken = req.body.token;
     const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
 
+    console.log(secretKey)
     try{
       await verifyCaptcha(url)
     }catch(e){
       console.log(e);
       res.status(400).send(e);
+      return
     }
   }
 
@@ -83,7 +87,11 @@ router.post("/create", async (req, res) => {
 const verifyCaptcha = (url) => {
   return new Promise (async (resolve, reject) => {
     try{
-      await axios.post(url)
+      const res = await axios.post(url)
+      console.log(res.data)
+      if(!res.data.success){
+        return reject()
+      }
       resolve()
     }catch(e){
       reject(e)

@@ -29,7 +29,7 @@ export const classLabelsAny = {
 
 
 
-
+export const equippableItems = ['weapon', 'feet', 'hands', 'head', 'chest', 'legs', 'ring']
 
 export const roomLabels = {
     medieval: 'Pokój średniowieczny',

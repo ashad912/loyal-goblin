@@ -49,9 +49,9 @@ export const signUp = (credentials) => {
 
                 resolve()
             } catch (e) {
-                const language = null
-                console.log(e)
-                dispatch( {type: "SIGNUP_ERROR", language})
+                
+                console.error(e)
+                dispatch( {type: "SIGNUP_ERROR", messageCode: e.response.data.code})
 
                 reject(e)
             }

@@ -58,18 +58,23 @@ const ItemListItem = ({
                 {item.hasOwnProperty('twoHanded') ? (item.twoHanded ? ('Dwuręczna') : ('Jednoręczna')) : null}
             </Typography>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <Box display="flex">
                 <Typography >
-                    {`${item.class ? classLabels[item.class] : 'Wszystkie klasy'}`}
+                    {`${item.class !== 'any' ? classLabels[item.class] : 'Wszystkie klasy'}`}
                 </Typography>
             </Box>
+          </Grid>
+          <Grid item xs={2}>
+            <Typography >
+                {item.hasOwnProperty('loyalAward') ? (item.loyalAward ? ('Nagroda lojal.') : (null)) : null}
+            </Typography>
           </Grid>
         </Grid>
         <Grid item container>
           <Grid item xs={2}>
             <img
-              src={(item.imgSrc.includes('blob') || item.imgSrc.includes('data:image')) ? (item.imgSrc) : (require("../../../assets/icons/items/" + item.imgSrc))}
+              src={'/images/items/' + item.imgSrc}
               width={32}
             />
           </Grid>
