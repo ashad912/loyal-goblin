@@ -56,21 +56,21 @@ const AmuletsModal = props => {
               <List dense >
                 {props.amuletList.map(amulet => {
                   return (
-                    <ListItem key={amulet.itemModel._id}>
+                    <ListItem key={amulet._id}>
                       <ListItemAvatar>
                         <img
                           src={require("../../../assets/icons/items/" +
-                            amulet.itemModel.imgSrc)}
+                            amulet.imgSrc)}
                           width="64px"
                         />
                       </ListItemAvatar>
-                      <ListItemText primary={amulet.itemModel.name} />
+                      <ListItemText primary={amulet.name} />
 
                       <ListItemSecondaryAction>
                         <Checkbox
                           edge="end"
                           onChange={handleCheckbox(
-                            amulet.itemModel._id,
+                            amulet._id,
                             amulet.quantity
                           )}
                           checked={amulet.quantity > 0}
@@ -87,7 +87,7 @@ const AmuletsModal = props => {
                   .filter(amulet => amulet.quantity > 0)
                   .map(amulet => {
                     return (
-                      <ListItem key={amulet.itemModel._id}>
+                      <ListItem key={amulet._id}>
                         <Grid
                           container
                           direction="row"
@@ -99,22 +99,22 @@ const AmuletsModal = props => {
                           <Grid item >
                             <ListItemAvatar>
                               <img
-                                src={require("../../../assets/icons/items/" +
-                                  amulet.itemModel.imgSrc)}
+                                src={"/images/items/" +
+                                  amulet.imgSrc}
                                 width="64px"
                               />
                             </ListItemAvatar>
                           </Grid>
                           <Grid item style={{flexBasis: '40%'}}>
                             <Typography variant="h6">
-                              {amulet.itemModel.name}
+                              {amulet.name}
                             </Typography>
                           </Grid>
                           <Grid item >
                             <Button
                               variant="contained"
                               color="secondary"
-                              onClick={handleSubtract(amulet.itemModel._id)}
+                              onClick={handleSubtract(amulet._id)}
                             >
                               -
                             </Button>
@@ -125,7 +125,7 @@ const AmuletsModal = props => {
                               type="tel"
                               value={amulet.quantity}
                               onChange={e =>
-                                handleChangeQuantity(e, amulet.itemModel._id)
+                                handleChangeQuantity(e, amulet._id)
                               }
                               inputProps = {{style: {textAlign: 'center'}}}
                             />
@@ -134,7 +134,7 @@ const AmuletsModal = props => {
                             <Button
                               variant="contained"
                               color="primary"
-                              onClick={handleAdd(amulet.itemModel._id)}
+                              onClick={handleAdd(amulet._id)}
                             >
                               +
                             </Button>

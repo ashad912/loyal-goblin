@@ -117,7 +117,7 @@ export const MissionSchema = new mongoose.Schema({
     completedByUsers: [{ //user whoes have finished the events - to query available events for specific user -> for users statistics used virtualization by user side
         type: mongoose.Schema.Types.ObjectId, //id in mongo - user id
         ref: 'user',
-        unique: true,
+        //unique: true,
     }],
     awardsAreSecret: Boolean,
     awards: {

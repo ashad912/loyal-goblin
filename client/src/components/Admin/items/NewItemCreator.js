@@ -63,7 +63,7 @@ const FileInputButton = styled(Button)`
 `;
 
 const AddIcon = styled(AddCircleIcon)`
-  color: #3f51b5
+  color: #3f51b5;
   width: 1.5rem;
   transition: transform 0.2s ease-in-out;
   transform: scale(1.8);
@@ -437,8 +437,8 @@ class NewItemCreator extends Component {
                     </FileInputButton>
                     <HiddenFileInput
                       type="file"
-                      accept=".svg"
                       onChange={this.handleAppearanceChange}
+                      inputProps={{accept:"image/svg+xml"}}
                     />
                     
                   </FileInputWrapper>
@@ -554,8 +554,9 @@ class NewItemCreator extends Component {
                 </FileInputButton>
                 <HiddenFileInput
                   type="file"
-                  accept="image/*"
+                  //accept="image/*"
                   onChange={this.handleIconChange}
+                  inputProps={{accept: 'image/*'}}
                 />
                 
               </FileInputWrapper>

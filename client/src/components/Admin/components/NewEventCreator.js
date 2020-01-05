@@ -32,10 +32,12 @@ import emeraldAmulet from "../../../assets/icons/items/emerald-amulet.png";
 
 import characterClasses from "../../../assets/categories/characterClasses";
 
-import convertItemsArrayToCategories from "../utils/bagArayToCategories";
+import convertItemModelsToCategories from "../utils/itemModelsToCategories";
 import { asyncForEach } from "../utils/asyncForEach";
+import {createEvent, updateEvent, uploadEventIcon} from '../../../store/adminActions/eventActions'
 
 import "moment/locale/pl";
+import { getItemModels } from "../../../store/adminActions/itemActions";
 moment.locale("pl");
 
 const mockAmulets = [
@@ -432,7 +434,7 @@ class NewEventCreator extends Component {
     title: "",
     description: "",
     minLevel: "",
-    imgSrc: "",
+    iconView: "",
     minPlayers: 1,
     maxPlayers: 8,
     strength: 1,
@@ -481,41 +483,44 @@ class NewEventCreator extends Component {
     disableSubmit: true
   };
 
-  componentDidMount() {
+ async componentDidMount() {
     //fetch things from back end
+    let itemModels = await getItemModels()
+    itemModels = convertItemModelsToCategories(itemModels)
+
     this.setState(
       {
-        amulets: [...mockAmulets],
-        fullItemsList: { ...convertItemsArrayToCategories(mockItems) }
+        amulets: [...itemModels.amulet],
+        fullItemsList: itemModels
       },
       () => {
         if (this.props.isEdit) {
           const event = { ...this.props.eventToEdit };
           if (event.hasOwnProperty("minLevel")) {
             //MISSION
-            const amulets = mockAmulets.map(amulet => {
+            const amulets = itemModels.amulet.map(amulet => {
               return {
                 ...amulet,
                 quantity:
                   event.amulets.find(
                     eventAmulet =>
-                      eventAmulet.itemModel.id === amulet.itemModel.id
+                      eventAmulet._id === amulet._id
                   ) !== undefined
                     ? event.amulets.find(
                         eventAmulet =>
-                          eventAmulet.itemModel.id === amulet.itemModel.id
+                          eventAmulet._id === amulet._id
                       ).quantity
                     : 0
               };
             });
             this.setState({
-              id: event.id,
+              _id: event._id,
               isRally: false,
               unique: event.isUnique,
               title: event.title,
               description: event.description,
               minLevel: event.minLevel,
-              imgSrc: event.imgSrc,
+              iconView:  event.imgSrc ? ('/images/missions/' + event.imgSrc) : null, 
               minPlayers: event.minPlayers,
               maxPlayers: event.maxPlayers,
               amulets: [...amulets],
@@ -539,11 +544,11 @@ class NewEventCreator extends Component {
             });
           } else {
             this.setState({
-              id: event.id,
+              _id: event._id,
               isRally: true,
               title: event.title,
               description: event.description,
-              imgSrc: event.imgSrc,
+              iconView: event.imgSrc ? ('/images/rallies/' + event.imgSrc) : null, 
               experience: event.experience,
               awardsLevels: [...event.awardsLevels],
               activationDate: event.activationDate,
@@ -766,7 +771,7 @@ class NewEventCreator extends Component {
         if (this.state.isRally) {
           this.handleCheckRallyDates();
         }else{
-          this.handleRaidStartTimeChange(e)
+          //this.handleRaidStartTimeChange(e)
         }
       }
     );
@@ -804,7 +809,7 @@ class NewEventCreator extends Component {
     }
     const classItems = [...allItems[characterClass]];
     const idOfItem = classItems.findIndex(
-      item => item.itemModel.id === currentItem.itemModel.id
+      item => item._id === currentItem._id
     );
 
     classItems[idOfItem].quantity = parseInt(quantity);
@@ -828,7 +833,7 @@ class NewEventCreator extends Component {
     }
     let classItems = [...allItems[characterClass]];
     const idOfItem = classItems.findIndex(
-      item => item.itemModel.id === currentItem.itemModel.id
+      item => item._id === currentItem._id
     );
 
     classItems[idOfItem].quantity -= 1;
@@ -854,7 +859,7 @@ class NewEventCreator extends Component {
     }
     const classItems = [...allItems[characterClass]];
     const idOfItemAlreadyAdded = classItems.findIndex(
-      item => item.itemModel.id === currentItem.itemModel.id
+      item => item._id === currentItem._id
     );
     if (idOfItemAlreadyAdded === -1) {
       classItems.push({ ...currentItem, quantity: 1 });
@@ -904,7 +909,7 @@ class NewEventCreator extends Component {
 
   handleChangeAmuletQuantity = (id, quantity) => {
     const amulets = [...this.state.amulets];
-    const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel.id === id);
+    const idOfAmulet = amulets.findIndex(amulet => amulet._id === id);
     if (idOfAmulet !== -1) {
       amulets[idOfAmulet].quantity = parseInt(quantity);
       this.setState({ amulets });
@@ -913,7 +918,7 @@ class NewEventCreator extends Component {
 
   handleSubtractAmulet = id => {
     const amulets = [...this.state.amulets];
-    const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel.id === id);
+    const idOfAmulet = amulets.findIndex(amulet => amulet._id === id);
     if (idOfAmulet !== -1) {
       amulets[idOfAmulet].quantity -= 1;
 
@@ -923,7 +928,7 @@ class NewEventCreator extends Component {
 
   handleDeleteAmulet = id => {
     const amulets = [...this.state.amulets];
-    const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel.id === id);
+    const idOfAmulet = amulets.findIndex(amulet => amulet._id === id);
     if (idOfAmulet !== -1) {
       amulets[idOfAmulet].quantity = 0;
 
@@ -933,14 +938,13 @@ class NewEventCreator extends Component {
 
   handleAddAmulet = id => {
     const amulets = [...this.state.amulets];
-    const idOfAmuletAlreadyAdded = amulets.findIndex(
-      amulet => amulet.itemModel.id === id
-    );
-    if (idOfAmuletAlreadyAdded !== -1) {
-      amulets[idOfAmuletAlreadyAdded].quantity += 1;
+    const thisAmulet = amulets.find(amulet => amulet._id === id)
+    if(thisAmulet.quantity > 0){
+      thisAmulet.quantity += 1
+    }else{
+      thisAmulet.quantity = 1
     }
-
-    this.setState({ amulets });
+    this.setState({amulets})
   };
 
   handleToggleRallyItemsModal = (e, awardTier) => {
@@ -984,14 +988,14 @@ class NewEventCreator extends Component {
 
   handleIconChange = e => {
     if (e.target.files.length > 0) {
-      this.setState({ imgSrc: URL.createObjectURL(e.target.files[0]), dirtyFields: this.handleMakeDirtyField('imgSrc') }, () => {
+      this.setState({ icon: e.target.files[0], iconView: URL.createObjectURL(e.target.files[0]), dirtyFields: this.handleMakeDirtyField('iconView') }, () => {
         this.validateRequiredFields();
       });
     }
   };
 
   handleDescriptionChange = e => {
-    this.setState({ description: e.target.value.trim(), dirtyFields: this.handleMakeDirtyField('description') }, () => {
+    this.setState({ description: e.target.value, dirtyFields: this.handleMakeDirtyField('description') }, () => {
       this.validateRequiredFields();
     });
   };
@@ -1003,7 +1007,7 @@ class NewEventCreator extends Component {
   };
 
   handleNameChange = e => {
-    this.setState({ title: e.target.value.trim(), dirtyFields: this.handleMakeDirtyField('title') }, () => {
+    this.setState({ title: e.target.value, dirtyFields: this.handleMakeDirtyField('title') }, () => {
       this.validateRequiredFields();
     });
   };
@@ -1016,22 +1020,25 @@ class NewEventCreator extends Component {
 
   validateRequiredFields = () => {
     const validationErrors = {
-      title: "",
-      minLevel: "",
-      description: "",
-      imgSrc: ""
+      title: "Pole wymagane",
+      minLevel: "Pole wymagane",
+      description: "Pole wymagane",
+      iconView: "Wczytaj ikonę"
     };
-    if (this.state.dirtyFields.title && this.state.title.trim() === "") {
-      validationErrors.title = "Pole wymagane";
+    if (this.state.dirtyFields.title && this.state.title.trim() !== "") {
+      validationErrors.title = "";
     }
-    if (this.state.dirtyFields.minLevel && this.state.minLevel.trim() === "") {
-      validationErrors.minLevel = "Pole wymagane";
+    if (this.state.dirtyFields.minLevel && this.state.minLevel.trim() !== "") {
+      validationErrors.minLevel = "";
     }
-    if (this.state.dirtyFields.description && this.state.description.trim() === "") {
-      validationErrors.description = "Pole wymagane";
+    if(this.state.isRally){
+      validationErrors.minLevel = "";
     }
-    if (this.state.dirtyFields.imgSrc && !this.state.imgSrc) {
-      validationErrors.imgSrc = "Wczytaj ikonę";
+    if (this.state.dirtyFields.description && this.state.description.trim() !== "") {
+      validationErrors.description = "";
+    }
+    if (this.state.dirtyFields.iconView && this.state.iconView) {
+      validationErrors.iconView = "";
     }
     
 
@@ -1048,9 +1055,50 @@ class NewEventCreator extends Component {
 
   };
 
-  handleSubmit = () => {
-    //valdidate and send data
+  handleSubmit = async () => {
+    let event = {
+      title: this.state.title,
+      description: this.state.description,
+      activationDate: this.state.activationDate,
+      expiryDate: this.state.expiryDate,
+      experience: this.state.experience,
+      awardsAreSecret: this.state.awardsAreSecret
+
+    }
+    let eventId = null
+    if(this.state.isRally){
+      event.startDate = this.state.startDate
+      event.awardsLevels = this.state.awardsLevels
+    }else{
+      event.minPlayers = this.state.minPlayers
+      event.maxPlayers = this.state.maxPlayers
+      event.strength = this.state.strength
+      event.dexterity = this.state.dexterity
+      event.magic = this.state.magic
+      event.endurance = this.state.endurance
+      event.level = this.state.minLevel
+      event.unique = this.state.unique
+      event.amulets = this.state.amulets
+      event.awards = this.state.items
+
+    }
     
+    const eventType = this.state.isRally ? 'rally' : 'mission'
+    if(this.props.isEdit){
+      eventId = await updateEvent(eventType, event)
+    }else{
+      eventId = await createEvent(eventType, event)
+    }
+    console.log('here', eventId, this.state.icon)
+    if(eventId && this.state.icon){
+      const formData = new FormData()
+      if(this.state.icon){
+        formData.append('icon', this.state.icon)
+      }
+      
+      await uploadEventIcon(eventType, eventId, formData)
+    }
+
       this.props.handleClose();
 
   };
@@ -1102,8 +1150,8 @@ class NewEventCreator extends Component {
                 type="text"
                 fullWidth
                 required
-                error={this.state.validationErrors.title ? true : false}
-                helperText={this.state.validationErrors.title}
+                error={this.state.dirtyFields.title && this.state.validationErrors.title ? true : false}
+                helperText={this.state.dirtyFields.title && this.state.validationErrors.title}
               />
             </Grid>
             <Grid item xs={4}>
@@ -1116,8 +1164,8 @@ class NewEventCreator extends Component {
                   type="number"
                   inputProps={{ min: "1" }}
                   required
-                  error={this.state.validationErrors.minLevel ? true : false}
-                  helperText={this.state.validationErrors.minLevel}
+                  error={this.state.dirtyFields.minLevel && this.state.validationErrors.minLevel ? true : false}
+                  helperText={this.state.dirtyFields.minLevel && this.state.validationErrors.minLevel}
                 />
               )}
             </Grid>
@@ -1133,19 +1181,19 @@ class NewEventCreator extends Component {
             rows={2}
             rowsMax={5}
             required
-            error={this.state.validationErrors.description ? true : false}
-            helperText={this.state.validationErrors.description}
+            error={this.state.dirtyFields.description && this.state.validationErrors.description ? true : false}
+            helperText={this.state.dirtyFields.description && this.state.validationErrors.description}
           />
           <Grid container spacing={2}>
-            {this.state.validationErrors.imgSrc && 
+            {this.state.dirtyFields.iconView && this.state.validationErrors.iconView && 
             <Grid item>
-  <Typography variant="caption" style={{ color: "rgb(206, 0, 0)" }}>{this.state.validationErrors.imgSrc}</Typography>
+  <Typography variant="caption" style={{ color: "rgb(206, 0, 0)" }}>{this.state.validationErrors.iconView}</Typography>
             </Grid>
             }
             <Grid item>
               <FileInputWrapper>
                 <FileInputButton variant="contained" color="primary">
-                  {this.state.imgSrc ? "Zmień ikonę" : "Dodaj ikonę"}{" "}
+                  {this.state.iconView ? "Zmień ikonę" : "Dodaj ikonę"}{" "}
                   {this.state.isRally ? " rajdu *" : " misji *"}
                 </FileInputButton>
                 <HiddenFileInput
@@ -1163,14 +1211,9 @@ class NewEventCreator extends Component {
                 alignItems: "center"
               }}
             >
-              {this.state.imgSrc && (
+              {this.state.iconView && (
                 <img
-                  src={
-                    this.state.imgSrc.startsWith("blob")
-                      ? this.state.imgSrc
-                      : require("../../../assets/icons/events/" +
-                          this.state.imgSrc)
-                  }
+                  src={this.state.iconView}
                   style={{ width: "64px" }}
                 />
               )}
@@ -1256,16 +1299,16 @@ class NewEventCreator extends Component {
                     .filter(amulet => amulet.quantity > 0)
                     .map(amulet => {
                       return (
-                        <Grid item key={amulet.itemModel.id}>
+                        <Grid item key={amulet.id}>
                           <ListItemAvatar>
                             <img
-                              src={require("../../../assets/icons/items/" +
-                                amulet.itemModel.imgSrc)}
+                              src={"/images/items/" +
+                                amulet.imgSrc}
                               width="64px"
                             />
                           </ListItemAvatar>
                           <ListItemText
-                            primary={amulet.itemModel.name}
+                            primary={amulet.name}
                             secondary={"x" + amulet.quantity}
                             style={{ marginLeft: "1rem" }}
                           />
@@ -1392,8 +1435,8 @@ class NewEventCreator extends Component {
                                   <ListItem>
                                     <ListItemAvatar>
                                       <img
-                                        src={require("../../../assets/icons/items/" +
-                                          item.itemModel.imgSrc)}
+                                        src={"/images/items/" +
+                                          item.imgSrc}
                                         style={{
                                           width: "32px",
                                           height: "32px"
@@ -1401,7 +1444,7 @@ class NewEventCreator extends Component {
                                       />
                                     </ListItemAvatar>
                                     <ListItemText
-                                      primary={item.itemModel.name}
+                                      primary={item.name}
                                       secondary={"x" + item.quantity}
                                     />
                                   </ListItem>
@@ -1432,8 +1475,8 @@ class NewEventCreator extends Component {
                                           <ListItem>
                                             <ListItemAvatar>
                                               <img
-                                                src={require("../../../assets/icons/items/" +
-                                                  item.itemModel.imgSrc)}
+                                                src={"/images/items/" +
+                                                  item.imgSrc}
                                                 style={{
                                                   width: "32px",
                                                   height: "32px"
@@ -1441,7 +1484,7 @@ class NewEventCreator extends Component {
                                               />
                                             </ListItemAvatar>
                                             <ListItemText
-                                              primary={item.itemModel.name}
+                                              primary={item.name}
                                               secondary={"x" + item.quantity}
                                             />
                                           </ListItem>
@@ -1514,16 +1557,16 @@ class NewEventCreator extends Component {
                   <List dense>
                     {this.state.items.any.map(item => {
                       return (
-                        <ListItem key={item.itemModel._id}>
+                        <ListItem key={item._id}>
                           <ListItemAvatar>
                             <img
-                              src={require("../../../assets/icons/items/" +
-                                item.itemModel.imgSrc)}
+                              src={"/images/items/" +
+                                item.imgSrc}
                               style={{ width: "32px", height: "32px" }}
                             />
                           </ListItemAvatar>
                           <ListItemText
-                            primary={item.itemModel.name}
+                            primary={item.name}
                             secondary={"x" + item.quantity}
                           />
                         </ListItem>
@@ -1548,16 +1591,16 @@ class NewEventCreator extends Component {
                           </Typography>
                           {this.state.items[characterClass].map(item => {
                             return (
-                              <ListItem key={item.itemModel._id}>
+                              <ListItem key={item._id}>
                                 <ListItemAvatar>
                                   <img
-                                    src={require("../../../assets/icons/items/" +
-                                      item.itemModel.imgSrc)}
+                                    src={"/images/items/" +
+                                      item.imgSrc}
                                     style={{ width: "32px", height: "32px" }}
                                   />
                                 </ListItemAvatar>
                                 <ListItemText
-                                  primary={item.itemModel.name}
+                                  primary={item.name}
                                   secondary={"x" + item.quantity}
                                 />
                               </ListItem>

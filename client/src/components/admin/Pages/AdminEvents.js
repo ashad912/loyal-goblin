@@ -25,6 +25,7 @@ import NewEventCreator from "../components/NewEventCreator";
 
 import "moment/locale/pl";
 import EventRallyListItem from "../components/EventRallyListItem";
+import { getEvents } from "../../../store/adminActions/eventActions";
 moment.locale("pl");
 
 const mockEvents = [
@@ -335,9 +336,14 @@ class AdminMissions extends Component {
   // const [changeEndDate, setChangeEndDate] = React.useState(false);
   // const [endDate, setEndDate] = React.useState("");
 
+
+  fetchEvents = async () => {
+    const events = await getEvents()
+    this.setState({ fullEventList: [...events], events: [...events ]})
+  }
+
   componentDidMount() {
-    //fetch all events
-    this.setState({ fullEventList: [...mockEvents], events: [...mockEvents] });
+     this.fetchEvents()
   }
 
   toggleChangeEndDate = () => {

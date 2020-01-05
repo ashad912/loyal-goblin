@@ -468,6 +468,39 @@ export const saveImage = async (
   return imageName;
 };
 
+export const saveAppearanceImage = async (
+  imageFile,
+  ownerId,
+  uploadPath,
+  previousFileName,
+  date
+) => {
+  let imageName
+  if(date){
+    imageName = ownerId + date + ".png"
+  }else{
+    imageName = ownerId + Date.now() + ".png";
+  }
+  await mkdirp(uploadPath);
+  try {
+    fs.writeFile(uploadPath+imageName, imageFile, (err)=>{
+
+      if (previousFileName) {
+        fs.unlink(uploadPath + previousFileName, function(err) {
+          if (err) throw err;
+          console.log("File deleted!");
+          return imageName;
+        });
+      }
+    })
+  } catch (error) {
+    console.log(err);
+      throw new Error("Błąd podczas wczytywania obrazu");
+  }
+
+  return imageName;
+};
+
 
 
 export const removeImage = async (uploadPath, fileName) => {

@@ -26,7 +26,7 @@ const ItemsModalListItem = props => {
   const handleAdd = () => {
     props.handleAdd(
       item,
-      item.itemModel.class !== "any" ? item.itemModel.class : chosenClass
+      item.class !== "any" ? item.class : chosenClass
     );
   };
 
@@ -34,8 +34,8 @@ const ItemsModalListItem = props => {
     <ListItem
       style={{
         background:
-          item.itemModel.class !== "any"
-            ? `${classThemes[item.itemModel.class]}`
+          item.class !== "any"
+            ? `${classThemes[item.class]}`
             : "none"
       }}
     >
@@ -45,28 +45,28 @@ const ItemsModalListItem = props => {
           <ListItemAvatar>
             <img
               style={{ width: "32px", height: "32px" }}
-              src={require(`../../../assets/icons/items/${item.itemModel.imgSrc}`)}
+              src={`/images/items/${item.imgSrc}`}
             />
           </ListItemAvatar>
           </Grid>
           <Grid item>
 
           <ListItemText
-            primary={item.itemModel.name}
+            primary={item.name}
             secondary={
               <span style={{ fontStyle: "italic" }}>
-                {item.itemModel.fluff}
+                {item.fluff}
               </span>
             }
           />
           </Grid>
         </Grid>
-        {item.itemModel.hasOwnProperty("perks") &&
-          item.itemModel.perks.length > 0 && (
+        {item.hasOwnProperty("perks") &&
+          item.perks.length > 0 && (
             <Grid item style={{ border: "1px solid grey" }}>
               <Divider />
               <List dense>
-                {item.itemModel.perks.map(perk => {
+                {item.perks.map(perk => {
                   //TODO: ustalić dokładnie co pobierane jest z perków
                   return (
                     <ItemsModalListItemPerks
@@ -81,7 +81,7 @@ const ItemsModalListItem = props => {
           )}
       </Grid>
 
-      {!props.onlyAllClassItems && item.itemModel.class === "any" ? (
+      {!props.onlyAllClassItems && item.class === "any" ? (
         <FormControl
           style={{ margin: "0 1rem", boxSizing: "border-box", width: "10rem", alignSelf: 'flex-start' }}
         >

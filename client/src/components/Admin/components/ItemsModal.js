@@ -56,7 +56,7 @@ const ItemsModal = props => {
       const tempItemsList = { ...itemsList };
       for (let category in tempItemsList) {
         tempItemsList[category] = tempItemsList[category].filter(item =>
-          item.itemModel.name.search(searchValue) !== -1
+          item.name.search(searchValue) !== -1
         );
       }
       setItemsList(tempItemsList);
@@ -70,7 +70,7 @@ const ItemsModal = props => {
       const tempItemsList = { ...itemsList };
       for (let category in tempItemsList) {
         tempItemsList[category] = tempItemsList[category].filter(
-          item => item.itemModel.class === classFilter
+          item => item.class === classFilter
         );
       }
       setItemsList(tempItemsList);
@@ -85,8 +85,8 @@ const ItemsModal = props => {
       for (let category in tempItemsList) {
         tempItemsList[category] = tempItemsList[category].filter(
           item =>
-            item.itemModel.hasOwnProperty("perks") &&
-            item.itemModel.perks.length > 0
+            item.hasOwnProperty("perks") &&
+            item.perks.length > 0
         );
       }
       setItemsList(tempItemsList);
@@ -261,7 +261,7 @@ const ItemsModal = props => {
                         return (
                           <ItemsModalListItem
                             item={item}
-                            key={item.itemModel._id}
+                            key={item._id}
                             handleAdd={handleAdd}
                           />
                         );
@@ -284,7 +284,7 @@ const ItemsModal = props => {
                     <List>
                       {eventItems[characterClass].map(item => {
                         return (
-                          <ListItem key={item.itemModel._id}>
+                          <ListItem key={item._id}>
                             <Grid
                               container
                               direction="row"
@@ -295,7 +295,7 @@ const ItemsModal = props => {
                             >
                               <Grid item style={{ flexBasis: "40%" }}>
                                 <Typography >
-                                  {item.itemModel.name}
+                                  {item.name}
                                 </Typography>
                               </Grid>
                               <Grid item>

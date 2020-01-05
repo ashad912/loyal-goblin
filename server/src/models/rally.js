@@ -57,7 +57,7 @@ export const RallySchema = new mongoose.Schema({
                     throw new Error(`${value} is not an integer value!`)
                 }
             },
-            unique: true,
+           // unique: true,
         },
         awards: {
             any: [ClassAwardsSchema],

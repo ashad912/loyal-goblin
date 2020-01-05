@@ -1,5 +1,5 @@
 import express from 'express'
-import { asyncForEach, saveImage, removeImage } from '../utils/methods'
+import { asyncForEach, saveImage, saveAppearanceImage, removeImage } from '../utils/methods'
 import { ItemModel } from '../models/itemModel';
 import { Mission } from '../models/mission';
 import { MissionInstance } from '../models/missionInstance';
@@ -29,9 +29,8 @@ router.get('/modelList', auth, async(req,res) => {
         console.log(e.message)
         res.status(500).send(e.message)
     }
-    
-
 })
+
 
 //OK
 router.post('/createModel', auth, async (req, res) =>{
@@ -60,15 +59,17 @@ router.patch('/uploadModelImages/:id', auth, async (req, res) => {
             throw new Error('Item model does not exist!')
         }
 
+        const date = Date.now()
+
         if(req.files.icon){
             let icon = req.files.icon.data
-            const imgSrc = await saveImage(icon, itemModel._id, uploadIconPath, itemModel.imgSrc)
+            const imgSrc = await saveImage(icon, itemModel._id, uploadIconPath, itemModel.imgSrc, date)
             itemModel.imgSrc = imgSrc
         }
         
         if(req.files.appearance){
             let appearance = req.files.appearance.data
-            const appearanceSrc = await saveImage(appearance, itemModel._id, uploadAppearancePath, itemModel.appearanceSrc)
+            const appearanceSrc = await saveAppearanceImage(appearance, itemModel._id, uploadAppearancePath, itemModel.appearanceSrc, date)
             itemModel.appearanceSrc = appearanceSrc
         }
         

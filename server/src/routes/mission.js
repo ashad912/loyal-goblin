@@ -46,15 +46,15 @@ router.get('/events', auth, async (req,res) => {
 router.post('/create', auth, async (req, res) =>{
 
     const mission = new Mission(req.body)
-    if(!req.body.postman){
-        let icon = req.files.icon
-        const imgSrc = await saveImage(icon, mission._id, uploadPath, null)
-        mission.imgSrc = imgSrc
-    }
+    // if(!req.body.postman){
+    //     let icon = req.files.icon
+    //     const imgSrc = await saveImage(icon, mission._id, uploadPath, null)
+    //     mission.imgSrc = imgSrc
+    // }
     
     try {
         await mission.save() 
-        res.status(201).send(mission)
+        res.status(201).send(mission._id)
     } catch (e) {
         console.log(e)
         res.status(500).send(e.message)
@@ -78,6 +78,36 @@ router.delete('/remove', auth, async(req, res) => {
     } catch (e) {
         res.status(500).send(e.message)
     }
+})
+
+
+router.patch('/uploadIcon/:id', auth, async (req, res) => {
+    try{
+        if (!req.files) {
+            throw new Error("Brak ikony misji")
+        }
+
+        const mission = await Mission.findById(req.params.id)
+        if(!mission){
+            throw new Error('Mission does not exist!')
+        }
+
+        if(req.files.icon){
+            let icon = req.files.icon.data
+            const imgSrc = await saveImage(icon, mission._id, uploadPath, mission.imgSrc)
+            mission.imgSrc = imgSrc
+        }
+        
+        
+
+        await mission.save()
+
+        res.status(200).send()
+    }catch(e){
+        console.log(e.message)
+        res.status(400).send(e.message)
+    }
+  
 })
 
 //OK
@@ -112,15 +142,15 @@ router.patch("/update", auth, async (req, res, next) => {
         mission[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.
       });
 
-      if(req.files){
-        let icon = req.files.icon.data
-        const imgSrc = await saveImage(icon, mission._id, uploadPath, mission.imgSrc)
-        mission.imgSrc = imgSrc
-      }
+    //   if(req.files){
+    //     let icon = req.files.icon.data
+    //     const imgSrc = await saveImage(icon, mission._id, uploadPath, mission.imgSrc)
+    //     mission.imgSrc = imgSrc
+    //   }
   
       await mission.save();
 
-      res.send(mission);
+      res.send(mission._id);
     } catch (e) {
       res.status(500).send(e.message);
     }

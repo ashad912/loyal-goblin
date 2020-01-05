@@ -202,20 +202,48 @@ router.post('/create', auth, async (req, res) =>{
 
     const rally = new Rally(req.body)
 
-    let icon = req.files.icon.data
-    const imgSrc = await saveImage(icon, rally._id, uploadPath, null)
-    rally.imgSrc = imgSrc
+    // let icon = req.files.icon.data
+    // const imgSrc = await saveImage(icon, rally._id, uploadPath, null)
+    // rally.imgSrc = imgSrc
 
     try {
         await rally.save()
         
         await updateRallyQueue()
-        res.status(201).send(rally)
+        res.status(201).send(rally._id)
     } catch (e) {
         res.status(400).send(e.message)
     }
 })
 
+router.patch('/uploadIcon/:id', auth, async (req, res) => {
+    try{
+        if (!req.files) {
+            throw new Error("Brak ikony rajdu")
+        }
+
+        const rally = await Rally.findById(req.params.id)
+        if(!rally){
+            throw new Error('Rally does not exist!')
+        }
+
+        if(req.files.icon){
+            let icon = req.files.icon.data
+            const imgSrc = await saveImage(icon, rally._id, uploadPath, rally.imgSrc)
+            rally.imgSrc = imgSrc
+        }
+        
+        
+
+        await rally.save()
+
+        res.status(200).send()
+    }catch(e){
+        console.log(e.message)
+        res.status(400).send(e.message)
+    }
+  
+})
 
 //OK
 router.patch("/update", auth, async (req, res, next) => {
@@ -247,11 +275,11 @@ router.patch("/update", auth, async (req, res, next) => {
         rally[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.
       });
 
-      if(req.files){
-        let icon = req.files.icon.data
-        const imgSrc = await saveImage(icon, rally._id, uploadPath, rally.imgSrc)
-        rally.imgSrc = imgSrc
-      }
+    //   if(req.files){
+    //     let icon = req.files.icon.data
+    //     const imgSrc = await saveImage(icon, rally._id, uploadPath, rally.imgSrc)
+    //     rally.imgSrc = imgSrc
+    //   }
   
       await rally.save();
 
@@ -259,7 +287,7 @@ router.patch("/update", auth, async (req, res, next) => {
         await updateRallyQueue()
       }
 
-      res.send(rally);
+      res.send(rally._id);
     } catch (e) {
       res.status(500).send(e.message);
     }
