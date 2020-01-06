@@ -73,10 +73,19 @@ const ItemListItem = ({
         </Grid>
         <Grid item container>
           <Grid item xs={2}>
-            <img
-              src={'/images/items/' + item.imgSrc}
-              width={32}
-            />
+            <Grid container style={{}}>
+              <img
+                src={'/images/items/' + item.imgSrc}
+                width={32}
+                style={{height: '100%', marginRight: '1rem'}}
+              />
+              <img
+                src={'/images/appearance/' + item.appearanceSrc}
+                width={32}
+                style={{height: '100%'}}
+              />
+            </Grid>
+            
           </Grid>
           <Grid item container direction="column" xs={6}>
             <Grid item>

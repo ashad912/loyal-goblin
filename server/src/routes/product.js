@@ -22,17 +22,28 @@ const router = new express.Router();
 
 ////ADMIN-SIDE
 
+
+router.get('/products', auth, async(req,res) => {
+  try{
+      const products = await Product.find({})
+      res.status(200).send(products)
+  }catch(e){
+      console.log(e.message)
+      res.status(500).send(e.message)
+  }
+})
+
 //OK
 router.post("/create", auth, async (req, res) => {
   const product = new Product(req.body);
 
-  let icon = req.files.icon.data
-  const imgSrc = await saveImage(icon, product._id, uploadPath, null)
-  product.imgSrc = imgSrc
+  // let icon = req.files.icon.data
+  // const imgSrc = await saveImage(icon, product._id, uploadPath, null)
+  // product.imgSrc = imgSrc
 
   try {
     await product.save();
-    res.status(201).send(product);
+    res.status(201).send(product._id);
   } catch (e) {
     res.status(500).send(e);
   }
@@ -76,11 +87,42 @@ router.patch("/update", auth, async (req, res, next) => {
 
     await product.save();
 
-    res.send(product);
+    res.send(product._id);
   } catch (e) {
     res.status(500).send(e.message);
   }
 });
+
+
+router.patch('/uploadImage/:id', auth, async (req, res) => {
+  try{
+      if (!req.files) {
+          throw new Error("Brak ikony produktu")
+      }
+
+      const product = await Product.findById(req.params.id)
+      if(!product){
+          throw new Error('Product does not exist!')
+      }
+
+      const date = Date.now()
+
+      if(req.files.icon){
+          let icon = req.files.icon.data
+          const imgSrc = await saveImage(icon, product._id, uploadPath, product.imgSrc, date)
+          product.imgSrc = imgSrc
+      }
+      
+      await product.save()
+
+      res.status(200).send()
+  }catch(e){
+      console.log(e.message)
+      res.status(400).send(e.message)
+  }
+
+})
+
 
 //OK
 router.delete("/remove", auth, async (req, res) => {

@@ -30,6 +30,8 @@ import ItemsModal from './ItemsModal'
 import {asyncForEach} from '../../../utils/methods'
 import {categoryLabelsSpecifed} from '../../../utils/labels'
 
+import { createProduct, updateProduct, uploadProductImage } from "../../../store/adminActions/productActions";
+
 
 const FileInputWrapper = styled.div`
   position: relative;
@@ -71,7 +73,7 @@ const AddIcon = styled(AddCircleIcon)`
   }
 `;
 
-const mockItems = [
+const mockProducts = [
     {
       
         _id: 101,
@@ -264,21 +266,22 @@ const mockItems = [
     },
   ]
 
-const validatedFields = ['category', 'name', 'description', 'icon', 'price']
+const validatedFields = ['category', 'name', 'description', 'iconView', 'price']
 
 
-class NewProductCreator extends Component {
+class ProductCreator extends Component {
   state = {
     name: '',
     description: '',
-    icon: "",
+    icon: '',
+    iconView: "",
     price: "",
     category: null,
     formError: {
         price: null,
         name: null,
         description: null,
-        icon: null,
+        iconView: null,
     },
     showItemsModal: false,
     awards: [],
@@ -295,7 +298,7 @@ class NewProductCreator extends Component {
       category: product.category ? (product.category) : (Object.keys(categoryLabelsSpecifed)[0]),
       price: product.price,
       awards: product.awards,
-      icon: product.imgSrc ? ((product.imgSrc.includes('blob') || product.imgSrc.includes('data:image') || product.imgSrc.includes('static')) ? (product.imgSrc) : (require("../../../assets/shop/" + product.imgSrc))) : (null),
+      iconView: product.imgSrc ? ('/images/products/' + product.imgSrc) : null,
     }, () => {
       this.setState({
         componentMounted: true
@@ -304,8 +307,11 @@ class NewProductCreator extends Component {
 }
 
   handleIconChange = e => {
-    const url = URL.createObjectURL(e.target.files[0])
-    this.setState({ icon: url}, () => this.callbacksAndValidation('icon', url));
+    if (e.target.files.length > 0) {
+      const url = URL.createObjectURL(e.target.files[0])
+      this.setState({ iconView: url, icon: e.target.files[0]}, () => this.callbacksAndValidation('iconView', url));
+    }
+    
   };
 
 
@@ -327,7 +333,7 @@ class NewProductCreator extends Component {
       let error = ''
 
       if(fieldValue.length === 0){
-        error = fieldName === 'icon' ? ('Ikona wymagana!') : ('Pole wymagane!')
+        error = fieldName === 'iconView' ? ('Ikona wymagana!') : ('Pole wymagane!')
       }
 
       this.setState({
@@ -430,7 +436,7 @@ class NewProductCreator extends Component {
         this.setState({
           formError: {
               ...this.state.formError,
-              [fieldName]: fieldName === 'icon' ? ('Ikona wymagana!') : ('Pole wymagane!')
+              [fieldName]: fieldName === 'iconView' ? ('Ikona wymagana!') : ('Pole wymagane!')
           },
           
         });
@@ -449,6 +455,10 @@ class NewProductCreator extends Component {
       return
     }
 
+    const awards = this.state.awards.map((award) => {
+      return {quantity: award.quantity, itemModel: award.itemModel._id}
+    })
+
 
     const product = {
       _id: this.state._id,
@@ -456,10 +466,27 @@ class NewProductCreator extends Component {
       description: this.state.description,
       price: this.state.price,
       category: this.state.category,
-      awards: this.state.awards,
-      imgSrc: this.state.icon,
+      awards: awards,
+      //imgSrc: this.state.icon,
     }
     
+    let productId = null
+    if(!(typeof this.props.modifyingProductIndex === "number")){
+      delete product._id
+      productId = await createProduct(product)
+    }else{
+      productId = await updateProduct(product)
+    }
+    
+    if(productId && (this.state.icon)){
+      const formData = new FormData()
+      if(this.state.icon){
+        formData.append('icon', this.state.icon)
+      }
+      
+      await uploadProductImage(productId, formData)
+    }
+
 
     this.props.updateProducts(product)
 }
@@ -499,7 +526,7 @@ class NewProductCreator extends Component {
                     <Grid item>
                     <FileInputWrapper>
                         <FileInputButton variant="contained" color="primary">
-                        {this.state.icon ? "Zmień ikonę" : "Dodaj ikonę"}
+                        {this.state.iconView ? "Zmień ikonę" : "Dodaj ikonę"}
                         </FileInputButton>
                         <HiddenFileInput
                         type="file"
@@ -507,7 +534,7 @@ class NewProductCreator extends Component {
                         onChange={this.handleIconChange}
                         />
                     </FileInputWrapper>
-                    {this.state.formError.icon && <Typography style={{color: 'red', fontSize: '0.8rem'}}>{this.state.formError.icon}</Typography>}
+                    {this.state.formError.iconView && <Typography style={{color: 'red', fontSize: '0.8rem'}}>{this.state.formError.iconView}</Typography>}
                     </Grid>
                     <Grid
                         item
@@ -517,7 +544,7 @@ class NewProductCreator extends Component {
                             alignItems: "center"
                         }}
                         >
-                        <img src={this.state.icon} style={{ width: "64px" }} />
+                        <img src={this.state.iconView} style={{ width: "64px" }} />
                     </Grid>
                 </Grid>
             </Grid>
@@ -625,7 +652,7 @@ class NewProductCreator extends Component {
         <ItemsModal
             open={this.state.showItemsModal}
             handleClose={this.handleToggleItemsModal}
-            itemsList={mockItems.filter(
+            itemsList={mockProducts.filter(
               itemModel => itemModel.class === "any"
             )}
             productAwards={this.state.awards}
@@ -660,4 +687,4 @@ class NewProductCreator extends Component {
   }
 }
 
-export default NewProductCreator;
+export default ProductCreator;

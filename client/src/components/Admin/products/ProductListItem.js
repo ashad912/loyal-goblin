@@ -59,7 +59,7 @@ const ProductListItem = ({
                     src={iconCoins}
                     style={{width: '1rem'}}
                   />
-                  {` ${product.price}`}
+                  {` ${product.price} zł`}
                 </Typography>
             </Box>
           </Grid>
@@ -67,7 +67,7 @@ const ProductListItem = ({
         <Grid item container>
           <Grid item xs={2}>
             <img
-              src={(product.imgSrc.includes('blob') || product.imgSrc.includes('data:image') || product.imgSrc.includes('static')) ? (product.imgSrc) : (require("../../../assets/shop/" + product.imgSrc))}
+              src={'/images/products/' + product.imgSrc}
               width={32}
             />
           </Grid>

@@ -77,7 +77,7 @@ const validatedFields = ['type', 'name', 'description', 'iconView', 'appearanceV
 
 
             
-class NewItemCreator extends Component {
+class ItemCreator extends Component {
   state = {
     name: '',
     description: '',
@@ -209,13 +209,17 @@ class NewItemCreator extends Component {
   };
 
   handleIconChange = e => {
-    const url = URL.createObjectURL(e.target.files[0])
-    this.setState({ iconView: url, icon: e.target.files[0]}, () => this.callbacksAndValidation('iconView', url));
+    if (e.target.files.length > 0) {
+      const url = URL.createObjectURL(e.target.files[0])
+      this.setState({ iconView: url, icon: e.target.files[0]}, () => this.callbacksAndValidation('iconView', url));
+    }
   };
 
   handleAppearanceChange = e => {
-    const url = URL.createObjectURL(e.target.files[0])
-    this.setState({ appearanceView: url, appearance: e.target.files[0]}, () => this.callbacksAndValidation('appearanceView', url));
+    if (e.target.files.length > 0) {
+      const url = URL.createObjectURL(e.target.files[0])
+      this.setState({ appearanceView: url, appearance: e.target.files[0]}, () => this.callbacksAndValidation('appearanceView', url));
+    }
   };
 
 
@@ -374,7 +378,7 @@ class NewItemCreator extends Component {
       } 
 
       let itemModelId = null
-      if(!this.props.modifyingItemIndex){
+      if(!(typeof this.props.modifyingItemIndex === "number")){
         delete item._id
         itemModelId = await createItemModel(item)
       }else{
@@ -694,4 +698,4 @@ class NewItemCreator extends Component {
   }
 }
 
-export default NewItemCreator;
+export default ItemCreator;

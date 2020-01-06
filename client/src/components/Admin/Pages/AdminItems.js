@@ -1,7 +1,7 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import NewItemCreator from "../items/NewItemCreator";
+import ItemCreator from "../items/ItemCreator";
 import Paper from "@material-ui/core/Paper";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -180,7 +180,7 @@ const AdminItems = () => {
   return (
     <div>
       {showNewItemCreator ? (
-        <NewItemCreator
+        <ItemCreator
           open={showNewItemCreator}
           handleClose={toggleItemCreator}
           item={itemToPass}

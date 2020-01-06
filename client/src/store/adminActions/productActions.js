@@ -1,11 +1,10 @@
-
 import axios from 'axios'
 
-export const getItemModels = () => {
+export const getProducts = () => {
     return new Promise (async (resolve, reject) => {
         try {
-            console.log('getItemModels')
-            const res = await axios.get('/item/itemModels')
+            console.log('getProducts')
+            const res = await axios.get('/product/products')
             console.log(res.data)
             resolve(res.data)
         }catch (e) {
@@ -14,11 +13,11 @@ export const getItemModels = () => {
     })
 }
 
-export const createItemModel = (itemModel) => {
+export const createProduct = (product) => {
     return new Promise (async (resolve, reject) => {
         try {
-            console.log('createItemModel')
-            const res = await axios.post('/item/createModel', itemModel)
+            console.log('createProduct')
+            const res = await axios.post('/product/create', product)
             console.log(res.data)
             resolve(res.data)
         }catch (e) {
@@ -27,11 +26,11 @@ export const createItemModel = (itemModel) => {
     })
 }
 
-export const updateItemModel = (itemModel) => {
+export const updateProduct = (product) => {
     return new Promise (async (resolve, reject) => {
         try {
-            console.log('updateItemModel')
-            const res = await axios.patch('/item/updateModel', itemModel)
+            console.log('updateProduct')
+            const res = await axios.patch('/product/update', product)
             console.log(res.data)
             resolve(res.data)
         }catch (e) {
@@ -40,11 +39,11 @@ export const updateItemModel = (itemModel) => {
     })
 }
 
-export const deleteItemModel = (_id) => {
+export const deleteProduct = (_id) => {
     return new Promise (async (resolve, reject) => {
         try {
-            console.log('removeItemModel', _id)
-            await axios.delete('/item/removeModel', {data: {_id}})
+            console.log('removeProduct')
+            await axios.delete('/product/remove', {data: {_id}})
             //console.log(res.data)
             resolve()
         }catch (e) {
@@ -53,10 +52,10 @@ export const deleteItemModel = (_id) => {
     })
 }
 
-export const uploadItemModelImages = (id, formData) => {
+export const uploadProductImage = (id, formData) => {
     return new Promise (async (resolve, reject) => {
         try {
-            const res = await axios.patch('/item/uploadModelImages/' + id, formData, {
+            const res = await axios.patch('/product/uploadImage/' + id, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

@@ -21,7 +21,7 @@ const router = new express.Router
 ///MODEL
 
 
-router.get('/modelList', auth, async(req,res) => {
+router.get('/itemModels', auth, async(req,res) => {
     try{
         const itemModels = await ItemModel.find({})
         res.status(200).send(itemModels)
@@ -135,7 +135,6 @@ router.patch("/updateModel", auth, async (req, res, next) => {
 router.delete('/removeModel', auth, async (req, res) =>{
 
     try {
-        console.log('back', req.body._id)
         const itemModel = await ItemModel.findOne({_id: req.body._id})
 
         if(!itemModel){

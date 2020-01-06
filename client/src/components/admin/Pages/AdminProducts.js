@@ -1,7 +1,7 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import NewProductCreator from "../products/NewProductCreator";
+import ProductCreator from "../products/ProductCreator";
 import Paper from "@material-ui/core/Paper";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -20,12 +20,13 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {mockProducts} from "../../../utils/mocks"
 import {categoryLabels} from '../../../utils/labels'
+import {getProducts, deleteProduct} from '../../../store/adminActions/productActions'
 
 const AdminProducts = () => {
   const [showNewProductCreator, setShowNewProductCreator] = React.useState(false);
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [nameFilter, setNameFilter] = React.useState("");
-  const [products, setProducts] = React.useState(mockProducts);
+  const [products, setProducts] = React.useState([]);
   const [filteredProducts, setFilteredProducts] = React.useState(products);
   const [modifyingIndex, setModifyingIndex] = React.useState(null)
 
@@ -43,6 +44,15 @@ const AdminProducts = () => {
       imgSrc: null,
       awards: [],
   })
+
+  const fetchProducts = async () => {
+    const products = await getProducts()
+    setProducts(products)
+  }
+
+  React.useEffect(() => {
+    fetchProducts()
+  }, [])
 
   const toggleProductCreator = e => {
     if(showNewProductCreator){
@@ -117,16 +127,18 @@ const AdminProducts = () => {
 
   const updateProducts = (product) => {
     console.log(product)
+    fetchProducts()
     if(modifyingIndex != null){
-      const tempProducts = [...products]
+      // const tempProducts = [...products]
 
-      tempProducts[modifyingIndex] = product
+      // tempProducts[modifyingIndex] = product
 
-      setProducts(tempProducts)
+      // setProducts(tempProducts)
       toggleProductCreator()
+     
       
     }else{
-      setProducts([...products, product])
+      // setProducts([...products, product])
       toggleProductCreator()
     }
     
@@ -159,11 +171,12 @@ const AdminProducts = () => {
   return (
     <div>
       {showNewProductCreator ? (
-        <NewProductCreator
+        <ProductCreator
           open={showNewProductCreator}
           handleClose={toggleProductCreator}
           product={productToPass}
-          updateProducts={updateProducts}
+          modifyingProductIndex={modifyingIndex}
+          updateProducts={updateProducts} 
         />
       ) : (
         <div>
@@ -172,10 +185,10 @@ const AdminProducts = () => {
             color="primary"
             onClick={handleAddItemCreator}
           >
-            Nowy przedmiot
+            Nowy produkt
           </Button>
           <Typography variant="h5" style={{ marginTop: "2rem" }}>
-            Lista przedmiotów
+            Lista produktów
           </Typography>
 
           <Paper

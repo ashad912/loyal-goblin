@@ -455,7 +455,7 @@ export const saveImage = async (
       .then(function(newFileInfo) {
         if (previousFileName) {
           fs.unlink(uploadPath + previousFileName, async function(err) {
-            if (err) throw err;
+            if (err) {console.log(err)}
             console.log("File deleted!");
             resolve(imageName);
           });
@@ -495,7 +495,7 @@ export const saveAppearanceImage = async (
 
         if (previousFileName) {
           fs.unlink(uploadPath + previousFileName, function(err) {
-            if (err) throw err;
+            if (err) {console.log(err)};
             console.log("File deleted!");
             resolve(imageName);
           });
