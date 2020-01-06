@@ -447,25 +447,27 @@ export const saveImage = async (
     imageName = ownerId + Date.now() + ".png";
   }
   await mkdirp(uploadPath);
-  sharp(imageFile)
-    .resize({ width: 124 })
-    .toFormat('png')
-    .toFile(uploadPath + imageName)
-    .then(function(newFileInfo) {
-      if (previousFileName) {
-        fs.unlink(uploadPath + previousFileName, async function(err) {
-          if (err) throw err;
-          console.log("File deleted!");
-          return imageName;
-        });
-      }
-    })
-    .catch(function(err) {
-      console.log(err);
-      throw new Error("Błąd podczas wczytywania obrazu");
-    });
-
-  return imageName;
+  return new Promise ((resolve, reject) => {
+    sharp(imageFile)
+      .resize({ width: 124 })
+      .toFormat('png')
+      .toFile(uploadPath + imageName)
+      .then(function(newFileInfo) {
+        if (previousFileName) {
+          fs.unlink(uploadPath + previousFileName, async function(err) {
+            if (err) throw err;
+            console.log("File deleted!");
+            resolve(imageName);
+          });
+        }else{
+            resolve(imageName);
+        }
+      })
+      .catch(function(err) {
+        console.log(err);
+        reject("Błąd podczas wczytywania obrazu");
+      });
+  }) 
 };
 
 export const saveAppearanceImage = async (
@@ -475,46 +477,56 @@ export const saveAppearanceImage = async (
   previousFileName,
   date
 ) => {
+
+
+
   let imageName
   if(date){
-    imageName = ownerId + date + ".png"
+    imageName = ownerId + date + ".svg"
   }else{
-    imageName = ownerId + Date.now() + ".png";
+    imageName = ownerId + Date.now() + ".svg";
   }
+
   await mkdirp(uploadPath);
-  try {
-    fs.writeFile(uploadPath+imageName, imageFile, (err)=>{
+  
+  return new Promise ((resolve, reject) => {
+    try {
+      fs.writeFile(uploadPath+imageName, imageFile, (err)=>{
 
-      if (previousFileName) {
-        fs.unlink(uploadPath + previousFileName, function(err) {
-          if (err) throw err;
-          console.log("File deleted!");
-          return imageName;
-        });
-      }
-    })
-  } catch (error) {
-    console.log(err);
-      throw new Error("Błąd podczas wczytywania obrazu");
-  }
-
-  return imageName;
+        if (previousFileName) {
+          fs.unlink(uploadPath + previousFileName, function(err) {
+            if (err) throw err;
+            console.log("File deleted!");
+            resolve(imageName);
+          });
+        }else{
+            resolve(imageName);
+        }
+      })
+    } catch (error) {
+      console.log(err);
+        throw new Error("Błąd podczas wczytywania obrazu");
+    }
+  }) 
 };
 
 
 
-export const removeImage = async (uploadPath, fileName) => {
+export const removeImage = (uploadPath, fileName) => {
     //Check if file exists
-  fs.access(uploadPath + fileName, fs.F_OK, async err => {
-    if (err) {
-      //proceed with model functions (do not throw error)
-      return false;
-    }
-    //Remove file if found
-    fs.unlink(uploadPath + fileName, async function(err) {
-      if (err) throw err;
-      console.log("File deleted!");
-      return true;
+  return new Promise ((resolve, reject) => {
+    fs.access(uploadPath + fileName, fs.F_OK, async err => {
+        if (err) {
+          //proceed with model functions (do not throw error)
+          resolve(false);
+        }
+        //Remove file if found
+        fs.unlink(uploadPath + fileName, async function(err) {
+          if (err) throw err;
+          console.log("File deleted!");
+          resolve(true);
+      });
     });
-  });
+  }) 
+ 
 };

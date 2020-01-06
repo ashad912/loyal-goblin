@@ -20,7 +20,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {mockItemModels} from "../../../utils/mocks"
 import {itemTypeLabelsPlural} from '../../../utils/labels'
-import {getItemModels} from '../../../store/adminActions/itemActions'
+import {getItemModels, deleteItemModel} from '../../../store/adminActions/itemActions'
 
 
 
@@ -164,14 +164,15 @@ const AdminItems = () => {
     setDeleteDialog(false)
   }
 
-  const handleItemDelete = () => {
-   
-    const tempItems = [...items]
-    const newItems = tempItems.filter((item, itemIndex) => {
-      return item._id !== itemToDelete._id
-    })
-
-    setItems(newItems)
+  const handleItemDelete = async () => {
+    console.log(itemToDelete)
+    await deleteItemModel(itemToDelete._id)
+    // const tempItems = [...items]
+    // const newItems = tempItems.filter((item, itemIndex) => {
+    //   return item._id !== itemToDelete._id
+    // })
+    fetchItemModels()
+    //setItems(newItems)
     handleDeleteDialogClose()
   }
 

@@ -7,6 +7,7 @@ export const getEvents = () => {
             console.log('getEvents')
             // /mission/events gets both missions and rallies
             const res = await axios.get('/missions/events')
+            console.log(res)
             resolve(res.data)
         }catch (e) {
             reject(e)     

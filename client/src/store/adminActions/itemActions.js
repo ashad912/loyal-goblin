@@ -40,6 +40,19 @@ export const updateItemModel = (itemModel) => {
     })
 }
 
+export const deleteItemModel = (_id) => {
+    return new Promise (async (resolve, reject) => {
+        try {
+            console.log('removeItemModel', _id)
+            await axios.delete('/item/removeModel', {data: {_id}})
+            //console.log(res.data)
+            resolve()
+        }catch (e) {
+            reject(e)     
+        } 
+    })
+}
+
 export const uploadItemModelImages = (id, formData) => {
     return new Promise (async (resolve, reject) => {
         try {

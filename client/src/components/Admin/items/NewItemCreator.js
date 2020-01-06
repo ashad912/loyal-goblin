@@ -354,7 +354,7 @@ class NewItemCreator extends Component {
   
 
       const item = {
-        //_id: this.state._id,
+        _id: this.state._id,
         name: this.state.name,
         description: this.state.description,
         type: this.state.type,
@@ -375,6 +375,7 @@ class NewItemCreator extends Component {
 
       let itemModelId = null
       if(!this.props.modifyingItemIndex){
+        delete item._id
         itemModelId = await createItemModel(item)
       }else{
         itemModelId = await updateItemModel(item)
@@ -455,7 +456,7 @@ class NewItemCreator extends Component {
                   <img src={this.state.appearanceView} style={{ width: "64px" }} />
                 </Grid>
               </Grid>
-            </Grid>)}
+           </Grid>)}
 
           <Grid item xs={12} style={{paddingTop: '0rem', paddingBottom: '0rem'}}>
           {this.state.type === 'weapon' && 

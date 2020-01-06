@@ -13,6 +13,13 @@
             ],
             "program": "${workspaceFolder}\\server\\src\\index.js",
             "runtimeArgs": ["-r", "esm"]
+        },
+        {
+            "name": "Chrome",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceRoot}/src"
         }
     ]
 }

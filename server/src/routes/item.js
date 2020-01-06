@@ -135,13 +135,14 @@ router.patch("/updateModel", auth, async (req, res, next) => {
 router.delete('/removeModel', auth, async (req, res) =>{
 
     try {
+        console.log('back', req.body._id)
         const itemModel = await ItemModel.findOne({_id: req.body._id})
 
         if(!itemModel){
             return res.status(404).send()
         }
 
-        await removeImage(uploadPath, itemModel.imgSrc)
+        await removeImage(uploadIconPath, itemModel.imgSrc)
 
         await itemModel.remove()
 
