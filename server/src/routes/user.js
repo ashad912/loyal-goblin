@@ -111,6 +111,9 @@ router.patch("/character", auth, async (req, res) => {
     if(!name || !sex || !characterClass || !attributes){
       throw new Error("Niepełne dane tworzenia postaci")
     }
+    if(parseInt(attributes.strength) + parseInt(attributes.dexterity) + parseInt(attributes.magic) + parseInt(attributes.endurance) > 7){
+      throw new Error("Nieprawidłowa suma atrybutów")
+    }
 
     user.name = name
     user.sex = sex

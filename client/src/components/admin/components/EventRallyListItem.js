@@ -25,12 +25,16 @@ const pulse = keyframes`
 `;
 
 const StyledListItem = styled(ListItem)`
-  animation: ${pulse} ${props => (props.active ? "5s ease-in-out infinite" : "none")};
+  animation: ${pulse}
+    ${props => (props.active ? "5s ease-in-out infinite" : "none")};
   border: 2px solid rgb(158, 0, 0);
 `;
 
 const EventRallyListItem = ({
   event,
+  activationDate,
+  startDate,
+  expiryDate,
   active,
   activateNow,
   editEvent,
@@ -67,10 +71,7 @@ const EventRallyListItem = ({
           </Grid>
           <Grid item container>
             <Grid item xs={2}>
-              <img
-                src={require("../../../assets/icons/events/" + event.imgSrc)}
-                width={128}
-              />
+              <img src={"/images/rallies/" + event.imgSrc} width={128} />
             </Grid>
             <Grid item container direction="column" xs={6}>
               <Grid item>
@@ -82,26 +83,20 @@ const EventRallyListItem = ({
                 </Typography>
               </Grid>
               <Grid item>
-                <Typography>{`Czas publikacji: ${
-                  event.activationDate.split("T")[0]
-                }, ${event.activationDate.split("T")[1]}`}</Typography>
+                <Typography>{`Czas publikacji: ${activationDate}`}</Typography>
               </Grid>
               <Grid item>
-                <Typography>{`Czas rozpoczęcia: ${
-                  event.startDate.split("T")[0]
-                }, ${event.startDate.split("T")[1]}`}</Typography>
+                <Typography>{`Czas rozpoczęcia: ${startDate}`}</Typography>
               </Grid>
               <Grid item>
-                <Typography>{`Czas zakończenia: ${
-                  event.expiryDate.split("T")[0]
-                }, ${event.expiryDate.split("T")[1]}`}</Typography>
+                <Typography>{`Czas zakończenia: ${expiryDate}`}</Typography>
               </Grid>
               {!active && (
                 <Grid item>
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={e => activateNow(event.id)}
+                    onClick={e => activateNow(event._id)}
                   >
                     Publikuj teraz
                   </Button>
@@ -116,15 +111,15 @@ const EventRallyListItem = ({
               alignItems="flex-start"
               xs={2}
             >
-                  <Grid item>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleItemPopover}
-                    >
-                      {"Nagrody"}
-                    </Button>
-                  </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleItemPopover}
+                >
+                  {"Nagrody"}
+                </Button>
+              </Grid>
 
               <Popover
                 open={Boolean(itemPopover)}
@@ -143,27 +138,72 @@ const EventRallyListItem = ({
                   {event.awardsLevels.map(awardLevel => {
                     return (
                       <React.Fragment key={awardLevel.level}>
-                        <ListItem style={{borderTop: '1px solid grey', borderBottom: '1px solid grey', background: 'rgb(228, 228, 228)'}}>
+                        <ListItem
+                          style={{
+                            borderTop: "1px solid grey",
+                            borderBottom: "1px solid grey",
+                            background: "rgb(228, 228, 228)"
+                          }}
+                        >
                           <ListItemText
-                          
                             primary={
                               "Nagroda za " + awardLevel.level + " " + "PD"
                             }
-                            primaryTypographyProps={{style: {fontWeight: 'bolder'}}}
+                            primaryTypographyProps={{
+                              style: { fontWeight: "bolder" }
+                            }}
                           />
                         </ListItem>
 
                         <List style={{ paddingLeft: "1rem" }}>
-                          {Object.values(awardLevel.awards)
+                          {Object.keys(awardLevel.awards).map(
+                            awardLevelClass => {
+               
+                              const data = awardLevel.awards[awardLevelClass]
+                              if(data.length){
+
+                                return (
+                                  <ListItem
+                                    style={{
+                                      background: classThemes[awardLevelClass]
+                                    }}
+                                    key={awardLevel+awardLevelClass}
+                                  >
+                                  <List style={{ paddingLeft: "1rem" }} dense>
+                                      {data.map(item => {
+                                        return(
+                                          <ListItem
+                                            key={item.itemModel._id}
+                                          >
+                                            <ListItemText
+                                              primary={item.itemModel.name}
+                                              secondary={"x" + item.quantity}
+                                            />
+
+                                          </ListItem>
+  
+                                        )
+                                      })}
+                                    </List>
+                                  
+                                  </ListItem>
+                                )
+                              }else{
+                                return null
+                              }
+                            }
+                          )}
+                          {/* {Object.values(awardLevel.awards)
                             .reduce((a, b) => a.concat(b))
                             .map(item => {
+                              console.log(item)
                               return (
                                 <ListItem
                                   style={{
                                     background:
-                                      classThemes[item.itemModel.class]
+                                      classThemes[item.class]
                                   }}
-                                  key={item.itemModel.id}
+                                  key={item._id}
                                 >
                                   <ListItemText
                                     primary={item.itemModel.name}
@@ -171,31 +211,27 @@ const EventRallyListItem = ({
                                   />
                                 </ListItem>
                               );
-                            })}
+                            })} */}
                         </List>
                       </React.Fragment>
                     );
                   })}
                 </List>
-                
-
-
               </Popover>
-              
             </Grid>
             <Grid item container direction="column" xs={2} spacing={2}>
               <Grid item>
-                <Button color="primary" onClick={e => editEvent(event.id)}>
+                <Button color="primary" onClick={e => editEvent(event._id)}>
                   Edytuj
                 </Button>
               </Grid>
               <Grid item>
-                <Button onClick={e => archiveEvent(event.id)}>
+                <Button onClick={e => archiveEvent(event._id)}>
                   Archiwizuj
                 </Button>
               </Grid>
               <Grid item>
-                <Button onClick={e => deleteEvent(event.id)} color="secondary">
+                <Button onClick={e => deleteEvent(event._id)} color="secondary">
                   Usuń
                 </Button>
               </Grid>

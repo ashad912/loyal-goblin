@@ -56,7 +56,7 @@ const AmuletsModal = props => {
               <List dense >
                 {props.amuletList.map(amulet => {
                   return (
-                    <ListItem key={amulet._id}>
+                    <ListItem key={amulet.itemModel}>
                       <ListItemAvatar>
                         <img
                           src={require("../../../assets/icons/items/" +
@@ -70,7 +70,7 @@ const AmuletsModal = props => {
                         <Checkbox
                           edge="end"
                           onChange={handleCheckbox(
-                            amulet._id,
+                            amulet.itemModel,
                             amulet.quantity
                           )}
                           checked={amulet.quantity > 0}
@@ -87,7 +87,7 @@ const AmuletsModal = props => {
                   .filter(amulet => amulet.quantity > 0)
                   .map(amulet => {
                     return (
-                      <ListItem key={amulet._id}>
+                      <ListItem key={amulet.itemModel}>
                         <Grid
                           container
                           direction="row"
@@ -114,7 +114,7 @@ const AmuletsModal = props => {
                             <Button
                               variant="contained"
                               color="secondary"
-                              onClick={handleSubtract(amulet._id)}
+                              onClick={handleSubtract(amulet.itemModel)}
                             >
                               -
                             </Button>
@@ -125,7 +125,7 @@ const AmuletsModal = props => {
                               type="tel"
                               value={amulet.quantity}
                               onChange={e =>
-                                handleChangeQuantity(e, amulet._id)
+                                handleChangeQuantity(e, amulet.itemModel)
                               }
                               inputProps = {{style: {textAlign: 'center'}}}
                             />
@@ -134,7 +134,7 @@ const AmuletsModal = props => {
                             <Button
                               variant="contained"
                               color="primary"
-                              onClick={handleAdd(amulet._id)}
+                              onClick={handleAdd(amulet.itemModel)}
                             >
                               +
                             </Button>

@@ -34,7 +34,7 @@ import characterClasses from "../../../assets/categories/characterClasses";
 
 import convertItemModelsToCategories from "../utils/itemModelsToCategories";
 import { asyncForEach } from "../utils/asyncForEach";
-import {createEvent, updateEvent, uploadEventIcon} from '../../../store/adminActions/eventActions'
+import {createEvent, updateEvent, uploadEventIcon, getRallies} from '../../../store/adminActions/eventActions'
 
 import "moment/locale/pl";
 import { getItemModels } from "../../../store/adminActions/itemActions";
@@ -429,6 +429,7 @@ const FileInputButton = styled(Button)`
 
 class NewEventCreator extends Component {
   state = {
+    _id: null,
     isRally: false,
     unique: false,
     title: "",
@@ -472,13 +473,13 @@ class NewEventCreator extends Component {
       title: "",
       minLevel: "",
       description: "",
-      imgSrc: ""
+      iconView: ""
     },
     dirtyFields: {
       title: false,
       minLevel: false,
       description: false,
-      imgSrc: false
+      iconView: false
     },
     disableSubmit: true
   };
@@ -486,6 +487,10 @@ class NewEventCreator extends Component {
  async componentDidMount() {
     //fetch things from back end
     let itemModels = await getItemModels()
+    itemModels.forEach(itemModel => {
+      itemModel.itemModel = itemModel._id
+      delete itemModel._id
+    })
     itemModels = convertItemModelsToCategories(itemModels)
 
     this.setState(
@@ -496,30 +501,31 @@ class NewEventCreator extends Component {
       () => {
         if (this.props.isEdit) {
           const event = { ...this.props.eventToEdit };
-          if (event.hasOwnProperty("minLevel")) {
+          console.log(event)
+          if (event.hasOwnProperty("level") && event.level) {
             //MISSION
-            const amulets = itemModels.amulet.map(amulet => {
+            const amulets = this.state.amulets.map(amulet => {
               return {
                 ...amulet,
                 quantity:
-                  event.amulets.find(
-                    eventAmulet =>
-                      eventAmulet._id === amulet._id
+                event.amulets.find(
+                  eventAmulet =>
+                  eventAmulet.itemModel._id === amulet.itemModel
                   ) !== undefined
-                    ? event.amulets.find(
-                        eventAmulet =>
-                          eventAmulet._id === amulet._id
-                      ).quantity
+                  ? event.amulets.find(
+                    eventAmulet =>
+                    eventAmulet.itemModel._id === amulet.itemModel
+                    ).quantity
                     : 0
-              };
-            });
+                  };
+                });
             this.setState({
               _id: event._id,
               isRally: false,
               unique: event.isUnique,
               title: event.title,
               description: event.description,
-              minLevel: event.minLevel,
+              minLevel: event.level+"",
               iconView:  event.imgSrc ? ('/images/missions/' + event.imgSrc) : null, 
               minPlayers: event.minPlayers,
               maxPlayers: event.maxPlayers,
@@ -535,12 +541,23 @@ class NewEventCreator extends Component {
                 mage: [],
                 rogue: [],
                 cleric: [],
-                ...event.items
+                ...event.awards
               },
-              activationDate: event.activationDate,
-              expiryDate: event.expiryDate,
+              activationDate: moment(event.activationDate).format("YYYY-MM-DDTHH:mm"),
+              expiryDate: moment(event.expiryDate).format("YYYY-MM-DDTHH:mm"),
               isPermanent: event.isPermanent,
               awardsAreSecret: event.awardsAreSecret
+            }, () => {
+
+              const dirtyFields = {
+                title: this.state.title ? true : false,
+                minLevel: this.state.minLevel ? true : false,
+                description: this.state.description ? true : false,
+                iconView: this.state.iconView ? true : false
+              }
+              this.setState({dirtyFields}, () => {
+                this.validateRequiredFields()
+              })
             });
           } else {
             this.setState({
@@ -551,13 +568,22 @@ class NewEventCreator extends Component {
               iconView: event.imgSrc ? ('/images/rallies/' + event.imgSrc) : null, 
               experience: event.experience,
               awardsLevels: [...event.awardsLevels],
-              activationDate: event.activationDate,
-              startDate: event.startDate,
-              expiryDate: event.expiryDate,
+              activationDate: moment(event.activationDate).format("YYYY-MM-DDTHH:mm"),
+              startDate: moment(event.startDate).format("YYYY-MM-DDTHH:mm"),
+              expiryDate: moment(event.expiryDate).format("YYYY-MM-DDTHH:mm"),
               awardsAreSecret: event.awardsAreSecret
+            }, () => {
+              const dirtyFields = {
+                title: this.state.title ? true : false,
+                description: this.state.description ? true : false,
+                iconView: this.state.iconView ? true : false
+              }
+              this.setState({dirtyFields}, () => {
+                this.validateRequiredFields()
+              })
             });
           }
-          this.validateRequiredFields()
+          
         }
       }
     );
@@ -573,6 +599,7 @@ class NewEventCreator extends Component {
     event[type] = moment(value);
 
     const errors = { ...this.state.dateErrors };
+    errors[type] = ["",""]
 
     const newEventActivation = event.activationDate.valueOf();
     const newEventStart = isRally ? event.startDate.valueOf() : null;
@@ -586,7 +613,7 @@ class NewEventCreator extends Component {
         } else {
           errors.activationDate[0] = "";
         }
-        if (isRally && newEventActivation >= newEventStart) {
+        if (isRally && newEventActivation > newEventStart) {
           errors.activationDate[1] =
             "Czas publikacji nie może być późniejszy niż czas rozpoczęcia";
         } else {
@@ -629,8 +656,7 @@ class NewEventCreator extends Component {
     }
 
     if (
-      Object.values(errors)
-        .reduce((a, b) => a.concat(b))
+     errors[type]
         .every(error => error === "")
     ) {
       return { value, errors };
@@ -646,23 +672,7 @@ class NewEventCreator extends Component {
       this.state.startDate
     ) {
       this.setState({ awaitingRallyList: true }, async () => {
-        const rallyList = [
-          {
-            title: "Wydarzenie 1",
-            activationDate: moment("2019-11-19T08:00"),
-            expiryDate: moment("2019-11-19T20:00")
-          },
-          {
-            title: "Wydarzenie 2",
-            activationDate: moment("2019-11-19T21:00"),
-            expiryDate: moment("2019-11-20T07:00:00")
-          },
-          {
-            title: "Wydarzenie 3",
-            activationDate: moment("2019-11-20T08:00"),
-            expiryDate: moment("2019-11-20T20:00")
-          }
-        ];
+        const rallyList = await getRallies()
 
         const rally = {
           activationDate: moment(this.state.activationDate),
@@ -673,10 +683,13 @@ class NewEventCreator extends Component {
         const newRallyEnd = rally.expiryDate.valueOf();
 
         let causingRallyList = [];
-        await asyncForEach(rallyList, rallyItem => {
-          const existingRallyActiviation = rallyItem.activationDate.valueOf();
-          const existingRallyEnd = rallyItem.expiryDate.valueOf();
-
+        rallyList.forEach(rallyItem => {
+          if(this.state.isEdit && this.state._id === rallyItem._id){
+            return
+          }
+          const existingRallyActiviation = moment(rallyItem.activationDate).valueOf();
+          const existingRallyEnd = moment(rallyItem.expiryDate).valueOf();
+         
           if (
             !(
               (existingRallyActiviation < newRallyActivation &&
@@ -685,14 +698,26 @@ class NewEventCreator extends Component {
                 existingRallyActiviation > newRallyEnd)
             )
           ) {
+
+           
             causingRallyList = [...causingRallyList, rallyItem]; //assembling list of 'bad' rallies :<<
           }
+
+          // if(existingRallyActiviation < newRallyActivation &&
+          //   existingRallyEnd < newRallyActivation){
+          //     console.log(rallyItem.title, 'collision 1')
+          //   }
+          //   if(existingRallyEnd > newRallyEnd &&
+          //     existingRallyActiviation > newRallyEnd){
+          //       console.log(rallyItem.title, 'collision 2')
+          //     }
         });
 
-        if (causingRallyList.length) {
+        if (causingRallyList.length > 0) {
           this.setState({
-            collisionRallyList: causingRallyList,
-            awaitingRallyList: false
+            collisionRallyList: [...causingRallyList],
+            awaitingRallyList: false,
+            disableSubmit: true
           });
         } else {
           this.setState({ collisionRallyList: [], awaitingRallyList: false });
@@ -723,7 +748,7 @@ class NewEventCreator extends Component {
       },
       () => {
         if (this.state.isRally) {
-          this.handleCheckRallyDates();
+        //  this.handleCheckRallyDates();
         }
       }
     );
@@ -745,7 +770,7 @@ class NewEventCreator extends Component {
       },
       () => {
         if (this.state.isRally) {
-          this.handleCheckRallyDates();
+         // this.handleCheckRallyDates();
         }
       }
     );
@@ -769,7 +794,7 @@ class NewEventCreator extends Component {
       },
       () => {
         if (this.state.isRally) {
-          this.handleCheckRallyDates();
+         // this.handleCheckRallyDates();
         }else{
           //this.handleRaidStartTimeChange(e)
         }
@@ -809,7 +834,7 @@ class NewEventCreator extends Component {
     }
     const classItems = [...allItems[characterClass]];
     const idOfItem = classItems.findIndex(
-      item => item._id === currentItem._id
+      item => item.itemModel === currentItem.itemModel
     );
 
     classItems[idOfItem].quantity = parseInt(quantity);
@@ -833,7 +858,7 @@ class NewEventCreator extends Component {
     }
     let classItems = [...allItems[characterClass]];
     const idOfItem = classItems.findIndex(
-      item => item._id === currentItem._id
+      item => item.itemModel === currentItem.itemModel
     );
 
     classItems[idOfItem].quantity -= 1;
@@ -859,7 +884,7 @@ class NewEventCreator extends Component {
     }
     const classItems = [...allItems[characterClass]];
     const idOfItemAlreadyAdded = classItems.findIndex(
-      item => item._id === currentItem._id
+      item => item.itemModel === currentItem.itemModel
     );
     if (idOfItemAlreadyAdded === -1) {
       classItems.push({ ...currentItem, quantity: 1 });
@@ -909,7 +934,7 @@ class NewEventCreator extends Component {
 
   handleChangeAmuletQuantity = (id, quantity) => {
     const amulets = [...this.state.amulets];
-    const idOfAmulet = amulets.findIndex(amulet => amulet._id === id);
+    const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel === id);
     if (idOfAmulet !== -1) {
       amulets[idOfAmulet].quantity = parseInt(quantity);
       this.setState({ amulets });
@@ -918,7 +943,7 @@ class NewEventCreator extends Component {
 
   handleSubtractAmulet = id => {
     const amulets = [...this.state.amulets];
-    const idOfAmulet = amulets.findIndex(amulet => amulet._id === id);
+    const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel === id);
     if (idOfAmulet !== -1) {
       amulets[idOfAmulet].quantity -= 1;
 
@@ -928,7 +953,7 @@ class NewEventCreator extends Component {
 
   handleDeleteAmulet = id => {
     const amulets = [...this.state.amulets];
-    const idOfAmulet = amulets.findIndex(amulet => amulet._id === id);
+    const idOfAmulet = amulets.findIndex(amulet => amulet.itemModel === id);
     if (idOfAmulet !== -1) {
       amulets[idOfAmulet].quantity = 0;
 
@@ -938,7 +963,7 @@ class NewEventCreator extends Component {
 
   handleAddAmulet = id => {
     const amulets = [...this.state.amulets];
-    const thisAmulet = amulets.find(amulet => amulet._id === id)
+    const thisAmulet = amulets.find(amulet => amulet.itemModel === id)
     if(thisAmulet.quantity > 0){
       thisAmulet.quantity += 1
     }else{
@@ -1051,12 +1076,14 @@ class NewEventCreator extends Component {
       }
     }
 
+
     this.setState({ disableSubmit: !inputAndDateValidation, validationErrors });
 
   };
 
   handleSubmit = async () => {
     let event = {
+      _id: this.state._id,
       title: this.state.title,
       description: this.state.description,
       activationDate: this.state.activationDate,
@@ -1079,6 +1106,10 @@ class NewEventCreator extends Component {
       event.level = this.state.minLevel
       event.unique = this.state.unique
       event.amulets = this.state.amulets
+                        // event.amulets.forEach(amulet => {
+                        //   amulet.itemModel = amulet._id
+                        //   delete amulet._id
+                        // })
       event.awards = this.state.items
 
     }
@@ -1087,9 +1118,10 @@ class NewEventCreator extends Component {
     if(this.props.isEdit){
       eventId = await updateEvent(eventType, event)
     }else{
+      delete event._id
       eventId = await createEvent(eventType, event)
     }
-    console.log('here', eventId, this.state.icon)
+
     if(eventId && this.state.icon){
       const formData = new FormData()
       if(this.state.icon){
@@ -1198,8 +1230,8 @@ class NewEventCreator extends Component {
                 </FileInputButton>
                 <HiddenFileInput
                   type="file"
-                  accept="image/*"
                   onChange={this.handleIconChange}
+                  inputProps={{accept: 'image/*'}}
                 />
               </FileInputWrapper>
             </Grid>
@@ -1557,7 +1589,7 @@ class NewEventCreator extends Component {
                   <List dense>
                     {this.state.items.any.map(item => {
                       return (
-                        <ListItem key={item._id}>
+                        <ListItem key={item.itemModel}>
                           <ListItemAvatar>
                             <img
                               src={"/images/items/" +
@@ -1585,13 +1617,13 @@ class NewEventCreator extends Component {
                     )
                     .map(characterClass => {
                       return (
-                        <React.Fragment>
+                        <React.Fragment key={characterClass}>
                           <Typography style={{ fontWeight: "bolder" }}>
                             {characterClasses[characterClass]}
                           </Typography>
                           {this.state.items[characterClass].map(item => {
                             return (
-                              <ListItem key={item._id}>
+                              <ListItem key={item.itemModel}>
                                 <ListItemAvatar>
                                   <img
                                     src={"/images/items/" +
@@ -1674,6 +1706,7 @@ class NewEventCreator extends Component {
                     Czas publikacji {this.state.isRally ? "rajdu:" : "misji:"}
                   </Typography>
                   <TextField
+                  onBlur={this.state.isRally && this.handleCheckRallyDates}
                     type="datetime-local"
                     value={this.state.activationDate}
                     onChange={this.handleActivationDateChange}
@@ -1752,6 +1785,7 @@ class NewEventCreator extends Component {
                   </Typography>
 
                   <TextField
+                  onBlur={this.state.isRally && this.handleCheckRallyDates}
                     type="datetime-local"
                     value={this.state.expiryDate}
                     onChange={this.handleEndDateChange}

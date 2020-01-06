@@ -155,7 +155,7 @@ class Rally extends Component {
                                     horizontal: 'right',
                                 }}
                             >
-                                <Avatar style={{height: height, width: width, }} alt="avatar" src={require(`../../../assets/avatar/${rally.avatar}`)} />
+                                <Avatar style={{height: height, width: width, }} alt="avatar" src={`/images/rallies/${rally.avatar}`} />
                             </Badge>
                             <Typography variant="h5">
                                 {rally.title}

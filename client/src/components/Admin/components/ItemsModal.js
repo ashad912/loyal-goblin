@@ -261,7 +261,7 @@ const ItemsModal = props => {
                         return (
                           <ItemsModalListItem
                             item={item}
-                            key={item._id}
+                            key={item.itemModel}
                             handleAdd={handleAdd}
                           />
                         );
@@ -284,7 +284,7 @@ const ItemsModal = props => {
                     <List>
                       {eventItems[characterClass].map(item => {
                         return (
-                          <ListItem key={item._id}>
+                          <ListItem key={item.itemModel}>
                             <Grid
                               container
                               direction="row"

@@ -6,7 +6,20 @@ export const getEvents = () => {
         try {
             console.log('getEvents')
             // /mission/events gets both missions and rallies
-            const res = await axios.get('/missions/events')
+            const res = await axios.get('/mission/events')
+            resolve(res.data)
+        }catch (e) {
+            reject(e)     
+        } 
+    })
+}
+
+export const getRallies = () => {
+    return new Promise (async (resolve, reject) => {
+        try {
+            console.log('getRallies')
+            // /mission/events gets both missions and rallies
+            const res = await axios.get('/rally/listEventCreator')
             resolve(res.data)
         }catch (e) {
             reject(e)     
