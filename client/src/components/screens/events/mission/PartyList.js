@@ -264,7 +264,7 @@ const PartyList = (props) => {
                                                 return(
                                                     <React.Fragment key={item._id}>
                                                         {item.owner === member.profile._id ? (
-                                                            <StyledImage  src={require(`../../../../assets/icons/items/${item.itemModel.imgSrc}`)} alt='icon'/>
+                                                            <StyledImage  src={`/images/items/${item.model.imgSrc}`} alt='icon'/>
                                                         ) : (
                                                             null
                                                         )}

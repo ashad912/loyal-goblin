@@ -25,7 +25,9 @@ const router = new express.Router();
 
 router.get('/products', auth, async(req,res) => {
   try{
-      const products = await Product.find({})
+      const products = await Product.find({}).populate({
+        path: 'awards.itemModel'
+      })
       res.status(200).send(products)
   }catch(e){
       console.log(e.message)

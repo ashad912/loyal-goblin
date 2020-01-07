@@ -117,11 +117,16 @@ const ProductListItem = ({
                     container
                     direction="column"
                     spacing={1}
-                    style={{ width: "10vw", padding: "0.5rem" }}
+                    style={{ width: "15vw", padding: "0.5rem" }}
                   >
                     {product.awards.map(award => {
                       return (
-                        <Grid item key={award.itemModel._id}>
+                        <Grid item key={award.itemModel._id} style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                          <img
+                            src={'/images/items/' + award.itemModel.imgSrc}
+                            width={32}
+                            style={{height: '100%', marginRight: '0.5rem'}}
+                          />
                           <ListItemText
                             primary={award.itemModel.name}
                             secondary={"x" + award.quantity}

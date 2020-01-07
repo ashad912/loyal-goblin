@@ -99,7 +99,7 @@ const RallyDetails = (props) => {
                                 direction="column"
                             >
                                 <Grid item style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                    <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={require(`../../../assets/avatar/${rally.avatar}`)} />
+                                    <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`/images/rallies/${rally.avatar}`} />
                                 </Grid>
                             </Grid>
                         </Grid>

@@ -100,7 +100,7 @@ const MissionDetails = (props) => {
                                 direction="column"
                             >
                                 <Grid item style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                    <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={require(`../../../assets/avatar/${mission.avatar}`)} />
+                                    <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`/images/missions/${mission.avatar}`} />
                                 </Grid>
                             </Grid>
                         </Grid> 
@@ -210,7 +210,7 @@ const MissionDetails = (props) => {
                                         key={amulet.itemModel.id}
                                     >
                                         {`${amulet.quantity}x`}
-                                        <img style={{height: 20, width: 20, marginLeft: '0.1rem'}} src={require(`../../../assets/icons/items/${amulet.itemModel.imgSrc}`)} alt='icon'/>
+                                        <img style={{height: 20, width: 20, marginLeft: '0.1rem'}} src={`images/items/${amulet.itemModel.imgSrc}`} alt='icon'/>
                                         {` `}
                                     </Typography>
                                     )

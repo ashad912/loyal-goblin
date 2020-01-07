@@ -387,7 +387,7 @@ class MissionInstance extends React.Component {
                 <React.Fragment>
                     
                     <TitleBar>
-                        <StyledImg src={require(`../../../assets/avatar/${this.state.missionObject.avatar}`)}/>
+                        <StyledImg src={`/images/missions/${this.state.missionObject.avatar}`}/>
                         <Typography style={{display: 'inline'}} variant="h6">{this.state.missionObject.title}</Typography>
                         {statusIcon(isRequiredItemsCollected)}
                     </TitleBar>   
@@ -397,7 +397,7 @@ class MissionInstance extends React.Component {
                             return (
                                 <React.Fragment key={amulet.itemModel.id}>
                                     
-                                    <StyledItemIcon src={require(`../../../assets/icons/items/${amulet.itemModel.imgSrc}`)}/>
+                                    <StyledItemIcon src={`/images/items/${amulet.itemModel.imgSrc}`}/>
                                     <StyledItemsIndicator required={amulet.quantity} inBox={amulet.inBox}>{` ${amulet.inBox}/${amulet.quantity}`}</StyledItemsIndicator>
                                     {statusIcon(amulet.readyStatus)}
                                 </React.Fragment>

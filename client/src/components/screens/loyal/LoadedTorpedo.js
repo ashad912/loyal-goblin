@@ -36,7 +36,7 @@ const LoadedTorpedo = (props) => {
           <img
             style={{ width: "32px", height: "32px" }}
             alt={torpedo.itemModel.name}
-            src={require(`../../../assets/icons/items/${torpedo.itemModel.imgSrc}`)}
+            src={`images/items/${torpedo.itemModel.imgSrc}`}
           />
         </ListItemAvatar>
         <ListItemText

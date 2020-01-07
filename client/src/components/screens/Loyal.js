@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import boardsvg from '../../assets/board/statki.svg'
 import Loading from '../layout/Loading';
-import VerificationDialog from './loyal/VerificationDialog'
 import TorpedoList from './loyal/TorpedoList'
 import LoadedTorpedo from './loyal/LoadedTorpedo'
 import Button from "@material-ui/core/Button";
@@ -359,10 +358,6 @@ class Loyal extends Component {
                             handleTorpedoDelete={this.handleTorpedoDelete}
                         />
                     </React.Fragment>)}
-                <VerificationDialog
-                    open={this.state.dialogOpen}
-                    handleClose={this.handleDialogClose}
-                />
             </React.Fragment>      
         );
     }

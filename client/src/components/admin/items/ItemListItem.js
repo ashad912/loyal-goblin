@@ -12,7 +12,8 @@ import PerkListBox from './PerkListBox'
 import Collapse from "@material-ui/core/Collapse";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
-import {itemTypeLabels, classLabels} from '../../../utils/labels'
+import {itemTypeLabels, classLabels, equippableItems} from '../../../utils/labels'
+
 
 
 const StyledListItem = styled(ListItem)`
@@ -79,11 +80,11 @@ const ItemListItem = ({
                 width={32}
                 style={{height: '100%', marginRight: '1rem'}}
               />
-              <img
+              {equippableItems.includes(item.type) && <img
                 src={'/images/appearance/' + item.appearanceSrc}
                 width={32}
                 style={{height: '100%'}}
-              />
+              />}
             </Grid>
             
           </Grid>

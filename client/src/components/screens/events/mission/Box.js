@@ -161,14 +161,14 @@ const Box = (props) => {
                                       isDragging = {snapshot.isDragging}
                                     >
                                     
-                                    <img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>
+                                    <img style={{height: 40, width:40}} src={`/images/items/${item.model.imgSrc}`} alt='icon'/>
                                     {!snapshot.isDragging && (<span>{item.instancesIds.length}</span>)}
 
                                   </Item>
 
                                   {snapshot.isDragging && (
                                     <Clone>
-                                      <img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>
+                                      <img style={{height: 40, width:40}} src={`/images/items/${item.model.imgSrc}`} alt='icon'/>
                                       <span>{item.instancesIds.length - 1}</span>
                                     </Clone>
                                   )}

@@ -86,7 +86,7 @@ const MissionListItem = (props) => {
                             direction="column"
                         >
                             <Grid item style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={require(`../../../assets/avatar/${mission.avatar}`)} />
+                                <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`/images/missions/${mission.avatar}`} />
                             </Grid>
                         </Grid>
                     </Grid> 
@@ -207,7 +207,7 @@ const MissionListItem = (props) => {
                                             key={amulet.itemModel.id}
                                         >
                                             {`${amulet.quantity}x`}
-                                            <img style={{height: 20, width: 20, marginLeft: '0.1rem'}} src={require(`../../../assets/icons/items/${amulet.itemModel.imgSrc}`)} alt='icon'/>
+                                            <img style={{height: 20, width: 20, marginLeft: '0.1rem'}} src={`/images/items/${amulet.itemModel.imgSrc}`} alt='icon'/>
                                             {` `}
                                         </Typography>
                                         )
@@ -261,7 +261,7 @@ const MissionListItem = (props) => {
                                             {mission.awards[className].map((award)=>{
                                                 let copies = []
                                                 for(let i=0; i<award.quantity; i++){
-                                                    const copy = <img style={{height: 20, width: 20, marginLeft: '0.1rem'}} src={require(`../../../assets/icons/items/${award.itemModel.imgSrc}`)} alt='icon'/>
+                                                    const copy = <img style={{height: 20, width: 20, marginLeft: '0.1rem'}} src={`/images/items/${award.itemModel.imgSrc}`} alt='icon'/>
                                                     copies = [...copies, copy]
                                                 }
                                                 return copies

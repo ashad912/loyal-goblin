@@ -111,7 +111,7 @@ const AdminUsers = () => {
 
   return (
     <Grid container direction="column" alignItems="center">
-      <Grid item style={{ width: "40%" }}>
+      <Grid item style={{ width: "80%" }}>
         <Paper
           style={{
             width: "100%",
@@ -163,15 +163,21 @@ const AdminUsers = () => {
             return (
               <ListItem key={user.id}>
                 <ListItemText
-                  style={{ maxWidth: "60%" }}
+                  style={{ maxWidth: "40%" }}
                   primary={user.name}
                   secondary={"Poziom " + user.level}
                 />
                 <ListItemAvatar>
                   <Typography variant="caption">
+                    10000 PD
+                  </Typography>
+                </ListItemAvatar>
+                <ListItemAvatar style={{marginLeft: '8rem'}}>
+                  <Typography variant="caption">
                     {statusCodes[user.status]}
                   </Typography>
                 </ListItemAvatar>
+                
                 <ListItemSecondaryAction>
                   <Button color="secondary">Zbanuj</Button>
                 </ListItemSecondaryAction>

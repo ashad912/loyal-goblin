@@ -631,7 +631,6 @@ class ProductCreator extends Component {
                 justifyContent: "flex-start",
                 overflow: "hidden",
                 width: "100%",
-                marginTop: "1rem"
               }}
             >
               {this.state.awards && this.state.awards.length > 0 && (

@@ -19,6 +19,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {mockItemModels} from "../../../utils/mocks"
+import {classLabels, itemTypeLabels, equippableItems} from '../../../utils/labels'
 import {itemTypeLabelsPlural} from '../../../utils/labels'
 import {getItemModels, deleteItemModel} from '../../../store/adminActions/itemActions'
 
@@ -280,7 +281,7 @@ const AdminItems = () => {
             <DialogContent>
               <DialogContentText >
                       <span>Czy na pewno chcesz usunąć przedmiot {itemToDelete.name}?</span>< br/>
-                      Przedmiot zostanie usunięty z ekwipunku wszystkich użytkowników.
+                      Przedmiot zostanie usunięty z misji, rajdów, produktów oraz ekwipunku wszystkich użytkowników.
               </DialogContentText>
             </DialogContent>
             <DialogActions>

@@ -156,14 +156,18 @@ const AdminProducts = () => {
     setDeleteDialog(false)
   }
 
-  const handleProductDelete = () => {
-   
-    const tempItems = [...products]
-    const newItems = tempItems.filter((item, itemIndex) => {
-      return item._id !== productToDelete._id
-    })
+  const handleProductDelete = async () => {
 
-    setProducts(newItems)
+    console.log(productToDelete)
+    await deleteProduct(productToDelete._id)
+    
+   
+    // const tempItems = [...products]
+    // const newItems = tempItems.filter((item, itemIndex) => {
+    //   return item._id !== productToDelete._id
+    // })
+    fetchProducts()
+    //setProducts(newItems)
     handleDeleteDialogClose()
   }
 
