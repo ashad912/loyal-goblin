@@ -870,7 +870,7 @@ const Events = (props) => {
                 setMissionId(response.mission)
             }catch(e){
                 console.log(e)
-                //window.location.reload();
+                fetchMissions()
             }
             
             

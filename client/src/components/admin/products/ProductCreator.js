@@ -31,6 +31,7 @@ import {asyncForEach} from '../../../utils/methods'
 import {categoryLabelsSpecifed} from '../../../utils/labels'
 
 import { createProduct, updateProduct, uploadProductImage } from "../../../store/adminActions/productActions";
+import { getItemModels } from "../../../store/adminActions/itemActions";
 
 
 const FileInputWrapper = styled.div`
@@ -73,7 +74,7 @@ const AddIcon = styled(AddCircleIcon)`
   }
 `;
 
-const mockProducts = [
+const mockItems = [
     {
       
         _id: 101,
@@ -285,10 +286,13 @@ class ProductCreator extends Component {
     },
     showItemsModal: false,
     awards: [],
+    items: []
   };
 
-  componentDidMount = () => {
+  componentDidMount = async () => {
     const product = this.props.product
+    //const items = await getItemModels()
+    
     
     console.log(product)
     this.setState({
@@ -299,12 +303,13 @@ class ProductCreator extends Component {
       price: product.price,
       awards: product.awards,
       iconView: product.imgSrc ? ('/images/products/' + product.imgSrc) : null,
+      //items: items
     }, () => {
       this.setState({
         componentMounted: true
       })
     })
-}
+  }
 
   handleIconChange = e => {
     if (e.target.files.length > 0) {
@@ -419,9 +424,21 @@ class ProductCreator extends Component {
     this.setState({ awards: items });
   };
 
-  handleToggleItemsModal = e => {
+  handleToggleItemsModal = async e => {
+    let items = []
+
+    if(!this.state.showItemsModal && !this.state.items.length){
+      items = await getItemModels()
+    }
+    
     this.setState(prevState => {
       return { showItemsModal: !prevState.showItemsModal };
+    }, () => {
+      if(items.length){
+        this.setState({
+          items: items
+        })
+      }
     });
   };
  
@@ -494,7 +511,7 @@ class ProductCreator extends Component {
 
   render() {
     
-
+    
     return (
       <MuiPickersUtilsProvider utils={MomentUtils}>
         <Button onClick={this.props.handleClose}>{"< Powrót do panelu produktów"}</Button>
@@ -629,8 +646,8 @@ class ProductCreator extends Component {
                         <ListItem style={{paddingLeft: '0px'}}>
                           <ListItemAvatar>
                             <img
-                              src={require("../../../assets/icons/items/" +
-                                award.itemModel.imgSrc)}
+                              src={"/images/items/" +
+                                award.itemModel.imgSrc}
                               style={{ width: "32px", height: "32px" }}
                             />
                           </ListItemAvatar>
@@ -652,9 +669,10 @@ class ProductCreator extends Component {
         <ItemsModal
             open={this.state.showItemsModal}
             handleClose={this.handleToggleItemsModal}
-            itemsList={mockProducts.filter(
-              itemModel => itemModel.class === "any"
+            itemsList={this.state.items.filter(
+                itemModel => itemModel.class === "any"
             )}
+            productCategory={this.state.category}
             productAwards={this.state.awards}
             handleAddItem={this.handleAddItem}
             handleSubtractItem={this.handleSubtractItem}

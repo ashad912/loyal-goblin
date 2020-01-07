@@ -34,23 +34,64 @@ import {itemTypeLabelsPlural} from '../../../utils/labels'
 const ItemsModal = props => {
   const [searchValue, setSearchValue] = useState("");
   const [itemsList, setItemsList] = useState(props.itemsList);
-  const categories = {};
+  const [categories, setCategories] = useState({});
 
-  
-  Object.keys(itemTypeLabelsPlural).forEach(categoryKey => {
-    if(categoryKey !== 'all'){
-      if(categoryKey === 'amulet'){
-        categories[categoryKey] = true
-      }else{
-        categories[categoryKey] = false
-      }
-    }
+  // Object.keys(itemTypeLabelsPlural).forEach(categoryKey => {
+  //   if(categoryKey !== 'all'){
+  //     if(props.productCategory === 'beer'){
+  //       if(categoryKey === 'torpedo'){
+  //         categories[categoryKey] = true
+  //       }else{
+  //         categories[categoryKey] = false
+  //       }
+  //     }else{
+  //       if(categoryKey === 'amulet'){
+  //         categories[categoryKey] = true
+  //       }else{
+  //         categories[categoryKey] = false
+  //       }
+  //     }
+      
+  //   }
     
-  });
+  // });
+  
+
+  useEffect(()=> {
+    console.log('props.productCategory')
+    const categories = {}
+    Object.keys(itemTypeLabelsPlural).forEach(categoryKey => {
+      if(categoryKey !== 'all'){
+        if(props.productCategory === 'beers'){
+          if(categoryKey === 'torpedo'){
+            categories[categoryKey] = true
+          }else{
+            categories[categoryKey] = false
+          }
+        }else{
+          if(categoryKey === 'amulet'){
+            categories[categoryKey] = true
+          }else{
+            categories[categoryKey] = false
+          }
+        }
+        
+      }
+      
+    });
+
+    setCategories(categories)
+    setCategoryFilter(categories)
+  }, [props.productCategory])
   
   
   const [categoryFilter, setCategoryFilter] = useState(categories);
   const [perksFilter, setPerksFilter] = useState(false);
+
+
+  useEffect(()=> {
+    setItemsList(props.itemsList)
+  }, [props.itemsList])
 
 
   useEffect(() => {
@@ -207,7 +248,11 @@ const ItemsModal = props => {
           <List dense style={{ padding: "1rem" }}>
             {Object.keys(itemTypeLabelsPlural)
               .map(itemCategory => {
-                const categoryItems = itemsList.filter((item) => { return item.type === itemCategory})
+                console.log(itemsList)
+                const categoryItems = itemsList.filter((item) => { 
+                  console.log(item.type, itemCategory)
+                  return item.type === itemCategory})
+                console.log(categoryItems)
                 return categoryItems.length > 0 && categoryFilter[itemCategory] && (
                   <React.Fragment key={itemCategory}>
                     <Divider />

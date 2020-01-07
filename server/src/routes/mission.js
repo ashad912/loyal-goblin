@@ -277,7 +277,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
         //console.log(partyIds)
         
         //console.log( new Date().toUTCString())
-        const missions = await Mission.aggregate().match({
+        let missions = await Mission.aggregate().match({
              $and: [
                 {activationDate: { $lte: new Date() } },
                 {expiryDate: { $gte: new Date() } }, 
@@ -290,7 +290,8 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
                 }
             ],
         })
-        .project({ 
+        .project({
+            '_id': 1,
             'title': 1,
             'description': 1,
             'avatar': 1,
@@ -319,7 +320,22 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
                 }
             },
         })
-        
+
+        //excluding unique missions which instances exist
+        let excludedMissions = []
+        await asyncForEach(missions, async (mission) => {
+            if(mission.unique){
+                const instances = await MissionInstance.find({mission: mission._id})
+                if(instances.length){
+                    excludedMissions = [...excludedMissions, mission._id.toString()]
+                }
+            }
+        })
+
+        missions = missions.filter((mission) => {
+            return !excludedMissions.includes(mission._id.toString())
+        })
+        //
         
         //population on all colection saved to missions var
         await ItemModel.populate(missions, { //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
@@ -459,6 +475,13 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
 
         if(!mission){
             throw new Error('There is no such mission!')
+        }
+
+        if(mission.unique){
+            const instances = await MissionInstance.find({mission: mission._id})
+            if(instances.length){
+                throw new Error('It is unique mission, which instance exists!')
+            }
         }
 
         //SOLO-MISSION

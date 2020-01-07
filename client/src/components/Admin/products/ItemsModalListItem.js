@@ -45,7 +45,7 @@ const ItemsModalListItem = props => {
           <ListItemAvatar>
             <img
               style={{ width: "32px", height: "32px" }}
-              src={require(`../../../assets/icons/items/${itemModel.imgSrc}`)}
+              src={`/images/items/${itemModel.imgSrc}`}
             />
           </ListItemAvatar>
           </Grid>
@@ -55,7 +55,7 @@ const ItemsModalListItem = props => {
             primary={itemModel.name}
             secondary={
               <span style={{ fontStyle: "italic" }}>
-                {itemModel.fluff}
+                {itemModel.description}
               </span>
             }
           />
