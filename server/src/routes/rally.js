@@ -199,14 +199,40 @@ router.get('/listEventCreator', auth, async (req, res) => {
 
 //OK
 router.post('/create', auth, async (req, res) =>{
-
+    
+    try {
     const rally = new Rally(req.body)
 
-    // let icon = req.files.icon.data
-    // const imgSrc = await saveImage(icon, rally._id, uploadPath, null)
-    // rally.imgSrc = imgSrc
+    const rallyList = await Rally.find({})
 
-    try {
+    let causingRallyList = [];
+    const newRallyActivation = moment(rally.activationDate).valueOf()
+
+    const newRallyEnd = moment(rally.expiryDate).valueOf()
+        rallyList.forEach(rallyItem => {
+
+          const existingRallyActiviation = moment(rallyItem.activationDate).valueOf();
+          const existingRallyEnd = moment(rallyItem.expiryDate).valueOf();
+         
+          if (
+            !(
+              (existingRallyActiviation < newRallyActivation &&
+                existingRallyEnd < newRallyActivation) ||
+              (existingRallyEnd > newRallyEnd &&
+                existingRallyActiviation > newRallyEnd)
+            )
+          ) {
+
+           
+            causingRallyList = [...causingRallyList, rallyItem]; //assembling list of 'bad' rallies :<<
+          }
+
+        });
+
+    if(causingRallyList.length > 0){
+        throw new Error('Znaleziono rajd o kolidujących terminach')
+    }
+
         await rally.save()
         
         await updateRallyQueue()

@@ -1,5 +1,6 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
+import moment from 'moment'
 import Popover from "@material-ui/core/Popover";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
@@ -29,19 +30,20 @@ const pulse = keyframes`
 
 const StyledListItem = styled(ListItem)`
   animation: ${pulse}
-    ${props => (props.active ? "5s ease-in-out infinite" : "none")};
+  ${props => (props.active ? `5s ease-in-out -${parseInt(Math.random()*10)}s infinite` : "none")};
 `;
 
 const EventMissionListItem = ({
   event,
   activationDate,
   expiryDate,
-  active,
   activateNow,
   editEvent,
+  copyEvent,
   deleteEvent,
   archiveEvent,
-  isLast
+  isLast,
+  statusFilter
 }) => {
   const [amuletPopover, setAmuletPopover] = React.useState(null);
   const [itemPopover, setItemPopover] = React.useState(null);
@@ -57,22 +59,56 @@ const EventMissionListItem = ({
     setAmuletPopover(null);
     setItemPopover(null);
   };
+
+
+  let active, archive, isPermanent
+  const now = moment()
+  if(moment(activationDate).isSameOrAfter(now) && moment(expiryDate).isAfter(now)){
+    active = true
+  }
+  if(moment(activationDate).isBefore(now)){
+    archive = true
+  }
+  if(moment(expiryDate).isAfter(moment().add(100, 'y'))){
+    isPermanent = true
+  }
+
+  let shouldRender = false
+
+  switch (statusFilter) {
+    case 'all':
+      shouldRender = true
+      break;
+    case 'ready':
+      shouldRender = !active  && !archive
+      break;
+      case 'active':
+        shouldRender = active  && !archive
+    break;
+    case 'running':
+    shouldRender = false
+    break;
+    case 'archive':
+      shouldRender = !active && archive
+      break;
+    default:
+      shouldRender = true
+      break;
+  }
+
   return (
+    shouldRender ? 
     <React.Fragment>
       <StyledListItem active={active ? 1 : 0}>
         <Grid container direction="column" spacing={2}>
           <Grid item container>
-            <Grid item xs={2}>
+            <Grid item xs={3}>
               <Typography style={{ textAlign: "center" }}>- Misja -</Typography>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={3}>
               <Typography>{active ? "Aktywna" : "Nieaktywna"}</Typography>
             </Grid>
-            <Grid item xs={2}>
-              <Typography>
-                {event.awardsAreSecret ? "Nagrody ukryte" : "Nagrody jawne"}
-              </Typography>
-            </Grid>
+
             <Grid item xs={6}>
               <Box display="flex">
                 <Typography
@@ -103,7 +139,7 @@ const EventMissionListItem = ({
                 <Typography>{`Czas publikacji: ${ activationDate}`}</Typography>
               </Grid>
               <Grid item>
-                <Typography>{`Czas zakończenia: ${expiryDate}`}</Typography>
+                <Typography>{`Czas zakończenia: ${isPermanent ? "misja bezterminowa" : expiryDate}`}</Typography>
               </Grid>
               {!active && (
                 <Grid item>
@@ -173,6 +209,9 @@ const EventMissionListItem = ({
                 >
                   Nagrody
                 </Button>
+                <Typography>
+                {event.awardsAreSecret ? "Nagrody ukryte" : "Nagrody jawne"}
+              </Typography>
                 <Popover
                   open={Boolean(itemPopover)}
                   anchorEl={itemPopover}
@@ -252,10 +291,15 @@ const EventMissionListItem = ({
                 </Button>
               </Grid>
               <Grid item>
+                <Button onClick={e => copyEvent(event._id)}>
+                  Duplikuj
+                </Button>
+              </Grid>
+              {/* <Grid item>
                 <Button onClick={e => archiveEvent(event._id)}>
                   Archiwizuj
                 </Button>
-              </Grid>
+              </Grid> */}
               <Grid item>
                 <Button onClick={e => deleteEvent(event._id)} color="secondary">
                   Usuń
@@ -266,7 +310,7 @@ const EventMissionListItem = ({
         </Grid>
       </StyledListItem>
       {!isLast && <Divider />}
-    </React.Fragment>
+    </React.Fragment> : null
   );
 };
 

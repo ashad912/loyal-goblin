@@ -467,7 +467,6 @@ class NewEventCreator extends Component {
       startDate: ["", ""],
       expiryDate: ["", ""]
     },
-    awaitingRallyList: false,
     collisionRallyList: [],
     validationErrors: {
       title: "",
@@ -481,12 +480,14 @@ class NewEventCreator extends Component {
       description: false,
       iconView: false
     },
-    disableSubmit: true
+    disableSubmit: true,
+    rallies: []
   };
 
  async componentDidMount() {
     //fetch things from back end
     let itemModels = await getItemModels()
+    const rallies = await getRallies()
     itemModels.forEach(itemModel => {
       itemModel.itemModel = itemModel._id
       delete itemModel._id
@@ -496,7 +497,8 @@ class NewEventCreator extends Component {
     this.setState(
       {
         amulets: [...itemModels.amulet],
-        fullItemsList: itemModels
+        fullItemsList: itemModels,
+        rallies
       },
       () => {
         if (this.props.isEdit) {
@@ -579,6 +581,7 @@ class NewEventCreator extends Component {
                 iconView: this.state.iconView ? true : false
               }
               this.setState({dirtyFields}, () => {
+                this.handleCheckRallyDates()
                 this.validateRequiredFields()
               })
             });
@@ -671,8 +674,7 @@ class NewEventCreator extends Component {
       this.state.expiryDate &&
       this.state.startDate
     ) {
-      this.setState({ awaitingRallyList: true }, async () => {
-        const rallyList = await getRallies()
+
 
         const rally = {
           activationDate: moment(this.state.activationDate),
@@ -683,7 +685,7 @@ class NewEventCreator extends Component {
         const newRallyEnd = rally.expiryDate.valueOf();
 
         let causingRallyList = [];
-        rallyList.forEach(rallyItem => {
+        this.state.rallies.forEach(rallyItem => {
           if(this.state.isEdit && this.state._id === rallyItem._id){
             return
           }
@@ -703,26 +705,17 @@ class NewEventCreator extends Component {
             causingRallyList = [...causingRallyList, rallyItem]; //assembling list of 'bad' rallies :<<
           }
 
-          // if(existingRallyActiviation < newRallyActivation &&
-          //   existingRallyEnd < newRallyActivation){
-          //     console.log(rallyItem.title, 'collision 1')
-          //   }
-          //   if(existingRallyEnd > newRallyEnd &&
-          //     existingRallyActiviation > newRallyEnd){
-          //       console.log(rallyItem.title, 'collision 2')
-          //     }
         });
 
         if (causingRallyList.length > 0) {
           this.setState({
             collisionRallyList: [...causingRallyList],
-            awaitingRallyList: false,
             disableSubmit: true
           });
         } else {
-          this.setState({ collisionRallyList: [], awaitingRallyList: false });
+          this.setState({ collisionRallyList: []});
         }
-      });
+ 
     }
   };
 
@@ -748,7 +741,7 @@ class NewEventCreator extends Component {
       },
       () => {
         if (this.state.isRally) {
-        //  this.handleCheckRallyDates();
+          this.handleCheckRallyDates();
         }
       }
     );
@@ -770,7 +763,7 @@ class NewEventCreator extends Component {
       },
       () => {
         if (this.state.isRally) {
-         // this.handleCheckRallyDates();
+          this.handleCheckRallyDates();
         }
       }
     );
@@ -794,9 +787,7 @@ class NewEventCreator extends Component {
       },
       () => {
         if (this.state.isRally) {
-         // this.handleCheckRallyDates();
-        }else{
-          //this.handleRaidStartTimeChange(e)
+          this.handleCheckRallyDates();
         }
       }
     );
@@ -805,18 +796,24 @@ class NewEventCreator extends Component {
   handlePermanentChange = () => {
     this.setState(prevState => {
       return { isPermanent: !prevState.isPermanent };
+    }, () => {
+      this.handleEndDateChange({target: {value: moment().add(200, 'y').format("YYYY-MM-DDTHH:mm")}})
     });
   };
 
   handleRaidInstantStart = () => {
     this.setState(prevState => {
       return { raidIsInstantStart: !prevState.raidIsInstantStart };
+    }, () => {
+      this.handleRaidStartTimeChange({target: {value: moment().format("YYYY-MM-DDTHH:mm")}})
     });
   };
 
   handleInstantChange = () => {
     this.setState(prevState => {
       return { isInstant: !prevState.isInstant };
+    }, () => {
+      this.handleActivationDateChange({target: {value: moment().format("YYYY-MM-DDTHH:mm")}})
     });
   };
 
@@ -1039,6 +1036,9 @@ class NewEventCreator extends Component {
 
   handleToggleRaid = e => {
     this.setState(prevState => {
+      if(!prevState.isRally){
+        this.handleCheckRallyDates()
+      }
       return { isRally: !prevState.isRally };
     });
   };
