@@ -27,13 +27,13 @@ const ShopListItem = props => {
   return (
     <ListItem>
       <ListItemIcon>
-        <img src={require("../../../assets/shop/"+imgSrc)} style={{width: '2rem'}}/>
+        <img src={'/images/items/' + imgSrc} style={{width: '2rem'}}/>
       </ListItemIcon>
       <Grid container direction="column">
         <ListItemText primary={name} />
         {props.awards &&
         props.awards.map((prize, index) => {
-          return <ListItemText key={prize.itemModel._id+index} secondary={<span>{prize.itemModel.name} <img width={16} src={require('../../../assets/icons/items/'+prize.itemModel.imgSrc)}/><span>{prize.quantity > 1 && " x"+prize.quantity}</span></span>}/>
+          return <ListItemText key={prize.itemModel._id+index} secondary={<span>{prize.itemModel.name} <img width={16} src={'/images/items' + prize.itemModel.imgSrc}/><span>{prize.quantity > 1 && " x"+prize.quantity}</span></span>}/>
 
         })}
         <ListItemText secondary={description} />

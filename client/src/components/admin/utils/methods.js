@@ -4,6 +4,7 @@ export async function asyncForEach(array, callback) {
     }
 }
 
+
 export const designateUserLevel = (points) => {
   const a = 10;
   const b = 100;
@@ -18,18 +19,4 @@ export const designateUserLevel = (points) => {
       }
       previousThreshold = topThreshold;
   }
-}
-
-
-export const createAvatarPlaceholder = (name) => {
-
-  if (!(/\s/.test(name))) {
-      return name.charAt(0).toUpperCase()
-  }
-  
-  const initials = name.split(" ").map(word => {
-      return word.charAt(0)
-  }).join('').toUpperCase()
-
-  return initials
 }

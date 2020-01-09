@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken'
+import moment from 'moment'
 import cookie from "cookie";
 import { User } from '../models/user'
 import { Party } from '../models/party'
 
-const decodeTokenAndGetUser = (token) => {
+const decodeTokenAndGetUser = (token, query) => {
     return new Promise(async (resolve, reject) => {
         try{
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
@@ -11,6 +12,22 @@ const decodeTokenAndGetUser = (token) => {
             if(!user) {
                 throw new Error()
             }
+            
+            const autoFetch = query.autoFetch && ((new Date().getTime() % 3600000) < 5000) //verify autoFetch query (available to 5 seconds after start of hour)
+            
+            if(!autoFetch){
+                let sub
+                if(user.lastActivityDate){
+                    sub = moment().valueOf() - moment(user.lastActivityDate).valueOf()
+                }
+                if(!user.lastActivityDate || (sub && sub >= 60 * 1000)){ //1 min db field refresh
+                    user.lastActivityDate = moment().toISOString()
+                    await user.save()
+                }
+            }
+            
+            
+
             resolve(user)
         }catch(e){
             reject(e)
@@ -30,7 +47,7 @@ export const auth = async (req, res, next) => {
             throw new Error()
         }
         
-        const user = await decodeTokenAndGetUser(token)
+        const user = await decodeTokenAndGetUser(token, req.query)
 
         req.token = token //specified token - u can logout from specific device!
         req.user = user

@@ -90,13 +90,17 @@ export const signOut = () => {
     }
 }
 
-export const authCheck =  () => {
+export const authCheck =  (params) => {
     return dispatch => {
 
         return new Promise( async (resolve, reject) => {
             try {
                 console.log('authCheck')
-                const res = await axios('/user/me')
+                let query = ''
+                if(params && params.autoFetch){
+                    query ='?autoFetch=true'
+                }
+                const res = await axios('/user/me' + query)
                 const profile = res.data
                 
                 const uid = profile._id

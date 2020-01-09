@@ -2,12 +2,16 @@ import axios from 'axios'
 import {socket, joinRoomEmit, leaveRoomEmit, partyRefreshEmit, deleteRoomEmit, instanceRefreshEmit} from '../../socket'
 
 
-export const updateParty = () => {
+export const updateParty = (params) => {
     return async dispatch => {
         
             try {
                 console.log('updateParty')
-                const res = await axios.get('/party')
+                let query = ''
+                if(params && params.autoFetch){
+                    query ='?autoFetch=true'
+                }
+                const res = await axios.get('/party' + query)
                 
                 if(res.data && res.status === 200){
                     dispatch({type: "UPDATE_PARTY", party: res.data})

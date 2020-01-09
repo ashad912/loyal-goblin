@@ -33,7 +33,7 @@ import emeraldAmulet from "../../../assets/icons/items/emerald-amulet.png";
 import characterClasses from "../../../assets/categories/characterClasses";
 
 import convertItemModelsToCategories from "../utils/itemModelsToCategories";
-import { asyncForEach } from "../utils/asyncForEach";
+import { asyncForEach } from "../utils/methods";
 import {createEvent, updateEvent, uploadEventIcon} from '../../../store/adminActions/eventActions'
 
 import "moment/locale/pl";

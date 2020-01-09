@@ -1,3 +1,11 @@
+export const userFilterStatuses = {
+  all: 'Wszyscy',
+  active: 'Aktywni',
+  new: 'Nowi',
+  banned: 'Zbanowani',
+}
+
+
 export const dayLabels = [null, 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela']
 
 export const perkLabels = {

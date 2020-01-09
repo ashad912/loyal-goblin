@@ -61,6 +61,9 @@ export const UserSchema = new mongoose.Schema({
     avatar: {
         type: String
     },
+    lastActivityDate: {
+        type: Date,
+    },
     name: {
         type: String,
     },

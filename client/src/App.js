@@ -80,8 +80,8 @@ class App extends React.Component {
       this.props.authCheck();
       this.props.onPartyUpdate()
       this.nextUpdates = setInterval(() => {
-        this.props.authCheck();
-        this.props.onPartyUpdate()
+        this.props.authCheck({autoFetch: true});
+        this.props.onPartyUpdate({autoFetch: true})
       }, 3600000)
     }, 3601000 - (new Date().getTime() % 3600000));
 

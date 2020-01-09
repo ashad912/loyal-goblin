@@ -113,7 +113,7 @@ const EquipmentListItem = props => {
           <img
             style={{ width: "32px", height: "32px" }}
             alt={item.itemModel.name}
-            src={require(`../../../assets/icons/items/${item.itemModel.imgSrc}`)}
+            src={'/images/items/' + item.itemModel.imgSrc}
           />
         </ListItemAvatar>
       </Badge>

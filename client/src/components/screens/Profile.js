@@ -40,7 +40,7 @@ import {
   clearRallyAwards
 } from "../../store/actions/profileActions";
 import { updateParty, removeMember } from "../../store/actions/partyActions";
-import createAvatarPlaceholder from "../../utils/createAvatarPlaceholder";
+import {createAvatarPlaceholder} from "../../utils/methods";
 import { socket } from "../../socket";
 
 import * as socketFuncs from "../../socket";
@@ -653,21 +653,21 @@ const Profile = props => {
           {equippedItems && equippedItems.legs && (
             <img
               className={classes.avatarImage}
-              src={require(`../../assets/avatar/items/${equippedItems.legs}`)}
+              src={`/images/items/${equippedItems.legs}`}
             />
           )}
           {/* feet */}
           {equippedItems && equippedItems.feet && (
             <img
               className={classes.avatarImage}
-              src={require(`../../assets/avatar/items/${equippedItems.feet}`)}
+              src={`/images/items/${equippedItems.feet}`}
             />
           )}
           {/* chest */}
           {equippedItems && equippedItems.chest && (
             <img
               className={classes.avatarImage}
-              src={require(`../../assets/avatar/items/${equippedItems.chest}`)}
+              src={`/images/items/${equippedItems.chest}`}
             />
           )}
           {/* head */}
@@ -676,21 +676,21 @@ const Profile = props => {
             equippedItems.head.includes(".") && (
               <img
                 className={classes.avatarImage}
-                src={require(`../../assets/avatar/items/${equippedItems.head}`)}
+                src={`/images/items/${equippedItems.head}`}
               />
             )}
           {/* Main-hand weapon */}
           {equippedItems && equippedItems.weaponRight && (
             <img
               className={classes.avatarImage}
-              src={require(`../../assets/avatar/items/${equippedItems.weaponRight}`)}
+              src={`/images/items/${equippedItems.weaponRight}`}
             />
           )}
           {/* Off-hand weapon */}
           {equippedItems && equippedItems.weaponLeft && (
             <img
               className={classes.avatarImage}
-              src={require(`../../assets/avatar/items/${equippedItems.weaponLeft}`)}
+              src={`/images/items/${equippedItems.weaponLeft}`}
               style={{ transform: "scaleX(-1)" }}
             />
           )}
@@ -918,12 +918,13 @@ const Profile = props => {
         handleClose={() => setIsCreatingParty(prev => !prev)}
         handleCreateParty={handleJoinOrCreateParty}
       />
-      <RankDialog
+      {showRankDialog && <RankDialog
         open={showRankDialog}
         profile={props.auth.profile}
         uid={props.auth.uid}
         handleClose={() => setShowRankDialog(prev => !prev)}
-      />
+      />}
+      
       <StatsDialog
         open={showStatsDialog}
         profile={props.auth.profile}

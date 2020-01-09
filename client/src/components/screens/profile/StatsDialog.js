@@ -19,7 +19,7 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import tempUserAvatar from '../../../assets/avatar/moose.png'
 import styled from 'styled-components'
 import uuid from 'uuid/v1'
-import createAvatarPlaceholder from "../../../utils/createAvatarPlaceholder";
+import {createAvatarPlaceholder} from "../../../utils/methods";
 
 const Background = styled.div`
     background-color: #3f51b5;
@@ -80,7 +80,7 @@ const StatsDialog = props => {
                                 horizontal: 'right',
                             }}
                         >
-                            {props.profile.avatar ? <Avatar style={{height: height, width: width}} alt="avatar" src={props.profile.avatar} /> : <Avatar style={{height: height, width: width, fontSize: '3.7rem'}}>{createAvatarPlaceholder(props.profile.name)}</Avatar>}
+                            {props.profile.avatar ? <Avatar style={{height: height, width: width}} alt="avatar" src={'/images/user_uploads/' + props.profile.avatar} /> : <Avatar style={{height: height, width: width, fontSize: '3.7rem'}}>{createAvatarPlaceholder(props.profile.name)}</Avatar>}
                         </Badge>
                     </Grid>
                     <Grid item style={{padding: '1rem 0 0 0'}}>
@@ -126,7 +126,7 @@ const StatsDialog = props => {
                                 <Grid container>
                                 <Grid item xs={11} style={{display: 'flex', alignItems: 'center'}}>
                                     <Typography>Wydane</Typography>
-                                    <img src={require('../../../assets/icons/items/' + amuletCounter.amulet.imgSrc)} style={{width: '20px', height: '20px', padding: '0 0.2rem 0 0.2rem'}}/>
+                                    <img src={'/images/items/' + amuletCounter.amulet.imgSrc} style={{width: '20px', height: '20px', padding: '0 0.2rem 0 0.2rem'}}/>
                                 </Grid>
                                 <Grid item xs={1}>
                                     <Typography style={{width: '100%', fontWeight: 'bold'}}>{amuletCounter.counter}</Typography>

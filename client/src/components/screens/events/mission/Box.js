@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import styled from 'styled-components'
 import { Paper } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
-
+import {createAvatarPlaceholder} from '../../../../utils/methods'
 
 
 
@@ -83,18 +83,6 @@ const convertToStack = (itemsToConvert) => {
   return itemObjects
 }
 
-const createAvatarPlaceholder = (name) => {
-
-  if (!(/\s/.test(name))) {
-      return name.charAt(0).toUpperCase()
-  }
-  
-  const initials = name.split(" ").map(word => {
-      return word.charAt(0)
-  }).join('').toUpperCase()
-
-  return initials
-}
 
 const Box = (props) => {
 

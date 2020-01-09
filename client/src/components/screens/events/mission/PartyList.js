@@ -19,6 +19,8 @@ import Avatar from '@material-ui/core/Avatar';
 import bagImg from '../../../../assets/avatar/bag.png'
 
 
+import {createAvatarPlaceholder} from '../../../../utils/methods'
+
 const StyledGrid = styled(Grid)`
     &&{
         margin: 0 0 0 1rem;
@@ -153,14 +155,6 @@ const PartyList = (props) => {
 
     const altAvatar = (user) => {
 
-        const createAvatarPlaceholder = () => {
-            const initials = user.name.split(" ").map(word => {
-                return word.charAt(0)
-            }).join('').toUpperCase()
-
-            return initials
-        }
-        
 
         
         return(
@@ -173,7 +167,7 @@ const PartyList = (props) => {
                 }}
                 badgeContent={<SmallAvatar alt="bag avatar" src={bagImg} />}
             >
-                {user.avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={'/images/user_uploads/' + user.avatar} /> : <Avatar style={{height: 30, width:30, backgroundColor: '#3f51b5'}}>{createAvatarPlaceholder()}</Avatar>}
+                {user.avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={'/images/user_uploads/' + user.avatar} /> : <Avatar style={{height: 30, width:30, backgroundColor: '#3f51b5'}}>{createAvatarPlaceholder(user.name)}</Avatar>}
             </Badge>
         )
         //return <img style={{height: 30, width:30}} src={user.avatar} alt='avatar'/>

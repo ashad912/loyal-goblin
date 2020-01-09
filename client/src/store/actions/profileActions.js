@@ -4,6 +4,20 @@ export const refreshProfile = () => {
     
 }
 
+
+export const getRankedUsers = () => {
+    return new Promise (async (resolve, reject) => {
+        try {
+            console.log('getRankedUsers')
+            const res = await axios.get('/user/users')
+            console.log(res.data)
+            resolve(res.data)
+        }catch (e) {
+            reject(e)     
+        } 
+    })
+}
+
 export const updateAvatar = (avatar) => {
     return (dispatch) => {
         return new Promise( async (resolve, reject) => {

@@ -1,40 +1,75 @@
 import React from "react";
+import moment from 'moment'
 import Grid from "@material-ui/core/Grid";
 import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-
+import { useTheme } from '@material-ui/core/styles';
+import uuid from 'uuid/v1'
+import Toolbar from "@material-ui/core/Toolbar";
+import Paper from '@material-ui/core/Paper';
+import IconButton from '@material-ui/core/IconButton';
+import FirstPageIcon from '@material-ui/icons/FirstPage';
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import LastPageIcon from '@material-ui/icons/LastPage';
 import Collapse from "@material-ui/core/Collapse";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import Paper from "@material-ui/core/Paper";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Box from "@material-ui/core/Box";
 import SearchIcon from "@material-ui/icons/Search";
 
 import PartyList from "../components/PartyList";
+import {designateUserLevel} from '../utils/methods'
+import {userFilterStatuses} from '../../../utils/labels'
+import {getAdminUsers, toggleUserActiveStatus} from '../../../store/adminActions/userActions'
 
 const mockUsers = [
-  { name: "A B", level: 1, status: "away", id: 1 },
-  { name: "Ccc", level: 2, status: "active", id: 2 },
-  { name: "Dee f", level: 3, status: "away", id: 3 },
-  { name: "Ghi", level: 4, status: "active", id: 4 },
-  { name: "Janusz Korwin Mikke", level: 100, status: "active", id: 5 },
-  { name: "Nnnn", level: 5, status: "away", id: 6 },
-  { name: "Oppppp pp", level: 6, status: "banned", id: 7 },
-  { name: "Rrr rr", level: 7, status: "away", id: 8 },
-  { name: "Stuwxyz", level: 8, status: "banned", id: 9 }
+  { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Ghi", experience: 400, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Janusz Korwin Mikke", experience: 1000, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
+  { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Ghi", experience: 400, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Janusz Korwin Mikke", experience: 1000, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
+  { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Ghi", experience: 400, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Janusz Korwin Mikke", experience: 1000, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
+  { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Ghi", experience: 400, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Janusz Korwin Mikke", experience: 1000, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
+  { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() }
 ];
 const statusCodes = {
   active: "Aktywny",
-  away: "Poza Goblinem",
+  new: "Nowy",
   banned: "Zbanowany"
 };
 
@@ -58,27 +93,55 @@ const mockPartys = [
 ];
 
 const AdminUsers = () => {
-  const [users, setUsers] = React.useState(mockUsers);
+  const [users, setUsers] = React.useState([]);
+  const [fetchedUsers, setFetchedUsers] = React.useState([])
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [nameFilter, setNameFilter] = React.useState("");
+  const [page, setPage] = React.useState(0)
   const [partys, setPartys] = React.useState(mockPartys);
 
-  const applyStatusFilter = status => {
-    let tempUsers = [...mockUsers];
+  const fetchUsers = async () => {
+    const users = await getAdminUsers()
+    setFetchedUsers(users)
+    applyStatusFilter(statusFilter, users)
+  }
+
+  React.useEffect(() => {
+    fetchUsers()
+
+    
+  
+  }, [])
+
+  React.useEffect(() => {
+
+    let timer
+
+    clearInterval(timer)
+
+    timer = setInterval(() => {
+      fetchUsers()     
+    }, 60 * 1000);
+
+    return () => clearInterval(timer);
+
+  }, [statusFilter])
+
+  const applyStatusFilter = (status, users) => {
+    let tempUsers = users ? [...users] : [...fetchedUsers];
     switch (status) {
       case "all":
-        tempUsers = [...mockUsers];
+        //tempUsers = [...fetchedUsers];
+        break;
+      case "new":
+        tempUsers = tempUsers.filter(user => !user.hasOwnProperty('name') || !user.name.length);
         break;
       case "active":
-        tempUsers = tempUsers.filter(user => user.status === "active");
-        break;
-      case "away":
-        tempUsers = tempUsers.filter(user => user.status === "away");
+        tempUsers = tempUsers.filter(user => user.active).sort((a, b)=> (moment(a.lastActivityDate).valueOf() > moment(b.experience).valueOf()) ? 1 : -1);
         break;
       case "banned":
-        tempUsers = tempUsers.filter(user => user.status === "banned");
+        tempUsers = tempUsers.filter(user => !user.active);
         break;
-
       default:
         break;
     }
@@ -91,7 +154,7 @@ const AdminUsers = () => {
     let tempUsersList = applyStatusFilter(statusFilter);
     if (nameFilter.trim().length > 0) {
       tempUsersList = tempUsersList.filter(
-        user => user.name.search(nameFilter) !== -1
+        user => user.hasOwnProperty('name') && user.name.search(nameFilter) !== -1
       );
       setUsers(tempUsersList);
     } else {
@@ -108,6 +171,27 @@ const AdminUsers = () => {
     setStatusFilter(status);
     applyStatusFilter(status);
   };
+
+  const handleToggleBan = async (user) => {
+    await toggleUserActiveStatus(user)
+    fetchUsers()
+  }
+
+  const designateActivityTime = (lastActivityDate) => {
+    return moment(lastActivityDate).fromNow();
+  }
+
+
+  const handlePreviousPageButtonClick = () => {
+    setPage(page-1)
+  }
+
+  const handleNextPageButtonClick = () => {
+    setPage(page+1)
+  }
+  
+  const tenOrNo = page === parseInt(users.length / 10) ? (users.length % 10) : 10
+  const oneOrZero = users.length ? 1 : 0
 
   return (
     <Grid container direction="column" alignItems="center">
@@ -136,10 +220,12 @@ const AdminUsers = () => {
                   id: "status-filter"
                 }}
               >
-                <MenuItem value={"all"}>Wszyscy</MenuItem>
-                <MenuItem value={"active"}>Aktywni</MenuItem>
-                <MenuItem value={"away"}>Poza Goblinem</MenuItem>
-                <MenuItem value={"banned"}>Zbanowani</MenuItem>
+                {Object.keys(userFilterStatuses).map((statusKey) => {
+                    return(
+                        <MenuItem value={statusKey}>{userFilterStatuses[statusKey]}</MenuItem>
+                    )
+                })}
+
               </Select>
             </FormControl>
             <TextField
@@ -156,35 +242,58 @@ const AdminUsers = () => {
                 )
               }}
             />
+            
           </Box>
         </Paper>
+        <Toolbar style={{justifyContent: 'flex-end', 'padding': 0, 'min-height': '1rem'}}>
+          <Typography> {`${(page*10)+oneOrZero}-${(page*10)+tenOrNo} z ${users.length}`}</Typography>
+          <div style={{marginLeft: '1rem'}}>
+            <IconButton
+              onClick={handlePreviousPageButtonClick}
+              disabled={page === 0}
+              aria-label="first page"
+              style={{padding: '0.5rem'}}
+            >
+              <KeyboardArrowLeft />
+            </IconButton>
+            <IconButton
+              onClick={handleNextPageButtonClick}
+              disabled={page === parseInt(users.length / 10)}
+              aria-label="first page"
+              style={{padding: '0.5rem'}}
+            >
+              <KeyboardArrowRight />
+            </IconButton>
+            
+          </div>
+        </Toolbar>
         <List style={{ border: "1px solid grey" }} alignItems="flex-start">
-          {users.map(user => {
+          {users.slice(page*10, page*10 + 10).map(user => {
             return (
-              <ListItem key={user.id}>
-                <ListItemText
-                  style={{ maxWidth: "40%" }}
-                  primary={user.name}
-                  secondary={"Poziom " + user.level}
-                />
-                <ListItemAvatar>
+              
+              <ListItem key={user.id} style={{paddingTop: '0.1rem', paddingBottom: '0.1rem'}}>
+                <Grid item xs={3}>
+                  <Typography>{user.name}</Typography>
+                </Grid>
+                <Grid item xs={2} style={{textAlign: 'center'}}>
+                  <Typography variant="caption">{'Poziom ' + designateUserLevel(user.experience)}</Typography>
+                </Grid>
+                <Grid item xs={2} style={{textAlign: 'center'}}>
+                  <Typography variant="caption">{user.experience}</Typography>
+                </Grid>
+                <Grid item xs={3} style={{textAlign: 'center'}}>
                   <Typography variant="caption">
-                    10000 PD
+                    {user.active ? ('Aktywny ' + designateActivityTime(user.lastActivityDate)) : ((!user.hasOwnProperty('name') || !user.name.length) ? ('Nowy') : ('Zbanowany'))}
                   </Typography>
-                </ListItemAvatar>
-                <ListItemAvatar style={{marginLeft: '8rem'}}>
-                  <Typography variant="caption">
-                    {statusCodes[user.status]}
-                  </Typography>
-                </ListItemAvatar>
-                
-                <ListItemSecondaryAction>
-                  <Button color="secondary">Zbanuj</Button>
-                </ListItemSecondaryAction>
+                </Grid>
+                <Grid item xs={2} style={{textAlign: 'right'}}>
+                  <Button color="secondary" onClick={() => handleToggleBan(user)}>{user.active ? ('Zbanuj') : ('Odbanuj')}</Button>
+                </Grid>
               </ListItem>
             );
           })}
         </List>
+        
       </Grid>
       <Grid item style={{ width: "40%" }}>
         <Typography variant="h5" style={{margin: "2rem 0 1rem 0"}}>Drużyny: </Typography>

@@ -28,6 +28,61 @@ const router = express.Router();
 
 const uploadPath = "../client/public/images/user_uploads/"
 
+
+
+////ADMIN
+
+router.get('/adminUsers', auth, async (req, res) => {
+  try{
+    const users = await User.aggregate().match({}).project({
+      '_id': 1,
+      'name': 1,
+      'active': 1,
+      'experience': 1,
+      'lastActivityDate': 1,
+  
+    })
+
+    res.send(users)
+  }catch(e){
+    res.status(500).send(e)
+  }
+  
+})
+
+const toggleBan = async (userId, status) => {
+  const result = await User.updateOne(
+    {_id: userId},
+    {$set: {active: status}}
+  )
+
+  if(!result.n){
+    throw Error('User not found!')
+  }
+  return
+}
+
+router.patch('/ban', auth, async (req, res) => {
+  try{
+    await toggleBan(req.body._id, false)
+    res.send()
+  }catch(e){
+    res.status(500).send(e.message)
+  }
+})
+
+router.patch('/unban', auth, async (req, res) => {
+  try{
+    await toggleBan(req.body._id, true)
+    res.send()
+  }catch(e){
+    res.status(500).send(e.message)
+  }
+})
+
+
+////USER
+
 router.post("/create", async (req, res) => {
   //registerKey used in biometrica, hwvr we may allow registration for ppl with key from qrcode - i left it
 
@@ -537,7 +592,7 @@ router.patch("/myItems/equip", auth, async (req, res) => {
   }
 });
 
-//CHECK
+//OK
 router.patch("/clearAwards", auth, async (req, res) => {
   let user = req.user;
 
@@ -664,6 +719,28 @@ router.patch("/loyal", auth, async (req, res) => {
     res.status(400).send(e.message);
   }
 });
+
+router.get('/users', auth, async(req, res) => {
+  try{
+    const users = await User.aggregate().match({ active: true }).sort({"experience": -1 }).project({
+      '_id': 1,
+      'avatar': 1,
+      'name': 1,
+      'experience': 1,
+    })
+
+    const userIndex = users.findIndex((user) => { //return client rank position
+          return user._id.toString() === req.user._id.toString()
+    })
+    const slicedUsers = users.slice(0, 50) //return first 50 users
+
+    res.send({users: slicedUsers, userIndex})
+  }catch(e){
+    res.status(400).send()
+  }
+  
+})
+
 
 router.patch("/testUpdateUser", auth, async (req, res) => {
   const user = req.user;
