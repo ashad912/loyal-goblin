@@ -323,17 +323,18 @@ router.patch("/update", auth, async (req, res, next) => {
 router.delete('/remove', auth, async (req, res) =>{
 
     try {
+
         const rally = await Rally.findOneAndDelete({_id: req.body._id})
-        
+ 
         if(!rally){
-            res.status(404).send()
+           return res.status(404).send()
         }
 
         await removeImage(uploadPath, rally.imgSrc)
 
         await updateRallyQueue()
         
-        res.send()
+        res.sendStatus(200)
     } catch (e) {
         res.status(500).send(e.message)
     }

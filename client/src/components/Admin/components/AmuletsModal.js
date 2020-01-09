@@ -59,8 +59,8 @@ const AmuletsModal = props => {
                     <ListItem key={amulet.itemModel}>
                       <ListItemAvatar>
                         <img
-                          src={require("../../../assets/icons/items/" +
-                            amulet.imgSrc)}
+                          src={"/images/items/" +
+                            amulet.imgSrc}
                           width="64px"
                         />
                       </ListItemAvatar>

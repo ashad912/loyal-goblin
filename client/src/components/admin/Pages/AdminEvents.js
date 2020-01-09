@@ -30,7 +30,8 @@ import {
   getEvents,
   getRallies,
   updateEvent,
-  createEvent
+  createEvent,
+  deleteEvent
 } from "../../../store/adminActions/eventActions";
 moment.locale("pl");
 
@@ -347,7 +348,8 @@ class AdminMissions extends Component {
     collisionRallyList: [],
     fetchInterval: null,
     copyMission: false,
-    copiedEventName: ''
+    copiedEventName: '',
+    showDeleteDialog: false
   };
   // const [showNewEventCreator, setShowNewEventCreator] = React.useState("");
   // const [events, setEvents] = React.useState(mockEvents);
@@ -686,10 +688,27 @@ class AdminMissions extends Component {
       }
   };
 
-  handleDeleteEvent = id => {
-    this.setState({
-      events: this.state.events.filter(event => event._id !== id)
-    });
+
+  handleShowDeleteDialog = (id) => {
+    this.handleSetCurrentEvent(
+      id, this.setState({showDeleteDialog: true})
+    )
+  }
+
+  handleHideDeleteDialog = () => {
+    this.handleSetCurrentEvent(
+      null, this.setState({showDeleteDialog: false})
+    )
+  }
+
+  handleDeleteEvent = async () => {
+    const tempEvents = [...this.state.events];
+    const event = tempEvents.find(e => e._id === this.state.currentEvent)
+    if(event){
+      await deleteEvent(this.state.currentEventIsRally ? 'rally' : 'mission', event._id) 
+      this.fetchEvents()
+    }
+    this.handleHideDeleteDialog()
   };
 
   handleCopyEventDialog = id => {
@@ -926,7 +945,7 @@ if(eventId){
                       expiryDate={moment(event.expiryDate).format("L, LTS")}
                       activateNow={this.handleShowActivateNowDialog}
                       editEvent={this.handleEditEventCreator}
-                      deleteEvent={this.handleDeleteEvent}
+                      deleteEvent={this.handleShowDeleteDialog}
                       archiveEvent={this.handleArchiveEvent}
                       statusFilter={this.state.statusFilter}
                       copyEvent={this.handleCopyEventDialog}
@@ -943,7 +962,7 @@ if(eventId){
                       expiryDate={moment(event.expiryDate).format("L, LTS")}
                       activateNow={this.handleShowActivateNowDialog}
                       editEvent={this.handleEditEventCreator}
-                      deleteEvent={this.handleDeleteEvent}
+                      deleteEvent={this.handleShowDeleteDialog}
                       archiveEvent={this.handleArchiveEvent}
                      statusFilter={this.state.statusFilter}
                     />
@@ -954,6 +973,7 @@ if(eventId){
           </div>
         )}
         {this.state.currentEvent && (
+          <React.Fragment>
           <Dialog
             open={this.state.showActivateNowDialog}
             onClose={this.handleHideActivateNowDialog}
@@ -1097,6 +1117,27 @@ if(eventId){
               </Button>
             </DialogActions>
           </Dialog>
+          <Dialog
+        open={this.state.showDeleteDialog}
+        onClose={this.handleHideDeleteDialog}
+      >
+        <DialogTitle >        Usuń wydarzenie{" "}
+                {this.state.events.find(
+                  event => event._id === this.state.currentEvent
+                ).title
+              }</DialogTitle>
+
+        <DialogActions>
+          <Button onClick={this.handleHideDeleteDialog} color="secondary">
+            Anuluj
+          </Button>
+          <Button onClick={this.handleDeleteEvent} color="primary" variant="contained" autoFocus>
+            Zatwierdź
+          </Button>
+        </DialogActions>
+      </Dialog>
+      </React.Fragment>
+
         )}
       </div>
     );

@@ -32,7 +32,7 @@ router.post("/create", async (req, res) => {
   //registerKey used in biometrica, hwvr we may allow registration for ppl with key from qrcode - i left it
 
   if (!req.body.token) {
-    res.status(400).send();
+    return res.status(400).send();
   }
 
   
@@ -259,7 +259,7 @@ router.patch("/changePassword", auth, async (req, res, next) => {
   const oldPassword = req.body.oldPassword;
   const newPassword = req.body.password;
   const repeatedNewPassword = req.body.confirmPassword
-  console.log(oldPassword, newPassword, repeatedNewPassword)
+
   try {
     if (oldPassword === newPassword) {
       throw new Error("Nowe i stare hasła nie mogą być takie same");

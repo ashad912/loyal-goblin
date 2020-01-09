@@ -30,7 +30,7 @@ export const getRallies = () => {
 export const createEvent = (eventType, event) => {
     return new Promise (async (resolve, reject) => {
         try {
-            console.log('createMission')
+            console.log('createEvent')
             const res = await axios.post(`/${eventType}/create/`, event)
             console.log(res.data)
             resolve(res.data)
@@ -43,7 +43,7 @@ export const createEvent = (eventType, event) => {
 export const updateEvent = (eventType, event) => {
     return new Promise (async (resolve, reject) => {
         try {
-            console.log('updateMission')
+            console.log('updateEvent')
             const res = await axios.patch(`/${eventType}/update/`, event)
             console.log(res.data)
             resolve(res.data)
@@ -57,11 +57,25 @@ export const updateEvent = (eventType, event) => {
 export const uploadEventIcon = (eventType, id, formData) => {
     return new Promise (async (resolve, reject) => {
         try {
+            console.log('uploadEventIcon')
             const res = await axios.patch(`/${eventType}/uploadIcon/` + id, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
               })
+            console.log(res.data)
+            resolve(res.data)
+        }catch (e) {
+            reject(e)     
+        } 
+    })
+}
+
+export const deleteEvent = (eventType, _id) => {
+    return new Promise (async (resolve, reject) => {
+        try {
+            console.log('deleteEvent')
+            const res = await axios.delete(`/${eventType}/remove/`, {data: {_id}})
             console.log(res.data)
             resolve(res.data)
         }catch (e) {

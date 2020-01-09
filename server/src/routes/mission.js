@@ -64,14 +64,14 @@ router.delete('/remove', auth, async(req, res) => {
         const mission = await Mission.findOne({_id: req.body._id})
 
         if(!mission){
-            res.status(404).send()
+            return res.status(404).send()
         }
         
         await removeImage(uploadPath, mission.imgSrc)
 
         await mission.remove()
 
-        res.send()
+        res.sendStatus(200)
     } catch (e) {
         res.status(500).send(e.message)
     }
