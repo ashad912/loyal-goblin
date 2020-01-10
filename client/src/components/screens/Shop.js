@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
-
+import Recaptcha from 'react-google-invisible-recaptcha';
 import { ScrollingProvider, Section } from "react-scroll-section";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -841,17 +841,28 @@ class Shop extends React.Component {
     });
   };
 
-  handleFinalizeOrder = () => {
-    const tempBaskets = { ...this.state.baskets };
+  handleFinalizeOrder = async () => {
+    //const tempBaskets = { ...this.state.baskets };
     // Object.keys(tempBaskets).forEach(owner => {
     //   if(tempBaskets[owner].length === 0){
     //     tempBaskets[owner].push(null)
     //   }
     // })
-    this.props.onActivateOrder(this.state.baskets);
-    this.handleToggleBasketDrawer()
+    if(Object.values(this.state.baskets).some(basket => basket.length > 0)){
+      this.recaptcha.execute();
+    }else{
+      this.recaptcha.reset();
+    }
+
+
     //this.setState({ showVerificationPage: true });
   };
+  
+  onCaptchaResolved =  () => {
+    const token = this.recaptcha.getResponse()
+     this.props.onActivateOrder(this.state.baskets, token);
+    this.handleToggleBasketDrawer()
+  }
 
   handleScrollModalToggle = () => {
     this.setState(prevState => {
@@ -1095,6 +1106,7 @@ class Shop extends React.Component {
                 </React.Fragment>
               )}
             <FloatingCart
+            style={{visibility: this.state.basketDrawerOpen ? 'hidden':'visible'}}
               variant="contained"
               color="primary"
               onClick={this.handleToggleBasketDrawer}
@@ -1123,7 +1135,13 @@ class Shop extends React.Component {
               handleRemoveItem={this.handleRemoveItemFromCart}
               finalizeOrder={this.handleFinalizeOrder}
               leader={this.props.leader}
-            />
+            >                     <Recaptcha
+            style={{visibility: this.state.basketDrawerOpen ? 'visible':'hidden'}}
+            badge={'bottomleft'}
+         ref={ ref => this.recaptcha = ref }
+         sitekey="6Ldy0ssUAAAAAKSZNuXULGv4U1PBI35BbvbWhT9x"
+         onResolved={ this.onCaptchaResolved }
+     /></BasketDrawer>
           </ScrollingProvider>
         )}
         
@@ -1136,6 +1154,7 @@ class Shop extends React.Component {
           equippedScrollId={activeUser.equipped.scroll}
           handleScrollSelect={this.handleScrollSelect}
         />
+
       </div>
     );
   }
@@ -1156,7 +1175,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onGetShop: () => dispatch(getShop()),
-    onActivateOrder: baskets => dispatch(activateOrder(baskets)),
+    onActivateOrder: (baskets, token) => dispatch(activateOrder(baskets, token)),
     onLeaveShop: () => dispatch(leaveShop()),
     onLeaderScrollToggle: (id, category, equipped) => dispatch(toggleItem(id, category, equipped, false)),
     onPartyMemberScrollToggle: (id, category, equipped, memberId) => dispatch(toggleItem(id, category, equipped, memberId))

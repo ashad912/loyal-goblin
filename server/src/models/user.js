@@ -58,7 +58,8 @@ export const UserSchema = new mongoose.Schema({
         type: String,
     },
     avatar: {
-        type: String
+        type: String,
+        maxlength: 20
     },
     name: {
         type: String,

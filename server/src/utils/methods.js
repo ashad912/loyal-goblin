@@ -8,6 +8,7 @@ import mkdirp from "mkdirp"
 import { levelingEquation } from "./definitions";
 import { Party } from "../models/party";
 import { MissionInstance } from "../models/missionInstance";
+import axios from 'axios'
 
 export async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
@@ -518,3 +519,19 @@ export const removeImage = async (uploadPath, fileName) => {
     });
   });
 };
+
+export const verifyCaptcha = (url) => {
+  return new Promise (async (resolve, reject) => {
+    try{
+      const res = await axios.post(url)
+      console.log(res.data)
+      if(!res.data.success){
+        return reject()
+      }
+      resolve()
+    }catch(e){
+      reject(e)
+    }
+    
+  })
+}

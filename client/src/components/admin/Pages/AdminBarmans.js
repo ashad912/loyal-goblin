@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import _ from 'lodash'
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
@@ -20,6 +21,8 @@ import Box from "@material-ui/core/Box";
 import SearchIcon from "@material-ui/icons/Search";
 import { getBarmans, registerBarman, changeBarmanPassword, deleteBarman } from "../../../store/adminActions/barmanActions";
 
+let currentBarman = null;
+
 const AdminBarmans = () => {
   const [barmans, setBarmans] = useState([]);
   const [newBarmanDialogOpen, setNewBarmanDialogOpen] = useState(false);
@@ -32,7 +35,6 @@ const AdminBarmans = () => {
     confirmPassword: null
   });
   const [disableSubmit, setDisableSubmit] = useState(true);
-  const [currentBarman, setCurrentBarman] = useState(null)
   const [showPasswordDialog, setShowPasswordDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
@@ -47,7 +49,7 @@ const AdminBarmans = () => {
 
   useEffect(() => {
     checkDisableSubmit();
-  }, [userName, password, confirmPassword]);
+  }, [userName, password, confirmPassword, formErrors]);
 
   const checkDisableSubmit = () => {
     let disable = true;
@@ -73,7 +75,7 @@ const AdminBarmans = () => {
     setDisableSubmit(disable);
   };
 
-  const validateForm = (field, value) => {
+  const validateForm = _.debounce((value, field) => {
     const errors = { ...formErrors };
     if (value.length) {
       switch (field) {
@@ -104,7 +106,7 @@ const AdminBarmans = () => {
     }
 
     setFormErrors(errors);
-  };
+  }, 500)
 
   const handleAddNewBarman = async () => {
     if(password === confirmPassword){
@@ -123,24 +125,25 @@ const AdminBarmans = () => {
 
   const handleChangeUserName = e => {
     setUserName(e.target.value);
-    validateForm("userName", e.target.value);
+   
   };
 
   const handleChangePassword = e => {
     setPassword(e.target.value);
-    validateForm("password", e.target.value);
+
   };
 
   const handleChangeConfirmPassword = e => {
     setConfirmPassword(e.target.value);
-    validateForm("confirmPassword", e.target.value);
   };
+
+
 
   const handleTogglePasswordDialog = (id) => {
     setUserName("");
     setPassword("");
     setConfirmPassword("");
-    setCurrentBarman(id)
+    currentBarman = typeof(id) === 'string' ? id : null
     setShowPasswordDialog(prev=>!prev)
   }
   const handleSubmitNewPassword = async () => {
@@ -151,8 +154,10 @@ const AdminBarmans = () => {
   }
 
   const handleToggleDeleteDialog = id => {
-    setCurrentBarman(id)
-    setShowDeleteDialog(prev=>!prev)
+
+    currentBarman = typeof(id) === 'string' ? id : null
+      setShowDeleteDialog(prev=>!prev)
+
   }
 
   const handleDeleteBarman = async () => {
@@ -160,6 +165,7 @@ const AdminBarmans = () => {
     fetchBarmans()
     handleToggleDeleteDialog()
   }
+
 
   return (
     <div>
@@ -194,6 +200,7 @@ const AdminBarmans = () => {
             label="Nazwa użytkownika"
             type="text"
             onChange={handleChangeUserName}
+            onKeyUp={(e)=>validateForm(e.target.value, "userName")}
             error={Boolean(formErrors.userName)}
             helperText={formErrors.userName}
           />
@@ -205,6 +212,7 @@ const AdminBarmans = () => {
             type="password"
             inputProps={{autoComplete:"new-password"}}
             onChange={handleChangePassword}
+            onKeyUp={(e)=>validateForm(e.target.value, "password")}
             error={Boolean(formErrors.password)}
             helperText={formErrors.password}
           />
@@ -216,6 +224,7 @@ const AdminBarmans = () => {
             type="password"
             inputProps={{autoComplete:"new-password"}}
             onChange={handleChangeConfirmPassword}
+            onKeyUp={(e)=>validateForm(e.target.value, "confirmPassword")}
             error={Boolean(formErrors.confirmPassword)}
             helperText={formErrors.confirmPassword}
           />
@@ -234,7 +243,7 @@ const AdminBarmans = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      {currentBarman && 
+
       
       <Dialog
         open={showPasswordDialog}
@@ -250,6 +259,7 @@ const AdminBarmans = () => {
             type="password"
             inputProps={{autoComplete:"new-password"}}
             onChange={handleChangePassword}
+            onKeyUp={(e)=>validateForm(e.target.value, "password")}
             error={Boolean(formErrors.password)}
             helperText={formErrors.password}
           />
@@ -261,6 +271,7 @@ const AdminBarmans = () => {
             type="password"
             inputProps={{autoComplete:"new-password"}}
             onChange={handleChangeConfirmPassword}
+            onKeyUp={(e)=>validateForm(e.target.value, "confirmPassword")}
             error={Boolean(formErrors.confirmPassword)}
             helperText={formErrors.confirmPassword}
           />
@@ -274,14 +285,14 @@ const AdminBarmans = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      }
-      {currentBarman && 
+      
+
       
       <Dialog
         open={showDeleteDialog}
         onClose={handleToggleDeleteDialog}
       >
-<DialogTitle >Usuń barmana {barmans.find(barman => barman._id === currentBarman).userName}</DialogTitle>
+<DialogTitle >Usuń barmana {barmans.find(barman => barman._id === currentBarman) && barmans.find(barman => barman._id === currentBarman).userName}</DialogTitle>
         
         <DialogActions>
           <Button onClick={handleToggleDeleteDialog} color="secondary">
@@ -292,7 +303,7 @@ const AdminBarmans = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      }
+      
     </div>
   );
 };

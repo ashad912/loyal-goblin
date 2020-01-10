@@ -16,7 +16,8 @@ import {
   userPopulateBag,
   updatePerks,
   saveImage,
-  removeImage
+  removeImage,
+  verifyCaptcha
 } from "../utils/methods";
 import moment from "moment";
 import { resolve } from "url";
@@ -84,21 +85,6 @@ router.post("/create", async (req, res) => {
   }
 });
 
-const verifyCaptcha = (url) => {
-  return new Promise (async (resolve, reject) => {
-    try{
-      const res = await axios.post(url)
-      console.log(res.data)
-      if(!res.data.success){
-        return reject()
-      }
-      resolve()
-    }catch(e){
-      reject(e)
-    }
-    
-  })
-}
 
 router.patch("/character", auth, async (req, res) => {
   try {
@@ -111,7 +97,7 @@ router.patch("/character", auth, async (req, res) => {
     if(!name || !sex || !characterClass || !attributes){
       throw new Error("Niepełne dane tworzenia postaci")
     }
-    if(parseInt(attributes.strength) + parseInt(attributes.dexterity) + parseInt(attributes.magic) + parseInt(attributes.endurance) > 7){
+    if(parseInt(attributes.strength) + parseInt(attributes.dexterity) + parseInt(attributes.magic) + parseInt(attributes.endurance) > 8){
       throw new Error("Nieprawidłowa suma atrybutów")
     }
 
@@ -125,6 +111,7 @@ router.patch("/character", auth, async (req, res) => {
 
     res.status(201).send(user)
   } catch (e) {
+    console.log(e)
     res.status(400).send(e);
   }
 });

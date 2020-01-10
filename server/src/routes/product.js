@@ -8,13 +8,15 @@ import {
   updatePerks,
   designateUserPerks,
   removeImage,
-  saveImage
+  saveImage,
+  verifyCaptcha
 } from "../utils/methods";
 import { Rally } from "../models/rally";
 import { User } from "../models/user";
 import { Party } from "../models/party";
 import {Item} from '../models/item'
 import { ArchiveOrder } from "../models/archiveOrder";
+
 
 const uploadPath = "../client/public/images/products/"
 
@@ -311,10 +313,27 @@ const verifyParty = (leader, membersIds, order) => {
   });
 };
 
+
+
+
+
 //OK
 router.patch("/activate", auth, async (req, res) => {
   const order = req.body.order;
   const user = req.user;
+
+  const secretKey = process.env.SECRET_RECAPTCHA_KEY;
+    const recaptchaToken = req.body.token;
+    const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
+
+
+    try{
+      await verifyCaptcha(url)
+    }catch(e){
+      console.log(e);
+      res.status(400).send(e);
+      return
+    }
 
   try {
     //checking active order - user
