@@ -31,5 +31,5 @@ export const createAvatarPlaceholder = (name) => {
       return word.charAt(0)
   }).join('').toUpperCase()
 
-  return initials
+  return initials.substring(0,2)
 }

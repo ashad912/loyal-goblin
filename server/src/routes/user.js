@@ -37,6 +37,7 @@ router.get('/adminUsers', auth, async (req, res) => {
     const users = await User.aggregate().match({}).project({
       '_id': 1,
       'name': 1,
+      'avatar': 1,
       'active': 1,
       'experience': 1,
       'lastActivityDate': 1,

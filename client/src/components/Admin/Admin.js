@@ -11,12 +11,14 @@ import LocalBarIcon from '@material-ui/icons/LocalBar';
 import EventSeatIcon from "@material-ui/icons/EventSeat";
 import CropFreeIcon from "@material-ui/icons/CropFree";
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import PersonIcon from '@material-ui/icons/Person';
 
 import MenuDrawer from "./MenuDrawer";
 import AdminEvents from "./Pages/AdminEvents";
 import AdminItems from "./Pages/AdminItems";
 import AdminProducts from "./Pages/AdminProducts";
 import AdminUsers from "./Pages/AdminUsers";
+import AdminParties from "./Pages/AdminParties";
 import AdminBarmans from './Pages/AdminBarmans'
 import AdminReservations from "./Pages/AdminReservations";
 import AdminQR from "./Pages/AdminQR";
@@ -43,10 +45,11 @@ const menuItems = [
   { title: "Misje", icon: <EventIcon /> },
   { title: "Przedmioty", icon: <CreateIcon />},
   { title: "Produkty", icon: <ShoppingCartIcon />},
-  { title: "Użytkownicy", icon: <PeopleIcon /> },
+  { title: "Użytkownicy", icon: <PersonIcon /> },
+  { title: "Drużyny", icon: <PeopleIcon /> },
   { title: "Barmani", icon: <LocalBarIcon /> },
   { title: "Rezerwacje", icon: <EventSeatIcon /> },
-  { title: "QR", icon: <CropFreeIcon /> }
+  { title: "Zamówienia", icon: <CropFreeIcon /> }
 ];
 
 const Admin = () => {
@@ -83,13 +86,16 @@ const Admin = () => {
     case "Użytkownicy":
       page = <AdminUsers />;
       break;
-      case "Barmani":
-        page = <AdminBarmans />;
-        break;
+    case "Drużyny":
+      page = <AdminParties />;
+      break;
+    case "Barmani":
+      page = <AdminBarmans />;
+      break;
     case "Rezerwacje":
       page = <AdminReservations />;
       break;
-    case "QR":
+    case "Zamówienia":
       page = <AdminQR />;
       break;
 

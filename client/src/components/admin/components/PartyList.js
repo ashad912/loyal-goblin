@@ -6,7 +6,7 @@ const PartyList = ({ partys }) => {
 
 
   return (
-    <List style={{ border: "1px solid grey" }} alignItems="flex-start">
+    <List dense style={{ border: "1px solid grey" }} alignItems="flex-start">
       {partys.map(party => {
         return <PartyListItem party={party}/>
       })}

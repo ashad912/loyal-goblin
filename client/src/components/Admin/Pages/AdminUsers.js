@@ -9,11 +9,11 @@ import uuid from 'uuid/v1'
 import Toolbar from "@material-ui/core/Toolbar";
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
-import FirstPageIcon from '@material-ui/icons/FirstPage';
+import Avatar from '@material-ui/core/Avatar';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import LastPageIcon from '@material-ui/icons/LastPage';
-import Collapse from "@material-ui/core/Collapse";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
@@ -23,13 +23,49 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Box from "@material-ui/core/Box";
 import SearchIcon from "@material-ui/icons/Search";
+import RefreshIcon from '@material-ui/icons/Refresh';
+import styled from 'styled-components'
 
-import PartyList from "../components/PartyList";
 import {designateUserLevel} from '../utils/methods'
 import {userFilterStatuses} from '../../../utils/labels'
+import {createAvatarPlaceholder} from '../../../utils/methods'
 import {getAdminUsers, toggleUserActiveStatus} from '../../../store/adminActions/userActions'
 
+
+const RefreshBar = styled.div`
+  flex-grow: 3;
+  text-align: left;
+`
+
+
 const mockUsers = [
+  { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment(), avatar: 'dsad' },
+  { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Ghi", experience: 400, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Janusz Korwin Mikke", experience: 1000, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
+  { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Ghi", experience: 400, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Janusz Korwin Mikke", experience: 1000, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
+  { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Ghi", experience: 400, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Janusz Korwin Mikke", experience: 1000, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
+  { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
   { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment() },
   { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
   { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
@@ -65,7 +101,16 @@ const mockUsers = [
   { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
   { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
   { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() }
+  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Ghi", experience: 400, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Janusz Korwin Mikke", experience: 1000, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
+  { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
+  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
 ];
 const statusCodes = {
   active: "Aktywny",
@@ -73,24 +118,7 @@ const statusCodes = {
   banned: "Zbanowany"
 };
 
-const mockPartys = [
-  {
-    name: "Drużyna A",
-    leader: { _id: "1", name: "Szef", avatar: "moose.png" },
-    members: [
-      { _id: "2", name: "Przydupas 1", avatar: "moose.png" },
-      { _id: "3", name: "Przydupas 2", avatar: "moose.png" }
-    ]
-  },
-  {
-    name: "Ekipa jamnika",
-    leader: { _id: "4", name: "Jamnik", avatar: "moose.png" },
-    members: [
-      { _id: "5", name: "Przydupas 1", avatar: "moose.png" },
-      { _id: "6", name: "Przydupas 2", avatar: "moose.png" }
-    ]
-  }
-];
+
 
 const AdminUsers = () => {
   const [users, setUsers] = React.useState([]);
@@ -98,34 +126,39 @@ const AdminUsers = () => {
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [nameFilter, setNameFilter] = React.useState("");
   const [page, setPage] = React.useState(0)
-  const [partys, setPartys] = React.useState(mockPartys);
-
-  const fetchUsers = async () => {
-    const users = await getAdminUsers()
-    setFetchedUsers(users)
-    applyStatusFilter(statusFilter, users)
-  }
+  const [rowsPerPage, setRowsPerPage] = React.useState(10)
+  const [autoRefresh, setAutoRefresh] = React.useState(false)
 
   React.useEffect(() => {
-    fetchUsers()
-
-    
-  
+    fetchUsers() 
   }, [])
 
   React.useEffect(() => {
 
     let timer
-
     clearInterval(timer)
-
-    timer = setInterval(() => {
-      fetchUsers()     
-    }, 60 * 1000);
-
+    if(autoRefresh){
+      timer = setInterval(() => {
+        fetchUsers()     
+      }, 60 * 1000);
+    } 
     return () => clearInterval(timer);
 
-  }, [statusFilter])
+  }, [fetchedUsers, statusFilter, autoRefresh])
+
+
+  React.useEffect(() => {
+    applyNameFilter()
+    if(nameFilter.trim().length > 0){
+      setPage(0)
+    }
+  }, [nameFilter]);
+
+  const fetchUsers = async () => {
+    const users = await getAdminUsers()
+    setFetchedUsers(users)
+    applyNameFilter(users)
+  }
 
   const applyStatusFilter = (status, users) => {
     let tempUsers = users ? [...users] : [...fetchedUsers];
@@ -150,17 +183,23 @@ const AdminUsers = () => {
     return tempUsers;
   };
 
-  React.useEffect(() => {
-    let tempUsersList = applyStatusFilter(statusFilter);
+  const applyNameFilter = (users) => {
+    let tempUsersList = applyStatusFilter(statusFilter, users);
     if (nameFilter.trim().length > 0) {
-      tempUsersList = tempUsersList.filter(
-        user => user.hasOwnProperty('name') && user.name.search(nameFilter) !== -1
-      );
+      tempUsersList = tempUsersList.filter( (user) => {
+        const reg = new RegExp(nameFilter, 'gi')
+        return user.hasOwnProperty('name') && user.name.match(reg)
+       } );
+      
       setUsers(tempUsersList);
     } else {
       setUsers(tempUsersList);
     }
-  }, [nameFilter]);
+  }
+
+
+
+
 
   const handleChangeNameFilter = e => {
     setNameFilter(e.target.value.trim());
@@ -177,10 +216,18 @@ const AdminUsers = () => {
     fetchUsers()
   }
 
-  const designateActivityTime = (lastActivityDate) => {
-    return moment(lastActivityDate).fromNow();
+  const handleToggleAutoRefresh = () => {
+    setAutoRefresh(!autoRefresh)
   }
 
+  const handleRefresh = () => {
+    fetchUsers() 
+  }
+
+  const handleSetRowsPerPage = (e) => {
+    setRowsPerPage(e.target.value)
+    setPage(0)
+  }
 
   const handlePreviousPageButtonClick = () => {
     setPage(page-1)
@@ -190,7 +237,7 @@ const AdminUsers = () => {
     setPage(page+1)
   }
   
-  const tenOrNo = page === parseInt(users.length / 10) ? (users.length % 10) : 10
+  const tenOrNo = page === parseInt(users.length / rowsPerPage) ? (users.length % rowsPerPage) : rowsPerPage
   const oneOrZero = users.length ? 1 : 0
 
   return (
@@ -246,20 +293,61 @@ const AdminUsers = () => {
           </Box>
         </Paper>
         <Toolbar style={{justifyContent: 'flex-end', 'padding': 0, 'min-height': '1rem'}}>
-          <Typography> {`${(page*10)+oneOrZero}-${(page*10)+tenOrNo} z ${users.length}`}</Typography>
+          <RefreshBar>
+            <FormControlLabel
+                style={{marginLeft: '0rem'}}
+                control={
+                  <Checkbox
+                    checked={autoRefresh}
+                    onChange={handleToggleAutoRefresh}
+                  />
+                }
+                label="Autoodświeżanie (1 min)"
+            />
+            <IconButton
+                onClick={handleRefresh}
+                aria-label="Odśwież"
+                style={{padding: '0.5rem'}}
+            >
+              <RefreshIcon/>
+            </IconButton>
+          </RefreshBar>
+          <Typography >Wyświetlane rekordy:</Typography>
+          <FormControl >
+            <Select
+                autoFocus
+                value={rowsPerPage}
+                onChange={handleSetRowsPerPage}
+                inputProps={{
+                    name: 'rowsPerPage',
+                    id: 'rowsPerPage',
+                }}
+                style={{
+                  marginLeft: '0.5rem',
+                  marginRight: '1.5rem'
+                }}
+            >
+                
+                <MenuItem value={10}>10</MenuItem>
+                <MenuItem value={20}>20</MenuItem>
+                <MenuItem value={50}>50</MenuItem>
+                 
+            </Select>
+          </FormControl>
+          <Typography> {`${(page*rowsPerPage)+oneOrZero}-${(page*rowsPerPage)+tenOrNo} z ${users.length}`}</Typography>
           <div style={{marginLeft: '1rem'}}>
             <IconButton
               onClick={handlePreviousPageButtonClick}
               disabled={page === 0}
-              aria-label="first page"
+              aria-label="Poprzednia strona"
               style={{padding: '0.5rem'}}
             >
               <KeyboardArrowLeft />
             </IconButton>
             <IconButton
               onClick={handleNextPageButtonClick}
-              disabled={page === parseInt(users.length / 10)}
-              aria-label="first page"
+              disabled={page === parseInt(users.length / rowsPerPage)}
+              aria-label="Kolejna strona"
               style={{padding: '0.5rem'}}
             >
               <KeyboardArrowRight />
@@ -268,14 +356,20 @@ const AdminUsers = () => {
           </div>
         </Toolbar>
         <List style={{ border: "1px solid grey" }} alignItems="flex-start">
-          {users.slice(page*10, page*10 + 10).map(user => {
+          {users.slice(page*rowsPerPage, page*rowsPerPage + rowsPerPage).map(user => {
             return (
               
-              <ListItem key={user.id} style={{paddingTop: '0.1rem', paddingBottom: '0.1rem'}}>
+              <ListItem button key={user._id} style={{paddingTop: '0.1rem', paddingBottom: '0.1rem'}} >
+                <Grid item xs={1}>
+                  {user.avatar ? 
+                    <img style={{width: '32px', height: '32px'}} src={'/images/user_uploads/' + user.avatar} /> :
+                    <Avatar style={{width: '32px', height: '32px', fontSize: '0.9rem'}}>{createAvatarPlaceholder(user.name)}</Avatar>
+                  }
+                </Grid>
                 <Grid item xs={3}>
                   <Typography>{user.name}</Typography>
                 </Grid>
-                <Grid item xs={2} style={{textAlign: 'center'}}>
+                <Grid item xs={1} style={{textAlign: 'center'}}>
                   <Typography variant="caption">{'Poziom ' + designateUserLevel(user.experience)}</Typography>
                 </Grid>
                 <Grid item xs={2} style={{textAlign: 'center'}}>
@@ -283,7 +377,7 @@ const AdminUsers = () => {
                 </Grid>
                 <Grid item xs={3} style={{textAlign: 'center'}}>
                   <Typography variant="caption">
-                    {user.active ? ('Aktywny ' + designateActivityTime(user.lastActivityDate)) : ((!user.hasOwnProperty('name') || !user.name.length) ? ('Nowy') : ('Zbanowany'))}
+                    {user.active ? ('Aktywny ' + moment(user.lastActivityDate).fromNow()) : ((!user.hasOwnProperty('name') || !user.name.length) ? ('Nowy') : ('Zbanowany'))}
                   </Typography>
                 </Grid>
                 <Grid item xs={2} style={{textAlign: 'right'}}>
@@ -295,10 +389,7 @@ const AdminUsers = () => {
         </List>
         
       </Grid>
-      <Grid item style={{ width: "40%" }}>
-        <Typography variant="h5" style={{margin: "2rem 0 1rem 0"}}>Drużyny: </Typography>
-        <PartyList partys={partys} />
-      </Grid>
+      
     </Grid>
   );
 };

@@ -15,7 +15,7 @@ const PartyListItem = ({party}) => {
       {open ? <ExpandLess /> : <ExpandMore />}
     </ListItem>
     <Collapse in={open} timeout="auto" unmountOnExit>
-      <List component="div" disablePadding>
+      <List dense component="div" disablePadding>
         <ListItem style={{ paddingLeft: "2rem"}}>
           <ListItemText primary={party.leader.name}/>
         </ListItem>

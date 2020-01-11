@@ -1,25 +1,28 @@
 import express from "express";
 import { User } from "../models/user";
-import { Mission } from "../models/mission";
 import { auth } from "../middleware/auth";
 import { MissionInstance } from "../models/missionInstance";
-import { Item } from "../models/item";
-import { ItemModel } from "../models/itemModel";
-import {
-  asyncForEach,
-  designateUserPerks,
-  isNeedToPerksUpdate,
-  designateUserLevel
-} from "../utils/methods";
-
-import isEqual from "lodash/isEqual";
-import moment from "moment";
-import { Rally } from "../models/rally";
 import { Party } from "../models/party";
 import _ from "lodash";
 var ObjectId = require("mongoose").Types.ObjectId;
 
 const router = new express.Router();
+
+//ADMIN
+router.get('/adminParties', auth, async (req, res) => {
+  try{
+    const parties = await Party.find({}).populate({
+      path: 'leader members'
+    })
+
+    res.send(parties)
+  }catch(e){
+    res.status(500).send(e)
+  }
+  
+})
+
+
 
 router.get("/", auth, async (req, res, next) => {
   const user = req.user;
