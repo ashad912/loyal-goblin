@@ -14,7 +14,7 @@ import Typography from "@material-ui/core/Typography";
 import Input from "@material-ui/core/Input";
 import Checkbox from "@material-ui/core/Checkbox";
 
-
+import { itemsPath } from "../../../utils/paths";
 
 
 const AmuletsModal = props => {
@@ -59,7 +59,7 @@ const AmuletsModal = props => {
                     <ListItem key={amulet.itemModel}>
                       <ListItemAvatar>
                         <img
-                          src={"/images/items/" +
+                          src={itemsPath +
                             amulet.imgSrc}
                           width="64px"
                         />
@@ -99,7 +99,7 @@ const AmuletsModal = props => {
                           <Grid item >
                             <ListItemAvatar>
                               <img
-                                src={"/images/items/" +
+                                src={itemsPath +
                                   amulet.imgSrc}
                                 width="64px"
                               />

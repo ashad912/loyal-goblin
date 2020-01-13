@@ -20,12 +20,12 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import SearchIcon from "@material-ui/icons/Search";
-import EventMissionListItem from "../components/EventMissionListItem";
+import EventMissionListItem from "../events/EventMissionListItem";
 
-import NewEventCreator from "../components/NewEventCreator";
+import EventCreator from "../events/EventCreator";
 
 import "moment/locale/pl";
-import EventRallyListItem from "../components/EventRallyListItem";
+import EventRallyListItem from "../events/EventRallyListItem";
 import {
   getEvents,
   getRallies,
@@ -834,7 +834,7 @@ if(eventId){
     return (
       <div>
         {this.state.showNewEventCreator ? (
-          <NewEventCreator
+          <EventCreator
             open={this.state.showNewEventCreator}
             handleClose={this.handleCloseEventCreator}
             isEdit={this.state.showNewEventCreator === "edit"}

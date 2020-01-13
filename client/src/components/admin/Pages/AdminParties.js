@@ -4,47 +4,58 @@ import Grid from "@material-ui/core/Grid";
 import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import ListItem from "@material-ui/core/ListItem";
-import { useTheme } from '@material-ui/core/styles';
+
 import uuid from 'uuid/v1'
-import Toolbar from "@material-ui/core/Toolbar";
+
 import Paper from '@material-ui/core/Paper';
-import IconButton from '@material-ui/core/IconButton';
-import Avatar from '@material-ui/core/Avatar';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
+
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
+
 import Box from "@material-ui/core/Box";
 import SearchIcon from "@material-ui/icons/Search";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import IconButton from '@material-ui/core/IconButton';
+import PartyList from "../parties/PartyList";
 
-import PartyList from "../components/PartyList";
 import styled from 'styled-components'
-import {getAdminParties} from '../../../store/adminActions/partyActions'
+import {getAdminParties, deleteParty} from '../../../store/adminActions/partyActions'
+
+const RefreshBar = styled.div`
+  flex-grow: 3;
+  text-align: left;
+`
 
 
-const mockPartys = [
+const mockParties = [
     {
       name: "Drużyna A",
-      leader: { _id: "1", name: "Szef", avatar: "moose.png" },
+      leader:  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
       members: [
-        { _id: "2", name: "Przydupas 1", avatar: "moose.png" },
-        { _id: "3", name: "Przydupas 2", avatar: "moose.png" }
+        { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
+        { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
       ]
     },
     {
       name: "Ekipa jamnika",
-      leader: { _id: "4", name: "Jamnik", avatar: "moose.png" },
+      leader: { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
       members: [
-        { _id: "5", name: "Przydupas 1", avatar: "moose.png" },
-        { _id: "6", name: "Przydupas 2", avatar: "moose.png" }
+        { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
+        { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
+        { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
+        { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
+        { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment() },
+        { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
+        { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
+        
       ]
     }
   ];
@@ -52,8 +63,11 @@ const mockPartys = [
 const AdminParties = () => {
     
     const [fetchedParties, setFetchedParties] = React.useState([])
-    const [parties, setParties] = React.useState(mockPartys);
+    const [parties, setParties] = React.useState([]);
     const [nameFilter, setNameFilter] = React.useState("");
+
+    const [deleteDialog, setDeleteDialog] = React.useState(false)
+    const [partyToDelete, setPartyToDelete] = React.useState({_id: '', name: ''})
 
     React.useEffect(() => {
         fetchParties() 
@@ -90,44 +104,94 @@ const AdminParties = () => {
         setNameFilter(e.target.value.trim());
     };
 
+    const handleDeleteDialogOpen = (_id, name) => {
+     
+      setPartyToDelete({_id, name})
+      setDeleteDialog(true)
+    }
+  
+    const handleDeleteDialogClose = () => {
+    
+      setDeleteDialog(false)
+      setPartyToDelete({_id: '', name: ''})
+    }
+
+    const handlePartyDelete = async  () => {
+      await deleteParty(partyToDelete._id)
+      fetchParties()
+      handleDeleteDialogClose()
+    }
+
+    const handleRefresh = () => {
+      fetchParties() 
+    }
 
     return (
         <Grid container direction="column" alignItems="center">
             <Grid item style={{ width: "80%" }}>
             <Paper
-          style={{
-            width: "100%",
-            margin: "1rem auto",
-            padding: "1rem",
-            boxSizing: "border-box"
-          }}
-        >
-          <Typography>Filtruj</Typography>
-          <Box
-            display="flex"
-            flexDirection="row"
-            justifyContent="space-around"
-            alignItems="center"
-          >
-            <TextField
-              value={nameFilter}
-              onChange={handleChangeNameFilter}
-              margin="dense"
-              label="Szukaj nazwy drużyny"
-              type="search"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                )
+              style={{
+                width: "100%",
+                margin: "1rem auto",
+                padding: "1rem",
+                boxSizing: "border-box"
               }}
-            />
-            
-          </Box>
-        </Paper>
-                <PartyList partys={parties} />
-            </Grid>
+            >
+            <Typography>Filtruj</Typography>
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="space-around"
+              alignItems="center"
+            >
+              <TextField
+                value={nameFilter}
+                onChange={handleChangeNameFilter}
+                margin="dense"
+                label="Szukaj nazwy drużyny"
+                type="search"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  )
+                }}
+              />
+              
+            </Box>
+          </Paper>
+          <RefreshBar>
+            <IconButton
+                onClick={handleRefresh}
+                aria-label="Odśwież"
+                style={{padding: '0.5rem'}}
+            >
+              <RefreshIcon/>
+            </IconButton>
+          </RefreshBar>
+            {parties.length ? (<PartyList parties={parties} handleDelete={handleDeleteDialogOpen}/>) : (<Typography>Brak utworzonych drużyn!</Typography>)}
+          </Grid>
+          <Dialog
+            open={deleteDialog}
+            onClose={handleDeleteDialogClose}
+          >
+            <DialogTitle >Usuwanie przedmiotu</DialogTitle>
+            <DialogContent>
+              <DialogContentText >
+                      <span>Czy na pewno chcesz usunąć drużynę {partyToDelete.name}?</span>< br/>
+                      Aktywna sesja sklepu bądź misji drużyny zostanie zakończona.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleDeleteDialogClose} color="secondary">
+                Anuluj
+              </Button>
+              <Button onClick={handlePartyDelete} color="primary" autoFocus>
+                Potwierdź
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Grid>
     )
 }

@@ -12,3 +12,15 @@ export const getAdminParties = () => {
         } 
     })
 }
+
+export const deleteParty = (_id) => {
+    return new Promise (async (resolve, reject) => {
+        try {
+            console.log('deleteParty')
+            await axios.delete('/party/adminRemove', {data: {_id}})
+            resolve()
+        }catch (e) {
+            reject(e)     
+        } 
+    })
+}

@@ -25,16 +25,12 @@ import AttributeBox from "./AttributeBox";
 import AmuletsModal from "./AmuletsModal";
 import ItemsModal from "./ItemsModal";
 
-import diamondAmulet from "../../../assets/icons/items/diamond-amulet.png";
-import sapphireAmulet from "../../../assets/icons/items/sapphire-amulet.png";
-import pearlAmulet from "../../../assets/icons/items/pearl-amulet.png";
-import emeraldAmulet from "../../../assets/icons/items/emerald-amulet.png";
-
 import characterClasses from "../../../assets/categories/characterClasses";
 
 import convertItemModelsToCategories from "../utils/itemModelsToCategories";
 
-import { asyncForEach } from "../utils/methods";
+
+import { itemsPath } from "../../../utils/paths";
 import {createEvent, updateEvent, uploadEventIcon, getRallies} from '../../../store/adminActions/eventActions'
 
 
@@ -429,7 +425,7 @@ const FileInputButton = styled(Button)`
   width: 14rem;
 `;
 
-class NewEventCreator extends Component {
+class EventCreator extends Component {
   state = {
     _id: null,
     isRally: false,
@@ -1336,7 +1332,7 @@ class NewEventCreator extends Component {
                         <Grid item key={amulet.id}>
                           <ListItemAvatar>
                             <img
-                              src={"/images/items/" +
+                              src={itemsPath +
                                 amulet.imgSrc}
                               width="64px"
                             />
@@ -1469,7 +1465,7 @@ class NewEventCreator extends Component {
                                   <ListItem>
                                     <ListItemAvatar>
                                       <img
-                                        src={"/images/items/" +
+                                        src={itemsPath +
                                           item.imgSrc}
                                         style={{
                                           width: "32px",
@@ -1509,7 +1505,7 @@ class NewEventCreator extends Component {
                                           <ListItem>
                                             <ListItemAvatar>
                                               <img
-                                                src={"/images/items/" +
+                                                src={itemsPath +
                                                   item.imgSrc}
                                                 style={{
                                                   width: "32px",
@@ -1594,7 +1590,7 @@ class NewEventCreator extends Component {
                         <ListItem key={item.itemModel}>
                           <ListItemAvatar>
                             <img
-                              src={"/images/items/" +
+                              src={itemsPath +
                                 item.imgSrc}
                               style={{ width: "32px", height: "32px" }}
                             />
@@ -1628,7 +1624,7 @@ class NewEventCreator extends Component {
                               <ListItem key={item.itemModel}>
                                 <ListItemAvatar>
                                   <img
-                                    src={"/images/items/" +
+                                    src={itemsPath +
                                       item.imgSrc}
                                     style={{ width: "32px", height: "32px" }}
                                   />
@@ -1884,4 +1880,4 @@ class NewEventCreator extends Component {
 //   }
 // }
 
-export default NewEventCreator;
+export default EventCreator;

@@ -9,7 +9,7 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-
+import {itemsPath} from '../../../utils/paths'
 const StyledMenu = withStyles({
   paper: {
     border: "1px solid #d3d4d5",
@@ -93,7 +93,7 @@ const TorpedoListItem = props => {
         <img
           style={{ width: "32px", height: "32px" }}
           alt={item.itemModel.name}
-          src={`/images/items/${item.itemModel.imgSrc}`}
+          src={`${itemsPath}${item.itemModel.imgSrc}`}
         />
       </ListItemAvatar>
       <ListItemText

@@ -20,6 +20,7 @@ import bagImg from '../../../../assets/avatar/bag.png'
 
 
 import {createAvatarPlaceholder} from '../../../../utils/methods'
+import {itemsPath} from '../../../../utils/paths'
 
 const StyledGrid = styled(Grid)`
     &&{
@@ -258,7 +259,7 @@ const PartyList = (props) => {
                                                 return(
                                                     <React.Fragment key={item._id}>
                                                         {item.owner === member.profile._id ? (
-                                                            <StyledImage  src={`/images/items/${item.model.imgSrc}`} alt='icon'/>
+                                                            <StyledImage  src={`${itemsPath}${item.model.imgSrc}`} alt='icon'/>
                                                         ) : (
                                                             null
                                                         )}

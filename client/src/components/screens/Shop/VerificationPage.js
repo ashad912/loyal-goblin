@@ -20,7 +20,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { cancelOrder, leaveShop } from "../../../store/actions/shopActions";
-
+import {itemsPath} from '../../../utils/paths'
+import {createAvatarPlaceholder} from '../../../utils/methods'
 
 //Info z backendu
 const baskets = [
@@ -119,18 +120,6 @@ const VerificationPage = props => {
     }
   }
 
-  const createAvatarPlaceholder = (name) => {
-
-    if (!(/\s/.test(name))) {
-        return name.charAt(0).toUpperCase()
-    }
-    
-    const initials = name.split(" ").map(word => {
-        return word.charAt(0)
-    }).join('').toUpperCase()
-
-    return initials
-}
 
 const handleCloseCancelDialog = () => {
   setShowCancelDialog(prev => !prev)
@@ -180,7 +169,7 @@ const handleCancelOrder = async () => {
                           <ListItem key={award._id}>
                             <ListItemIcon>
                               <img
-                                src={"/images/items/" +award.itemModel.imgSrc}
+                                src={itemsPath + award.itemModel.imgSrc}
                                 width="32"
                               />
                             </ListItemIcon>

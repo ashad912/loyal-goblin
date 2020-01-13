@@ -16,6 +16,7 @@ import ExpandMore from "@material-ui/icons/ExpandMore";
 import styled from 'styled-components'
 import AwardListItem from './AwardListItem'
 import { classLabelsAny } from '../../../utils/labels';
+import {itemsPath} from '../../../utils/paths'
 
 
 
@@ -210,7 +211,7 @@ const MissionDetails = (props) => {
                                         key={amulet.itemModel.id}
                                     >
                                         {`${amulet.quantity}x`}
-                                        <img style={{height: 20, width: 20, marginLeft: '0.1rem'}} src={`images/items/${amulet.itemModel.imgSrc}`} alt='icon'/>
+                                        <img style={{height: 20, width: 20, marginLeft: '0.1rem'}} src={`${itemsPath}${amulet.itemModel.imgSrc}`} alt='icon'/>
                                         {` `}
                                     </Typography>
                                     )

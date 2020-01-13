@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import styled from 'styled-components'
 import { classLabelsAny } from '../../../utils/labels';
+import {itemsPath} from '../../../utils/paths'
 
 const ShortDescription = styled(Typography)`
     display: -webkit-box;
@@ -207,7 +208,7 @@ const MissionListItem = (props) => {
                                             key={amulet.itemModel.id}
                                         >
                                             {`${amulet.quantity}x`}
-                                            <img style={{height: 20, width: 20, marginLeft: '0.1rem'}} src={`/images/items/${amulet.itemModel.imgSrc}`} alt='icon'/>
+                                            <img style={{height: 20, width: 20, marginLeft: '0.1rem'}} src={`${itemsPath}${amulet.itemModel.imgSrc}`} alt='icon'/>
                                             {` `}
                                         </Typography>
                                         )
@@ -261,7 +262,7 @@ const MissionListItem = (props) => {
                                             {mission.awards[className].map((award)=>{
                                                 let copies = []
                                                 for(let i=0; i<award.quantity; i++){
-                                                    const copy = <img style={{height: 20, width: 20, marginLeft: '0.1rem'}} src={`/images/items/${award.itemModel.imgSrc}`} alt='icon'/>
+                                                    const copy = <img style={{height: 20, width: 20, marginLeft: '0.1rem'}} src={`${itemsPath}${award.itemModel.imgSrc}`} alt='icon'/>
                                                     copies = [...copies, copy]
                                                 }
                                                 return copies

@@ -13,6 +13,7 @@ import Collapse from "@material-ui/core/Collapse";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import {itemTypeLabels, classLabels, equippableItems} from '../../../utils/labels'
+import { itemsPath, appearancePath } from "../../../utils/paths";
 
 
 
@@ -76,12 +77,12 @@ const ItemListItem = ({
           <Grid item xs={2}>
             <Grid container style={{}}>
               <img
-                src={'/images/items/' + item.imgSrc}
+                src={itemsPath + item.imgSrc}
                 width={32}
                 style={{height: '100%', marginRight: '1rem'}}
               />
               {equippableItems.includes(item.type) && <img
-                src={'/images/appearance/' + item.appearanceSrc}
+                src={appearancePath + item.appearanceSrc}
                 width={32}
                 style={{height: '100%'}}
               />}

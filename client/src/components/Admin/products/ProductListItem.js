@@ -10,6 +10,7 @@ import List from "@material-ui/core/List";
 import ListItemText from "@material-ui/core/ListItemText";
 import Popover from "@material-ui/core/Popover";
 import {categoryLabels} from '../../../utils/labels'
+import {itemsPath} from '../../../utils/paths'
 import iconCoins from "../../../assets/shop/coins.png"
 
 
@@ -123,7 +124,7 @@ const ProductListItem = ({
                       return (
                         <Grid item key={award.itemModel._id} style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
                           <img
-                            src={'/images/items/' + award.itemModel.imgSrc}
+                            src={itemsPath + award.itemModel.imgSrc}
                             width={32}
                             style={{height: '100%', marginRight: '0.5rem'}}
                           />

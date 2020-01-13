@@ -8,12 +8,12 @@ const decodeTokenAndGetUser = (token, query) => {
     return new Promise(async (resolve, reject) => {
         try{
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
-            const user = await User.findOne({_id: decoded._id, 'tokens.token': token}) //finding proper user with proper token
+            const user = await User.findOne({_id: decoded._id, 'tokens.token': token, active: true}) //finding proper user with proper token
             if(!user) {
                 throw new Error()
             }
             
-            const autoFetch = query.autoFetch && ((new Date().getTime() % 3600000) < 5000) //verify autoFetch query (available to 5 seconds after start of hour)
+            const autoFetch = query && query.autoFetch && ((new Date().getTime() % 3600000) < 5000) //verify autoFetch query (available to 5 seconds after start of hour)
             
             if(!autoFetch){
                 let sub
@@ -30,6 +30,7 @@ const decodeTokenAndGetUser = (token, query) => {
 
             resolve(user)
         }catch(e){
+            console.log(e)
             reject(e)
         }
     })
@@ -54,7 +55,7 @@ export const auth = async (req, res, next) => {
         next()
         //console.log(token)
     }catch(e) {
-        //console.log(e)
+        console.log(e.message)
         res.status(401).send({ error: 'Please authenticate.'})
     }
 }
@@ -115,7 +116,7 @@ export const socketConnectAuth = (socket) => {
             const user = await socketBasicAuth(socket)
             resolve(user)
         }catch(e){
-            //console.log(e)
+            console.log(e)
             reject(e)
         }
         

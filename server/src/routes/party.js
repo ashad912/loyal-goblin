@@ -11,8 +11,9 @@ const router = new express.Router();
 //ADMIN
 router.get('/adminParties', auth, async (req, res) => {
   try{
-    const parties = await Party.find({}).populate({
-      path: 'leader members'
+    const parties = await Party.find({}).sort({"createdAt": -1 }).populate({
+      path: 'leader members',
+      select: "_id name avatar active lastActivityDate experience"
     })
 
     res.send(parties)
@@ -22,6 +23,22 @@ router.get('/adminParties', auth, async (req, res) => {
   
 })
 
+
+router.delete("/adminRemove", auth, async (req, res) => {
+ 
+  try {
+    const party = await Party.findById(req.body._id);
+    
+    if (!party) {
+      res.status(404).send();
+    }
+
+    await party.remove(); //look at middleware
+    res.send();
+  } catch (e) {
+    res.status(400).send(e.message);
+  }
+});
 
 
 router.get("/", auth, async (req, res, next) => {
@@ -292,14 +309,6 @@ router.delete("/remove", auth, async (req, res) => {
       throw new Error("You are not the leader!");
     }
 
-    //Remove party's existing mission instance if present on user add
-    const missionInstance = await MissionInstance.findOne({
-      party: { $elemMatch: { profile: user._id } }
-    });
-
-    if (missionInstance) {
-      missionInstance.remove();
-    }
 
     await party.remove(); //look at middleware
     res.send(party);

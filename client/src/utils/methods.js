@@ -23,6 +23,9 @@ export const designateUserLevel = (points) => {
 
 export const createAvatarPlaceholder = (name) => {
 
+  if (!name.length) return ''
+
+  
   if (!(/\s/.test(name))) {
       return name.charAt(0).toUpperCase()
   }

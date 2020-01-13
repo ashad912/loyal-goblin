@@ -20,6 +20,7 @@ import tempUserAvatar from '../../../assets/avatar/moose.png'
 import styled from 'styled-components'
 import uuid from 'uuid/v1'
 import {createAvatarPlaceholder} from "../../../utils/methods";
+import {itemsPath} from '../../../utils/paths'
 
 const Background = styled.div`
     background-color: #3f51b5;
@@ -126,7 +127,7 @@ const StatsDialog = props => {
                                 <Grid container>
                                 <Grid item xs={11} style={{display: 'flex', alignItems: 'center'}}>
                                     <Typography>Wydane</Typography>
-                                    <img src={'/images/items/' + amuletCounter.amulet.imgSrc} style={{width: '20px', height: '20px', padding: '0 0.2rem 0 0.2rem'}}/>
+                                    <img src={itemsPath + amuletCounter.amulet.imgSrc} style={{width: '20px', height: '20px', padding: '0 0.2rem 0 0.2rem'}}/>
                                 </Grid>
                                 <Grid item xs={1}>
                                     <Typography style={{width: '100%', fontWeight: 'bold'}}>{amuletCounter.counter}</Typography>

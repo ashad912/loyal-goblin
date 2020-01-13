@@ -29,6 +29,7 @@ import ItemsModal from './ItemsModal'
 
 import {asyncForEach} from '../../../utils/methods'
 import {categoryLabelsSpecifed} from '../../../utils/labels'
+import {itemsPath} from '../../../utils/paths'
 
 import { createProduct, updateProduct, uploadProductImage } from "../../../store/adminActions/productActions";
 import { getItemModels } from "../../../store/adminActions/itemActions";
@@ -645,7 +646,7 @@ class ProductCreator extends Component {
                         <ListItem style={{paddingLeft: '0px'}}>
                           <ListItemAvatar>
                             <img
-                              src={"/images/items/" +
+                              src={itemsPath +
                                 award.itemModel.imgSrc}
                               style={{ width: "32px", height: "32px" }}
                             />

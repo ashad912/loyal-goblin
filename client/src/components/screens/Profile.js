@@ -41,6 +41,7 @@ import {
 } from "../../store/actions/profileActions";
 import { updateParty, removeMember } from "../../store/actions/partyActions";
 import {createAvatarPlaceholder} from "../../utils/methods";
+import {appearancePath} from '../../utils/paths'
 import { socket } from "../../socket";
 
 import * as socketFuncs from "../../socket";
@@ -653,21 +654,21 @@ const Profile = props => {
           {equippedItems && equippedItems.legs && (
             <img
               className={classes.avatarImage}
-              src={`/images/items/${equippedItems.legs}`}
+              src={`${appearancePath}${equippedItems.legs}`}
             />
           )}
           {/* feet */}
           {equippedItems && equippedItems.feet && (
             <img
               className={classes.avatarImage}
-              src={`/images/items/${equippedItems.feet}`}
+              src={`/${appearancePath}${equippedItems.feet}`}
             />
           )}
           {/* chest */}
           {equippedItems && equippedItems.chest && (
             <img
               className={classes.avatarImage}
-              src={`/images/items/${equippedItems.chest}`}
+              src={`${appearancePath}${equippedItems.chest}`}
             />
           )}
           {/* head */}
@@ -676,21 +677,21 @@ const Profile = props => {
             equippedItems.head.includes(".") && (
               <img
                 className={classes.avatarImage}
-                src={`/images/items/${equippedItems.head}`}
+                src={`${appearancePath}${equippedItems.head}`}
               />
             )}
           {/* Main-hand weapon */}
           {equippedItems && equippedItems.weaponRight && (
             <img
               className={classes.avatarImage}
-              src={`/images/items/${equippedItems.weaponRight}`}
+              src={`${appearancePath}${equippedItems.weaponRight}`}
             />
           )}
           {/* Off-hand weapon */}
           {equippedItems && equippedItems.weaponLeft && (
             <img
               className={classes.avatarImage}
-              src={`/images/items/${equippedItems.weaponLeft}`}
+              src={`${appearancePath}${equippedItems.weaponLeft}`}
               style={{ transform: "scaleX(-1)" }}
             />
           )}

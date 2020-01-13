@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { Paper } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import {createAvatarPlaceholder} from '../../../../utils/methods'
+import {itemsPath} from '../../../../utils/paths'
 
 
 
@@ -149,14 +150,14 @@ const Box = (props) => {
                                       isDragging = {snapshot.isDragging}
                                     >
                                     
-                                    <img style={{height: 40, width:40}} src={`/images/items/${item.model.imgSrc}`} alt='icon'/>
+                                    <img style={{height: 40, width:40}} src={`${itemsPath}${item.model.imgSrc}`} alt='icon'/>
                                     {!snapshot.isDragging && (<span>{item.instancesIds.length}</span>)}
 
                                   </Item>
 
                                   {snapshot.isDragging && (
                                     <Clone>
-                                      <img style={{height: 40, width:40}} src={`/images/items/${item.model.imgSrc}`} alt='icon'/>
+                                      <img style={{height: 40, width:40}} src={`${itemsPath}/${item.model.imgSrc}`} alt='icon'/>
                                       <span>{item.instancesIds.length - 1}</span>
                                     </Clone>
                                   )}

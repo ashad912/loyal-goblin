@@ -4,7 +4,6 @@ import Grid from "@material-ui/core/Grid";
 import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import ListItem from "@material-ui/core/ListItem";
-import { useTheme } from '@material-ui/core/styles';
 import uuid from 'uuid/v1'
 import Toolbar from "@material-ui/core/Toolbar";
 import Paper from '@material-ui/core/Paper';
@@ -24,7 +23,10 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Box from "@material-ui/core/Box";
 import SearchIcon from "@material-ui/icons/Search";
 import RefreshIcon from '@material-ui/icons/Refresh';
+
 import styled from 'styled-components'
+
+import UserListItem from '../common/UserListItem'
 
 import {designateUserLevel} from '../utils/methods'
 import {userFilterStatuses} from '../../../utils/labels'
@@ -355,38 +357,13 @@ const AdminUsers = () => {
             
           </div>
         </Toolbar>
-        <List style={{ border: "1px solid grey" }} alignItems="flex-start">
+        {users.length ? (<List style={{ border: "1px solid grey" }} alignItems="flex-start">
           {users.slice(page*rowsPerPage, page*rowsPerPage + rowsPerPage).map(user => {
-            return (
-              
-              <ListItem button key={user._id} style={{paddingTop: '0.1rem', paddingBottom: '0.1rem'}} >
-                <Grid item xs={1}>
-                  {user.avatar ? 
-                    <img style={{width: '32px', height: '32px'}} src={'/images/user_uploads/' + user.avatar} /> :
-                    <Avatar style={{width: '32px', height: '32px', fontSize: '0.9rem'}}>{createAvatarPlaceholder(user.name)}</Avatar>
-                  }
-                </Grid>
-                <Grid item xs={3}>
-                  <Typography>{user.name}</Typography>
-                </Grid>
-                <Grid item xs={1} style={{textAlign: 'center'}}>
-                  <Typography variant="caption">{'Poziom ' + designateUserLevel(user.experience)}</Typography>
-                </Grid>
-                <Grid item xs={2} style={{textAlign: 'center'}}>
-                  <Typography variant="caption">{user.experience}</Typography>
-                </Grid>
-                <Grid item xs={3} style={{textAlign: 'center'}}>
-                  <Typography variant="caption">
-                    {user.active ? ('Aktywny ' + moment(user.lastActivityDate).fromNow()) : ((!user.hasOwnProperty('name') || !user.name.length) ? ('Nowy') : ('Zbanowany'))}
-                  </Typography>
-                </Grid>
-                <Grid item xs={2} style={{textAlign: 'right'}}>
-                  <Button color="secondary" onClick={() => handleToggleBan(user)}>{user.active ? ('Zbanuj') : ('Odbanuj')}</Button>
-                </Grid>
-              </ListItem>
-            );
+            return ( <UserListItem user={user} handleToggleBan={handleToggleBan}/>);
           })}
-        </List>
+        </List>) : (
+          <Typography>Brak zarejstrowanych użytkowników!</Typography>
+        )}
         
       </Grid>
       

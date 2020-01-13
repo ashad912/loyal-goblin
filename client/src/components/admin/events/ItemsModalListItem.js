@@ -12,7 +12,9 @@ import Select from "@material-ui/core/Select";
 import Divider from "@material-ui/core/Divider";
 
 import classThemes from "../../../assets/themes/classThemes";
-import ItemsModalListItemPerks from "./ItemsModalListItemPerks";
+
+import { itemsPath } from "../../../utils/paths";
+import ItemsModalListItemPerks from "../common/ItemsModalListItemPerks";
 
 const ItemsModalListItem = props => {
   const [chosenClass, setChosenClass] = React.useState("any");
@@ -45,7 +47,7 @@ const ItemsModalListItem = props => {
           <ListItemAvatar>
             <img
               style={{ width: "32px", height: "32px" }}
-              src={`/images/items/${item.imgSrc}`}
+              src={`${itemsPath}${item.imgSrc}`}
             />
           </ListItemAvatar>
           </Grid>

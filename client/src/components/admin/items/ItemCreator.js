@@ -29,6 +29,7 @@ import MomentUtils from "@date-io/moment";
 
 import PerkModal from "./PerkModal";
 import {asyncForEach} from '../../../utils/methods'
+import { itemsPath, appearancePath } from "../../../utils/paths";
 import {classLabels, itemTypeLabels, equippableItems} from '../../../utils/labels'
 import {torpedoFields, userClasses, itemModelTypes} from '../../../utils/modelArrays'
 import { createItemModel, updateItemModel, uploadItemModelImages } from "../../../store/adminActions/itemActions";
@@ -110,8 +111,8 @@ class ItemCreator extends Component {
         class: item.class,
         loyalAward: item.loyalAward ? true : false,
         perks: item.perks,
-        iconView: item.imgSrc ? ('/images/items/' + item.imgSrc) : null, 
-        appearanceView: item.appearanceSrc ? ('/images/appearance/' + item.appearanceSrc) : null,
+        iconView: item.imgSrc ? (itemsPath + item.imgSrc) : null, 
+        appearanceView: item.appearanceSrc ? (appearancePath + item.appearanceSrc) : null,
         twoHanded: item.twoHanded
       }, () => {
         this.setState({

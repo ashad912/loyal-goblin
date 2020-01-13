@@ -1,4 +1,5 @@
 import React from 'react'
+import {connect} from 'react-redux'
 import ExchangeArea from './mission/ExchangeArea'
 import PartyList from './mission/PartyList'
 import Loading from '../../layout/Loading';
@@ -10,7 +11,9 @@ import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
 import VerificationPage from './mission/VerificationPage'
 import { Typography } from '@material-ui/core';
-import {connect} from 'react-redux'
+
+import {itemsPath} from '../../../utils/paths'
+
 import { authCheck } from "../../../store/actions/authActions";
 import {togglePresenceInInstance, toggleUserReady, finishInstance} from '../../../store/actions/missionActions'
 import {socket, modifyUserStatusSubscribe, finishMissionSubscribe} from '../../../socket'
@@ -397,7 +400,7 @@ class MissionInstance extends React.Component {
                             return (
                                 <React.Fragment key={amulet.itemModel.id}>
                                     
-                                    <StyledItemIcon src={`/images/items/${amulet.itemModel.imgSrc}`}/>
+                                    <StyledItemIcon src={`${itemsPath}${amulet.itemModel.imgSrc}`}/>
                                     <StyledItemsIndicator required={amulet.quantity} inBox={amulet.inBox}>{` ${amulet.inBox}/${amulet.quantity}`}</StyledItemsIndicator>
                                     {statusIcon(amulet.readyStatus)}
                                 </React.Fragment>

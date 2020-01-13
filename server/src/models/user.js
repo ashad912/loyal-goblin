@@ -370,7 +370,7 @@ UserSchema.methods.checkPasswordChangeTokenExpired = (token) => {
 
 
 UserSchema.statics.findByCredentials = async (email, password) => {
-    const user = await User.findOne( {email: email})
+    const user = await User.findOne( {email: email, active: true})
     
 
     if(!user) {
@@ -389,7 +389,7 @@ UserSchema.statics.findByCredentials = async (email, password) => {
 
 UserSchema.statics.findByPasswordChangeToken = async (token) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    const user = await User.findOne( {_id: decoded._id, passwordChangeToken: token})
+    const user = await User.findOne( {_id: decoded._id, active: true, passwordChangeToken: token})
     if(!user) {
         throw new Error('Nie znaleziono użytkownika')
     }

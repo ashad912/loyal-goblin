@@ -15,6 +15,7 @@ import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import perkLabels from "../../../assets/categories/perks";
 import { dayLabels, categoryLabels } from "../../../utils/labels";
+import {itemsPath} from '../../../utils/paths'
 
 const StyledMenu = withStyles({
   paper: {
@@ -77,7 +78,7 @@ const ScrollListItem = props => {
           <img
             style={{ width: "32px", height: "32px" }}
             alt={scroll.itemModel.name}
-            src={`/images/items/${scroll.itemModel.imgSrc}`}
+            src={`${itemsPath}${scroll.itemModel.imgSrc}`}
           />
         </ListItemAvatar>
         <Grid container direction="column">

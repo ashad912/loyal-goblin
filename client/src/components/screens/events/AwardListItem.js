@@ -18,6 +18,7 @@ import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import perkLabels from "../../../assets/categories/perks";
 import Divider from '@material-ui/core/Divider';
 import { dayLabels, categoryLabels } from "../../../utils/labels";
+import {itemsPath} from '../../../utils/paths'
 
 
 
@@ -48,7 +49,7 @@ const AwardListItem = props => {
                 <img
                 style={{ width: "32px", height: "32px" }}
                 alt={item.itemModel.name}
-                src={`/images/items/${item.itemModel.imgSrc}`}
+                src={`${itemsPath}${item.itemModel.imgSrc}`}
                 />
             </ListItemAvatar>
         </Badge>

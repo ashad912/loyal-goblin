@@ -7,6 +7,7 @@ import validator from 'validator'
 import axios from 'axios'
 
 import { User } from "../models/user";
+import { Party } from "../models/party";
 import { Item } from "../models/item";
 import { ItemModel } from "../models/itemModel";
 import { auth } from "../middleware/auth";
@@ -67,6 +68,18 @@ const toggleBan = async (userId, status) => {
 router.patch('/ban', auth, async (req, res) => {
   try{
     await toggleBan(req.body._id, false)
+
+    const party = await Party.findOne({
+      $or: [
+        { leader: req.body._id },
+        { members: { $elemMatch: { $eq: req.body._id } } }
+      ]
+    })
+
+    if(party){
+      await party.remove()
+    }
+    
     res.send()
   }catch(e){
     res.status(500).send(e.message)
@@ -88,9 +101,7 @@ router.patch('/unban', auth, async (req, res) => {
 router.post("/create", async (req, res) => {
   //registerKey used in biometrica, hwvr we may allow registration for ppl with key from qrcode - i left it
 
-  if (!req.body.token) {
-    return res.status(400).send();
-  }
+  
 
   
   if(req.body.registerKey){
@@ -103,6 +114,10 @@ router.post("/create", async (req, res) => {
       res.status(401).send({ error: "Please authenticate." });
     }
   }else{
+
+    if (!req.body.token) {
+      return res.status(400).send();
+    }
     
     const secretKey = process.env.SECRET_RECAPTCHA_KEY;
     const recaptchaToken = req.body.token;
@@ -125,6 +140,7 @@ router.post("/create", async (req, res) => {
     const user = new User({
       email: req.body.email,
       password: req.body.password,
+      active: true,
       perksUpdatedAt: moment().toISOString(),
       activeOrder: [],
       loyal: {}

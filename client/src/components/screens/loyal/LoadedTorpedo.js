@@ -5,7 +5,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Button from "@material-ui/core/Button";
 import styled from 'styled-components'
-
+import {itemsPath} from '../../../utils/paths'
 
 const StyledListItem = styled(ListItem)`
     marginBottom: 0.2rem;
@@ -36,7 +36,7 @@ const LoadedTorpedo = (props) => {
           <img
             style={{ width: "32px", height: "32px" }}
             alt={torpedo.itemModel.name}
-            src={`images/items/${torpedo.itemModel.imgSrc}`}
+            src={`${itemsPath}${torpedo.itemModel.imgSrc}`}
           />
         </ListItemAvatar>
         <ListItemText
