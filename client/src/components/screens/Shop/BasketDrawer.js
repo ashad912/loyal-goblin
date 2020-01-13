@@ -21,7 +21,7 @@ const FinalizeButton = styled(Button)`
   margin-top: 2rem;
 `;
 
-const BasketDrawer = ({ open, toggle, baskets, users, activeUser, handleRemoveItem, finalizeOrder, leader }) => {
+const BasketDrawer = ({ open, toggle, baskets, users, activeUser, handleRemoveItem, finalizeOrder, leader, children }) => {
  
   let totalPrice = 0.0;
   const allBaskets = Object.values(baskets)
@@ -82,6 +82,7 @@ const BasketDrawer = ({ open, toggle, baskets, users, activeUser, handleRemoveIt
         </FinalizeButton>
         
         }
+        {children}
       </DrawerContents>
     </Drawer>
   );

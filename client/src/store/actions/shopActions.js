@@ -39,7 +39,7 @@ export const leaveShop = () => {
     }
 }
 
-export const activateOrder = (order) => {
+export const activateOrder = (order, token) => {
     return async dispatch => {
         try {
             const arrayOrder = Object.keys(order).map(user => {
@@ -51,7 +51,8 @@ export const activateOrder = (order) => {
                 console.log(order[user])
                 return {profile: user, products: order[user]}
             })
-            const res = await axios.patch('/product/activate', {order: arrayOrder})
+
+            const res = await axios.patch('/product/activate', {order: arrayOrder, token})
             dispatch({type: 'UPDATE_ACTIVE_ORDER', activeOrder: res.data })
 
         } catch (e) {

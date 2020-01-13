@@ -9,12 +9,17 @@ const Step1 = props => {
       <Typography variant="h6">Podaj imię swojej postaci</Typography>
       <Divider style={{width: '90%'}}/>
       <TextField
-      type=""
+      type="text"
+      fullWidth
         label="Na przykład Janusz"
         value={props.value}
         onChange={props.handleChange}
         margin="normal"
       />
+
+<Typography variant="caption" style={{textAlign: 'center', marginTop: '1rem'}}>
+        Imię może składać się z liter polskiego alfabetu, dwóch słów i maksymalnie 20 znaków.
+      </Typography>
     </React.Fragment>
   );
 };

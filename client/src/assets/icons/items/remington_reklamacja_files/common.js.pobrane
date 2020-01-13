@@ -1,0 +1,639 @@
+
+function jq(myid) {
+    return myid.replace(/:/g,"\\:").replace(/\./g,"\\.").replace(/ /g,"\\ ").replace(/\[/g,"\\[").replace(/\]/g,"\\]");
+}
+
+function goTo(p) {
+	top.window.location.href = p;
+}
+function confirmGoTo(m, p) {
+	if (confirm(m)) {
+		goTo(p);
+	}
+}
+
+function loadDictionary(selectObject, params, useEmptyOption, emptyOptionText, maxLength, useTooltip, callback) {
+	
+	useEmptyOption = useEmptyOption || false;
+	maxLength = maxLength || 0;
+	useTooltip = useTooltip || false;
+	emptyOptionText = emptyOptionText || '';
+	
+	var contextPath = "";
+	if (typeof $jsContextPath != "undefined") {
+		contextPath = $jsContextPath + "/";
+	}
+
+	$.getJSON(contextPath+"command/dictionary", params, function(data) {
+
+        var prevValue = selectObject.val();
+        var options = '';
+        var domyslna = '';
+        if ( typeof data.items != 'undefined' ) {
+	        for (var i = 0; i < data.items.length; i++) {
+	        	var toolTip = useTooltip ? data.items[i].name.replace( /"/g, '&quot;' ) : "";
+	        	var name = maxLength > 0 ? data.items[i].name.substr(0, maxLength) : data.items[i].name;
+	        	if (name != data.items[i].name) {
+	        		name += "...";
+	        	}
+                if (data.items[i].isDomyslna=='true') {
+                    domyslna = data.items[i].id;
+                }
+	            options += '<option value="' + data.items[i].id + '" title="'+toolTip+'">' + name + '</option>\n';
+	        }
+        } else {
+        	options = '<option value="">'+emptyOptionText+'</option>\n'+options;
+        	// jedna pusta opcja wystarczy
+        	useEmptyOption = false;
+        }
+
+        if ( options != '' ) {
+        	if (useEmptyOption) {
+        		options = '<option value="">'+emptyOptionText+'</option>\n'+options;
+        	}
+        	selectObject.html(options);
+        	if (prevValue != '' && selectObject.find('option[value="'+prevValue+'"]').length > 0) {
+            	selectObject.val(prevValue);
+        	} else {
+            	selectObject.val(domyslna);
+        	}
+
+	        if (useTooltip) {
+	        	$("option[title]", selectObject).bt();
+	        }
+        }
+        
+        if ( typeof callback == "function") {
+        	callback();
+        }
+
+    });
+}
+
+function setErrors(errors, el) {
+	$('input.error, select.error, span.error, textarea.error', el).removeClass('error');
+    var errorMessage = "";
+    for (var key in errors) {
+        if (key != '') {
+            $(jq("#"+key), el).addClass('error');
+        }
+    }
+}
+
+function setErrorMap(errors, el) {
+    var errorMessage = "";
+    for (var key in errors) {
+        if (key != '' && errors[key] != '') {
+            errorMessage += "<li>"+errors[key]+"</li>";
+        }
+    }
+    if ( errorMessage != '' ) {
+    	errorMessage = '<ul style="margin: 0px;">' + errorMessage + '</ul>';
+    }
+    el.html(errorMessage);
+}
+
+var isBlank = function(pString){
+    if (!pString || pString.length == 0) {
+        return true;
+    }
+    return !/[^\s]+/.test(pString);
+}
+
+var ajaxSubmitForm = function(input, callback, validate) {
+	var params = {
+		input: input,
+		callback: callback,
+		validate: validate
+	}
+	return submitFormAjax(params);
+};
+
+var submitFormAjax = function(params) {
+	input = $(params.input);
+
+	var form;
+	if($(input).is("form")) {
+		form = input;
+	} else {
+		form = input.closest("form");
+	}
+	
+	if (typeof params.validate == "undefined" || params.validate(form)) {
+		var content = form.serialize();
+		var url = form.attr("action");
+		var method = form.attr("method");
+		
+		$.ajax({
+			data: content,
+			type: method,
+			url: url,
+			success: function(data, textStatus, jqXHR) {
+				if (typeof params.callback != "undefined") {
+					params.callback(form, data);
+				}
+				if (typeof params.loadInto != "undefined") {
+					$(params.loadInto).html("");
+					$(params.loadInto).html(data);
+				}
+		    },
+			error: function() {
+				alert("Ajax error.");
+			}
+		});
+		return true;
+	} else {
+		return false;
+	}
+};
+
+String.prototype.replaceAll = function replaceAll(replace, with_this) {
+	return this.replace(new RegExp(replace, 'g'), with_this);
+}
+
+String.prototype.trim = function () {
+    return this.replace(/^\s+|\s+$/g, "");
+};
+
+String.prototype.isZeroValue = function() {
+	return this.replaceAll("[0.,]", "") == 0;
+}
+
+String.prototype.isEmptyValue = function() {
+	return this == "";
+}
+
+String.prototype.isZeroEmptyValue = function() {
+	return this == "" || this.replaceAll("[0.,]", "") == 0;
+}
+
+String.prototype.numeric = function() {
+	return this.replaceAll("[^0-9.,]", "");
+}
+
+if (typeof $ != "undefined") {
+	$(function() {
+		if (typeof $.validator != "undefined") {
+			$.each([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], function(i, v) {
+				$.validator.addMethod("requiredGroup" + v, function(value, element) {
+					var thisNotEmpty = ((value != null) && (value != ""))
+					if (thisNotEmpty) {
+						return true;
+					} else {
+						var allInGroup = $(".requiredGroup" + v);
+						var any = false;
+						var all = true;
+						
+						allInGroup.each(function() {
+							var val = $(this).val();
+							var notEmpty = ((val != null) && (val != ""));
+							
+							any |= notEmpty;
+							all &= notEmpty;
+						});
+						
+						return (!any || all);
+					}
+				}, "");
+			});
+		}
+		
+		$(".selectAllTableCheckbox").click(function() {
+			var $table = $(this).closest("table");
+			var name = $(this).attr("data-checkbox-name");
+			var checked = $(this).is(":checked");
+			
+			$table.find("input[type=checkbox][name='" + name + "']").prop("checked", checked);
+		});
+	});
+}
+
+function initFormValidation($form, stopScrolling) {
+	$form.validate({
+        ignore: ".inactive",
+        invalidHandler: function(e, validator) {
+
+            var errors = validator.numberOfInvalids();
+            if (errors) {
+                $("#beforeSubmitError span").html('Wprowadzono niepełne/niepoprawne dane. Proszę poprawić zaznaczone pola.');
+                $("#beforeSubmitError").show();
+            }
+            if(!stopScrolling) {
+            	scroll(0, 0);
+            }
+        },
+        onkeyup: false,
+        submitHandler: function(form) {
+        	var $form = $(form);
+            $("#beforeSubmitError").hide();
+
+            if ($form.is(".shippingForm")) {
+                ajaxSubmit($form, null);
+            } else if ($form.is(".handlingForm")) {
+            	var submitCallback = function() {
+	            	ajaxSubmitForm($form, function() {
+	            		if ($form.is(".handlingSaveShippingForm") && typeof reloadPage == "function") {
+	            			reloadPage("ORDER_HANDLING");
+	            		} else {
+	            			if ($form.is('.reloadOrderHistory') && orderHistoryWasLoaded) {
+	            				orderHistoryWasLoaded = false;
+	            			}
+	            	  		if (typeof loadOrderCommentList == "function") {
+	            	  			loadOrderCommentList();
+	            	  		}
+	            	  		
+		            		if (typeof loadHandling == "function") {
+		            			loadHandling();
+		            		}
+		            		if (typeof loadWZ == "function") {
+		            			loadWZ();
+		            		}
+		            		if (typeof $.colorbox != "undefined") {
+		            			$.colorbox.close();
+		            		}
+		            	}
+	            	});
+            	};
+            	var beforesubmitHandler = $form.data("beforesubmit");
+            	
+            	if (beforesubmitHandler == null) {
+            		submitCallback();
+            	} else {
+            		beforesubmitHandler($form, submitCallback);
+            	}
+            } else {
+                form.submit();
+            }
+        },
+        messages: {
+        },
+        errorPlacement: function(error, element) {
+        },
+        highlight: function(element, errorClass) {
+            if ($(element).attr('type') == 'radio') {
+                $('#'+jq($(element).attr('id')) + 'Group').addClass(errorClass);
+            } else {
+                $(element).addClass(errorClass);
+            }
+        },
+        unhighlight: function(element, errorClass) {
+            if ($(element).attr('type') == 'radio') {
+                $('#'+jq($(element).attr('id')) + 'Group').removeClass(errorClass);
+            } else {
+                $(element).removeClass(errorClass);
+            }
+        },
+        meta: "validate",
+        debug:false
+    });
+}
+
+function dateElementFormat(number) {
+	var number = 1 * number;
+	if (number < 10) {
+		number = "0" + number;
+	} else {
+		number = "" + number;
+	}
+	
+	return number;
+}
+
+function formatJsonDate(date) {
+	if (date != null) {
+		return (1900 + (1 * date.year)) + "-"
+				+ dateElementFormat(1 + (1 * date.month)) + "-"
+				+ dateElementFormat(date.date) + " "
+				+ dateElementFormat(date.hours) + ":"
+				+ dateElementFormat(date.minutes);
+	} else {
+		return "";
+	}
+}
+
+function formatDate(date) {
+	if (date != null) {
+		var year;
+		var month;
+		var day;
+		
+		if (date.getFullYear) {
+			year = date.getFullYear();
+			month = date.getMonth() + 1;
+			day = date.getDate();
+		} else {
+			year = date.year + 1900;
+			month = date.month + 1;
+			day = date.date;
+		}
+
+		if (year < 2000) {
+			year = (2000 + (1 * year));
+		}
+		if (month < 10) {
+			month = "0" + (1 * month);
+		}
+		if (day < 10) {
+			day = "0" + (1 * day);
+		}
+		
+		return year + "-" + month + "-" + day;
+	} else {
+		return "";
+	}
+}
+
+function createSelection(start, end, field) {
+
+    if ( field.createTextRange ) {
+
+        /* 
+        IE calculates the end of selection range based 
+        from the starting point.
+        Other browsers will calculate end of selection from
+        the beginning of given text node.
+        */
+
+        var newend = end - start;
+        var selRange = field.createTextRange();
+        selRange.collapse(true);
+        selRange.moveStart("character", start);
+        selRange.moveEnd("character", newend);
+        selRange.select();
+    } 
+
+    /* For the other browsers */
+
+    else if( field.setSelectionRange ){
+
+        field.setSelectionRange(start, end);
+    } 
+
+    field.focus();
+}
+
+function formatKwotaPL( k ) {
+	var kwota = "" + k;
+	  coma = ",";
+	  kwota = kwota.replace(/\./g, coma);
+	  kwotaOk = "";
+
+		comaIndex = kwota.indexOf(coma);
+		if (comaIndex>0) {
+			for (i=kwota.length; i>0; i--) {
+			  if ( kwota.charAt(i) == coma ) {
+			    kwotaOk = kwota.substring( 0, i ).replace(/\,/g, "")
+			            + kwota.substring( i, kwota.length );
+			    break;
+			  }
+			}
+		} else {
+		  kwotaOk = kwota;
+		}
+
+		beforeComa = "";
+		afterComa = "";
+		comaIndex = kwotaOk.indexOf(coma);
+		if ( comaIndex >= 0 ) {
+		  afterComa = kwotaOk.substring( comaIndex+1, kwotaOk.length );
+		  beforeComa = kwotaOk.substring( 0, comaIndex );
+		} else {
+			//beforeComa = 0;
+		  beforeComa = kwotaOk.replace(/\,/g, "");
+		}
+
+		tmp = "";
+		for( i = beforeComa.length; i > 0; i-- ){
+			if ( ((beforeComa.length-i)%3) == 0 && (beforeComa.length-i)!=0 ) {
+				tmp = " " + tmp;
+			}
+			
+			tmp = beforeComa.charAt( i-1 ) + tmp;
+		}
+
+		if ( tmp == "" ) {
+		  tmp = "0";
+		}
+
+		if ( afterComa == "" ) {
+		  afterComa = "00";
+		} else if ( afterComa.length == 1 ) {
+	    afterComa = afterComa + "0" ;
+		} else {
+		  afterComa = afterComa.substring( 0, 2 );
+		}
+
+		return tmp + coma + afterComa;
+	}
+
+$(document).ready(function(){
+	
+	$(".currentDateButton").live('click', function(){
+		var d = new Date();
+		var month = d.getMonth()+1;
+		var day = d.getDate();
+		
+		var currentDate = d.getFullYear() + '-' + ((''+month).length<2 ? '0' : '') + month + '-' + ((''+day).length<2 ? '0' : '') + day;
+	
+		var dateTo = $(this).attr("currentDateTo");
+	
+		$(jq("#"+dateTo)).val(currentDate);
+		
+		setTimeNow($(this).attr("currentDateTo") + "Time");
+		setTimeNow($(this).attr("currentDateTo") + "TimeMask", true);
+		
+		var nameOfInput = "withdrawal" + dateTo.charAt(0).toUpperCase() + dateTo.slice(1);
+		$("input[name='" + nameOfInput + "']").remove();
+	});
+	
+	$(".withdrawalDateButton").live('click', function() {
+		var d = new Date(new Date().setDate(new Date().getDate() - 1));
+		var month = d.getMonth() + 1;
+		var day = d.getDate();
+		var currentDate = d.getFullYear() + '-' + ((''+month).length<2 ? '0' : '') + month + '-' + ((''+day).length<2 ? '0' : '') + day;
+		var dateTo = $(this).attr("withdrawalDateTo");
+		
+		$(jq("#"+dateTo)).val(currentDate);
+		setTimeNow(dateTo + "Time");
+		setTimeNow(dateTo + "TimeMask", true);
+		$(jq("#"+dateTo)).addClass("withdrawal");
+		$(jq("#"+dateTo + "Time")).addClass("withdrawal");
+		$(jq("#"+dateTo + "TimeMask")).addClass("withdrawal");
+		var nameOfInput = "withdrawal" + dateTo.charAt(0).toUpperCase() + dateTo.slice(1);
+		if ($("input[name='" + nameOfInput + "']").length == 0) {
+			$("<input type='hidden' name='" + nameOfInput + "' value='true'/>").insertAfter($(this));
+		}
+	});
+	
+	$(".inlineConfig.autoselectTime").live("change", function() {
+		var name = $(this).attr("name");
+		setTimeNow(name + "Time");
+		setTimeNow(name + "TimeMask", true);
+	});
+	
+	if ($.mask) {
+		$.mask.definitions['H'] = "[0-2]";
+	    $.mask.definitions['h'] = "[0-9]";
+	    $.mask.definitions['M'] = "[0-5]";
+	    $.mask.definitions['m'] = "[0-9]";
+	}
+});
+
+
+function setTimeContainerMask(id) {
+	$(document).ready(function(){
+		if ($.mask) {
+			$("#" + id).mask("Hh:Mm", {placeholder:"HH:mm", completed:function(){
+				if (parseInt(this.val().substring(0, 2)) > 23) {
+					this.val('23' + this.val().substring(2));
+				}
+			}}).click(function(){
+				if ($(this).val() == 'HH:mm') {
+					setTimeNow(id, true);
+				}
+			});
+		}
+	});
+}
+
+function setTimeNow(timeTo, mask) {
+	if ($("#" + timeTo).length > 0) {
+		var d = new Date();
+		var currentTime;
+		if (!mask && d.getHours() < 7) {
+			currentTime = "0700";
+		} else if (!mask && d.getHours() >= 21) {
+			currentTime = "2100";
+		} else {
+			var hours = d.getHours();
+			var minutes = d.getMinutes();
+			
+			if (!mask) {			
+				minutes = 15 * Math.round(minutes / 15);
+			}
+			
+			if (minutes == 60) {
+				minutes = 0;
+				hours++;
+			}
+	
+			if (hours < 10) {
+				hours = "0" + hours;
+			}
+			if (minutes < 10) {
+				minutes = "0" + minutes;
+			}
+			currentTime = "" + hours + (mask ? ":" : "") + minutes;
+		}
+		
+		$(jq("#"+timeTo)).val(currentTime);
+	}
+}
+
+function selectPartners(contextPath, mode, input, title, defaultLabel, additionalParam) {
+	additionalParam = additionalParam || '';
+	var params = 'mode=' + mode + '&selectedPartners=' + input.val() + additionalParam;
+    Boxy.load(contextPath  + '/command/order.boxyOrderSelectPartners?'+params, {
+           title: title,
+           modal: true,
+           unloadOnHide: true,
+           closeText: 'X',
+           afterHide: function () {},
+           afterShow: function () {
+            $("#orderSelectPartners #select").on('click', function() {
+           		var selectedPartners = [];
+           		var label = '', pn = null, pni = -1;
+           		$("#orderSelectPartners input[type='checkbox']:checked, #orderSelectPartners input[type='radio']:checked").each(function(){
+           			selectedPartners.push($(this).val());
+           			pn = $(this).parent().next().html();
+           			pni = pn.indexOf('(');
+           			if (label != '') {
+           				label += ',';
+           			}
+           			label += (pni != -1 ? pn.substring(0, pni - 1) : pn);
+           		});
+           		input.val(selectedPartners.toString());
+           		input.trigger('change');
+           		if (label != '') {
+           			input.next().html(label);
+           		} else {
+           			input.next().html(defaultLabel);
+           		}
+           		Boxy.get($('#orderSelectPartners')).hide();
+           });
+         }
+       }
+    );
+}
+
+function selectSuppliers(contextPath, input, title, defaultLabel, additionalParam) {
+	additionalParam = additionalParam || '';
+	var params = '&selectedSuppliers=' + input.val() + additionalParam;
+    Boxy.load(contextPath  + '/command/order.boxyOrderSelectSuppliers?'+params, {
+           title: title,
+           modal: true,
+           unloadOnHide: true,
+           closeText: 'X',
+           afterHide: function () {},
+           afterShow: function () {
+            $("#orderSelectSuppliers #select").on('click', function() {
+           		var selectedSuppliers = [];
+           		var label = '', pn = null, pni = -1;
+           		$("#orderSelectSuppliers input[type='checkbox']:checked").each(function(){
+           			selectedSuppliers.push($(this).val());
+           			pn = $(this).parent().next().html();
+           			pni = pn.indexOf('(');
+           			if (label != '') {
+           				label += ',';
+           			}
+           			label += (pni != -1 ? pn.substring(0, pni - 1) : pn);
+           		});
+           		input.val(selectedSuppliers.toString());
+           		input.trigger('change');
+           		if (label != '') {
+           			input.next().html(label);
+           		} else {
+           			input.next().html(defaultLabel);
+           		}
+           		Boxy.get($('#orderSelectSuppliers')).hide();
+           });
+         }
+       }
+    );
+}
+
+function selectActivityClaimed(contextPath, partnerId, input, title, defaultLabel, additionalParam) {
+	additionalParam = additionalParam || '';
+	var params = 'partnerId=' + partnerId.val() + '&selectedActivityClaimed=' + input.val() + additionalParam;
+    Boxy.load(contextPath  + '/command/order.boxyOrderSelectActivityClaimed?'+params, {
+           title: title,
+           modal: true,
+           unloadOnHide: true,
+           closeText: 'X',
+           afterHide: function () {},
+           afterShow: function () {
+            $("#orderSelectActivityClaimed #select").on('click', function() {
+           		var selectedActivityClaimed = [];
+           		var label = '', pn = null, pni = -1;
+           		$("#orderSelectActivityClaimed input[type='checkbox']:checked").each(function(){
+           			selectedActivityClaimed.push($(this).val());
+           			pn = $(this).parent().next().html();
+           			pni = pn.indexOf('(');
+           			if (label != '') {
+           				label += ',';
+           			}
+           			label += (pni != -1 ? pn.substring(0, pni - 1) : pn);
+           		});
+           		input.val(selectedActivityClaimed.toString());
+           		input.trigger('change');
+           		if (label != '') {
+           			input.next().html(label);
+           		} else {
+           			input.next().html(defaultLabel);
+           		}
+           		Boxy.get($('#orderSelectActivityClaimed')).hide();
+           });
+         }
+       }
+    );
+}

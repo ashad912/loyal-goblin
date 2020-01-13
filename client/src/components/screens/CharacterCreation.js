@@ -49,8 +49,10 @@ const CharacterCreation = props => {
   });
 
   const handleNameChange = event => {
-    if (/^([a-zA-Z]+)$/.test(event.target.value)) {
-      setName(event.target.value.trim());
+    if ((/^[a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ\s]*$/.test(event.target.value)||event.target.value==="") && event.target.value.length <= 20) {
+        if(event.target.value.split(" ").length<3){
+          setName(event.target.value);
+      }
     }
   };
 

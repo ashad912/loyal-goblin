@@ -55,7 +55,7 @@ const menuItems = [
 const Admin = () => {
   const classes = useStyles();
 
-  const [currentPage, setCurrentPage] = React.useState("Misje");
+  const [currentPage, setCurrentPage] = React.useState("Barmani");
 
   //LEGACY CHECK SERVER STATUS
   // const handleClick = async () => {

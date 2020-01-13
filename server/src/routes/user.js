@@ -16,7 +16,8 @@ import {
   userPopulateBag,
   updatePerks,
   saveImage,
-  removeImage
+  removeImage,
+  verifyCaptcha
 } from "../utils/methods";
 import moment from "moment";
 import { resolve } from "url";
@@ -88,7 +89,7 @@ router.post("/create", async (req, res) => {
   //registerKey used in biometrica, hwvr we may allow registration for ppl with key from qrcode - i left it
 
   if (!req.body.token) {
-    res.status(400).send();
+    return res.status(400).send();
   }
 
   
@@ -140,21 +141,6 @@ router.post("/create", async (req, res) => {
   }
 });
 
-const verifyCaptcha = (url) => {
-  return new Promise (async (resolve, reject) => {
-    try{
-      const res = await axios.post(url)
-      console.log(res.data)
-      if(!res.data.success){
-        return reject()
-      }
-      resolve()
-    }catch(e){
-      reject(e)
-    }
-    
-  })
-}
 
 router.patch("/character", auth, async (req, res) => {
   try {
@@ -167,6 +153,9 @@ router.patch("/character", auth, async (req, res) => {
     if(!name || !sex || !characterClass || !attributes){
       throw new Error("Niepełne dane tworzenia postaci")
     }
+    if(parseInt(attributes.strength) + parseInt(attributes.dexterity) + parseInt(attributes.magic) + parseInt(attributes.endurance) > 8){
+      throw new Error("Nieprawidłowa suma atrybutów")
+    }
 
     user.name = name
     user.sex = sex
@@ -178,6 +167,7 @@ router.patch("/character", auth, async (req, res) => {
 
     res.status(201).send(user)
   } catch (e) {
+    console.log(e)
     res.status(400).send(e);
   }
 });
@@ -312,7 +302,7 @@ router.patch("/changePassword", auth, async (req, res, next) => {
   const oldPassword = req.body.oldPassword;
   const newPassword = req.body.password;
   const repeatedNewPassword = req.body.confirmPassword
-  console.log(oldPassword, newPassword, repeatedNewPassword)
+
   try {
     if (oldPassword === newPassword) {
       throw new Error("Nowe i stare hasła nie mogą być takie same");

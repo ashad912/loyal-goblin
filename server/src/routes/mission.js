@@ -27,14 +27,11 @@ const router = new express.Router
 //OK
 router.get('/events', auth, async (req,res) => {
     try{
-        const missionList = await Mission.find({})
-        const rallyList = await Rally.find({})
-        const eventList = [...missionList, ...rallyList]
-    
-        if(!eventList.length){
-            res.status(404).send()
-        }
+        const missionList = await Mission.find({}).populate({path: 'amulets.itemModel awards.any.itemModel awards.warrior.itemModel awards.rogue.itemModel awards.mage.itemModel awards.cleric.itemModel'})
+        const rallyList = await Rally.find({}).populate({path: 'awardsLevels.awards.any.itemModel awardsLevels.awards.warrior.itemModel awardsLevels.awards.rogue.itemModel awardsLevels.awards.mage.itemModel awardsLevels.awards.cleric.itemModel'})
+        //populate rallyList
 
+        const eventList = [...missionList, ...rallyList]
         res.send(eventList)
     }catch(e){
         res.status(500).send(e.message)
@@ -67,14 +64,14 @@ router.delete('/remove', auth, async(req, res) => {
         const mission = await Mission.findOne({_id: req.body._id})
 
         if(!mission){
-            res.status(404).send()
+            return res.status(404).send()
         }
         
         await removeImage(uploadPath, mission.imgSrc)
 
         await mission.remove()
 
-        res.send()
+        res.sendStatus(200)
     } catch (e) {
         res.status(500).send(e.message)
     }

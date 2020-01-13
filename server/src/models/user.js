@@ -35,7 +35,6 @@ export const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
         minlength: 7,
-        trim: true,
         validate(value) {
             if (value.toLowerCase().includes('password')) {
                 throw new Error('Password cannot contain "password"')
@@ -59,7 +58,8 @@ export const UserSchema = new mongoose.Schema({
         type: String,
     },
     avatar: {
-        type: String
+        type: String,
+        maxlength: 20
     },
     lastActivityDate: {
         type: Date,

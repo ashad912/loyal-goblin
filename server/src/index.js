@@ -6,6 +6,7 @@ import { rallyRouter, updateRallyQueue } from "./routes/rally";
 import { itemRouter } from "./routes/item";
 import { productRouter } from "./routes/product";
 import { partyRouter } from "./routes/party";
+import { barmanRouter } from "./routes/barman";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import path from "path";
@@ -54,7 +55,7 @@ app.use("/rally", rallyRouter);
 app.use("/item", itemRouter);
 app.use("/product", productRouter);
 app.use("/party", partyRouter);
-
+app.use("/barman", barmanRouter)
 
 
 app.use((err, req, res, next) => {
