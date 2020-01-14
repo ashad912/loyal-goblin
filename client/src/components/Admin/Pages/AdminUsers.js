@@ -239,7 +239,7 @@ const AdminUsers = () => {
     setPage(page+1)
   }
   
-  const tenOrNo = page === parseInt(users.length / rowsPerPage) ? (users.length % rowsPerPage) : rowsPerPage
+  const rowsPerPageOrNo = page === parseInt(users.length / rowsPerPage) ? (users.length % rowsPerPage) : rowsPerPage
   const oneOrZero = users.length ? 1 : 0
 
   return (
@@ -336,7 +336,7 @@ const AdminUsers = () => {
                  
             </Select>
           </FormControl>
-          <Typography> {`${(page*rowsPerPage)+oneOrZero}-${(page*rowsPerPage)+tenOrNo} z ${users.length}`}</Typography>
+          <Typography> {`${(page*rowsPerPage)+oneOrZero}-${(page*rowsPerPage)+rowsPerPageOrNo} z ${users.length}`}</Typography>
           <div style={{marginLeft: '1rem'}}>
             <IconButton
               onClick={handlePreviousPageButtonClick}

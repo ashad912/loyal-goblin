@@ -21,7 +21,7 @@ import AdminUsers from "./pages/AdminUsers";
 import AdminParties from "./pages/AdminParties";
 import AdminBarmans from './pages/AdminBarmans'
 import AdminReservations from "./pages/AdminReservations";
-import AdminQR from "./pages/AdminQR";
+import AdminOrders from "./pages/AdminOrders";
 const drawerWidth = 180;
 
 const useStyles = makeStyles(theme => ({
@@ -48,8 +48,8 @@ const menuItems = [
   { title: "Użytkownicy", icon: <PersonIcon /> },
   { title: "Drużyny", icon: <PeopleIcon /> },
   { title: "Barmani", icon: <LocalBarIcon /> },
+  { title: "Zamówienia", icon: <CropFreeIcon /> },
   { title: "Rezerwacje", icon: <EventSeatIcon /> },
-  { title: "Zamówienia", icon: <CropFreeIcon /> }
 ];
 
 const Admin = () => {
@@ -96,7 +96,7 @@ const Admin = () => {
       page = <AdminReservations />;
       break;
     case "Zamówienia":
-      page = <AdminQR />;
+      page = <AdminOrders />;
       break;
 
     default:

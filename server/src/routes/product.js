@@ -143,6 +143,22 @@ router.delete("/remove", auth, async (req, res) => {
   }
 });
 
+
+router.get('/orders', auth, async (req,res) => {
+  try{
+    const orders = await ArchiveOrder.aggreagate().match({}).project({
+      leader: 1,
+      totalPrice: 1,
+      createdAt: 1,
+    })
+
+    res.send(orders)
+
+  }catch(e){
+    res.status(400).send(e.message)
+  }
+})
+
 ////USER-SIDE
 
 const calculateOrder = async user => {

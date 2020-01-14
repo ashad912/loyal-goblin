@@ -67,3 +67,16 @@ export const uploadProductImage = (id, formData) => {
         } 
     })
 }
+
+export const getAdminOrders = () => {
+    return new Promise (async (resolve, reject) => {
+        try {
+            console.log('getOrders')
+            const res = await axios.get('/product/orders')
+            console.log(res.data)
+            resolve(res.data)
+        }catch (e) {
+            reject(e)     
+        } 
+    })
+}

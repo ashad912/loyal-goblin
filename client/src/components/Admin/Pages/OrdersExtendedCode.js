@@ -36,7 +36,7 @@ const mockOrders = [
   }
 ];
 
-const AdminQR = () => {
+const OrdersExtendedCode = () => {
   const [orders, setOrders] = React.useState(mockOrders);
   const [statusFilter, setStatusFilter] = React.useState("current");
 
@@ -156,4 +156,4 @@ const AdminQR = () => {
   );
 };
 
-export default AdminQR;
+export default OrdersExtendedCode;
