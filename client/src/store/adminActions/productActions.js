@@ -68,11 +68,12 @@ export const uploadProductImage = (id, formData) => {
     })
 }
 
-export const getAdminOrders = () => {
+export const getAdminOrders = (page, rowsPerPage) => {
     return new Promise (async (resolve, reject) => {
         try {
             console.log('getOrders')
-            const res = await axios.get('/product/orders')
+            const query = `?page=${page}&rowsPerPage=${rowsPerPage}`
+            const res = await axios.get('/product/orders' + query)
             console.log(res.data)
             resolve(res.data)
         }catch (e) {

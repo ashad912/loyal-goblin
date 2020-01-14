@@ -148,34 +148,47 @@ const mockOrders = [
 ];
 
 const AdminOrders = () => {
-  const [orders, setOrders] = React.useState(mockOrders);
+  const [orders, setOrders] = React.useState([]);
   const [fetchedOrders, setFetchedOrders] = React.useState([])
+  const [countedRecords, setCountedRecords] = React.useState(0)
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [nameFilter, setNameFilter] = React.useState("");
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
+  const [initUpdate, setInitUpdate] = React.useState(true)
+  
 
   
   React.useEffect(() => {
     fetchOrders() 
 
-  }, [])
+  }, [page, rowsPerPage])
+
 
   React.useEffect(() => {
+
     let timer
 
     clearTimeout(timer)
 
-    timer = setTimeout(() => {
-      updateNameFilter()
-    }, 500)
+    if(nameFilter.length || !initUpdate){
+      timer = setTimeout(() => {
+        updateNameFilter()
 
+        if(initUpdate){
+          setInitUpdate(false)
+        }
+      }, 500)
+    }
+  
     return () => clearInterval(timer);
 
   }, [nameFilter]);
 
   const fetchOrders = async () => {
-    const orders = await getAdminOrders()
+    const data = await getAdminOrders(page, rowsPerPage)
+    const {orders, countedRecords} = data
+    setCountedRecords(countedRecords)
     setFetchedOrders(orders)
     applyNameFilter(orders)
   }
@@ -194,7 +207,7 @@ const AdminOrders = () => {
     if (nameFilter.trim().length > 0) {
       tempUsersList = tempUsersList.filter( (order) => {
         const reg = new RegExp(nameFilter, 'gi')
-        return order.hasOwnProperty('leader') && order.leader.match(reg)
+        return order.leader.hasOwnProperty('name') && order.leader.name.match(reg)
        } );
       
       setOrders(tempUsersList);
@@ -207,7 +220,7 @@ const AdminOrders = () => {
     let tempOrders = orders ? [...orders] : [...fetchedOrders];
     switch (status) {
       case "all":
-        tempOrders = [...mockOrders];
+        //tempOrders = [...fetchedrders];
         break;
       case "current":
         tempOrders = tempOrders.filter(order => order.status === "current");
@@ -317,6 +330,7 @@ const AdminOrders = () => {
             records={orders}
             rowsPerPage={rowsPerPage}
             page={page}
+            backendCountedRecords={countedRecords}
             handleSetRowsPerPage={handleSetRowsPerPage}
             handlePreviousPageButtonClick={handlePreviousPageButtonClick}
             handleNextPageButtonClick={handleNextPageButtonClick}

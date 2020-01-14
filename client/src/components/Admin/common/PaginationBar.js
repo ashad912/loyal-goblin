@@ -9,10 +9,12 @@ import FormControl from "@material-ui/core/FormControl";
 
 
 const PaginationBar = (props) => {
-    const {records, rowsPerPage, page, handleSetRowsPerPage, handleNextPageButtonClick, handlePreviousPageButtonClick} = props
+    const {records, rowsPerPage, page, backendCountedRecords, handleSetRowsPerPage, handleNextPageButtonClick, handlePreviousPageButtonClick} = props
+    const recordsLength = backendCountedRecords ? (backendCountedRecords) : (records.length)
+
+    const rowsPerPageOrNo = page === parseInt(recordsLength / rowsPerPage) ? (recordsLength % rowsPerPage) : rowsPerPage
+    const oneOrZero = recordsLength ? 1 : 0
     
-    const rowsPerPageOrNo = page === parseInt(records.length / rowsPerPage) ? (records.length % rowsPerPage) : rowsPerPage
-    const oneOrZero = records.length ? 1 : 0
     
     return(
         <React.Fragment>
@@ -38,7 +40,7 @@ const PaginationBar = (props) => {
                 
             </Select>
             </FormControl>
-            <Typography> {`${(page*rowsPerPage)+oneOrZero}-${(page*rowsPerPage)+rowsPerPageOrNo} z ${records.length}`}</Typography>
+            <Typography> {`${(page*rowsPerPage)+oneOrZero}-${(page*rowsPerPage)+rowsPerPageOrNo} z ${recordsLength}`}</Typography>
             <div style={{marginLeft: '1rem'}}>
             <IconButton
                 onClick={handlePreviousPageButtonClick}
@@ -50,7 +52,7 @@ const PaginationBar = (props) => {
             </IconButton>
             <IconButton
                 onClick={handleNextPageButtonClick}
-                disabled={page === parseInt(records.length / rowsPerPage)}
+                disabled={page === parseInt(recordsLength / rowsPerPage)}
                 aria-label="Kolejna strona"
                 style={{padding: '0.5rem'}}
             >

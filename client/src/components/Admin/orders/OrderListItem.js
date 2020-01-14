@@ -26,7 +26,7 @@ const OrderListItem = (props) => {
                 <ListItemText primary={moment(order.createdAt).format("L, LTS")} />
             </Grid>
             <Grid item xs={5} style={{textAlign: 'center'}}>
-                <ListItemText primary={order.leader} />
+                <ListItemText primary={order.leader.name} />
             </Grid>
             <Grid item xs={3} style={{textAlign: 'right'}}>
                 <ListItemText primary={order.totalPrice + ' PLN'} />
