@@ -9,24 +9,25 @@ import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import InputAdornment from "@material-ui/core/InputAdornment";
+import EventIcon from '@material-ui/icons/Event';
 import Paper from "@material-ui/core/Paper";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Box from "@material-ui/core/Box";
 import SearchIcon from "@material-ui/icons/Search";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import { MuiPickersUtilsProvider, DateTimePicker } from "@material-ui/pickers";
 import PaginationBar from "../common/PaginationBar";
 import IconButton from '@material-ui/core/IconButton';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import OrderListItem from '../orders/OrderListItem'
-
 import styled from 'styled-components'
 import _ from 'lodash'
 
 import {getAdminOrders} from '../../../store/adminActions/productActions'
+
+import moment from 'moment'
+import MomentUtils from '@date-io/moment';
+moment.locale('pl')
 
 const RefreshBar = styled.div`
   flex-grow: 3;
@@ -152,6 +153,9 @@ const AdminOrders = () => {
   const [fetchedOrders, setFetchedOrders] = React.useState([])
   const [countedRecords, setCountedRecords] = React.useState(0)
   const [statusFilter, setStatusFilter] = React.useState("all");
+  const [fromDate, setFromDate] = React.useState(moment().subtract(1, "days").format("YYYY-MM-DDTHH:mm"))
+  const [fromDateError, setFromDateError] = React.useState('')
+  const [toDate, setToDate] = React.useState(moment().format("YYYY-MM-DDTHH:mm"))
   const [nameFilter, setNameFilter] = React.useState("");
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
@@ -165,37 +169,49 @@ const AdminOrders = () => {
   }, [page, rowsPerPage])
 
 
-  React.useEffect(() => {
+  useDidUpdateEffect(() => {
 
     let timer
 
     clearTimeout(timer)
 
-    if(nameFilter.length || !initUpdate){
+    
       timer = setTimeout(() => {
-        updateNameFilter()
+        updateRecords()
 
-        if(initUpdate){
-          setInitUpdate(false)
-        }
+        
       }, 500)
-    }
+    
   
     return () => clearInterval(timer);
 
-  }, [nameFilter]);
+  }, [nameFilter, fromDate, toDate]);
+
+  function useDidUpdateEffect(fn, inputs) {
+    const didMountRef = React.useRef(false);
+  
+    React.useEffect(() => {
+      if (didMountRef.current)
+        fn();
+      else
+        didMountRef.current = true;
+    }, inputs);
+  }
+
 
   const fetchOrders = async () => {
-    const data = await getAdminOrders(page, rowsPerPage)
+    const data = await getAdminOrders(page, rowsPerPage, fromDate, toDate, nameFilter)
     const {orders, countedRecords} = data
     setCountedRecords(countedRecords)
     setFetchedOrders(orders)
-    applyNameFilter(orders)
+    //applyNameFilter(orders)
+    setOrders(orders)
   }
 
-  const updateNameFilter = () =>{
+  const updateRecords = () =>{
     console.log('updatedOrders')
-    applyNameFilter()
+    //applyNameFilter()
+    fetchOrders()
     if(nameFilter.trim().length > 0){
       setPage(0)
     } 
@@ -236,6 +252,20 @@ const AdminOrders = () => {
     setOrders(tempOrders);
     return tempOrders;
   };
+
+  const handleFromDateChange = (input) => {
+    
+    
+    const date = input.format("YYYY-MM-DDTHH:mm")
+    setFromDate(date)
+    
+  }
+
+  
+
+  const handleToDateChange = (e) => {
+    setToDate(e.target.value)
+  }
 
   const handleChangeNameFilter = (e) => {
     setNameFilter(e.target.value.trim());
@@ -285,21 +315,35 @@ const AdminOrders = () => {
             justifyContent="space-around"
             alignItems="center"
           >
-            <FormControl style={{ alignSelf: "flex-start" }}>
-              <InputLabel htmlFor="status-filter">Status</InputLabel>
-              <Select
-                value={statusFilter}
-                onChange={handleChangeStatusFilter}
-                
-                inputProps={{
-                  id: "status-filter"
+            <MuiPickersUtilsProvider utils={MomentUtils}>
+              <DateTimePicker
+                cancelLabel={'Anuluj'}
+                ampm={false}
+                allowKeyboardControl={false}
+                label="Data od"
+                value={fromDate}
+                onChange={handleFromDateChange}
+                //invalidDateMessage={'Niepoprawny format!'}
+                disableFuture
+                format="YYYY-MM-DD HH:mm"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton>
+                        <EventIcon/>
+                      </IconButton>
+                    </InputAdornment>
+                  ),
                 }}
-              >
-                <MenuItem value={"current"}>Aktualne</MenuItem>
-                <MenuItem value={"all"}>Wszystkie</MenuItem>
-                <MenuItem value={"archived"}>Zarchiwizowane</MenuItem>
-              </Select>
-            </FormControl>
+              />
+            </MuiPickersUtilsProvider>
+           
+            <TextField         
+              type="datetime-local"
+              label="Data do"
+              value={toDate}
+              onChange={handleToDateChange}
+            />
             <TextField
               value={nameFilter}
               onChange={handleChangeNameFilter}

@@ -491,10 +491,10 @@ class EventCreator extends Component {
       delete itemModel._id
     })
     itemModels = convertItemModelsToCategories(itemModels)
-
+    console.log(itemModels)
     this.setState(
       {
-        amulets: [...itemModels.amulet],
+        amulets: itemModels.hasOwnProperty('amulet') ? [...itemModels.amulet] : [],
         fullItemsList: itemModels,
         rallies
       },

@@ -68,11 +68,11 @@ export const uploadProductImage = (id, formData) => {
     })
 }
 
-export const getAdminOrders = (page, rowsPerPage) => {
+export const getAdminOrders = (page, rowsPerPage, fromDate, toDate, nameFilter) => {
     return new Promise (async (resolve, reject) => {
         try {
             console.log('getOrders')
-            const query = `?page=${page}&rowsPerPage=${rowsPerPage}`
+            const query = `?page=${page}&rowsPerPage=${rowsPerPage}&from=${fromDate}&to=${toDate}&name=${nameFilter}`
             const res = await axios.get('/product/orders' + query)
             console.log(res.data)
             resolve(res.data)

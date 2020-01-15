@@ -147,11 +147,27 @@ router.delete("/remove", auth, async (req, res) => {
 router.get('/orders', auth, async (req,res) => {
   const page = parseInt(req.query.page)
   const rowsPerPage = parseInt(req.query.rowsPerPage)
+  const nameFilter = req.query.name || ''
+  const fromDate = req.query.from ? moment(req.query.from).toISOString() : moment().subtract(1, "days").toISOString()
+  const toDate = req.query.to ? moment(req.query.to).toISOString() : moment().toISOString()
 
   try{
-    const orders = await ArchiveOrder.aggregate()
-    .match({})
-    .sort({"createdAt": -1 })
+
+    
+  const users = await User.find({name: new RegExp(nameFilter, 'gi')},  {_id: 1})
+  const usersIds = users.map(user => user._id)
+
+  const orders = await ArchiveOrder.aggregate()
+    .match(
+      {$and: [
+        {leader: {$in: usersIds}},
+        {createdAt: {
+          $gte: new Date(fromDate),
+          $lt: new Date(toDate)
+        }}
+      ]
+    }
+    ).sort({"createdAt": -1 })
     .skip((rowsPerPage * page))
     .limit(rowsPerPage)
     .project({
@@ -165,7 +181,14 @@ router.get('/orders', auth, async (req,res) => {
       select: '_id name'
     })
 
-    const countedRecords = await ArchiveOrder.countDocuments()
+  const countedRecords = await ArchiveOrder.find(
+      {$and: [
+        {leader: {$in: usersIds}},
+        {createdAt: {
+          $gte: new Date(fromDate),
+          $lt: new Date(toDate)
+        }}
+      ]}, {_id: 1}).countDocuments()
 
 
     res.send({orders, countedRecords})
@@ -178,101 +201,97 @@ router.get('/orders', auth, async (req,res) => {
 
 router.post('/testAddMockOrders', auth, async(req,res) => {
 
-  const user = await User.findOne({})
-
-  if(!user){
-    return res.status(400).send()
-  }
+  const userId = req.user._id
   
   const mockOrders = [
-    {leader: user._id, totalPrice: 41.5},
-    {leader: user._id, totalPrice: 12},
-    {leader: user._id, totalPrice: 11.5},
-    {leader: user._id, totalPrice: 1000},
-    {leader: user._id, totalPrice: 141.5},
-    {leader: user._id, totalPrice: 1222},
-    {leader: user._id, totalPrice: 91.5},
-    {leader: user._id, totalPrice: 997.12},
-    {leader: user._id, totalPrice: 41.5},
-    {leader: user._id, totalPrice: 12},
-    {leader: user._id, totalPrice: 11.5},
-    {leader: user._id, totalPrice: 1000},
-    {leader: user._id, totalPrice: 141.5},
-    {leader: user._id, totalPrice: 1222},
-    {leader: user._id, totalPrice: 91.5},
-    {leader: user._id, totalPrice: 997.12},
-    {leader: user._id, totalPrice: 41.5},
-    {leader: user._id, totalPrice: 12},
-    {leader: user._id, totalPrice: 11.5},
-    {leader: user._id, totalPrice: 1000},
-    {leader: user._id, totalPrice: 141.5},
-    {leader: user._id, totalPrice: 1222},
-    {leader: user._id, totalPrice: 91.5},
-    {leader: user._id, totalPrice: 997.12},
-    {leader: user._id, totalPrice: 41.5},
-    {leader: user._id, totalPrice: 12},
-    {leader: user._id, totalPrice: 11.5},
-    {leader: user._id, totalPrice: 1000},
-    {leader: user._id, totalPrice: 141.5},
-    {leader: user._id, totalPrice: 1222},
-    {leader: user._id, totalPrice: 91.5},
-    {leader: user._id, totalPrice: 997.12},
-    {leader: user._id, totalPrice: 41.5},
-    {leader: user._id, totalPrice: 12},
-    {leader: user._id, totalPrice: 11.5},
-    {leader: user._id, totalPrice: 1000},
-    {leader: user._id, totalPrice: 141.5},
-    {leader: user._id, totalPrice: 1222},
-    {leader: user._id, totalPrice: 91.5},
-    {leader: user._id, totalPrice: 997.12},
-    {leader: user._id, totalPrice: 41.5},
-    {leader: user._id, totalPrice: 12},
-    {leader: user._id, totalPrice: 11.5},
-    {leader: user._id, totalPrice: 1000},
-    {leader: user._id, totalPrice: 141.5},
-    {leader: user._id, totalPrice: 1222},
-    {leader: user._id, totalPrice: 91.5},
-    {leader: user._id, totalPrice: 997.12},
-    {leader: user._id, totalPrice: 41.5},
-    {leader: user._id, totalPrice: 12},
-    {leader: user._id, totalPrice: 11.5},
-    {leader: user._id, totalPrice: 1000},
-    {leader: user._id, totalPrice: 141.5},
-    {leader: user._id, totalPrice: 1222},
-    {leader: user._id, totalPrice: 91.5},
-    {leader: user._id, totalPrice: 997.12},
-    {leader: user._id, totalPrice: 41.5},
-    {leader: user._id, totalPrice: 12},
-    {leader: user._id, totalPrice: 11.5},
-    {leader: user._id, totalPrice: 1000},
-    {leader: user._id, totalPrice: 141.5},
-    {leader: user._id, totalPrice: 1222},
-    {leader: user._id, totalPrice: 91.5},
-    {leader: user._id, totalPrice: 997.12},
-    {leader: user._id, totalPrice: 41.5},
-    {leader: user._id, totalPrice: 12},
-    {leader: user._id, totalPrice: 11.5},
-    {leader: user._id, totalPrice: 1000},
-    {leader: user._id, totalPrice: 141.5},
-    {leader: user._id, totalPrice: 1222},
-    {leader: user._id, totalPrice: 91.5},
-    {leader: user._id, totalPrice: 997.12},
-    {leader: user._id, totalPrice: 41.5},
-    {leader: user._id, totalPrice: 12},
-    {leader: user._id, totalPrice: 11.5},
-    {leader: user._id, totalPrice: 1000},
-    {leader: user._id, totalPrice: 141.5},
-    {leader: user._id, totalPrice: 1222},
-    {leader: user._id, totalPrice: 91.5},
-    {leader: user._id, totalPrice: 997.12},
-    {leader: user._id, totalPrice: 41.5},
-    {leader: user._id, totalPrice: 12},
-    {leader: user._id, totalPrice: 11.5},
-    {leader: user._id, totalPrice: 1000},
-    {leader: user._id, totalPrice: 141.5},
-    {leader: user._id, totalPrice: 1222},
-    {leader: user._id, totalPrice: 91.5},
-    {leader: user._id, totalPrice: 997.12},
+    {leader: userId, totalPrice: 41.5},
+    {leader: userId, totalPrice: 12},
+    {leader: userId, totalPrice: 11.5},
+    {leader: userId, totalPrice: 1000},
+    {leader: userId, totalPrice: 141.5},
+    {leader: userId, totalPrice: 1222},
+    {leader: userId, totalPrice: 91.5},
+    {leader: userId, totalPrice: 997.12},
+    {leader: userId, totalPrice: 41.5},
+    {leader: userId, totalPrice: 12},
+    {leader: userId, totalPrice: 11.5},
+    {leader: userId, totalPrice: 1000},
+    {leader: userId, totalPrice: 141.5},
+    {leader: userId, totalPrice: 1222},
+    {leader: userId, totalPrice: 91.5},
+    {leader: userId, totalPrice: 997.12},
+    {leader: userId, totalPrice: 41.5},
+    {leader: userId, totalPrice: 12},
+    {leader: userId, totalPrice: 11.5},
+    {leader: userId, totalPrice: 1000},
+    {leader: userId, totalPrice: 141.5},
+    {leader: userId, totalPrice: 1222},
+    {leader: userId, totalPrice: 91.5},
+    {leader: userId, totalPrice: 997.12},
+    {leader: userId, totalPrice: 41.5},
+    {leader: userId, totalPrice: 12},
+    {leader: userId, totalPrice: 11.5},
+    {leader: userId, totalPrice: 1000},
+    {leader: userId, totalPrice: 141.5},
+    {leader: userId, totalPrice: 1222},
+    {leader: userId, totalPrice: 91.5},
+    {leader: userId, totalPrice: 997.12},
+    {leader: userId, totalPrice: 41.5},
+    {leader: userId, totalPrice: 12},
+    {leader: userId, totalPrice: 11.5},
+    {leader: userId, totalPrice: 1000},
+    {leader: userId, totalPrice: 141.5},
+    {leader: userId, totalPrice: 1222},
+    {leader: userId, totalPrice: 91.5},
+    {leader: userId, totalPrice: 997.12},
+    {leader: userId, totalPrice: 41.5},
+    {leader: userId, totalPrice: 12},
+    {leader: userId, totalPrice: 11.5},
+    {leader: userId, totalPrice: 1000},
+    {leader: userId, totalPrice: 141.5},
+    {leader: userId, totalPrice: 1222},
+    {leader: userId, totalPrice: 91.5},
+    {leader: userId, totalPrice: 997.12},
+    {leader: userId, totalPrice: 41.5},
+    {leader: userId, totalPrice: 12},
+    {leader: userId, totalPrice: 11.5},
+    {leader: userId, totalPrice: 1000},
+    {leader: userId, totalPrice: 141.5},
+    {leader: userId, totalPrice: 1222},
+    {leader: userId, totalPrice: 91.5},
+    {leader: userId, totalPrice: 997.12},
+    {leader: userId, totalPrice: 41.5},
+    {leader: userId, totalPrice: 12},
+    {leader: userId, totalPrice: 11.5},
+    {leader: userId, totalPrice: 1000},
+    {leader: userId, totalPrice: 141.5},
+    {leader: userId, totalPrice: 1222},
+    {leader: userId, totalPrice: 91.5},
+    {leader: userId, totalPrice: 997.12},
+    {leader: userId, totalPrice: 41.5},
+    {leader: userId, totalPrice: 12},
+    {leader: userId, totalPrice: 11.5},
+    {leader: userId, totalPrice: 1000},
+    {leader: userId, totalPrice: 141.5},
+    {leader: userId, totalPrice: 1222},
+    {leader: userId, totalPrice: 91.5},
+    {leader: userId, totalPrice: 997.12},
+    {leader: userId, totalPrice: 41.5},
+    {leader: userId, totalPrice: 12},
+    {leader: userId, totalPrice: 11.5},
+    {leader: userId, totalPrice: 1000},
+    {leader: userId, totalPrice: 141.5},
+    {leader: userId, totalPrice: 1222},
+    {leader: userId, totalPrice: 91.5},
+    {leader: userId, totalPrice: 997.12},
+    {leader: userId, totalPrice: 41.5},
+    {leader: userId, totalPrice: 12},
+    {leader: userId, totalPrice: 11.5},
+    {leader: userId, totalPrice: 1000},
+    {leader: userId, totalPrice: 141.5},
+    {leader: userId, totalPrice: 1222},
+    {leader: userId, totalPrice: 91.5},
+    {leader: userId, totalPrice: 997.12},
    
   ];
   
