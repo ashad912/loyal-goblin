@@ -20,7 +20,7 @@ import bagImg from '../../../../assets/avatar/bag.png'
 
 
 import {createAvatarPlaceholder} from '../../../../utils/methods'
-import {itemsPath} from '../../../../utils/paths'
+import {itemsPath, usersPath} from '../../../../utils/paths'
 
 const StyledGrid = styled(Grid)`
     &&{
@@ -168,7 +168,7 @@ const PartyList = (props) => {
                 }}
                 badgeContent={<SmallAvatar alt="bag avatar" src={bagImg} />}
             >
-                {user.avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={'/images/user_uploads/' + user.avatar} /> : <Avatar style={{height: 30, width:30, backgroundColor: '#3f51b5'}}>{createAvatarPlaceholder(user.name)}</Avatar>}
+                {user.avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={usersPath + user.avatar} /> : <Avatar style={{height: 30, width:30, backgroundColor: '#3f51b5'}}>{createAvatarPlaceholder(user.name)}</Avatar>}
             </Badge>
         )
         //return <img style={{height: 30, width:30}} src={user.avatar} alt='avatar'/>

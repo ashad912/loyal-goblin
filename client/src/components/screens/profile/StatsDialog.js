@@ -20,7 +20,7 @@ import tempUserAvatar from '../../../assets/avatar/moose.png'
 import styled from 'styled-components'
 import uuid from 'uuid/v1'
 import {createAvatarPlaceholder} from "../../../utils/methods";
-import {itemsPath} from '../../../utils/paths'
+import {itemsPath, usersPath} from '../../../utils/paths'
 
 const Background = styled.div`
     background-color: #3f51b5;
@@ -81,7 +81,7 @@ const StatsDialog = props => {
                                 horizontal: 'right',
                             }}
                         >
-                            {props.profile.avatar ? <Avatar style={{height: height, width: width}} alt="avatar" src={'/images/user_uploads/' + props.profile.avatar} /> : <Avatar style={{height: height, width: width, fontSize: '3.7rem'}}>{createAvatarPlaceholder(props.profile.name)}</Avatar>}
+                            {props.profile.avatar ? <Avatar style={{height: height, width: width}} alt="avatar" src={usersPath + props.profile.avatar} /> : <Avatar style={{height: height, width: width, fontSize: '3.7rem'}}>{createAvatarPlaceholder(props.profile.name)}</Avatar>}
                         </Badge>
                     </Grid>
                     <Grid item style={{padding: '1rem 0 0 0'}}>

@@ -27,6 +27,8 @@ import RefreshIcon from '@material-ui/icons/Refresh';
 import styled from 'styled-components'
 
 import UserListItem from '../common/UserListItem'
+import PaginationBar from "../common/PaginationBar";
+
 
 import {designateUserLevel} from '../utils/methods'
 import {userFilterStatuses} from '../../../utils/labels'
@@ -314,48 +316,15 @@ const AdminUsers = () => {
               <RefreshIcon/>
             </IconButton>
           </RefreshBar>
-          <Typography >Wyświetlane rekordy:</Typography>
-          <FormControl >
-            <Select
-                autoFocus
-                value={rowsPerPage}
-                onChange={handleSetRowsPerPage}
-                inputProps={{
-                    name: 'rowsPerPage',
-                    id: 'rowsPerPage',
-                }}
-                style={{
-                  marginLeft: '0.5rem',
-                  marginRight: '1.5rem'
-                }}
-            >
-                
-                <MenuItem value={10}>10</MenuItem>
-                <MenuItem value={20}>20</MenuItem>
-                <MenuItem value={50}>50</MenuItem>
-                 
-            </Select>
-          </FormControl>
-          <Typography> {`${(page*rowsPerPage)+oneOrZero}-${(page*rowsPerPage)+rowsPerPageOrNo} z ${users.length}`}</Typography>
-          <div style={{marginLeft: '1rem'}}>
-            <IconButton
-              onClick={handlePreviousPageButtonClick}
-              disabled={page === 0}
-              aria-label="Poprzednia strona"
-              style={{padding: '0.5rem'}}
-            >
-              <KeyboardArrowLeft />
-            </IconButton>
-            <IconButton
-              onClick={handleNextPageButtonClick}
-              disabled={page === parseInt(users.length / rowsPerPage)}
-              aria-label="Kolejna strona"
-              style={{padding: '0.5rem'}}
-            >
-              <KeyboardArrowRight />
-            </IconButton>
-            
-          </div>
+          <PaginationBar
+            records={users}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            backendCountedRecords={null}
+            handleSetRowsPerPage={handleSetRowsPerPage}
+            handlePreviousPageButtonClick={handlePreviousPageButtonClick}
+            handleNextPageButtonClick={handleNextPageButtonClick}
+          />
         </Toolbar>
         {users.length ? (<List style={{ border: "1px solid grey" }} alignItems="flex-start">
           {users.slice(page*rowsPerPage, page*rowsPerPage + rowsPerPage).map(user => {

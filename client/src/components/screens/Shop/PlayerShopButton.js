@@ -1,6 +1,7 @@
 import React from 'react'
 import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
+import {usersPath} from '../../../utils/paths'
 
 const PlayerShopButton = ({id, avatar, name, active, handleClick}) => {
 
@@ -9,8 +10,8 @@ const PlayerShopButton = ({id, avatar, name, active, handleClick}) => {
     })
   return (
     <Chip
-    style={{margin: '0.1rem'}}
-    avatar={avatar? <Avatar alt="Avatar" src={("/images/user_uploads/"+avatar)} /> : <Avatar>{initials}</Avatar> }
+    style={{margin: '0.1rem'}} 
+    avatar={avatar? <Avatar alt="Avatar" src={(usersPath + avatar)} /> : <Avatar>{initials}</Avatar> }
     label={name}
     onClick={(e) => handleClick(e, id)}
     color={active ? "primary" : "default"} 

@@ -17,6 +17,7 @@ import styled from 'styled-components'
 
 import AwardListItem from './AwardListItem'
 import { classLabelsAny } from '../../../utils/labels';
+import { ralliesPath } from '../../../utils/paths'
 
 const Background = styled.div`
     background-color: #3f51b5;
@@ -99,7 +100,7 @@ const RallyDetails = (props) => {
                                 direction="column"
                             >
                                 <Grid item style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                    <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`/images/rallies/${rally.avatar}`} />
+                                    <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`${ralliesPath}${rally.avatar}`} />
                                 </Grid>
                             </Grid>
                         </Grid>

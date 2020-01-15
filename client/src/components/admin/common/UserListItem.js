@@ -8,11 +8,9 @@ import Badge from '@material-ui/core/Badge';
 import Avatar from '@material-ui/core/Avatar';
 import Button from "@material-ui/core/Button";
 
-
-
 import {designateUserLevel} from '../utils/methods'
-
 import {createAvatarPlaceholder} from '../../../utils/methods'
+import { usersPath } from '../../../utils/paths';
 
 const leaderIcon = (
     <Badge
@@ -35,7 +33,7 @@ const UserListItem = (props) => {
         <ListItem button key={user._id} style={{paddingTop: '0.1rem', paddingBottom: '0.1rem'}} >
             <Grid item xs={1}>
                 {user.avatar ? 
-                <img style={{width: '32px', height: '32px'}} src={'/images/user_uploads/' + user.avatar} /> :
+                <img style={{width: '32px', height: '32px'}} src={usersPath + user.avatar} /> :
                 <Avatar style={{width: '32px', height: '32px', fontSize: '0.9rem'}}>{createAvatarPlaceholder(user.name)}</Avatar>
                 }
             </Grid>

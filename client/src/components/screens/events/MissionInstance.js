@@ -12,7 +12,7 @@ import ClearIcon from "@material-ui/icons/Clear";
 import VerificationPage from './mission/VerificationPage'
 import { Typography } from '@material-ui/core';
 
-import {itemsPath} from '../../../utils/paths'
+import {itemsPath, missionsPath} from '../../../utils/paths'
 
 import { authCheck } from "../../../store/actions/authActions";
 import {togglePresenceInInstance, toggleUserReady, finishInstance} from '../../../store/actions/missionActions'
@@ -385,12 +385,12 @@ class MissionInstance extends React.Component {
         return(
             <div style={{display: 'flex', flexDirection: 'column', alignContent: 'center', fontFamily: '"Roboto", sans-serif', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`}}>
             {this.state.showVerificationPage ? (
-                <VerificationPage missionAwards={this.state.missionAwards} userClass={this.props.auth.profile.class} authCheck={() => this.props.authCheck()}/>
+                <VerificationPage missionExperience={this.state.missionObject.experience} missionAwards={this.state.missionAwards} userClass={this.props.auth.profile.class} authCheck={() => this.props.authCheck()}/>
             ) : (
                 <React.Fragment>
                     
                     <TitleBar>
-                        <StyledImg src={`/images/missions/${this.state.missionObject.avatar}`}/>
+                        <StyledImg src={`${missionsPath}${this.state.missionObject.avatar}`}/>
                         <Typography style={{display: 'inline'}} variant="h6">{this.state.missionObject.title}</Typography>
                         {statusIcon(isRequiredItemsCollected)}
                     </TitleBar>   

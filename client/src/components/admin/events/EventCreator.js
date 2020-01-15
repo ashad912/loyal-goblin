@@ -30,7 +30,7 @@ import characterClasses from "../../../assets/categories/characterClasses";
 import convertItemModelsToCategories from "../utils/itemModelsToCategories";
 
 
-import { itemsPath } from "../../../utils/paths";
+import { itemsPath, missionsPath, ralliesPath } from "../../../utils/paths";
 import {createEvent, updateEvent, uploadEventIcon, getRallies} from '../../../store/adminActions/eventActions'
 
 
@@ -526,7 +526,7 @@ class EventCreator extends Component {
               title: event.title,
               description: event.description,
               minLevel: event.level+"",
-              iconView:  event.imgSrc ? ('/images/missions/' + event.imgSrc) : null, 
+              iconView:  event.imgSrc ? (missionsPath + event.imgSrc) : null, 
               minPlayers: event.minPlayers,
               maxPlayers: event.maxPlayers,
               amulets: [...amulets],
@@ -565,7 +565,7 @@ class EventCreator extends Component {
               isRally: true,
               title: event.title,
               description: event.description,
-              iconView: event.imgSrc ? ('/images/rallies/' + event.imgSrc) : null, 
+              iconView: event.imgSrc ? (ralliesPath + event.imgSrc) : null, 
               experience: event.experience,
               awardsLevels: [...event.awardsLevels],
               activationDate: moment(event.activationDate).format("YYYY-MM-DDTHH:mm"),
@@ -1140,7 +1140,7 @@ class EventCreator extends Component {
     return (
       <MuiPickersUtilsProvider utils={MomentUtils}>
         <Button onClick={this.props.handleClose}>
-          {"< Powrót do panelu misji"}
+          {"< Powrót do panelu wydarzeń"}
         </Button>
         <Container>
           <Typography component="div">

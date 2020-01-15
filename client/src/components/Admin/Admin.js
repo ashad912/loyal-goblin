@@ -42,13 +42,13 @@ const Content = styled.div`
 `;
 
 const menuItems = [
-  { title: "Misje", icon: <EventIcon /> },
   { title: "Przedmioty", icon: <CreateIcon />},
   { title: "Produkty", icon: <ShoppingCartIcon />},
+  { title: "Wydarzenia", icon: <EventIcon /> },
   { title: "Użytkownicy", icon: <PersonIcon /> },
   { title: "Drużyny", icon: <PeopleIcon /> },
-  { title: "Barmani", icon: <LocalBarIcon /> },
   { title: "Zamówienia", icon: <CropFreeIcon /> },
+  { title: "Barmani", icon: <LocalBarIcon /> },
   { title: "Rezerwacje", icon: <EventSeatIcon /> },
 ];
 
@@ -74,7 +74,7 @@ const Admin = () => {
   let page;
 
   switch (currentPage) {
-    case "Misje":
+    case "Wydarzenia":
       page = <AdminEvents />;
       break;
     case "Przedmioty":

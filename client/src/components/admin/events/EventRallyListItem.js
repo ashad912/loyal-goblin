@@ -11,6 +11,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import classThemes from "../../../assets/themes/classThemes";
 import "moment/locale/pl";
+import { ralliesPath } from "../../../utils/paths";
 
 const pulse = keyframes`
   0% {
@@ -113,7 +114,7 @@ const EventRallyListItem = ({
           </Grid>
           <Grid item container>
             <Grid item xs={2}>
-              <img src={"/images/rallies/" + event.imgSrc} width={128} />
+              <img src={ralliesPath + event.imgSrc} width={128} />
             </Grid>
             <Grid item container direction="column" xs={6}>
               <Grid item>

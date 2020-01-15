@@ -20,7 +20,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { cancelOrder, leaveShop } from "../../../store/actions/shopActions";
-import {itemsPath} from '../../../utils/paths'
+import {itemsPath, usersPath} from '../../../utils/paths'
 import {createAvatarPlaceholder} from '../../../utils/methods'
 
 //Info z backendu
@@ -149,7 +149,7 @@ const handleCancelOrder = async () => {
                     <List style={{ width: "100%" }}>
                       <ListItem>
                         <ListItemAvatar>
-                          {basket.profile.avatar ? <img src={'/images/user_uploads/'+basket.profile.avatar} width={32}/> : 
+                          {basket.profile.avatar ? <img src={usersPath + basket.profile.avatar} width={32}/> : 
                           <Avatar style={{height: 30, width: 30}}>{createAvatarPlaceholder(basket.profile.name)}</Avatar>}
                         </ListItemAvatar>
                         <ListItemText primary={basket.profile.name} />

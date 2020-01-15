@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import styled from 'styled-components'
 import { classLabelsAny } from '../../../utils/labels';
-import {itemsPath} from '../../../utils/paths'
+import {itemsPath, missionsPath} from '../../../utils/paths'
 
 const ShortDescription = styled(Typography)`
     display: -webkit-box;
@@ -87,7 +87,7 @@ const MissionListItem = (props) => {
                             direction="column"
                         >
                             <Grid item style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`/images/missions/${mission.avatar}`} />
+                                <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`${missionsPath}${mission.avatar}`} />
                             </Grid>
                         </Grid>
                     </Grid> 

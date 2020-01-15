@@ -10,7 +10,7 @@ import List from "@material-ui/core/List";
 import ListItemText from "@material-ui/core/ListItemText";
 import Popover from "@material-ui/core/Popover";
 import {categoryLabels} from '../../../utils/labels'
-import {itemsPath} from '../../../utils/paths'
+import {itemsPath, productsPath} from '../../../utils/paths'
 import iconCoins from "../../../assets/shop/coins.png"
 
 
@@ -68,7 +68,7 @@ const ProductListItem = ({
         <Grid item container>
           <Grid item xs={2}>
             <img
-              src={'/images/products/' + product.imgSrc}
+              src={productsPath + product.imgSrc}
               width={32}
             />
           </Grid>

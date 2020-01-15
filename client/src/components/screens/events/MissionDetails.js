@@ -16,7 +16,7 @@ import ExpandMore from "@material-ui/icons/ExpandMore";
 import styled from 'styled-components'
 import AwardListItem from './AwardListItem'
 import { classLabelsAny } from '../../../utils/labels';
-import {itemsPath} from '../../../utils/paths'
+import {itemsPath, missionsPath} from '../../../utils/paths'
 
 
 
@@ -101,7 +101,7 @@ const MissionDetails = (props) => {
                                 direction="column"
                             >
                                 <Grid item style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                    <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`/images/missions/${mission.avatar}`} />
+                                    <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`${missionsPath}${mission.avatar}`} />
                                 </Grid>
                             </Grid>
                         </Grid> 

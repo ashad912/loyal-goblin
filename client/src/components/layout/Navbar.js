@@ -24,6 +24,7 @@ import { Link } from '@material-ui/core';
 import {updateAvatar} from '../../store/actions/profileActions'
 import {signOut} from '../../store/actions/authActions'
 import ChangePasswordModal from '../auth/ChangePasswordModal';
+import { usersPath } from '../../utils/paths';
 
 
 const StyledMenu = styled(Menu)`
@@ -142,7 +143,7 @@ const Navbar = (props) => {
                             horizontal: 'right',
                         }}
                     >
-                        {props.auth.profile.avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={'/images/user_uploads/'+ props.auth.profile.avatar} /> : <Avatar style={{height: 30, width: 30}}>{createAvatarPlaceholder(props.auth.profile.name)}</Avatar>}
+                        {props.auth.profile.avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={usersPath + props.auth.profile.avatar} /> : <Avatar style={{height: 30, width: 30}}>{createAvatarPlaceholder(props.auth.profile.name)}</Avatar>}
                     </Badge>
                     <Typography variant="h6" style={{flexGrow: 1, textAlign: 'left'}}>
                         {props.auth.profile.name}

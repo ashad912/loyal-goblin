@@ -6,7 +6,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
-
+import {itemsPath, productsPath} from '../../../utils/paths'
 const AddIcon = styled(AddCircleIcon)`
   width: 2rem;
   transition: transform 0.2s ease-in-out;
@@ -27,13 +27,13 @@ const ShopListItem = props => {
   return (
     <ListItem>
       <ListItemIcon>
-        <img src={"/images/products/"+imgSrc} style={{width: '2rem'}}/>
+        <img src={productsPath+imgSrc} style={{width: '2rem'}}/>
       </ListItemIcon>
       <Grid container direction="column">
         <ListItemText primary={name} />
         {props.awards &&
         props.awards.map((prize, index) => {
-          return <ListItemText key={prize.itemModel._id+index} secondary={<span>{prize.itemModel.name} <img width={16} src={'/images/items' + prize.itemModel.imgSrc}/><span>{prize.quantity > 1 && " x"+prize.quantity}</span></span>}/>
+          return <ListItemText key={prize.itemModel._id+index} secondary={<span>{prize.itemModel.name} <img width={16} src={itemsPath + prize.itemModel.imgSrc}/><span>{prize.quantity > 1 && " x"+prize.quantity}</span></span>}/>
 
         })}
         <ListItemText secondary={description} />

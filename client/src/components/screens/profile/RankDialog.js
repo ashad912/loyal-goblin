@@ -19,7 +19,7 @@ import {designateUserLevel} from '../../../utils/methods'
 import { getRankedUsers } from "../../../store/actions/profileActions";
 
 import {createAvatarPlaceholder} from "../../../utils/methods";
-
+import {usersPath} from '../../../utils/paths'
 
 const RankDialog = props => {
   
@@ -81,7 +81,7 @@ const RankDialog = props => {
                         </Grid>
                         <Grid item xs={2}>
                             {props.profile.avatar ? 
-                                <img style={{width: '16px', height: '16px', paddingLeft: '0.2rem'}} alt="avatar" src={'/images/user_uploads/' + props.profile.avatar} /> :
+                                <img style={{width: '16px', height: '16px', paddingLeft: '0.2rem'}} alt="avatar" src={usersPath + props.profile.avatar} /> :
                                 <Avatar style={{width: '16px', height: '16px', fontSize: '0.6rem'}}>{createAvatarPlaceholder(props.profile.name)}</Avatar>
                             }
                         </Grid>
@@ -110,7 +110,7 @@ const RankDialog = props => {
                                     </Grid>
                                     <Grid item xs={2}>
                                     {props.profile.avatar ? 
-                                        <img style={{width: '16px', height: '16px', paddingLeft: '0.2rem'}} alt="avatar" src={'/images/user_uploads/' + props.profile.avatar} /> :
+                                        <img style={{width: '16px', height: '16px', paddingLeft: '0.2rem'}} alt="avatar" src={usersPath + props.profile.avatar} /> :
                                         <Avatar style={{width: '16px', height: '16px', fontSize: '0.6rem'}}>{createAvatarPlaceholder(props.profile.name)}</Avatar>
                                     }
                                     </Grid>

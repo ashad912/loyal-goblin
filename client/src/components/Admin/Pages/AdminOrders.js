@@ -148,69 +148,57 @@ const mockOrders = [
   {_id: uuid(), leader: "321dfcxz", totalPrice: 997.12},
 ];
 
+function useDidUpdateEffect(fn, inputs) {
+  const didMountRef = React.useRef(false);
+
+  React.useEffect(() => {
+    if (didMountRef.current)
+      fn();
+    else
+      didMountRef.current = true;
+  }, inputs);
+}
+
 const AdminOrders = () => {
   const [orders, setOrders] = React.useState([]);
-  const [fetchedOrders, setFetchedOrders] = React.useState([])
   const [countedRecords, setCountedRecords] = React.useState(0)
-  const [statusFilter, setStatusFilter] = React.useState("all");
-  const [fromDate, setFromDate] = React.useState(moment().subtract(1, "days").format("YYYY-MM-DDTHH:mm"))
-  const [fromDateError, setFromDateError] = React.useState('')
+  const [fromDate, setFromDate] = React.useState(moment().subtract(7, "days").format("YYYY-MM-DDTHH:mm"))
   const [toDate, setToDate] = React.useState(moment().format("YYYY-MM-DDTHH:mm"))
   const [nameFilter, setNameFilter] = React.useState("");
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
-  const [initUpdate, setInitUpdate] = React.useState(true)
   
 
   
   React.useEffect(() => {
     fetchOrders() 
-
   }, [page, rowsPerPage])
 
 
   useDidUpdateEffect(() => {
-
     let timer
 
     clearTimeout(timer)
+    timer = setTimeout(() => {
+      updateRecords()
+    }, 500)
 
-    
-      timer = setTimeout(() => {
-        updateRecords()
-
-        
-      }, 500)
-    
-  
     return () => clearInterval(timer);
+  }, [nameFilter]);
 
-  }, [nameFilter, fromDate, toDate]);
-
-  function useDidUpdateEffect(fn, inputs) {
-    const didMountRef = React.useRef(false);
-  
-    React.useEffect(() => {
-      if (didMountRef.current)
-        fn();
-      else
-        didMountRef.current = true;
-    }, inputs);
-  }
+  useDidUpdateEffect(() => { 
+    updateRecords()
+  }, [fromDate, toDate]);
 
 
   const fetchOrders = async () => {
     const data = await getAdminOrders(page, rowsPerPage, fromDate, toDate, nameFilter)
     const {orders, countedRecords} = data
     setCountedRecords(countedRecords)
-    setFetchedOrders(orders)
-    //applyNameFilter(orders)
     setOrders(orders)
   }
 
   const updateRecords = () =>{
-    console.log('updatedOrders')
-    //applyNameFilter()
     fetchOrders()
     if(nameFilter.trim().length > 0){
       setPage(0)
@@ -218,67 +206,25 @@ const AdminOrders = () => {
   }
 
 
-  const applyNameFilter = (orders) => {
-    let tempUsersList = applyStatusFilter(statusFilter, orders);
-    if (nameFilter.trim().length > 0) {
-      tempUsersList = tempUsersList.filter( (order) => {
-        const reg = new RegExp(nameFilter, 'gi')
-        return order.leader.hasOwnProperty('name') && order.leader.name.match(reg)
-       } );
-      
-      setOrders(tempUsersList);
-    } else {
-      setOrders(tempUsersList);
-    }
-  }
-
-  const applyStatusFilter = (status, orders) => {
-    let tempOrders = orders ? [...orders] : [...fetchedOrders];
-    switch (status) {
-      case "all":
-        //tempOrders = [...fetchedrders];
-        break;
-      case "current":
-        tempOrders = tempOrders.filter(order => order.status === "current");
-        break;
-      case "archived":
-        tempOrders = tempOrders.filter(order => order.status === "archived");
-        break;
-
-      default:
-        break;
-    }
-
-    setOrders(tempOrders);
-    return tempOrders;
-  };
-
   const handleFromDateChange = (input) => {
-    
-    
     const date = input.format("YYYY-MM-DDTHH:mm")
     setFromDate(date)
-    
   }
 
   
 
-  const handleToDateChange = (e) => {
-    setToDate(e.target.value)
+  const handleToDateChange = (input) => {
+    const date = input.format("YYYY-MM-DDTHH:mm")
+    setToDate(date)
   }
 
   const handleChangeNameFilter = (e) => {
     setNameFilter(e.target.value.trim());
   };
 
-  const handleChangeStatusFilter = e => {
-    const status = e.target.value;
-    setStatusFilter(status);
-    applyStatusFilter(status);
-  };
 
   const handleRefresh = () => {
-    fetchOrders() 
+    setToDate(moment().format("YYYY-MM-DDTHH:mm"))
   }
 
   const handleSetRowsPerPage = (e) => {
@@ -294,8 +240,8 @@ const AdminOrders = () => {
     setPage(page+1)
   }
 
-  const rowsPerPageOrNo = page === parseInt(orders.length / rowsPerPage) ? (orders.length % rowsPerPage) : rowsPerPage
-  const oneOrZero = orders.length ? 1 : 0
+  // const rowsPerPageOrNo = page === parseInt(orders.length / rowsPerPage) ? (orders.length % rowsPerPage) : rowsPerPage
+  // const oneOrZero = orders.length ? 1 : 0
 
   return (
     <Grid container direction="column" alignItems="center">
@@ -317,9 +263,10 @@ const AdminOrders = () => {
           >
             <MuiPickersUtilsProvider utils={MomentUtils}>
               <DateTimePicker
+                style={{marginRight: '1rem'}}
                 cancelLabel={'Anuluj'}
                 ampm={false}
-                allowKeyboardControl={false}
+                //allowKeyboardControl={false}
                 label="Data od"
                 value={fromDate}
                 onChange={handleFromDateChange}
@@ -336,14 +283,27 @@ const AdminOrders = () => {
                   ),
                 }}
               />
+              <DateTimePicker
+                style={{marginRight: '1rem'}}
+                cancelLabel={'Anuluj'}
+                ampm={false}
+                label="Data do"
+                value={toDate}
+                onChange={handleToDateChange}
+                disableFuture
+                format="YYYY-MM-DD HH:mm"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton>
+                        <EventIcon/>
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
             </MuiPickersUtilsProvider>
            
-            <TextField         
-              type="datetime-local"
-              label="Data do"
-              value={toDate}
-              onChange={handleToDateChange}
-            />
             <TextField
               value={nameFilter}
               onChange={handleChangeNameFilter}
@@ -380,13 +340,13 @@ const AdminOrders = () => {
             handleNextPageButtonClick={handleNextPageButtonClick}
           />
         </Toolbar>
-        {orders.length > 0 && (
+        {orders.length > 0 ? (
           <List style={{ border: "1px solid grey" }} alignItems="flex-start">
             {orders.map(order => {
               return ( <OrderListItem order={order} />);
             })}
           </List>
-        )}
+        ) : (<Typography>Brak zamówień!</Typography>)}
       </Grid>
     </Grid>
   );

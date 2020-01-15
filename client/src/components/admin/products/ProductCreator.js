@@ -29,7 +29,7 @@ import ItemsModal from './ItemsModal'
 
 import {asyncForEach} from '../../../utils/methods'
 import {categoryLabelsSpecifed} from '../../../utils/labels'
-import {itemsPath} from '../../../utils/paths'
+import {itemsPath, productsPath} from '../../../utils/paths'
 
 import { createProduct, updateProduct, uploadProductImage } from "../../../store/adminActions/productActions";
 import { getItemModels } from "../../../store/adminActions/itemActions";
@@ -303,7 +303,7 @@ class ProductCreator extends Component {
       category: product.category ? (product.category) : (Object.keys(categoryLabelsSpecifed)[0]),
       price: product.price,
       awards: product.awards,
-      iconView: product.imgSrc ? ('/images/products/' + product.imgSrc) : null,
+      iconView: product.imgSrc ? (productsPath + product.imgSrc) : null,
       //items: items
     }, () => {
       this.setState({

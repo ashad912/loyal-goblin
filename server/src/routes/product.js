@@ -176,22 +176,24 @@ router.get('/orders', auth, async (req,res) => {
       createdAt: 1,
     })
 
-    await User.populate(orders, {
-      path: 'leader',
-      select: '_id name'
-    })
+  await User.populate(orders, {
+    path: 'leader',
+    select: '_id name'
+  })
 
   const countedRecords = await ArchiveOrder.find(
-      {$and: [
-        {leader: {$in: usersIds}},
-        {createdAt: {
-          $gte: new Date(fromDate),
-          $lt: new Date(toDate)
-        }}
-      ]}, {_id: 1}).countDocuments()
+    {$and: [
+      {leader: {$in: usersIds}},
+      {createdAt: {
+        $gte: new Date(fromDate),
+        $lt: new Date(toDate)
+      }}
+    ]},
+    {_id: 1}
+  ).countDocuments()
 
 
-    res.send({orders, countedRecords})
+  res.send({orders, countedRecords})
 
   }catch(e){
     console.log(e.message)

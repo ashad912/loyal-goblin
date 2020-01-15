@@ -1,9 +1,10 @@
 import React from 'react'
+import Typography from "@material-ui/core/Typography";
 
 const AdminReservations = () => {
   return (
     <div>
-      <p>Rezerwacje w budowie!</p>
+      <Typography>Rezerwacje w budowie!</Typography>
     </div>
   )
 }

@@ -8,6 +8,7 @@ import Avatar from '@material-ui/core/Avatar';
 import { Badge } from '@material-ui/core';
 import styled from 'styled-components'
 import moment from 'moment'
+import { ralliesPath } from '../../../utils/paths';
 
 
 const StyledCard = styled(Card)`
@@ -155,7 +156,7 @@ class Rally extends Component {
                                     horizontal: 'right',
                                 }}
                             >
-                                <Avatar style={{height: height, width: width, }} alt="avatar" src={`/images/rallies/${rally.avatar}`} />
+                                <Avatar style={{height: height, width: width, }} alt="avatar" src={`${ralliesPath}${rally.avatar}`} />
                             </Badge>
                             <Typography variant="h5">
                                 {rally.title}

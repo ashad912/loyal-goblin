@@ -47,14 +47,17 @@ const VerificationPage = props => {
       <AwardsContainer maxWidth="xs">
         <StyledPaper>
           <Typography variant="h5" style={{marginBottom: '1rem'}}>Misja ukończona!</Typography>
+          <Typography style={{marginBottom: '0.5rem'}}>Zdobyte doświadczenie:</Typography>
+          <Typography variant='h6' style={{fontWeight: 'bold', marginBottom: '0.5rem'}}>+{props.missionExperience} PD</Typography>
           <Typography>Zdobyte przedmioty:</Typography>
-          <List component="nav" style={{ width: "100%" }}>
+          <List component="nav" style={{ width: "100%", marginBottom: '1rem' }}>
             {missionAwards.map(award => {
               return (
                 <AwardListItem key={award.itemModel._id} item={award} />
               );
             })}
           </List>
+          
           <Button 
             style={{ justifyContent: 'center', marginTop: '1.5rem'}}
             variant="contained"

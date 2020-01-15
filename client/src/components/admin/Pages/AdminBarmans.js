@@ -94,7 +94,7 @@ const AdminBarmans = () => {
         case "confirmPassword":
           errors.confirmPassword = null;
           if (value !== password) {
-            errors.confirmPassword = "Potwórzone hasło jest nieprawidłowe";
+            errors.confirmPassword = "Powtórzone hasło jest nieprawidłowe";
           }
           break;
 

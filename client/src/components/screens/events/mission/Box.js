@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { Paper } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import {createAvatarPlaceholder} from '../../../../utils/methods'
-import {itemsPath} from '../../../../utils/paths'
+import {itemsPath, usersPath} from '../../../../utils/paths'
 
 
 
@@ -107,7 +107,7 @@ const Box = (props) => {
           <Grid item xs={3}>
             {props.boxname === "userItems" ? (
               <React.Fragment>
-                {props.boxIcon ? <Avatar style={{height: 70, width: 70}} alt="avatar" src={'/images/user_uploads/'+ props.boxIcon} /> : <Avatar style={{height: 70, width: 70, fontSize: '2.5rem'}}>{createAvatarPlaceholder(props.userName)}</Avatar>}
+                {props.boxIcon ? <Avatar style={{height: 70, width: 70}} alt="avatar" src={usersPath + props.boxIcon} /> : <Avatar style={{height: 70, width: 70, fontSize: '2.5rem'}}>{createAvatarPlaceholder(props.userName)}</Avatar>}
               </React.Fragment>
             ) : (
               <Avatar style={{height: 70, width: 70}} alt="avatar" src={props.boxIcon} />

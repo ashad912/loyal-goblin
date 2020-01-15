@@ -41,7 +41,7 @@ import {
 } from "../../store/actions/profileActions";
 import { updateParty, removeMember } from "../../store/actions/partyActions";
 import {createAvatarPlaceholder} from "../../utils/methods";
-import {appearancePath} from '../../utils/paths'
+import {appearancePath, usersPath} from '../../utils/paths'
 import { socket } from "../../socket";
 
 import * as socketFuncs from "../../socket";
@@ -814,7 +814,7 @@ const Profile = props => {
               <ListItemAvatar>
                 {props.party.leader.avatar ? (
                   <img
-                    src={"/images/user_uploads/" + props.party.leader.avatar}
+                    src={usersPath + props.party.leader.avatar}
                     width="32"
                   />
                 ) : (
@@ -834,7 +834,7 @@ const Profile = props => {
                   <ListItemAvatar>
                     {partyMember.avatar ? (
                       <img
-                        src={"/images/user_uploads/" + partyMember.avatar}
+                        src={usersPath + partyMember.avatar}
                         width="32"
                       />
                     ) : (
