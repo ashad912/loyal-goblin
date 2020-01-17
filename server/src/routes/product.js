@@ -437,6 +437,9 @@ router.get("/shop", auth, async (req, res) => {
     if(user.party && !user.party.inShop){
       user.party.inShop = true
       await user.party.save()
+
+      //TO CHECK
+      //await Party.updateOne({_id: user.party._id}, {$set: {inShop: true}})
     }
 
     res.send({
@@ -457,6 +460,8 @@ router.patch("/leave", auth, async (req, res) => {
       await user.populate({path: "party"}).execPopulate()
       user.party.inShop = false
       await user.party.save()
+      //TO CHECK
+      //await Party.updateOne({_id: user.party._id}, {$set: {inShop: false}})
       res.send(user.party._id)
     }else{
       res.sendStatus(200)

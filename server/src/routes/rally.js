@@ -5,7 +5,7 @@ import { Rally } from '../models/rally';
 import { User } from '../models/user'
 import { auth } from '../middleware/auth';
 import { Item } from '../models/item';
-import { asyncForEach, designateUserPerks, removeImage, saveImage } from '../utils/methods'
+import { asyncForEach, designateUserPerks, designateExperienceMods, removeImage, saveImage } from '../utils/methods'
 
 
 const uploadPath = "../client/public/images/rallies/"
@@ -19,7 +19,8 @@ var rallyFinishTask
 var rallyTestTask
 
 //OK
-const addAwards = async (user, awardsLevels, prevNewRallyAwards) => {
+const addAwards = async (user, awardsLevels, rallyNotifications) => {
+    const prevNewRallyAwards = rallyNotifications.awards
     let items = []
     let newRallyAwards = []
     if(prevNewRallyAwards && prevNewRallyAwards.length){
@@ -84,18 +85,20 @@ const finishRally = async (rally) => {
             const index = user.userRallies.findIndex((activeRally) => activeRally._id.toString() === rally._id.toString())
 
             if((user.userRallies.length) && (index >= 0) && (rallyUser.experience > 0)){ 
-                const data = await addAwards(rallyUser, rally.awardsLevels, user.newRallyAwards)
+                const data = await addAwards(rallyUser, rally.awardsLevels, user.rallyNotifications)
                 const items = data.items
                 const newRallyAwards = data.newRallyAwards
+
+                const modRallyExp = designateExperienceMods(user.userPerks.rawExperience, rally.experience)
                 
                 await User.updateOne(
                     {_id: user._id},
-                    { $addToSet: { bag: { $each: items } }, $set: {newRallyAwards: newRallyAwards}, $inc: {experience: rally.experience} }
+                    { $addToSet: { bag: { $each: items } }, $set: {'rallyNotifications.isNew': true, 'rallyNotifications.awards': newRallyAwards}, $inc: {experience: modRallyExp, 'rallyNotifications.experience': modRallyExp}}
                 )
                 
             }
         }catch(e){
-            console.log('Problem with user population!')
+            console.log(e.message)
         }
            
             

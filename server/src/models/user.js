@@ -221,7 +221,18 @@ export const UserSchema = new mongoose.Schema({
         }]
 
     },
-    newRallyAwards: [ClassAwardsSchema],
+    rallyNotifications: {
+        isNew: {
+            type: Boolean, 
+            default: false,
+        },
+        experience: {
+            type: Number,
+            default: 0
+        },
+        awards: [ClassAwardsSchema],
+    },
+    
     perksUpdatedAt: Date,
     userPerks: {
         attrStrength: {

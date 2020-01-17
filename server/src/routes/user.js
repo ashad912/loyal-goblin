@@ -10,6 +10,7 @@ import { User } from "../models/user";
 import { Party } from "../models/party";
 import { Item } from "../models/item";
 import { ItemModel } from "../models/itemModel";
+import { MissionInstance } from "../models/missionInstance";
 import { auth } from "../middleware/auth";
 import {
   asyncForEach,
@@ -541,18 +542,45 @@ router.get("/myItems", auth, async (req, res) => {
 });
 
 router.patch("/myItems/equip", auth, async (req, res) => {
-
-  let user = req.user;
-  if(req.body.memberId){
-    user = await User.findById(req.body.memberId)
-  }
-  console.log(user)
-  const itemId = req.body.id;
-  const category = req.body.category;
-
-  const equipped = req.body.equipped;
-  
   try {
+
+    let user = req.user;
+
+    const missionInstance = await MissionInstance.findOne(
+      {party: {$elemMatch: {profile: user._id}}}    
+    )
+
+    if(missionInstance){
+      throw new Error('Cannot equip item during mission!')
+    }
+
+    // await user.populate({
+    //   path: 'party'
+    // }).execPopulate()
+
+    // //TO CHECK
+    // if(user.party && user.party.leader.toString() !== user._id.toString){ //if party leader
+    //   if(req.body.memberId && req.body.memberId.toString() != user._id.toString()){ //only if leader equips another members
+    //     const party = await Party.findOne({_id: user.party, inShop: true})
+    //     if(party){
+    //       throw new Error('Cannot equip item during shopping!')
+    //     }
+    //   }
+    // }
+    
+
+
+    
+    if(req.body.memberId){
+      user = await User.findById(req.body.memberId)
+    }
+    console.log(user)
+    const itemId = req.body.id;
+    const category = req.body.category;
+
+    const equipped = req.body.equipped;
+  
+  
     const itemToEquip = user.bag.find(item => {
       return item.toString() === itemId;
     });
@@ -604,7 +632,7 @@ router.patch("/clearAwards", auth, async (req, res) => {
   let user = req.user;
 
   try {
-    user.newRallyAwards = [];
+    user.rallyNotifications = {isNew: false, experience: 0, awards: []};
     await user.save();
     user = await userPopulateBag(user);
     res.send(user);

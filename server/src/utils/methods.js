@@ -360,18 +360,35 @@ export const isNeedToPerksUpdate = user => {
   }
 };
 
+export const designateExperienceMods = (rawExpMods, baseExp) => {
+  let modExp = baseExp
+  const absoluteMod = parseFloat(rawExpMods.absolute)
+  const percentMod = parseFloat(rawExpMods.percent)
+  
+  if(absoluteMod > 0.0){
+      modExp += absoluteMod
+  }
+
+  if(percentMod > 0.0){
+      modExp += baseExp * (percentMod/ 100.0)
+  }
+  
+  return parseInt(modExp)
+}
+
 export const userPopulateBag = async user => {
   await user
     .populate({
       path: "bag",
-      populate: { path: "itemModel" }
+      populate: { path: "itemModel", select: '_id description imgSrc name perks type' }
     })
     .execPopulate();
 
-  if (user.newRallyAwards && user.newRallyAwards.length) {
+  if (user.rallyNotifications.awards && user.rallyNotifications.awards.length) {
     await user
       .populate({
-        path: "newRallyAwards.itemModel"
+        path: "rallyNotifications.awards.itemModel",
+        select: '_id description imgSrc name perks'
       })
       .execPopulate();
   }
