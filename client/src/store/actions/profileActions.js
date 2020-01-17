@@ -1,8 +1,5 @@
 import axios from 'axios'
 
-export const refreshProfile = () => {
-    
-}
 
 
 export const getRankedUsers = () => {

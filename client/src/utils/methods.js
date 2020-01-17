@@ -23,7 +23,7 @@ export const designateUserLevel = (points) => {
 
 export const createAvatarPlaceholder = (name) => {
 
-  if (!name.length) return ''
+  if (!name || !name.length) return ''
 
   
   if (!(/\s/.test(name))) {

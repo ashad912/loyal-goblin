@@ -615,7 +615,7 @@ const Profile = props => {
     props.onRemoveMember(props.party._id, props.auth.uid);
   };
 
-
+  
   return (
     <Grid
       container
@@ -933,7 +933,7 @@ const Profile = props => {
       />
 
       <NewRallyAwardsDialog
-        open={props.auth.profile.newRallyAwards.length > 0}
+        open={props.auth.profile.rallyNotifications.isNew}
         clearRallyAwards={() => props.clearRallyAwards()}
         profile={props.auth.profile}
       />

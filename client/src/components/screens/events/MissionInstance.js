@@ -385,7 +385,13 @@ class MissionInstance extends React.Component {
         return(
             <div style={{display: 'flex', flexDirection: 'column', alignContent: 'center', fontFamily: '"Roboto", sans-serif', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`}}>
             {this.state.showVerificationPage ? (
-                <VerificationPage missionExperience={this.state.missionObject.experience} missionAwards={this.state.missionAwards} userClass={this.props.auth.profile.class} authCheck={() => this.props.authCheck()}/>
+                <VerificationPage 
+                    missionExperience={this.state.missionObject.experience} 
+                    missionAwards={this.state.missionAwards} 
+                    userPerks={this.props.auth.profile.userPerks}
+                    userClass={this.props.auth.profile.class} 
+                    authCheck={() => this.props.authCheck()}
+                />
             ) : (
                 <React.Fragment>
                     

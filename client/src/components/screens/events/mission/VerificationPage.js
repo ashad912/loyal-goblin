@@ -31,6 +31,22 @@ const VerificationPage = props => {
     }
   })
 
+  const designateExperienceMods = (rawExpMods, baseExp) => {
+    let modExp = baseExp
+    const absoluteMod = parseFloat(rawExpMods.absolute)
+    const percentMod = parseFloat(rawExpMods.percent)
+    
+    if(absoluteMod > 0.0){
+        modExp += absoluteMod
+    }
+  
+    if(percentMod > 0.0){
+        modExp += baseExp * (percentMod/ 100.0)
+    }
+    
+    return parseInt(modExp)
+  }
+
   const handleBackToMainScreen = async () => {
     await props.authCheck()
     setBackToMainScreen(true)
@@ -47,19 +63,28 @@ const VerificationPage = props => {
       <AwardsContainer maxWidth="xs">
         <StyledPaper>
           <Typography variant="h5" style={{marginBottom: '1rem'}}>Misja ukończona!</Typography>
-          <Typography style={{marginBottom: '0.5rem'}}>Zdobyte doświadczenie:</Typography>
-          <Typography variant='h6' style={{fontWeight: 'bold', marginBottom: '0.5rem'}}>+{props.missionExperience} PD</Typography>
-          <Typography>Zdobyte przedmioty:</Typography>
-          <List component="nav" style={{ width: "100%", marginBottom: '1rem' }}>
-            {missionAwards.map(award => {
-              return (
-                <AwardListItem key={award.itemModel._id} item={award} />
-              );
-            })}
-          </List>
+
+          {props.missionExperience > 0 &&
+            <React.Fragment>
+              <Typography style={{marginBottom: '0.5rem'}}>Zdobyte doświadczenie:</Typography>
+              <Typography variant='h6' style={{fontWeight: 'bold', marginBottom: '0.5rem'}}>+{designateExperienceMods(props.userPerks.rawExperience, props.missionExperience)} PD</Typography>
+            </React.Fragment>  
+          }
+          {missionAwards.length > 0 &&
+            <React.Fragment>
+              <Typography style={{marginBottom: '0.5rem'}}>Zdobyte przedmioty:</Typography>
+              <List component="nav" style={{ width: "100%", marginBottom: '1rem' }}>
+                {missionAwards.map(award => {
+                  return (
+                    <AwardListItem key={award.itemModel._id} item={award} />
+                  );
+                })}
+              </List>
+            </React.Fragment>
+          }
           
           <Button 
-            style={{ justifyContent: 'center', marginTop: '1.5rem'}}
+            style={{ justifyContent: 'center', marginTop: '1rem'}}
             variant="contained"
             fullWidth
             onClick={handleBackToMainScreen} 
