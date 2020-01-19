@@ -484,32 +484,7 @@ router.delete("/me/avatar", auth, async (req, res) => {
   }
 });
 
-router.patch("/addUserItem", auth, async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id);
 
-    user.bag = [...user.bag, req.body.item];
-
-    await user.save();
-    res.send();
-  } catch (e) {
-    console.log(e.message);
-    res.status(400).send();
-  }
-});
-
-router.delete("/deleteUserItem", auth, async (req, res) => {
-  try {
-    const item = await Item.findById({ _id: req.body.id });
-    await item.remove();
-    let user = await User.findById({ _id: req.user._id });
-    user = await userPopulateBag(user);
-    res.status(200).send(user);
-  } catch (error) {
-    console.log(error);
-    res.status(403).send(error);
-  }
-});
 
 // router.patch("/deleteUserItem", auth, async (req, res) => {
 //   try {
@@ -568,6 +543,8 @@ router.patch("/myItems/equip", auth, async (req, res) => {
     //   }
     // }
     
+    //- member item toggle (must be scroll)
+    //- refactor to /mate/equip OR /member/equip
 
 
     
@@ -627,17 +604,75 @@ router.patch("/myItems/equip", auth, async (req, res) => {
   }
 });
 
+router.delete("/deleteUserItem", auth, async (req, res) => {
+  try {
+    const item = await Item.findById({ _id: req.body.id });
+    await item.remove();
+    let user = await User.findById({ _id: req.user._id });
+    user = await userPopulateBag(user);
+    res.status(200).send(user);
+  } catch (error) {
+    console.log(error);
+    res.status(403).send(error);
+  }
+});
+
+router.patch('/confirmLevel', auth, async(req, res) => {
+  let user = req.user
+  let pointType = req.body.pointType
+
+  try{
+    if(user.levelNotifications <= 0){
+      throw new Error('Operation forbidden!')
+    }
+
+    if(!pointType){
+      throw new Error('No point type field!')
+    }
+
+    switch(pointType){
+      case 'strength':
+        user.attributes.strength += 1
+        break
+      case 'dexterity':
+        user.attributes.dexterity += 1
+        break
+      case 'magic':
+        user.attributes.magic += 1
+        break 
+      case 'endurance':
+        user.attributes.endurance += 1
+        break
+      default:
+        throw new Error('Invalid point type field!')
+    }
+
+    user.levelNotifications -= 1
+  
+    await user.save()
+    user = await userPopulateBag(user)
+    res.send(user)
+  }catch(e){
+    console.log(e.message)
+    res.status(400).send(e.message);
+  }
+})
+
 //OK
 router.patch("/clearAwards", auth, async (req, res) => {
   let user = req.user;
 
   try {
+    if(!user.rallyNotifications.isNew){
+      throw new Error('Operation forbidden!')
+    }
+    
     user.rallyNotifications = {isNew: false, experience: 0, awards: []};
     await user.save();
     user = await userPopulateBag(user);
     res.send(user);
   } catch (e) {
-    res.status(500).send(e.message);
+    res.status(400).send(e.message);
   }
 });
 
@@ -775,6 +810,25 @@ router.get('/users', auth, async(req, res) => {
   }
   
 })
+
+
+///TESTS
+
+router.patch("/addUserItem", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    user.bag = [...user.bag, req.body.item];
+
+    await user.save();
+    res.send();
+  } catch (e) {
+    console.log(e.message);
+    res.status(400).send();
+  }
+});
+
+
 
 
 router.patch("/testUpdateUser", auth, async (req, res) => {

@@ -30,7 +30,7 @@ import characterClasses from "../../../assets/categories/characterClasses";
 import convertItemModelsToCategories from "../utils/itemModelsToCategories";
 
 
-import { itemsPath, missionsPath, ralliesPath } from "../../../utils/paths";
+import { itemsPath, missionsPath, ralliesPath } from "../../../utils/definitions";
 import {createEvent, updateEvent, uploadEventIcon, getRallies} from '../../../store/adminActions/eventActions'
 
 

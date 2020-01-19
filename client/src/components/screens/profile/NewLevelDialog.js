@@ -14,18 +14,9 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 
-const useStyles = makeStyles(theme => ({
-  wrapper: {
-    flexGrow: 1
-  },
-  attribute: props => ({
-    background: props.selected ? "blue" : "",
-    color: props.selected ? "white" : ""
-  })
-}));
+
 
 const NewLevelDialog = props => {
-  const classes = useStyles();
 
   const [value, setValue] = React.useState('');
 
@@ -36,7 +27,8 @@ const NewLevelDialog = props => {
 
 
   const handleClose = () => {
-    props.handleAddAndClose(value)
+    props.confirmLevel(value)
+    setValue('')
   }
 
   return (
@@ -44,16 +36,16 @@ const NewLevelDialog = props => {
       <DialogTitle>Nowy poziom!</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Gratulacje nabicia {props.newLevel} levela, ziomeczku.
+          Osiągnąłeś poziom {(props.userLevel - props.levelNotifications)+1}!
         </DialogContentText>
 
         <FormControl component="fieldset" >
         <FormLabel component="legend">Teraz czas wybrać, który atrybut rozwijasz:</FormLabel>
         <RadioGroup  name="attribute-choice" value={value} onChange={handleChange}>
-          <FormControlLabel value="str" control={<Radio />} label="Siła" />
-          <FormControlLabel value="dex" control={<Radio />} label="Zręczność" />
-          <FormControlLabel value="mag" control={<Radio />} label="Magia" />
-          <FormControlLabel value="end" control={<Radio />} label="Wytrzymałość" />
+          <FormControlLabel value="strength" control={<Radio />} label="Siła" />
+          <FormControlLabel value="dexterity" control={<Radio />} label="Zręczność" />
+          <FormControlLabel value="magic" control={<Radio />} label="Magia" />
+          <FormControlLabel value="endurance" control={<Radio />} label="Wytrzymałość" />
         </RadioGroup>
       </FormControl>
       </DialogContent>

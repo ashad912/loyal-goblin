@@ -977,14 +977,6 @@ const Events = (props) => {
                 />
             }    
 
-
-           
-            
-                    
-                
-            
-            
-
         </React.Fragment>
       
     )

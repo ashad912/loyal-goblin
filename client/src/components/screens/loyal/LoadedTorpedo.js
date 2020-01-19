@@ -5,7 +5,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Button from "@material-ui/core/Button";
 import styled from 'styled-components'
-import {itemsPath} from '../../../utils/paths'
+import {itemsPath} from '../../../utils/definitions'
 
 const StyledListItem = styled(ListItem)`
     marginBottom: 0.2rem;

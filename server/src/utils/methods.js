@@ -360,7 +360,12 @@ export const isNeedToPerksUpdate = user => {
   }
 };
 
-export const designateExperienceMods = (rawExpMods, baseExp) => {
+export const designateNewLevels = (baseExp, newExp) => {
+  const levelsData = designateUserLevel(baseExp, newExp)
+  return levelsData.newLevel - levelsData.oldLevel
+}
+
+export const designateExperienceMods = (baseExp, rawExpMods) => {
   let modExp = baseExp
   const absoluteMod = parseFloat(rawExpMods.absolute)
   const percentMod = parseFloat(rawExpMods.percent)
@@ -395,21 +400,31 @@ export const userPopulateBag = async user => {
   return user; //CONSIDER: return user.bag -> props: const user declaration
 };
 
-export const designateUserLevel = points => {
+export const designateUserLevel = (points, addPoints) => {
   const a = levelingEquation.a;
   const b = levelingEquation.b;
   const pow = levelingEquation.pow;
 
   let previousThreshold = 0;
-  for (let i = 1; i <= 100; i++) {
+  let oldLevel;
+  for (let i = 1; i <= 1000; i++) {
     const bottomThreshold = previousThreshold;
     const topThreshold = previousThreshold + (a * i ** pow + b);
 
     if (points >= bottomThreshold && points < topThreshold) {
-      return i;
+      if(!addPoints){
+        return i
+      }
+      oldLevel = i
+    }
+
+    if(addPoints && points + addPoints >= bottomThreshold && points + addPoints < topThreshold){
+      return {oldLevel, newLevel: i}
     }
     previousThreshold = topThreshold;
   }
+
+  return 1000
 };
 
 export const validateInMissionInstanceStatus = (userId, newStatus, secondNewStatus) => {

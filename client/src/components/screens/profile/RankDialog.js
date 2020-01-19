@@ -19,7 +19,7 @@ import {designateUserLevel} from '../../../utils/methods'
 import { getRankedUsers } from "../../../store/actions/profileActions";
 
 import {createAvatarPlaceholder} from "../../../utils/methods";
-import {usersPath} from '../../../utils/paths'
+import {usersPath} from '../../../utils/definitions'
 
 const RankDialog = props => {
   

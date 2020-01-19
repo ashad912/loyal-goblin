@@ -20,7 +20,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { cancelOrder, leaveShop } from "../../../store/actions/shopActions";
-import {itemsPath, usersPath} from '../../../utils/paths'
+import {itemsPath, usersPath} from '../../../utils/definitions'
 import {createAvatarPlaceholder} from '../../../utils/methods'
 
 //Info z backendu

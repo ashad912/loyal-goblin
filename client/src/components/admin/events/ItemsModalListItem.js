@@ -13,7 +13,7 @@ import Divider from "@material-ui/core/Divider";
 
 import classThemes from "../../../assets/themes/classThemes";
 
-import { itemsPath } from "../../../utils/paths";
+import { itemsPath } from "../../../utils/definitions";
 import ItemsModalListItemPerks from "../common/ItemsModalListItemPerks";
 
 const ItemsModalListItem = props => {

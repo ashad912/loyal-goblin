@@ -11,7 +11,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import Divider from "@material-ui/core/Divider";
 
-import {itemsPath} from '../../../utils/paths'
+import {itemsPath} from '../../../utils/definitions'
 
 import classThemes from "../../../assets/themes/classThemes";
 import ItemsModalListItemPerks from "../common/ItemsModalListItemPerks";

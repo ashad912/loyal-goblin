@@ -24,7 +24,7 @@ import { Link } from '@material-ui/core';
 import {updateAvatar} from '../../store/actions/profileActions'
 import {signOut} from '../../store/actions/authActions'
 import ChangePasswordModal from '../auth/ChangePasswordModal';
-import { usersPath } from '../../utils/paths';
+import { usersPath } from '../../utils/definitions';
 
 
 const StyledMenu = styled(Menu)`

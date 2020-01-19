@@ -6,7 +6,7 @@ import { auth } from '../middleware/auth';
 import { MissionInstance } from '../models/missionInstance';
 import { Item } from '../models/item'
 import { ItemModel } from '../models/itemModel'
-import { asyncForEach, designateUserPerks, isNeedToPerksUpdate, designateUserLevel, designateExperienceMods, saveImage, removeImage } from '../utils/methods'
+import { asyncForEach, designateUserPerks, isNeedToPerksUpdate, designateUserLevel, designateExperienceMods, saveImage, removeImage, designateNewLevels } from '../utils/methods'
 
 import isEqual from 'lodash/isEqual'
 import moment from 'moment'
@@ -879,11 +879,12 @@ router.delete('/finishInstance', auth, async (req,res) => {
             if(user.activeMission.length && (user.activeMission[0]._id.toString() === missionInstance._id.toString())){
                 const items = await addAwards(user, missionInstance.mission.awards)
                 
-                const modMissionExp = designateExperienceMods(user.userPerks.rawExperience, missionInstance.mission.experience)
+                const modMissionExp = designateExperienceMods(missionInstance.mission.experience, user.userPerks.rawExperience)
+                const newLevels = designateNewLevels(user.experience, modMissionExp)
                 
                 await User.updateOne(
                     {_id: user._id},
-                    { $addToSet: { bag: { $each: items } }, $inc: {experience: modMissionExp} }
+                    { $addToSet: { bag: { $each: items } }, $inc: {experience: modMissionExp, levelNotifications: newLevels} }
                 )
 
                 // PREVIOUS VERSION

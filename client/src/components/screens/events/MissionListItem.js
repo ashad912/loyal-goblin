@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import styled from 'styled-components'
 import { classLabelsAny } from '../../../utils/labels';
-import {itemsPath, missionsPath} from '../../../utils/paths'
+import {itemsPath, missionsPath} from '../../../utils/definitions'
 
 const ShortDescription = styled(Typography)`
     display: -webkit-box;

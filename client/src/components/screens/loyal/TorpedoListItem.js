@@ -9,7 +9,7 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import {itemsPath} from '../../../utils/paths'
+import {itemsPath} from '../../../utils/definitions'
 const StyledMenu = withStyles({
   paper: {
     border: "1px solid #d3d4d5",

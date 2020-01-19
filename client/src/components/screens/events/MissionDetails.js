@@ -16,7 +16,7 @@ import ExpandMore from "@material-ui/icons/ExpandMore";
 import styled from 'styled-components'
 import AwardListItem from './AwardListItem'
 import { classLabelsAny } from '../../../utils/labels';
-import {itemsPath, missionsPath} from '../../../utils/paths'
+import {itemsPath, missionsPath} from '../../../utils/definitions'
 
 
 

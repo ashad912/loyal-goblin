@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { Paper } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import {createAvatarPlaceholder} from '../../../../utils/methods'
-import {itemsPath, usersPath} from '../../../../utils/paths'
+import {itemsPath, usersPath} from '../../../../utils/definitions'
 
 
 

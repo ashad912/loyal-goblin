@@ -11,7 +11,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import classThemes from "../../../assets/themes/classThemes";
 import "moment/locale/pl";
-import { ralliesPath } from "../../../utils/paths";
+import { ralliesPath } from "../../../utils/definitions";
 
 const pulse = keyframes`
   0% {

@@ -22,6 +22,9 @@ import {
   removeMember,
   giveLeader
 } from "../../../store/actions/partyActions";
+import {
+  setActiveInstanceId
+} from "../../../store/actions/missionActions";
 import QRreaderView from "./QRreaderView";
 import {
   SwipeableList,
@@ -142,6 +145,10 @@ const PartyCreationDialog = props => {
 
   const handlePartyDisband = () => {
     props.onPartyDelete();
+    if(props.activeMission){
+      props.setActiveInstanceId(null)
+    }
+    
     props.handleClose();
   };
 
@@ -278,7 +285,7 @@ const mapStateToProps = state => {
   return {
     auth: state.auth,
     party: state.party,
-    activeMission: state.mission.activeInstanceId
+    //activeMission: state.mission.activeInstanceId
   };
 };
 
@@ -289,7 +296,8 @@ const mapDispatchToProps = dispatch => {
     onAddMember: (partyId, memberId) => dispatch(addMember(partyId, memberId)),
     onRemoveMember: (partyId, memberId) =>
       dispatch(removeMember(partyId, memberId)),
-    onGiveLeader: (partyId, memberId) => dispatch(giveLeader(partyId, memberId))
+    onGiveLeader: (partyId, memberId) => dispatch(giveLeader(partyId, memberId)),
+    setActiveInstanceId: (id) => dispatch(setActiveInstanceId(id))
   };
 };
 

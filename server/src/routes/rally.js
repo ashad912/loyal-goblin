@@ -89,11 +89,12 @@ const finishRally = async (rally) => {
                 const items = data.items
                 const newRallyAwards = data.newRallyAwards
 
-                const modRallyExp = designateExperienceMods(user.userPerks.rawExperience, rally.experience)
+                const modRallyExp = designateExperienceMods(rally.experience, user.userPerks.rawExperience)
+                const newLevels = designateNewLevels(user.experience, modRallyExp)
                 
                 await User.updateOne(
                     {_id: user._id},
-                    { $addToSet: { bag: { $each: items } }, $set: {'rallyNotifications.isNew': true, 'rallyNotifications.awards': newRallyAwards}, $inc: {experience: modRallyExp, 'rallyNotifications.experience': modRallyExp}}
+                    { $addToSet: { bag: { $each: items } }, $set: {'rallyNotifications.isNew': true, 'rallyNotifications.awards': newRallyAwards}, $inc: {experience: modRallyExp, 'rallyNotifications.experience': modRallyExp, levelNotifications: newLevels}}
                 )
                 
             }

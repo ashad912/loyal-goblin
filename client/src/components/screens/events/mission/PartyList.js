@@ -20,7 +20,7 @@ import bagImg from '../../../../assets/avatar/bag.png'
 
 
 import {createAvatarPlaceholder} from '../../../../utils/methods'
-import {itemsPath, usersPath} from '../../../../utils/paths'
+import {itemsPath, usersPath} from '../../../../utils/definitions'
 
 const StyledGrid = styled(Grid)`
     &&{

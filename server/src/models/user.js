@@ -93,7 +93,13 @@ export const UserSchema = new mongoose.Schema({
     },
     experience: {
         type: Number,
-        default: 0
+        default: 0,
+        min: 0,
+        validate(value) {
+            if (!Number.isInteger(value)) {
+                throw new Error(`${value} is not an integer value!`)
+            }
+        },
     },
     bag: {
         type: [{  //for plugin proper work - bag field is required while user is being created
@@ -228,11 +234,26 @@ export const UserSchema = new mongoose.Schema({
         },
         experience: {
             type: Number,
-            default: 0
+            default: 0,
+            min: 0,
+            validate(value) {
+                if (!Number.isInteger(value)) {
+                    throw new Error(`${value} is not an integer value!`)
+                }
+            },
         },
         awards: [ClassAwardsSchema],
     },
-    
+    levelNotifications: {
+        type: Number,
+        default: 0,
+        min: 0,
+        validate(value) {
+            if (!Number.isInteger(value)) {
+                throw new Error(`${value} is not an integer value!`)
+            }
+        },
+    },
     perksUpdatedAt: Date,
     userPerks: {
         attrStrength: {

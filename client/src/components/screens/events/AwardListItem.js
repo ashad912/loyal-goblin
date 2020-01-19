@@ -18,7 +18,7 @@ import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import perkLabels from "../../../assets/categories/perks";
 import Divider from '@material-ui/core/Divider';
 import { dayLabels, categoryLabels } from "../../../utils/labels";
-import {itemsPath} from '../../../utils/paths'
+import {itemsPath} from '../../../utils/definitions'
 
 
 

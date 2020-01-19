@@ -10,7 +10,7 @@ import List from "@material-ui/core/List";
 import ListItemText from "@material-ui/core/ListItemText";
 import Popover from "@material-ui/core/Popover";
 import {categoryLabels} from '../../../utils/labels'
-import {itemsPath, productsPath} from '../../../utils/paths'
+import {itemsPath, productsPath} from '../../../utils/definitions'
 import iconCoins from "../../../assets/shop/coins.png"
 
 

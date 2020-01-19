@@ -1,7 +1,7 @@
 import React from 'react'
 import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
-import {usersPath} from '../../../utils/paths'
+import {usersPath} from '../../../utils/definitions'
 
 const PlayerShopButton = ({id, avatar, name, active, handleClick}) => {
 

@@ -20,7 +20,7 @@ import tempUserAvatar from '../../../assets/avatar/moose.png'
 import styled from 'styled-components'
 import uuid from 'uuid/v1'
 import {createAvatarPlaceholder} from "../../../utils/methods";
-import {itemsPath, usersPath} from '../../../utils/paths'
+import {itemsPath, usersPath} from '../../../utils/definitions'
 
 const Background = styled.div`
     background-color: #3f51b5;

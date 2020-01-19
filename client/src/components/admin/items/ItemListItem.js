@@ -13,7 +13,7 @@ import Collapse from "@material-ui/core/Collapse";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import {itemTypeLabels, classLabels, equippableItems} from '../../../utils/labels'
-import { itemsPath, appearancePath } from "../../../utils/paths";
+import { itemsPath, appearancePath } from "../../../utils/definitions";
 
 
 

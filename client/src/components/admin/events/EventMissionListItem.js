@@ -12,7 +12,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import PeopleIcon from "@material-ui/icons/People";
 import classThemes from "../../../assets/themes/classThemes";
-import { missionsPath } from "../../../utils/paths";
+import { missionsPath } from "../../../utils/definitions";
 
 
 const pulse = keyframes`

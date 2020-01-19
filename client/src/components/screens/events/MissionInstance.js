@@ -12,7 +12,7 @@ import ClearIcon from "@material-ui/icons/Clear";
 import VerificationPage from './mission/VerificationPage'
 import { Typography } from '@material-ui/core';
 
-import {itemsPath, missionsPath} from '../../../utils/paths'
+import {itemsPath, missionsPath} from '../../../utils/definitions'
 
 import { authCheck } from "../../../store/actions/authActions";
 import {togglePresenceInInstance, toggleUserReady, finishInstance} from '../../../store/actions/missionActions'

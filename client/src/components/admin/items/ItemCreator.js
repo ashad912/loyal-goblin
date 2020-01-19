@@ -29,7 +29,7 @@ import MomentUtils from "@date-io/moment";
 
 import PerkModal from "./PerkModal";
 import {asyncForEach} from '../../../utils/methods'
-import { itemsPath, appearancePath } from "../../../utils/paths";
+import { itemsPath, appearancePath } from "../../../utils/definitions";
 import {classLabels, itemTypeLabels, equippableItems} from '../../../utils/labels'
 import {torpedoFields, userClasses, itemModelTypes} from '../../../utils/modelArrays'
 import { createItemModel, updateItemModel, uploadItemModelImages } from "../../../store/adminActions/itemActions";

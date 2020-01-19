@@ -14,7 +14,7 @@ import Typography from "@material-ui/core/Typography";
 import Input from "@material-ui/core/Input";
 import Checkbox from "@material-ui/core/Checkbox";
 
-import { itemsPath } from "../../../utils/paths";
+import { itemsPath } from "../../../utils/definitions";
 
 
 const AmuletsModal = props => {

@@ -6,7 +6,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
-import {itemsPath, productsPath} from '../../../utils/paths'
+import {itemsPath, productsPath} from '../../../utils/definitions'
 const AddIcon = styled(AddCircleIcon)`
   width: 2rem;
   transition: transform 0.2s ease-in-out;

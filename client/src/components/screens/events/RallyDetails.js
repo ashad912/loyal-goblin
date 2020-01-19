@@ -17,7 +17,7 @@ import styled from 'styled-components'
 
 import AwardListItem from './AwardListItem'
 import { classLabelsAny } from '../../../utils/labels';
-import { ralliesPath } from '../../../utils/paths'
+import { ralliesPath } from '../../../utils/definitions'
 
 const Background = styled.div`
     background-color: #3f51b5;

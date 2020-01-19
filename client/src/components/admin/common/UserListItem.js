@@ -10,7 +10,7 @@ import Button from "@material-ui/core/Button";
 
 import {designateUserLevel} from '../utils/methods'
 import {createAvatarPlaceholder} from '../../../utils/methods'
-import { usersPath } from '../../../utils/paths';
+import { usersPath } from '../../../utils/definitions';
 
 const leaderIcon = (
     <Badge

@@ -29,7 +29,7 @@ import ItemsModal from './ItemsModal'
 
 import {asyncForEach} from '../../../utils/methods'
 import {categoryLabelsSpecifed} from '../../../utils/labels'
-import {itemsPath, productsPath} from '../../../utils/paths'
+import {itemsPath, productsPath} from '../../../utils/definitions'
 
 import { createProduct, updateProduct, uploadProductImage } from "../../../store/adminActions/productActions";
 import { getItemModels } from "../../../store/adminActions/itemActions";

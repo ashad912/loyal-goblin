@@ -182,6 +182,7 @@ const Equipment = props => {
         </DialogActions>
       </Dialog>
       {props.leaderInShop && Object.keys(items).length > 0 && <div style={{color: 'white', background: 'rgb(0, 0, 0, 0.6)', position: 'absolute', width: '100%', height: '100%', top: 0}}>Lider ma otwarty sklep. Klikanie przedmiotów niemożliwe.</div>}
+      {props.activeMission && Object.keys(items).length > 0 && <div style={{color: 'white', background: 'rgb(0, 0, 0, 0.6)', position: 'absolute', width: '100%', height: '100%', top: 0}}>Nie można zmieniać ekwipunku w trakcie aktywnej misji.</div>}
     </Paper>
   );
 };

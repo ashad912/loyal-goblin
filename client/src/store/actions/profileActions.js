@@ -1,4 +1,5 @@
 import axios from 'axios'
+import {partyRefreshEmit} from '../../socket'
 
 
 
@@ -77,6 +78,7 @@ export const toggleItem = (id, category, equipped, memberId) => {
             
             if(memberId){
                 dispatch({type: "UPDATE_PARTY", party: res.data})
+                partyRefreshEmit(res.data._id)
             }else{
                 const profile = res.data
                 delete profile._id
@@ -111,6 +113,22 @@ export const clearRallyAwards = () => {
         try {
             console.log('clearUserAwards')
             const res = await axios.patch('/user/clearAwards')
+            const profile = res.data
+            
+            delete profile._id
+            dispatch({type: 'UPDATE_PROFILE_DATA', profile})
+            
+        }catch (e) {
+            dispatch( {type: "NO_CONNECTION", error: e})      
+        } 
+    }
+}
+
+export const confirmLevel = (pointType) => {
+    return async dispatch => {
+        try {
+            console.log('confirmLevel' + pointType)
+            const res = await axios.patch('/user/confirmLevel', {pointType})
             const profile = res.data
             
             delete profile._id

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import {socket, joinRoomEmit, leaveRoomEmit, partyRefreshEmit, deleteRoomEmit, instanceRefreshEmit} from '../../socket'
+import { setActiveInstanceId } from './missionActions'
 
 
 export const updateParty = (params) => {
@@ -62,7 +63,9 @@ export const deleteParty =  () => {
             const res = await axios.delete('/party/remove')
             
             dispatch({type: "DELETE_PARTY"})
+            instanceRefreshEmit(res.data._id)
             deleteRoomEmit(res.data._id)
+            
 
             if(socket.connected){
                 socket.disconnect()

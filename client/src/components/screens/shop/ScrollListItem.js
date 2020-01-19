@@ -15,7 +15,7 @@ import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import perkLabels from "../../../assets/categories/perks";
 import { dayLabels, categoryLabels } from "../../../utils/labels";
-import {itemsPath} from '../../../utils/paths'
+import {itemsPath} from '../../../utils/definitions'
 
 const StyledMenu = withStyles({
   paper: {

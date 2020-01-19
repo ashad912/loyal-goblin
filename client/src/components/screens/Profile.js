@@ -37,11 +37,12 @@ import NewRallyAwardsDialog from "./profile/NewRallyAwardsDialog";
 import {
   toggleItem,
   deleteItem,
-  clearRallyAwards
+  clearRallyAwards,
+  confirmLevel
 } from "../../store/actions/profileActions";
 import { updateParty, removeMember } from "../../store/actions/partyActions";
-import {createAvatarPlaceholder} from "../../utils/methods";
-import {appearancePath, usersPath} from '../../utils/paths'
+import {createAvatarPlaceholder, designateUserLevel} from "../../utils/methods";
+import {appearancePath, usersPath} from '../../utils/definitions'
 import { socket } from "../../socket";
 
 import * as socketFuncs from "../../socket";
@@ -383,7 +384,9 @@ const Profile = props => {
   const [activePerks, setActivePerks] = React.useState([]);
 
   const [goExp, setGoExp] = React.useState(false);
-  const [newLevelDialogOpen, setNewLevelDialogOpen] = React.useState(false);
+  const [userLevel, setUserLevel] = React.useState(1);
+  const [relativeExp, setRelativeExp] = React.useState(0)
+  const [relativeThreshold, setRelativeThreshold] = React.useState(0)
   const [isJoiningParty, setIsJoiningParty] = React.useState(false);
   const [isCreatingParty, setIsCreatingParty] = React.useState(false);
   const [showRankDialog, setShowRankDialog] = React.useState(false);
@@ -394,6 +397,13 @@ const Profile = props => {
     handleJoinOrCreateParty();
     props.onPartyUpdate();
   }, []);
+
+  React.useEffect(() => {
+    const levelData = designateUserLevel(props.auth.profile.experience, true)
+    setUserLevel(levelData.level)
+    setRelativeExp(levelData.relativeExp)
+    setRelativeThreshold(levelData.relativeThreshold)
+  }, [props.auth.profile.experience])
 
   const updateEquippedItems = () => {
     const equipment = {
@@ -587,12 +597,12 @@ const Profile = props => {
   //   return player;
   // };
 
-  const handleNewLevelDialogClose = attribute => {
-    setNewLevelDialogOpen(false);
-    const attributes = { ...props.auth.profile.attributes };
-    attributes[attribute]++;
+  //const handleNewLevelDialogClose = attribute => {
+    //setNewLevelDialogOpen(false);
+    // const attributes = { ...props.auth.profile.attributes };
+    // attributes[attribute]++;
     //TODO: backend add attribute point
-  };
+  //};
 
   // const handleGoExp = () => {
   //   console.log(props.location.push('shop'));
@@ -626,16 +636,16 @@ const Profile = props => {
       spacing={2}
     >
       {/* TODO: add user level */}
-      <Typography variant="h5">Poziom {0}</Typography>
+      <Typography variant="h5">Poziom {userLevel}</Typography>
       {/* TODO: add experience needed for next level */}
       <Typography variant="subtitle2">
         Doświadczenie:{" "}
-        {props.auth.profile.experience + " / " + props.auth.profile.experience}
+        {relativeExp + " / " + relativeThreshold}
       </Typography>
       <LinearProgress
         variant="determinate"
         value={
-          (props.auth.profile.experience * 100) / props.auth.profile.experience
+          (relativeExp * 100) / relativeThreshold
         }
         className={classes.expBar}
       />
@@ -774,7 +784,8 @@ const Profile = props => {
         }
         handleItemToggle={handleItemToggle}
         handleItemDelete={handleItemDelete}
-        leaderInShop={props.party && props.party._id && props.party.inShop/*(props.party && props.party.leader && (props.party.leader._id !== props.auth.uid || props.party.leader !== props.auth.uid) && props.party.inShop ) || !props.party.leader && !props.party.members.length*/}
+        leaderInShop={props.party && props.party._id && props.party.inShop}
+        activeMission={props.mission.activeInstanceId}
       />
       <Typography variant="h5" className={classes.eqHeading}></Typography>
       {props.party && props.party.leader && props.party.leader._id && (
@@ -897,10 +908,7 @@ const Profile = props => {
         </Grid>
       </Grid>
 
-      <NewLevelDialog
-        open={newLevelDialogOpen}
-        handleAddAndClose={handleNewLevelDialogClose}
-      />
+      
       <PartyJoiningDialog
         open={isJoiningParty}
         userId={props.auth.uid}
@@ -918,6 +926,7 @@ const Profile = props => {
         partyName={props.party && props.party.name}
         handleClose={() => setIsCreatingParty(prev => !prev)}
         handleCreateParty={handleJoinOrCreateParty}
+        activeMission={props.mission.activeInstanceId}
       />
       {showRankDialog && <RankDialog
         open={showRankDialog}
@@ -930,6 +939,13 @@ const Profile = props => {
         open={showStatsDialog}
         profile={props.auth.profile}
         handleClose={() => setShowStatsDialog(prev => !prev)}
+      />
+
+      <NewLevelDialog
+        open={props.auth.profile.levelNotifications > 0 && !props.auth.profile.rallyNotifications.isNew}
+        confirmLevel={(attribute) => props.confirmLevel(attribute)}
+        userLevel={userLevel}
+        levelNotifications={props.auth.profile.levelNotifications}
       />
 
       <NewRallyAwardsDialog
@@ -946,7 +962,8 @@ const Profile = props => {
 const mapStateToProps = state => {
   return {
     auth: state.auth,
-    party: state.party
+    party: state.party,
+    mission: state.mission,
   };
 };
 
@@ -959,6 +976,7 @@ const mapDispatchToProps = dispatch => {
     onRemoveMember: (partyId, memberId) =>
       dispatch(removeMember(partyId, memberId)),
     clearRallyAwards: () => dispatch(clearRallyAwards()),
+    confirmLevel: (attribute) => dispatch(confirmLevel(attribute)),
     onAuthCheck: () => dispatch(authCheck())
   };
 };

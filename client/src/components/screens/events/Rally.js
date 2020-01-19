@@ -8,7 +8,7 @@ import Avatar from '@material-ui/core/Avatar';
 import { Badge } from '@material-ui/core';
 import styled from 'styled-components'
 import moment from 'moment'
-import { ralliesPath } from '../../../utils/paths';
+import { ralliesPath } from '../../../utils/definitions';
 
 
 const StyledCard = styled(Card)`
