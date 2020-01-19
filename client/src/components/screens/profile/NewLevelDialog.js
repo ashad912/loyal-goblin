@@ -36,7 +36,7 @@ const NewLevelDialog = props => {
       <DialogTitle>Nowy poziom!</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Osiągnąłeś poziom {(props.userLevel - props.levelNotifications)+1}!
+          {props.levelNotifications > 0 && `Osiągnąłeś poziom ${(props.userLevel - props.levelNotifications)+1}!`}
         </DialogContentText>
 
         <FormControl component="fieldset" >

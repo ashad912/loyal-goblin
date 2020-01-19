@@ -119,7 +119,7 @@ const StatsDialog = props => {
                 </ListItem>
                 <Divider/>
     
-                {amuletCounters.map((amuletCounter, index) => {
+                {props.profile.statistics.amuletCounters.map((amuletCounter, index) => {
                     return (
                         <React.Fragment key={amuletCounter._id}>
                             <ListItem style={{paddingTop: '0.75rem', paddingBottom: '0.75rem'}}>

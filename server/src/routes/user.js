@@ -15,7 +15,7 @@ import { auth } from "../middleware/auth";
 import {
   asyncForEach,
   designateUserPerks,
-  userPopulateBag,
+  userStandardPopulate,
   updatePerks,
   saveImage,
   removeImage,
@@ -194,7 +194,7 @@ router.post("/login", async (req, res) => {
   try {
     let user = await User.findByCredentials(req.body.email, req.body.password);
     const token = await user.generateAuthToken(); //on instancegenerateAuthToken
-    user = await userPopulateBag(user);
+    user = await userStandardPopulate(user);
     user.userPerks = await updatePerks(user, true);
     if(user.passwordChangeToken){
       user.passwordChangeToken = null
@@ -247,7 +247,7 @@ router.patch("/updatePerks", auth, async (req, res, next) => {
 
 router.get("/me", auth, async (req, res, next) => {
   try {
-    const user = await userPopulateBag(req.user);
+    const user = await userStandardPopulate(req.user);
 
     user.userPerks = await updatePerks(user, false);
 
@@ -457,7 +457,7 @@ router.post("/me/avatar", auth, async (req, res) => {
       const avatarName = await saveImage(avatar, req.user._id, uploadPath, req.user.avatar)
       req.user.avatar = avatarName;
       let user = await req.user.save();
-      user = await userPopulateBag(user);
+      user = await userStandardPopulate(user);
       res.send(user);
 
     
@@ -475,7 +475,7 @@ router.delete("/me/avatar", auth, async (req, res) => {
     await removeImage(uploadPath+req.user.avatar)
     req.user.avatar = null;
     await req.user.save();
-    const user = await userPopulateBag(req.user);
+    const user = await userStandardPopulate(req.user);
     res.send(user);
 
   }
@@ -507,7 +507,7 @@ router.get("/myItems", auth, async (req, res) => {
   let user = req.user;
 
   try {
-    user = await userPopulateBag(user);
+    user = await userStandardPopulate(user);
 
     const items = { bag: user.bag, equipped: user.equipped };
     res.send(items);
@@ -567,7 +567,7 @@ router.patch("/myItems/equip", auth, async (req, res) => {
       user.userPerks = await designateUserPerks(user);
       user.userPerks = await updatePerks(user, true);
       await user.save();
-      user = await userPopulateBag(user);
+      user = await userStandardPopulate(user);
       //Depopulate equipped key
       user.equipped = { ...equipped };
 
@@ -609,7 +609,7 @@ router.delete("/deleteUserItem", auth, async (req, res) => {
     const item = await Item.findById({ _id: req.body.id });
     await item.remove();
     let user = await User.findById({ _id: req.user._id });
-    user = await userPopulateBag(user);
+    user = await userStandardPopulate(user);
     res.status(200).send(user);
   } catch (error) {
     console.log(error);
@@ -650,7 +650,7 @@ router.patch('/confirmLevel', auth, async(req, res) => {
     user.levelNotifications -= 1
   
     await user.save()
-    user = await userPopulateBag(user)
+    user = await userStandardPopulate(user)
     res.send(user)
   }catch(e){
     console.log(e.message)
@@ -666,10 +666,10 @@ router.patch("/clearAwards", auth, async (req, res) => {
     if(!user.rallyNotifications.isNew){
       throw new Error('Operation forbidden!')
     }
-    
+
     user.rallyNotifications = {isNew: false, experience: 0, awards: []};
     await user.save();
-    user = await userPopulateBag(user);
+    user = await userStandardPopulate(user);
     res.send(user);
   } catch (e) {
     res.status(400).send(e.message);
@@ -782,7 +782,7 @@ router.patch("/loyal", auth, async (req, res) => {
 
     await updatedUser.save();
 
-    updatedUser = await userPopulateBag(updatedUser);
+    updatedUser = await userStandardPopulate(updatedUser);
 
     res.send({ updatedUser, awardToPass });
   } catch (e) {

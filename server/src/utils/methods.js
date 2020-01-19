@@ -381,14 +381,36 @@ export const designateExperienceMods = (baseExp, rawExpMods) => {
   return parseInt(modExp)
 }
 
-export const userPopulateBag = async user => {
+export const updateAmuletCounters = (amuletCounters, amulets) => {
+
+  amulets.forEach( (amulet) => {
+
+    const index = amuletCounters.findIndex((item) => item.amulet.toString() === amulet.itemModel.toString())
+    if(index > -1){
+        amuletCounters[index].counter += amulet.quantity
+    }else{
+        amuletCounters = [...amuletCounters, {counter: amulet.quantity, amulet: amulet.itemModel}] 
+    }
+  })
+
+  return amuletCounters
+}
+
+export const userStandardPopulate = async user => {
   await user
     .populate({
       path: "bag",
       populate: { path: "itemModel", select: '_id description imgSrc name perks type' }
     })
     .execPopulate();
-
+  if(user.statistics.amuletCounters && user.statistics.amuletCounters.length){
+    await user
+      .populate({
+        path: "statistics.amuletCounters.amulet",
+        select: '_id imgSrc name'
+      })
+      .execPopulate();
+  }
   if (user.rallyNotifications.awards && user.rallyNotifications.awards.length) {
     await user
       .populate({

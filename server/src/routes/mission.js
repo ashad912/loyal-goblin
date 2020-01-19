@@ -6,7 +6,7 @@ import { auth } from '../middleware/auth';
 import { MissionInstance } from '../models/missionInstance';
 import { Item } from '../models/item'
 import { ItemModel } from '../models/itemModel'
-import { asyncForEach, designateUserPerks, isNeedToPerksUpdate, designateUserLevel, designateExperienceMods, saveImage, removeImage, designateNewLevels } from '../utils/methods'
+import { asyncForEach, designateUserPerks, isNeedToPerksUpdate, designateUserLevel, designateExperienceMods, saveImage, removeImage, designateNewLevels, updateAmuletCounters } from '../utils/methods'
 
 import isEqual from 'lodash/isEqual'
 import moment from 'moment'
@@ -577,6 +577,15 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
         console.log(missionInstance)
         await missionInstance.save()
 
+        setTimeout( async () => {
+            try{
+                const instance = await MissionInstance.findById(missionInstance._id)
+                await instance.remove()
+            }catch(e){
+                console.log(e.message)
+            }    
+        }, 30* 60 * 1000) //30 mins
+
         res.status(200).send(missionInstance)
   
     } catch (e) {
@@ -881,10 +890,14 @@ router.delete('/finishInstance', auth, async (req,res) => {
                 
                 const modMissionExp = designateExperienceMods(missionInstance.mission.experience, user.userPerks.rawExperience)
                 const newLevels = designateNewLevels(user.experience, modMissionExp)
+
+                const statistics = user.statistics
+                statistics.missionCounter += 1
+                statistics.amuletCounters = updateAmuletCounters(statistics.amuletCounters, missionInstance.mission.amulets)
                 
                 await User.updateOne(
                     {_id: user._id},
-                    { $addToSet: { bag: { $each: items } }, $inc: {experience: modMissionExp, levelNotifications: newLevels} }
+                    { $addToSet: { bag: { $each: items } }, $inc: {experience: modMissionExp, levelNotifications: newLevels}, $set: {statistics: statistics} }
                 )
 
                 // PREVIOUS VERSION

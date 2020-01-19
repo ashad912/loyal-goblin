@@ -951,7 +951,7 @@ const Events = (props) => {
             {rally !== null && (<Rally rally={rally} handleRallyDetailsOpen={handleRallyDetailsOpen} handleRallyDetailsClose={handleRallyDetailsClose} refreshProfile={() => props.authCheck()}/>)}
 
             <Typography variant="h6">
-                {props.activeInstanceId ? 'Aktywna misja' : 'Dostępne misje'}
+                {missionList.length ? (props.activeInstanceId ? 'Aktywna misja' : 'Dostępne misje') : 'Brak dostępnych misji!'}
             </Typography>
 
             <StyledList> 

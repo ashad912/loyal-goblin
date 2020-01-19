@@ -5,7 +5,7 @@ import { Rally } from '../models/rally';
 import { User } from '../models/user'
 import { auth } from '../middleware/auth';
 import { Item } from '../models/item';
-import { asyncForEach, designateUserPerks, designateExperienceMods, removeImage, saveImage } from '../utils/methods'
+import { asyncForEach, designateUserPerks, designateExperienceMods, designateNewLevels, removeImage, saveImage } from '../utils/methods'
 
 
 const uploadPath = "../client/public/images/rallies/"
@@ -94,7 +94,7 @@ const finishRally = async (rally) => {
                 
                 await User.updateOne(
                     {_id: user._id},
-                    { $addToSet: { bag: { $each: items } }, $set: {'rallyNotifications.isNew': true, 'rallyNotifications.awards': newRallyAwards}, $inc: {experience: modRallyExp, 'rallyNotifications.experience': modRallyExp, levelNotifications: newLevels}}
+                    { $addToSet: { bag: { $each: items } }, $set: {'rallyNotifications.isNew': true, 'rallyNotifications.awards': newRallyAwards}, $inc: {experience: modRallyExp, 'statistics.rallyCounter': 1, 'rallyNotifications.experience': modRallyExp, levelNotifications: newLevels}}
                 )
                 
             }
