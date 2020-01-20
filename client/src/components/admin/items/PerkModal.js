@@ -85,7 +85,16 @@ const createTempProducts = () => {
   }]
 }
 
+const nullTarget = {
+  'disc-product': null,
+  'disc-category': null,
+  'disc-rent': null
+}
 
+const setTarget = (object, field, value) => { 
+  Object.keys(object).forEach((key) => key === field ? object[key] = value : object[key] = null)
+  return object
+}
 
 
 class PerkModal extends React.Component {
@@ -94,14 +103,13 @@ class PerkModal extends React.Component {
     perk:{
       perkType: null,
       value: null,
-      target: null,
+      target: {...nullTarget},
       time: [/* hoursFlag, day, startHour, lengthInHours*/],
     },
     formError: {
       value: null
     },
     timeActive: false,
-    products: createTempProducts(),
     categories: productCategories,
     rentRooms: rentRooms
     
@@ -112,6 +120,8 @@ class PerkModal extends React.Component {
   }
 
   componentDidUpdate = (prevProps) => {
+    
+
     if(!prevProps.trigger && this.props.trigger){
       const perk = this.props.perkToModal
       let timeActive = null;
@@ -149,6 +159,28 @@ class PerkModal extends React.Component {
     })
   };
 
+  handleChangePerkTargetNameValue = (e) => {
+    const name = e.target.name
+    const value = e.target.value
+    let prevValue = null 
+    
+    this.setState((prevState) => {
+      prevValue = prevState.perk[name]
+      return{
+        perk: {
+          ...this.state.perk,
+          target: {
+            ...this.state.perk.target,
+            [name]: value
+          }
+          
+        } 
+      }    
+    }, () => {
+      this.callbacksAndValidation(name, value, prevValue)
+    })
+  };
+
   handleChangePerkTimeNameValue = (e, index) => {
     const name = e.target.name
     const value = e.target.value 
@@ -178,7 +210,7 @@ class PerkModal extends React.Component {
           let newTargetValue
           switch(fieldValue) {
             case targetPerks[0]:
-              newTargetValue = this.state.products[0]
+              newTargetValue = this.props.products[0]
               break
             case targetPerks[1]:
               newTargetValue = this.state.categories[0]
@@ -192,7 +224,7 @@ class PerkModal extends React.Component {
           this.setState({
             perk: {
               ...this.state.perk,
-              target: newTargetValue,
+              target: setTarget(this.state.perk.target, fieldValue, newTargetValue),
               value: clearValue ? '' : this.state.perk.value
               
             },
@@ -202,10 +234,11 @@ class PerkModal extends React.Component {
             },
           })
         }else{
+          
           this.setState({
             perk: {
               ...this.state.perk,
-              target: null,
+              target: {...nullTarget},
               value: clearValue ? '' : this.state.perk.value
             },
             formError: {
@@ -246,7 +279,7 @@ class PerkModal extends React.Component {
       perk:{
         perkType: null,
         value: null,
-        target: null,
+        target: {...nullTarget},
         time: [/*day, startHour, lengthInHours*/],
       }
     }, () => {
@@ -335,17 +368,24 @@ class PerkModal extends React.Component {
     if(!this.state.timeActive){
       perk.time = []
     }
-    
-    this.setState({
-      // perk:{
-      //   perkType: null,
-      //   value: null,
-      //   target: null,
-      //   time: [/*day, startHour, lengthInHours*/],
-      // }
-    }, () => {
-      this.props.updatePerks(perk)
-    })
+
+    //prevent minus discount
+    if(perk.perkType.includes('disc') && (perk.value.includes('-') || perk.value.includes('+'))){
+      perk.value = perk.value.slice(1)
+    }
+
+    this.props.updatePerks(perk)
+
+    // this.setState({
+    //   // perk:{
+    //   //   perkType: null,
+    //   //   value: null,
+    //   //   target: null,
+    //   //   time: [/*day, startHour, lengthInHours*/],
+    //   // }
+    // }, () => {
+      
+    // })
     
   }
 
@@ -361,14 +401,14 @@ const createDiscTarget = (perkType) => {
       <StyledFormControl >
             <InputLabel shrink={true} htmlFor="target">Zakres zniżki</InputLabel>
             <Select
-                value={this.state.perk.target}
-                onChange={this.handleChangePerkNameValue}
+                value={this.state.perk.target['disc-product']}
+                onChange={this.handleChangePerkTargetNameValue}
                 inputProps={{
-                    name: 'target',
-                    id: 'target',
+                    name: 'disc-product',
+                    id: 'disc-product',
                 }}
             >
-            {this.state.products.map((product) => {
+            {this.props.products.map((product) => {
               return(
                 <MenuItem value={product}>{product.name}</MenuItem>
               )
@@ -382,11 +422,11 @@ const createDiscTarget = (perkType) => {
         <StyledFormControl >
           <InputLabel shrink={true} htmlFor="target">Zakres zniżki</InputLabel>
           <Select
-              value={this.state.perk.target}
-              onChange={this.handleChangePerkNameValue}
+              value={this.state.perk.target['disc-category']}
+              onChange={this.handleChangePerkTargetNameValue}
               inputProps={{
-                  name: 'target',
-                  id: 'target',
+                  name: 'disc-category',
+                  id: 'disc-category',
               }}
           >
           {this.state.categories.map((category) => {
@@ -402,12 +442,12 @@ const createDiscTarget = (perkType) => {
         <StyledFormControl >
           <InputLabel shrink={true} htmlFor="target" >Zakres zniżki</InputLabel>
           <Select
-              value={this.state.perk.target}
-              onChange={this.handleChangePerkNameValue}
+              value={this.state.perk.target['disc-rent']}
+              onChange={this.handleChangePerkTargetNameValue}
               
               inputProps={{
-                  name: 'target',
-                  id: 'target',
+                  name: 'disc-rent',
+                  id: 'disc-rent',
               }}
           >
           {this.state.rentRooms.map((room) => {
@@ -482,7 +522,7 @@ const createNumberList = (startNum, endNum, isWeekDay, isHour, startHour) => {
                 margin="dense"
                 label={`Modyfikator efektu`}
                 type="text"
-                helperText={this.state.formError.value ? (this.state.formError.value) : ("Procenty lub wartości bezwzględne (całkowite): 10%, -5%, +1, -50")}
+                helperText={this.state.formError.value ? (this.state.formError.value) : ("Procenty lub wartości bezwzględne (całkowite): 10%, -5%, -1, +5")}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -642,7 +682,7 @@ const createNumberList = (startNum, endNum, isWeekDay, isHour, startHour) => {
         <Button onClick={this.handleUpdatePerk} color="primary">
             Zatwierdź
           </Button>
-          <Button onClick={this.handleClose} color="primary">
+          <Button onClick={this.handleClose} color="secondary">
             Anuluj
           </Button>
         </DialogActions>

@@ -17,14 +17,54 @@ import TouchAppIcon from '@material-ui/icons/TouchApp';
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import perkLabels from "../../../assets/categories/perks";
 import Divider from '@material-ui/core/Divider';
-import { dayLabels, categoryLabels } from "../../../utils/labels";
+import { dayLabels, categoryLabels, roomLabels } from "../../../utils/labels";
 import {itemsPath} from '../../../utils/definitions'
 
 
 
 const AwardListItem = props => {
   
- 
+  const getValue = (perkType, value) => {
+    if(perkType.includes('attr')){
+      if(!value.includes('+') && !value.includes('-')){
+        return `+${value}`
+      }
+    }else if(perkType.includes('disc')){
+      if(!value.includes('%')){
+        return value + " ZŁ"
+      }
+    }else if(perkType.includes('experience')){
+      let modValue = value
+      if(!value.includes('+') && !value.includes('-')){
+        modValue = `+${value}`
+      }
+      if(!value.includes('%')){
+        modValue += " PD"
+      }
+      return modValue
+    }
+  
+    return value
+  }
+  
+  
+  const getTarget = (perkType, target) => {
+    const targetPerks = ['disc-product', 'disc-category', 'disc-rent']
+  
+    if(targetPerks.includes(perkType)){
+      switch(perkType) {
+        case 'disc-product':
+          return target['disc-product'].name
+        case 'disc-category':
+          return categoryLabels[target['disc-category']]
+        case 'disc-rent':
+          return roomLabels[target['disc-rent']]
+        default:   
+          break
+      }
+    }
+    return null
+  }
 
   const item = props.item;
   const quantity = item.quantity && item.quantity > 1 ? item.quantity : null
@@ -108,13 +148,9 @@ const AwardListItem = props => {
                     <ListItem style={{padding: '0.5rem'}}>
                       <Grid container justify="flex-start">
                         <Grid item xs={6}>{perkLabels[perk.perkType]}</Grid>
-                        <Grid item xs={3}>{perk.value}</Grid>
+                        <Grid item xs={3}>{getValue(perk.perkType, perk.value)}</Grid>
                         <Grid item xs={3}>
-                          {perk.target
-                            ? perk.target.name
-                              ? perk.target.name
-                              : categoryLabels[perk.target]
-                            : null}
+                          {getTarget(perk.perkType, perk.target)}
                         </Grid>
                         <Grid item xs={12}>
                           {perk.time.length > 0 && (

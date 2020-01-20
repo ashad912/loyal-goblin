@@ -257,6 +257,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
 
             await ItemModel.populate(mission, { //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
                 path: 'amulets.itemModel awards.any.itemModel awards.warrior.itemModel awards.rogue.itemModel awards.mage.itemModel awards.cleric.itemModel',
+                populate: { path: "perks.target.disc-product", select: '_id name' },
                 options: {}
             })
             
@@ -337,6 +338,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
         //population on all colection saved to missions var
         await ItemModel.populate(missions, { //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
             path: 'amulets.itemModel awards.any.itemModel awards.warrior.itemModel awards.rogue.itemModel awards.mage.itemModel awards.cleric.itemModel',
+            populate: { path: "perks.target.disc-product", select: '_id name' },
             options: {}
         })
         
@@ -368,7 +370,8 @@ router.get('/amulets', auth, async(req,res) => {
         }).populate({
             path: 'bag'
         }).populate({
-            path: 'bag.itemModel'
+            path: 'bag.itemModel',
+            populate: { path: "perks.target.disc-product", select: '_id name' },
         }).execPopulate()
 
 
@@ -695,7 +698,7 @@ router.patch('/enterInstance', auth, async (req, res) => {
         
         await user.populate({
             path: 'bag party',
-            populate: {path: 'itemModel'}
+            populate: {path: 'itemModel', populate: { path: "perks.target.disc-product", select: '_id name' },}
         }).execPopulate()
 
         if(user.party){
@@ -716,7 +719,7 @@ router.patch('/enterInstance', auth, async (req, res) => {
 
         await missionInstance.populate({
             path: 'mission items party.profile ',
-            populate: {path: 'amulets.itemModel itemModel'}
+            populate: {path: 'amulets.itemModel itemModel', select: '_id name imgSrc description'}
         }).execPopulate()
 
         //amulets used in mission
@@ -833,7 +836,7 @@ router.delete('/finishInstance', auth, async (req,res) => {
         }).populate({
             path: 'mission'
         }).populate({
-            path: 'items'
+            path: 'items', populate: { path: "perks.target.disc-product", select: '_id name' },
         })
 
 
@@ -915,7 +918,7 @@ router.delete('/finishInstance', auth, async (req,res) => {
 
         await missionInstance.populate({
             path: 'mission',
-            populate: {path: 'awards.any.itemModel awards.warrior.itemModel awards.rogue.itemModel awards.mage.itemModel awards.cleric.itemModel'}
+            populate: {path: 'awards.any.itemModel awards.warrior.itemModel awards.rogue.itemModel awards.mage.itemModel awards.cleric.itemModel', populate: { path: "perks.target.disc-product", select: '_id name' },}
         }).execPopulate()
        
         await missionInstance.remove() //remove middleware trigger method returning instance items to owner bags (in this case instance items array is empty)

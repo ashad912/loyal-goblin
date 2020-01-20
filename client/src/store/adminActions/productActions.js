@@ -1,10 +1,12 @@
 import axios from 'axios'
 
-export const getProducts = () => {
+export const getProducts = (params) => {
     return new Promise (async (resolve, reject) => {
         try {
+            const query = params && params.onlyNames ? '?onlyNames=true' : ''
+
             console.log('getProducts')
-            const res = await axios.get('/product/products')
+            const res = await axios.get('/product/products' + query)
             console.log(res.data)
             resolve(res.data)
         }catch (e) {

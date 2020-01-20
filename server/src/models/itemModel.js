@@ -61,7 +61,21 @@ const ItemModelSchema = new mongoose.Schema({
     {
       perkType: String, //perkTypes - easier to search -> u know key words -> perks.map(perk => if(perk.perkType = 'disc-product' && perk.name === product.name) -> give discount
       value: String, //value  '100' or '15%' - interpreted by discountCounting method (finding percent sign -> converting)
-      target: String, // field necessary for disc-product/disc-category/disc-rent
+      target: {
+        'disc-product': {
+          type: mongoose.Schema.Types.ObjectId, 
+          ref: 'product',
+          default: null
+        },
+        'disc-category': {
+          type: String,
+          default: null
+        },
+        'disc-rent': {
+          type: String,
+          default: null
+        }
+      }, // field necessary for disc-product/disc-category/disc-rent
       time: [
         {
           //u can specify many time periods for perk - ex: day: 5, startHour: 16, lengthInHours: 11 -> Friday, 16:00 - 03:00 [03:00 is at Saturday]

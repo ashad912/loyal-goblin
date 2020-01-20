@@ -23,7 +23,10 @@ const router = new express.Router
 
 router.get('/itemModels', auth, async(req,res) => {
     try{
-        const itemModels = await ItemModel.find({})
+        const itemModels = await ItemModel.find({}).populate({
+            path: "perks.target.disc-product",
+            select: '_id name' 
+        })
         res.status(200).send(itemModels)
     }catch(e){
         console.log(e.message)

@@ -243,7 +243,7 @@ export const designateUserPerks = async user => {
                   break;
                 case "disc-product":
                   const product = products.find(product => {
-                    return product._id.toString() === perk.target;
+                    return product._id.toString() === perk.target['disc-product'];
                   });
 
                   if (product) {
@@ -254,11 +254,7 @@ export const designateUserPerks = async user => {
                     );
                     if (!modelPerks.products.hasOwnProperty(product._id)) {
                       modelPerks.products[product._id] = { priceMod: priceMod };
-                    } else if (
-                      !modelPerks.products[product._id].hasOwnProperty(
-                        "priceMod"
-                      )
-                    ) {
+                    } else if (!modelPerks.products[product._id].hasOwnProperty("priceMod")) {
                       modelPerks.products[product._id]["priceMod"] = priceMod;
                     } else {
                       modelPerks.products[product._id]["priceMod"] += priceMod;
@@ -269,7 +265,7 @@ export const designateUserPerks = async user => {
                 case "disc-category":
                   //console.log('haleczko')
                   const productsInCategory = products.filter(product => {
-                    return product.category === perk.target;
+                    return product.category === perk.target['disc-category'];
                   });
 
                   for (let i = 0; i < productsInCategory.length; i++) {
@@ -281,11 +277,7 @@ export const designateUserPerks = async user => {
                     );
                     if (!modelPerks.products.hasOwnProperty(product._id)) {
                       modelPerks.products[product._id] = { priceMod: priceMod };
-                    } else if (
-                      !modelPerks.products[product._id].hasOwnProperty(
-                        "priceMod"
-                      )
-                    ) {
+                    } else if (!modelPerks.products[product._id].hasOwnProperty("priceMod")) {
                       modelPerks.products[product._id]["priceMod"] = priceMod;
                     } else {
                       modelPerks.products[product._id]["priceMod"] += priceMod;
@@ -317,9 +309,7 @@ export const designateUserPerks = async user => {
           experienceModFromAbsolute + experienceModFromPercent;
         if (!modelPerks.products.hasOwnProperty(product._id)) {
           modelPerks.products[product._id] = { experienceMod: experienceMod };
-        } else if (
-          !modelPerks.products[product._id].hasOwnProperty("experienceMod")
-        ) {
+        } else if (!modelPerks.products[product._id].hasOwnProperty("experienceMod")) {
           modelPerks.products[product._id]["experienceMod"] = experienceMod;
         } else {
           modelPerks.products[product._id]["experienceMod"] += experienceMod;
@@ -400,7 +390,7 @@ export const userStandardPopulate = async user => {
   await user
     .populate({
       path: "bag",
-      populate: { path: "itemModel", select: '_id description imgSrc name perks type' }
+      populate: { path: "itemModel", select: '_id description imgSrc name perks type', populate: { path: "perks.target.disc-product", select: '_id name' } }
     })
     .execPopulate();
   if(user.statistics.amuletCounters && user.statistics.amuletCounters.length){
@@ -415,7 +405,8 @@ export const userStandardPopulate = async user => {
     await user
       .populate({
         path: "rallyNotifications.awards.itemModel",
-        select: '_id description imgSrc name perks'
+        select: '_id description imgSrc name perks',
+        populate: { path: "perks.target.disc-product", select: '_id name' },
       })
       .execPopulate();
   }

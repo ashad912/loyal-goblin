@@ -357,7 +357,8 @@ router.get('/first', auth, async (req, res)=> {
         const rally = rallyArray[0]
 
         await rally.populate({
-            path: 'awardsLevels.awards.any.itemModel awardsLevels.awards.warrior.itemModel awardsLevels.awards.rogue.itemModel awardsLevels.awards.mage.itemModel awardsLevels.awards.cleric.itemModel'
+            path: 'awardsLevels.awards.any.itemModel awardsLevels.awards.warrior.itemModel awardsLevels.awards.rogue.itemModel awardsLevels.awards.mage.itemModel awardsLevels.awards.cleric.itemModel',
+            populate: { path: "perks.target.disc-product", select: '_id name' },
         }).execPopulate()
 
         rally.users = rally.users.filter((user) => { //return only user whoes fetched request

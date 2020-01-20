@@ -33,7 +33,7 @@ import { itemsPath, appearancePath } from "../../../utils/definitions";
 import {classLabels, itemTypeLabels, equippableItems} from '../../../utils/labels'
 import {torpedoFields, userClasses, itemModelTypes} from '../../../utils/modelArrays'
 import { createItemModel, updateItemModel, uploadItemModelImages } from "../../../store/adminActions/itemActions";
-
+import { getProducts } from "../../../store/adminActions/productActions";
 
 
 
@@ -76,7 +76,11 @@ const AddIcon = styled(AddCircleIcon)`
 
 const validatedFields = ['type', 'name', 'description', 'iconView', 'appearanceView']
 
-
+const nullTarget = {
+  'disc-product': null,
+  'disc-category': null,
+  'disc-rent': null
+}
             
 class ItemCreator extends Component {
   state = {
@@ -91,6 +95,7 @@ class ItemCreator extends Component {
     modifyingIndex: null,
     showPerkModal: false,
     perks: [],
+    products: [],
     formError: {
       name: null,
       description: null,
@@ -172,7 +177,7 @@ class ItemCreator extends Component {
       perkToModal: {
         perkType: null,
         value: null,
-        target: null,
+        target: {...nullTarget},
         time: [/*hoursFlag, day, startHour, lengthInHours*/],
       }
     }, () => {
@@ -200,12 +205,21 @@ class ItemCreator extends Component {
     })
     
   }
-  handleTogglePerkModal = e => {
+  handleTogglePerkModal = async e => {
+
+    const products = !this.state.showPerkModal && !this.state.products.length ? await getProducts({onlyNames: true}) : []
+
     this.setState(prevState => {
       return { 
         showPerkModal: !prevState.showPerkModal,
         modifyingIndex: prevState.showPerkModal ? null : prevState.modifyingIndex
        };
+    }, () => {
+      if(products.length){
+        this.setState({
+          products: products
+        })
+      }
     });
   };
 
@@ -691,6 +705,7 @@ class ItemCreator extends Component {
             updatePerks={this.updatePerks}
             trigger={this.state.showPerkModal}
             perkToModal={this.state.perkToModal}
+            products={this.state.products}
           />
       
         </Container>

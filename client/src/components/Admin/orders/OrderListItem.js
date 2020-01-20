@@ -29,7 +29,7 @@ const OrderListItem = (props) => {
                 <ListItemText primary={order.leader.name} />
             </Grid>
             <Grid item xs={3} style={{textAlign: 'right'}}>
-                <ListItemText primary={order.totalPrice + ' PLN'} />
+                <ListItemText primary={order.totalPrice + ' ZŁ'} />
             </Grid>
         </ListItem>
     )

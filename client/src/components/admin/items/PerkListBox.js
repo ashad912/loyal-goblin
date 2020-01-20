@@ -9,7 +9,7 @@ import Grid from '@material-ui/core/Grid';
 import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import {perkLabels, dayLabels, categoryLabels} from '../../../utils/labels'
+import {perkLabels, dayLabels, categoryLabels, roomLabels} from '../../../utils/labels'
 
 
 
@@ -32,6 +32,48 @@ const HeadersContainer = styled.div`
 
 const PerkListBox = (props) => {
 
+    const getValue = (perkType, value) => {
+      if(perkType.includes('attr')){
+        if(!value.includes('+') && !value.includes('-')){
+          return `+${value}`
+        }
+      }else if(perkType.includes('disc')){
+        if(!value.includes('%')){
+          return value + " ZŁ"
+        }
+      }else if(perkType.includes('experience')){
+        let modValue = value
+        if(!value.includes('+') && !value.includes('-')){
+          modValue = `+${value}`
+        }
+        if(!value.includes('%')){
+          modValue += " PD"
+        }
+        return modValue
+      }
+    
+      return value
+    }
+    
+    
+    const getTarget = (perkType, target) => {
+      const targetPerks = ['disc-product', 'disc-category', 'disc-rent']
+    
+      if(targetPerks.includes(perkType)){
+        switch(perkType) {
+          case 'disc-product':
+            return target['disc-product'].name
+          case 'disc-category':
+            return categoryLabels[target['disc-category']]
+          case 'disc-rent':
+            return roomLabels[target['disc-rent']]
+          default:   
+            break
+        }
+      }
+      return null
+    }
+
     return(
         <Grid item xs={12}>
               <StyledPaper elevation={0}>
@@ -52,8 +94,7 @@ const PerkListBox = (props) => {
                         </Grid>
                         <Grid item xs={props.breakWidth}>
                         </Grid>
-                        {props.actions && <Grid item xs={props.actionsWidth}>
-                        </Grid>}
+                        {props.actions && <Grid item xs={props.actionsWidth}></Grid>}
                       </Grid>
                       </Typography>
                   </HeadersContainer>}
@@ -70,10 +111,10 @@ const PerkListBox = (props) => {
                                     {perkLabels[perk.perkType]}
                                   </Grid>
                                   <Grid item xs={props.valueWidth}>
-                                    {perk.value}
+                                    {getValue(perk.perkType, perk.value)}
                                   </Grid>
                                   <Grid item xs={props.targetWidth}>
-                                    {perk.target ? (perk.target.name ? (perk.target.name) : (categoryLabels[perk.target])) : (null)}
+                                    {getTarget(perk.perkType, perk.target)}
                                   </Grid>
                                   <Grid item xs={props.timeWidth}>
                                     {perk.time.length ? (

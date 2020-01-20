@@ -26,9 +26,15 @@ const router = new express.Router();
 
 
 router.get('/products', auth, async(req,res) => {
+  const onlyNames = req.query.onlyNames === 'true'
   try{
+      if(onlyNames){
+        const products = await Product.find({}, {_id: 1, name: 1})
+        return res.status(200).send(products)
+      }
+
       const products = await Product.find({}).populate({
-        path: 'awards.itemModel'
+        path: 'awards.itemModel', populate: { path: "perks.target.disc-product", select: '_id name' },
       })
       res.status(200).send(products)
   }catch(e){
@@ -403,7 +409,7 @@ router.get("/shop", auth, async (req, res) => {
   const user = req.user
   try {
     const shop = await Product.find({}).populate({
-      path: "awards.itemModel"
+      path: "awards.itemModel", populate: { path: "perks.target.disc-product", select: '_id name' },
     });
 
     await updatePerks(user, false);
@@ -429,7 +435,7 @@ router.get("/shop", auth, async (req, res) => {
           populate: {
             path: "members",
             select: "bag equipped name _id avatar bag equipped userPerks",
-            populate: { path: "bag", populate: { path: "itemModel" } }
+            populate: { path: "bag", populate: { path: "itemModel", populate: { path: "perks.target.disc-product", select: '_id name' }, } }
           }
         })
         .execPopulate();
@@ -582,7 +588,7 @@ router.patch("/activate", auth, async (req, res) => {
       })
       .populate({
         path: "activeOrder.products.product",
-        populate: { path: "awards.itemModel" } //is necessary here?
+        populate: { path: "awards.itemModel", populate: { path: "perks.target.disc-product", select: '_id name' }, } //is necessary here?
       })
       .execPopulate();
 

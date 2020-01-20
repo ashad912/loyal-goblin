@@ -268,8 +268,8 @@ router.get("/me", auth, async (req, res, next) => {
           select: "_id name avatar bag equipped userPerks"
         })
         .populate({
-                  path: "activeOrder.awards.itemModel", select: "name imgSrc"
-                })
+                  path: "activeOrder.awards.itemModel", select: "name imgSrc"}
+                )
         .execPopulate();
 
     }
@@ -582,7 +582,7 @@ router.patch("/myItems/equip", auth, async (req, res) => {
             .populate({
               path: "party",
               populate: { path: "leader members", select: "_id name avatar attributes experience userPerks bag equipped", 
-            populate: { path: "bag", populate: { path: "itemModel" } } }
+            populate: { path: "bag", populate: { path: "itemModel", populate: { path: "perks.target.disc-product", select: '_id name' }, } } }
             })
             .execPopulate();
       
@@ -691,7 +691,7 @@ const verifyTorpedo = (user, fieldName) => {
       await user
         .populate({
           path: "bag",
-          populate: { path: "itemModel" }
+          populate: { path: "itemModel", populate: { path: "perks.target.disc-product", select: '_id name' }, }
         })
         .execPopulate();
 
@@ -768,7 +768,7 @@ router.patch("/loyal", auth, async (req, res) => {
         updatedUser.bag = [...updatedUser.bag, newItem._id];
         await newItem
           .populate({
-            path: "itemModel"
+            path: "itemModel", populate: { path: "perks.target.disc-product", select: '_id name' },
           })
           .execPopulate();
 
