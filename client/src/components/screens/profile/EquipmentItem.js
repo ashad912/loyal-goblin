@@ -15,9 +15,9 @@ import Badge from '@material-ui/core/Badge';
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import TouchAppIcon from '@material-ui/icons/TouchApp';
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import perkLabels from "../../../assets/categories/perks";
-import { dayLabels, categoryLabels } from "../../../utils/labels";
+import { dayLabels, categoryLabels, perkLabels } from "../../../utils/labels";
 import {itemsPath} from '../../../utils/definitions'
+import { getValue, getTarget } from "../../../utils/methods";
 
 const StyledMenu = withStyles({
   paper: {
@@ -178,13 +178,9 @@ const EquipmentListItem = props => {
                     <ListItem>
                       <Grid container justify="space-around">
                         <Grid item>{perkLabels[perk.perkType]}</Grid>
-                        <Grid item>{perk.value}</Grid>
+                        <Grid item>{getValue(perk.perkType, perk.value)}</Grid>
                         <Grid item>
-                          {perk.target
-                            ? perk.target.name
-                              ? perk.target.name
-                              : categoryLabels[perk.target]
-                            : null}
+                          {getTarget(perk.perkType, perk.target)}
                         </Grid>
                         <Grid item>
                           {perk.time.length > 0 && (

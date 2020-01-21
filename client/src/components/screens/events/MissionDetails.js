@@ -101,7 +101,7 @@ const MissionDetails = (props) => {
                                 direction="column"
                             >
                                 <Grid item style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                    <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`${missionsPath}${mission.avatar}`} />
+                                    <imgSrc alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`${missionsPath}${mission.imgSrc}`} />
                                 </Grid>
                             </Grid>
                         </Grid> 

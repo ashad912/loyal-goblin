@@ -6,7 +6,8 @@ const items = {
     feet: "Stopy",
     head: "Głowa",
     ring: "Pierścienie",
-    scroll: 'Zwoje'
+    scroll: 'Zwoje',
+    hands: 'Dłonie'
 }
 
 export default items

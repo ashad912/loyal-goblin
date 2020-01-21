@@ -15,56 +15,14 @@ import Badge from '@material-ui/core/Badge';
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import TouchAppIcon from '@material-ui/icons/TouchApp';
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import perkLabels from "../../../assets/categories/perks";
 import Divider from '@material-ui/core/Divider';
-import { dayLabels, categoryLabels, roomLabels } from "../../../utils/labels";
+import { dayLabels, categoryLabels, roomLabels, perkLabels } from "../../../utils/labels";
 import {itemsPath} from '../../../utils/definitions'
+import { getValue, getTarget } from "../../../utils/methods";
 
 
 
 const AwardListItem = props => {
-  
-  const getValue = (perkType, value) => {
-    if(perkType.includes('attr')){
-      if(!value.includes('+') && !value.includes('-')){
-        return `+${value}`
-      }
-    }else if(perkType.includes('disc')){
-      if(!value.includes('%')){
-        return value + " ZŁ"
-      }
-    }else if(perkType.includes('experience')){
-      let modValue = value
-      if(!value.includes('+') && !value.includes('-')){
-        modValue = `+${value}`
-      }
-      if(!value.includes('%')){
-        modValue += " PD"
-      }
-      return modValue
-    }
-  
-    return value
-  }
-  
-  
-  const getTarget = (perkType, target) => {
-    const targetPerks = ['disc-product', 'disc-category', 'disc-rent']
-  
-    if(targetPerks.includes(perkType)){
-      switch(perkType) {
-        case 'disc-product':
-          return target['disc-product'].name
-        case 'disc-category':
-          return categoryLabels[target['disc-category']]
-        case 'disc-rent':
-          return roomLabels[target['disc-rent']]
-        default:   
-          break
-      }
-    }
-    return null
-  }
 
   const item = props.item;
   const quantity = item.quantity && item.quantity > 1 ? item.quantity : null

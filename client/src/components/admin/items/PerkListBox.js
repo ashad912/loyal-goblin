@@ -9,7 +9,9 @@ import Grid from '@material-ui/core/Grid';
 import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import {perkLabels, dayLabels, categoryLabels, roomLabels} from '../../../utils/labels'
+import {perkLabels, dayLabels} from '../../../utils/labels'
+import { getValue, getTarget } from '../../../utils/methods';
+
 
 
 
@@ -31,48 +33,6 @@ const HeadersContainer = styled.div`
 
 
 const PerkListBox = (props) => {
-
-    const getValue = (perkType, value) => {
-      if(perkType.includes('attr')){
-        if(!value.includes('+') && !value.includes('-')){
-          return `+${value}`
-        }
-      }else if(perkType.includes('disc')){
-        if(!value.includes('%')){
-          return value + " ZŁ"
-        }
-      }else if(perkType.includes('experience')){
-        let modValue = value
-        if(!value.includes('+') && !value.includes('-')){
-          modValue = `+${value}`
-        }
-        if(!value.includes('%')){
-          modValue += " PD"
-        }
-        return modValue
-      }
-    
-      return value
-    }
-    
-    
-    const getTarget = (perkType, target) => {
-      const targetPerks = ['disc-product', 'disc-category', 'disc-rent']
-    
-      if(targetPerks.includes(perkType)){
-        switch(perkType) {
-          case 'disc-product':
-            return target['disc-product'].name
-          case 'disc-category':
-            return categoryLabels[target['disc-category']]
-          case 'disc-rent':
-            return roomLabels[target['disc-rent']]
-          default:   
-            break
-        }
-      }
-      return null
-    }
 
     return(
         <Grid item xs={12}>

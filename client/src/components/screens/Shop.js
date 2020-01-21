@@ -905,19 +905,19 @@ class Shop extends React.Component {
 
   render() {
     const shotList = this.state.products.filter(product => {
-      return product.category === "shot";
+      return product.category === "shots";
     });
 
     const drinkList = this.state.products.filter(product => {
-      return product.category === "drink";
+      return product.category === "drinks";
     });
 
     const beerList = this.state.products.filter(product => {
-      return product.category === "beer";
+      return product.category === "beers";
     });
 
     const alcoholFreeList = this.state.products.filter(product => {
-      return product.category === "alcoholFree";
+      return product.category === "alco-free";
     });
 
     const foodList = this.state.products.filter(product => {

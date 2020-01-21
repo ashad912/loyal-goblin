@@ -2,7 +2,8 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import ListItem from "@material-ui/core/ListItem";
 import Typography from "@material-ui/core/Typography";
-import perkTranslation from "../../../assets/categories/perks";
+import {perkLabels, dayLabels} from '../../../utils/labels'
+import { getValue, getTarget } from '../../../utils/methods';
 
 const ItemsModalListItemPerks = ({perk}) => {
   const hasTime = perk.time.length > 0;
@@ -11,7 +12,7 @@ const ItemsModalListItemPerks = ({perk}) => {
     timeText = perk.time.map(time => {
       const startTime =
         "Początek: " +
-        perkTranslation[time.startDay] +
+        dayLabels[time.startDay] +
         ", godzina " +
         time.startHour+":00";
       const duration = time.hoursFlag
@@ -34,10 +35,10 @@ const ItemsModalListItemPerks = ({perk}) => {
     <ListItem style={{fontSize: '0.8rem'}}>
       <Grid container spacing={1}>
         <Grid item>
-          {perkTranslation[perk.perkType]}{" "}
-          {perk.target && " - " + perk.target.name + ":"}
+          {perkLabels[perk.perkType]}{" "}
+          {getTarget(perk.perkType, perk.target)}
         </Grid>
-        <Grid item>{perk.value}</Grid>
+        <Grid item>{getValue(perk.perkType, perk.value)}</Grid>
         {hasTime && (
           <Grid item container direction="column">
             {timeText}

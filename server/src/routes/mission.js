@@ -228,7 +228,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
                 {_id: missionInstance.mission }).project({ 
                     'title': 1,
                     'description': 1,
-                    'avatar': 1,
+                    'imgSrc': 1,
                     'minPlayers': 1,
                     'maxPlayers': 1,
                     'level': 1,
@@ -292,7 +292,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
             '_id': 1,
             'title': 1,
             'description': 1,
-            'avatar': 1,
+            'imgSrc': 1,
             'minPlayers': 1,
             'maxPlayers': 1,
             'level': 1,

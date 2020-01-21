@@ -396,7 +396,7 @@ class MissionInstance extends React.Component {
                 <React.Fragment>
                     
                     <TitleBar>
-                        <StyledImg src={`${missionsPath}${this.state.missionObject.avatar}`}/>
+                        <StyledImg src={`${missionsPath}${this.state.missionObject.imgSrc}`}/>
                         <Typography style={{display: 'inline'}} variant="h6">{this.state.missionObject.title}</Typography>
                         {statusIcon(isRequiredItemsCollected)}
                     </TitleBar>   

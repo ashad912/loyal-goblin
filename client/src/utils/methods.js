@@ -1,4 +1,5 @@
 import { levelingEquation } from "./definitions";
+import {categoryLabels, roomLabels} from './labels'
 
 export async function asyncForEach(array, callback) {
     for (let index = 0; index < array.length; index++) {
@@ -44,4 +45,47 @@ export const createAvatarPlaceholder = (name) => {
   }).join('').toUpperCase()
 
   return initials.substring(0,2)
+}
+
+
+export const getValue = (perkType, value) => {
+  if(perkType.includes('attr')){
+    if(!value.includes('+') && !value.includes('-')){
+      return `+${value}`
+    }
+  }else if(perkType.includes('disc')){
+    if(!value.includes('%')){
+      return value + " ZŁ"
+    }
+  }else if(perkType.includes('experience')){
+    let modValue = value
+    if(!value.includes('+') && !value.includes('-')){
+      modValue = `+${value}`
+    }
+    if(!value.includes('%')){
+      modValue += " PD"
+    }
+    return modValue
+  }
+
+  return value
+}
+
+
+export const getTarget = (perkType, target) => {
+  const targetPerks = ['disc-product', 'disc-category', 'disc-rent']
+
+  if(targetPerks.includes(perkType)){
+    switch(perkType) {
+      case 'disc-product':
+        return target['disc-product'].name
+      case 'disc-category':
+        return categoryLabels[target['disc-category']]
+      case 'disc-rent':
+        return roomLabels[target['disc-rent']]
+      default:   
+        break
+    }
+  }
+  return null
 }
