@@ -394,7 +394,6 @@ const Profile = props => {
 
   React.useEffect(() => {
     updateEquippedItems();
-    handleJoinOrCreateParty();
     props.onPartyUpdate();
   }, []);
 
@@ -461,13 +460,20 @@ const Profile = props => {
 
   const handleItemToggle = (id, isEquipped, category, twoHanded) => {
     const tempPlayer = { ...props.auth.profile };
+
     if(props.party && props.party.inShop){
       return
     }else{
       if (category === "weapon") {
         if (twoHanded) {
-          tempPlayer.equipped.weaponRight = id;
-          tempPlayer.equipped.weaponLeft = null;
+          if(isEquipped){
+            tempPlayer.equipped.weaponRight = null;
+            tempPlayer.equipped.weaponLeft = null;
+          }else{
+
+            tempPlayer.equipped.weaponRight = id;
+            tempPlayer.equipped.weaponLeft = null;
+          }
         } else {
           const rightHandItem =
             tempPlayer.equipped.weaponRight &&
@@ -609,17 +615,7 @@ const Profile = props => {
   //   setGoExp(prev => !prev);
   // };
 
-  const handleJoinOrCreateParty = () => {
-    let party = localStorage.getItem("party");
-    const tempPlayer = { ...props.auth.profile };
-    if (party) {
-      party = JSON.parse(party);
-      //TODO: backend call
-    } else {
-      delete tempPlayer.party;
-      //TODO: backend call
-    }
-  };
+
 
   const handleLeaveParty = () => {
     props.onRemoveMember(props.party._id, props.auth.uid);
@@ -925,7 +921,6 @@ const Profile = props => {
         }
         partyName={props.party && props.party.name}
         handleClose={() => setIsCreatingParty(prev => !prev)}
-        handleCreateParty={handleJoinOrCreateParty}
         activeMission={props.mission.activeInstanceId}
       />
       {showRankDialog && <RankDialog

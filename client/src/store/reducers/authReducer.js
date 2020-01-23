@@ -6,6 +6,7 @@ const initState = {
   profile: {},
   authError: null,
   multipleSession: false,
+  allNames: []
 };
 
 const authReducer = (state = initState, action) => {
@@ -84,6 +85,17 @@ const authReducer = (state = initState, action) => {
         ...state,
         multipleSession: true
       }
+      case 'GET_ALL_NAMES':
+        const allNames = action.names.map(user => user.name)
+        return{
+          ...state,
+          allNames: allNames
+        }
+        case 'CLEAR_ALL_NAMES':
+          return{
+            ...state,
+            allNames: []
+          }
     default:
       return state;
   }

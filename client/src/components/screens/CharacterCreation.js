@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import MobileStepper from "@material-ui/core/MobileStepper";
 import Paper from "@material-ui/core/Paper";
+import _ from "lodash";
 
 import Container from "@material-ui/core/Container";
 import Button from "@material-ui/core/Button";
@@ -34,14 +35,15 @@ const useStyles = makeStyles(theme => ({
 
 const CharacterCreation = props => {
   const classes = useStyles();
-  const [stepperHeight, setStepperHeight] = React.useState(0);
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [nextDisabled, setNextDisabled] = React.useState(true);
-  const [name, setName] = React.useState("");
-  const [sex, setSex] = React.useState("");
-  const [characterClass, setCharacterClass] = React.useState("");
-  const [attributePool, setAttributePool] = React.useState(3);
-  const [attributes, setAttributes] = React.useState({
+  const [stepperHeight, setStepperHeight] = useState(0);
+  const [activeStep, setActiveStep] = useState(0);
+  const [nextDisabled, setNextDisabled] = useState(true);
+  const [name, setName] = useState("");
+  const [nameTaken, setNameTaken] = useState(false);
+  const [sex, setSex] = useState("");
+  const [characterClass, setCharacterClass] = useState("");
+  const [attributePool, setAttributePool] = useState(3);
+  const [attributes, setAttributes] = useState({
     strength: 1,
     dexterity: 1,
     magic: 1,
@@ -49,12 +51,32 @@ const CharacterCreation = props => {
   });
 
   const handleNameChange = event => {
-    if ((/^[a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ\s]*$/.test(event.target.value)||event.target.value==="") && event.target.value.length <= 20) {
-        if(event.target.value.split(" ").length<3){
-          setName(event.target.value);
+    if (
+      (/^[a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ\s]*$/.test(
+        event.target.value
+      ) ||
+        event.target.value === "") &&
+      event.target.value.length <= 20
+    ) {
+      if (event.target.value.split(" ").length < 3) {
+        setName(event.target.value);
+        setNameTaken(false);
       }
     }
   };
+
+  const handleCheckAllNames = useCallback(
+    _.debounce(value => {
+      if (!props.allNames.find(name => name === value)) {
+        setNameTaken(false);
+      } else {
+        setNameTaken(true);
+      }
+     
+    }, 500)
+  );
+
+
 
   const handleSexChange = event => {
     setSex(event.target.value);
@@ -100,13 +122,27 @@ const CharacterCreation = props => {
     if (tempAttributes[attributeName] + value <= 0) {
       return;
     }
+
+    const classAttributes = {
+      strength: "warrior",
+      dexterity: "rogue",
+      magic: "mage",
+      endurance: "cleric"
+    };
+
+    if (
+      characterClass === classAttributes[attributeName] &&
+      tempAttributes[attributeName] + value <= 1
+    ) {
+      return;
+    }
     tempAttributes[attributeName] += value;
     setAttributes(tempAttributes);
     setAttributePool(prev => prev - value);
   };
 
   const steps = [
-    <Step1 handleChange={handleNameChange} value={name} />,
+    <Step1 handleChange={handleNameChange} handleCheck={handleCheckAllNames} value={name} nameTaken={nameTaken}/>,
     <Step2 handleChange={handleSexChange} value={sex} />,
     <Step3 handleChange={handleCharacterClassChange} value={characterClass} />,
     <Step4
@@ -125,6 +161,16 @@ const CharacterCreation = props => {
   const maxSteps = steps.length;
 
   const handleNext = () => {
+    
+    if(activeStep === 0){
+      if (!props.allNames.find(otherName => otherName === name)) {
+        setNameTaken(false);
+      } else {
+        setNameTaken(true);
+        return;
+      }
+    }
+
     if (activeStep === maxSteps - 1) {
       props.onFinish(name, sex, characterClass, attributes);
     }
@@ -138,7 +184,7 @@ const CharacterCreation = props => {
 
   React.useEffect(() => {
     let buttonDisabled = true;
-    if (name.length > 1 && activeStep === 0) {
+    if (name.length > 1 && activeStep === 0 && !nameTaken) {
       buttonDisabled = false;
     }
     if (sex !== "" && activeStep === 1) {
@@ -150,12 +196,12 @@ const CharacterCreation = props => {
     if (attributePool === 0 && activeStep === 3) {
       buttonDisabled = false;
     }
-    if ( activeStep === 4) {
+    if (activeStep === 4) {
       buttonDisabled = false;
     }
 
     setNextDisabled(buttonDisabled);
-  }, [activeStep, name, sex, characterClass, attributePool]);
+  }, [activeStep, name, sex, characterClass, attributePool, nameTaken]);
 
   React.useEffect(() => {
     setStepperHeight(document.getElementById("stepper").offsetHeight);

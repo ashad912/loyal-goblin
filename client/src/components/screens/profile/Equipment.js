@@ -23,7 +23,7 @@ import itemCategories from "../../../assets/categories/items";
 const useStyles = makeStyles(theme => ({
   root: {
     width: "100%",
-    position:'relative'
+    position: "relative"
   }
 }));
 
@@ -61,50 +61,76 @@ const Equipment = props => {
   };
 
   React.useEffect(() => {
-    setOpenList("")
-  }, [props.leaderInShop])
+    setOpenList("");
+  }, [props.leaderInShop]);
 
-  const convertToStack = (itemsToConvert) => {
-      let itemModels = []
-      itemsToConvert.forEach((itemToConvert) => {
+  const convertToStack = itemsToConvert => {
+    let itemModels = [];
+    itemsToConvert.forEach(itemToConvert => {
       //NOTE: filter returns new array - if for itemModels gets zero length, it is new name
-      if(itemModels.filter(itemModel => itemModel.name === itemToConvert.itemModel.name).length === 0){
-          itemModels = [...itemModels, itemToConvert.itemModel]
+      if (
+        itemModels.filter(
+          itemModel => itemModel.name === itemToConvert.itemModel.name
+        ).length === 0
+      ) {
+        itemModels = [...itemModels, itemToConvert.itemModel];
       }
       //console.log(itemModels)
-      })
+    });
 
-      let itemObjects = []
-      itemModels.forEach((itemModel) => {
-      let instanceItemsIds = []
-      itemsToConvert.forEach((itemToConvert) => {
-          if(itemModel.name === itemToConvert.itemModel.name){
-          instanceItemsIds = [...instanceItemsIds, itemToConvert._id]
-          }
-      })
-      const itemObject = {itemModel: itemModel, instancesIds: instanceItemsIds}
-      itemObjects = [...itemObjects, itemObject]
-      })
-      return itemObjects
-  }
+    let itemObjects = [];
+    itemModels.forEach(itemModel => {
+      let instanceItemsIds = [];
+      itemsToConvert.forEach(itemToConvert => {
+        if (itemModel.name === itemToConvert.itemModel.name) {
+          instanceItemsIds = [...instanceItemsIds, itemToConvert._id];
+        }
+      });
+      const itemObject = {
+        itemModel: itemModel,
+        instancesIds: instanceItemsIds
+      };
+      itemObjects = [...itemObjects, itemObject];
+    });
+    return itemObjects;
+  };
 
   const items = props.items;
-
-  return (
-    <Paper className={classes.root}>
-      <List component="nav" className={classes.root}>
-        {Object.keys(items).map(itemCategory => {
-          const chest = itemCategory === 'amulet'
-          const torpedo = itemCategory === 'torpedo'
-          if(torpedo){
-            return null
+let content = null
+  if(Object.keys(items).length > 0){
+    if(props.leaderInShop ){
+      content = (<Typography
+              variant="caption"
+              component="p"
+              style={{ marginBottom: "1rem", padding: "1rem", color:"rgb(139, 0, 0)" }}
+            >
+              Lider ma otwarty sklep. Klikanie przedmiotów niemożliwe.
+    </Typography>
+      )
+    }else if(props.activeMission){
+      content = (<Typography
+      variant="caption"
+      component="p"
+      style={{ marginBottom: "1rem", padding: "1rem", color:"rgb(139, 0, 0)" }}
+    >
+        Nie można zmieniać ekwipunku w trakcie aktywnej misji.
+      </Typography>
+      )
+    }else{
+      content = (
+        <List component="nav" className={classes.root}>
+        { Object.keys(items).map(itemCategory => {
+          const chest = itemCategory === "amulet";
+          const torpedo = itemCategory === "torpedo";
+          if (torpedo) {
+            return null;
           }
-          let stackedItems
-          if(chest){
-              stackedItems = convertToStack(items[itemCategory])
-              //console.log(stackedItems)
+          let stackedItems;
+          if (chest) {
+            stackedItems = convertToStack(items[itemCategory]);
+            //console.log(stackedItems)
           }
-          return (!chest) ? (
+          return !chest ? (
             <React.Fragment key={itemCategory}>
               <ListItem onClick={handleOpenList} data-value={itemCategory}>
                 <ListItemText primary={itemCategories[itemCategory]} />
@@ -135,36 +161,55 @@ const Equipment = props => {
                 </List>
               </Collapse>
             </React.Fragment>
-        ) : (
-                <React.Fragment key={itemCategory}>
-                    <ListItem onClick={handleOpenList} data-value={itemCategory}>
-                        <ListItemText primary={itemCategories[itemCategory]} />
-                        {openList === itemCategory ? <ExpandLess /> : <ExpandMore />}
-                    </ListItem>
-                    <Collapse
-                        in={openList === itemCategory}
-                        timeout="auto"
-                        unmountOnExit
-                    >
-                    <List component="div" disablePadding>
-                        {stackedItems.map(item => (
-                        <EquipmentItem
-                            key={item._id}
-                            stacked={true}
-                            item={item}
-                            handleItemToggle={props.handleItemToggle}
-                            itemCategory={itemCategory}
-                            handleItemDelete={handleShowDeleteDialog}
-                            
-                        />
-                        ))}
-                    </List>
-                    </Collapse>
-                </React.Fragment>
-            )})}
+          ) : (
+            <React.Fragment key={itemCategory}>
+              <ListItem onClick={handleOpenList} data-value={itemCategory}>
+                <ListItemText primary={itemCategories[itemCategory]} />
+                {openList === itemCategory ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse
+                in={openList === itemCategory}
+                timeout="auto"
+                unmountOnExit
+              >
+                <List component="div" disablePadding>
+                  {stackedItems.map(item => (
+                    <EquipmentItem
+                      key={item._id}
+                      stacked={true}
+                      item={item}
+                      handleItemToggle={props.handleItemToggle}
+                      itemCategory={itemCategory}
+                      handleItemDelete={handleShowDeleteDialog}
+                    />
+                  ))}
+                </List>
+              </Collapse>
+            </React.Fragment>
+          );
+        })}
       </List>
-      {Object.keys(items).length <= 0 && 
-      <Typography variant="caption" >Ekwipunek jest pusty</Typography>}
+      )
+    }
+
+  }else{
+    content = (
+      <Typography
+      variant="caption"
+      component="p"
+      style={{ marginBottom: "1rem", padding: "1rem" }}
+    >
+      Ekwipunek jest pusty. Idź expić, by zdobyć przedmioty!
+    </Typography>
+    )
+  }
+
+  return (
+    <Paper className={classes.root}>
+      
+      
+      {content}
+
       <Dialog open={deleteDialog} onClose={handleDeleteDialogClose}>
         <DialogTitle>Wyrzucanie przedmiotu</DialogTitle>
         <DialogContent>
@@ -173,16 +218,12 @@ const Equipment = props => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDeleteDialogClose} >
-            Anuluj
-          </Button>
+          <Button onClick={handleDeleteDialogClose}>Anuluj</Button>
           <Button onClick={handleItemDelete} color="secondary" autoFocus>
             Potwierdź
           </Button>
         </DialogActions>
       </Dialog>
-      {props.leaderInShop && Object.keys(items).length > 0 && <div style={{color: 'white', background: 'rgb(0, 0, 0, 0.6)', position: 'absolute', width: '100%', height: '100%', top: 0}}>Lider ma otwarty sklep. Klikanie przedmiotów niemożliwe.</div>}
-      {props.activeMission && Object.keys(items).length > 0 && <div style={{color: 'white', background: 'rgb(0, 0, 0, 0.6)', position: 'absolute', width: '100%', height: '100%', top: 0}}>Nie można zmieniać ekwipunku w trakcie aktywnej misji.</div>}
     </Paper>
   );
 };

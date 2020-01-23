@@ -21,6 +21,14 @@ const StyledListItem = styled(ListItem)`
     padding-left: 1rem;
 `
 
+const ListItemHover = styled(ListItem)`
+  transition: all 0.2s ease-out;
+  &:hover {
+    cursor: pointer;
+    background: rgb(225, 225, 225);
+  }
+`
+
 
 const ItemListItem = ({
     item,
@@ -126,10 +134,10 @@ const ItemListItem = ({
           <List component="nav" style={{width: '100%', borderTop: '1px solid #ddd'}}>
               
               
-              <ListItem onClick={handleOpenEffect} data-value={item._id} style={{paddingLeft: '0.5rem'}}>
-                <ListItemText primary={'Efekty'} />
+              <ListItemHover onClick={handleOpenEffect} data-value={item._id} style={{paddingLeft: '0.5rem'}}>
+                <ListItemText primary={'Efekty'} style={{marginLeft: '2rem'}}/>
                 {openEffect === item._id ? <ExpandLess /> : <ExpandMore />}
-              </ListItem>
+              </ListItemHover>
               <Collapse
                 in={openEffect === item._id}
                 timeout="auto"
@@ -152,7 +160,7 @@ const ItemListItem = ({
         )}
       </Grid>
     </StyledListItem>
-    {!isLast && <Divider />}
+    {!isLast && <Divider style={{marginBottom: '0.5rem'}}/>}
     </React.Fragment>
   );
 };

@@ -14,14 +14,14 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import PersonIcon from '@material-ui/icons/Person';
 
 import MenuDrawer from "./MenuDrawer";
-import AdminEvents from "./Pages/AdminEvents";
-import AdminItems from "./Pages/AdminItems";
-import AdminProducts from "./Pages/AdminProducts";
-import AdminUsers from "./Pages/AdminUsers";
-import AdminParties from "./Pages/AdminParties";
-import AdminBarmans from './Pages/AdminBarmans'
-import AdminReservations from "./Pages/AdminReservations";
-import AdminOrders from "./Pages/AdminOrders";
+import AdminEvents from "./pages/AdminEvents";
+import AdminItems from "./pages/AdminItems";
+import AdminProducts from "./pages/AdminProducts";
+import AdminUsers from "./pages/AdminUsers";
+import AdminParties from "./pages/AdminParties";
+import AdminBarmans from './pages/AdminBarmans'
+import AdminReservations from "./pages/AdminReservations";
+import AdminOrders from "./pages/AdminOrders";
 const drawerWidth = 180;
 
 const useStyles = makeStyles(theme => ({

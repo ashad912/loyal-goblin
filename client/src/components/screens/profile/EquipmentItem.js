@@ -11,12 +11,12 @@ import Menu from "@material-ui/core/Menu";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import MenuItem from "@material-ui/core/MenuItem";
-import Badge from '@material-ui/core/Badge';
+import Badge from "@material-ui/core/Badge";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
-import TouchAppIcon from '@material-ui/icons/TouchApp';
+import TouchAppIcon from "@material-ui/icons/TouchApp";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import { dayLabels, categoryLabels, perkLabels } from "../../../utils/labels";
-import {itemsPath} from '../../../utils/definitions'
+import { itemsPath } from "../../../utils/definitions";
 import { getValue, getTarget } from "../../../utils/methods";
 
 const StyledMenu = withStyles({
@@ -79,27 +79,30 @@ const EquipmentListItem = props => {
 
   const handleDelete = event => {
     event.stopPropagation();
-    let itemId
-    if(props.stacked){
-      itemId = item.instancesIds[0]
-    }else{
-      itemId = item._id
+    let itemId;
+    if (props.stacked) {
+      itemId = item.instancesIds[0];
+    } else {
+      itemId = item._id;
     }
     //console.log(itemId, item.itemModel.name, props.itemCategory)
     props.handleItemDelete(itemId, item.itemModel.name, props.itemCategory);
     setAnchorEl(null);
   };
 
-  const quantity = item.instancesIds && item.instancesIds.length > 1 ? item.instancesIds.length : null
+  const quantity =
+    item.instancesIds && item.instancesIds.length > 1
+      ? item.instancesIds.length
+      : null;
   return (
     <ListItem
-      button={props.itemCategory !== "amulet" }
+      button={props.itemCategory !== "amulet"}
       alignItems="flex-start"
       className={classes.listItem}
       style={{ background: props.equipped ? "#e6dc8d" : "" }}
       equipped={props.equipped ? 1 : 0}
       onClick={() =>
-        props.itemCategory !== "amulet" && 
+        props.itemCategory !== "amulet" &&
         props.handleItemToggle(
           item._id,
           props.equipped,
@@ -108,50 +111,61 @@ const EquipmentListItem = props => {
         )
       }
     >
-      <Badge overlap="circle" color="primary" badgeContent={quantity} anchorOrigin={{horizontal: 'right', vertical: 'bottom'}} style={{marginRight: '0.5rem'}}>
+      <Grid container directon="column">
+        <Grid item container direction="row" justify="space-between">
+          <Grid item xs={3}>
+              <Badge
+                overlap="circle"
+                color="primary"
+                badgeContent={quantity}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                style={{ marginRight: "0.5rem" }}
+              >
+                <ListItemAvatar>
+                  <img
+                    style={{ width: "4rem", height: "4rem" }}
+                    alt={item.itemModel.name}
+                    src={itemsPath + item.itemModel.imgSrc}
+                  />
+                </ListItemAvatar>
+              </Badge>
+          </Grid>
 
-        <ListItemAvatar>
-          <img
-            style={{ width: "32px", height: "32px" }}
-            alt={item.itemModel.name}
-            src={itemsPath + item.itemModel.imgSrc}
-          />
-        </ListItemAvatar>
-      </Badge>
-      <Grid container direction="column">
-        <Grid item container>
-          <Grid item xs={9}>
-            <ListItemText
-              disableTypography
-              primary={item.itemModel.name}
-              secondary={
-                <div>
-                  {item.itemModel.hasOwnProperty("twoHanded") &&
-                    item.itemModel.twoHanded && (
-                      <Typography variant="subtitle2">
-                        Broń dwuręczna
-                      </Typography>
-                    )}
-                  <Typography variant="caption">
-                    {item.itemModel.description}
-                  </Typography>
-                </div>
-              }
-            />
-          </Grid>
-          {props.itemCategory !== "amulet" && 
-          <Grid item xs={1}>
-            <TouchAppIcon/>
-          </Grid>
-        
-        }
-          <Grid item xs={2}>
-            <ListItemIcon onClick={handleClick}>
-              <Button>
-                <MoreHorizIcon className={classes.optionsIcon} />
-              </Button>
-            </ListItemIcon>
-          </Grid>
+            <Grid container direction="column" item xs={9}>
+              <Grid item container>
+                <Grid item xs={9}>
+                  <ListItemText
+                    disableTypography
+                    primary={item.itemModel.name}
+                    secondary={
+                      <div>
+                        {props.twoHanded && (
+                            <Typography variant="subtitle2">
+                              Broń dwuręczna
+                            </Typography>
+                          )}
+                        <Typography variant="caption">
+                          {item.itemModel.description}
+                        </Typography>
+                      </div>
+                    }
+                  />
+                </Grid>
+                {props.itemCategory !== "amulet" && (
+                  <Grid item xs={1}>
+                    <TouchAppIcon />
+                  </Grid>
+                )}
+                <Grid item xs={2}>
+                  <ListItemIcon onClick={handleClick}>
+                    <Button>
+                      <MoreHorizIcon className={classes.optionsIcon} />
+                    </Button>
+                  </ListItemIcon>
+                </Grid>
+              </Grid>
+            </Grid>
+          
         </Grid>
         <Grid item>
           {item.itemModel.perks.length > 0 && (
@@ -170,7 +184,7 @@ const EquipmentListItem = props => {
               {item.itemModel.perks.map((perk, index) => {
                 return (
                   <Box
-                  key={perk._id}
+                    key={perk._id}
                     border={1}
                     borderColor="primary.main"
                     style={{ margin: "0.2rem 0", fontSize: "0.8rem" }}

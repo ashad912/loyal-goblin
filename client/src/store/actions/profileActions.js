@@ -141,6 +141,24 @@ export const confirmLevel = (pointType) => {
 }
 
 
+export const getAllNames = () => {
+    return async dispatch => {
+        try {
+           
+            const res = await axios.get('/user/allNames')
+            
+            dispatch({type: 'GET_ALL_NAMES', names: res.data})
+            
+        }catch (e) {
+            dispatch( {type: "NO_CONNECTION", error: e})      
+        } 
+    }
+}
+
+export const clearAllNames = () => {
+    return {type: 'CLEAR_ALL_NAMES'}
+}
+
 export const createCharacter = (name, sex, characterClass, attributes) => {
     return async dispatch => {
         try {

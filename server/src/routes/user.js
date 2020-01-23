@@ -158,6 +158,17 @@ router.post("/create", async (req, res) => {
   }
 });
 
+router.get("/allNames", auth, async(req,res) => {
+  try {
+    const allNames = await User.find({}, 'name')
+    res.status(200).send(allNames)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(400)
+  }
+
+})
+
 
 router.patch("/character", auth, async (req, res) => {
   try {
@@ -173,6 +184,19 @@ router.patch("/character", auth, async (req, res) => {
     if(parseInt(attributes.strength) + parseInt(attributes.dexterity) + parseInt(attributes.magic) + parseInt(attributes.endurance) > 8){
       throw new Error("Nieprawidłowa suma atrybutów")
     }
+    if(characterClass === 'warrior' && attributes.strength <= 1){
+      throw new Error("Nieprawidłowa wartość atrybutu klasowego")
+    }
+    if(characterClass === 'rogue' && attributes.dexterity <= 1){
+      throw new Error("Nieprawidłowa wartość atrybutu klasowego")
+    }
+    if(characterClass === 'mage' && attributes.magic <= 1){
+      throw new Error("Nieprawidłowa wartość atrybutu klasowego")
+    }
+    if(characterClass === 'cleric' && attributes.endurance <= 1){
+      throw new Error("Nieprawidłowa wartość atrybutu klasowego")
+    }
+
 
     user.name = name
     user.sex = sex
