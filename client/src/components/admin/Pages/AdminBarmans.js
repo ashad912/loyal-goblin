@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import _ from 'lodash'
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
@@ -75,45 +75,72 @@ const AdminBarmans = () => {
     setDisableSubmit(disable);
   };
 
-  const validateForm = _.debounce((value, field) => {
-    const errors = { ...formErrors };
-    if (value.length) {
-      switch (field) {
-        case "userName":
-          errors.userName = null;
-          if (value.trim().length <= 0) {
-            errors.userName = "Wpisz nazwę użytkownika";
-          }
-          break;
-        case "password":
-          errors.password = null;
-          if (value.length < 7) {
-            errors.password = "Hasło musi składać się z minimum 7 znaków";
-          }
-          break;
-        case "confirmPassword":
-          errors.confirmPassword = null;
-          if (value !== password) {
-            errors.confirmPassword = "Powtórzone hasło jest nieprawidłowe";
-          }
-          break;
+  const validateForm = useCallback(
+    //Need to pass any external values to function (e.g. password for confirmPassword validation), if no values are in the dependencies array.
+    //Values in dependencies array force an update of the function, and this makes the debounce repeat.
+    _.debounce((value, field, password) => {
+      console.log('debounce')
+      console.log(password)
+      const errors = { ...formErrors };
+      if (value.length > 0) {
+        switch (field) {
+          case "userName":
+            errors.userName = null;
+            if (value.trim().length <= 0) {
+              errors.userName = "Wpisz nazwę użytkownika";
+            }
+            break;
+          case "password":
+            errors.password = null;
+            if (value.length < 7) {
+              errors.password = "Hasło musi składać się z minimum 7 znaków";
+            }
+            break;
+          case "confirmPassword":
+            errors.confirmPassword = null;
+            if (value !== password) {
+              errors.confirmPassword = "Powtórzone hasło jest nieprawidłowe";
+            }
+            break;
+  
+          default:
+            break;
+        }
+      } 
+  
+      setFormErrors(errors);
+    }, 500), []
+  )
 
-        default:
-          break;
-      }
-    } else {
-      errors[field] = "Uzupełnij to pole";
+  const preSubmitValidate = (isChangePassword) => {
+    const errors = {...formErrors}
+    if(userName.length <= 0 && !isChangePassword){
+      errors.userName = "Uzupełnij to pole"
+    }
+    if(password.length <= 0){
+      errors.password = "Uzupełnij to pole"
+    }
+    if(confirmPassword.length <= 0){
+      errors.confirmPassword = "Uzupełnij to pole"
+    }
+    setFormErrors(errors)
+    if(Object.values(errors).some(error => error !== null)){
+      return false
+    }else{
+      return true
     }
 
-    setFormErrors(errors);
-  }, 500)
+  }
 
   const handleAddNewBarman = async () => {
-    if(password === confirmPassword){
-      await registerBarman(userName, password, confirmPassword)
+    if(preSubmitValidate){
+
+      if(password === confirmPassword){
+        await registerBarman(userName, password, confirmPassword)
+      }
+      fetchBarmans()
+      handleToggleDialog();
     }
-    fetchBarmans()
-    handleToggleDialog();
   };
 
   const handleToggleDialog = () => {
@@ -147,10 +174,13 @@ const AdminBarmans = () => {
     setShowPasswordDialog(prev=>!prev)
   }
   const handleSubmitNewPassword = async () => {
-    if(password === confirmPassword && currentBarman){
-      await changeBarmanPassword(currentBarman, password, confirmPassword)
+    if(preSubmitValidate(true)){
+
+      if(password === confirmPassword && currentBarman){
+        await changeBarmanPassword(currentBarman, password, confirmPassword)
+      }
+      handleTogglePasswordDialog()
     }
-    handleTogglePasswordDialog()
   }
 
   const handleToggleDeleteDialog = id => {
@@ -224,7 +254,7 @@ const AdminBarmans = () => {
             type="password"
             inputProps={{autoComplete:"new-password"}}
             onChange={handleChangeConfirmPassword}
-            onKeyUp={(e)=>validateForm(e.target.value, "confirmPassword")}
+            onKeyUp={(e)=>validateForm(e.target.value, "confirmPassword", password)}
             error={Boolean(formErrors.confirmPassword)}
             helperText={formErrors.confirmPassword}
           />
@@ -271,7 +301,7 @@ const AdminBarmans = () => {
             type="password"
             inputProps={{autoComplete:"new-password"}}
             onChange={handleChangeConfirmPassword}
-            onKeyUp={(e)=>validateForm(e.target.value, "confirmPassword")}
+            onKeyUp={(e)=>validateForm(e.target.value, "confirmPassword", password)}
             error={Boolean(formErrors.confirmPassword)}
             helperText={formErrors.confirmPassword}
           />

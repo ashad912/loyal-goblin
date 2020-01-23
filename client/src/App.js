@@ -24,6 +24,7 @@ import ConnectionSnackbar from "./components/layout/ConnectionSnackbar";
 
 import {socket, joinRoomSubscribe, leaveRoomSubscribe, partyRefreshSubscribe, deleteRoomSubscribe} from './socket'
 import ResetPassword from "./components/auth/ResetPassword";
+import PageNotFound from "./components/screens/PageNotFound";
 
 class App extends React.Component {
   state = {
@@ -120,6 +121,7 @@ class App extends React.Component {
             <div className="App">
               <Route exact path="/" component={withAuth(Admin)} />
               <Route exact path="/signin" component={withNoAuth(SignIn)} />
+              <Route component={PageNotFound}/>
             </div>
           ) : (
             <div className="App">
@@ -144,7 +146,9 @@ class App extends React.Component {
                   path="/reset/:token"
                   component={withNoAuth(ResetPassword)}
                 />
+                {/* TODO: remove admin path from Client */}
                 <Route exact path="/admin" component={Admin} />
+                <Route component={PageNotFound}/>
               </Switch>
               <Footer />
             </div>
