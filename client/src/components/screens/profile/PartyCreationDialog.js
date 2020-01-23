@@ -23,7 +23,7 @@ import {
   giveLeader
 } from "../../../store/actions/partyActions";
 import {
-  setActiveInstanceId
+  setActiveInstance
 } from "../../../store/actions/missionActions";
 import QRreaderView from "./QRreaderView";
 import {
@@ -146,7 +146,7 @@ const PartyCreationDialog = props => {
   const handlePartyDisband = () => {
     props.onPartyDelete();
     if(props.activeMission){
-      props.setActiveInstanceId(null)
+      props.setActiveInstance(null, null)
     }
     
     props.handleClose();
@@ -297,7 +297,7 @@ const mapDispatchToProps = dispatch => {
     onRemoveMember: (partyId, memberId) =>
       dispatch(removeMember(partyId, memberId)),
     onGiveLeader: (partyId, memberId) => dispatch(giveLeader(partyId, memberId)),
-    setActiveInstanceId: (id) => dispatch(setActiveInstanceId(id))
+    setActiveInstance: (id, imgSrc) => dispatch(setActiveInstance(id, imgSrc))
   };
 };
 

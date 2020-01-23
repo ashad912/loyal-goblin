@@ -1,4 +1,6 @@
 import axios from 'axios'
+import {socket, socketAuthenticateEmit, joinRoomEmit, leaveRoomEmit, partyRefreshEmit, deleteRoomEmit, instanceRefreshEmit} from '../../socket'
+
 
 export const validatePasswordChangeToken = (token) => {
     return new Promise (async (resolve, reject) => {
@@ -106,6 +108,7 @@ export const authCheck =  (params) => {
                 const uid = profile._id
                 delete profile._id
                 dispatch( {type: "AUTH_SUCCESS", profile, uid}) //DISPATCH IS SYNCHRONOUS!!!
+
                 resolve(uid)
                 
             } catch (e) {

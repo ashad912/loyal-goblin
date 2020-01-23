@@ -709,17 +709,18 @@ router.post("/finalize", auth, async (req, res) => {
     const partyIds = [...user.party.members, party.leader];
 
     await asyncForEach(partyIds, async memberId => {
-      const member = await User.findById(memberId);
-      member.bag = [...member.bag /*, things from order*/];
-      member.experience = member.experience; /*+ exp from order for user*/
-      await member.save();
+      const exp = 0 //DEVELOP: user's exp counted (with perks/without perks ?)
+      const items = [] //DEVELOP: items from order for user
+      const newLevels = designateNewLevels(user.experience, exp)
 
-      if (
-        activeRally &&
-        !activeRally.users.includes(
-          memberId.toString() /*!!! toString() - to CHECK! */
-        )
-      ) {
+
+      
+      await User.updateOne(
+          {_id: memberId},
+          { $addToSet: { bag: { $each: items } }, $inc: {experience: exp, levelNotifications: newLevels} }
+      )
+
+      if (activeRally && !activeRally.users.includes(memberId.toString() /*!!! toString() - to CHECK! */)) {
         activeRally.users = [...activeRally.users, memberId];
         await activeRally.save();
       }

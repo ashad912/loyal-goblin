@@ -57,7 +57,7 @@ const VerificationPage = props => {
     <React.Fragment>
       {backToMainScreen && (
         <Redirect to={{
-            pathname: '/'                                  
+            pathname: '/',                               
       }} />)}
 
       <AwardsContainer maxWidth="xs">

@@ -1,13 +1,15 @@
 const initState = {
-    activeInstanceId: null
+    activeInstanceId: null,
+    activeInstanceImgSrc: null
   };
   
   const missionReducer = (state = initState, action) => {
     switch (action.type) {
-      case "SET_INSTANCE_ID":
+      case "SET_INSTANCE":
           return {
             ...state,
-            activeInstanceId: action.id
+            activeInstanceId: action.id,
+            activeInstanceImgSrc: action.imgSrc
           };
       default:
         return state;

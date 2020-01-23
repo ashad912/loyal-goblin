@@ -12,7 +12,7 @@ import uuid from 'uuid/v1'
 import Typography from '@material-ui/core/Typography';
 import styled from 'styled-components'
 import moment from 'moment'
-import {getMissionList, createInstance, deleteInstance, setActiveInstanceId} from '../../store/actions/missionActions.js'
+import {getMissionList, createInstance, deleteInstance, setActiveInstance} from '../../store/actions/missionActions.js'
 import {socket, instanceRefreshSubscribe} from '../../socket'
 
 import Rally from './events/Rally'
@@ -845,8 +845,16 @@ const Events = (props) => {
     const fetchMissions = async () => {
         const missionObject = await getMissionList()
         setMissionListData(missionObject.missions)
+
+        if(missionObject.missionInstanceId){
+            const instanceIndex = missionObject.missions.findIndex((mission) => mission._id === missionObject.missionInstanceId)
+            props.setActiveInstance(missionObject.missionInstanceId, missionObject.missions[instanceIndex].imgSrc)
+        }else{
+            props.setActiveInstance(null, null)
+        }
         
-        props.setActiveInstanceId(missionObject.missionInstanceId)
+        
+        
         //updateActiveInstanceId(missionObject.missionInstanceId)
     }
 
@@ -1008,7 +1016,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         authCheck: () => dispatch(authCheck()),
-        setActiveInstanceId: (id) => dispatch(setActiveInstanceId(id))
+        setActiveInstance: (id, imgSrc) => dispatch(setActiveInstance(id, imgSrc))
     };
 };
   

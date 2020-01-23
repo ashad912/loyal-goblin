@@ -52,7 +52,7 @@ function a11yProps(index) {
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.background.paper,
-    flexGrow: 1
+    flexGrow: 1,
   }
 }));
 
