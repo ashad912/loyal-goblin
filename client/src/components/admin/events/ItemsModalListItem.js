@@ -58,7 +58,7 @@ const ItemsModalListItem = props => {
             primary={item.name}
             secondary={
               <span style={{ fontStyle: "italic" }}>
-                {item.fluff}
+                {item.description}
               </span>
             }
           />

@@ -27,6 +27,7 @@ router.get('/itemModels', auth, async(req,res) => {
             path: "perks.target.disc-product",
             select: '_id name' 
         })
+
         res.status(200).send(itemModels)
     }catch(e){
         console.log(e.message)
