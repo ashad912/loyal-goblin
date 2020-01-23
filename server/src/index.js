@@ -12,13 +12,15 @@ import mongoose from "mongoose";
 import path from "path";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import cookie from "cookie";
+import cron from 'node-cron'
 import socket from "socket.io";
 import { socketRoomAuth, socketConnectAuth } from "./middleware/auth";
-import { validateInMissionInstanceStatus, validateInShopPartyStatus } from './utils/methods' 
+import { validateInMissionInstanceStatus, validateInShopPartyStatus, initCleaning } from './utils/methods' 
+
 import _ from "lodash";
 
 //TO-START: npm run-script dev
+
 
 mongoose.Promise = global.Promise;
 
@@ -70,21 +72,29 @@ app.use((err, req, res, next) => {
 
 const server = app.listen(port, () => {
   console.log(`Listening at ${port}`);
+  initCleaning() 
   updateRallyQueue();
+
+  cron.schedule('0 0 10 * * *', () => { //every day at 10:00 AM
+    initCleaning() 
+  },{
+    scheduled: true,
+    timezone: "Europe/Warsaw" ///Warsaw UTC+1/UTC+2 -> stable hour despite of the timezone change
+  })
+
 });
+
+
+
+
 
 //cant refactor socket methods to separate file :<< but it worked on another computer, maybe clean and rebuild?
 
 var io = socket(server); //param is a server, defined upper
-
-
-
 var allClients = [];
 
-
-
-
 async function authenticate(socket, data, callback) {
+  console.log(socket.id, 'tried socket auth')
   let multipleSession = false
   try{
     const user = await socketConnectAuth(socket)

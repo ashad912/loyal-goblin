@@ -34,14 +34,14 @@ const RallyDetails = (props) => {
     const [levelList, setLevelList] = React.useState(null);
 
     const handleOpenList = (event, level) => {
-            if (event.currentTarget.dataset.value === openList && levelList === level) {
-                setOpenList("");
-                setLevelList(null)
-              } else {
-                setOpenList(event.currentTarget.dataset.value);
-                setLevelList(level)
-              }
-      };
+        if (event.currentTarget.dataset.value === openList && levelList === level) {
+            setOpenList("");
+            setLevelList(null)
+        } else {
+            setOpenList(event.currentTarget.dataset.value);
+            setLevelList(level)
+        }
+    };
 
 
 
@@ -63,47 +63,43 @@ const RallyDetails = (props) => {
                 >
                 
                 <Grid
-                        container
-                        direction="row"
-                    >
-                            
-                        <Grid item xs={9}>
-                            <Grid
-                                container
-                                direction="column"
+                    container
+                    direction="row"
+                >        
+                    <Grid item xs={9}>
+                        <Grid
+                            container
+                            direction="column"      
+                        >
+                        <Grid item style={{marginBottom: '0.5rem'}}>
+                            <Typography
+                                component="span"
+                                variant="h5"
                                 
                             >
-                                <Grid item style={{marginBottom: '0.5rem'}}>
-                                    <Typography
-                                        component="span"
-                                        variant="h5"
-                                        
-                                    >
-                                        {rally.title}
-                                    </Typography>
-                                </Grid>
-                                <Grid item /*style={{textAlign: 'justify'}}*/> 
-                                    <Typography
-                                        component="p"
-                                        variant="body2"
-                                        
-                                        
-                                    >
-                                        {rally.description}
-                                    </Typography>
-                                </Grid>
-                            </Grid>   
-                        </Grid> 
-                        <Grid item xs={3} >
-                            <Grid
-                                container
-                                direction="column"
+                                {rally.title}
+                            </Typography>
+                        </Grid>
+                        <Grid item /*style={{textAlign: 'justify'}}*/> 
+                            <Typography
+                                component="p"
+                                variant="body2"    
                             >
-                                <Grid item style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                    <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`${ralliesPath}${rally.avatar}`} />
-                                </Grid>
+                                {rally.description}
+                            </Typography>
+                        </Grid>
+                        </Grid>   
+                    </Grid> 
+                    <Grid item xs={3} >
+                        <Grid
+                            container
+                            direction="column"
+                        >
+                            <Grid item style={{display: 'flex', justifyContent: 'flex-end'}}>
+                                <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`${ralliesPath}${rally.imgSrc}`} />
                             </Grid>
                         </Grid>
+                    </Grid>
                     
 
                 </Grid>

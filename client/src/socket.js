@@ -7,11 +7,11 @@ export const socket =  io({
 
 //SUBSCRIBE
 
-// export const socketUnauthorizedSubscribe = (err) => {
-//     socket.on('unauthorized', err, () => {
-//         return err
-//     })
-// }
+export const socketUnauthorizedSubscribe = (err) => {
+    socket.on('unauthorized', err, () => {
+        return err
+    })
+}
 
 
 export const joinRoomSubscribe = (roomId) => {
@@ -76,9 +76,9 @@ export const multipleSessionSubscribe = (socketId) => {
 
 //EMIT
 
-// export const socketAuthenticateEmit = () => {
-//     socket.emit('authentication', {});
-// }
+export const socketAuthenticateEmit = () => {
+    socket.emit('authentication', {});
+}
 
 export const joinRoomEmit = (roomId) => {
     socket.emit('joinRoom', roomId)

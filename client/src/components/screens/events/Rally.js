@@ -156,7 +156,7 @@ class Rally extends Component {
                                     horizontal: 'right',
                                 }}
                             >
-                                <Avatar style={{height: height, width: width, }} alt="avatar" src={`${ralliesPath}${rally.avatar}`} />
+                                <Avatar style={{height: height, width: width, }} alt="avatar" src={`${ralliesPath}${rally.imgSrc}`} />
                             </Badge>
                             <Typography variant="h5">
                                 {rally.title}

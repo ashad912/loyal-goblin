@@ -10,6 +10,18 @@ import { Party } from "../models/party";
 import { MissionInstance } from "../models/missionInstance";
 import axios from 'axios'
 
+export const initCleaning = async () => {
+  try{
+    //await Party.deleteMany() //drop() did not work on 'model' / remove() depracated
+    //await MissionInstance.deleteMany()
+    console.log('Initialization completed!')
+    
+  }catch(e){
+    console.log(e.message)
+  }
+  
+}
+
 export async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array);

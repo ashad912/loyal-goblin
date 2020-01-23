@@ -8,6 +8,8 @@ var ObjectId = require("mongoose").Types.ObjectId;
 
 const router = new express.Router();
 
+
+
 //ADMIN
 router.get('/adminParties', auth, async (req, res) => {
   try{
@@ -91,6 +93,15 @@ router.post("/create", auth, async (req, res) => {
       }
     }
 
+    //Remove party's existing mission instance if present on user add
+    const missionInstance = await MissionInstance.findOne({ //ASHAD ADD
+        party: { $elemMatch: { profile: leader._id } } //remove existing mInstance 
+    });
+
+    if (missionInstance) {
+      await missionInstance.remove();
+    }
+
     //Create new party with name from request and leader from auth
     const party = new Party({ name: req.body.name, leader: leader._id });
 
@@ -100,6 +111,7 @@ router.post("/create", auth, async (req, res) => {
 
     res.status(200).send({ partyId: party._id });
   } catch (e) {
+    console.log(e.message)
     res.status(400).send(e.message);
   }
 });
@@ -109,6 +121,12 @@ router.post("/create", auth, async (req, res) => {
 router.patch("/addMember", auth, async (req, res) => {
   try {
     const party = await Party.findById(req.body.partyId);
+
+    const leader = req.user
+
+    if(leader._id.toString() !== party.leader._id.toString()){ //ASHAD
+      throw new Error('You are not the leader!')
+    }
 
     if (party.members.length >= 7) {
       throw new Error("Maksymalna wielkość drużyny została osiągnięta!");
@@ -135,13 +153,18 @@ router.patch("/addMember", auth, async (req, res) => {
       { $set: { party: req.body.partyId } }
     );
 
-    //Remove party's existing mission instance if present on user add
-    const missionInstance = await MissionInstance.findOne({
-      party: { $elemMatch: { profile: user._id } }
+    //Remove party's (and new user's) existing mission instance if present on user add
+    const missionInstances = await MissionInstance.find({ //ASHAD MOD
+      $or: [
+        {party: { $elemMatch: { profile: leader._id } }}, //remove existing mInstance - party side
+        {party: { $elemMatch: { profile: user._id } }} //remove existing mInstance - new user side
+       ]
     });
 
-    if (missionInstance) {
-      missionInstance.remove();
+    if (missionInstances.length) {
+      await asyncForEach(missionInstances, async (missionInstance) => {
+        missionInstance.remove();
+      })  
     }
 
     party.members.push(req.body.memberId);

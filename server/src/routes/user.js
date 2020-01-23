@@ -268,8 +268,8 @@ router.get("/me", auth, async (req, res, next) => {
           select: "_id name avatar bag equipped userPerks"
         })
         .populate({
-                  path: "activeOrder.awards.itemModel", select: "name imgSrc"}
-                )
+          path: "activeOrder.awards.itemModel", select: "name imgSrc"}
+        )
         .execPopulate();
 
     }

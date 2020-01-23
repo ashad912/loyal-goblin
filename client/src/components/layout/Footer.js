@@ -6,7 +6,7 @@ const Footer = (props) => {
     return(
         <div style={{backgroundColor: '#3f51b5', paddingLeft: '1rem'}} id="footer">
             <Divider/>
-            <Typography style={{textAlign: 'left', color: 'white'}} variant="body1">© 2019 HHG Studio</Typography>
+            <Typography style={{textAlign: 'left', color: 'white'}} variant="body1">© 2019-2020 HHG Studio</Typography>
         </div>
     )
 }

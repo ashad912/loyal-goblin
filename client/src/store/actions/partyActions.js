@@ -1,9 +1,9 @@
 import axios from 'axios'
-import {socket, joinRoomEmit, leaveRoomEmit, partyRefreshEmit, deleteRoomEmit, instanceRefreshEmit} from '../../socket'
+import {socket, socketAuthenticateEmit, joinRoomEmit, leaveRoomEmit, partyRefreshEmit, deleteRoomEmit, instanceRefreshEmit} from '../../socket'
 import { setActiveInstanceId } from './missionActions'
 
 
-export const updateParty = (params) => {
+export const updateParty = (params, socketAuthReconnect) => {
     return async dispatch => {
         
             try {
@@ -19,8 +19,14 @@ export const updateParty = (params) => {
                     const party = res.data
                     
                     if(!socket.connected){
+                        console.log('connect from updateParty')
                         socket.open()
+                        if(socketAuthReconnect){
+                            console.log('reconnect')
+                            socket.emit('authentication', {});
+                        }
                         joinRoomEmit(party._id)
+                        instanceRefreshEmit(res.data.partyId)
                     }
                     
                 }else{
@@ -47,8 +53,11 @@ export const createParty =  (name, leader) => {
             dispatch({type: "CREATE_PARTY", name, partyId: res.data.partyId, leader})
 
             if(!socket.connected){
+                console.log('connect from createParty')
                 socket.open()
+                socket.emit('authentication', {});
                 joinRoomEmit(res.data.partyId)
+                instanceRefreshEmit(res.data.partyId)
             }     
         }catch (e) {
             console.log(e)

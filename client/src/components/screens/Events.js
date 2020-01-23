@@ -817,7 +817,16 @@ const createTempRally = () => {
 }
 
 
-
+function useDidUpdateEffect(fn, inputs) {
+    const didMountRef = React.useRef(false);
+  
+    React.useEffect(() => {
+      if (didMountRef.current)
+        fn();
+      else
+        didMountRef.current = true;
+    }, inputs);
+  }
 
 
 const Events = (props) => {
@@ -861,6 +870,12 @@ const Events = (props) => {
         })
 
     }, []);
+
+    // useDidUpdateEffect(() => {
+    //     fetchMissions()
+    // }, [props.party.members, props.party.leader])
+
+    
 
     const handleMissionClick = async (id) => {
         console.log('clicked',  id) 

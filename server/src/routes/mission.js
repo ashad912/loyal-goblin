@@ -217,7 +217,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
         //         options: {}
         //     })
 
-        let partyIds = []
+        let partyIds = [user._id]
 
         const missionInstance = await MissionInstance.findOne(
             {party: {$elemMatch: {profile: user._id}}}    
@@ -267,7 +267,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
 
         if(user.party){
             const party = await Party.findById(user.party)
-            partyIds = [party.leader, ...party.members]
+            partyIds = [...partyIds, ...party.members]
         }
         
         
@@ -285,6 +285,12 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
                             {$in: partyIds} //if even one of completedByUsers elements includes some element from 'party' -> true
                         }
                     }
+                },
+                {
+                    $or: [ //excluding unique missions finished by at least one user
+                        {unique: false},
+                        {completedByUsers: {$size: 0}}
+                    ]
                 }
             ],
         })
@@ -324,7 +330,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
         await asyncForEach(missions, async (mission) => {
             if(mission.unique){
                 const instances = await MissionInstance.find({mission: mission._id})
-                if(instances.length){
+                if( instances.length){
                     excludedMissions = [...excludedMissions, mission._id.toString()]
                 }
             }
@@ -469,6 +475,12 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
                         }
                     }
                     
+                },
+                {
+                    $or: [ //excluding unique missions finished by at least one user
+                        {unique: false},
+                        {completedByUsers: {$size: 0}}
+                    ]
                 }
                 
         ]})
@@ -903,6 +915,10 @@ router.delete('/finishInstance', auth, async (req,res) => {
                     { $addToSet: { bag: { $each: items } }, $inc: {experience: modMissionExp, levelNotifications: newLevels}, $set: {statistics: statistics} }
                 )
 
+                // await Mission.updateOne(
+                //     {_id: missionInstance.mission._id},
+                //     { $addToSet: { completedByUsers: user._id }}
+                // )
                 // PREVIOUS VERSION
                 // user.bag = [...user.bag, ...items]
                 // await user.save()

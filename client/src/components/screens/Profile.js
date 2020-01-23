@@ -912,7 +912,7 @@ const Profile = props => {
       <PartyJoiningDialog
         open={isJoiningParty}
         userId={props.auth.uid}
-        forcePartyUpdate={() => props.onPartyUpdate()}
+        forcePartyUpdate={() => props.onPartyUpdate(null, true)}
         handleClose={() => setIsJoiningParty(prev => !prev)}
       />
 
@@ -972,7 +972,7 @@ const mapDispatchToProps = dispatch => {
     onItemToggle: (id, category, equipped) =>
       dispatch(toggleItem(id, category, equipped)),
     onItemDelete: id => dispatch(deleteItem(id)),
-    onPartyUpdate: () => dispatch(updateParty()),
+    onPartyUpdate: (params, socketAuthReconnect) => dispatch(updateParty(params, socketAuthReconnect)),
     onRemoveMember: (partyId, memberId) =>
       dispatch(removeMember(partyId, memberId)),
     clearRallyAwards: () => dispatch(clearRallyAwards()),
