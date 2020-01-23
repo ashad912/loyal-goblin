@@ -104,7 +104,7 @@ const EventMissionListItem = ({
         <Grid container direction="column" spacing={2}>
           <Grid item container>
             <Grid item xs={3}>
-              <Typography style={{ textAlign: "center" }}>- Misja -</Typography>
+  <Typography style={{ textAlign: "center" }}>{event.unique ? "- Misja unikalna -" : "- Misja -"}</Typography>
             </Grid>
             <Grid item xs={3}>
               <Typography>{active ? "Aktywna" : "Nieaktywna"}</Typography>
@@ -167,6 +167,7 @@ const EventMissionListItem = ({
                   variant="contained"
                   color="secondary"
                   onClick={handleAmuletPopover}
+                  disabled={event.amulets.length <= 0}
                 >
                   Amulety
                 </Button>

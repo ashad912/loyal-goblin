@@ -793,6 +793,11 @@ if(eventId){
           event.hasOwnProperty("level")
         );
         break;
+        case "unique":
+          tempEvents = tempEvents.filter(event =>
+            event.unique
+          );
+          break;
       case "rally":
         tempEvents = tempEvents.filter(
           event => !event.hasOwnProperty("level")
@@ -889,6 +894,7 @@ if(eventId){
                   >
                     <MenuItem value={"all"}>Wszystkie</MenuItem>
                     <MenuItem value={"mission"}>Misja</MenuItem>
+                    <MenuItem value={"unique"}>Misje unikalne</MenuItem>
                     <MenuItem value={"rally"}>Rajd</MenuItem>
                   </Select>
                 </FormControl>

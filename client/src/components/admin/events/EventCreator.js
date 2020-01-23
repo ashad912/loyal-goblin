@@ -494,7 +494,7 @@ class EventCreator extends Component {
     console.log(itemModels)
     this.setState(
       {
-        amulets: itemModels.hasOwnProperty('amulet') ? [...itemModels.amulet] : [],
+        amulets: itemModels.hasOwnProperty('amulet') && itemModels.amulet.length ? [...itemModels.amulet] : [],
         fullItemsList: itemModels,
         rallies
       },
@@ -504,6 +504,14 @@ class EventCreator extends Component {
           console.log(event)
           if (event.hasOwnProperty("level") && event.level) {
             //MISSION
+            Object.keys(event.awards).forEach(awardClass => {
+              event.awards[awardClass] = event.awards[awardClass].map(award => {
+                const id = award.itemModel._id 
+                delete award.itemModel._id 
+                return {...award.itemModel, quantity: award.quantity, itemModel: id}
+              })
+            })
+  
             const amulets = this.state.amulets.map(amulet => {
               return {
                 ...amulet,
@@ -522,7 +530,7 @@ class EventCreator extends Component {
             this.setState({
               _id: event._id,
               isRally: false,
-              unique: event.isUnique,
+              unique: event.unique,
               title: event.title,
               description: event.description,
               minLevel: event.level+"",
@@ -901,6 +909,12 @@ class EventCreator extends Component {
     });
   };
 
+  handleDeleteAwardLevel = (level) => {
+    let awardsLevels = [...this.state.awardsLevels];
+    awardsLevels = awardsLevels.filter(awardLevel => awardLevel.level !== level)
+   this.setState({awardsLevels}) 
+  }
+
   handleAddNewAwardLevel = () => {
     const awardsLevels = [...this.state.awardsLevels];
     if (
@@ -1103,7 +1117,8 @@ class EventCreator extends Component {
       event.endurance = this.state.endurance
       event.level = this.state.minLevel
       event.unique = this.state.unique
-      event.amulets = this.state.amulets
+      const amulets = this.state.amulets.filter(amulet => amulet.quantity > 0)
+      event.amulets = amulets
                         // event.amulets.forEach(amulet => {
                         //   amulet.itemModel = amulet._id
                         //   delete amulet._id
@@ -1420,7 +1435,9 @@ class EventCreator extends Component {
                       <Grid item xs={4}>
                         <Typography variant="h6">{`Minimum ${awardLevel.level} PD`}</Typography>
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid item xs={6} container direction="row" justify="space-evenly">
+                        <Grid item style={{marginBottom: '1rem'}}>
+
                         <Button
                           variant="contained"
                           color="primary"
@@ -1428,8 +1445,24 @@ class EventCreator extends Component {
                             this.handleToggleRallyItemsModal(e, index)
                           }
                         >
-                          Dodaj przedmioty do tego progu
+                          Dodaj nagrody do tego progu
                         </Button>
+                        </Grid>
+                        <Grid item>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={e =>
+                            this.handleDeleteAwardLevel(awardLevel.level)
+                          }
+                        >
+                          Usuń próg
+                        </Button>
+
+                        </Grid>
+
+
+                        
                       </Grid>
                     </Grid>
                     {!this.state.showItemsModal && (
@@ -1539,7 +1572,7 @@ class EventCreator extends Component {
                     color="primary"
                     onClick={this.handleToggleItemsModal}
                   >
-                    Dodaj przedmioty
+                    Dodaj nagrody
                   </Button>
                 </Grid>
                 <Grid item>
