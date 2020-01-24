@@ -1,6 +1,7 @@
 import express from "express";
 import { User } from "../models/user";
 import { auth } from "../middleware/auth";
+import { adminAuth } from '../middleware/adminAuth';
 import { MissionInstance } from "../models/missionInstance";
 import { Party } from "../models/party";
 import { asyncForEach } from '../utils/methods'
@@ -12,8 +13,8 @@ const router = new express.Router();
 
 
 
-//ADMIN
-router.get('/adminParties', auth, async (req, res) => {
+////ADMIN
+router.get('/adminParties', adminAuth, async (req, res) => {
   try{
     const parties = await Party.find({}).sort({"createdAt": -1 }).populate({
       path: 'leader members',
@@ -28,7 +29,7 @@ router.get('/adminParties', auth, async (req, res) => {
 })
 
 
-router.delete("/adminRemove", auth, async (req, res) => {
+router.delete("/adminRemove", adminAuth, async (req, res) => {
  
   try {
     const party = await Party.findById(req.body._id);
@@ -44,6 +45,8 @@ router.delete("/adminRemove", auth, async (req, res) => {
   }
 });
 
+
+////USER
 
 router.get("/", auth, async (req, res, next) => {
   const user = req.user;
@@ -292,31 +295,6 @@ router.patch("/leave", auth, async (req, res) => {
   }
 });
 
-//OK, TO DEVELOP - ALMOST RAW API
-// router.post('/create', auth, async (req,res) => {
-//     const party = new Party(req.body)
-
-//     try {
-
-//         await party.save()
-
-//         const allInPartyIds = [party.leader, ...party.members]
-
-//         await User.updateMany({
-//             _id: {$in: allInPartyIds}
-//         },{
-//             $set: {
-//                 party: party._id
-//             }
-//         })
-
-//         res.status(201).send(party)
-//     } catch (e) {
-//         res.status(500).send(e.message)
-//     }
-// })
-
-//user leaves party -> remove missionInstance!
 
 //Called when leader deletes party
 //TODO: Send info to members about party removal

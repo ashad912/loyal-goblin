@@ -20,7 +20,7 @@ export const AdminSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        minlength: 12,
+        minlength: 15,
         validate(value) {
             if (value.toLowerCase().includes('password')) {
                 throw new Error('Password cannot contain "password"')

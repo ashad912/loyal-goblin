@@ -1,5 +1,6 @@
 import express from "express";
 import { Product } from "../models/product";
+import { adminAuth } from '../middleware/adminAuth';
 import { auth } from "../middleware/auth";
 import isEqual from "lodash/isEqual";
 import moment from 'moment'
@@ -25,7 +26,7 @@ const router = new express.Router();
 ////ADMIN-SIDE
 
 
-router.get('/products', auth, async(req,res) => {
+router.get('/products', adminAuth, async(req,res) => {
   const onlyNames = req.query.onlyNames === 'true'
   try{
       if(onlyNames){
@@ -44,7 +45,7 @@ router.get('/products', auth, async(req,res) => {
 })
 
 //OK
-router.post("/create", auth, async (req, res) => {
+router.post("/create", adminAuth, async (req, res) => {
   const product = new Product(req.body);
 
   // let icon = req.files.icon.data
@@ -60,7 +61,7 @@ router.post("/create", auth, async (req, res) => {
 });
 
 //OK
-router.patch("/update", auth, async (req, res, next) => {
+router.patch("/update", adminAuth, async (req, res, next) => {
   let updates = Object.keys(req.body);
   const id = req.body._id;
 
@@ -104,7 +105,7 @@ router.patch("/update", auth, async (req, res, next) => {
 });
 
 
-router.patch('/uploadImage/:id', auth, async (req, res) => {
+router.patch('/uploadImage/:id', adminAuth, async (req, res) => {
   try{
       if (!req.files) {
           throw new Error("Brak ikony produktu")
@@ -135,7 +136,7 @@ router.patch('/uploadImage/:id', auth, async (req, res) => {
 
 
 //OK
-router.delete("/remove", auth, async (req, res) => {
+router.delete("/remove", adminAuth, async (req, res) => {
   try {
     const product = await Product.findOneAndDelete({ _id: req.body._id });
 
@@ -150,7 +151,7 @@ router.delete("/remove", auth, async (req, res) => {
 });
 
 
-router.get('/orders', auth, async (req,res) => {
+router.get('/orders', adminAuth, async (req,res) => {
   const page = parseInt(req.query.page)
   const rowsPerPage = parseInt(req.query.rowsPerPage)
   const nameFilter = req.query.name || ''
@@ -158,48 +159,46 @@ router.get('/orders', auth, async (req,res) => {
   const toDate = req.query.to ? moment(req.query.to).toISOString() : moment().toISOString()
 
   try{
+    const users = await User.find({name: new RegExp(nameFilter, 'gi')},  {_id: 1})
+    const usersIds = users.map(user => user._id)
 
-    
-  const users = await User.find({name: new RegExp(nameFilter, 'gi')},  {_id: 1})
-  const usersIds = users.map(user => user._id)
+    const orders = await ArchiveOrder.aggregate()
+      .match(
+        {$and: [
+          {leader: {$in: usersIds}},
+          {createdAt: {
+            $gte: new Date(fromDate),
+            $lt: new Date(toDate)
+          }}
+        ]
+      }
+      ).sort({"createdAt": -1 })
+      .skip((rowsPerPage * page))
+      .limit(rowsPerPage)
+      .project({
+        leader: 1,
+        totalPrice: 1,
+        createdAt: 1,
+      })
 
-  const orders = await ArchiveOrder.aggregate()
-    .match(
+    await User.populate(orders, {
+      path: 'leader',
+      select: '_id name'
+    })
+
+    const countedRecords = await ArchiveOrder.find(
       {$and: [
         {leader: {$in: usersIds}},
         {createdAt: {
           $gte: new Date(fromDate),
           $lt: new Date(toDate)
         }}
-      ]
-    }
-    ).sort({"createdAt": -1 })
-    .skip((rowsPerPage * page))
-    .limit(rowsPerPage)
-    .project({
-      leader: 1,
-      totalPrice: 1,
-      createdAt: 1,
-    })
-
-  await User.populate(orders, {
-    path: 'leader',
-    select: '_id name'
-  })
-
-  const countedRecords = await ArchiveOrder.find(
-    {$and: [
-      {leader: {$in: usersIds}},
-      {createdAt: {
-        $gte: new Date(fromDate),
-        $lt: new Date(toDate)
-      }}
-    ]},
-    {_id: 1}
-  ).countDocuments()
+      ]},
+      {_id: 1}
+    ).countDocuments()
 
 
-  res.send({orders, countedRecords})
+    res.send({orders, countedRecords})
 
   }catch(e){
     console.log(e.message)
@@ -207,109 +206,10 @@ router.get('/orders', auth, async (req,res) => {
   }
 })
 
-router.post('/testAddMockOrders', auth, async(req,res) => {
 
-  const userId = req.user._id
-  
-  const mockOrders = [
-    {leader: userId, totalPrice: 41.5},
-    {leader: userId, totalPrice: 12},
-    {leader: userId, totalPrice: 11.5},
-    {leader: userId, totalPrice: 1000},
-    {leader: userId, totalPrice: 141.5},
-    {leader: userId, totalPrice: 1222},
-    {leader: userId, totalPrice: 91.5},
-    {leader: userId, totalPrice: 997.12},
-    {leader: userId, totalPrice: 41.5},
-    {leader: userId, totalPrice: 12},
-    {leader: userId, totalPrice: 11.5},
-    {leader: userId, totalPrice: 1000},
-    {leader: userId, totalPrice: 141.5},
-    {leader: userId, totalPrice: 1222},
-    {leader: userId, totalPrice: 91.5},
-    {leader: userId, totalPrice: 997.12},
-    {leader: userId, totalPrice: 41.5},
-    {leader: userId, totalPrice: 12},
-    {leader: userId, totalPrice: 11.5},
-    {leader: userId, totalPrice: 1000},
-    {leader: userId, totalPrice: 141.5},
-    {leader: userId, totalPrice: 1222},
-    {leader: userId, totalPrice: 91.5},
-    {leader: userId, totalPrice: 997.12},
-    {leader: userId, totalPrice: 41.5},
-    {leader: userId, totalPrice: 12},
-    {leader: userId, totalPrice: 11.5},
-    {leader: userId, totalPrice: 1000},
-    {leader: userId, totalPrice: 141.5},
-    {leader: userId, totalPrice: 1222},
-    {leader: userId, totalPrice: 91.5},
-    {leader: userId, totalPrice: 997.12},
-    {leader: userId, totalPrice: 41.5},
-    {leader: userId, totalPrice: 12},
-    {leader: userId, totalPrice: 11.5},
-    {leader: userId, totalPrice: 1000},
-    {leader: userId, totalPrice: 141.5},
-    {leader: userId, totalPrice: 1222},
-    {leader: userId, totalPrice: 91.5},
-    {leader: userId, totalPrice: 997.12},
-    {leader: userId, totalPrice: 41.5},
-    {leader: userId, totalPrice: 12},
-    {leader: userId, totalPrice: 11.5},
-    {leader: userId, totalPrice: 1000},
-    {leader: userId, totalPrice: 141.5},
-    {leader: userId, totalPrice: 1222},
-    {leader: userId, totalPrice: 91.5},
-    {leader: userId, totalPrice: 997.12},
-    {leader: userId, totalPrice: 41.5},
-    {leader: userId, totalPrice: 12},
-    {leader: userId, totalPrice: 11.5},
-    {leader: userId, totalPrice: 1000},
-    {leader: userId, totalPrice: 141.5},
-    {leader: userId, totalPrice: 1222},
-    {leader: userId, totalPrice: 91.5},
-    {leader: userId, totalPrice: 997.12},
-    {leader: userId, totalPrice: 41.5},
-    {leader: userId, totalPrice: 12},
-    {leader: userId, totalPrice: 11.5},
-    {leader: userId, totalPrice: 1000},
-    {leader: userId, totalPrice: 141.5},
-    {leader: userId, totalPrice: 1222},
-    {leader: userId, totalPrice: 91.5},
-    {leader: userId, totalPrice: 997.12},
-    {leader: userId, totalPrice: 41.5},
-    {leader: userId, totalPrice: 12},
-    {leader: userId, totalPrice: 11.5},
-    {leader: userId, totalPrice: 1000},
-    {leader: userId, totalPrice: 141.5},
-    {leader: userId, totalPrice: 1222},
-    {leader: userId, totalPrice: 91.5},
-    {leader: userId, totalPrice: 997.12},
-    {leader: userId, totalPrice: 41.5},
-    {leader: userId, totalPrice: 12},
-    {leader: userId, totalPrice: 11.5},
-    {leader: userId, totalPrice: 1000},
-    {leader: userId, totalPrice: 141.5},
-    {leader: userId, totalPrice: 1222},
-    {leader: userId, totalPrice: 91.5},
-    {leader: userId, totalPrice: 997.12},
-    {leader: userId, totalPrice: 41.5},
-    {leader: userId, totalPrice: 12},
-    {leader: userId, totalPrice: 11.5},
-    {leader: userId, totalPrice: 1000},
-    {leader: userId, totalPrice: 141.5},
-    {leader: userId, totalPrice: 1222},
-    {leader: userId, totalPrice: 91.5},
-    {leader: userId, totalPrice: 997.12},
-   
-  ];
-  
-  try{
-    await ArchiveOrder.insertMany(mockOrders)
-    res.send(mockOrders.map((order) =>  order.leader))
-  }catch(e){
-    res.status(400).send(e.message)
-  }
-})
+
+
+
 
 ////USER-SIDE
 
@@ -347,7 +247,6 @@ const calculateOrder = async user => {
      
     const partyFullObject = [user, ...members];
 
-    const calculatedOrders = {};
 
     await asyncForEach(partyFullObject, async partyMember => {
       //HERE IMPLEMENT PRICE AND EXPERIENCE MODS - input: activeOrder, userPerks; output: object for view
@@ -378,7 +277,7 @@ const calculateOrder = async user => {
       //currentMember.products.forEach(product => console.log(product.product.price, product.product.experience))
       if (user.activeOrder[currentMember].products.length > 0) {
         let totalPrice = 0
-         let totalExperience = 0
+        let totalExperience = 0
         let totalAwards = []
         user.activeOrder[currentMember].products.forEach(product => {
            totalPrice += product.product.price * product.quantity
@@ -635,7 +534,7 @@ router.patch("/cancel", auth, async (req, res) => {
 
 })
 
-//triggered by ADMIN
+//DEVELOP: BARMANAUTH?!
 //OK BUT TO DEVELOP
 router.patch("/verify", auth, async (req, res) => {
   try {
@@ -682,8 +581,7 @@ router.patch("/verify", auth, async (req, res) => {
   }
 });
 
-//DEVELOP
-//ADMIN?
+//DEVELOP: BARMANAUTH?!
 router.post("/finalize", auth, async (req, res) => {
   //depends on source of request
   const party = req.party;
@@ -731,5 +629,111 @@ router.post("/finalize", auth, async (req, res) => {
     res.status(500).send(e.message);
   }
 });
+
+
+////TESTS
+// router.post('/testAddMockOrders', adminAuth, async(req,res) => {
+
+//   const userId = req.user._id
+  
+//   const mockOrders = [
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+   
+//   ];
+  
+//   try{
+//     await ArchiveOrder.insertMany(mockOrders)
+//     res.send(mockOrders.map((order) =>  order.leader))
+//   }catch(e){
+//     res.status(400).send(e.message)
+//   }
+// })
 
 export const productRouter = router;

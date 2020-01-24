@@ -12,6 +12,7 @@ import { Item } from "../models/item";
 import { ItemModel } from "../models/itemModel";
 import { MissionInstance } from "../models/missionInstance";
 import { auth } from "../middleware/auth";
+import { adminAuth } from '../middleware/adminAuth';
 import {
   asyncForEach,
   designateUserPerks,
@@ -33,9 +34,9 @@ const uploadPath = "../client/public/images/user_uploads/"
 
 
 
-////ADMIN
+////ADMIN-SIDE
 
-router.get('/adminUsers', auth, async (req, res) => {
+router.get('/adminUsers', adminAuth, async (req, res) => {
   try{
     const users = await User.aggregate().match({}).project({
       '_id': 1,
@@ -66,7 +67,7 @@ const toggleBan = async (userId, status) => {
   return
 }
 
-router.patch('/ban', auth, async (req, res) => {
+router.patch('/ban', adminAuth, async (req, res) => {
   try{
     await toggleBan(req.body._id, false)
 
@@ -87,7 +88,7 @@ router.patch('/ban', auth, async (req, res) => {
   }
 })
 
-router.patch('/unban', auth, async (req, res) => {
+router.patch('/unban', adminAuth, async (req, res) => {
   try{
     await toggleBan(req.body._id, true)
     res.send()
@@ -97,7 +98,7 @@ router.patch('/unban', auth, async (req, res) => {
 })
 
 
-////USER
+////USER-SIDE
 
 router.post("/create", async (req, res) => {
   //registerKey used in biometrica, hwvr we may allow registration for ppl with key from qrcode - i left it

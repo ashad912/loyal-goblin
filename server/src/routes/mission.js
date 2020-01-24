@@ -2,6 +2,7 @@ import express from 'express'
 import bcrypt from 'bcryptjs'
 import { User } from '../models/user';
 import { Mission } from '../models/mission';
+import { adminAuth } from '../middleware/adminAuth';
 import { auth } from '../middleware/auth';
 import { MissionInstance } from '../models/missionInstance';
 import { Item } from '../models/item'
@@ -25,7 +26,7 @@ const router = new express.Router
 
 
 //OK
-router.get('/events', auth, async (req,res) => {
+router.get('/events', adminAuth, async (req,res) => {
     try{
         const missionList = await Mission.find({}).populate({path: 'amulets.itemModel awards.any.itemModel awards.warrior.itemModel awards.rogue.itemModel awards.mage.itemModel awards.cleric.itemModel'})
         const rallyList = await Rally.find({}).populate({path: 'awardsLevels.awards.any.itemModel awardsLevels.awards.warrior.itemModel awardsLevels.awards.rogue.itemModel awardsLevels.awards.mage.itemModel awardsLevels.awards.cleric.itemModel'})
@@ -40,7 +41,7 @@ router.get('/events', auth, async (req,res) => {
 })
 
 //OK
-router.post('/create', auth, async (req, res) =>{
+router.post('/create', adminAuth, async (req, res) =>{
 
     const mission = new Mission(req.body)
     // if(!req.body.postman){
@@ -59,7 +60,7 @@ router.post('/create', auth, async (req, res) =>{
 })
 
 //OK
-router.delete('/remove', auth, async(req, res) => {
+router.delete('/remove', adminAuth, async(req, res) => {
     try {
         const mission = await Mission.findOne({_id: req.body._id})
 
@@ -78,7 +79,7 @@ router.delete('/remove', auth, async(req, res) => {
 })
 
 
-router.patch('/uploadIcon/:id', auth, async (req, res) => {
+router.patch('/uploadIcon/:id', adminAuth, async (req, res) => {
     try{
         if (!req.files) {
             throw new Error("Brak ikony misji")
@@ -108,7 +109,7 @@ router.patch('/uploadIcon/:id', auth, async (req, res) => {
 })
 
 //OK
-router.patch("/update", auth, async (req, res, next) => {
+router.patch("/update", adminAuth, async (req, res, next) => {
 
     let updates = Object.keys(req.body);
     const id = req.body._id
@@ -155,7 +156,7 @@ router.patch("/update", auth, async (req, res, next) => {
 
 //OK
 //completedByUsers is cleared by 'copy' request
-router.post("/copy", auth, async (req, res, next) => {
+router.post("/copy", adminAuth, async (req, res, next) => {
 
     
     try {
@@ -180,7 +181,7 @@ router.post("/copy", auth, async (req, res, next) => {
 });
 
 //OK
-router.patch("/publish", auth, async (req, res, next) => {
+router.patch("/publish", adminAuth, async (req, res, next) => {
 
     
     try {
@@ -1094,16 +1095,4 @@ router.patch('/sendItem/user', auth, async (req, res) => {
 })
 
 
-////TESTS
-
-router.post('/testCreateMissionInstance', auth, async (req, res) => {
-    try{
-        const missionInstance = new MissionInstance(req.body)
-        await missionInstance.save()
-        res.send(missionInstance)
-    }catch(e){
-        res.status(400).send(e)
-    }
-
-})
 export const missionRouter = router

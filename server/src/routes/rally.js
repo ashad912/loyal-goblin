@@ -3,6 +3,7 @@ import cron from 'node-cron'
 import moment from 'moment'
 import { Rally } from '../models/rally';
 import { User } from '../models/user'
+import { adminAuth } from '../middleware/adminAuth';
 import { auth } from '../middleware/auth';
 import { Item } from '../models/item';
 import { asyncForEach, designateUserPerks, designateExperienceMods, designateNewLevels, removeImage, saveImage } from '../utils/methods'
@@ -16,7 +17,6 @@ const router = new express.Router
 ////ADMIN-SIDE
 
 var rallyFinishTask
-var rallyTestTask
 
 //OK
 const addAwards = async (user, awardsLevels, rallyNotifications) => {
@@ -189,7 +189,7 @@ export const updateRallyQueue = async () => {
 }
 
 //OK
-router.get('/listEventCreator', auth, async (req, res) => {
+router.get('/listEventCreator', adminAuth, async (req, res) => {
     try {
         const rallyList = await Rally.find({expiryDate: { $gte: new Date() } })
 
@@ -202,7 +202,7 @@ router.get('/listEventCreator', auth, async (req, res) => {
 })
 
 //OK
-router.post('/create', auth, async (req, res) =>{
+router.post('/create', adminAuth, async (req, res) =>{
     
     try {
     const rally = new Rally(req.body)
@@ -246,7 +246,7 @@ router.post('/create', auth, async (req, res) =>{
     }
 })
 
-router.patch('/uploadIcon/:id', auth, async (req, res) => {
+router.patch('/uploadIcon/:id', adminAuth, async (req, res) => {
     try{
         if (!req.files) {
             throw new Error("Brak ikony rajdu")
@@ -276,7 +276,7 @@ router.patch('/uploadIcon/:id', auth, async (req, res) => {
 })
 
 //OK
-router.patch("/update", auth, async (req, res, next) => {
+router.patch("/update", adminAuth, async (req, res, next) => {
     let updates = Object.keys(req.body);
     const id = req.body._id
 
@@ -324,7 +324,7 @@ router.patch("/update", auth, async (req, res, next) => {
   });
 
 //OK
-router.delete('/remove', auth, async (req, res) =>{
+router.delete('/remove', adminAuth, async (req, res) =>{
 
     try {
 
@@ -371,94 +371,5 @@ router.get('/first', auth, async (req, res)=> {
 })
 
 
-
-
-
-////////////////////TEST
-
-router.get('/perks', auth, async(req,res) => {
-    try{
-        await designateUserPerks(req.user)
-        res.send()
-    }catch(e){
-        res.status(400).send(e.message)
-    }
-    
-})
-
-router.get('/triggerCron', auth, async(req, res) => {
-    
-    var halo = 'haloVar'
-    rallyTestTask = cron.schedule("* * * * * *", async () => {
-        //console.log(`this message logs every minute`);
-        try{
-            getCron(halo)
-        }catch(e) {
-            console.log(e.message)
-        }
-        
-        
-    },
-    
-        {
-            scheduled: true,
-            timezone: "Europe/Warsaw"
-        });
-    res.send()
-})
-
-const getCron = (p) => {
-    console.log('hello from testTask var:' + p)
-    //rallyTestTask.destroy()
-} 
-
-
-
 export const rallyRouter = router
 
-//const checkRallyDates = async (/*param*/) => {
-//     const rallyList = [
-//         {
-//             activationDate: moment('2019-11-19T08:00:00.000+00:00'),
-//             expiryDate: moment('2019-11-19T20:00:00.000+00:00')
-//         },
-//         {
-//             activationDate: moment('2019-11-19T21:00:00.000+00:00'),
-//             expiryDate: moment('2019-11-20T07:00:00.000+00:00')
-//         },
-//         {
-//             activationDate: moment('2019-11-20T08:00:00.000+00:00'),
-//             expiryDate: moment('2019-11-20T20:00:00.000+00:00')
-//         },
-//     ]
-
-//     const rally = {
-//         activationDate: moment('2019-11-19T20:03:00.000+00:00'),
-//         expiryDate: moment('2019-11-19T20:02:00.000+00:00')
-//     }
-
-    
-//     const newRallyStart = rally.activationDate.valueOf()
-//     const newRallyEnd = rally.expiryDate.valueOf()
-
-//     if(newRallyStart >= newRallyEnd){
-//         console.log('switch dates, dummy boy')
-//         return
-//     }
-
-//     let causingRallyList = []
-//     await asyncForEach(rallyList, (rallyItem) => {
-//         const existingRallyStart = rallyItem.activationDate.valueOf()
-//         const existingRallyEnd = rallyItem.expiryDate.valueOf()
-
-//         if(!((existingRallyStart < newRallyStart && existingRallyEnd < newRallyStart) || (existingRallyEnd > newRallyEnd && existingRallyStart > newRallyEnd))){
-//             causingRallyList = [...causingRallyList, rallyItem] //assembling list of 'bad' rallies :<<
-//         }
-//     })
-
-//     if(causingRallyList.length){
-//         console.log(causingRallyList)
-//     }else{
-//         console.log('no problemo seniorita')
-//     }
-// }
