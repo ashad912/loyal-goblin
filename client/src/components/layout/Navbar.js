@@ -96,7 +96,7 @@ const Navbar = (props) => {
     const handleAvatarDelete = async e => {
         e.stopPropagation();
         setAnchorEl(null);
-        window.location.reload(); 
+        //window.location.reload(); 
         await props.updateAvatar();
         
         

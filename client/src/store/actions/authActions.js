@@ -1,6 +1,4 @@
 import axios from 'axios'
-import {socket, socketAuthenticateEmit, joinRoomEmit, leaveRoomEmit, partyRefreshEmit, deleteRoomEmit, instanceRefreshEmit} from '../../socket'
-
 
 export const validatePasswordChangeToken = (token) => {
     return new Promise (async (resolve, reject) => {

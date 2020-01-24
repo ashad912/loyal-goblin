@@ -4,6 +4,7 @@ import styled from "styled-components";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 import EventIcon from "@material-ui/icons/Event";
 import CreateIcon from "@material-ui/icons/Create";
 import PeopleIcon from "@material-ui/icons/People";
@@ -12,6 +13,10 @@ import EventSeatIcon from "@material-ui/icons/EventSeat";
 import CropFreeIcon from "@material-ui/icons/CropFree";
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import PersonIcon from '@material-ui/icons/Person';
+
+import { connect } from 'react-redux';
+import { Link } from '@material-ui/core';
+import {signOut} from '../../store/adminActions/authActions'
 
 import MenuDrawer from "./MenuDrawer";
 import AdminEvents from "./pages/AdminEvents";
@@ -52,7 +57,7 @@ const menuItems = [
   { title: "Rezerwacje", icon: <EventSeatIcon /> },
 ];
 
-const Admin = () => {
+const Admin = (props) => {
   const classes = useStyles();
 
   const [currentPage, setCurrentPage] = React.useState("Wydarzenia");
@@ -66,6 +71,10 @@ const Admin = () => {
   //         console.log(e)
   //     }
   // }
+
+  const handleLogout = async e => {
+    await props.signOut() 
+}
 
   const handlePageChange = (e, page) => {
     setCurrentPage(page);
@@ -106,10 +115,19 @@ const Admin = () => {
   return (
     <div className={classes.root}>
       <AppBar position="fixed" className={classes.appBar}>
-        <Toolbar>
-          <Typography variant="h6" noWrap>
+        <Toolbar style={{width: '100%'}}>
+          <Typography variant="h6" noWrap style={{flexGrow: 3, textAlign: 'center'}}>
             {currentPage}
           </Typography>
+          <Button
+              style={{justifyContent: 'flex-end', color: 'white', marginRight: '0.5rem'}}
+          >
+          <Link onClick={handleLogout} style={{justifyContent: 'flex-end', textAlign: 'right'}} underline='none' color="white">
+            <Typography>Wyloguj</Typography>
+                
+          </Link>
+          </Button>
+          
         </Toolbar>
       </AppBar>
       <MenuDrawer
@@ -127,4 +145,19 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+const mapStateToProps = (state) => {
+  return {
+      auth: state.auth,
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+      signOut: () => dispatch(signOut())
+  }
+}
+
+
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Admin);

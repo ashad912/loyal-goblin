@@ -88,9 +88,11 @@ class App extends React.Component {
         <StylesProvider injectFirst>
           {this.state.isAdmin ? (
             <div className="App">
-              <Route exact path="/" component={withAuth(Admin)} />
-              <Route exact path="/signin" component={withNoAuth(SignIn)} />
-              <Route component={PageNotFound}/>
+              <Switch>
+                <Route exact path="/" component={withAuth(Admin)} />
+                <Route exact path="/signin" component={withNoAuth(SignIn)} />
+                <Route component={PageNotFound}/>
+              </Switch>
             </div>
           ) : (
             <div className="App">
