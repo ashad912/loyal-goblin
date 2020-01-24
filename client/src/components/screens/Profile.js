@@ -615,21 +615,6 @@ const Profile = props => {
   //   setGoExp(prev => !prev);
   // };
 
-<<<<<<< HEAD
-
-=======
-  // const handleJoinOrCreateParty = () => {
-  //   let party = localStorage.getItem("party");
-  //   const tempPlayer = { ...props.auth.profile };
-  //   if (party) {
-  //     party = JSON.parse(party);
-  //     //TODO: backend call
-  //   } else {
-  //     delete tempPlayer.party;
-  //     //TODO: backend call
-  //   }
-  // };
->>>>>>> origin/ashad10
 
   const handleLeaveParty = () => {
     props.onRemoveMember(props.party._id, props.auth.uid);
