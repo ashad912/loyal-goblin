@@ -19,14 +19,10 @@ export const updateParty = (params, socketAuthReconnect) => {
                     const party = res.data
                     
                     if(!socket.connected){
-                        console.log('connect from updateParty')
+                        //console.log('connect from updateParty')
                         socket.open()
-                        if(socketAuthReconnect){
-                            console.log('reconnect')
-                            socket.emit('authentication', {});
-                        }
-                        joinRoomEmit(party._id)
-                        instanceRefreshEmit(res.data.partyId)
+                        socket.emit('authentication', {});
+                        
                     }
                     
                 }else{
@@ -56,8 +52,6 @@ export const createParty =  (name, leader) => {
                 console.log('connect from createParty')
                 socket.open()
                 socket.emit('authentication', {});
-                joinRoomEmit(res.data.partyId)
-                instanceRefreshEmit(res.data.partyId)
             }     
         }catch (e) {
             console.log(e)

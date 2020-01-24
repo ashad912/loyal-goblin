@@ -919,6 +919,7 @@ router.delete('/finishInstance', auth, async (req,res) => {
                 //     {_id: missionInstance.mission._id},
                 //     { $addToSet: { completedByUsers: user._id }}
                 // )
+
                 // PREVIOUS VERSION
                 // user.bag = [...user.bag, ...items]
                 // await user.save()
@@ -954,8 +955,6 @@ const verifySendItem = (user, missionInstance, itemId) => {
                 throw Error('There is no such mission instance!')
             }
 
-            
-
             let membersIds = []
             let leader = null
 
@@ -982,9 +981,6 @@ const verifySendItem = (user, missionInstance, itemId) => {
                 throw Error('Invalid party!')
             }
     
-            // if(!user.bag.includes(itemId)){
-            //     throw Error('No such item in eq!')
-            // }
     
             const item = await Item.findOne({_id: itemId}).populate({
                 path: 'itemModel',

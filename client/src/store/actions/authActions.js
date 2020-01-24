@@ -106,6 +106,7 @@ export const authCheck =  (params) => {
                 const uid = profile._id
                 delete profile._id
                 dispatch( {type: "AUTH_SUCCESS", profile, uid}) //DISPATCH IS SYNCHRONOUS!!!
+
                 resolve(uid)
                 
             } catch (e) {

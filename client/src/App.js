@@ -21,15 +21,16 @@ import { authCheck, setMultipleSession } from "./store/actions/authActions";
 import { updateParty } from "./store/actions/partyActions";
 import ConnectionSpinnerDialog from "./components/layout/ConnectionSpinnerDialog";
 import ConnectionSnackbar from "./components/layout/ConnectionSnackbar";
-
-import {socket, joinRoomSubscribe, leaveRoomSubscribe, partyRefreshSubscribe, deleteRoomSubscribe} from './socket'
+import SocketConfig from "./SocketConfig"
+import {socket, joinRoomEmit, joinRoomSubscribe, instanceRefreshEmit, leaveRoomSubscribe, partyRefreshSubscribe, deleteRoomSubscribe} from './socket'
 import ResetPassword from "./components/auth/ResetPassword";
 import PageNotFound from "./components/screens/PageNotFound";
 
 class App extends React.Component {
   state = {
     fields: [],
-    isAdmin: false
+    isAdmin: false,
+    uid: null
   };
 
   async componentDidMount() {
@@ -38,48 +39,12 @@ class App extends React.Component {
     this.setState({ isAdmin });
 
     //CHECK AUTH ON APP LOAD
-    const uid = await this.props.authCheck();
-
-
-    socket.emit('authentication', {});
-
-
-  
-    socket.on('unauthorized', (err) => {
-      if(err.message === "multipleSession"){
-        this.props.setMultipleSession()
-      }
-      console.log('Socket auth failed: ' + err.message)
-    });
-
-    joinRoomSubscribe((roomId) => {
-      console.log("New member is now visible in socket - party: " + roomId)
-      this.props.onPartyUpdate()
-    })
-
-    leaveRoomSubscribe((socketUserIdToLeave) => {
-      console.log(uid, socketUserIdToLeave)
-      if(uid === socketUserIdToLeave && socket.connected){
-        socket.disconnect()
-      }  
-      this.props.onPartyUpdate()
-    })
-
-    partyRefreshSubscribe((roomId) => {
-      this.props.onPartyUpdate()
-    })
-
-    deleteRoomSubscribe((roomId) => {
-      if(socket.connected){
-        socket.disconnect()
-      }
-      this.props.onPartyUpdate()
-    })
+    await this.props.authCheck();
 
     //Update profile data on first full hour and after next 60 minutes
     this.firstUpdate = setTimeout(() => {
-      this.props.authCheck();
-      this.props.onPartyUpdate()
+      this.props.authCheck({autoFetch: true});
+      this.props.onPartyUpdate({autoFetch: true})
       this.nextUpdates = setInterval(() => {
         this.props.authCheck({autoFetch: true});
         this.props.onPartyUpdate({autoFetch: true})
@@ -91,6 +56,10 @@ class App extends React.Component {
     //   this.props.authCheck();
     //   this.props.onPartyUpdate()
     // }, 5000);
+
+    // this.setState({
+    //   uid
+    // })
      
   }
 
@@ -119,9 +88,11 @@ class App extends React.Component {
         <StylesProvider injectFirst>
           {this.state.isAdmin ? (
             <div className="App">
-              <Route exact path="/" component={withAuth(Admin)} />
-              <Route exact path="/signin" component={withNoAuth(SignIn)} />
-              <Route component={PageNotFound}/>
+              <Switch>
+                <Route exact path="/" component={withAuth(Admin)} />
+                <Route exact path="/signin" component={withNoAuth(SignIn)} />
+                <Route component={PageNotFound}/>
+              </Switch>
             </div>
           ) : (
             <div className="App">
@@ -153,16 +124,15 @@ class App extends React.Component {
               <Footer />
             </div>
           )}
-
-         <ConnectionSnackbar resetConnectionError = {() => this.props.resetConnectionError()}/>
+          
+          <ConnectionSnackbar resetConnectionError = {() => this.props.resetConnectionError()}/>
           <ConnectionSpinnerDialog />
-         
+          <SocketConfig />
         </StylesProvider>
       </BrowserRouter>
     );
   }
 }
-
 
 
 const mapDispatchToProps = dispatch => {

@@ -4,9 +4,9 @@ import { modifyUserStatusEmit, instanceRefreshEmit, addItemEmit, deleteItemEmit,
 const axiosInstance = axios.create({}); //to avoid interceptors "index.js"
 
 
-export const setActiveInstanceId = (id) => {
+export const setActiveInstance = (id, imgSrc) => {
     return (dispatch) => {
-        dispatch( {type: "SET_INSTANCE_ID", id})
+        dispatch( {type: "SET_INSTANCE", id, imgSrc})
     }
 }
 
@@ -16,7 +16,7 @@ export const getMissionList = () => {
         try {
             console.log('getMissionList')
             const res = await axios.get('/mission/list')
-            console.log(res.data)
+            //console.log(res.data)
             resolve(res.data)
         }catch (e) {
             reject(e)     

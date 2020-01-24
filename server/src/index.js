@@ -1,5 +1,6 @@
 import express from "express";
-const fileUpload = require("express-fileupload");
+import fileUpload from "express-fileupload"
+import { adminRouter } from "./routes/admin";
 import { userRouter } from "./routes/user";
 import { missionRouter } from "./routes/mission";
 import { rallyRouter, updateRallyQueue } from "./routes/rally";
@@ -51,6 +52,7 @@ app.use(express.static(path.join(__dirname, "../client/build")));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
+app.use("/admin", adminRouter);
 app.use("/user", userRouter);
 app.use("/mission", missionRouter);
 app.use("/rally", rallyRouter);
@@ -69,6 +71,8 @@ app.use((err, req, res, next) => {
 //   res.sendFile(path.join(__dirname, '../../client/build/index.html'));
  
 // })
+var allClients = []; //all socket clients
+
 
 const server = app.listen(port, () => {
   console.log(`Listening at ${port}`);
@@ -77,6 +81,7 @@ const server = app.listen(port, () => {
 
   cron.schedule('0 0 10 * * *', () => { //every day at 10:00 AM
     initCleaning() 
+    allClients = []
   },{
     scheduled: true,
     timezone: "Europe/Warsaw" ///Warsaw UTC+1/UTC+2 -> stable hour despite of the timezone change
@@ -91,10 +96,10 @@ const server = app.listen(port, () => {
 //cant refactor socket methods to separate file :<< but it worked on another computer, maybe clean and rebuild?
 
 var io = socket(server); //param is a server, defined upper
-var allClients = [];
+
 
 async function authenticate(socket, data, callback) {
-  console.log(socket.id, 'tried socket auth')
+  //console.log(socket.id, 'tried socket auth')
   let multipleSession = false
   try{
     const user = await socketConnectAuth(socket)
