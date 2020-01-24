@@ -2,7 +2,7 @@ import React from "react";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
+
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
@@ -10,11 +10,10 @@ import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Avatar from "@material-ui/core/Avatar";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 
-import {mockUsers} from '../../../utils/mocks'
+import Avatar from "@material-ui/core/Avatar";
+
+
 import {designateUserLevel} from '../../../utils/methods'
 import { getRankedUsers } from "../../../store/actions/profileActions";
 

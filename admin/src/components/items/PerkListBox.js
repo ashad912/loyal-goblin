@@ -9,10 +9,9 @@ import Grid from '@material-ui/core/Grid';
 import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+
 import {perkLabels, dayLabels} from '../../utils/labels'
 import { getValue, getTarget } from '../../utils/methods';
-
-
 
 
 const StyledPaper = styled(Paper)`
@@ -30,7 +29,6 @@ const HeadersContainer = styled.div`
     
     
 `
-
 
 const PerkListBox = (props) => {
 

@@ -1,24 +1,18 @@
 import React from "react";
+import styled from 'styled-components'
+import uuid from 'uuid/v1'
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import Avatar from '@material-ui/core/Avatar';
 import { Badge } from '@material-ui/core';
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 
-
-import tempUserAvatar from '../../../assets/avatar/moose.png'
-import styled from 'styled-components'
-import uuid from 'uuid/v1'
 import {createAvatarPlaceholder} from "../../../utils/methods";
 import {itemsPath, usersPath} from '../../../utils/definitions'
 

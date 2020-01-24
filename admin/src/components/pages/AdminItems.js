@@ -18,7 +18,9 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+
 import {itemTypeLabelsPlural} from '../../utils/labels'
+
 import {getItemModels, deleteItemModel} from '../../store/actions/itemActions'
 
 
@@ -76,10 +78,12 @@ const AdminItems = () => {
       
       setFilteredItems(tempItemsList);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nameFilter]);
 
   React.useEffect(() => {
     applyStatusFilter(statusFilter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items]);
 
   const handleChangeNameFilter = e => {

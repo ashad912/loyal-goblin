@@ -18,7 +18,6 @@ import MenuIcon from "@material-ui/icons/Menu";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import LockIcon from '@material-ui/icons/Lock';
 import { Badge } from '@material-ui/core';
-import tempUserAvatar from '../../assets/avatar/moose.png'
 import { connect } from 'react-redux';
 import { Link } from '@material-ui/core';
 import {updateAvatar} from '../../store/actions/profileActions'

@@ -1,17 +1,11 @@
 import React from "react";
-import moment from 'moment'
+import styled from 'styled-components'
 import Grid from "@material-ui/core/Grid";
-
 import Typography from "@material-ui/core/Typography";
-
-import uuid from 'uuid/v1'
-
 import Paper from '@material-ui/core/Paper';
-
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
-
 import Box from "@material-ui/core/Box";
 import SearchIcon from "@material-ui/icons/Search";
 import Dialog from '@material-ui/core/Dialog';
@@ -21,9 +15,9 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import IconButton from '@material-ui/core/IconButton';
+
 import PartyList from "../parties/PartyList";
 
-import styled from 'styled-components'
 import {getAdminParties, deleteParty} from '../../store/actions/partyActions'
 
 const RefreshBar = styled.div`
@@ -31,31 +25,6 @@ const RefreshBar = styled.div`
   text-align: left;
 `
 
-
-const mockParties = [
-    {
-      name: "Drużyna A",
-      leader:  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
-      members: [
-        { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
-        { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
-      ]
-    },
-    {
-      name: "Ekipa jamnika",
-      leader: { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
-      members: [
-        { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
-        { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
-        { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
-        { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
-        { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment() },
-        { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
-        { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
-        
-      ]
-    }
-  ];
 
 const AdminParties = () => {
     
@@ -68,10 +37,12 @@ const AdminParties = () => {
 
     React.useEffect(() => {
         fetchParties() 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     React.useEffect(() => {
         applyNameFilter()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nameFilter]);
 
     const fetchParties = async () => {

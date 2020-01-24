@@ -3,18 +3,14 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import MenuItem from "@material-ui/core/MenuItem";
-import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
-import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import perkLabels from "../../../assets/categories/perks";
-import { dayLabels, categoryLabels } from "../../../utils/labels";
+import { getTarget, getValue } from "../../../utils/methods";
+import { perkLabels } from "../../../utils/labels";
 import {itemsPath} from '../../../utils/definitions'
 
 const StyledMenu = withStyles({
@@ -122,13 +118,9 @@ const ScrollListItem = props => {
                       <ListItem>
                         <Grid container justify="space-around">
                           <Grid item>{perkLabels[perk.perkType]}</Grid>
-                          <Grid item>{perk.value}</Grid>
+                          <Grid item>{getValue(perk.perkType, perk.value)}</Grid>
                           <Grid item>
-                            {perk.target
-                              ? perk.target.name
-                                ? perk.target.name
-                                : categoryLabels[perk.target]
-                              : null}
+                            {getTarget(perk.perkType, perk.target)}
                           </Grid>
                           
                         </Grid>

@@ -2,16 +2,15 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
+
 import ListItemText from "@material-ui/core/ListItemText";
-import Collapse from "@material-ui/core/Collapse";
+
 import Paper from "@material-ui/core/Paper";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+
 import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import ExpandLess from "@material-ui/icons/ExpandLess";
+
 import ExpandMore from "@material-ui/icons/ExpandMore";
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -19,7 +18,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TorpedoListItem from './TorpedoListItem'
 
-import itemCategories from '../../../assets/categories/items'
+
 
 const useStyles = makeStyles(theme => ({
   root: {

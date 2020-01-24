@@ -10,7 +10,6 @@ import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
 import Badge from "@material-ui/core/Badge";
 import Snackbar from "@material-ui/core/Snackbar";
-
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 
@@ -21,12 +20,12 @@ import BasketDrawer from "./shop/BasketDrawer";
 import VerificationPage from "./shop/VerificationPage";
 import ScrollModal from "./shop/ScrollModal";
 import ScrollListItem from "./shop/ScrollListItem";
+
 import {
   getShop,
   activateOrder,
   leaveShop
 } from "../../store/actions/shopActions";
-import { updateParty } from "../../store/actions/partyActions";
 import { toggleItem } from "../../store/actions/profileActions";
 
 const Menu = styled(Paper)`

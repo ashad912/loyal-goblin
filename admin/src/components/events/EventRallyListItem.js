@@ -1,6 +1,7 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
 import moment from 'moment'
+import "moment/locale/pl";
 import Popover from "@material-ui/core/Popover";
 import List from "@material-ui/core/List";
 import Grid from "@material-ui/core/Grid";
@@ -9,9 +10,9 @@ import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import classThemes from "../../assets/themes/classThemes";
-import "moment/locale/pl";
-import { ralliesPath } from "../../utils/definitions";
+
+import { ralliesPath, classThemes } from "../../utils/definitions";
+
 
 const pulse = keyframes`
   0% {
@@ -114,7 +115,7 @@ const EventRallyListItem = ({
           </Grid>
           <Grid item container>
             <Grid item xs={2}>
-              <img src={ralliesPath + event.imgSrc} width={128} />
+              <img alt='' src={ralliesPath + event.imgSrc} width={128} />
             </Grid>
             <Grid item container direction="column" xs={6}>
               <Grid item>
@@ -190,7 +191,7 @@ const EventRallyListItem = ({
                         >
                           <ListItemText
                             primary={
-                              "Nagroda za " + awardLevel.level + " " + "PD"
+                              "Nagroda za " + awardLevel.level + " PD"
                             }
                             primaryTypographyProps={{
                               style: { fontWeight: "bolder" }

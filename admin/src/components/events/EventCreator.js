@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import moment from "moment";
 import styled from "styled-components";
+import MomentUtils from "@date-io/moment";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
@@ -17,387 +18,24 @@ import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-
-import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
-import MomentUtils from "@date-io/moment";
+import { MuiPickersUtilsProvider} from "@material-ui/pickers";
 
 import AttributeBox from "./AttributeBox";
 import AmuletsModal from "./AmuletsModal";
 import ItemsModal from "./ItemsModal";
 
 import {classLabelsAll} from '../../utils/labels'
-
-import convertItemModelsToCategories from "../utils/itemModelsToCategories";
-
-
+import { convertItemModelsToCategories } from "../../utils/methods";
 import { itemsPath, missionsPath, ralliesPath } from "../../utils/definitions";
 import {createEvent, updateEvent, uploadEventIcon, getRallies} from '../../store/actions/eventActions'
+import { getItemModels } from "../../store/actions/itemActions";
+
 
 
 import "moment/locale/pl";
-import { getItemModels } from "../../store/actions/itemActions";
 moment.locale("pl");
 
-const mockAmulets = [
-  {
-    itemModel: {
-      _id: 101,
-      type: {
-        _id: 201,
-        type: "amulet"
-      },
-      name: "Diament",
-      imgSrc: "diamond-amulet.png"
-    },
-    quantity: 0
-  },
-  {
-    itemModel: {
-      _id: 102,
-      type: {
-        _id: 201,
-        type: "amulet"
-      },
-      name: "Perła",
-      imgSrc: "pearl-amulet.png"
-    },
-    quantity: 0
-  },
-  {
-    itemModel: {
-      _id: 103,
-      type: {
-        _id: 201,
-        type: "amulet"
-      },
-      name: "Szmaragd",
-      imgSrc: "emerald-amulet.png"
-    },
-    quantity: 0
-  },
-  {
-    itemModel: {
-      _id: 104,
-      type: {
-        _id: 201,
-        type: "amulet"
-      },
-      name: "Szafir",
-      imgSrc: "sapphire-amulet.png"
-    },
-    quantity: 0
-  },
-  {
-    itemModel: {
-      _id: 105,
-      type: {
-        _id: 201,
-        type: "amulet"
-      },
-      name: "Diament2",
-      imgSrc: "diamond-amulet.png"
-    },
-    quantity: 0
-  },
-  {
-    itemModel: {
-      _id: 106,
-      type: {
-        _id: 201,
-        type: "amulet"
-      },
-      name: "Perła2",
-      imgSrc: "pearl-amulet.png"
-    },
-    quantity: 0
-  },
-  {
-    itemModel: {
-      _id: 107,
-      type: {
-        _id: 201,
-        type: "amulet"
-      },
-      name: "Szmaragd2",
-      imgSrc: "emerald-amulet.png"
-    },
-    quantity: 0
-  },
-  {
-    itemModel: {
-      _id: 108,
-      type: {
-        _id: 201,
-        type: "amulet"
-      },
-      name: "Szafir2",
-      imgSrc: "sapphire-amulet.png"
-    },
-    quantity: 0
-  }
-];
 
-let mockItems = [
-  {
-    itemModel: {
-      _id: 101,
-      type: {
-        _id: 1,
-        type: "amulet"
-      },
-      name: "Diament",
-      fluff: "Najlepszy przyjaciel dziewyczyny",
-      imgSrc: "diamond-amulet.png",
-      class: "any"
-    }
-  },
-  {
-    itemModel: {
-      _id: 102,
-      type: {
-        _id: 1,
-        type: "amulet"
-      },
-      name: "Perła",
-      fluff: "Perła prosto z lodówki, znaczy z małży",
-      imgSrc: "pearl-amulet.png",
-      class: "any"
-    }
-  },
-
-  {
-    itemModel: {
-      _id: 201,
-      type: {
-        _id: 2,
-        type: "weapon"
-      },
-      name: "Krótki miecz",
-      fluff: "Przynajmniej nie masz kompleksów",
-      imgSrc: "short-sword.png",
-      class: "any"
-    }
-  },
-  {
-    itemModel: {
-      _id: 202,
-      type: {
-        _id: 2,
-        type: "weapon"
-      },
-      name: "Wielki miecz",
-      fluff: "Zdecydowanie masz kompleksy",
-      imgSrc: "short-sword.png",
-      class: "warrior",
-      perks: [
-        {
-          perkType: "attr-strength",
-          target: undefined,
-          time: [],
-          value: "+1"
-        }
-      ]
-    }
-  },
-  {
-    itemModel: {
-      _id: 203,
-      type: {
-        _id: 2,
-        type: "weapon"
-      },
-      name: "Kostur twojej starej",
-      fluff: "Niektórzy mówią, że to tylko miotła",
-      imgSrc: "short-sword.png",
-      class: "mage"
-    }
-  },
-  {
-    itemModel: {
-      _id: 204,
-      type: {
-        _id: 2,
-        type: "weapon"
-      },
-      name: "Nusz",
-      fluff: "(ja)nusz",
-      imgSrc: "short-sword.png",
-      class: "rogue"
-    }
-  },
-  {
-    itemModel: {
-      _id: 205,
-      type: {
-        _id: 2,
-        type: "weapon"
-      },
-      name: "Morgensztern",
-      fluff: "Adam Małysz, jeszcze cię pokonam",
-      imgSrc: "short-sword.png",
-      class: "cleric"
-    }
-  },
-
-  {
-    itemModel: {
-      _id: 301,
-      type: {
-        _id: 3,
-        type: "chest"
-      },
-      name: "Skórzana kurta",
-      fluff: "Lale za takimi szaleją",
-      imgSrc: "leather-jerkin.png",
-      class: "any"
-    }
-  },
-  {
-    itemModel: {
-      _id: 302,
-      type: {
-        _id: 3,
-        type: "chest"
-      },
-      name: "Sutanna bojowa",
-      fluff: "Wiadomo, kto jest kierownikiem tej plebanii",
-      imgSrc: "leather-jerkin.png",
-      class: "cleric"
-    }
-  },
-
-  {
-    itemModel: {
-      _id: 401,
-      type: {
-        _id: 4,
-        type: "legs"
-      },
-      name: "Lniane spodnie",
-      fluff: "Zwykłe spodnie, czego jeszcze chcesz?",
-      imgSrc: "linen-trousers.png",
-      class: "any"
-    }
-  },
-  {
-    itemModel: {
-      _id: 402,
-      type: {
-        _id: 4,
-        type: "legs"
-      },
-      name: "Nogawice płytowe",
-      fluff: "Nie da się w nich klękać do miecza",
-      imgSrc: "linen-trousers.png",
-      class: "warrior"
-    }
-  },
-  {
-    itemModel: {
-      _id: 403,
-      type: {
-        _id: 4,
-        type: "legs"
-      },
-      name: "Ledżinsy",
-      fluff: "Obcisłe jak lubisz",
-      imgSrc: "linen-trousers.png",
-      class: "rogue"
-    }
-  },
-
-  {
-    itemModel: {
-      _id: 501,
-      type: {
-        _id: 5,
-        type: "feet"
-      },
-      name: "Wysokie buty",
-      fluff: "Skórzane, wypastowane, lśniące",
-      imgSrc: "high-boots.png",
-      class: "any"
-    }
-  },
-  {
-    itemModel: {
-      _id: 502,
-      type: {
-        _id: 5,
-        type: "feet"
-      },
-      name: "Kapcie cichobiegi",
-      fluff: "+10 do testów skradania na linoleum",
-      imgSrc: "high-boots.png",
-      class: "rogue"
-    }
-  },
-
-  {
-    itemModel: {
-      _id: 601,
-      type: {
-        _id: 6,
-        type: "head"
-      },
-      name: "Czapka z piórkiem",
-      fluff: "Wesoła kompaniaaaa",
-      imgSrc: "feathered-hat.png",
-      class: "any"
-    }
-  },
-  {
-    itemModel: {
-      _id: 602,
-      type: {
-        _id: 6,
-        type: "head"
-      },
-      name: "Kaptur czarodzieja",
-      fluff: "Kiedyś nosił go czarodziej. Już nie nosi.",
-      imgSrc: "wizard-coul.png",
-      class: "mage",
-      perks: [
-        {
-          perkType: "experience",
-          target: undefined,
-          time: [
-            {
-              hoursFlag: false,
-              lengthInHours: 24,
-              startDay: 5,
-              startHour: 12
-            }
-          ],
-          value: "+10%"
-        }
-      ]
-    }
-  },
-  {
-    itemModel: {
-      _id: 701,
-      type: {
-        _id: 7,
-        type: "ring"
-      },
-      name: "Pierścień wódy",
-      fluff: "Całuj mój sygnet potęgi",
-      imgSrc: "strength-ring.png",
-      class: "any",
-      perks: [
-        {
-          perkType: "disc-product",
-          target: { name: "Wóda" },
-          time: [
-            { hoursFlag: true, lengthInHours: 2, startDay: 1, startHour: 18 }
-          ],
-          value: "-10%"
-        }
-      ]
-    }
-  }
-];
 
 const FileInputWrapper = styled.div`
   position: relative;
@@ -1257,7 +895,7 @@ class EventCreator extends Component {
               }}
             >
               {this.state.iconView && (
-                <img
+                <img alt=''
                   src={this.state.iconView}
                   style={{ width: "64px" }}
                 />
@@ -1346,7 +984,7 @@ class EventCreator extends Component {
                       return (
                         <Grid item key={amulet.id}>
                           <ListItemAvatar>
-                            <img
+                            <img alt=''
                               src={itemsPath +
                                 amulet.imgSrc}
                               width="64px"
@@ -1497,7 +1135,7 @@ class EventCreator extends Component {
                                 return (
                                   <ListItem>
                                     <ListItemAvatar>
-                                      <img
+                                      <img alt=''
                                         src={itemsPath +
                                           item.imgSrc}
                                         style={{
@@ -1537,7 +1175,7 @@ class EventCreator extends Component {
                                         return (
                                           <ListItem>
                                             <ListItemAvatar>
-                                              <img
+                                              <img alt=''
                                                 src={itemsPath +
                                                   item.imgSrc}
                                                 style={{
@@ -1622,7 +1260,7 @@ class EventCreator extends Component {
                       return (
                         <ListItem key={item.itemModel}>
                           <ListItemAvatar>
-                            <img
+                            <img alt=''
                               src={itemsPath +
                                 item.imgSrc}
                               style={{ width: "32px", height: "32px" }}
@@ -1656,7 +1294,7 @@ class EventCreator extends Component {
                             return (
                               <ListItem key={item.itemModel}>
                                 <ListItemAvatar>
-                                  <img
+                                  <img alt=''
                                     src={itemsPath +
                                       item.imgSrc}
                                     style={{ width: "32px", height: "32px" }}

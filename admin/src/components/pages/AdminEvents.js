@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import moment from "moment";
+import "moment/locale/pl";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
@@ -20,305 +21,21 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import SearchIcon from "@material-ui/icons/Search";
-import EventMissionListItem from "../events/EventMissionListItem";
 
 import EventCreator from "../events/EventCreator";
-
-import "moment/locale/pl";
+import EventMissionListItem from "../events/EventMissionListItem";
 import EventRallyListItem from "../events/EventRallyListItem";
+
 import {
   getEvents,
-  getRallies,
   updateEvent,
   createEvent,
   deleteEvent
 } from "../../store/actions/eventActions";
 moment.locale("pl");
 
-const mockEvents = [
-  {
-    id: 1,
-    status: "ready",
-    unique: false,
-    title: "Wyprawa po minerał fiuta",
-    minLevel: 5,
-    description: "Dalej dalej po minerał fiutaa",
-    imgSrc: "mission-icon.png",
-    minPlayers: 2,
-    maxPlayers: 6,
-    strength: 5,
-    dexterity: 4,
-    magic: 10,
-    endurance: 3,
-    amulets: [
-      {
-        itemModel: {
-          id: 101,
-          type: {
-            id: 201,
-            type: "amulet"
-          },
-          name: "Diament",
-          imgSrc: "diamond-amulet.png"
-        },
-        quantity: 1
-      },
-      {
-        itemModel: {
-          id: 102,
-          type: {
-            id: 201,
-            type: "amulet"
-          },
-          name: "Perła",
-          imgSrc: "pearl-amulet.png"
-        },
-        quantity: 1
-      }
-    ],
-    items: {
-      any: [
-        {
-          itemModel: {
-            id: 201,
-            type: {
-              id: 2,
-              type: "weapon"
-            },
-            name: "Krótki miecz",
-            fluff: "Przynajmniej nie masz kompleksów",
-            imgSrc: "short-sword.png",
-            class: "any"
-          },
-          quantity: 2
-        }
-      ],
-      warrior: [
-        {
-          itemModel: {
-            id: 202,
-            type: {
-              id: 2,
-              type: "weapon"
-            },
-            name: "Wielki miecz",
-            fluff: "Zdecydowanie masz kompleksy",
-            imgSrc: "short-sword.png",
-            class: "warrior",
-            perks: [
-              {
-                perkType: "attr-strength",
-                target: undefined,
-                time: [],
-                value: "+1"
-              }
-            ]
-          },
-          quantity: 1
-        }
-      ]
-    },
-    experience: 2000,
-    activationDate: "2019-10-21T19:00",
-    expiryDate: "2019-10-21T00:00",
-    isPermanent: false,
-    awardsAreSecret: false
-  },
-  {
-    id: 2,
-    status: "active",
-    unique: false,
-    title: "Wycieczka z przewodnikiem po grocie Twojej Starej",
-    minLevel: 5,
-    description: "Echo echo echo...",
-    imgSrc: "mission-icon.png",
-    minPlayers: 3,
-    maxPlayers: 8,
-    strength: 15,
-    dexterity: 14,
-    magic: 11,
-    endurance: 31,
-    amulets: [
-      {
-        itemModel: {
-          id: 101,
-          type: {
-            id: 201,
-            type: "amulet"
-          },
-          name: "Diament",
-          imgSrc: "diamond-amulet.png"
-        },
-        quantity: 1
-      },
-      {
-        itemModel: {
-          id: 102,
-          type: {
-            id: 201,
-            type: "amulet"
-          },
-          name: "Perła",
-          imgSrc: "pearl-amulet.png"
-        },
-        quantity: 1
-      }
-    ],
-    items: {
-      any: [
-        {
-          itemModel: {
-            id: 201,
-            type: {
-              id: 2,
-              type: "weapon"
-            },
-            name: "Krótki miecz",
-            fluff: "Przynajmniej nie masz kompleksów",
-            imgSrc: "short-sword.png",
-            class: "any"
-          },
-          quantity: 2
-        }
-      ],
-      warrior: [
-        {
-          itemModel: {
-            id: 202,
-            type: {
-              id: 2,
-              type: "weapon"
-            },
-            name: "Wielki miecz",
-            fluff: "Zdecydowanie masz kompleksy",
-            imgSrc: "short-sword.png",
-            class: "warrior",
-            perks: [
-              {
-                perkType: "attr-strength",
-                target: undefined,
-                time: [],
-                value: "+1"
-              }
-            ]
-          },
-          quantity: 1
-        }
-      ]
-    },
-    experience: 5000,
-    activationDate: "2019-10-21T19:00",
-    expiryDate: "2019-10-21T00:00",
-    isPermanent: false,
-    awardsAreSecret: true
-  },
-  {
-    id: 3,
-    status: "ready",
-    title: "Rajd test",
-    description: "Idziemy na rajd",
-    imgSrc: "mission-icon.png",
-    awardsLevels: [
-      {
-        level: 200,
-        awards: {
-          any: [
-            {
-              itemModel: {
-                id: 201,
-                type: {
-                  id: 2,
-                  type: "weapon"
-                },
-                name: "Krótki miecz",
-                fluff: "Przynajmniej nie masz kompleksów",
-                imgSrc: "short-sword.png",
-                class: "any"
-              },
-              quantity: 2
-            }
-          ],
-          warrior: [
-            {
-              itemModel: {
-                id: 202,
-                type: {
-                  id: 2,
-                  type: "weapon"
-                },
-                name: "Wielki miecz",
-                fluff: "Zdecydowanie masz kompleksy",
-                imgSrc: "short-sword.png",
-                class: "warrior",
-                perks: [
-                  {
-                    perkType: "attr-strength",
-                    target: undefined,
-                    time: [],
-                    value: "+1"
-                  }
-                ]
-              },
-              quantity: 1
-            }
-          ]
-        }
-      },
-      {
-        level: 2000,
-        awards: {
-          any: [
-            {
-              itemModel: {
-                id: 201,
-                type: {
-                  id: 2,
-                  type: "weapon"
-                },
-                name: "Krótki miecz",
-                fluff: "Przynajmniej nie masz kompleksów",
-                imgSrc: "short-sword.png",
-                class: "any"
-              },
-              quantity: 2
-            }
-          ],
-          warrior: [
-            {
-              itemModel: {
-                id: 202,
-                type: {
-                  id: 2,
-                  type: "weapon"
-                },
-                name: "Wielki miecz",
-                fluff: "Zdecydowanie masz kompleksy",
-                imgSrc: "short-sword.png",
-                class: "warrior",
-                perks: [
-                  {
-                    perkType: "attr-strength",
-                    target: undefined,
-                    time: [],
-                    value: "+1"
-                  }
-                ]
-              },
-              quantity: 1
-            }
-          ]
-        }
-      }
-    ],
-    experience: 500,
-    activationDate: "2019-10-21T19:00",
-    startDate: "2019-10-22T19:00",
-    expiryDate: "2019-10-23T00:00",
-    awardsAreSecret: false
-  }
-];
 
-class AdminMissions extends Component {
+class AdminEvents extends Component {
   state = {
     showNewEventCreator: "",
     fullEventList: [],
@@ -1150,4 +867,4 @@ if(eventId){
   }
 }
 
-export default AdminMissions;
+export default AdminEvents;

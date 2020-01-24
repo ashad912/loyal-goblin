@@ -1,17 +1,17 @@
 import React from "react";
-import styled, {keyframes}  from 'styled-components'
+import styled  from 'styled-components'
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
-import List from "@material-ui/core/List";
 import ListItemText from "@material-ui/core/ListItemText";
 import Popover from "@material-ui/core/Popover";
+
 import {categoryLabels} from '../../utils/labels'
 import {itemsPath, productsPath} from '../../utils/definitions'
-import iconCoins from "../../assets/shop/coins.png"
+import iconCoins from "../../assets/coins.png"
 
 
 const StyledListItem = styled(ListItem)`
@@ -56,7 +56,7 @@ const ProductListItem = ({
           <Grid item xs={3}>
             <Box display="flex">
                 <Typography >
-                  <img
+                  <img alt=''
                     src={iconCoins}
                     style={{width: '1rem'}}
                   />
@@ -67,7 +67,7 @@ const ProductListItem = ({
         </Grid>
         <Grid item container>
           <Grid item xs={2}>
-            <img
+            <img alt=''
               src={productsPath + product.imgSrc}
               width={32}
             />
@@ -123,7 +123,7 @@ const ProductListItem = ({
                     {product.awards.map(award => {
                       return (
                         <Grid item key={award.itemModel._id} style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                          <img
+                          <img alt=''
                             src={itemsPath + award.itemModel.imgSrc}
                             width={32}
                             style={{height: '100%', marginRight: '0.5rem'}}

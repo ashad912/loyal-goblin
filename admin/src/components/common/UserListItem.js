@@ -1,14 +1,13 @@
 import React from 'react'
 import moment from 'moment'
 import Grid from "@material-ui/core/Grid";
-import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import ListItem from "@material-ui/core/ListItem";
 import Badge from '@material-ui/core/Badge';
 import Avatar from '@material-ui/core/Avatar';
 import Button from "@material-ui/core/Button";
 
-import {designateUserLevel} from '../utils/methods'
+import {designateUserLevel} from '../../utils/methods'
 import {createAvatarPlaceholder} from '../../utils/methods'
 import { usersPath } from '../../utils/definitions';
 
@@ -33,7 +32,7 @@ const UserListItem = (props) => {
         <ListItem button key={user._id} style={{paddingTop: '0.1rem', paddingBottom: '0.1rem'}} >
             <Grid item xs={1}>
                 {user.avatar ? 
-                <img style={{width: '32px', height: '32px'}} src={usersPath + user.avatar} /> :
+                <img alt='' style={{width: '32px', height: '32px'}} src={usersPath + user.avatar} /> :
                 <Avatar style={{width: '32px', height: '32px', fontSize: '0.9rem'}}>{createAvatarPlaceholder(user.name)}</Avatar>
                 }
             </Grid>

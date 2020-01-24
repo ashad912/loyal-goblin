@@ -1,8 +1,10 @@
 import React from "react";
+import styled from 'styled-components'
+import moment from 'moment'
+import MomentUtils from '@date-io/moment';
 import Grid from "@material-ui/core/Grid";
 import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
-import uuid from 'uuid/v1'
 import Toolbar from "@material-ui/core/Toolbar";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -14,14 +16,11 @@ import { MuiPickersUtilsProvider, DateTimePicker } from "@material-ui/pickers";
 import PaginationBar from "../common/PaginationBar";
 import IconButton from '@material-ui/core/IconButton';
 import RefreshIcon from '@material-ui/icons/Refresh';
+
 import OrderListItem from '../orders/OrderListItem'
-import styled from 'styled-components'
-import _ from 'lodash'
 
 import {getAdminOrders} from '../../store/actions/productActions'
 
-import moment from 'moment'
-import MomentUtils from '@date-io/moment';
 moment.locale('pl')
 
 const RefreshBar = styled.div`
@@ -29,128 +28,16 @@ const RefreshBar = styled.div`
   text-align: left;
 `
 
-const mockOrders = [
-  {_id: uuid(), leader: "A B", totalPrice: 41.5},
-  {_id: uuid(), leader: "halo2", totalPrice: 12},
-  {_id: uuid(), leader: "eeas", totalPrice: 11.5},
-  {_id: uuid(), leader: "sad", totalPrice: 1000},
-  {_id: uuid(), leader: "dcxzda", totalPrice: 141.5},
-  {_id: uuid(), leader: "haldsdsa", totalPrice: 1222},
-  {_id: uuid(), leader: "eedsas", totalPrice: 91.5},
-  {_id: uuid(), leader: "321dfcxz", totalPrice: 997.12},
-  {_id: uuid(), leader: "A B", totalPrice: 41.5},
-  {_id: uuid(), leader: "halo2", totalPrice: 12},
-  {_id: uuid(), leader: "eeas", totalPrice: 11.5},
-  {_id: uuid(), leader: "sad", totalPrice: 1000},
-  {_id: uuid(), leader: "dcxzda", totalPrice: 141.5},
-  {_id: uuid(), leader: "haldsdsa", totalPrice: 1222},
-  {_id: uuid(), leader: "eedsas", totalPrice: 91.5},
-  {_id: uuid(), leader: "321dfcxz", totalPrice: 997.12},
-  {_id: uuid(), leader: "A B", totalPrice: 41.5},
-  {_id: uuid(), leader: "halo2", totalPrice: 12},
-  {_id: uuid(), leader: "eeas", totalPrice: 11.5},
-  {_id: uuid(), leader: "sad", totalPrice: 1000},
-  {_id: uuid(), leader: "dcxzda", totalPrice: 141.5},
-  {_id: uuid(), leader: "haldsdsa", totalPrice: 1222},
-  {_id: uuid(), leader: "eedsas", totalPrice: 91.5},
-  {_id: uuid(), leader: "321dfcxz", totalPrice: 997.12},
-  {_id: uuid(), leader: "A B", totalPrice: 41.5},
-  {_id: uuid(), leader: "halo2", totalPrice: 12},
-  {_id: uuid(), leader: "eeas", totalPrice: 11.5},
-  {_id: uuid(), leader: "sad", totalPrice: 1000},
-  {_id: uuid(), leader: "dcxzda", totalPrice: 141.5},
-  {_id: uuid(), leader: "haldsdsa", totalPrice: 1222},
-  {_id: uuid(), leader: "eedsas", totalPrice: 91.5},
-  {_id: uuid(), leader: "321dfcxz", totalPrice: 997.12},
-  {_id: uuid(), leader: "A B", totalPrice: 41.5},
-  {_id: uuid(), leader: "halo2", totalPrice: 12},
-  {_id: uuid(), leader: "eeas", totalPrice: 11.5},
-  {_id: uuid(), leader: "sad", totalPrice: 1000},
-  {_id: uuid(), leader: "dcxzda", totalPrice: 141.5},
-  {_id: uuid(), leader: "haldsdsa", totalPrice: 1222},
-  {_id: uuid(), leader: "eedsas", totalPrice: 91.5},
-  {_id: uuid(), leader: "321dfcxz", totalPrice: 997.12},
-  {_id: uuid(), leader: "A B", totalPrice: 41.5},
-  {_id: uuid(), leader: "halo2", totalPrice: 12},
-  {_id: uuid(), leader: "eeas", totalPrice: 11.5},
-  {_id: uuid(), leader: "sad", totalPrice: 1000},
-  {_id: uuid(), leader: "dcxzda", totalPrice: 141.5},
-  {_id: uuid(), leader: "haldsdsa", totalPrice: 1222},
-  {_id: uuid(), leader: "eedsas", totalPrice: 91.5},
-  {_id: uuid(), leader: "321dfcxz", totalPrice: 997.12},
-  {_id: uuid(), leader: "A B", totalPrice: 41.5},
-  {_id: uuid(), leader: "halo2", totalPrice: 12},
-  {_id: uuid(), leader: "eeas", totalPrice: 11.5},
-  {_id: uuid(), leader: "sad", totalPrice: 1000},
-  {_id: uuid(), leader: "dcxzda", totalPrice: 141.5},
-  {_id: uuid(), leader: "haldsdsa", totalPrice: 1222},
-  {_id: uuid(), leader: "eedsas", totalPrice: 91.5},
-  {_id: uuid(), leader: "321dfcxz", totalPrice: 997.12},
-  {_id: uuid(), leader: "A B", totalPrice: 41.5},
-  {_id: uuid(), leader: "halo2", totalPrice: 12},
-  {_id: uuid(), leader: "eeas", totalPrice: 11.5},
-  {_id: uuid(), leader: "sad", totalPrice: 1000},
-  {_id: uuid(), leader: "dcxzda", totalPrice: 141.5},
-  {_id: uuid(), leader: "haldsdsa", totalPrice: 1222},
-  {_id: uuid(), leader: "eedsas", totalPrice: 91.5},
-  {_id: uuid(), leader: "321dfcxz", totalPrice: 997.12},
-  {_id: uuid(), leader: "A B", totalPrice: 41.5},
-  {_id: uuid(), leader: "halo2", totalPrice: 12},
-  {_id: uuid(), leader: "eeas", totalPrice: 11.5},
-  {_id: uuid(), leader: "sad", totalPrice: 1000},
-  {_id: uuid(), leader: "dcxzda", totalPrice: 141.5},
-  {_id: uuid(), leader: "haldsdsa", totalPrice: 1222},
-  {_id: uuid(), leader: "eedsas", totalPrice: 91.5},
-  {_id: uuid(), leader: "321dfcxz", totalPrice: 997.12},
-  {_id: uuid(), leader: "A B", totalPrice: 41.5},
-  {_id: uuid(), leader: "halo2", totalPrice: 12},
-  {_id: uuid(), leader: "eeas", totalPrice: 11.5},
-  {_id: uuid(), leader: "sad", totalPrice: 1000},
-  {_id: uuid(), leader: "dcxzda", totalPrice: 141.5},
-  {_id: uuid(), leader: "haldsdsa", totalPrice: 1222},
-  {_id: uuid(), leader: "eedsas", totalPrice: 91.5},
-  {_id: uuid(), leader: "321dfcxz", totalPrice: 997.12},
-  {_id: uuid(), leader: "A B", totalPrice: 41.5},
-  {_id: uuid(), leader: "halo2", totalPrice: 12},
-  {_id: uuid(), leader: "eeas", totalPrice: 11.5},
-  {_id: uuid(), leader: "sad", totalPrice: 1000},
-  {_id: uuid(), leader: "dcxzda", totalPrice: 141.5},
-  {_id: uuid(), leader: "haldsdsa", totalPrice: 1222},
-  {_id: uuid(), leader: "eedsas", totalPrice: 91.5},
-  {_id: uuid(), leader: "321dfcxz", totalPrice: 997.12},
-  {_id: uuid(), leader: "A B", totalPrice: 41.5},
-  {_id: uuid(), leader: "halo2", totalPrice: 12},
-  {_id: uuid(), leader: "eeas", totalPrice: 11.5},
-  {_id: uuid(), leader: "sad", totalPrice: 1000},
-  {_id: uuid(), leader: "dcxzda", totalPrice: 141.5},
-  {_id: uuid(), leader: "haldsdsa", totalPrice: 1222},
-  {_id: uuid(), leader: "eedsas", totalPrice: 91.5},
-  {_id: uuid(), leader: "321dfcxz", totalPrice: 997.12},
-  {_id: uuid(), leader: "halo2", totalPrice: 12},
-  {_id: uuid(), leader: "eeas", totalPrice: 11.5},
-  {_id: uuid(), leader: "sad", totalPrice: 1000},
-  {_id: uuid(), leader: "dcxzda", totalPrice: 141.5},
-  {_id: uuid(), leader: "haldsdsa", totalPrice: 1222},
-  {_id: uuid(), leader: "eedsas", totalPrice: 91.5},
-  {_id: uuid(), leader: "321dfcxz", totalPrice: 997.12},
-  {_id: uuid(), leader: "A B", totalPrice: 41.5},
-  {_id: uuid(), leader: "halo2", totalPrice: 12},
-  {_id: uuid(), leader: "eeas", totalPrice: 11.5},
-  {_id: uuid(), leader: "sad", totalPrice: 1000},
-  {_id: uuid(), leader: "dcxzda", totalPrice: 141.5},
-  {_id: uuid(), leader: "haldsdsa", totalPrice: 1222},
-  {_id: uuid(), leader: "eedsas", totalPrice: 91.5},
-  {_id: uuid(), leader: "321dfcxz", totalPrice: 997.12},
-];
-
 function useDidUpdateEffect(fn, inputs) {
   const didMountRef = React.useRef(false);
 
   React.useEffect(() => {
-    if (didMountRef.current)
+    if (didMountRef.current){
       fn();
-    else
+    }else{
       didMountRef.current = true;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, inputs);
 }
 
@@ -163,10 +50,9 @@ const AdminOrders = () => {
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
   
-
-  
   React.useEffect(() => {
     fetchOrders() 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, rowsPerPage])
 
 

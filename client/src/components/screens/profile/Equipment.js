@@ -18,7 +18,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
-import itemCategories from "../../../assets/categories/items";
+import {itemTypeLabels} from  "../../../utils/labels";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -133,7 +133,7 @@ let content = null
           return !chest ? (
             <React.Fragment key={itemCategory}>
               <ListItem onClick={handleOpenList} data-value={itemCategory}>
-                <ListItemText primary={itemCategories[itemCategory]} />
+                <ListItemText primary={itemTypeLabels[itemCategory]} />
                 {openList === itemCategory ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
               <Collapse
@@ -164,7 +164,7 @@ let content = null
           ) : (
             <React.Fragment key={itemCategory}>
               <ListItem onClick={handleOpenList} data-value={itemCategory}>
-                <ListItemText primary={itemCategories[itemCategory]} />
+                <ListItemText primary={itemTypeLabels[itemCategory]} />
                 {openList === itemCategory ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
               <Collapse

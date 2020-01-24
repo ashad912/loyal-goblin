@@ -2,7 +2,6 @@ import React from "react";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Grid from "@material-ui/core/Grid";
 import List from "@material-ui/core/List";
@@ -26,9 +25,9 @@ const AmuletsModal = props => {
     props.handleSubtractAmulet(id);
   };
 
-  const handleDelete = id => () => {
-    props.handleDeleteAmulet(id);
-  };
+  // const handleDelete = id => () => {
+  //   props.handleDeleteAmulet(id);
+  // };
 
   const handleChangeQuantity = (e, id) => {
     props.handleChangeAmuletQuantity(id, e.target.value);
@@ -50,15 +49,14 @@ const AmuletsModal = props => {
         maxWidth="md"
       >
         <DialogTitle>Dodaj amulety misji</DialogTitle>
- <div style={{display: 'flex', overflow: 'hidden'}}>
-          
+          <div style={{display: 'flex', overflow: 'hidden'}}>
             <div style={{ borderRight: "1px solid grey", flexBasis: '40%', overflow: 'auto'}}>
               <List dense >
                 {props.amuletList.map(amulet => {
                   return (
                     <ListItem key={amulet.itemModel}>
                       <ListItemAvatar>
-                        <img
+                        <img alt=''
                           src={itemsPath +
                             amulet.imgSrc}
                           width="64px"
@@ -98,7 +96,7 @@ const AmuletsModal = props => {
                         >
                           <Grid item >
                             <ListItemAvatar>
-                              <img
+                              <img alt=''
                                 src={itemsPath +
                                   amulet.imgSrc}
                                 width="64px"

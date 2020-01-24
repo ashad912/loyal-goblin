@@ -18,7 +18,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
-import itemCategories from "../../../assets/categories/items";
+import { itemCategories } from "../../../utils/definitions";
 
 const useStyles = makeStyles(theme => ({
   root: {

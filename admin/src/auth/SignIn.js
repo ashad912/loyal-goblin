@@ -1,23 +1,18 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { signIn } from '../store/actions/authActions'
-import { Redirect, Link } from 'react-router-dom'
+import styled from 'styled-components'
 import Container from '@material-ui/core/Container';
 import { Typography } from '@material-ui/core';
-import { TextField } from '@material-ui/core';
 import { Button } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
-import styled from 'styled-components'
 import { FormControl } from '@material-ui/core';
 import { FormHelperText } from '@material-ui/core';
 import { Input } from '@material-ui/core';
 import { InputLabel } from '@material-ui/core';
-import { Divider } from '@material-ui/core';
 import ErrorIcon from '@material-ui/icons/Error';
+
+import { signIn } from '../store/actions/authActions'
 import {asyncForEach} from '../utils/methods'
-
-
-//import {labels} from '../strings/labels'
 
 
 const FormContainer = styled(Container)`
@@ -40,16 +35,7 @@ const ErrorPaper = styled(Paper)`
     text-align: left;
 `
 
-const ActionBar = styled.div`
-    display: flex;
-    justify-content: space-between;
-`
-const StyledLink = styled(Link)`
-color: #249123;
-&:visited {
-  color: #249123;
-}
-`
+
 
 class SignIn extends Component {
     state = {

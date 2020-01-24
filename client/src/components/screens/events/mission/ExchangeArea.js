@@ -4,15 +4,10 @@ import React from 'react';
 import Box from './Box';
 
 import uuid from 'uuid/v1'
-import Loading from '../../../layout/Loading';
-import Grid from '@material-ui/core/Grid';
 import {addItemSubscribe, deleteItemSubscribe} from '../../../../socket'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components'
-import avatarTemp from '../../../../assets/avatar/moose.png'
-import bagImg from '../../../../assets/avatar/bag.png'
-import Cookies from 'js-cookie';
-import {socket} from '../../../../socket'
+import bagImg from '../../../../assets/mission/bag.png'
 import { sendItemToMission, sendItemToUser } from '../../../../store/actions/missionActions';
 
 // import io from 'socket.io-client'

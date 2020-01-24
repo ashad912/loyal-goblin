@@ -12,53 +12,27 @@ import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Typography from "@material-ui/core/Typography";
 import SearchIcon from "@material-ui/icons/Search";
-import ItemsModalListItem from "./ItemsModalListItem";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
+import ItemsModalListItem from "../common/ItemsModalListItem";
 import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
 import FormLabel from "@material-ui/core/FormLabel";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Grid from "@material-ui/core/Grid";
 import Checkbox from "@material-ui/core/Checkbox";
-
 
 import {itemTypeLabelsPlural} from '../../utils/labels'
 
 const ItemsModal = props => {
   const [searchValue, setSearchValue] = useState("");
   const [itemsList, setItemsList] = useState(props.itemsList);
-  const [categories, setCategories] = useState({});
-
-  // Object.keys(itemTypeLabelsPlural).forEach(categoryKey => {
-  //   if(categoryKey !== 'all'){
-  //     if(props.productCategory === 'beer'){
-  //       if(categoryKey === 'torpedo'){
-  //         categories[categoryKey] = true
-  //       }else{
-  //         categories[categoryKey] = false
-  //       }
-  //     }else{
-  //       if(categoryKey === 'amulet'){
-  //         categories[categoryKey] = true
-  //       }else{
-  //         categories[categoryKey] = false
-  //       }
-  //     }
-      
-  //   }
-    
-  // });
-  
+  const [categoryFilter, setCategoryFilter] = useState({});
+  const [perksFilter, setPerksFilter] = useState(false);
 
   useEffect(()=> {
-    console.log('props.productCategory')
     const categories = {}
     Object.keys(itemTypeLabelsPlural).forEach(categoryKey => {
       if(categoryKey !== 'all'){
@@ -80,15 +54,10 @@ const ItemsModal = props => {
       
     });
 
-    setCategories(categories)
     setCategoryFilter(categories)
   }, [props.productCategory])
   
   
-  const [categoryFilter, setCategoryFilter] = useState(categories);
-  const [perksFilter, setPerksFilter] = useState(false);
-
-
   useEffect(()=> {
     setItemsList(props.itemsList)
   }, [props.itemsList])
@@ -106,6 +75,8 @@ const ItemsModal = props => {
       } else {
         setItemsList(itemsList);
       }
+
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue]);
     
 
@@ -124,6 +95,7 @@ const ItemsModal = props => {
     } else {
       setItemsList(itemsList);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [perksFilter]);
 
   const handlePerksFilterChange = () => {
@@ -141,8 +113,6 @@ const ItemsModal = props => {
   const handleSeachChange = e => {
     setSearchValue(e.target.value.trim());
   };
-
-
 
   const handleSubtract = (item) => {
     props.handleSubtractItem(item);
@@ -199,7 +169,7 @@ const ItemsModal = props => {
                         Kategorie:
                       </FormLabel>
                       <FormGroup>
-                        {Object.keys(categories).map(category => {
+                        {Object.keys(categoryFilter).map(category => {
                           return (
                             <FormControlLabel
                               key={category}

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import moment from "moment";
 import styled from "styled-components";
+import MomentUtils from "@date-io/moment";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
@@ -8,30 +8,23 @@ import Container from "@material-ui/core/Container";
 import Switch from "@material-ui/core/Switch";
 import Grid from "@material-ui/core/Grid";
 import Input from "@material-ui/core/Input";
-import Slider from "@material-ui/core/Slider";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import Paper from "@material-ui/core/Paper";
-import ListItem from "@material-ui/core/ListItem";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
-import DeleteIcon from '@material-ui/icons/Delete';
-import CreateIcon from '@material-ui/icons/Create';
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import PerkListBox from './PerkListBox'
-
-import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
-import MomentUtils from "@date-io/moment";
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 
 import PerkModal from "./PerkModal";
+import PerkListBox from './PerkListBox'
+
 import {asyncForEach} from '../../utils/methods'
 import { itemsPath, appearancePath } from "../../utils/definitions";
 import {classLabels, itemTypeLabels, equippableItems} from '../../utils/labels'
-import {torpedoFields, userClasses, itemModelTypes} from '../../utils/modelArrays'
+import {torpedoFields, userClasses} from '../../utils/modelArrays'
+
 import { createItemModel, updateItemModel, uploadItemModelImages } from "../../store/actions/itemActions";
 import { getProducts } from "../../store/actions/productActions";
 
@@ -86,6 +79,7 @@ class ItemCreator extends Component {
   state = {
     name: '',
     description: '',
+    type: null,
     icon: "",
     appearance: "",
     iconView: "",
@@ -472,7 +466,7 @@ class ItemCreator extends Component {
                     alignItems: "center"
                   }}
                 >
-                  <img src={this.state.appearanceView} style={{ width: "64px" }} />
+                  <img alt='' src={this.state.appearanceView} style={{ width: "64px" }} />
                 </Grid>
               </Grid>
            </Grid>)}
@@ -590,7 +584,7 @@ class ItemCreator extends Component {
                 alignItems: "center"
               }}
             >
-              <img src={this.state.iconView} style={{ width: "64px" }} />
+              <img alt='' src={this.state.iconView} style={{ width: "64px" }} />
             </Grid>
           </Grid>
           

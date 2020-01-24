@@ -83,13 +83,13 @@ export const itemTypeLabelsPlural = {
   export const itemTypeLabels = {
     amulet: 'Amulet',
     weapon: 'Broń',
-    feet: 'Stopy',
     hands: 'Dłonie',
     head: 'Głowa',
-    chest: 'Tors',
     legs: 'Nogi',
     ring: 'Pierścień',
+    feet: 'Stopy',
     torpedo: 'Torpeda',
+    chest: 'Tors',
     scroll: 'Zwój',
   }
 

@@ -1,11 +1,3 @@
-export const userFilterStatuses = {
-  all: 'Wszyscy',
-  active: 'Aktywni',
-  new: 'Nowi',
-  banned: 'Zbanowani',
-}
-
-
 export const dayLabels = [null, 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela']
 
 export const perkLabels = {
@@ -20,12 +12,6 @@ export const perkLabels = {
     'custom': 'Własny',
 }
 
-export const classLabels = {
-    warrior: 'Wojownik',
-    mage: 'Mag',
-    rogue: 'Łotrzyk',
-    cleric: 'Kleryk'
-}
 
 export const classLabelsAny = {
   any: 'Ogólne',
@@ -35,6 +21,12 @@ export const classLabelsAny = {
   cleric: 'Kleryk'
 }
 
+export const classLabels = {
+  warrior: 'Wojownik',
+  mage: 'Mag',
+  rogue: 'Łotrzyk',
+  cleric: 'Kleryk'
+}
 
 
 export const equippableItems = ['weapon', 'feet', 'hands', 'head', 'chest', 'legs', 'ring']
@@ -46,46 +38,25 @@ export const roomLabels = {
 }
 
 
-export const itemTypeLabelsPlural = {
-    all: 'Wszystkie',
-    amulet: 'Amulety',
-    weapon: 'Broń',
-    feet: 'Stopy',
-    hands: 'Dłonie',
-    head: 'Głowa',
-    chest: 'Korpus',
-    legs: 'Nogi',
-    ring: 'Pierścienie',
-    torpedo: 'Torpedy',
-    scroll: 'Zwoje',
-  }
-
-  export const itemTypeLabels = {
-    amulet: 'Amulet',
-    weapon: 'Broń',
-    feet: 'Buty',
-    hands: 'Dłonie',
-    head: 'Głowa',
-    chest: 'Tors',
-    legs: 'Nogi',
-    ring: 'Pierścień',
-    torpedo: 'Torpeda',
-    scroll: 'Zwój',
-  }
-
-  export const categoryLabels = {
-    all: 'Wszystkie',
-    shots: 'Szoty',
-    drinks: 'Drinki',
-    'alco-free': 'Bezalkoholowe',
-    beers: 'Piwa',
-    food: 'Jedzenie'
-}
-
-export const categoryLabelsSpecifed = {
+export const categoryLabels = {
+  all: 'Wszystkie',
   shots: 'Szoty',
   drinks: 'Drinki',
   'alco-free': 'Bezalkoholowe',
   beers: 'Piwa',
   food: 'Jedzenie'
 }
+
+export const itemTypeLabels = {
+    amulet: "Amulety",
+    weapon: "Broń",
+    hands: 'Dłonie',
+    head: "Głowa",
+    legs: "Nogi",
+    ring: "Pierścienie",
+    feet: "Stopy",
+    torpedo: 'Torpedy',
+    chest: "Tors",
+    scroll: 'Zwoje',
+}
+

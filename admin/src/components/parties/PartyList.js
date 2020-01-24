@@ -19,8 +19,6 @@ const PartyList = (props) => {
             <Grid item xs={5} style={{textAlign: 'center'}}>
                 <Typography style={{width: '100%', fontWeight: 'bold'}}>Nazwa drużyny</Typography>
             </Grid>
-            
-        
         </Grid>
     </ListItem>
     {props.parties.map(party => {

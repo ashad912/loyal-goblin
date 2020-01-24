@@ -3,7 +3,6 @@ import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 
-import avatarTemp from '../../../../assets/avatar/moose.png'
 import Typography from "@material-ui/core/Typography";
 import styled from 'styled-components'
 import CheckIcon from "@material-ui/icons/Check";
@@ -16,7 +15,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 
 import Badge from '@material-ui/core/Badge';
 import Avatar from '@material-ui/core/Avatar';
-import bagImg from '../../../../assets/avatar/bag.png'
+import bagImg from '../../../../assets/mission/bag.png'
 
 
 import {createAvatarPlaceholder} from '../../../../utils/methods'

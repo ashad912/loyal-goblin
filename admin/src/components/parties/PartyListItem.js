@@ -1,8 +1,8 @@
 import React from 'react'
+import moment from 'moment'
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import Collapse from "@material-ui/core/Collapse";
@@ -11,7 +11,6 @@ import Grid from "@material-ui/core/Grid";
 
 import UserListItem from '../common/UserListItem'
 
-import moment from 'moment'
 moment.locale("pl");
 
 const PartyListItem = (props) => {

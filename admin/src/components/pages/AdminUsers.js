@@ -1,17 +1,14 @@
 import React from "react";
 import moment from 'moment'
+import styled from 'styled-components'
 import Grid from "@material-ui/core/Grid";
 import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
-
-import uuid from 'uuid/v1'
 import Toolbar from "@material-ui/core/Toolbar";
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
-
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -22,11 +19,8 @@ import Box from "@material-ui/core/Box";
 import SearchIcon from "@material-ui/icons/Search";
 import RefreshIcon from '@material-ui/icons/Refresh';
 
-import styled from 'styled-components'
-
 import UserListItem from '../common/UserListItem'
 import PaginationBar from "../common/PaginationBar";
-
 
 import {userFilterStatuses} from '../../utils/labels'
 import {getAdminUsers, toggleUserActiveStatus} from '../../store/actions/userActions'
@@ -36,89 +30,6 @@ const RefreshBar = styled.div`
   flex-grow: 3;
   text-align: left;
 `
-
-
-const mockUsers = [
-  { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment(), avatar: 'dsad' },
-  { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Ghi", experience: 400, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Janusz Korwin Mikke", experience: 1000, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
-  { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Ghi", experience: 400, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Janusz Korwin Mikke", experience: 1000, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
-  { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Ghi", experience: 400, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Janusz Korwin Mikke", experience: 1000, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
-  { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Ghi", experience: 400, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Janusz Korwin Mikke", experience: 1000, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
-  { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Ghi", experience: 400, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Janusz Korwin Mikke", experience: 1000, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
-  { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Ghi", experience: 400, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Janusz Korwin Mikke", experience: 1000, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
-  { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Ghi", experience: 400, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Janusz Korwin Mikke", experience: 1000, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
-  { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "A B", experience: 100, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Ccc", experience: 200, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Dee f", experience: 300, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Ghi", experience: 400, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Janusz Korwin Mikke", experience: 1000, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Nnnn", experience: 500, active: true, _id: uuid(), lastActivityDate: moment()},
-  { name: "Oppppp pp", experience: 600, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Rrr rr", experience: 700, active: true, _id: uuid(), lastActivityDate: moment() },
-  { name: "Stuwxyz", experience: 800, active: true, _id: uuid(), lastActivityDate: moment() },
-];
-const statusCodes = {
-  active: "Aktywny",
-  new: "Nowy",
-  banned: "Zbanowany"
-};
-
-
 
 const AdminUsers = () => {
   const [users, setUsers] = React.useState([]);
@@ -131,6 +42,7 @@ const AdminUsers = () => {
 
   React.useEffect(() => {
     fetchUsers() 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   React.useEffect(() => {
@@ -143,7 +55,7 @@ const AdminUsers = () => {
       }, 60 * 1000);
     } 
     return () => clearInterval(timer);
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchedUsers, statusFilter, autoRefresh])
 
 
@@ -152,6 +64,7 @@ const AdminUsers = () => {
     if(nameFilter.trim().length > 0){
       setPage(0)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nameFilter]);
 
   const fetchUsers = async () => {
@@ -237,8 +150,6 @@ const AdminUsers = () => {
     setPage(page+1)
   }
   
-  const rowsPerPageOrNo = page === parseInt(users.length / rowsPerPage) ? (users.length % rowsPerPage) : rowsPerPage
-  const oneOrZero = users.length ? 1 : 0
 
   return (
     <Grid container direction="column" alignItems="center">

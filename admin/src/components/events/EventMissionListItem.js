@@ -11,8 +11,8 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import PeopleIcon from "@material-ui/icons/People";
-import classThemes from "../../assets/themes/classThemes";
-import { missionsPath } from "../../utils/definitions";
+
+import { missionsPath, classThemes } from "../../utils/definitions";
 
 
 const pulse = keyframes`
@@ -125,7 +125,7 @@ const EventMissionListItem = ({
           </Grid>
           <Grid item container>
             <Grid item xs={2}>
-              <img src={missionsPath + event.imgSrc} width={128} />
+              <img alt='' src={missionsPath + event.imgSrc} width={128} />
             </Grid>
             <Grid item container direction="column" xs={6}>
               <Grid item>

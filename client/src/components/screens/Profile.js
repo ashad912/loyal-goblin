@@ -8,7 +8,6 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Fab from "@material-ui/core/Fab";
-import Tooltip from "@material-ui/core/Tooltip";
 import ColorizeIcon from "@material-ui/icons/Colorize";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
 import EmojiPeopleIcon from "@material-ui/icons/EmojiPeople";
@@ -21,18 +20,21 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 
-import convertBagArrayToCategories from "../../utils/bagArrayToCategories";
 
 import Attribute from "./profile/Attribute";
 import Equipment from "./profile/Equipment";
 import NewLevelDialog from "./profile/NewLevelDialog";
 import PerkBox from "./profile/PerkBox";
-import maleBody from "../../assets/avatar/male-body.png";
 import PartyCreationDialog from "./profile/PartyCreationDialog";
 import PartyJoiningDialog from "./profile/PartyJoiningDialog";
 import RankDialog from "./profile/RankDialog";
 import StatsDialog from "./profile/StatsDialog";
 import NewRallyAwardsDialog from "./profile/NewRallyAwardsDialog";
+
+import { updateParty, removeMember } from "../../store/actions/partyActions";
+import {createAvatarPlaceholder, designateUserLevel, bagArrayToCategories} from "../../utils/methods";
+import {appearancePath, usersPath} from '../../utils/definitions'
+import maleBody from "../../assets/profile/male-body.png";
 
 import {
   toggleItem,
@@ -40,12 +42,6 @@ import {
   clearRallyAwards,
   confirmLevel
 } from "../../store/actions/profileActions";
-import { updateParty, removeMember } from "../../store/actions/partyActions";
-import {createAvatarPlaceholder, designateUserLevel} from "../../utils/methods";
-import {appearancePath, usersPath} from '../../utils/definitions'
-import { socket } from "../../socket";
-
-import * as socketFuncs from "../../socket";
 import { authCheck } from "../../store/actions/authActions";
 
 const useStyles = makeStyles(theme => ({
@@ -368,12 +364,12 @@ const Profile = props => {
   const classes = useStyles();
 
   const [bag, setBag] = React.useState(
-    convertBagArrayToCategories(props.auth.profile.bag)
+    bagArrayToCategories(props.auth.profile.bag)
   );
   const [equippedItems, setEquippedItems] = React.useState(null);
 
   React.useEffect(() => {
-    setBag(convertBagArrayToCategories(props.auth.profile.bag));
+    setBag(bagArrayToCategories(props.auth.profile.bag));
   }, [props.auth.profile.bag]);
 
   React.useEffect(() => {

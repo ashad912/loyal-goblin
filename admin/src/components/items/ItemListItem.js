@@ -1,5 +1,5 @@
 import React from "react";
-import styled, {keyframes}  from 'styled-components'
+import styled  from 'styled-components'
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -12,9 +12,9 @@ import PerkListBox from './PerkListBox'
 import Collapse from "@material-ui/core/Collapse";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
+
 import {itemTypeLabels, classLabels, equippableItems} from '../../utils/labels'
 import { itemsPath, appearancePath } from "../../utils/definitions";
-
 
 
 const StyledListItem = styled(ListItem)`
@@ -39,9 +39,6 @@ const ItemListItem = ({
 
   const [openEffect, setOpenEffect] = React.useState("");
  
-
- 
-
   const handleOpenEffect = event => {
     if (event.currentTarget.dataset.value === openEffect) {
       setOpenEffect("");
@@ -84,12 +81,12 @@ const ItemListItem = ({
         <Grid item container>
           <Grid item xs={2}>
             <Grid container style={{}}>
-              <img
+              <img alt=''
                 src={itemsPath + item.imgSrc}
                 width={32}
                 style={{height: '100%', marginRight: '1rem'}}
               />
-              {equippableItems.includes(item.type) && <img
+              {equippableItems.includes(item.type) && <img alt=''
                 src={appearancePath + item.appearanceSrc}
                 width={32}
                 style={{height: '100%'}}

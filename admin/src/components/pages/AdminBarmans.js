@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import _ from 'lodash'
-import Typography from "@material-ui/core/Typography";
+
 import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
 import Dialog from "@material-ui/core/Dialog";
@@ -11,14 +11,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import TextField from "@material-ui/core/TextField";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import Paper from "@material-ui/core/Paper";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import Box from "@material-ui/core/Box";
-import SearchIcon from "@material-ui/icons/Search";
+
 import { getBarmans, registerBarman, changeBarmanPassword, deleteBarman } from "../../store/actions/barmanActions";
 
 let currentBarman = null;
@@ -49,6 +42,7 @@ const AdminBarmans = () => {
 
   useEffect(() => {
     checkDisableSubmit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userName, password, confirmPassword, formErrors]);
 
   const checkDisableSubmit = () => {

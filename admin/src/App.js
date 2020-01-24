@@ -1,20 +1,19 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { connect } from "react-redux";
 import { StylesProvider } from "@material-ui/styles";
-import "./App.css";
+
 //import Footer from "./components/layout/Footer";
 import SignIn from "./auth/SignIn";
 import Admin from "./components/Admin";
-
-import { connect } from "react-redux";
-import { resetConnectionError } from "./store/actions/connectionActions";
-
 import withAuth from "./hoc/withAuth";
 import withNoAuth from "./hoc/withNoAuth";
-import { authCheck} from "./store/actions/authActions";
 import ConnectionSpinnerDialog from "./layout/ConnectionSpinnerDialog";
 import ConnectionSnackbar from "./layout/ConnectionSnackbar";
 import PageNotFound from "./components/PageNotFound";
+
+import { authCheck} from "./store/actions/authActions";
+import { resetConnectionError } from "./store/actions/connectionActions";
 
 class App extends React.Component {
   state = {

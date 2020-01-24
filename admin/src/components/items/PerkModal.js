@@ -1,4 +1,5 @@
 import React from "react";
+import styled from 'styled-components'
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -15,9 +16,9 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Checkbox from "@material-ui/core/Checkbox";
-import styled from 'styled-components'
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 import DeleteIcon from '@material-ui/icons/Delete';
+
 import {perkLabels, dayLabels, categoryLabels, roomLabels} from '../../utils/labels'
 import {rentRooms, productCategories, perkTypes} from '../../utils/modelArrays'
 
@@ -36,54 +37,10 @@ const StyledFormControl = styled(FormControl)`
 `
 
 
-
 const StyledBox = styled(Box)`
     padding: 0.5rem 0.5rem 0.5rem 0.5rem;
     margin: 0.5rem 0 0.5rem 0;
 `
-
-const createTempProducts = () => {
-  return [{
-    _id: 1,
-    category: "shot",
-    name: "Wóda",
-    description: "nie mam weny",
-    price: 7.0,
-    imgSrc: "drink.png"
-  },
-  {
-    _id: 2,
-    category: "shot",
-    name: "Zryje",
-    description: "na opisy",
-    price: 7.0,
-    imgSrc: "drink.png"
-  },
-  {
-    _id: 3,
-    category: "shot",
-    name: "Banie",
-    description: "szotów",
-    price: 7.0,
-    imgSrc: "drink.png"
-  },
-  {
-    _id: 4,
-    category: "shot",
-    name: "BWóda",
-    description: "nie mam weny",
-    price: 7.0,
-    imgSrc: "drink.png"
-  },
-  {
-    _id: 5,
-    category: "shot",
-    name: "BZryje",
-    description: "na opisy",
-    price: 7.0,
-    imgSrc: "drink.png"
-  }]
-}
 
 const nullTarget = {
   'disc-product': null,
@@ -396,27 +353,25 @@ render(){
 const createDiscTarget = (perkType) => {
   switch(perkType){
     case 'disc-product':
-      return(
-        
-      <StyledFormControl >
-            <InputLabel shrink={true} htmlFor="target">Zakres zniżki</InputLabel>
-            <Select
-                value={this.state.perk.target['disc-product']}
-                onChange={this.handleChangePerkTargetNameValue}
-                inputProps={{
-                    name: 'disc-product',
-                    id: 'disc-product',
-                }}
-            >
-            {this.props.products.map((product) => {
-              return(
-                <MenuItem value={product}>{product.name}</MenuItem>
-              )
-            })}
-            </Select>
-      </StyledFormControl>
+      return( 
+        <StyledFormControl >
+              <InputLabel shrink={true} htmlFor="target">Zakres zniżki</InputLabel>
+              <Select
+                  value={this.state.perk.target['disc-product']}
+                  onChange={this.handleChangePerkTargetNameValue}
+                  inputProps={{
+                      name: 'disc-product',
+                      id: 'disc-product',
+                  }}
+              >
+              {this.props.products.map((product) => {
+                return(
+                  <MenuItem value={product}>{product.name}</MenuItem>
+                )
+              })}
+              </Select>
+        </StyledFormControl>
       )
-    break
     case 'disc-category':
       return(
         <StyledFormControl >

@@ -12,7 +12,7 @@ import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Typography from "@material-ui/core/Typography";
 import SearchIcon from "@material-ui/icons/Search";
-import ItemsModalListItem from "./ItemsModalListItem";
+import ItemsModalListItem from "../common/ItemsModalListItem";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
@@ -22,12 +22,10 @@ import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Grid from "@material-ui/core/Grid";
 import Checkbox from "@material-ui/core/Checkbox";
-
 
 import {classLabelsAll, itemTypeLabelsPluralNoAll} from '../../utils/labels'
 
@@ -36,7 +34,7 @@ const ItemsModal = props => {
   const [searchValue, setSearchValue] = useState("");
   const [itemsList, setItemsList] = useState({});
   const [classFilter, setClassFilter] = useState("any");
-    const [categoryFilter, setCategoryFilter] = useState({});
+  const [categoryFilter, setCategoryFilter] = useState({});
   const [perksFilter, setPerksFilter] = useState(false);
   
   useEffect(() => {
@@ -63,6 +61,7 @@ const ItemsModal = props => {
     } else {
       setItemsList(props.itemsList);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue]);
 
   useEffect(() => {
@@ -77,6 +76,7 @@ const ItemsModal = props => {
     } else {
       setItemsList(props.itemsList);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classFilter]);
 
   useEffect(() => {
@@ -93,6 +93,7 @@ const ItemsModal = props => {
     } else {
       setItemsList(props.itemsList);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [perksFilter]);
 
   const handlePerksFilterChange = () => {

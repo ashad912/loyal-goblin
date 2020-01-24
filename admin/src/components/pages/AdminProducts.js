@@ -18,6 +18,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+
 import {categoryLabels} from '../../utils/labels'
 import {getProducts, deleteProduct} from '../../store/actions/productActions'
 
@@ -31,8 +32,6 @@ const AdminProducts = () => {
 
   const [deleteDialog, setDeleteDialog] = React.useState(false)
   const [productToDelete, setProductToDelete] = React.useState({_id: '', name: ''})
-
- 
 
   const [productToPass, setProductToPass] = React.useState({   
       _id: null,
@@ -72,10 +71,12 @@ const AdminProducts = () => {
       
       setFilteredProducts(tempItemsList);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nameFilter]);
 
   React.useEffect(() => {
     applyStatusFilter(statusFilter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [products]);
 
   const handleChangeNameFilter = e => {

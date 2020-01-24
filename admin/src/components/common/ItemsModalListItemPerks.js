@@ -2,6 +2,7 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import ListItem from "@material-ui/core/ListItem";
 import Typography from "@material-ui/core/Typography";
+
 import {perkLabels, dayLabels} from '../../utils/labels'
 import { getValue, getTarget } from '../../utils/methods';
 
