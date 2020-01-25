@@ -201,7 +201,7 @@ const AdminOrders = () => {
             />
           </Box>
         </Paper>
-        <Toolbar style={{justifyContent: 'flex-end', 'padding': 0, 'min-height': '1rem'}}>
+        <Toolbar style={{justifyContent: 'flex-end', 'padding': 0, minHeight: '1rem'}}>
           <RefreshBar>
             <IconButton
                 onClick={handleRefresh}

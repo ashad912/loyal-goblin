@@ -220,7 +220,7 @@ const AdminProducts = () => {
                   }}
                 >
                 {Object.keys(categoryLabels).map((categoryKey) => {
-                  return <MenuItem value={categoryKey}>{categoryLabels[categoryKey]}</MenuItem>
+                  return <MenuItem key={categoryKey} value={categoryKey}>{categoryLabels[categoryKey]}</MenuItem>
                 })}
 
                 </Select>
@@ -251,7 +251,7 @@ const AdminProducts = () => {
               >
               {filteredProducts.map((product, index) => {
                 return (
-                  <React.Fragment>
+                  <React.Fragment key={product._id}>
                   <ProductListItem
                     key={product._id}
                     index={index}

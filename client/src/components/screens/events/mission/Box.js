@@ -26,7 +26,7 @@ const Item = styled.div`
   line-height: 1.5;
   border-radius: 1px;
   border: 1px ${props => (props.isDragging ? 'dashed #000' : 'solid #ddd')};
-  background: ${(props) => props.isDragging ? 'rgb(230, 220, 141)' : 'white'}
+  background: ${(props) => props.isDragging ? 'rgb(230, 220, 141)' : 'white'};
 `
 
 const Clone = styled(Item)`
@@ -51,7 +51,7 @@ const BoxList = styled.div`
   align-text: flex-start;
   flex-wrap: wrap;
   justify-content: flex-start;
-  margin: 0.5rem 
+  margin: 0.5rem ;
 
 `
 

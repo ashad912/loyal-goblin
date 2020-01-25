@@ -47,7 +47,10 @@ app.use(
 );
 
 app.use(cors());
-app.use(express.static(path.join(__dirname, "../client/build")));
+app.use(express.static(path.join(__dirname, "../../static")));
+app.use(express.static(path.join(__dirname, "../../client/build")));
+app.use(express.static(path.join(__dirname, "../../admin/build")));
+app.use(express.static(path.join(__dirname, "../../barman/build")));
 
 app.use(bodyParser.json());
 app.use(cookieParser());

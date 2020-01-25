@@ -228,7 +228,7 @@ const AdminItems = () => {
                   }}
                 >
                 {Object.keys(itemTypeLabelsPlural).map((itemTypeKey) => {
-                  return <MenuItem value={itemTypeKey}>{itemTypeLabelsPlural[itemTypeKey]}</MenuItem>
+                  return <MenuItem key={itemTypeKey} value={itemTypeKey}>{itemTypeLabelsPlural[itemTypeKey]}</MenuItem>
                 })}
 
                 </Select>

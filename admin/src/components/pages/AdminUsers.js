@@ -180,7 +180,7 @@ const AdminUsers = () => {
               >
                 {Object.keys(userFilterStatuses).map((statusKey) => {
                     return(
-                        <MenuItem value={statusKey}>{userFilterStatuses[statusKey]}</MenuItem>
+                        <MenuItem key={statusKey} value={statusKey}>{userFilterStatuses[statusKey]}</MenuItem>
                     )
                 })}
 
@@ -203,7 +203,7 @@ const AdminUsers = () => {
             
           </Box>
         </Paper>
-        <Toolbar style={{justifyContent: 'flex-end', 'padding': 0, 'min-height': '1rem'}}>
+        <Toolbar style={{justifyContent: 'flex-end', 'padding': 0, minHeight: '1rem'}}>
           <RefreshBar>
             <FormControlLabel
                 style={{marginLeft: '0rem'}}
@@ -233,9 +233,9 @@ const AdminUsers = () => {
             handleNextPageButtonClick={handleNextPageButtonClick}
           />
         </Toolbar>
-        {users.length ? (<List style={{ border: "1px solid grey" }} alignItems="flex-start">
+        {users.length ? (<List style={{ border: "1px solid grey", alignItems: 'flex-start' }} >
           {users.slice(page*rowsPerPage, page*rowsPerPage + rowsPerPage).map(user => {
-            return ( <UserListItem user={user} handleToggleBan={handleToggleBan}/>);
+            return ( <UserListItem key={user._id} user={user} handleToggleBan={handleToggleBan}/>);
           })}
         </List>) : (
           <Typography>Brak zarejstrowanych użytkowników!</Typography>

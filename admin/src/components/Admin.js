@@ -124,7 +124,7 @@ const Admin = (props) => {
           <Button
               style={{justifyContent: 'flex-end', color: 'white', marginRight: '0.5rem'}}
           >
-          <Link onClick={handleLogout} style={{justifyContent: 'flex-end', textAlign: 'right'}} underline='none' color="white">
+          <Link onClick={handleLogout} style={{justifyContent: 'flex-end', textAlign: 'right', color: 'white'}} underline='none' >
             <Typography>Wyloguj</Typography>
                 
           </Link>
