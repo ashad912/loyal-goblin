@@ -1,7 +1,8 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
-import { StylesProvider } from "@material-ui/styles";
+import { StylesProvider, ThemeProvider } from "@material-ui/styles";
+import { createMuiTheme } from "@material-ui/core/styles";
 
 //import Footer from "./components/layout/Footer";
 import SignIn from "./auth/SignIn";
@@ -14,6 +15,25 @@ import PageNotFound from "./components/PageNotFound";
 
 import { authCheck} from "./store/actions/authActions";
 import { resetConnectionError } from "./store/actions/connectionActions";
+
+
+const goblinTheme = createMuiTheme({
+  palette: {
+    primary: {
+      light: "#66bb6a",
+      main: "#388e3c",
+      dark: "#1b5e20",
+      contrastText: "#fff"
+    },
+    secondary: {
+      light: "#f44336",
+      main: "#e53935",
+      dark: "#b71c1c",
+      contrastText: "#000"
+    }
+  }
+});
+
 
 class App extends React.Component {
   state = {
@@ -47,7 +67,8 @@ class App extends React.Component {
     return (
       <BrowserRouter>
         <StylesProvider injectFirst>
-          
+        <ThemeProvider theme={goblinTheme}>
+
             <div className="App">
               <Switch>
                 <Route exact path="/" component={withAuth(Admin)} />
@@ -58,6 +79,7 @@ class App extends React.Component {
           
           <ConnectionSnackbar resetConnectionError = {() => this.props.resetConnectionError()}/>
           <ConnectionSpinnerDialog />
+        </ThemeProvider>
         </StylesProvider>
       </BrowserRouter>
     );

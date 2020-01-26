@@ -364,7 +364,12 @@ export const isNeedToPerksUpdate = user => {
 
 export const designateNewLevels = (baseExp, newExp) => {
   const levelsData = designateUserLevel(baseExp, newExp)
-  return levelsData.newLevel - levelsData.oldLevel
+  console.log("levelsData", levelsData)
+  if(levelsData.hasOwnProperty("newLevel") && levelsData.hasOwnProperty("oldLevel")){
+    return levelsData.newLevel - levelsData.oldLevel
+  }else{
+    return levelsData
+  }
 }
 
 export const designateExperienceMods = (baseExp, rawExpMods) => {

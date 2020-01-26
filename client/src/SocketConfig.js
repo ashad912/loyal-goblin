@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from "react-redux";
 import { updateParty } from "./store/actions/partyActions";
 import {socket, joinRoomEmit, joinRoomSubscribe, instanceRefreshEmit, leaveRoomSubscribe, partyRefreshSubscribe, deleteRoomSubscribe} from './socket'
+import { setMultipleSession } from './store/actions/authActions';
 
 class SocketConfig extends React.Component {
   state = {};
@@ -17,7 +18,9 @@ class SocketConfig extends React.Component {
   
     socket.on('unauthorized', (err) => {
       if(err.message === "multipleSession"){
-        this.props.setMultipleSession()
+
+          this.props.setMultipleSession()
+
       }
       console.log('Socket auth failed: ' + err.message)
     });
@@ -67,7 +70,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onPartyUpdate: () => dispatch(updateParty())
+    onPartyUpdate: () => dispatch(updateParty()),
+    setMultipleSession: () => dispatch(setMultipleSession()),
   };
 };
 

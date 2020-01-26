@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { StylesProvider, ThemeProvider } from "@material-ui/styles";
+import { createMuiTheme } from "@material-ui/core/styles";
 import axios from "axios";
 import moment from "moment";
 import SignIn from "./auth/SignIn";
@@ -14,15 +16,35 @@ import ConnectionSpinnerDialog from "./layout/ConnectionSpinnerDialog";
 
 export const OrderContext = React.createContext(null);
 
-function App() {
+const goblinTheme = createMuiTheme({
+  palette: {
+    primary: {
+      light: "#66bb6a",
+      main: "#388e3c",
+      dark: "#1b5e20",
+      contrastText: "#fff"
+    },
+    secondary: {
+      light: "#f44336",
+      main: "#e53935",
+      dark: "#b71c1c",
+      contrastText: "#000"
+    }
+  }
+});
+
+
+function App(props) {
   const [connection, setConnection] = useState({
     loading: false,
     connectionError: null
   });
   const [auth, setAuth] = useState({ uid: null, init: null });
   const [order, setOrder] = useState([]);
+  const [orderFinalized, setOrderFinalized] = useState(false)
   const [timer, setTimer] = useState("");
   const [userId, setUserId] = useState(null);
+  const [redirect, setRedirect] = useState(false)
 
   useEffect(() => {
     axios.defaults.baseURL = process.env.REACT_APP_API_URL;
@@ -81,17 +103,20 @@ function App() {
         );
         setTimer(`Zamówienie wygaśnie za ${formatted}`);
       } else {
-        handleCancelOrder();
+        handleEndOrder();
       }
     } else {
-      handleCancelOrder();
+      handleEndOrder();
     }
   };
 
-  const handleCancelOrder = () => {
+  const handleEndOrder = () => {
+    setRedirect(true)
     setOrder([]);
     setUserId(null);
     localStorage.removeItem('lastUserId')
+    setOrderFinalized(false)
+    setRedirect(false)
   };
 
   const checkAuth = async () => {
@@ -126,15 +151,27 @@ function App() {
       setOrder(res.data);
       setUserId(userId);
       localStorage.setItem("lastUserId", userId);
-      console.log(res.data);
+
     } catch (error) {
       console.log(error);
     }
   };
 
   const handleFinalizeOrder = async () => {
-    const res = await axios.post("/product/finalize", { userId });
-    handleCancelOrder();
+    try {
+      const res = await axios.post("/product/finalize", { userId });
+      setOrder([]);
+      setOrderFinalized(true)
+      setUserId(null);
+      setTimeout(() => {
+        handleEndOrder();
+      }, 5000);
+    } catch (error) {
+      setTimeout(() => {
+        handleEndOrder();
+      }, 5000);
+    }
+
   };
 
   return (
@@ -143,9 +180,13 @@ function App() {
         order,
         handleGetOrder,
         timer,
-        finalizeOrder: handleFinalizeOrder
+        finalizeOrder: handleFinalizeOrder,
+        orderFinalized,
+        redirect
       }}
     >
+      <ThemeProvider theme={goblinTheme}>
+
       <BrowserRouter>
         <div className="App">
           <Switch>
@@ -185,6 +226,8 @@ function App() {
         />
         <ConnectionSpinnerDialog connection={connection} />
       </BrowserRouter>
+
+      </ThemeProvider>
     </OrderContext.Provider>
   );
 }

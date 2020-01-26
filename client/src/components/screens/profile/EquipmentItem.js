@@ -124,7 +124,7 @@ const EquipmentListItem = props => {
                 <ListItemAvatar>
                   <img
                     style={{ width: "4rem", height: "4rem" }}
-                    alt={item.itemModel.name}
+                    // alt={item.itemModel.name}
                     src={itemsPath + item.itemModel.imgSrc}
                   />
                 </ListItemAvatar>
@@ -184,7 +184,7 @@ const EquipmentListItem = props => {
               {item.itemModel.perks.map((perk, index) => {
                 return (
                   <Box
-                    key={perk._id}
+                    key={JSON.stringify(perk.target)+index}
                     border={1}
                     borderColor="primary.main"
                     style={{ margin: "0.2rem 0", fontSize: "0.8rem" }}
