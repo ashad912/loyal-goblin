@@ -1,43 +1,192 @@
-import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import QRReader from './components/QRReader';
+import React, { useState, useEffect } from "react";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
+import axios from "axios";
+import moment from "moment";
+import SignIn from "./auth/SignIn";
+import Menu from "./components/Menu";
+import QRReader from "./components/QRReader";
+import Order from "./components/Order";
+import withAuth from "./hoc/withAuth";
+import withNoAuth from "./hoc/withNoAuth";
+import PageNotFound from "./PageNotFound";
+import ConnectionSnackbar from "./layout/ConnectionSnackbar";
+import ConnectionSpinnerDialog from "./layout/ConnectionSpinnerDialog";
+
+export const OrderContext = React.createContext(null);
 
 function App() {
-  const [screen, setScreen] = React.useState('scan')
+  const [connection, setConnection] = useState({
+    loading: false,
+    connectionError: null
+  });
+  const [auth, setAuth] = useState({ uid: null, init: null });
+  const [order, setOrder] = useState([]);
+  const [timer, setTimer] = useState("");
+  const [userId, setUserId] = useState(null);
 
-  const handleChangeScreen = (name) => {
-    setScreen(name)
-  }
+  useEffect(() => {
+    axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+    axios.interceptors.request.use(
+      function(config) {
+        setLoading(true)
+        return config;
+      },
+      function(error) {
+        setLoading(false)
+        return Promise.reject(error);
+      }
+    );
 
+    // Add a response interceptor
+    axios.interceptors.response.use(
+      function(response) {
+       setLoading(false)
+        return response;
+      },
+      function(error) {
+        setLoading(false)
+        return Promise.reject(error);
+      }
+    );
+    checkAuth();
+    if (localStorage.getItem("lastUserId")) {
+      handleGetOrder(localStorage.getItem("lastUserId"));
+    }
+  }, []);
 
+  useEffect(() => {
+    if (order.length > 0) {
+      calculateTimeLeft();
+      const orderTimeout = setInterval(() => {
+        calculateTimeLeft();
+      }, 1000);
+      return () => {
+        clearInterval(orderTimeout);
+      };
+    }
+  }, [order]);
 
+  const calculateTimeLeft = () => {
+    if (order.length > 0) {
+      const utcDateNow = moment.utc(new Date());
+      const orderTimeMax = moment(order[0].createdAt);
+      const difference = orderTimeMax.diff(utcDateNow);
+      if (difference > 0) {
+        const minutes = Math.floor(
+          (difference % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+        const formatted = moment(`${minutes}:${seconds}`, "mm:ss").format(
+          "mm:ss"
+        );
+        setTimer(`Zamówienie wygaśnie za ${formatted}`);
+      } else {
+        handleCancelOrder();
+      }
+    } else {
+      handleCancelOrder();
+    }
+  };
 
-  switch (screen) {
-    case 'menu':
-      return (
-        <Grid style={{height: '100vh', width: '100%'}} container direction="column" alignItems="center" justify="space-around">
-          <Grid item>
-            <Button variant="contained" fullWidth size="large" onClick={()=>handleChangeScreen('scan')}>Skanuj kod</Button>
-          </Grid>
-          <Grid item>
-            <Button variant="contained" fullWidth size="large">Otwórz ostatnie zamówienie</Button>
-          </Grid>
-        </Grid>
+  const handleCancelOrder = () => {
+    setOrder([]);
+    setUserId(null);
+    localStorage.removeItem('lastUserId')
+  };
 
-      )
+  const checkAuth = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get("/barman/me");
+      setAuth({ uid: res.data._id, init: false });
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    case 'scan': 
-    return <QRReader onReturn={() => handleChangeScreen('menu')}/>
+  const setLoading = isLoading => {
+    const conn = { ...connection };
+    conn.loading = isLoading;
+    setConnection(conn);
+  };
 
-    case 'order':
-      return null
-  
-    default:
-      break;
-  }
+  const handleSignIn = async (userName, password) => {
+    try {
+      const res = await axios.post("/barman/login", { userName, password });
+      setAuth({ uid: res.data._id, init: false });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  const handleGetOrder = async userId => {
+    try {
+      const res = await axios.get("/product/verify/" + userId);
+      setOrder(res.data);
+      setUserId(userId);
+      localStorage.setItem("lastUserId", userId);
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  const handleFinalizeOrder = async () => {
+    const res = await axios.post("/product/finalize", { userId });
+    handleCancelOrder();
+  };
+
+  return (
+    <OrderContext.Provider
+      value={{
+        order,
+        handleGetOrder,
+        timer,
+        finalizeOrder: handleFinalizeOrder
+      }}
+    >
+      <BrowserRouter>
+        <div className="App">
+          <Switch>
+            <Route
+              exact
+              path="/"
+              component={withAuth(QRReader, connection, auth)}
+            />
+            <Route
+              exact
+              path="/menu"
+              component={withAuth(Menu, connection, auth)}
+            />
+            <Route
+              exact
+              path="/order"
+              component={withAuth(Order, connection, auth, setLoading)}
+            />
+            <Route
+              exact
+              path="/signin"
+              component={withNoAuth(
+                SignIn,
+                connection,
+                auth,
+                handleSignIn,
+                setLoading
+              )}
+            />
+            <Route component={PageNotFound} />
+          </Switch>
+        </div>
+
+        <ConnectionSnackbar
+          resetConnectionError={() => this.props.resetConnectionError()}
+          connection={connection}
+        />
+        <ConnectionSpinnerDialog connection={connection} />
+      </BrowserRouter>
+    </OrderContext.Provider>
+  );
 }
 
 export default App;

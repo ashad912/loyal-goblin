@@ -149,8 +149,8 @@ const handleCancelOrder = async () => {
                     <List style={{ width: "100%" }}>
                       <ListItem>
                         <ListItemAvatar>
-                          {basket.profile.avatar ? <img src={usersPath + basket.profile.avatar} width={32}/> : 
-                          <Avatar style={{height: 30, width: 30}}>{createAvatarPlaceholder(basket.profile.name)}</Avatar>}
+                          {basket.profile.avatar ? <img src={usersPath + basket.profile.avatar} style={{width: '3rem'}}/> : 
+                          <Avatar style={{width: '3rem', height: '3rem'}}>{createAvatarPlaceholder(basket.profile.name)}</Avatar>}
                         </ListItemAvatar>
                         <ListItemText primary={basket.profile.name} />
                         <ListItemText

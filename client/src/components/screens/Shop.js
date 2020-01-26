@@ -778,6 +778,7 @@ class Shop extends React.Component {
     //CALL BACKEND FOR PRODUCT MODIFIERS EACH TIME ACTIVE USER CHANGES
     this.setState({ activeUser: id }, () => {
       let products = [...this.props.products];
+      console.log(products)
       products = products.map(product => {
         return {
           ...product,

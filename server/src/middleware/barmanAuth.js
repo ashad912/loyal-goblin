@@ -23,13 +23,13 @@ export const barmanAuth = async (req, res, next) => {
     //console.log('auth middleware')
     try{
         
-        const token = req.cookies.token || (req.header('Authorization') && req.header('Authorization').replace('Bearer ', ''))
+        const token = req.cookies.tokash || (req.header('Authorization') && req.header('Authorization').replace('Bearer ', ''))
 
         if(!token){
             throw new Error()
         }
         
-        const barman = await decodeTokenAndGetUser(token)
+        const barman = await decodeTokenAndGetBarman(token)
 
         req.token = token 
         req.barman = barman

@@ -38,13 +38,14 @@ router.post("/register", adminAuth, async (req, res) => {
   
 router.post("/login", async (req, res) => {
   try {
-    let barman = await Barman.findByCredentials(req.body.email, req.body.password);
+    let barman = await Barman.findByCredentials(req.body.userName, req.body.password);
     const token = await barman.generateAuthToken(); //on instancegenerateAuthToken
     
     res
-      .cookie("token", token, { maxAge: 2592000000, httpOnly: true })
+      .cookie("tokash", token, { maxAge: 2592000000, httpOnly: true })
       .send(barman); //cookie lifetime: 30 days (maxAge in msc)
   } catch (e) {
+    console.log(e)
     res.status(400).send(e);
   }
 });

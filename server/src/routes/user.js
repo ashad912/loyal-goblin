@@ -30,7 +30,7 @@ const router = express.Router();
 
 
 
-const uploadPath = "../client/public/images/user_uploads/"
+const uploadPath = "../static/images/avatars/"
 
 
 
@@ -476,17 +476,20 @@ router.post("/me/avatar", auth, async (req, res) => {
     if (!req.files) {
       throw new Error("Brak pliku")
     }
+    let user = req.user
       //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
       let avatar = await req.files.avatar.data;
 
-      const avatarName = await saveImage(avatar, req.user._id, uploadPath, req.user.avatar)
-      req.user.avatar = avatarName;
-      let user = await req.user.save();
+      const avatarName = await saveImage(avatar, user._id, uploadPath, user.avatar)
+      
+      user.avatar = avatarName;
+      await user.save();
       user = await userStandardPopulate(user);
       res.send(user);
 
     
   } catch (err) {
+    console.log(err)
     res.status(500).send(err);
   }
 });

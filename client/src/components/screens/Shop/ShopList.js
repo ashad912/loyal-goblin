@@ -11,6 +11,7 @@ const ShopList = ({title, list, handleAddItem}) => {
         <Typography variant="h5">{title}</Typography>
       </ListItem>
       {list.map(item => {
+        console.log(item)
         return (
           <ShopListItem
             key={item._id}
@@ -18,8 +19,8 @@ const ShopList = ({title, list, handleAddItem}) => {
             description={item.description}
             price={item.price}
             priceModified={item.hasOwnProperty('priceModified') && item.priceModified}
-            experience={item.experience}
-            experienceModified={ item.hasOwnProperty('experienceModified') &&  item.experienceModified}
+            experience={item.experienceModified ? item.experience : item.price * 10}
+            experienceModified={  item.experienceModified}
             imgSrc={item.imgSrc}
             id={item._id}
             handleAddItem={handleAddItem}

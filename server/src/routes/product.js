@@ -17,9 +17,10 @@ import { User } from "../models/user";
 import { Party } from "../models/party";
 import {Item} from '../models/item'
 import { ArchiveOrder } from "../models/archiveOrder";
+import { barmanAuth } from "../middleware/barmanAuth";
 
 
-const uploadPath = "../client/public/images/products/"
+const uploadPath = "../static/images/products/"
 
 const router = new express.Router();
 
@@ -478,6 +479,7 @@ router.patch("/activate", auth, async (req, res) => {
     
     order[0].createdAt = momentDate
     user.activeOrder = order;
+    await user.save();
 
     await user
       .populate({
@@ -492,7 +494,6 @@ router.patch("/activate", auth, async (req, res) => {
       .execPopulate();
 
     await calculateOrder(user);
-    await user.save();
 
     await user.populate({
       path: "activeOrder.awards.itemModel", select: "name imgSrc"
@@ -504,7 +505,7 @@ router.patch("/activate", auth, async (req, res) => {
         setTimeout(async () => {
             user.activeOrder = []
             await user.save()
-        }, 60*1000); //removing activeOrder after 60 seconds
+        }, 5*60*1000); //removing activeOrder after 5 minutes
         */
 
     res.send(user.activeOrder);
@@ -536,46 +537,43 @@ router.patch("/cancel", auth, async (req, res) => {
 
 //DEVELOP: BARMANAUTH?!
 //OK BUT TO DEVELOP
-router.patch("/verify", auth, async (req, res) => {
+router.get("/verify/:id", barmanAuth, async (req, res) => {
   try {
     const user = await User.findOne({
       $and: [
-        { _id: req.body._id },
+        { _id: req.params.id },
         //{party: partyId},
         { activeOrder: { $not: { $size: 0 } } } //size does not accept ranges
       ]
     });
     await calculateOrder(user);
-    await user.save()
-    await user.populate({
+    
+    await user
+    .populate({
       path: "activeOrder.awards.itemModel", select: "name imgSrc"
-    }).populate({path: 'activeOrder.profile', select: 'equipped'})
+    }).populate({path: 'activeOrder.profile', select: '_id name avatar equipped'})
     .execPopulate();
 
 
 
-    asyncForEach(user.activeOrder, async order => {
-      if(order.products.length && order.profile.equipped.scroll){
-        const scroll = await Item.findById(order.profile.equipped.scroll)
-        scroll.remove()
-      }
-    })
+    //TODO: MOVE TO FINALIZE
+    // asyncForEach(user.activeOrder, async order => {
+    //   if(order.products.length && order.profile.equipped.scroll){
+    //     const scroll = await Item.findById(order.profile.equipped.scroll)
+    //     scroll.remove()
+    //   }
+    // })
+    // const archive = {leader: req.body._id, totalPrice: 0, users: []} 
+    // user.activeOrder.forEach(order => {
+    //   archive.totalPrice += order.price
+    //   archive.users.push(order)
+    // })
+    // const newArchiveOrder = new ArchiveOrder(archive)
+    // await newArchiveOrder.save()
+    // user.activeOrder = []
+    // await user.save()
 
-
-    const archive = {leader: req.body._id, totalPrice: 0, users: []} 
-    user.activeOrder.forEach(order => {
-      archive.totalPrice += order.price
-      archive.users.push(order)
-    })
- 
-
-    const newArchiveOrder = new ArchiveOrder(archive)
-    await newArchiveOrder.save()
-    
-    user.activeOrder = []
-    await user.save()
-
-    res.sendStatus(200);
+    res.status(200).send(user.activeOrder);
   } catch (e) {
     res.status(400).send(e.message);
   }

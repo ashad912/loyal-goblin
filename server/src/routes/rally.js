@@ -9,7 +9,7 @@ import { Item } from '../models/item';
 import { asyncForEach, designateUserPerks, designateExperienceMods, designateNewLevels, removeImage, saveImage } from '../utils/methods'
 
 
-const uploadPath = "../client/public/images/rallies/"
+const uploadPath = "../static/images/rallies/"
 
 const router = new express.Router
 

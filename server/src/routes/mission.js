@@ -16,7 +16,7 @@ import { Party } from '../models/party';
 
 
 
-const uploadPath = "../client/public/images/missions/"
+const uploadPath = "../static/images/missions/"
 
 const router = new express.Router
 

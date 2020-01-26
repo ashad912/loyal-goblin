@@ -18,6 +18,19 @@ const BarmanSchema = new mongoose.Schema({
 })
 
 
+BarmanSchema.methods.toJSON = function () { //like a middleware from express, we can use it with everythin
+    const barman = this
+    const barmanObject = barman.toObject() //thanks userObject we can manipulate data inside
+    
+
+    delete barmanObject.password
+    delete barmanObject.token
+
+    
+
+    return barmanObject
+}
+
 BarmanSchema.methods.generateAuthToken = async function () { //on instances
     const barman = this
     const token = jwt.sign({_id: barman._id.toString()}, process.env.BARMAN_JWT_SECRET)

@@ -69,7 +69,7 @@ const ProductListItem = ({
           <Grid item xs={2}>
             <img alt=''
               src={productsPath + product.imgSrc}
-              width={32}
+              style={{width: '3rem'}}
             />
           </Grid>
           <Grid item container direction="column" xs={6}>

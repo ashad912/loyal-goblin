@@ -6,8 +6,8 @@ import { adminAuth } from '../middleware/adminAuth';
 import { Item } from '../models/item';
 
 
-const uploadIconPath = "../client/public/images/items/"
-const uploadAppearancePath = "../client/public/images/appearance/"
+const uploadIconPath = "../static/images/items/"
+const uploadAppearancePath = "../static/images/appearance/"
 
 const router = new express.Router
 
