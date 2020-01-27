@@ -371,7 +371,7 @@ export const designateNewLevels = (baseExp, newExp) => {
   if(typeof newExp !== Number){
     throw new Error('Invalid second param!')
   }
-  
+
   const levelsData = designateUserLevel(baseExp, newExp)
   return levelsData.newLevel - levelsData.oldLevel
   

@@ -621,7 +621,7 @@ router.get("/verify/:id", barmanAuth, async (req, res) => {
 });
 
 //DEVELOP: BARMANAUTH?!
-router.post("/finalize", auth, async (req, res) => {
+router.post("/finalize", barmanAuth, async (req, res) => {
   //depends on source of request
   //const party = req.party;
   const user = await User.findById(req.body.userId)
@@ -707,12 +707,7 @@ router.post("/finalize", auth, async (req, res) => {
         }
       );
 
-      if (
-        activeRally &&
-        !activeRally.users.includes(
-          memberId.toString() /*!!! toString() - to CHECK! */
-        )
-      ) {
+      if (activeRally && !activeRally.users.includes(memberId.toString() /*!!! toString() - to CHECK! */)) {
         activeRally.users = [...activeRally.users, memberId];
         await activeRally.save();
       }

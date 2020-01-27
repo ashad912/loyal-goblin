@@ -655,13 +655,19 @@ router.patch("/myItems/equip", auth, async (req, res) => {
     if(party){
       throw new Error('Cannot equip item during shopping!')
     }
-  
+
+    const item = await Item.findOne({_id: itemId}, {_id: 1})
+
+    if (!item) {
+      throw new Error('Item does not exist!')
+    }
+
     const itemToEquip = user.bag.find(item => {
       return item.toString() === itemId;
     });
 
     if (!itemToEquip) {
-      throw new Error('Item does not exist!')
+      throw new Error('There is no such item in bag!')
     }
 
     //WARNING!: u can pass anything in equipped object, without verification
