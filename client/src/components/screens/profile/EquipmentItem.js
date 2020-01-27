@@ -167,7 +167,7 @@ const EquipmentListItem = props => {
             </Grid>
           
         </Grid>
-        <Grid item>
+        <Grid item style={{width: '100%'}}>
           {item.itemModel.perks.length > 0 && (
             <List
               dense

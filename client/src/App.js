@@ -21,6 +21,8 @@ import SignUp from "./components/auth/SignUp";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import MissionInstance from "./components/screens/events/MissionInstance";
 
+import {palette} from './utils/definitions'
+
 import { authCheck } from "./store/actions/authActions";
 import { resetConnectionError } from "./store/actions/connectionActions";
 import { updateParty } from "./store/actions/partyActions";
@@ -28,16 +30,16 @@ import { updateParty } from "./store/actions/partyActions";
 const goblinTheme = createMuiTheme({
   palette: {
     primary: {
-      light: "#66bb6a",
-      main: "#388e3c",
-      dark: "#1b5e20",
-      contrastText: "#fff"
+      light: palette.primary.light,
+      main: palette.primary.main,
+      dark: palette.primary.dark,
+      contrastText: palette.primary.contrastText
     },
     secondary: {
-      light: "#f44336",
-      main: "#e53935",
-      dark: "#b71c1c",
-      contrastText: "#000"
+      light: palette.secondary.light,
+      main: palette.secondary.main,
+      dark: palette.secondary.dark,
+      contrastText: palette.secondary.contrastText
     }
   }
 });
