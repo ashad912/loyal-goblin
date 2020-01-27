@@ -1,11 +1,11 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
-import { StylesProvider } from "@material-ui/styles";
+import { StylesProvider, ThemeProvider } from "@material-ui/styles";
+import { createMuiTheme } from "@material-ui/core/styles";
 import "./App.css";
 
-
-import SocketConfig from "./SocketConfig"
+import SocketConfig from "./SocketConfig";
 import withAuth from "./hoc/withAuth";
 import withNoAuth from "./hoc/withNoAuth";
 import ConnectionSpinnerDialog from "./components/layout/ConnectionSpinnerDialog";
@@ -21,9 +21,28 @@ import SignUp from "./components/auth/SignUp";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import MissionInstance from "./components/screens/events/MissionInstance";
 
-import { authCheck, setMultipleSession } from "./store/actions/authActions";
+import {palette} from './utils/definitions'
+
+import { authCheck } from "./store/actions/authActions";
 import { resetConnectionError } from "./store/actions/connectionActions";
 import { updateParty } from "./store/actions/partyActions";
+
+const goblinTheme = createMuiTheme({
+  palette: {
+    primary: {
+      light: palette.primary.light,
+      main: palette.primary.main,
+      dark: palette.primary.dark,
+      contrastText: palette.primary.contrastText
+    },
+    secondary: {
+      light: palette.secondary.light,
+      main: palette.secondary.main,
+      dark: palette.secondary.dark,
+      contrastText: palette.secondary.contrastText
+    }
+  }
+});
 
 class App extends React.Component {
   state = {};
@@ -34,12 +53,12 @@ class App extends React.Component {
 
     //Update profile data on first full hour and after next 60 minutes
     this.firstUpdate = setTimeout(() => {
-      this.props.authCheck({autoFetch: true});
-      this.props.onPartyUpdate({autoFetch: true})
+      this.props.authCheck({ autoFetch: true });
+      this.props.onPartyUpdate({ autoFetch: true });
       this.nextUpdates = setInterval(() => {
-        this.props.authCheck({autoFetch: true});
-        this.props.onPartyUpdate({autoFetch: true})
-      }, 3600000)
+        this.props.authCheck({ autoFetch: true });
+        this.props.onPartyUpdate({ autoFetch: true });
+      }, 3600000);
     }, 3601000 - (new Date().getTime() % 3600000));
 
     //For testing
@@ -47,8 +66,6 @@ class App extends React.Component {
     //   this.props.authCheck();
     //   this.props.onPartyUpdate()
     // }, 5000);
-
-     
   }
 
   componentWillUnmount() {
@@ -74,48 +91,48 @@ class App extends React.Component {
     return (
       <BrowserRouter>
         <StylesProvider injectFirst>
-        
-          <div className="App">
-            <Navbar />
-            <Switch>
-              <Route exact path="/" component={withAuth(Root)} />
-              <Route exact path="/shop" component={withAuth(Shop)} />
-              <Route
-                exact
-                path="/mission"
-                component={withAuth(MissionInstance)}
-              />
-              <Route exact path="/signin" component={withNoAuth(SignIn)} />
-              <Route exact path="/signup" component={withNoAuth(SignUp)} />
-              <Route
-                exact
-                path="/lost-password"
-                component={withNoAuth(ForgotPassword)}
-              />
-              <Route
-                exact
-                path="/reset/:token"
-                component={withNoAuth(ResetPassword)}
-              />
-              <Route component={PageNotFound}/>
-            </Switch>
-            <Footer />
-          </div>
-          
-          
-          <ConnectionSnackbar resetConnectionError = {() => this.props.resetConnectionError()}/>
-          <ConnectionSpinnerDialog />
-          <SocketConfig />
+          <ThemeProvider theme={goblinTheme}>
+            <div className="App">
+              <Navbar />
+              <Switch>
+                <Route exact path="/" component={withAuth(Root)} />
+                <Route exact path="/shop" component={withAuth(Shop)} />
+                <Route
+                  exact
+                  path="/mission"
+                  component={withAuth(MissionInstance)}
+                />
+                <Route exact path="/signin" component={withNoAuth(SignIn)} />
+                <Route exact path="/signup" component={withNoAuth(SignUp)} />
+                <Route
+                  exact
+                  path="/lost-password"
+                  component={withNoAuth(ForgotPassword)}
+                />
+                <Route
+                  exact
+                  path="/reset/:token"
+                  component={withNoAuth(ResetPassword)}
+                />
+                <Route component={PageNotFound} />
+              </Switch>
+              <Footer />
+            </div>
+
+            <ConnectionSnackbar
+              resetConnectionError={() => this.props.resetConnectionError()}
+            />
+            <ConnectionSpinnerDialog />
+            <SocketConfig />
+          </ThemeProvider>
         </StylesProvider>
       </BrowserRouter>
     );
   }
 }
 
-
 const mapDispatchToProps = dispatch => {
   return {
-    setMultipleSession: () => dispatch(setMultipleSession()),
     resetConnectionError: () => dispatch(resetConnectionError()),
     authCheck: () => dispatch(authCheck()),
     onPartyUpdate: () => dispatch(updateParty())

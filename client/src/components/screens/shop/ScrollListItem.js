@@ -86,7 +86,7 @@ const ScrollListItem = props => {
                 secondary={
                   <div>
                     <Typography variant="caption">
-                      {scroll.itemModel.fluff}
+                      {scroll.itemModel.description}
                     </Typography>
                   </div>
                 }

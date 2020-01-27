@@ -1,49 +1,50 @@
 import express from "express";
 import { Product } from "../models/product";
-import { adminAuth } from '../middleware/adminAuth';
+import { adminAuth } from "../middleware/adminAuth";
 import { auth } from "../middleware/auth";
 import isEqual from "lodash/isEqual";
-import moment from 'moment'
+import differenceWith from 'lodash/differenceWith'
+import moment from "moment";
 import {
   asyncForEach,
   updatePerks,
   designateUserPerks,
   removeImage,
   saveImage,
-  verifyCaptcha
+  verifyCaptcha,
+  designateNewLevels
 } from "../utils/methods";
 import { Rally } from "../models/rally";
 import { User } from "../models/user";
 import { Party } from "../models/party";
-import {Item} from '../models/item'
+import { Item } from "../models/item";
 import { ArchiveOrder } from "../models/archiveOrder";
 import { barmanAuth } from "../middleware/barmanAuth";
 
-
-const uploadPath = "../static/images/products/"
+const uploadPath = "../static/images/products/";
 
 const router = new express.Router();
 
 ////ADMIN-SIDE
 
+router.get("/products", adminAuth, async (req, res) => {
+  const onlyNames = req.query.onlyNames === "true";
+  try {
+    if (onlyNames) {
+      const products = await Product.find({}, { _id: 1, name: 1 });
+      return res.status(200).send(products);
+    }
 
-router.get('/products', adminAuth, async(req,res) => {
-  const onlyNames = req.query.onlyNames === 'true'
-  try{
-      if(onlyNames){
-        const products = await Product.find({}, {_id: 1, name: 1})
-        return res.status(200).send(products)
-      }
-
-      const products = await Product.find({}).populate({
-        path: 'awards.itemModel', populate: { path: "perks.target.disc-product", select: '_id name' },
-      })
-      res.status(200).send(products)
-  }catch(e){
-      console.log(e.message)
-      res.status(500).send(e.message)
+    const products = await Product.find({}).populate({
+      path: "awards.itemModel",
+      populate: { path: "perks.target.disc-product", select: "_id name imgSrc" }
+    });
+    res.status(200).send(products);
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).send(e.message);
   }
-})
+});
 
 //OK
 router.post("/create", adminAuth, async (req, res) => {
@@ -67,7 +68,7 @@ router.patch("/update", adminAuth, async (req, res, next) => {
   const id = req.body._id;
 
   updates = updates.filter(update => {
-    return update !== "_id"  || update !== "imgSrc"
+    return update !== "_id" || update !== "imgSrc";
   });
 
   const forbiddenUpdates = [""];
@@ -91,10 +92,15 @@ router.patch("/update", adminAuth, async (req, res, next) => {
       product[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.
     });
 
-    if(req.files){
-      let icon = req.files.icon.data
-      const imgSrc = await saveImage(icon, product._id, uploadPath, product.imgSrc)
-      product.imgSrc = imgSrc
+    if (req.files) {
+      let icon = req.files.icon.data;
+      const imgSrc = await saveImage(
+        icon,
+        product._id,
+        uploadPath,
+        product.imgSrc
+      );
+      product.imgSrc = imgSrc;
     }
 
     await product.save();
@@ -105,36 +111,39 @@ router.patch("/update", adminAuth, async (req, res, next) => {
   }
 });
 
+router.patch("/uploadImage/:id", adminAuth, async (req, res) => {
+  try {
+    if (!req.files) {
+      throw new Error("Brak ikony produktu");
+    }
 
-router.patch('/uploadImage/:id', adminAuth, async (req, res) => {
-  try{
-      if (!req.files) {
-          throw new Error("Brak ikony produktu")
-      }
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      throw new Error("Product does not exist!");
+    }
 
-      const product = await Product.findById(req.params.id)
-      if(!product){
-          throw new Error('Product does not exist!')
-      }
+    const date = Date.now();
 
-      const date = Date.now()
+    if (req.files.icon) {
+      let icon = req.files.icon.data;
+      const imgSrc = await saveImage(
+        icon,
+        product._id,
+        uploadPath,
+        product.imgSrc,
+        date
+      );
+      product.imgSrc = imgSrc;
+    }
 
-      if(req.files.icon){
-          let icon = req.files.icon.data
-          const imgSrc = await saveImage(icon, product._id, uploadPath, product.imgSrc, date)
-          product.imgSrc = imgSrc
-      }
-      
-      await product.save()
+    await product.save();
 
-      res.status(200).send()
-  }catch(e){
-      console.log(e.message)
-      res.status(400).send(e.message)
+    res.status(200).send();
+  } catch (e) {
+    console.log(e.message);
+    res.status(400).send(e.message);
   }
-
-})
-
+});
 
 //OK
 router.delete("/remove", adminAuth, async (req, res) => {
@@ -144,73 +153,80 @@ router.delete("/remove", adminAuth, async (req, res) => {
     if (!product) {
       res.status(404).send();
     }
-    await removeImage(uploadPath, product.imgSrc)
+    await removeImage(uploadPath, product.imgSrc);
     res.send();
   } catch (e) {
     res.status(500).send(e.message);
   }
 });
 
+router.get("/orders", adminAuth, async (req, res) => {
+  const page = parseInt(req.query.page);
+  const rowsPerPage = parseInt(req.query.rowsPerPage);
+  const nameFilter = req.query.name || "";
+  const fromDate = req.query.from
+    ? moment(req.query.from).toISOString()
+    : moment()
+        .subtract(1, "days")
+        .toISOString();
+  const toDate = req.query.to
+    ? moment(req.query.to).toISOString()
+    : moment().toISOString();
 
-router.get('/orders', adminAuth, async (req,res) => {
-  const page = parseInt(req.query.page)
-  const rowsPerPage = parseInt(req.query.rowsPerPage)
-  const nameFilter = req.query.name || ''
-  const fromDate = req.query.from ? moment(req.query.from).toISOString() : moment().subtract(1, "days").toISOString()
-  const toDate = req.query.to ? moment(req.query.to).toISOString() : moment().toISOString()
-
-  try{
-    const users = await User.find({name: new RegExp(nameFilter, 'gi')},  {_id: 1})
-    const usersIds = users.map(user => user._id)
+  try {
+    const users = await User.find(
+      { name: new RegExp(nameFilter, "gi") },
+      { _id: 1 }
+    );
+    const usersIds = users.map(user => user._id);
 
     const orders = await ArchiveOrder.aggregate()
-      .match(
-        {$and: [
-          {leader: {$in: usersIds}},
-          {createdAt: {
-            $gte: new Date(fromDate),
-            $lt: new Date(toDate)
-          }}
+      .match({
+        $and: [
+          { leader: { $in: usersIds } },
+          {
+            createdAt: {
+              $gte: new Date(fromDate),
+              $lt: new Date(toDate)
+            }
+          }
         ]
-      }
-      ).sort({"createdAt": -1 })
-      .skip((rowsPerPage * page))
+      })
+      .sort({ createdAt: -1 })
+      .skip(rowsPerPage * page)
       .limit(rowsPerPage)
       .project({
         leader: 1,
         totalPrice: 1,
-        createdAt: 1,
-      })
+        createdAt: 1
+      });
 
     await User.populate(orders, {
-      path: 'leader',
-      select: '_id name'
-    })
+      path: "leader",
+      select: "_id name"
+    });
 
     const countedRecords = await ArchiveOrder.find(
-      {$and: [
-        {leader: {$in: usersIds}},
-        {createdAt: {
-          $gte: new Date(fromDate),
-          $lt: new Date(toDate)
-        }}
-      ]},
-      {_id: 1}
-    ).countDocuments()
+      {
+        $and: [
+          { leader: { $in: usersIds } },
+          {
+            createdAt: {
+              $gte: new Date(fromDate),
+              $lt: new Date(toDate)
+            }
+          }
+        ]
+      },
+      { _id: 1 }
+    ).countDocuments();
 
-
-    res.send({orders, countedRecords})
-
-  }catch(e){
-    console.log(e.message)
-    res.status(400).send(e.message)
+    res.send({ orders, countedRecords });
+  } catch (e) {
+    console.log(e.message);
+    res.status(400).send(e.message);
   }
-})
-
-
-
-
-
+});
 
 ////USER-SIDE
 
@@ -242,12 +258,11 @@ const calculateOrder = async user => {
     await user
       .populate({
         path: "activeOrder.products.product",
-        populate: { path: "awards.itemModel", select: "name imgSrc" }
+         populate: { path: "awards.itemModel", select: "name imgSrc" }
       })
       .execPopulate();
-     
-    const partyFullObject = [user, ...members];
 
+    const partyFullObject = [user, ...members];
 
     await asyncForEach(partyFullObject, async partyMember => {
       //HERE IMPLEMENT PRICE AND EXPERIENCE MODS - input: activeOrder, userPerks; output: object for view
@@ -277,28 +292,30 @@ const calculateOrder = async user => {
       });
       //currentMember.products.forEach(product => console.log(product.product.price, product.product.experience))
       if (user.activeOrder[currentMember].products.length > 0) {
-        let totalPrice = 0
-        let totalExperience = 0
-        let totalAwards = []
+        let totalPrice = 0;
+        let totalExperience = 0;
+        let totalAwards = [];
         user.activeOrder[currentMember].products.forEach(product => {
-           totalPrice += product.product.price * product.quantity
+          totalPrice += product.product.price * product.quantity;
 
-           totalExperience += product.product.experience * product.quantity
-
-           totalAwards = totalAwards.concat(product.product.awards)
-           
-        })
-        console.log(totalPrice, totalExperience, totalAwards)
+          totalExperience += product.product.experience * product.quantity;
+          product.product.awards.forEach(award => {
+            award.quantity = award.quantity * product.quantity
+          })
+         
+            totalAwards = totalAwards.concat(product.product.awards);
+          
+        });
+       // console.log(totalPrice, totalExperience, totalAwards);
 
         user.activeOrder[currentMember].price = totalPrice;
         user.activeOrder[currentMember].experience = totalExperience;
         user.activeOrder[currentMember].awards = totalAwards;
+
       }
       //calculatedOrders[partyMember._id.toString()] = {_id: partyMember._id.toString(), totalPrice: currentMember.totalPrice, totalExperience: currentMember.totalExperience, totalAwards: currentMember.totalAwards }
       // user.activeOrder.find(basket => )
     });
-
-
   } catch (e) {
     throw Error(e, "Błąd przy obliczaniu zamówienia");
   }
@@ -306,10 +323,11 @@ const calculateOrder = async user => {
 
 //OK
 router.get("/shop", auth, async (req, res) => {
-  const user = req.user
+  const user = req.user;
   try {
     const shop = await Product.find({}).populate({
-      path: "awards.itemModel", populate: { path: "perks.target.disc-product", select: '_id name' },
+      path: "awards.itemModel",
+      populate: { path: "perks.target.disc-product", select: "_id name" }
     });
 
     await updatePerks(user, false);
@@ -321,28 +339,36 @@ router.get("/shop", auth, async (req, res) => {
           select: "_id name avatar bag equipped userPerks"
         })
         .populate({
-                  path: "activeOrder.awards.itemModel", select: "name imgSrc"
-                })
+          path: "activeOrder.awards.itemModel",
+          select: "name imgSrc"
+        })
         .execPopulate();
-
     }
 
-    if(user.party){
-
+    if (user.party) {
       await user
         .populate({
           path: "party",
           populate: {
             path: "members",
-            select: "bag equipped name _id avatar bag equipped userPerks",
-            populate: { path: "bag", populate: { path: "itemModel", populate: { path: "perks.target.disc-product", select: '_id name' }, } }
+            select: "bag equipped name _id avatar bag userPerks",
+            populate: {
+              path: "bag",
+              populate: {
+                path: "itemModel",
+                populate: {
+                  path: "perks.target.disc-product",
+                  select: "_id name"
+                }
+              }
+            }
           }
         })
         .execPopulate();
     }
-    if(user.party && !user.party.inShop){
-      user.party.inShop = true
-      await user.party.save()
+    if (user.party && !user.party.inShop) {
+      user.party.inShop = true;
+      await user.party.save();
 
       //TO CHECK
       //await Party.updateOne({_id: user.party._id}, {$set: {inShop: true}})
@@ -358,26 +384,37 @@ router.get("/shop", auth, async (req, res) => {
   }
 });
 
+router.get('/activeOrder', auth, async(req, res) => {
+  try {
+    const user = req.user
+    if(user.activeOrder && user.activeOrder.length > 0){
+      return res.send(true)
+    }else{
+      return res.send(false)
+    }
+  } catch (error) {
+    res.sendStatus(400)
+  }
+})
+
 router.patch("/leave", auth, async (req, res) => {
-  const user = req.user
-  try{
-    
-    if(user.party){
-      await user.populate({path: "party"}).execPopulate()
-      user.party.inShop = false
-      await user.party.save()
+  const user = req.user;
+  try {
+    if (user.party) {
+      await user.populate({ path: "party" }).execPopulate();
+      user.party.inShop = false;
+      await user.party.save();
       //TO CHECK
       //await Party.updateOne({_id: user.party._id}, {$set: {inShop: false}})
-      res.send(user.party._id)
-    }else{
-      res.sendStatus(200)
+      res.send(user.party._id);
+    } else {
+      res.sendStatus(200);
     }
-  }catch(e){
-    console.log(e)
+  } catch (e) {
+    console.log(e);
     res.status(400).send(e.message);
   }
-  
-})
+});
 
 const verifyParty = (leader, membersIds, order) => {
   return new Promise(async (resolve, reject) => {
@@ -430,27 +467,22 @@ const verifyParty = (leader, membersIds, order) => {
   });
 };
 
-
-
-
-
 //OK
 router.patch("/activate", auth, async (req, res) => {
   const order = req.body.order;
   const user = req.user;
 
   const secretKey = process.env.SECRET_RECAPTCHA_KEY;
-    const recaptchaToken = req.body.token;
-    const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
+  const recaptchaToken = req.body.token;
+  const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
 
-
-    try{
-      await verifyCaptcha(url)
-    }catch(e){
-      console.log(e);
-      res.status(400).send(e);
-      return
-    }
+  try {
+    await verifyCaptcha(url);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e);
+    return;
+  }
 
   try {
     //checking active order - user
@@ -475,30 +507,38 @@ router.patch("/activate", auth, async (req, res) => {
       throw new Error("User is not the leader!");
     }
     //const party = await verifyParty(leader, membersIds, order);
-    const momentDate = moment.utc(new Date()).add('5', 'minutes').toDate()
-    
-    order[0].createdAt = momentDate
-    user.activeOrder = order;
-    await user.save();
+    const momentDate = moment
+      .utc(new Date())
+      .add("5", "minutes")
+      .toDate();
 
-    await user
-      .populate({
-        //populate after verification
-        path: "activeOrder.profile",
-        select: "_id name avatar"
-      })
-      .populate({
-        path: "activeOrder.products.product",
-        populate: { path: "awards.itemModel", populate: { path: "perks.target.disc-product", select: '_id name' }, } //is necessary here?
-      })
-      .execPopulate();
+    order[0].createdAt = momentDate;
+    user.activeOrder = order;
 
     await calculateOrder(user);
 
-    await user.populate({
-      path: "activeOrder.awards.itemModel", select: "name imgSrc"
+    await user
+    .populate({
+      //populate after verification
+      path: "activeOrder.profile",
+      select: "_id name avatar"
+    })
+    .populate({
+      path: "activeOrder.products.product",
+      populate: {
+        path: "awards.itemModel",
+        populate: { path: "perks.target.disc-product", select: "_id name" }
+      } //is necessary here?
+    })
+    .populate({
+      path: "activeOrder.awards.itemModel",
+      select: "name imgSrc"
     })
     .execPopulate();
+    
+   
+    await user.save();
+
 
     //WORKING! AS COMMENT FOR TESTS
     /*
@@ -515,25 +555,23 @@ router.patch("/activate", auth, async (req, res) => {
 });
 
 router.patch("/cancel", auth, async (req, res) => {
-  const user = req.user
-  if (user.activeOrder.length <= 0) {
-    throw new Error(`No active order exists (user: ${user._id})!`);
-  }
+  const user = req.user;
   try {
-    const orderArchived = await ArchiveOrder.findById(user.activeOrder._id)
-    if(orderArchived){
+    if (user.activeOrder.length <= 0) {
+      throw new Error(`No active order exists (user: ${user._id})!`);
+    }
+    const orderArchived = await ArchiveOrder.findById(user.activeOrder._id);
+    if (orderArchived) {
       throw new Error(`Order ${user.activeOrder._id} was already verified!`);
     }
 
-    user.activeOrder = []
-    await user.save()
-    res.sendStatus(200)
-
+    user.activeOrder = [];
+    await user.save();
+    res.sendStatus(200);
   } catch (error) {
     res.status(400).send(e.message);
   }
-
-})
+});
 
 //DEVELOP: BARMANAUTH?!
 //OK BUT TO DEVELOP
@@ -546,32 +584,35 @@ router.get("/verify/:id", barmanAuth, async (req, res) => {
         { activeOrder: { $not: { $size: 0 } } } //size does not accept ranges
       ]
     });
-    await calculateOrder(user);
-    
+
+    // await user
+    // .populate({
+    //   path: "activeOrder.awards.itemModel", select: "name imgSrc"
+    // }).populate({path: 'activeOrder.profile', select: '_id name avatar equipped'})
+    // .execPopulate();
+
     await user
-    .populate({
-      path: "activeOrder.awards.itemModel", select: "name imgSrc"
-    }).populate({path: 'activeOrder.profile', select: '_id name avatar equipped'})
-    .execPopulate();
+      .populate({
+        //populate after verification
+        path: "activeOrder.profile",
+        select: "_id name avatar"
+      })
+      .populate({
+        path: "activeOrder.products.product",
+        populate: {
+          path: "awards.itemModel",
+          populate: { path: "perks.target.disc-product", select: "_id name" }
+        } //is necessary here?
+      })
+      .populate({
+        path: "activeOrder.awards.itemModel",
+        select: "name imgSrc"
+      })
+      .execPopulate();
+
+    await calculateOrder(user);
 
 
-
-    //TODO: MOVE TO FINALIZE
-    // asyncForEach(user.activeOrder, async order => {
-    //   if(order.products.length && order.profile.equipped.scroll){
-    //     const scroll = await Item.findById(order.profile.equipped.scroll)
-    //     scroll.remove()
-    //   }
-    // })
-    // const archive = {leader: req.body._id, totalPrice: 0, users: []} 
-    // user.activeOrder.forEach(order => {
-    //   archive.totalPrice += order.price
-    //   archive.users.push(order)
-    // })
-    // const newArchiveOrder = new ArchiveOrder(archive)
-    // await newArchiveOrder.save()
-    // user.activeOrder = []
-    // await user.save()
 
     res.status(200).send(user.activeOrder);
   } catch (e) {
@@ -582,9 +623,10 @@ router.get("/verify/:id", barmanAuth, async (req, res) => {
 //DEVELOP: BARMANAUTH?!
 router.post("/finalize", auth, async (req, res) => {
   //depends on source of request
-  const party = req.party;
-  const user = req.user; //if admin-side: get leader of this party
-
+  //const party = req.party;
+  const user = await User.findById(req.body.userId)
+ // const user = req.user; //if admin-side: get leader of this party
+  
   try {
     //const order = await ArchiveOrder.findById(req.body.order)
     const activeRally = await Rally.findOne({
@@ -594,46 +636,116 @@ router.post("/finalize", auth, async (req, res) => {
       ]
     });
 
-    if (
-      party.name !== user.party.name ||
-      party.leader.toString() !== user.party.leader.toString() ||
-      isEqual(party.members, user.party.members)
-    ) {
-      throw new Error("Party mismatch!");
-    }
 
-    const partyIds = [...user.party.members, party.leader];
+      let party = await Party.findById(user.party)
+    
 
-    await asyncForEach(partyIds, async memberId => {
-      const exp = 0 //DEVELOP: user's exp counted (with perks/without perks ?)
-      const items = [] //DEVELOP: items from order for user
-      const newLevels = designateNewLevels(user.experience, exp)
-
-
+      const orderPartyIds = user.activeOrder.map(basket => basket.profile.toString())
       
-      await User.updateOne(
-          {_id: memberId},
-          { $addToSet: { bag: { $each: items } }, $inc: {experience: exp, levelNotifications: newLevels} }
-      )
+      if(!party){
+        if(orderPartyIds.length > 1){
+          throw new Error("Multiple orders for single user!")
+        }
 
-      if (activeRally && !activeRally.users.includes(memberId.toString() /*!!! toString() - to CHECK! */)) {
+      }else{
+        party.members = [party.leader, ...party.members].map(member => member.toString())
+        
+        console.log("party members", party.members)
+        console.log("orderPartyIds", orderPartyIds)
+        console.log("party leader", party.leader.toString())
+        console.log("orderPartyIds leader", orderPartyIds[0])
+        console.log(differenceWith(party.members, orderPartyIds, isEqual))
+        if(party.leader.toString() !== orderPartyIds[0] ){
+          throw new Error("Party leader mismatch!")
+        }
+        if(isEqual(party.members, orderPartyIds) ){
+          throw new Error("Party member mismatch!");
+        }
+
+        await user.populate({path: 'party'}).execPopulate()
+      }
+      
+
+      // else{
+      //   await user.populate({path: "party"}).execPopulate()
+      // }
+      // // console.log(party.members, user.party.members)
+      // if (
+      //   party.name !== user.party.name ||
+      //   party.leader.toString() !== user.party.leader.toString() ||
+      //   isEqual(party.members, user.party.members)
+      // ) {
+        
+      // }
+
+
+
+    
+    const archive = {leader: req.body.userId, totalPrice: 0, users: []}
+
+    await asyncForEach(user.activeOrder, async basket => {
+
+      const user = await User.findById(basket.profile)
+
+      const exp = basket.experience;
+      const items = [];
+      await asyncForEach(basket.awards, async award => {
+        for(let i = 0; i < award.quantity; i++){
+          const newAward = await Item({itemModel: award.itemModel, owner: user._id})
+          await newAward.save()
+          items.push(newAward._id)
+        }
+      })
+
+
+      const newLevels = designateNewLevels(user.experience, exp);
+  
+      await user.updateOne(
+        {
+          $addToSet: { bag: { $each: items } },
+          $inc: { experience: exp, levelNotifications: newLevels }
+        }
+      );
+
+      if (
+        activeRally &&
+        !activeRally.users.includes(
+          memberId.toString() /*!!! toString() - to CHECK! */
+        )
+      ) {
         activeRally.users = [...activeRally.users, memberId];
         await activeRally.save();
       }
+
+      if(basket.products.length > 0 && user.equipped.scroll){
+        const scroll = await Item.findById(user.equipped.scroll)
+        if(scroll){
+          scroll.remove()
+        }
+      }
+      archive.totalPrice += basket.price
+      archive.users.push(basket)
     });
+
+
+    const newArchiveOrder = new ArchiveOrder(archive)
+    await newArchiveOrder.save()
+    user.activeOrder = []
+    await user.save()
+
 
     res.send();
   } catch (e) {
+    console.log(e)
     res.status(500).send(e.message);
   }
 });
-
 
 ////TESTS
 // router.post('/testAddMockOrders', adminAuth, async(req,res) => {
 
 //   const userId = req.user._id
-  
+
 //   const mockOrders = [
 //     {leader: userId, totalPrice: 41.5},
 //     {leader: userId, totalPrice: 12},
@@ -723,9 +835,9 @@ router.post("/finalize", auth, async (req, res) => {
 //     {leader: userId, totalPrice: 1222},
 //     {leader: userId, totalPrice: 91.5},
 //     {leader: userId, totalPrice: 997.12},
-   
+
 //   ];
-  
+
 //   try{
 //     await ArchiveOrder.insertMany(mockOrders)
 //     res.send(mockOrders.map((order) =>  order.leader))

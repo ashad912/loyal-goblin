@@ -937,6 +937,7 @@ class Shop extends React.Component {
         item => item._id === activeUser.equipped.scroll
       );
     }
+   
     return (
       <div>
         {this.props.activeOrder.length > 0 && this.state.activeUser ? (

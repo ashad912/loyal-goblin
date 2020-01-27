@@ -290,7 +290,7 @@ router.get("/me", auth, async (req, res, next) => {
       await user
         .populate({
           path: "activeOrder.profile",
-          select: "_id name avatar bag equipped userPerks"
+          select: "_id name avatar bag userPerks"
         })
         .populate({
           path: "activeOrder.awards.itemModel", select: "name imgSrc"}

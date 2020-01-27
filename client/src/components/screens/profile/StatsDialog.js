@@ -14,10 +14,10 @@ import ListItem from "@material-ui/core/ListItem";
 import Divider from "@material-ui/core/Divider";
 
 import {createAvatarPlaceholder} from "../../../utils/methods";
-import {itemsPath, usersPath} from '../../../utils/definitions'
+import {palette, itemsPath, usersPath} from '../../../utils/definitions'
 
 const Background = styled.div`
-    background-color: #3f51b5;
+    background-color: ${props => props.color};
     color: white;
 `
 
@@ -58,7 +58,7 @@ const StatsDialog = props => {
     return (
         <Dialog style={{margin: '-24px'}} fullWidth open={props.open} onClose={props.handleClose}>
         <DialogContent style={{padding: '0'}}>
-            <Background>
+            <Background color={palette.primary.main}>
                 <Grid 
                     container 
                     direction='column'

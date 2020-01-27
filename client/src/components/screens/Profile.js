@@ -728,7 +728,7 @@ const Profile = props => {
 
           {(props.party && props.party.leader && (props.party.leader._id === props.auth.uid || props.party.leader === props.auth.uid)) || !props.party.leader && !props.party.members.length ? 
           
-          <Link to={{pathname: '/shop', state: { id: props.auth.uid} }} style={{ marginTop: "1rem" }} >
+          <Link to={{pathname: '/shop', state: { id: props.auth.uid} }} style={{ marginTop: "1rem", textDecoration: 'none' }} >
             <Button variant="contained" color="primary" >
               Idziemy expić!
               <ColorizeIcon

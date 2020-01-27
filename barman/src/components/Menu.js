@@ -22,6 +22,7 @@ const Menu = props => {
     >
       <Grid item>
         <Button
+        color="primary"
           variant="contained"
           fullWidth
           size="large"
@@ -32,10 +33,10 @@ const Menu = props => {
       </Grid>
       {order.length > 0 && 
       <Grid item>
-        <Button variant="contained" fullWidth size="large" onClick={() => history.push('order')}>
+        <Button variant="contained" color="primary" fullWidth size="large" onClick={() => history.push('order')}>
           Otwórz ostatnie zamówienie
         </Button>
-        <Typography variant="h6" style={{width: '100%', margin: '1rem 0', color: 'rgb(184, 47, 47)'}}>{timer}</Typography>
+        <Typography variant="h6" style={{width: '100%', margin: '1rem 0'}} color="secondary">{timer}</Typography>
       </Grid>
       }
     </Grid>
