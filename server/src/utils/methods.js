@@ -363,13 +363,18 @@ export const isNeedToPerksUpdate = user => {
 };
 
 export const designateNewLevels = (baseExp, newExp) => {
-  const levelsData = designateUserLevel(baseExp, newExp)
-  console.log("levelsData", levelsData)
-  if(levelsData.hasOwnProperty("newLevel") && levelsData.hasOwnProperty("oldLevel")){
-    return levelsData.newLevel - levelsData.oldLevel
-  }else{
-    return levelsData
+
+  if(typeof baseExp !== Number){
+    throw new Error('Invalid first param!')
   }
+
+  if(typeof newExp !== Number){
+    throw new Error('Invalid second param!')
+  }
+  
+  const levelsData = designateUserLevel(baseExp, newExp)
+  return levelsData.newLevel - levelsData.oldLevel
+  
 }
 
 export const designateExperienceMods = (baseExp, rawExpMods) => {
