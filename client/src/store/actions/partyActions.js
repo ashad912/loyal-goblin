@@ -111,6 +111,7 @@ export const removeMember =  (partyId, memberId) => {
                 }else{
                     
                     leaveRoomEmit(memberId, partyId)
+                    instanceRefreshEmit(partyId)
                     if(socket.connected){
                         socket.disconnect()
                     }

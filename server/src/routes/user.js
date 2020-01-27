@@ -544,10 +544,103 @@ router.get("/myItems", auth, async (req, res) => {
   }
 });
 
+
+router.patch("/party/equip", auth, async (req, res) => {
+  try {
+
+    const leader = req.user
+    const itemId = req.body.id;
+    const category = req.body.category;
+    const equipped = req.body.equipped;
+
+    if(!req.body.memberId){
+      throw new Error('No memberId field!')
+      
+    }
+    const party = await Party.findOne({inShop: true, leader: leader._id, members: {$elemMatch: req.body.memberId}})
+
+    if(!party){
+      throw new Error('Invalid party conditions!')
+    }
+
+    if(leader.party.toString() !== party._id.toString()){
+      throw new Error('Leader party field mismatch!')
+    }
+
+    let user = await User.findById(req.body.memberId)
+
+    if(user.party.toString() !== party._id.toString()){
+      throw new Error('Member party field mismatch!')
+    }
+    
+    const missionInstance = await MissionInstance.findOne(
+      {party: {$elemMatch: {profile: user._id}}}    
+    )
+
+    if(missionInstance){
+      throw new Error('Cannot equip item during mission!')
+    }
+
+    const item = await Item.findOne({_id: itemId}).populate({
+      path: 'itemModel',
+      select: '_id type'
+    })
+
+    if(!item || item.itemModel.type !== 'scroll'){
+      throw new Error('Item to equip must be a scroll!')
+    }
+  
+    const itemToEquip = user.bag.find(item => {
+      return item.toString() === itemId;
+    });
+
+    if(!itemToEquip){
+      throw new Error('Item does not exist!')
+    }
+
+    //WARNING!: u can pass anything in equipped object, without verification
+    user.equipped = { ...equipped };
+    user.userPerks = await designateUserPerks(user);
+    user.userPerks = await updatePerks(user, true);
+    await user.save();
+    user = await userStandardPopulate(user);
+    //Depopulate equipped key
+    user.equipped = { ...equipped };
+
+    
+      
+    if(!user.party){
+      res.status(204).send(null)
+      return
+    }
+    
+    await user
+      .populate({
+        path: "party",
+        populate: { path: "leader members", select: "_id name avatar attributes experience userPerks bag equipped", 
+        populate: { path: "bag", populate: { path: "itemModel", populate: { path: "perks.target.disc-product", select: '_id name' }, } } }
+      })
+      .execPopulate();
+
+    res.send(user.party);
+          
+        
+      
+
+    
+  } catch (e) {
+    console.log(e.message);
+    res.sendStatus(400);
+  }
+});
+
 router.patch("/myItems/equip", auth, async (req, res) => {
   try {
 
     let user = req.user;
+    const itemId = req.body.id;
+    const category = req.body.category;
+    const equipped = req.body.equipped;
 
     const missionInstance = await MissionInstance.findOne(
       {party: {$elemMatch: {profile: user._id}}}    
@@ -557,77 +650,37 @@ router.patch("/myItems/equip", auth, async (req, res) => {
       throw new Error('Cannot equip item during mission!')
     }
 
-    // await user.populate({
-    //   path: 'party'
-    // }).execPopulate()
+    const party = await Party.findOne({inShop: true, members: {$elemMatch: user._id}})
 
-    // //TO CHECK
-    // if(user.party && user.party.leader.toString() !== user._id.toString){ //if party leader
-    //   if(req.body.memberId && req.body.memberId.toString() != user._id.toString()){ //only if leader equips another members
-    //     const party = await Party.findOne({_id: user.party, inShop: true})
-    //     if(party){
-    //       throw new Error('Cannot equip item during shopping!')
-    //     }
-    //   }
-    // }
-    
-    //- member item toggle (must be scroll)
-    //- refactor to /mate/equip OR /member/equip
-
-
-    
-    if(req.body.memberId){
-      user = await User.findById(req.body.memberId)
+    if(party){
+      throw new Error('Cannot equip item during shopping!')
     }
-    console.log(user)
-    const itemId = req.body.id;
-    const category = req.body.category;
-
-    const equipped = req.body.equipped;
-  
   
     const itemToEquip = user.bag.find(item => {
       return item.toString() === itemId;
     });
 
-    if (itemToEquip) {
-      user.equipped = { ...equipped };
-      user.userPerks = await designateUserPerks(user);
-      user.userPerks = await updatePerks(user, true);
-      await user.save();
-      user = await userStandardPopulate(user);
-      //Depopulate equipped key
-      user.equipped = { ...equipped };
-
-      if(req.body.memberId){
-        
-          if(!user.party){
-            res.status(204).send(null)
-            return
-          }
-          
-          await user
-            .populate({
-              path: "party",
-              populate: { path: "leader members", select: "_id name avatar attributes experience userPerks bag equipped", 
-            populate: { path: "bag", populate: { path: "itemModel", populate: { path: "perks.target.disc-product", select: '_id name' }, } } }
-            })
-            .execPopulate();
-      
-          res.send(user.party);
-          
-        
-      }else{
-        res.status(200).send(user);
-
-      }
-
-    } else {
-      // console.log("item not found")
-      res.sendStatus(400);
+    if (!itemToEquip) {
+      throw new Error('Item does not exist!')
     }
-  } catch (error) {
-    console.log(error);
+
+    //WARNING!: u can pass anything in equipped object, without verification
+      
+    user.equipped = { ...equipped };
+    user.userPerks = await designateUserPerks(user);
+    user.userPerks = await updatePerks(user, true);
+    await user.save();
+    user = await userStandardPopulate(user);
+    //Depopulate equipped key
+    user.equipped = { ...equipped };
+
+    
+    res.status(200).send(user);
+
+      
+    
+  } catch (e) {
+    console.log(e.message);
     res.sendStatus(400);
   }
 });
