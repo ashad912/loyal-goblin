@@ -432,6 +432,15 @@ export const userStandardPopulate = async user => {
       })
       .execPopulate();
   }
+
+  // const userObj = user.toObject() 
+  // delete userObj.lastActivityDate
+  // delete userObj.createdAt
+  // delete userObj.updatedAt
+  // delete userObj.perksUpdatedAt
+  // delete userObj.__v
+  // console.log(userObj)
+
   return user; //CONSIDER: return user.bag -> props: const user declaration
 };
 

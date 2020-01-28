@@ -2,6 +2,9 @@ import mongoose from 'mongoose'
 import {ClassAwardsSchema} from '../schemas/ClassAwardsSchema'
 import { MissionInstance } from './missionInstance';
 import arrayUniquePlugin from 'mongoose-unique-array'
+import {
+    asyncForEach,
+  } from "../utils/methods";
 export const eventStatuses = ['ready', 'active', 'archive']
 
 
@@ -136,7 +139,14 @@ MissionSchema.plugin(arrayUniquePlugin)
 
 MissionSchema.pre('remove', async function (next){
     const mission = this
-    await MissionInstance.deleteMany({mission: mission._id})
+
+    const missionInstances = await MissionInstance.find({mission: mission._id}) //if deleteMany runs remove middleware? -> NO
+
+    await asyncForEach((missionInstances), async missionInstance => {
+        await missionInstance.remove() //running 'pre remove' instance middleware
+    })
+
+    //await MissionInstance.deleteMany({mission: mission._id})
     next()
 })
 

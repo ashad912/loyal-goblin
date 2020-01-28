@@ -8,10 +8,7 @@ export const updateParty = (params, socketAuthReconnect) => {
         
             try {
                 console.log('updateParty')
-                let query = ''
-                if(params && params.autoFetch){
-                    query ='?autoFetch=true'
-                }
+                const query = params && params.autoFetch ? '?autoFetch=true' : ''
                 const res = await axios.get('/party' + query)
                 
                 if(res.data && res.status === 200){
@@ -110,8 +107,9 @@ export const removeMember =  (partyId, memberId) => {
                     instanceRefreshEmit(partyId)
                 }else{
                     
-                    leaveRoomEmit(memberId, partyId)
                     instanceRefreshEmit(partyId)
+                    leaveRoomEmit(memberId, partyId)
+                    
                     if(socket.connected){
                         socket.disconnect()
                     }

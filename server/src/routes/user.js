@@ -557,7 +557,7 @@ router.patch("/party/equip", auth, async (req, res) => {
       throw new Error('No memberId field!')
       
     }
-    const party = await Party.findOne({inShop: true, leader: leader._id, members: {$elemMatch: req.body.memberId}})
+    const party = await Party.findOne({inShop: true, leader: leader._id, members: {$elemMatch: {$eq: req.body.memberId}}})
 
     if(!party){
       throw new Error('Invalid party conditions!')
@@ -650,7 +650,7 @@ router.patch("/myItems/equip", auth, async (req, res) => {
       throw new Error('Cannot equip item during mission!')
     }
 
-    const party = await Party.findOne({inShop: true, members: {$elemMatch: user._id}})
+    const party = await Party.findOne({inShop: true, members: {$elemMatch: {$eq: user._id}}})
 
     if(party){
       throw new Error('Cannot equip item during shopping!')

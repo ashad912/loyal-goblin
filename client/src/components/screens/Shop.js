@@ -949,7 +949,7 @@ class Shop extends React.Component {
               style={{ marginTop: "1rem" }}
               onClick={this.handleLeaveShop}
             >{`< Wyjście`}</Button>
-            {this.props.party.length > 1 && (
+            {this.props.party && this.props.party.length > 1 && (
               <PlayerShopButtons
                 users={this.props.party}
                 activeUser={this.state.activeUser}
