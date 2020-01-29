@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -9,7 +9,8 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import {itemsPath} from '../../../utils/definitions'
+
+import {palette, itemsPath} from '../../../utils/definitions'
 const StyledMenu = withStyles({
   paper: {
     border: "1px solid #d3d4d5",
@@ -81,7 +82,7 @@ const TorpedoListItem = props => {
       key={item._id}
       alignItems="flex-start"
       className={classes.listItem}
-      style={{ background: props.loadedTorpedoId === item.instancesIds[0] ? "#e6dc8d" : "" }}
+      style={{ background: props.loadedTorpedoId === item.instancesIds[0] ? palette.background.equipped : "" }}
       loaded={props.loadedTorpedoId === item.instancesIds[0] ? (1) : (0)}
       onClick={() =>
         props.handleTorpedoToggle(

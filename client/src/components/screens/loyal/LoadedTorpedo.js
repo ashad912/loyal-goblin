@@ -22,7 +22,7 @@ const LoadedTorpedo = (props) => {
     
     const torpedo = props.torpedo;
   
-    console.log(torpedo)
+    //console.log(torpedo)
   
   
     return (

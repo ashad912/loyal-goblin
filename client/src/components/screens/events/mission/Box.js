@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { Paper } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import {createAvatarPlaceholder} from '../../../../utils/methods'
-import {itemsPath, usersPath} from '../../../../utils/definitions'
+import {palette, itemsPath, usersPath} from '../../../../utils/definitions'
 
 
 
@@ -26,7 +26,7 @@ const Item = styled.div`
   line-height: 1.5;
   border-radius: 1px;
   border: 1px ${props => (props.isDragging ? 'dashed #000' : 'solid #ddd')};
-  background: ${(props) => props.isDragging ? 'rgb(230, 220, 141)' : 'white'};
+  background: ${(props) => props.isDragging ? palette.background.equipped : 'white'};
 `
 
 const Clone = styled(Item)`
@@ -42,7 +42,7 @@ const StyledPaper = styled(Paper)`
 `
 
 const BoxList = styled.div`
-  background: ${(props) => props.isDraggingOver ? 'rgb(230, 220, 141)' : 'white'};
+  background: ${(props) => props.isDraggingOver ? palette.background.equipped : 'white'};
   min-height: 4rem;
   align-items: center;
   width: 96%;
@@ -94,7 +94,7 @@ const Box = (props) => {
     
     //convert client items to stack view
     const items = convertToStack(props.items) //from backend
-    console.log(items)
+    
     return (
       <RootDiv >
         <Grid

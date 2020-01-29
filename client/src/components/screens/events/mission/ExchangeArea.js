@@ -6,26 +6,12 @@ import Box from './Box';
 import uuid from 'uuid/v1'
 import {addItemSubscribe, deleteItemSubscribe} from '../../../../socket'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import styled from 'styled-components'
 import bagImg from '../../../../assets/mission/bag.png'
 import { sendItemToMission, sendItemToUser } from '../../../../store/actions/missionActions';
-
-// import io from 'socket.io-client'
-// export const socket =  io('/mission', {
-//   autoConnect: false,
-
-// })
 
 
 const userItemsName = 'userItems'
 const missionItemsName = 'missionItems'
-
-const StyledP = styled.p`
-    font-size: 8px;
-    margin-block-start: 0.25em;
-    margin-block-end: 0.25em;
-    color: ${props => props.userRegistered ? 'green' : 'black'} 
-`
 
 
 
@@ -141,13 +127,8 @@ const createTempItemListMission = (userId) => {
 export default class ExchangeArea extends React.Component {
 
   state = {
-    //roomId: null,
-    //userRegistered: false,
-    //connectedUsers: [/*from backend*/],
     [userItemsName]: this.props.initUserItems,
     [missionItemsName]: this.props.initMissionItems,
-    //all possible items in communication
-    
   }
   
   
@@ -161,25 +142,6 @@ export default class ExchangeArea extends React.Component {
     })
    
     
-    // console.log(socket)
-    // //await from backend generating roomId -> roomId = missionInstanceId
-    
-    // //temporary separate room for specific mission
-    // console.log(this.props.locationId)
-    // socketFuncs.joinRoomEmit(socket, this.props.locationId)
-
-    // ////
-    // if(!this.state.roomId){
-    //   socketFuncs.joinRoomSubscribe((roomId) => {
-    //     this.setState({
-    //       socket: socket,
-    //       roomId: roomId,
-    //     }, () => {
-    //         this.props.setConnection(roomId)  
-    //     })
-    //   })
-    //}
-    
     addItemSubscribe((item) => {
       this.addItemToState(item, missionItemsName)
     })
@@ -187,80 +149,7 @@ export default class ExchangeArea extends React.Component {
     deleteItemSubscribe((id) => {
       this.deleteItemFromState(id, missionItemsName)
     })
-
-    // socketFuncs.registerUserSubscribe((user) => {
-
-    //   const users = [...this.state.connectedUsers, user]
-
-    //   this.setState({
-    //     connectedUsers: users
-    //   }, () => {
-    //     this.props.instanceUsers(this.state.connectedUsers) 
-    //   })
-    // })
-
-    // socketFuncs.unregisterUserSubscribe(socket, (id) => {
-
-    //   const users = this.state.connectedUsers.filter((user) => {
-    //     return user._id !== id
-    //   })
-
-    //   this.setState({
-    //     connectedUsers: users
-    //   }, () => {
-    //     this.props.instanceUsers(this.state.connectedUsers)
-    //   })
-    // })
-
-    // socketFuncs.modifyUserStatusSubscribe(socket, (user) => {
-      
-    //   const users = [...this.state.connectedUsers];
-  
-    //   const modifyUserArrayIndex = users.findIndex(
-    //     specificUser => {
-    //       return specificUser._id === user._id;
-    //     }
-    //   );
-      
-    //   users[modifyUserArrayIndex].readyStatus = user.readyStatus;
-
-    //   this.setState({
-    //     connectedUsers: users
-    //   }, () => {
-    //     this.props.instanceUsers(this.state.connectedUsers) 
-    //   })
-    // })
-
   }
-
-  // componentDidUpdate(prevProps) {
-  //   if (this.state.roomId && (prevProps.userReadyStatus !== this.props.userReadyStatus)) {
-  //     //const {socket} = this.state
-  //     const user = {_id: this.props.userId, readyStatus: this.props.userReadyStatus}
-  //     socketFuncs.modifyUserStatusEmit(socket, user, this.state.roomId)
-  //   }
-  // } 
-
-  // componentWillUnmount() {
-  //   const {socket} = this.state
-  //   socketFuncs.unregisterUserEmit(socket, this.props.userId, this.state.roomId)
-  //   //socket.disconnect()
-  // }
-
-  // handleRegister = () => {
-  //   if(!this.state.userRegistered){
-  //     this.setState({
-  //       userRegistered: true
-  //     }, () => {
-        
-  //       //const {socket} = this.state
-  //       console.log(socket)
-  //       //socket.open()
-  //       const user = {_id: this.props.userId, readyStatus: false}
-  //       socketFuncs.registerUserEmit(socket, user, this.state.roomId)
-  //     })
-  //   }  
-  // }
 
   findItemById = (id) => {
     return this.state.allItems.find((item) => {
@@ -304,7 +193,7 @@ export default class ExchangeArea extends React.Component {
   }
 
   addItemToState = (item, targetKey) => {
-    console.log('add to', targetKey)
+    //console.log('add to', targetKey)
     const items = [...this.state[targetKey], item]
     
     this.setState({
@@ -316,7 +205,7 @@ export default class ExchangeArea extends React.Component {
   }
 
   deleteItemFromState = (id, targetKey) => {
-    console.log('delete from', targetKey)
+    //console.log('delete from', targetKey)
     let items = this.state[targetKey].filter((item) => {
       return item._id !== id
     })
@@ -337,7 +226,7 @@ export default class ExchangeArea extends React.Component {
   }
 
   onDragEnd = (result) => {
-    console.log(result)
+    //console.log(result)
     const { source, destination } = result;
 
     if(!destination) {
@@ -380,11 +269,6 @@ export default class ExchangeArea extends React.Component {
   
   render() {
 
-    // if(!this.state.roomId){
-    //   return <Loading/>
-    // }
-    
-    //const registerLabel = this.state.userRegistered ? ('User registered!') : ('Register user in SocketIO!')
 
 
     return (
@@ -407,20 +291,12 @@ export default class ExchangeArea extends React.Component {
              
                 <Box 
                     targetKey={missionItemsName}
-                    //this.state.missionItems has all items in box from socket point of view - for missionBox there are all clients items
-                    //this.socketShare() -> want to show only specific client items in box (for userBox clientItems === props.items)
                     items={this.socketShare(this.state.missionItems)} 
                     draggableProperty={this.state.draggableProperty}
                     boxname={missionItemsName}
-                    boxIcon={bagImg}/>
-              
-          {/*<div className="test">
-          <Box targetKey={missionItemsName} items={this.state.missionItems} addItem={this.addMissionItem} deleteItem={this.deleteMissionItem} boxname='mission' />
-          </div>*/}
-        
+                    boxIcon={bagImg}/>    
         
         </DragDropContext>
-        {/* <StyledP onClick={this.handleRegister} userRegistered={this.state.userRegistered}>{registerLabel}</StyledP> */}
       </div>
     )
   }

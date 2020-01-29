@@ -15,8 +15,8 @@ import Badge from "@material-ui/core/Badge";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import TouchAppIcon from "@material-ui/icons/TouchApp";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import { dayLabels, categoryLabels, perkLabels } from "../../../utils/labels";
-import { itemsPath } from "../../../utils/definitions";
+import { dayLabels, perkLabels } from "../../../utils/labels";
+import { palette, itemsPath } from "../../../utils/definitions";
 import { getValue, getTarget } from "../../../utils/methods";
 
 const StyledMenu = withStyles({
@@ -99,7 +99,7 @@ const EquipmentListItem = props => {
       button={props.itemCategory !== "amulet"}
       alignItems="flex-start"
       className={classes.listItem}
-      style={{ background: props.equipped ? "#e6dc8d" : "" }}
+      style={{ background: props.equipped ? palette.background.equipped : "" }}
       equipped={props.equipped ? 1 : 0}
       onClick={() =>
         props.itemCategory !== "amulet" &&
@@ -185,9 +185,9 @@ const EquipmentListItem = props => {
                 return (
                   <Box
                     key={JSON.stringify(perk.target)+index}
-                    border={1}
+                    border={0}
                     borderColor="primary.main"
-                    style={{ margin: "0.2rem 0", fontSize: "0.8rem" }}
+                    style={{ margin: "0.2rem 0", fontSize: "0.8rem", background: palette.background.standard}}
                   >
                     <ListItem>
                       <Grid container justify="space-around">

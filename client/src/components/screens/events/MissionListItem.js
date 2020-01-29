@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import styled from 'styled-components'
 import { classLabelsAny } from '../../../utils/labels';
-import {itemsPath, missionsPath} from '../../../utils/definitions'
+import {palette, itemsPath, missionsPath} from '../../../utils/definitions'
 
 const ShortDescription = styled(Typography)`
     display: -webkit-box;
@@ -32,7 +32,7 @@ const StyledList = styled(List)`
 `
 const StyledBox = styled(Box)`
     margin: 0.5rem 0;
-    background: ${props => props.active === '1' ? '#e6dc8d' : '#eeeeee'} 
+    background: ${props => props.active === '1' ? palette.background.equipped : palette.background.standard} 
 
 `
 

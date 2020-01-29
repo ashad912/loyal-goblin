@@ -102,16 +102,16 @@ let content = null
       content = (<Typography
               variant="caption"
               component="p"
-              style={{ marginBottom: "1rem", padding: "1rem", color:"rgb(139, 0, 0)" }}
+              style={{  padding: "1rem", color:"rgb(139, 0, 0)" }}
             >
-              Lider ma otwarty sklep. Klikanie przedmiotów niemożliwe.
+              Nie można zmieniać ekwuipunku w trakcie zakupów.
     </Typography>
       )
     }else if(props.activeMission){
       content = (<Typography
       variant="caption"
       component="p"
-      style={{ marginBottom: "1rem", padding: "1rem", color:"rgb(139, 0, 0)" }}
+      style={{  padding: "1rem", color:"rgb(139, 0, 0)" }}
     >
         Nie można zmieniać ekwipunku w trakcie aktywnej misji.
       </Typography>
@@ -197,7 +197,7 @@ let content = null
       <Typography
       variant="caption"
       component="p"
-      style={{ marginBottom: "1rem", padding: "1rem" }}
+      style={{ padding: "1rem" }}
     >
       Ekwipunek jest pusty. Idź expić, by zdobyć przedmioty!
     </Typography>

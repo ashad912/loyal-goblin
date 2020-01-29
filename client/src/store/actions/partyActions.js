@@ -104,15 +104,15 @@ export const removeMember =  (partyId, memberId) => {
                     
                     dispatch({type: "REMOVE_MEMBER", party: res.data}) //updating leader redux - he has just dropped the member
                     leaveRoomEmit(memberId, partyId)  //from party point of view - some user left the party with success - take his id and trigger leave event
-                    instanceRefreshEmit(partyId)
+                    //instanceRefreshEmit(partyId)
                 }else{
                     
-                    instanceRefreshEmit(partyId)
+                    //instanceRefreshEmit(partyId)
                     leaveRoomEmit(memberId, partyId)
                     
-                    if(socket.connected){
-                        socket.disconnect()
-                    }
+                    // if(socket.connected){
+                    //     socket.disconnect()
+                    // }
                     dispatch({type: "DELETE_PARTY"}) //clearing member redux - he has just left (only for member!)
                 }
 

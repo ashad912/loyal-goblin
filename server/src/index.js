@@ -151,8 +151,9 @@ const postAuthenticate = socket => {
 
   socket.on("leaveRoom", data => {
     console.log(`User ${data.id} left the room ${data.roomId}`)
-    socket.broadcast.to(data.roomId).emit("leaveRoom", data.id);
-    socket.broadcast.to(data.roomId).emit("instanceRefresh", data.roomId);
+    io.to(data.roomId).emit("instanceRefresh", data.roomId);
+    io.to(data.roomId).emit("leaveRoom", data.id);
+    
   });
 
 

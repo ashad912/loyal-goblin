@@ -19,7 +19,7 @@ import bagImg from '../../../../assets/mission/bag.png'
 
 
 import {createAvatarPlaceholder} from '../../../../utils/methods'
-import {itemsPath, usersPath} from '../../../../utils/definitions'
+import {palette, itemsPath, usersPath} from '../../../../utils/definitions'
 
 const StyledGrid = styled(Grid)`
     &&{
@@ -50,7 +50,7 @@ const StyledList = styled(List)`
 `
 
 const StyledTypo = styled(Typography)`
-   
+   padding-top: 0.5rem;
 `
 
 const StyledBox = styled(Box)`
@@ -167,7 +167,7 @@ const PartyList = (props) => {
                 }}
                 badgeContent={<SmallAvatar alt="bag avatar" src={bagImg} />}
             >
-                {user.avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={usersPath + user.avatar} /> : <Avatar style={{height: 30, width:30, backgroundColor: '#3f51b5'}}>{createAvatarPlaceholder(user.name)}</Avatar>}
+                {user.avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={usersPath + user.avatar} /> : <Avatar style={{height: 30, width:30, backgroundColor: palette.primary.main}}>{createAvatarPlaceholder(user.name)}</Avatar>}
             </Badge>
         )
         //return <img style={{height: 30, width:30}} src={user.avatar} alt='avatar'/>
@@ -218,7 +218,7 @@ const PartyList = (props) => {
                     horizontal: 'right',
                 }}
             >
-                 <Avatar style={{height: 30, width:30, backgroundColor: '#3f51b5'}}>L</Avatar>
+                 <Avatar style={{height: 30, width:30, backgroundColor: palette.primary.main}}>L</Avatar>
             </Badge>
         )
     }
@@ -233,7 +233,7 @@ const PartyList = (props) => {
                 {party.map((member) => {
                     return(
                     
-                        <StyledBox border={1} borderColor="primary.main">
+                        <StyledBox border={0} borderColor="primary.main" style={{background: palette.background.standard}}>
                             <ListItem>
                             {member.inMission ? (
                                 <ListItemAvatar style={{minWidth: 32}}>

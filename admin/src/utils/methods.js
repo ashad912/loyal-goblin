@@ -69,7 +69,7 @@ export const getValue = (perkType, value) => {
     }
   }else if(perkType.includes('disc')){
     if(!value.includes('%')){
-      return value + " ZŁ"
+      return value + "zł"
     }
   }else if(perkType.includes('experience')){
     let modValue = value

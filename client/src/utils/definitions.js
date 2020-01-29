@@ -24,6 +24,10 @@ export const palette = {
         light: "#f44336",
         main: "#e53935",
         dark: "#b71c1c",
-        contrastText: "#000"
+        contrastText: "#fff"
+    },
+    background: {
+        equipped: '#e6dc8d',
+        standard: '#eeeeee'
     }
 }
