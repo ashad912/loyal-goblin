@@ -1,6 +1,6 @@
 
 import axios from 'axios'
-import {partyRefreshEmit} from '../../socket'
+import {partyRefreshEmit, instanceRefreshEmit} from '../../socket'
 
 export const getShop = () => {
     return async dispatch => {
@@ -12,6 +12,7 @@ export const getShop = () => {
             dispatch({type: "UPDATE_PARTY", party: res.data.party})
             if(res.data.party){
                 partyRefreshEmit(res.data.party._id)
+                instanceRefreshEmit(res.data.party._id)
             }
 
         } catch (e) {

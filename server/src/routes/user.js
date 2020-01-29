@@ -557,7 +557,7 @@ router.patch("/party/equip", auth, async (req, res) => {
       throw new Error('No memberId field!')
       
     }
-    const party = await Party.findOne({inShop: true, leader: leader._id, members: {$elemMatch: {$eq: req.body.memberId}}})
+    const party = await Party.findOne({_id: leader.party, inShop: true, leader: leader._id, members: {$elemMatch: {$eq: req.body.memberId}}})
 
     if(!party){
       throw new Error('Invalid party conditions!')

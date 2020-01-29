@@ -16,6 +16,7 @@ import {
 } from "../utils/methods";
 import { Rally } from "../models/rally";
 import { User } from "../models/user";
+import { MissionInstance } from "../models/missionInstance";
 import { Party } from "../models/party";
 import { Item } from "../models/item";
 import { ArchiveOrder } from "../models/archiveOrder";
@@ -325,10 +326,27 @@ const calculateOrder = async user => {
 router.get("/shop", auth, async (req, res) => {
   const user = req.user;
   try {
+
+    if(user.party){
+      const party = await Party.findOne({_id: user.party, leader: user._id})
+
+      if(!party){
+        throw new Error('Invalid party conditions!')
+      }
+    }
+
     const shop = await Product.find({}).populate({
       path: "awards.itemModel",
       populate: { path: "perks.target.disc-product", select: "_id name" }
     });
+
+    const missionInstance = await MissionInstance.findOne(
+      {party: {$elemMatch: {profile: user._id}}}    
+    )
+
+    if(missionInstance){
+      await missionInstance.remove()
+    }
 
     await updatePerks(user, false);
 
@@ -368,9 +386,9 @@ router.get("/shop", auth, async (req, res) => {
     }
     if (user.party && !user.party.inShop) {
       user.party.inShop = true;
-      await user.party.save();
+      await user.party.save(); //NOTE: can be saved like this -> user.party is now Mongo model due to population and no use toObject method
 
-      //TO CHECK
+      //SAFE OPTION:
       //await Party.updateOne({_id: user.party._id}, {$set: {inShop: true}})
     }
 
@@ -585,6 +603,10 @@ router.get("/verify/:id", barmanAuth, async (req, res) => {
       ]
     });
 
+    if(!user){
+      throw new Error('Invalid order conditions!')
+    }
+
     // await user
     // .populate({
     //   path: "activeOrder.awards.itemModel", select: "name imgSrc"
@@ -622,10 +644,19 @@ router.get("/verify/:id", barmanAuth, async (req, res) => {
 
 //DEVELOP: BARMANAUTH?!
 router.post("/finalize", barmanAuth, async (req, res) => {
-  //depends on source of request
-  //const party = req.party;
-  const user = await User.findById(req.body.userId)
- // const user = req.user; //if admin-side: get leader of this party
+  
+
+  const user = await User.findOne({
+    $and: [
+      { _id: req.body.userId },
+      //{party: partyId},
+      { activeOrder: { $not: { $size: 0 } } } //size does not accept ranges
+    ]
+  });
+
+  if(!user){
+    throw new Error('Invalid order conditions!')
+  }
   
   try {
     //const order = await ArchiveOrder.findById(req.body.order)
@@ -685,35 +716,35 @@ router.post("/finalize", barmanAuth, async (req, res) => {
 
     await asyncForEach(user.activeOrder, async basket => {
 
-      const user = await User.findById(basket.profile)
+      const member = await User.findById(basket.profile)
 
       const exp = basket.experience;
       const items = [];
       await asyncForEach(basket.awards, async award => {
         for(let i = 0; i < award.quantity; i++){
-          const newAward = await Item({itemModel: award.itemModel, owner: user._id})
+          const newAward = await Item({itemModel: award.itemModel, owner: member._id})
           await newAward.save()
           items.push(newAward._id)
         }
       })
 
 
-      const newLevels = designateNewLevels(user.experience, exp);
+      const newLevels = designateNewLevels(member.experience, exp);
   
-      await user.updateOne(
+      await member.updateOne(
         {
           $addToSet: { bag: { $each: items } },
           $inc: { experience: exp, levelNotifications: newLevels }
         }
       );
 
-      if (activeRally && !activeRally.users.includes(memberId.toString() /*!!! toString() - to CHECK! */)) {
-        activeRally.users = [...activeRally.users, memberId];
+      if (activeRally && !activeRally.users.includes(member._id.toString() /*!!! toString() - to CHECK! */)) {
+        activeRally.users = [...activeRally.users, member._id];
         await activeRally.save();
       }
 
-      if(basket.products.length > 0 && user.equipped.scroll){
-        const scroll = await Item.findById(user.equipped.scroll)
+      if(basket.products.length > 0 && member.equipped.scroll){
+        const scroll = await Item.findById(member.equipped.scroll)
         if(scroll){
           scroll.remove()
         }
