@@ -13,6 +13,7 @@ import withNoAuth from "./hoc/withNoAuth";
 import PageNotFound from "./PageNotFound";
 import ConnectionSnackbar from "./layout/ConnectionSnackbar";
 import ConnectionSpinnerDialog from "./layout/ConnectionSpinnerDialog";
+import Settings from "./components/Settings";
 
 export const OrderContext = React.createContext(null);
 
@@ -33,7 +34,6 @@ const goblinTheme = createMuiTheme({
   }
 });
 
-
 function App(props) {
   const [connection, setConnection] = useState({
     loading: false,
@@ -41,20 +41,29 @@ function App(props) {
   });
   const [auth, setAuth] = useState({ uid: null, init: null });
   const [order, setOrder] = useState([]);
-  const [orderFinalized, setOrderFinalized] = useState(false)
+  const [orderFinalized, setOrderFinalized] = useState(false);
   const [timer, setTimer] = useState("");
   const [userId, setUserId] = useState(null);
-  const [redirect, setRedirect] = useState(false)
+  const [redirect, setRedirect] = useState(false);
+  const [orderError, setOrderError] = useState('')
+
+
+  useEffect(() => {
+
+    setTimeout(() => {
+      setOrderError('')
+    }, 6000);
+  }, [orderError])
 
   useEffect(() => {
     axios.defaults.baseURL = process.env.REACT_APP_API_URL;
     axios.interceptors.request.use(
       function(config) {
-        setLoading(true)
+        setLoading(true);
         return config;
       },
       function(error) {
-        setLoading(false)
+        setLoading(false);
         return Promise.reject(error);
       }
     );
@@ -62,11 +71,11 @@ function App(props) {
     // Add a response interceptor
     axios.interceptors.response.use(
       function(response) {
-       setLoading(false)
+        setLoading(false);
         return response;
       },
       function(error) {
-        setLoading(false)
+        setLoading(false);
         return Promise.reject(error);
       }
     );
@@ -111,12 +120,12 @@ function App(props) {
   };
 
   const handleEndOrder = () => {
-    setRedirect(true)
+    setRedirect(true);
     setOrder([]);
     setUserId(null);
-    localStorage.removeItem('lastUserId')
-    setOrderFinalized(false)
-    setRedirect(false)
+    localStorage.removeItem("lastUserId");
+    setOrderFinalized(false);
+    setRedirect(false);
   };
 
   const checkAuth = async () => {
@@ -151,28 +160,51 @@ function App(props) {
       setOrder(res.data);
       setUserId(userId);
       localStorage.setItem("lastUserId", userId);
-
     } catch (error) {
       console.log(error);
+      setOrderError(error.response.data)
     }
   };
 
   const handleFinalizeOrder = async () => {
     try {
-      const res = await axios.post("/product/finalize", { userId });
+      const res = await axios.post("/product/finalize", { userId, currentOrder: order });
       setOrder([]);
-      setOrderFinalized(true)
+      setOrderFinalized(true);
       setUserId(null);
       setTimeout(() => {
         handleEndOrder();
-      }, 5000);
+      }, 5500);
     } catch (error) {
+      setOrderError(error.response.data)
       setTimeout(() => {
         handleEndOrder();
-      }, 5000);
+      }, 5500);
     }
-
   };
+
+  const handleChangePassword = async (oldPassword, password, confirmPassword) => {
+    try {
+      await axios.patch("/barman/changePassword", {oldPassword, password, confirmPassword})
+      setTimeout(() => {
+        handleLogout()
+      }, 3000);
+    } catch (error) {
+      
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      await axios.post("/barman/logout")
+      setAuth({ uid: null, init: null })
+      setOrder([])
+      setUserId(null)
+      localStorage.removeItem('lastUserId')
+    } catch (error) {
+      
+    }
+  }
 
   return (
     <OrderContext.Provider
@@ -182,51 +214,57 @@ function App(props) {
         timer,
         finalizeOrder: handleFinalizeOrder,
         orderFinalized,
-        redirect
+        redirect,
+        handleChangePassword,
+        handleLogout,
+        orderError
       }}
     >
       <ThemeProvider theme={goblinTheme}>
+        <BrowserRouter>
+          <div className="App">
+            <Switch>
+              <Route
+                exact
+                path="/"
+                component={withAuth(QRReader, connection, auth)}
+              />
+              <Route
+                exact
+                path="/menu"
+                component={withAuth(Menu, connection, auth)}
+              />
+              <Route
+                exact
+                path="/order"
+                component={withAuth(Order, connection, auth, setLoading)}
+              />
+              <Route
+                exact
+                path="/settings"
+                component={withAuth(Settings, connection, auth, setLoading)}
+              />
+              <Route
+                exact
+                path="/signin"
+                component={withNoAuth(
+                  SignIn,
+                  connection,
+                  auth,
+                  handleSignIn,
+                  setLoading
+                )}
+              />
+              <Route component={PageNotFound} />
+            </Switch>
+          </div>
 
-      <BrowserRouter>
-        <div className="App">
-          <Switch>
-            <Route
-              exact
-              path="/"
-              component={withAuth(QRReader, connection, auth)}
-            />
-            <Route
-              exact
-              path="/menu"
-              component={withAuth(Menu, connection, auth)}
-            />
-            <Route
-              exact
-              path="/order"
-              component={withAuth(Order, connection, auth, setLoading)}
-            />
-            <Route
-              exact
-              path="/signin"
-              component={withNoAuth(
-                SignIn,
-                connection,
-                auth,
-                handleSignIn,
-                setLoading
-              )}
-            />
-            <Route component={PageNotFound} />
-          </Switch>
-        </div>
-
-        <ConnectionSnackbar
-          resetConnectionError={() => this.props.resetConnectionError()}
-          connection={connection}
-        />
-        <ConnectionSpinnerDialog connection={connection} />
-      </BrowserRouter>
-
+          <ConnectionSnackbar
+            resetConnectionError={() => this.props.resetConnectionError()}
+            connection={connection}
+          />
+          <ConnectionSpinnerDialog connection={connection} />
+        </BrowserRouter>
       </ThemeProvider>
     </OrderContext.Provider>
   );

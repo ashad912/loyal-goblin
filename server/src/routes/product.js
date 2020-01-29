@@ -350,7 +350,7 @@ router.get("/shop", auth, async (req, res) => {
         .populate({
           path: "party",
           populate: {
-            path: "members",
+            path: "leader members",
             select: "bag equipped name _id avatar bag userPerks",
             populate: {
               path: "bag",
@@ -625,6 +625,7 @@ router.post("/finalize", barmanAuth, async (req, res) => {
   //depends on source of request
   //const party = req.party;
   const user = await User.findById(req.body.userId)
+  const frontEndOrder = req.body.currentOrder
  // const user = req.user; //if admin-side: get leader of this party
   
   try {
@@ -637,6 +638,17 @@ router.post("/finalize", barmanAuth, async (req, res) => {
     });
 
 
+      if(user.activeOrder.length <= 0){
+        throw new Error("Brak aktywnego zamówienia dla tego użytkownika!")
+      }
+
+      user.activeOrder.forEach((basket, index) => {
+        if((basket._id.toString() !== frontEndOrder[index]._id) || basket.price !== frontEndOrder[index].price){
+          throw new Error(`Koszyk numer ${index+1} nieprawidłowy!`)
+        }
+      })
+
+
       let party = await Party.findById(user.party)
     
 
@@ -644,24 +656,20 @@ router.post("/finalize", barmanAuth, async (req, res) => {
       
       if(!party){
         if(orderPartyIds.length > 1){
-          throw new Error("Multiple orders for single user!")
+          throw new Error("Wielokrotne koszyki dla pojedynczego użytkownika!")
         }
 
       }else{
-        party.members = [party.leader, ...party.members].map(member => member.toString())
-        
-        console.log("party members", party.members)
-        console.log("orderPartyIds", orderPartyIds)
-        console.log("party leader", party.leader.toString())
-        console.log("orderPartyIds leader", orderPartyIds[0])
-        console.log(differenceWith(party.members, orderPartyIds, isEqual))
-        if(party.leader.toString() !== orderPartyIds[0] ){
-          throw new Error("Party leader mismatch!")
-        }
-        if(isEqual(party.members, orderPartyIds) ){
-          throw new Error("Party member mismatch!");
-        }
+        party.members = [party.leader, ...party.members]
 
+        if(party.leader.toString() !== orderPartyIds[0] ){
+          throw new Error("Błąd weryfikacji lidera drużyny!")
+        }
+        party.members.forEach((member, index) => {
+          if(member.toString() !== orderPartyIds[index]){
+            throw new Error(`Niezgodność członka drużyny z koszykiem o numerze ${index+1}!`)
+          }
+        })
         await user.populate({path: 'party'}).execPopulate()
       }
       
@@ -696,7 +704,6 @@ router.post("/finalize", barmanAuth, async (req, res) => {
           items.push(newAward._id)
         }
       })
-
 
       const newLevels = designateNewLevels(user.experience, exp);
   

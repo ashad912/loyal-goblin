@@ -50,7 +50,7 @@ BarmanSchema.methods.updatePassword = async function(oldPassword, newPassword) {
         if (res) {
           barman.password = newPassword
   
-          resolve(user);
+          resolve(barman);
         } else {
           reject();
         }

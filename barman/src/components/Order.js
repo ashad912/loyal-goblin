@@ -21,7 +21,7 @@ import { OrderContext } from "../App";
 const Order = props => {
   const history = useHistory();
 
-  const { order, timer, finalizeOrder, orderFinalized, redirect } = React.useContext(OrderContext);
+  const { order, timer, finalizeOrder, orderFinalized, redirect, orderError } = React.useContext(OrderContext);
 
   // const handleCancelOrder = async () => {
   //   history.push("/");
@@ -47,6 +47,16 @@ const Order = props => {
   if (order.length > 0) {
     content = (
       <React.Fragment>
+        <Button
+        style={{borderRadius: 0}}
+ 
+          variant="contained"
+          fullWidth
+          size="large"
+          onClick={() => history.push('menu')}
+        >
+    {"< Wróć"}
+    </Button>
         <Typography
           variant="h5"
           style={{ marginTop: "2rem", marginBottom: "1rem" }}
@@ -181,6 +191,11 @@ const Order = props => {
             })}
           </List>
         </Paper>
+        {orderError ? 
+      <Typography color="secondary" variant="h6" style={{margin: '1rem 0 2rem 0'}}>
+        {orderError}
+      </Typography>  :
+
         <Button
           style={{ margin: "1rem 0 2rem 0" }}
           variant="contained"
@@ -189,6 +204,7 @@ const Order = props => {
         >
           Zatwierdź zamówienie
         </Button>
+      }
       </React.Fragment>
     );
   } else {
@@ -201,13 +217,6 @@ const Order = props => {
 
   return (
     <div style={{ width: "100%", textAlign: "center" }}>
-      <Button
-        style={{ marginTop: "1.5rem" }}
-        variant="contained"
-        onClick={() => history.push("")}
-      >
-        {"< Menu"}
-      </Button>
       {content}
     </div>
   );

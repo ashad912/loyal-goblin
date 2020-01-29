@@ -12,6 +12,7 @@ import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import MenuItem from "@material-ui/core/MenuItem";
 import Badge from "@material-ui/core/Badge";
+import Divider from "@material-ui/core/Divider";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import TouchAppIcon from "@material-ui/icons/TouchApp";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
@@ -181,22 +182,22 @@ const EquipmentListItem = props => {
                 background: "rgba(255, 255, 255, 0.198)"
               }}
             >
+              <Typography>
               {item.itemModel.perks.map((perk, index) => {
                 return (
                   <Box
-                    key={JSON.stringify(perk.target)+index}
                     border={0}
                     borderColor="primary.main"
-                    style={{ margin: "0.2rem 0", fontSize: "0.8rem", background: palette.background.standard}}
+                    style={{ margin: "0.2rem 0", fontSize: "0.8rem" }}
                   >
-                    <ListItem>
-                      <Grid container justify="space-around">
-                        <Grid item>{perkLabels[perk.perkType]}</Grid>
-                        <Grid item>{getValue(perk.perkType, perk.value)}</Grid>
-                        <Grid item>
+                    <ListItem style={{padding: '0.5rem'}}>
+                      <Grid container justify="flex-start">
+                        <Grid item xs={6}>{perkLabels[perk.perkType]}</Grid>
+                        <Grid item xs={3}>{getValue(perk.perkType, perk.value)}</Grid>
+                        <Grid item xs={3}>
                           {getTarget(perk.perkType, perk.target)}
                         </Grid>
-                        <Grid item>
+                        <Grid item xs={12}>
                           {perk.time.length > 0 && (
                             <React.Fragment>
                               {perk.time
@@ -205,8 +206,7 @@ const EquipmentListItem = props => {
                                 .map(period => (
                                   <Grid
                                     container
-                                    key={JSON.stringify(period)}
-                                    style={{ justifyContent: "center" }}
+                                    
                                   >
                                     <Grid item>
                                       {`${dayLabels[period.startDay]}`}
@@ -230,9 +230,11 @@ const EquipmentListItem = props => {
                         </Grid>
                       </Grid>
                     </ListItem>
+                    {item.itemModel.perks.length !== index+1 && <Divider />}
                   </Box>
                 );
               })}
+              </Typography>
             </List>
           )}
         </Grid>

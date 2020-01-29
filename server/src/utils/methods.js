@@ -364,15 +364,16 @@ export const isNeedToPerksUpdate = user => {
 
 export const designateNewLevels = (baseExp, newExp) => {
 
-  if(typeof baseExp !== Number){
+  if(typeof baseExp !== 'number'){
     throw new Error('Invalid first param!')
   }
 
-  if(typeof newExp !== Number){
+  if(typeof newExp !== 'number'){
     throw new Error('Invalid second param!')
   }
 
   const levelsData = designateUserLevel(baseExp, newExp)
+  console.log(levelsData)
   return levelsData.newLevel - levelsData.oldLevel
   
 }
@@ -448,7 +449,6 @@ export const designateUserLevel = (points, addPoints) => {
   const a = levelingEquation.a;
   const b = levelingEquation.b;
   const pow = levelingEquation.pow;
-
   let previousThreshold = 0;
   let oldLevel;
   for (let i = 1; i <= 1000; i++) {
@@ -456,13 +456,13 @@ export const designateUserLevel = (points, addPoints) => {
     const topThreshold = previousThreshold + (a * i ** pow + b);
 
     if (points >= bottomThreshold && points < topThreshold) {
-      if(!addPoints){
+      if(!addPoints && addPoints !== 0){
         return i
       }
       oldLevel = i
     }
 
-    if(addPoints && points + addPoints >= bottomThreshold && points + addPoints < topThreshold){
+    if(addPoints > -1 && points + addPoints >= bottomThreshold && points + addPoints < topThreshold){
       return {oldLevel, newLevel: i}
     }
     previousThreshold = topThreshold;

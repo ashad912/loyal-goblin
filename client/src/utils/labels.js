@@ -28,7 +28,6 @@ export const classLabels = {
   cleric: 'Kleryk'
 }
 
-
 export const equippableItems = ['weapon', 'feet', 'hands', 'head', 'chest', 'legs', 'ring']
 
 export const roomLabels = {

@@ -98,7 +98,7 @@ const VerificationPage = props => {
   }
 
   React.useEffect(() => {
-
+    window.scrollTo(0, 0)
     QRCode.toDataURL(props.user.uid, opts, function (err, url) {
       if (err) throw err
       setQrCode(url)
@@ -122,7 +122,7 @@ const VerificationPage = props => {
       setOrderFinalized(true)
       setTimeout(async() => {
         await props.onLeaveShop()
-        history.push("/");
+        history.push("/", {authCheck: true});
       }, 5000);
     }
   }
@@ -156,7 +156,10 @@ const handleCloseCancelDialog = () => {
 }
 
 const handleCancelOrder = async () => {
-  await props.onCancelOrder()
+  const res = await axiosInstance.get('/product/activeOrder')
+  if(res.data){
+    await props.onCancelOrder()
+  }
   await props.onLeaveShop()
   history.push("/");
 }
