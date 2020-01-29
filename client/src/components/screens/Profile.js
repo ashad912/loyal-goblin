@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
+import {useHistory} from 'react-router'
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -33,7 +34,7 @@ import NewRallyAwardsDialog from "./profile/NewRallyAwardsDialog";
 
 import { updateParty, removeMember } from "../../store/actions/partyActions";
 import {createAvatarPlaceholder, designateUserLevel, bagArrayToCategories} from "../../utils/methods";
-import {appearancePath, usersPath} from '../../utils/definitions'
+import {appearancePath, usersPath, classThemes} from '../../utils/definitions'
 import maleBody from "../../assets/profile/male-body.png";
 
 import {
@@ -43,7 +44,8 @@ import {
   confirmLevel
 } from "../../store/actions/profileActions";
 import { authCheck } from "../../store/actions/authActions";
-
+import { classLabels } from "../../utils/labels";
+import {uiPaths } from '../../utils/uiPaths'
 const useStyles = makeStyles(theme => ({
   wrapper: {
     flexGrow: 1,
@@ -361,6 +363,7 @@ const createTempEquipped = () => {
 };
 
 const Profile = props => {
+  const history = useHistory()
   const classes = useStyles();
 
   const [bag, setBag] = React.useState(
@@ -389,6 +392,9 @@ const Profile = props => {
   const [showStatsDialog, setShowStatsDialog] = React.useState(false);
 
   React.useEffect(() => {
+    if(history.location.state && history.location.state.hasOwnProperty("authCheck")){
+      props.onAuthCheck()
+    }
     updateEquippedItems();
     props.onPartyUpdate();
   }, []);
@@ -626,9 +632,9 @@ const Profile = props => {
       className={classes.wrapper}
       spacing={2}
     >
-      {/* TODO: add user level */}
-      <Typography variant="h5">Poziom {userLevel}</Typography>
-      {/* TODO: add experience needed for next level */}
+
+      <Typography variant="h5"> Poziom {userLevel} <img src={uiPaths[props.auth.profile.class]} width={32} /> </Typography>
+
       <Typography variant="subtitle2">
         Doświadczenie:{" "}
         {relativeExp + " / " + relativeThreshold}
@@ -640,6 +646,8 @@ const Profile = props => {
         }
         className={classes.expBar}
       />
+   
+     
       <Grid
         container
         item
@@ -705,6 +713,7 @@ const Profile = props => {
           justify="flex-start"
           alignItems="center"
         >
+          
           <Attribute
             attributeName="Siła"
             attributeValue={props.auth.profile.attributes.strength}

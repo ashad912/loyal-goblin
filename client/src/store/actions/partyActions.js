@@ -12,8 +12,12 @@ export const updateParty = (params, socketAuthReconnect) => {
                 const res = await axios.get('/party' + query)
                 
                 if(res.data && res.status === 200){
-                    dispatch({type: "UPDATE_PARTY", party: res.data})
-                    const party = res.data
+                    dispatch({type: "UPDATE_PARTY", party: res.data.party})
+                    if(res.data.bag){
+                        console.log(res.data.bag)
+                        dispatch({type: "UPDATE_PROFILE_BAG", bag: res.data.bag})
+                    }
+                    
                     
                     if(!socket.connected){
                         //console.log('connect from updateParty')

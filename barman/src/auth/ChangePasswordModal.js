@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { connect } from "react-redux";
+import React, {useState} from 'react'
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -8,17 +7,17 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { Typography } from "@material-ui/core";
-import { changePassword, signOut } from "../../store/actions/authActions";
 
 const ChangePasswordModal = (props) => {
-    const open = props.open
-    const handleClose = props.handleClose
+
     const [oldPassword, setOldPassword] = useState("");
   const [password, setPassword] = useState("");
   const [repeatedPassword, setRepeatedPassword] = useState("");
-  const [showError, setShowError] = useState(false);
+const [showError, setShowError] = useState(false)
 
-  const handleOldPasswordChange = e => {
+
+
+const handleOldPasswordChange = e => {
     setOldPassword(e.target.value);
   };
 
@@ -41,19 +40,25 @@ const ChangePasswordModal = (props) => {
   const handleSubmit = async e => {
     if (password === repeatedPassword && oldPassword && password.length >= 7 && repeatedPassword.length >= 7) {
       setShowError(false);
-     await props.onChangePassword(oldPassword, password, repeatedPassword);
+     props.handleConfirm(oldPassword, password, repeatedPassword);
       handleClose()
       setOldPassword('')
       setPassword('')
       setRepeatedPassword('')
-      props.signOut()
+      props.handleLogout()
     } else {
       setShowError(true);
     }
   };
 
+
+    const open = props.open
+    const handleClose = props.handleClose
+
+
+
   return (
-    <Dialog
+<Dialog
       open={open}
       onClose={handleClose}
       aria-labelledby="form-dialog-title"
@@ -101,8 +106,8 @@ const ChangePasswordModal = (props) => {
         </Button>
         <Button
           onClick={handleSubmit}
-          color="primary"
           variant="contained"
+          color="primary"
           disabled={
             password.length <= 0 || repeatedPassword.length <= 0 || showError
           }
@@ -111,15 +116,7 @@ const ChangePasswordModal = (props) => {
         </Button>
       </DialogActions>
     </Dialog>
-  );
-};
+  )
+}
 
-const mapDispatchToProps = dispatch => {
-  return {
-    onChangePassword: (oldPassword, password, repeatedPassword) =>
-      dispatch(changePassword(oldPassword, password, repeatedPassword)),
-    signOut: () => dispatch(signOut())
-  };
-};
-
-export default connect(null, mapDispatchToProps)(ChangePasswordModal);
+export default ChangePasswordModal

@@ -3,7 +3,6 @@ import { Product } from "../models/product";
 import { adminAuth } from "../middleware/adminAuth";
 import { auth } from "../middleware/auth";
 import isEqual from "lodash/isEqual";
-import differenceWith from 'lodash/differenceWith'
 import moment from "moment";
 import {
   asyncForEach,
@@ -368,7 +367,7 @@ router.get("/shop", auth, async (req, res) => {
         .populate({
           path: "party",
           populate: {
-            path: "members",
+            path: "leader members",
             select: "bag equipped name _id avatar bag userPerks",
             populate: {
               path: "bag",
@@ -644,6 +643,7 @@ router.get("/verify/:id", barmanAuth, async (req, res) => {
 
 //DEVELOP: BARMANAUTH?!
 router.post("/finalize", barmanAuth, async (req, res) => {
+
   
 
   const user = await User.findOne({
@@ -657,6 +657,10 @@ router.post("/finalize", barmanAuth, async (req, res) => {
   if(!user){
     throw new Error('Invalid order conditions!')
   }
+
+  const frontEndOrder = req.body.currentOrder
+
+
   
   try {
     //const order = await ArchiveOrder.findById(req.body.order)
@@ -668,46 +672,53 @@ router.post("/finalize", barmanAuth, async (req, res) => {
     });
 
 
-      let party = await Party.findById(user.party)
+    if(user.activeOrder.length <= 0){
+      throw new Error("Brak aktywnego zamówienia dla tego użytkownika!")
+    }
+
+    user.activeOrder.forEach((basket, index) => {
+      if((basket._id.toString() !== frontEndOrder[index]._id) || basket.price !== frontEndOrder[index].price){
+        throw new Error(`Koszyk numer ${index+1} nieprawidłowy!`)
+      }
+    })
+
+
+    let party = await Party.findById(user.party)
+  
+
+    const orderPartyIds = user.activeOrder.map(basket => basket.profile.toString())
+    
+    if(!party){
+      if(orderPartyIds.length > 1){
+        throw new Error("Wielokrotne koszyki dla pojedynczego użytkownika!")
+      }
+
+    }else{
+      party.members = [party.leader, ...party.members]
+
+      if(party.leader.toString() !== orderPartyIds[0] ){
+        throw new Error("Błąd weryfikacji lidera drużyny!")
+      }
+      party.members.forEach((member, index) => {
+        if(member.toString() !== orderPartyIds[index]){
+          throw new Error(`Niezgodność członka drużyny z koszykiem o numerze ${index+1}!`)
+        }
+      })
+      await user.populate({path: 'party'}).execPopulate()
+    }
     
 
-      const orderPartyIds = user.activeOrder.map(basket => basket.profile.toString())
+    // else{
+    //   await user.populate({path: "party"}).execPopulate()
+    // }
+    // // console.log(party.members, user.party.members)
+    // if (
+    //   party.name !== user.party.name ||
+    //   party.leader.toString() !== user.party.leader.toString() ||
+    //   isEqual(party.members, user.party.members)
+    // ) {
       
-      if(!party){
-        if(orderPartyIds.length > 1){
-          throw new Error("Multiple orders for single user!")
-        }
-
-      }else{
-        party.members = [party.leader, ...party.members].map(member => member.toString())
-        
-        console.log("party members", party.members)
-        console.log("orderPartyIds", orderPartyIds)
-        console.log("party leader", party.leader.toString())
-        console.log("orderPartyIds leader", orderPartyIds[0])
-        console.log(differenceWith(party.members, orderPartyIds, isEqual))
-        if(party.leader.toString() !== orderPartyIds[0] ){
-          throw new Error("Party leader mismatch!")
-        }
-        if(isEqual(party.members, orderPartyIds) ){
-          throw new Error("Party member mismatch!");
-        }
-
-        await user.populate({path: 'party'}).execPopulate()
-      }
-      
-
-      // else{
-      //   await user.populate({path: "party"}).execPopulate()
-      // }
-      // // console.log(party.members, user.party.members)
-      // if (
-      //   party.name !== user.party.name ||
-      //   party.leader.toString() !== user.party.leader.toString() ||
-      //   isEqual(party.members, user.party.members)
-      // ) {
-        
-      // }
+    // }
 
 
 

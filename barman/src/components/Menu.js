@@ -39,6 +39,17 @@ const Menu = props => {
         <Typography variant="h6" style={{width: '100%', margin: '1rem 0'}} color="secondary">{timer}</Typography>
       </Grid>
       }
+      <Grid item>
+
+              <Button
+          variant="contained"
+          fullWidth
+          size="large"
+          onClick={() => history.push('settings')}
+        >
+          Ustawienia
+        </Button>
+      </Grid>
     </Grid>
   );
 };

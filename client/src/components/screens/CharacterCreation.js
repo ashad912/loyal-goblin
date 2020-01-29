@@ -112,6 +112,7 @@ const CharacterCreation = props => {
         break;
     }
     setAttributes(attributesTemp);
+    setAttributePool(3)
   };
 
   const handleAttributeChange = (event, attributeName, value) => {

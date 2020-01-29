@@ -67,7 +67,7 @@ function Root(props) {
   const [activeInstanceId, setActiveInstanceId] = React.useState(null)
   useEffect(() => {
     //change tab, when returing from specific event
-    if (props.location.state && props.location.state.indexRedirect !== null) {
+    if (props.location.state && props.location.state.hasOwnProperty("indexRedirect")) {
       const redirectToIndex = props.location.state.indexRedirect;
       props.history.replace("", null);
       setValue(redirectToIndex);

@@ -65,9 +65,13 @@ router.get("/", auth, async (req, res, next) => {
           select: "_id name avatar attributes experience userPerks equipped"
         }
       })
+      .populate({
+        path: "bag",
+        populate: { path: "itemModel", select: '_id description imgSrc name perks type twoHanded', populate: { path: "perks.target.disc-product", select: '_id name' } }
+      })
       .execPopulate();
 
-    res.send(user.party);
+    res.send({party: user.party, bag: user.bag});
   } catch (e) {
     console.log(e);
     res.status(400).send();
