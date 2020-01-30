@@ -27,6 +27,7 @@ import PartyJoiningDialog from "./profile/PartyJoiningDialog";
 import RankDialog from "./profile/RankDialog";
 import StatsDialog from "./profile/StatsDialog";
 import NewRallyAwardsDialog from "./profile/NewRallyAwardsDialog";
+import NewShopAwardsDialog from "./profile/NewShopAwardsDialog";
 import ProfileMissionInstanceWarningDialog from "./profile/ProfileMissionInstanceWarningDialog";
 
 import { updateParty, removeMember } from "../../store/actions/partyActions";
@@ -48,6 +49,7 @@ import {
   toggleItem,
   deleteItem,
   clearRallyAwards,
+  clearShopAwards,
   confirmLevel
 } from "../../store/actions/profileActions";
 import { authCheck } from "../../store/actions/authActions";
@@ -829,7 +831,6 @@ const Profile = props => {
           </Grid>
         </Paper>
 
-
       </Grid>
       {activePerks.length > 0 && (
         <React.Fragment>
@@ -1045,7 +1046,8 @@ const Profile = props => {
       <NewLevelDialog
         open={
           props.auth.profile.levelNotifications > 0 &&
-          !props.auth.profile.rallyNotifications.isNew
+          !props.auth.profile.rallyNotifications.isNew &&
+          !props.auth.profile.shopNotifications.isNew
         }
         confirmLevel={attribute => props.confirmLevel(attribute)}
         userLevel={userLevel}
@@ -1053,8 +1055,14 @@ const Profile = props => {
       />
 
       <NewRallyAwardsDialog
-        open={props.auth.profile.rallyNotifications.isNew}
+        open={props.auth.profile.rallyNotifications.isNew && !props.auth.profile.shopNotifications.isNew}
         clearRallyAwards={() => props.clearRallyAwards()}
+        profile={props.auth.profile}
+      />
+
+      <NewShopAwardsDialog
+        open={props.auth.profile.shopNotifications.isNew}
+        clearShopAwards={() => props.clearShopAwards()}
         profile={props.auth.profile}
       />
 
@@ -1088,6 +1096,7 @@ const mapDispatchToProps = dispatch => {
     onRemoveMember: (partyId, memberId) =>
       dispatch(removeMember(partyId, memberId)),
     clearRallyAwards: () => dispatch(clearRallyAwards()),
+    clearShopAwards: () => dispatch(clearShopAwards()),
     confirmLevel: attribute => dispatch(confirmLevel(attribute)),
     onAuthCheck: () => dispatch(authCheck())
   };

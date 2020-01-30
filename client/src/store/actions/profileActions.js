@@ -113,7 +113,23 @@ export const clearRallyAwards = () => {
     return async dispatch => {
         try {
             console.log('clearUserAwards')
-            const res = await axios.patch('/user/clearAwards')
+            const res = await axios.patch('/user/clearRallyAwards')
+            const profile = res.data
+            
+            delete profile._id
+            dispatch({type: 'UPDATE_PROFILE_DATA', profile})
+            
+        }catch (e) {
+            dispatch( {type: "NO_CONNECTION", error: e})      
+        } 
+    }
+}
+
+export const clearShopAwards = () => {
+    return async dispatch => {
+        try {
+            console.log('clearUserAwards')
+            const res = await axios.patch('/user/clearShopAwards')
             const profile = res.data
             
             delete profile._id

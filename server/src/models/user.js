@@ -243,6 +243,23 @@ export const UserSchema = new mongoose.Schema({
         },
         awards: [ClassAwardsSchema],
     },
+    shopNotifications: {
+        isNew: {
+            type: Boolean, 
+            default: false,
+        },
+        experience: {
+            type: Number,
+            default: 0,
+            min: 0,
+            validate(value) {
+                if (!Number.isInteger(value)) {
+                    throw new Error(`${value} is not an integer value!`)
+                }
+            },
+        },
+        awards: [ClassAwardsSchema],
+    },
     levelNotifications: {
         type: Number,
         default: 0,

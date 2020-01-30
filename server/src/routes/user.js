@@ -779,7 +779,7 @@ router.patch('/confirmLevel', auth, async(req, res) => {
 })
 
 //OK
-router.patch("/clearAwards", auth, async (req, res) => {
+router.patch("/clearRallyAwards", auth, async (req, res) => {
   let user = req.user;
 
   try {
@@ -788,6 +788,23 @@ router.patch("/clearAwards", auth, async (req, res) => {
     }
 
     user.rallyNotifications = {isNew: false, experience: 0, awards: []};
+    await user.save();
+    user = await userStandardPopulate(user);
+    res.send(user);
+  } catch (e) {
+    res.status(400).send(e.message);
+  }
+});
+
+router.patch("/clearShopAwards", auth, async (req, res) => {
+  let user = req.user;
+
+  try {
+    if(!user.shopNotifications.isNew){
+      throw new Error('Operation forbidden!')
+    }
+
+    user.shopNotifications = {isNew: false, experience: 0, awards: []};
     await user.save();
     user = await userStandardPopulate(user);
     res.send(user);
@@ -884,7 +901,7 @@ router.patch("/loyal", auth, async (req, res) => {
         });
         await newItem.save();
         //new item id -> normal js saving
-
+        
         updatedUser.bag = [...updatedUser.bag, newItem._id];
         await newItem
           .populate({

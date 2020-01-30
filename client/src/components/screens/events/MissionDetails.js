@@ -16,7 +16,7 @@ import ExpandMore from "@material-ui/icons/ExpandMore";
 import styled from 'styled-components'
 import AwardListItem from './AwardListItem'
 import { classLabelsAny } from '../../../utils/labels';
-import {itemsPath, missionsPath} from '../../../utils/definitions'
+import {palette, itemsPath, missionsPath} from '../../../utils/definitions'
 
 
 
@@ -25,7 +25,7 @@ const RequiredAttribute = styled(Typography)`
     color: ${props => props.attr ? 'green' : 'red' } 
 `
 const Background = styled.div`
-    background-color: #3f51b5;
+    background-color: ${palette.primary.main};
     color: white;
 `
 
