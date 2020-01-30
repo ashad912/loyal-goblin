@@ -469,8 +469,9 @@ const verifyParty = (leader, membersIds, order) => {
       ];
       let orderParty = [];
       await asyncForEach(order, async user => {
-        const memberId = user.profile._id;
-
+        const memberId = user.profile._id; //works when order is MongoObject -> when depopulated can be: user.profile or user.profile._id, when populated only - user.profile._id
+                                              //for JSObject -> user.profile would be a String - only clear user.profile is accepted here
+                                              //CONCLUSION: this method works only with order as MongoObject
         orderParty = [...orderParty, memberId.toString()];
       });
       if (!isEqual(orderParty, party)) {
@@ -523,7 +524,7 @@ router.patch("/activate", auth, async (req, res) => {
       //here are objectIDs - need to be string
       throw new Error("User is not the leader!");
     }
-    //const party = await verifyParty(leader, membersIds, order);
+    //const party = await verifyParty(leader, membersIds, order); <- here is JS 
     const momentDate = moment
       .utc(new Date())
       .add("5", "minutes")

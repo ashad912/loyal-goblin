@@ -34,7 +34,7 @@ import NewRallyAwardsDialog from "./profile/NewRallyAwardsDialog";
 
 import { updateParty, removeMember } from "../../store/actions/partyActions";
 import {createAvatarPlaceholder, designateUserLevel, bagArrayToCategories} from "../../utils/methods";
-import {appearancePath, usersPath, classThemes} from '../../utils/definitions'
+import {appearancePath, usersPath, classThemes, uiPaths} from '../../utils/definitions'
 import maleBody from "../../assets/profile/male-body.png";
 
 import {
@@ -45,7 +45,6 @@ import {
 } from "../../store/actions/profileActions";
 import { authCheck } from "../../store/actions/authActions";
 import { classLabels } from "../../utils/labels";
-import {uiPaths } from '../../utils/uiPaths'
 const useStyles = makeStyles(theme => ({
   wrapper: {
     flexGrow: 1,

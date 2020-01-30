@@ -5,6 +5,17 @@ export const missionsPath = '/images/missions/'
 export const ralliesPath = '/images/rallies/'
 export const productsPath = '/images/products/'
 
+const basicPath = '/images/icons/'
+
+export const uiPaths = {
+    male: basicPath+'male.svg',
+    female: basicPath+'female.svg',
+    warrior: basicPath+'warrior.svg',
+    rogue: basicPath+'rogue.svg',
+    mage: basicPath+'mage.svg',
+    cleric: basicPath+'cleric.svg',
+}
+
 
 export const levelingEquation = { //y = a*(x*pow) + b
     a: 10,
