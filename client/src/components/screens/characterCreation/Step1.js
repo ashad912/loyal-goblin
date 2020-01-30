@@ -27,7 +27,7 @@ const Step1 = props => {
       />
 
 <Typography variant="caption" style={{textAlign: 'center', marginTop: '1rem'}}>
-        Imię może składać się z liter polskiego alfabetu, dwóch słów i maksymalnie 20 znaków.
+        Imię może składać się z liter polskiego alfabetu, cyfr, dwóch słów i maksymalnie 20 znaków.
       </Typography>
 
     </React.Fragment>

@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import {useHistory} from 'react-router'
+import { useHistory } from "react-router";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -21,7 +21,6 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 
-
 import Attribute from "./profile/Attribute";
 import Equipment from "./profile/Equipment";
 import NewLevelDialog from "./profile/NewLevelDialog";
@@ -31,11 +30,21 @@ import PartyJoiningDialog from "./profile/PartyJoiningDialog";
 import RankDialog from "./profile/RankDialog";
 import StatsDialog from "./profile/StatsDialog";
 import NewRallyAwardsDialog from "./profile/NewRallyAwardsDialog";
+import ProfileMissionInstanceWarningDialog from "./profile/ProfileMissionInstanceWarningDialog";
 
 import { updateParty, removeMember } from "../../store/actions/partyActions";
-import {createAvatarPlaceholder, designateUserLevel, bagArrayToCategories} from "../../utils/methods";
-import {appearancePath, usersPath, classThemes, uiPaths, appearancePaths} from '../../utils/definitions'
-import maleBody from "../../assets/profile/male-body.png";
+import {
+  createAvatarPlaceholder,
+  designateUserLevel,
+  bagArrayToCategories
+} from "../../utils/methods";
+import {
+  appearancePath,
+  usersPath,
+  classThemes,
+  uiPaths,
+  uiAppearancePaths
+} from "../../utils/definitions";
 
 import {
   toggleItem,
@@ -362,7 +371,7 @@ const createTempEquipped = () => {
 };
 
 const Profile = props => {
-  const history = useHistory()
+  const history = useHistory();
   const classes = useStyles();
 
   const [bag, setBag] = React.useState(
@@ -383,27 +392,34 @@ const Profile = props => {
 
   const [goExp, setGoExp] = React.useState(false);
   const [userLevel, setUserLevel] = React.useState(1);
-  const [relativeExp, setRelativeExp] = React.useState(0)
-  const [relativeThreshold, setRelativeThreshold] = React.useState(0)
+  const [relativeExp, setRelativeExp] = React.useState(0);
+  const [relativeThreshold, setRelativeThreshold] = React.useState(0);
   const [isJoiningParty, setIsJoiningParty] = React.useState(false);
   const [isCreatingParty, setIsCreatingParty] = React.useState(false);
   const [showRankDialog, setShowRankDialog] = React.useState(false);
   const [showStatsDialog, setShowStatsDialog] = React.useState(false);
+  const [
+    missionInstanceWarningDialog,
+    setMissionInstanceWarningDialog
+  ] = React.useState({action: null, text: ''});
 
   React.useEffect(() => {
-    if(history.location.state && history.location.state.hasOwnProperty("authCheck")){
-      props.onAuthCheck()
+    if (
+      history.location.state &&
+      history.location.state.hasOwnProperty("authCheck")
+    ) {
+      props.onAuthCheck();
     }
     updateEquippedItems();
     props.onPartyUpdate();
   }, []);
 
   React.useEffect(() => {
-    const levelData = designateUserLevel(props.auth.profile.experience, true)
-    setUserLevel(levelData.level)
-    setRelativeExp(levelData.relativeExp)
-    setRelativeThreshold(levelData.relativeThreshold)
-  }, [props.auth.profile.experience])
+    const levelData = designateUserLevel(props.auth.profile.experience, true);
+    setUserLevel(levelData.level);
+    setRelativeExp(levelData.relativeExp);
+    setRelativeThreshold(levelData.relativeThreshold);
+  }, [props.auth.profile.experience]);
 
   const updateEquippedItems = () => {
     const equipment = {
@@ -461,25 +477,24 @@ const Profile = props => {
 
   const handleItemToggle = (id, isEquipped, category, twoHanded) => {
     const tempPlayer = { ...props.auth.profile };
-    if(props.party && props.party.inShop){
-      return
-    }else{
+    if (props.party && props.party.inShop) {
+      return;
+    } else {
       if (category === "weapon") {
         if (twoHanded) {
-          if(isEquipped){
+          if (isEquipped) {
             tempPlayer.equipped.weaponRight = null;
             tempPlayer.equipped.weaponLeft = null;
-
-          }else{
-
+          } else {
             tempPlayer.equipped.weaponRight = id;
             tempPlayer.equipped.weaponLeft = null;
           }
         } else {
           const rightHandItem =
             tempPlayer.equipped.weaponRight &&
-            bag.weapon.find(item => item._id === tempPlayer.equipped.weaponRight)
-              .itemModel;
+            bag.weapon.find(
+              item => item._id === tempPlayer.equipped.weaponRight
+            ).itemModel;
           if (
             rightHandItem &&
             rightHandItem.hasOwnProperty("twoHanded") &&
@@ -487,7 +502,7 @@ const Profile = props => {
           ) {
             tempPlayer.equipped.weaponRight = null;
           }
-  
+
           if (
             !tempPlayer.equipped.weaponRight &&
             !tempPlayer.equipped.weaponLeft
@@ -556,7 +571,7 @@ const Profile = props => {
       } else {
         tempPlayer.equipped[category] = isEquipped ? null : id;
       }
-  
+
       props.onItemToggle(id, category, tempPlayer.equipped);
     }
   };
@@ -573,9 +588,9 @@ const Profile = props => {
     //   delete tempPlayer.bag[category];
     // }
     // setPlayer({ ...tempPlayer });
-    if(props.party && props.party.inShop){
-      return
-    }else{
+    if (props.party && props.party.inShop) {
+      return;
+    } else {
       props.onItemDelete(id);
       updateEquippedItems();
     }
@@ -605,10 +620,10 @@ const Profile = props => {
   // };
 
   //const handleNewLevelDialogClose = attribute => {
-    //setNewLevelDialogOpen(false);
-    // const attributes = { ...props.auth.profile.attributes };
-    // attributes[attribute]++;
-    //TODO: backend add attribute point
+  //setNewLevelDialogOpen(false);
+  // const attributes = { ...props.auth.profile.attributes };
+  // attributes[attribute]++;
+  //TODO: backend add attribute point
   //};
 
   // const handleGoExp = () => {
@@ -616,12 +631,18 @@ const Profile = props => {
   //   setGoExp(prev => !prev);
   // };
 
+  const handleOpenShop = () => {
+    history.push("/shop", { id: props.auth.uid });
+  };
 
   const handleLeaveParty = () => {
     props.onRemoveMember(props.party._id, props.auth.uid);
   };
 
-  
+  const handleMissionInstanceWarningDialog = (action, text) => {
+    setMissionInstanceWarningDialog({action, text});
+  };
+
   return (
     <Grid
       container
@@ -631,22 +652,21 @@ const Profile = props => {
       className={classes.wrapper}
       spacing={2}
     >
-
-      <Typography variant="h5"> Poziom {userLevel} <img src={uiPaths[props.auth.profile.class]} width={32} /> </Typography>
+      <Typography variant="h5">
+        {" "}
+        Poziom {userLevel}{" "}
+        <img src={uiPaths[props.auth.profile.class]} width={32} />{" "}
+      </Typography>
 
       <Typography variant="subtitle2">
-        Doświadczenie:{" "}
-        {relativeExp + " / " + relativeThreshold}
+        Doświadczenie: {relativeExp + " / " + relativeThreshold}
       </Typography>
       <LinearProgress
         variant="determinate"
-        value={
-          (relativeExp * 100) / relativeThreshold
-        }
+        value={(relativeExp * 100) / relativeThreshold}
         className={classes.expBar}
       />
-   
-     
+
       <Grid
         container
         item
@@ -657,7 +677,10 @@ const Profile = props => {
       >
         <Paper xs={8} className={classes.avatarCard}>
           {/* body */}
-          <img src={appearancePaths[props.auth.profile.sex]} className={classes.avatarImage} />
+          <img
+            src={uiAppearancePaths[props.auth.profile.sex]}
+            className={classes.avatarImage}
+          />
           {/* legs */}
           {equippedItems && equippedItems.legs && (
             <img
@@ -689,7 +712,10 @@ const Profile = props => {
               />
             )}
           {/* Main-hand weapon */}
-          {console.log(equippedItems, equippedItems&&equippedItems.weaponRight)}
+          {console.log(
+            equippedItems,
+            equippedItems && equippedItems.weaponRight
+          )}
           {equippedItems && equippedItems.weaponRight && (
             <img
               className={classes.avatarImage}
@@ -713,7 +739,6 @@ const Profile = props => {
           justify="flex-start"
           alignItems="center"
         >
-          
           <Attribute
             attributeName="Siła"
             attributeValue={props.auth.profile.attributes.strength}
@@ -735,10 +760,22 @@ const Profile = props => {
             attributeModifier={props.auth.profile.userPerks.attrEndurance}
           />
 
-          {(props.party && props.party.leader && (props.party.leader._id === props.auth.uid || props.party.leader === props.auth.uid)) || !props.party.leader && !props.party.members.length ? 
-          
-          <Link to={{pathname: '/shop', state: { id: props.auth.uid} }} style={{ marginTop: "1rem", textDecoration: 'none' }} >
-            <Button variant="contained" color="primary" >
+          {(props.party &&
+            props.party.leader &&
+            (props.party.leader._id === props.auth.uid ||
+              props.party.leader === props.auth.uid)) ||
+          (!props.party.leader && !props.party.members.length) ? (
+            <Button
+              variant="contained"
+              color="primary"
+              style={{ marginTop: "1rem" }}
+              onClick={
+                !props.mission.activeInstanceId
+                  ? () =>
+                      handleMissionInstanceWarningDialog(() => handleOpenShop(), "Otworzenie sklepu")
+                  : handleOpenShop
+              }
+            >
               Idziemy expić!
               <ColorizeIcon
                 style={{
@@ -748,20 +785,23 @@ const Profile = props => {
                 }}
               />
             </Button>
-          </Link> :
-                      <Button variant="contained" color="primary" disabled style={{ marginTop: "1rem" }}>
-                      Idziemy expić!
-                      <ColorizeIcon
-                        style={{
-                          fontSize: "2rem",
-                          transition: "transform 500ms ease-out",
-                          transform: goExp ? "rotate(540deg)" : "rotate(180deg)"
-                        }}
-                      />
-                    </Button>
-
-          
-        }
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              disabled
+              style={{ marginTop: "1rem" }}
+            >
+              Idziemy expić!
+              <ColorizeIcon
+                style={{
+                  fontSize: "2rem",
+                  transition: "transform 500ms ease-out",
+                  transform: goExp ? "rotate(540deg)" : "rotate(180deg)"
+                }}
+              />
+            </Button>
+          )}
         </Grid>
       </Grid>
       {activePerks.length > 0 && (
@@ -812,59 +852,79 @@ const Profile = props => {
         </div>
       )}
 
-      {props.party && props.party.leader  && props.party.leader._id ? (
-        <List
-          style={{ width: "80%", marginTop: "2rem", border: "1px solid grey" }}
-        >
-          <ListItem>
-            <Badge
-              badgeContent="Lider"
-              color="primary"
-              anchorOrigin={{ horizontal: "right", vertical: "top" }}
-            >
-              <ListItemAvatar>
-                {props.party.leader.avatar ? (
-                  <img
-                    src={usersPath + props.party.leader.avatar}
-                    width="32"
-                  />
-                ) : (
-                  <Avatar>
-                    {createAvatarPlaceholder(props.party.leader.name)}
-                  </Avatar>
-                )}
-              </ListItemAvatar>
-            </Badge>
-            <ListItemText primary={props.party.leader.name} style={{maxWidth: '40vw', whiteSpace:'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',}}/>
-          </ListItem>
+      {props.party && props.party.leader && props.party.leader._id ? (
+        <Paper style={{ width: "100%", marginTop: "2rem" }}>
+          <List>
+            <ListItem>
+              <Badge
+                badgeContent="Lider"
+                color="primary"
+                anchorOrigin={{ horizontal: "right", vertical: "top" }}
+              >
+                <ListItemAvatar>
+                  {props.party.leader.avatar ? (
+                    <img
+                      src={usersPath + props.party.leader.avatar}
+                      width="32"
+                    />
+                  ) : (
+                    <Avatar>
+                      {createAvatarPlaceholder(props.party.leader.name)}
+                    </Avatar>
+                  )}
+                </ListItemAvatar>
+              </Badge>
+              <ListItemText
+                primary={props.party.leader.name}
+                style={{
+                  maxWidth: "40vw",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis"
+                }}
+              />
+            </ListItem>
 
-          {props.party.members.length > 0 &&
-            props.party.members.map(partyMember => {
-              return (
-                <ListItem key={partyMember._id}>
-                  <ListItemAvatar>
-                    {partyMember.avatar ? (
-                      <img
-                        src={usersPath + partyMember.avatar}
-                        width="32"
-                      />
-                    ) : (
-                      <Avatar>
-                        {createAvatarPlaceholder(partyMember.name)}
-                      </Avatar>
-                    )}
-                  </ListItemAvatar>
-                  <ListItemText primary={partyMember.name} style={{maxWidth: '40vw', whiteSpace:'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}/>
-                </ListItem>
-              );
-            })}
-        </List>
+            {props.party.members.length > 0 &&
+              props.party.members.map(partyMember => {
+                return (
+                  <ListItem key={partyMember._id}>
+                    <ListItemAvatar>
+                      {partyMember.avatar ? (
+                        <img src={usersPath + partyMember.avatar} width="32" />
+                      ) : (
+                        <Avatar>
+                          {createAvatarPlaceholder(partyMember.name)}
+                        </Avatar>
+                      )}
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={partyMember.name}
+                      style={{
+                        maxWidth: "40vw",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis"
+                      }}
+                    />
+                  </ListItem>
+                );
+              })}
+          </List>
+        </Paper>
       ) : (
         <Grid container justify="space-around">
           <Grid item container direction="column" alignItems="center" xs={6}>
             <Fab
               color="primary"
-              onClick={() => setIsJoiningParty(prev => !prev)}
+              onClick={
+
+                props.mission.activeInstanceId
+                  ? () =>
+                      handleMissionInstanceWarningDialog(() => setIsJoiningParty(prev => !prev), "Poszukiwanie drużyny")
+                  : () => setIsJoiningParty(prev => !prev)
+              
+                }
             >
               <EmojiPeopleIcon />
             </Fab>
@@ -875,7 +935,14 @@ const Profile = props => {
           <Grid item container direction="column" alignItems="center" xs={6}>
             <Fab
               color="primary"
-              onClick={() => setIsCreatingParty(prev => !prev)}
+              onClick={
+
+                props.mission.activeInstanceId
+                  ? () =>
+                      handleMissionInstanceWarningDialog(() => setIsCreatingParty(prev => !prev), "Tworzenie drużyny")
+                  : () => setIsCreatingParty(prev => !prev)
+              
+                }
             >
               <GroupAddIcon />
             </Fab>
@@ -908,7 +975,6 @@ const Profile = props => {
         </Grid>
       </Grid>
 
-      
       <PartyJoiningDialog
         open={isJoiningParty}
         userId={props.auth.uid}
@@ -920,20 +986,23 @@ const Profile = props => {
         open={isCreatingParty}
         isManagingParty={
           props.party &&
-          props.party.leader  && props.party.leader._id && 
+          props.party.leader &&
+          props.party.leader._id &&
           props.party.leader._id === props.auth.uid
         }
         partyName={props.party && props.party.name}
         handleClose={() => setIsCreatingParty(prev => !prev)}
         activeMission={props.mission.activeInstanceId}
       />
-      {showRankDialog && <RankDialog
-        open={showRankDialog}
-        profile={props.auth.profile}
-        uid={props.auth.uid}
-        handleClose={() => setShowRankDialog(prev => !prev)}
-      />}
-      
+      {showRankDialog && (
+        <RankDialog
+          open={showRankDialog}
+          profile={props.auth.profile}
+          uid={props.auth.uid}
+          handleClose={() => setShowRankDialog(prev => !prev)}
+        />
+      )}
+
       <StatsDialog
         open={showStatsDialog}
         profile={props.auth.profile}
@@ -941,8 +1010,11 @@ const Profile = props => {
       />
 
       <NewLevelDialog
-        open={props.auth.profile.levelNotifications > 0 && !props.auth.profile.rallyNotifications.isNew}
-        confirmLevel={(attribute) => props.confirmLevel(attribute)}
+        open={
+          props.auth.profile.levelNotifications > 0 &&
+          !props.auth.profile.rallyNotifications.isNew
+        }
+        confirmLevel={attribute => props.confirmLevel(attribute)}
         userLevel={userLevel}
         levelNotifications={props.auth.profile.levelNotifications}
       />
@@ -953,7 +1025,12 @@ const Profile = props => {
         profile={props.auth.profile}
       />
 
-
+      <ProfileMissionInstanceWarningDialog
+        open={Boolean(missionInstanceWarningDialog.action)}
+        handleClose={()=>setMissionInstanceWarningDialog({action:null, text: ''})}
+        handleAction={missionInstanceWarningDialog.action}
+        text={missionInstanceWarningDialog.text}
+      />
     </Grid>
   );
 };
@@ -962,7 +1039,7 @@ const mapStateToProps = state => {
   return {
     auth: state.auth,
     party: state.party,
-    mission: state.mission,
+    mission: state.mission
   };
 };
 
@@ -971,11 +1048,12 @@ const mapDispatchToProps = dispatch => {
     onItemToggle: (id, category, equipped) =>
       dispatch(toggleItem(id, category, equipped)),
     onItemDelete: id => dispatch(deleteItem(id)),
-    onPartyUpdate: (params, socketAuthReconnect) => dispatch(updateParty(params, socketAuthReconnect)),
+    onPartyUpdate: (params, socketAuthReconnect) =>
+      dispatch(updateParty(params, socketAuthReconnect)),
     onRemoveMember: (partyId, memberId) =>
       dispatch(removeMember(partyId, memberId)),
     clearRallyAwards: () => dispatch(clearRallyAwards()),
-    confirmLevel: (attribute) => dispatch(confirmLevel(attribute)),
+    confirmLevel: attribute => dispatch(confirmLevel(attribute)),
     onAuthCheck: () => dispatch(authCheck())
   };
 };

@@ -39,9 +39,9 @@ Object.keys(iconPaths).forEach(path => {
     iconPaths[path] = basicPath + iconPaths[path]
 })
 
-export const uiPaths = {...iconPaths}
 
-export const appearancePaths = {
+
+export const uiAppearancePaths = {
     male: '/images/appearance/male-body.png',
     female: '/images/appearance/female-body.png'
 }
@@ -72,7 +72,8 @@ export const palette = {
     background: {
         equipped: '#e6dc8d',
         standard: '#eeeeee'
-    }
+    },
+    border: "1px solid rgb(192, 192, 192)"
 }
 
 export const classThemes = {

@@ -52,7 +52,7 @@ const CharacterCreation = props => {
 
   const handleNameChange = event => {
     if (
-      (/^[a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ\s]*$/.test(
+      (/^[a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ0-9][a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ0-9\s]*$/.test(
         event.target.value
       ) ||
         event.target.value === "") &&

@@ -6,21 +6,22 @@ import Grid from "@material-ui/core/Grid";
 
 import { perkLabels, dayLabels } from "../../../utils/labels";
 import { getValue, getTarget } from "../../../utils/methods";
+import { palette } from "../../../utils/definitions";
 
 
 
 
 
-const PerkBoxItem = ({ perk }) => {
+const PerkBoxItem = ({ perk, isFirst }) => {
 
 
 
   let primaryText = [perkLabels[perk.perkType]]
-  if (perk.hasOwnProperty("value")) {
-    primaryText.push(getValue(perk.perkType, perk.value))
-  }
   if (perk.perkType.startsWith("disc")) {
     primaryText.push(getTarget(perk.perkType, perk.target))
+  }
+  if (perk.hasOwnProperty("value")) {
+    primaryText.push(getValue(perk.perkType, perk.value))
   }
 
   let secondaryText;
@@ -60,15 +61,15 @@ const PerkBoxItem = ({ perk }) => {
   }
 
   return (
-    <ListItem style={{ flexDirection: "column", alignItems: 'flex-start' }}>
-      <Grid container justify="flex-start" spacing={2} >
+    <ListItem style={{ flexDirection: "column", alignItems: 'flex-start', borderTop: isFirst ? "" : palette.border }}>
+      <Typography variant="caption">
+      {secondaryText}
+      </Typography>
+      <Grid container justify="flex-start" spacing={1} >
       {primaryText.map((text, index) => {
         return <Grid key={text+index} item ><Typography style={{textAlign: 'center'}}>{text}</Typography></Grid>
       })}
       </Grid>
-      <Typography variant="caption">
-      {secondaryText}
-      </Typography>
     </ListItem>
   );
 };

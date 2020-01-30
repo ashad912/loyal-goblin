@@ -97,7 +97,7 @@ const EquipmentListItem = props => {
       alignItems="flex-start"
       className={classes.listItem}
       //style={{ boxShadow: props.equipped ? `inset 0px 0px 22px 3px ${palette.primary.main}`  : "" }}
-      style={{background: props.equipped ? "#388e3ccf" : '', color: props.equipped ? 'white' : 'black', borderBottom: "1px solid rgb(192, 192, 192)", borderTop: props.isFirst ? "1px solid rgb(192, 192, 192)" : ""}}
+      style={{background: props.equipped ? "#388e3ccf" : '', color: props.equipped ? 'white' : 'black', borderTop: palette.border}}
       equipped={props.equipped ? 1 : 0}
       onClick={() =>
         props.itemCategory !== "amulet" &&

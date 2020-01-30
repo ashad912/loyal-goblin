@@ -1,16 +1,18 @@
 import React from "react";
 import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
+import Paper from "@material-ui/core/Paper";
 
 import PerkBoxItem from "./PerkBoxItem";
 
 const PerkBox = ({ perks }) => {
   return (
-    <List style={{ width: "100%", border: "2px solid grey" }}>
-      {perks.map(perk => {
-        return <PerkBoxItem key={perk.perkType+perk.value+perk.id} perk={perk} />;
+    <Paper style={{ width: "100%"}}>
+    <List  >
+      {perks.map((perk, index) => {
+        return <PerkBoxItem key={perk.perkType+perk.value+perk.id} perk={perk} isFirst={index===0}/>;
       })}
     </List>
+    </Paper>
   );
 };
 
