@@ -259,9 +259,9 @@ const AdminItems = () => {
               >
               {filteredItems.map((item, index) => {
                 return (
-                  <React.Fragment>
+                  <React.Fragment key={item._id}>
                   <ItemListItem
-                    key={item._id}
+
                     index={index}
                     isLast={filteredItems.length - 1 === index}
                     item={item}

@@ -22,14 +22,15 @@ const iconPaths = {
     lookForGroup: 'look-for-group.svg',
     addMember: 'add-member.svg',
     statistics: 'statistics.svg',
-    ranking: 'ranking.svg'
+    ranking: 'ranking.svg',
+    goExp: 'go-exp.svg'
 }
 
 Object.keys(iconPaths).forEach(path => {
     iconPaths[path] = basicPath + iconPaths[path]
 })
 
-
+export const uiPaths = {...iconPaths}
 
 export const uiAppearancePaths = {
     male: '/images/appearance/male-body.png',

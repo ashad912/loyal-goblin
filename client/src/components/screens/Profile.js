@@ -1,4 +1,5 @@
 import React from "react";
+import styled from 'styled-components'
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
@@ -54,6 +55,13 @@ import {
 } from "../../store/actions/profileActions";
 import { authCheck } from "../../store/actions/authActions";
 import { classLabels } from "../../utils/labels";
+
+
+const FabIcon = styled.img`
+width: 2rem;
+`
+
+
 const useStyles = makeStyles(theme => ({
   wrapper: {
     flexGrow: 1,
@@ -712,10 +720,7 @@ const Profile = props => {
               />
             )}
           {/* Main-hand weapon */}
-          {console.log(
-            equippedItems,
-            equippedItems && equippedItems.weaponRight
-          )}
+          
           {equippedItems && equippedItems.weaponRight && (
             <img
               className={classes.avatarImage}
@@ -741,21 +746,25 @@ const Profile = props => {
         >
           <Attribute
             attributeName="Siła"
+            attributeIcon={uiPaths.strength}
             attributeValue={props.auth.profile.attributes.strength}
             attributeModifier={props.auth.profile.userPerks.attrStrength}
           />
           <Attribute
             attributeName="Zręczność"
+            attributeIcon={uiPaths.dexterity}
             attributeValue={props.auth.profile.attributes.dexterity}
             attributeModifier={props.auth.profile.userPerks.attrDexterity}
           />
           <Attribute
             attributeName="Magia"
+            attributeIcon={uiPaths.magic}
             attributeValue={props.auth.profile.attributes.magic}
             attributeModifier={props.auth.profile.userPerks.attrMagic}
           />
           <Attribute
             attributeName="Wytrzymałość"
+            attributeIcon={uiPaths.endurance}
             attributeValue={props.auth.profile.attributes.endurance}
             attributeModifier={props.auth.profile.userPerks.attrEndurance}
           />
@@ -770,18 +779,19 @@ const Profile = props => {
               color="primary"
               style={{ marginTop: "1rem" }}
               onClick={
-                !props.mission.activeInstanceId
+                props.mission.activeInstanceId
                   ? () =>
                       handleMissionInstanceWarningDialog(() => handleOpenShop(), "Otworzenie sklepu")
                   : handleOpenShop
               }
             >
               Idziemy expić!
-              <ColorizeIcon
+              <img
+              src={uiPaths.goExp}
                 style={{
-                  fontSize: "2rem",
+                  width: '2rem',
                   transition: "transform 500ms ease-out",
-                  transform: goExp ? "rotate(540deg)" : "rotate(180deg)"
+                  transform: goExp ? "rotate(540deg)" : "rotate(0deg)"
                 }}
               />
             </Button>
@@ -926,7 +936,8 @@ const Profile = props => {
               
                 }
             >
-              <EmojiPeopleIcon />
+              {/* <EmojiPeopleIcon /> */}
+              <FabIcon src={uiPaths.lookForGroup} style={{width: '2rem'}}/>
             </Fab>
             <Typography variant="caption" style={{ marginTop: "0.4rem" }}>
               Szukaj drużyny
@@ -944,7 +955,8 @@ const Profile = props => {
               
                 }
             >
-              <GroupAddIcon />
+              {/* <GroupAddIcon /> */}
+              <FabIcon src={uiPaths.addMember} style={{width: '2rem'}}/>
             </Fab>
             <Typography variant="caption" style={{ marginTop: "0.4rem" }}>
               Utwórz drużynę
@@ -956,7 +968,8 @@ const Profile = props => {
       <Grid container justify="space-around">
         <Grid item container direction="column" alignItems="center" xs={6}>
           <Fab color="primary" onClick={() => setShowRankDialog(prev => !prev)}>
-            <EmojiEventsIcon />
+            {/* <EmojiEventsIcon /> */}
+            <FabIcon src={uiPaths.ranking} style={{width: '2rem'}}/>
           </Fab>
           <Typography variant="caption" style={{ marginTop: "0.4rem" }}>
             Ranking
@@ -967,7 +980,8 @@ const Profile = props => {
             color="primary"
             onClick={() => setShowStatsDialog(prev => !prev)}
           >
-            <EqualizerIcon />
+            {/* <EqualizerIcon /> */}
+            <FabIcon src={uiPaths.statistics} style={{width: '2rem'}}/>
           </Fab>
           <Typography variant="caption" style={{ marginTop: "0.4rem" }}>
             Statystyki

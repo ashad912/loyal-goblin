@@ -42,7 +42,7 @@ const ProductListItem = ({
   return (
     <React.Fragment>
 
-    <StyledListItem active={false}>
+    <StyledListItem >
       <Grid container direction="column" spacing={2}>
         <Grid item container>
           <Grid item xs={2}>

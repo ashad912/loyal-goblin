@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import Recaptcha from 'react-google-invisible-recaptcha';
+import Recaptcha from "react-google-invisible-recaptcha";
 import { ScrollingProvider, Section } from "react-scroll-section";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -666,29 +666,32 @@ class Shop extends React.Component {
     this.menuRef = React.createRef();
   }
 
-  backToEvents = (history) => {
+  backToEvents = history => {
     history.push({
-      pathname: '/',
-      state: {indexRedirect: 0}
-    }) 
-  }
+      pathname: "/",
+      state: { indexRedirect: 0 }
+    });
+  };
 
   handleBack = () => {
-    this.backToEvents(this.props.history)
-  }
-
+    this.backToEvents(this.props.history);
+  };
 
   async componentDidMount() {
-
-    if(!this.props.location.state || (this.props.location.state.id === undefined)){
-      this.handleBack()
-      return
+    if (
+      !this.props.location.state ||
+      this.props.location.state.id === undefined
+    ) {
+      this.handleBack();
+      return;
     }
 
-    const leader = !this.props.party.length || (this.props.party[0]._id === this.props.auth.uid)
+    const leader =
+      !this.props.party.length ||
+      this.props.party[0]._id === this.props.auth.uid;
 
-    if(!leader){
-      this.handleBack()
+    if (!leader) {
+      this.handleBack();
     }
 
     let menuTopOffset = this.menuRef.current && this.menuRef.current.offsetTop;
@@ -708,9 +711,7 @@ class Shop extends React.Component {
       });
     }
 
-    this.setState({ baskets, products: [...this.props.products] }, () => {
-      
-    });
+    this.setState({ baskets, products: [...this.props.products] }, () => {});
 
     this.handleChangeactiveUser(
       null,
@@ -718,21 +719,21 @@ class Shop extends React.Component {
         ? this.props.party[0]._id
         : this.props.auth.uid
     );
-
-
   }
 
   async componentDidUpdate(prevProps, prevState) {
     if (prevProps.party !== this.props.party && this.state.activeUser) {
-      if(prevProps.party.length !== this.props.party.length){
-
-        const tempBaskets = {...this.state.baskets}
+      if (prevProps.party.length !== this.props.party.length) {
+        console.log(prevProps.party, this.props.party);
+        const tempBaskets = { ...this.state.baskets };
         Object.keys(tempBaskets).filter(basket => {
-          if(this.props.party.findIndex(member => member._id === basket) === -1){
-            delete tempBaskets[basket]
+          if (
+            this.props.party.findIndex(member => member._id === basket) === -1
+          ) {
+            delete tempBaskets[basket];
           }
-        })
-        this.setState({baskets: tempBaskets})
+        });
+        this.setState({ baskets: tempBaskets });
 
         this.handleChangeactiveUser(
           null,
@@ -740,10 +741,14 @@ class Shop extends React.Component {
             ? this.props.party[0]._id
             : this.props.auth.uid
         );
-      }else{
+      } else {
         this.handleChangeactiveUser(null, this.state.activeUser);
       }
-      
+    }
+    if (prevState.activeUser !== this.state.activeUser) {
+      let menuTopOffset =
+        this.menuRef.current && this.menuRef.current.offsetTop;
+      this.setState({ menuTopOffset });
     }
   }
 
@@ -797,7 +802,7 @@ class Shop extends React.Component {
     //CALL BACKEND FOR PRODUCT MODIFIERS EACH TIME ACTIVE USER CHANGES
     this.setState({ activeUser: id }, () => {
       let products = [...this.props.products];
-      console.log(products)
+     // console.log(products);
       products = products.map(product => {
         return {
           ...product,
@@ -824,8 +829,13 @@ class Shop extends React.Component {
                 "experienceMod"
               )
             ) {
-              const expMod = activeUser.userPerks.products[modifiedProduct].experienceMod;
-              const exp = parseInt(activeUser.userPerks.products[modifiedProduct].experienceMod) + products[modifyIndex].price*10
+              const expMod =
+                activeUser.userPerks.products[modifiedProduct].experienceMod;
+              const exp =
+                parseInt(
+                  activeUser.userPerks.products[modifiedProduct].experienceMod
+                ) +
+                products[modifyIndex].price * 10;
               products[modifyIndex].experience = exp;
               if (expMod > 0) {
                 products[modifyIndex].experienceModified =
@@ -867,21 +877,20 @@ class Shop extends React.Component {
     //     tempBaskets[owner].push(null)
     //   }
     // })
-    if(Object.values(this.state.baskets).some(basket => basket.length > 0)){
+    if (Object.values(this.state.baskets).some(basket => basket.length > 0)) {
       this.recaptcha.execute();
-    }else{
+    } else {
       this.recaptcha.reset();
     }
 
-
     //this.setState({ showVerificationPage: true });
   };
-  
-  onCaptchaResolved =  () => {
-    const token = this.recaptcha.getResponse()
-     this.props.onActivateOrder(this.state.baskets, token);
-    this.handleToggleBasketDrawer()
-  }
+
+  onCaptchaResolved = () => {
+    const token = this.recaptcha.getResponse();
+    this.props.onActivateOrder(this.state.baskets, token);
+    this.handleToggleBasketDrawer();
+  };
 
   handleScrollModalToggle = () => {
     this.setState(prevState => {
@@ -889,13 +898,17 @@ class Shop extends React.Component {
     });
   };
 
-  handleScrollSelect = async (id) => {
+  handleScrollSelect = async id => {
     if (this.state.activeUser === this.props.auth.uid) {
       //Leader equip
       const tempPlayer = { ...this.props.auth.profile };
       tempPlayer.equipped.scroll =
         tempPlayer.equipped.scroll === id ? null : id;
-      await this.props.onLeaderScrollToggle(id, "scroll", this.props.auth.profile.equipped);
+      await this.props.onLeaderScrollToggle(
+        id,
+        "scroll",
+        this.props.auth.profile.equipped
+      );
     } else {
       //Party member equip
 
@@ -914,7 +927,7 @@ class Shop extends React.Component {
         this.state.activeUser
       );
     }
-    this.handleChangeactiveUser(null, this.state.activeUser)
+    this.handleChangeactiveUser(null, this.state.activeUser);
   };
 
   handleLeaveShop = async () => {
@@ -943,12 +956,27 @@ class Shop extends React.Component {
       return product.category === "food";
     });
 
-    const activeUser =
-      this.state.activeUser &&
-      this.props.party.length > 0 &&
-      this.state.activeUser !== this.props.auth.uid
-        ? this.props.party.find(user => user._id === this.state.activeUser)
-        : this.props.auth.profile;
+    // const activeUser =
+    //   this.state.activeUser &&
+    //   this.props.party.length > 0 &&
+    //   this.state.activeUser !== this.props.auth.uid
+    //     ? this.props.party.find(user => user._id === this.state.activeUser)
+    //     : this.props.auth.profile;
+
+    let activeUser;
+    if (this.state.activeUser) {
+      if (this.props.party.length > 1) {
+        if (this.state.activeUser !== this.props.auth.uid) {
+          activeUser = this.props.party.find(
+            user => user._id === this.state.activeUser
+          );
+        } else {
+          activeUser = this.props.auth.profile;
+        }
+      } else {
+        activeUser = this.props.auth.profile;
+      }
+    }
 
     let equippedScroll;
     if (activeUser && activeUser.bag) {
@@ -956,227 +984,256 @@ class Shop extends React.Component {
         item => item._id === activeUser.equipped.scroll
       );
     }
-   
-    return (
-      <div>
-        {this.props.activeOrder.length > 0 && this.state.activeUser ? (
-          <VerificationPage user={this.props.auth} party={this.props.party} />
-        ) : (
-          <ScrollingProvider>
-            <Button
-              variant="contained"
-              style={{ marginTop: "1rem", marginBottom: '0.5rem' }}
-              onClick={this.handleLeaveShop}
-            >{`< Wyjście`}</Button>
-            {this.props.party && this.props.party.length > 1 && (
-              <PlayerShopButtons
-                users={this.props.party}
-                activeUser={this.state.activeUser}
-                handleChipClick={this.handleChangeactiveUser}
-              />
-            )}
-            {!activeUser.equipped.scroll && activeUser.bag.length > 0 ? (
-              <Box>
-
+    // console.log(this.state.activeUser,activeUser, this.props.party)
+    if (activeUser) {
+      return (
+        <div>
+          {this.props.activeOrder.length > 0 && this.state.activeUser ? (
+            <VerificationPage user={this.props.auth} party={this.props.party} />
+          ) : (
+            <ScrollingProvider>
               <Button
-                style={{ margin: "1rem 0" }}
+                fullWidth
                 variant="contained"
-                color="primary"
-                onClick={this.handleScrollModalToggle}
+                style={{
+                  marginTop: "0.5rem",
+                  marginBottom: "1rem",
+                  borderRadius: 0
+                }}
+                onClick={this.handleLeaveShop}
+              >{`< Wyjście`}</Button>
+              {this.props.party && this.props.party.length > 1 && (
+                <PlayerShopButtons
+                  users={this.props.party}
+                  activeUser={this.state.activeUser}
+                  handleChipClick={this.handleChangeactiveUser}
+                />
+              )}
+              {!activeUser.equipped.scroll && activeUser.bag.length > 0 ? (
+                <Box>
+                  <Button
+                    style={{ margin: "1rem 0" }}
+                    variant="contained"
+                    color="primary"
+                    onClick={this.handleScrollModalToggle}
+                  >
+                    Dodaj zwój z ekwipunku
+                  </Button>
+                </Box>
+              ) : (
+                activeUser.bag.length > 0 && (
+                  <Grid
+                    container
+                    alignItems="center"
+                    style={{
+                      width: "100%",
+                      margin: "1rem 0",
+                      padding: "0.4rem",
+                      boxSizing: "border-box"
+                    }}
+                  >
+                    <Grid item xs={10}>
+                      <ScrollListItem inactive scroll={equippedScroll} />
+                    </Grid>
+                    <Grid item>
+                      <HighlightOffIcon
+                        onClick={() =>
+                          this.handleScrollSelect(equippedScroll._id)
+                        }
+                        style={{ fontSize: "3rem", color: "#be0000" }}
+                      />
+                    </Grid>
+                  </Grid>
+                )
+              )}
+
+              <Menu
+                square
+                sticky={this.state.menuSticky ? 1 : 0}
+                ref={this.menuRef}
               >
-                Dodaj zwój z ekwipunku
-              </Button>
-              </Box>
-            ) : (
-              activeUser.bag.length > 0 && (
                 <Grid
                   container
+                  direction="row"
+                  justify="space-around"
                   alignItems="center"
-                  style={{
-                    width: "100%",
-                    margin: "1rem 0",
-                    padding: "0.4rem",
-                    boxSizing: "border-box"
-                  }}
+                  spacing={2}
                 >
-                  <Grid item xs={10}>
-                    <ScrollListItem inactive scroll={equippedScroll} />
+                  <Grid item>
+                    <MenuItem section="shots">Szoty</MenuItem>
                   </Grid>
                   <Grid item>
-                    <HighlightOffIcon
-                      onClick={() =>
-                        this.handleScrollSelect(equippedScroll._id)
-                      }
-                      style={{ fontSize: "3rem", color: "#be0000" }}
-                    />
+                    <MenuItem section="drinks">Driny</MenuItem>
+                  </Grid>
+                  <Grid item>
+                    <MenuItem section="beers">Piwa</MenuItem>
+                  </Grid>
+                  <Grid item>
+                    <MenuItem section="alco-free">Bez promili</MenuItem>
+                  </Grid>
+                  <Grid item>
+                    <MenuItem section="food">Jedzenie</MenuItem>
                   </Grid>
                 </Grid>
-              )
-            )}
-
-            <Menu
-              square
-              sticky={this.state.menuSticky ? 1 : 0}
-              ref={this.menuRef}
-            >
-              <Grid
-                container
-                direction="row"
-                justify="space-around"
-                alignItems="center"
-                spacing={2}
-              >
-                <Grid item>
-                  <MenuItem section="shots">Szoty</MenuItem>
-                </Grid>
-                <Grid item>
-                  <MenuItem section="drinks">Driny</MenuItem>
-                </Grid>
-                <Grid item>
-                  <MenuItem section="beers">Piwa</MenuItem>
-                </Grid>
-                <Grid item>
-                  <MenuItem section="alco-free">Bez promili</MenuItem>
-                </Grid>
-                <Grid item>
-                  <MenuItem section="food">Jedzenie</MenuItem>
-                </Grid>
-              </Grid>
-            </Menu>
-            <ListContainer sticky={this.state.menuSticky ? 1 : 0}>
-              <StyledSection id="shots">
-                <ShopList
-                  title="Szoty"
-                  list={shotList}
-                  handleAddItem={this.handleAddItemToCart}
-                />
-              </StyledSection>
-              <Divider />
-              <StyledSection id="drinks">
-                <ShopList
-                  title="Driny"
-                  list={drinkList}
-                  handleAddItem={this.handleAddItemToCart}
-                />
-              </StyledSection>
-              <Divider />
-              <StyledSection id="beers">
-                <ShopList
-                  title="Piwa"
-                  list={beerList}
-                  handleAddItem={this.handleAddItemToCart}
-                />
-              </StyledSection>
-              <Divider />
-              <StyledSection id="alco-free">
-                <ShopList
-                  title="Bez promili"
-                  list={alcoholFreeList}
-                  handleAddItem={this.handleAddItemToCart}
-                />
-              </StyledSection>
-              <Divider />
-              <StyledSection id="food">
-                <ShopList
-                  title="Jedzenie"
-                  list={foodList}
-                  handleAddItem={this.handleAddItemToCart}
-                />
-              </StyledSection>
-              <Divider />
-            </ListContainer>
-            <div style={{marginTop: '3rem'}}></div>
-            {this.state.baskets[this.state.activeUser] &&
-              this.state.baskets[this.state.activeUser].length > 0 && (
-                <React.Fragment>
-                  <Snackbar
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "left"
-                    }}
-                    open={this.state.snackbarOpen}
-                    onClose={this.handleSnackbarClose}
-                    autoHideDuration={1000}
-                    message={
-                      this.props.party.length > 0 ? (
-                        <span>
-                          Dodano{" "}
-                          {
-                            this.state.baskets[this.state.activeUser][
-                              this.state.baskets[this.state.activeUser].length -
-                                1
-                            ].name
-                          }{" "}
-                          do koszyka {activeUser.name}
-                        </span>
-                      ) : (
-                        <span>
-                          Dodano{" "}
-                          {
-                            this.state.baskets[this.state.activeUser][
-                              this.state.baskets[this.state.activeUser].length -
-                                1
-                            ].name
-                          }{" "}
-                          do Twojego koszyka
-                        </span>
-                      )
-                    }
+              </Menu>
+              <ListContainer sticky={this.state.menuSticky ? 1 : 0}>
+                <StyledSection id="shots">
+                  <ShopList
+                    title="Szoty"
+                    list={shotList}
+                    handleAddItem={this.handleAddItemToCart}
                   />
-                </React.Fragment>
-              )}
-            <FloatingCart
-            style={{visibility: this.state.basketDrawerOpen ? 'hidden':'visible'}}
-              variant="contained"
-              color="primary"
-              onClick={this.handleToggleBasketDrawer}
-            >
-              {this.state.baskets[this.state.activeUser] && (
-                <Badge
-                  style={{ right: "-2.5rem", top: "-1rem" }}
-                  color="secondary"
-                  badgeContent={this.state.baskets[
-                    this.state.activeUser
-                  ].reduce((a, b) => a + (b.quantity || 0), 0)}
+                </StyledSection>
+                <Divider />
+                <StyledSection id="drinks">
+                  <ShopList
+                    title="Driny"
+                    list={drinkList}
+                    handleAddItem={this.handleAddItemToCart}
+                  />
+                </StyledSection>
+                <Divider />
+                <StyledSection id="beers">
+                  <ShopList
+                    title="Piwa"
+                    list={beerList}
+                    handleAddItem={this.handleAddItemToCart}
+                  />
+                </StyledSection>
+                <Divider />
+                <StyledSection id="alco-free">
+                  <ShopList
+                    title="Bez promili"
+                    list={alcoholFreeList}
+                    handleAddItem={this.handleAddItemToCart}
+                  />
+                </StyledSection>
+                <Divider />
+                <StyledSection id="food">
+                  <ShopList
+                    title="Jedzenie"
+                    list={foodList}
+                    handleAddItem={this.handleAddItemToCart}
+                  />
+                </StyledSection>
+                <Divider />
+              </ListContainer>
+              <div style={{ marginTop: "3rem" }}></div>
+              {this.state.baskets[this.state.activeUser] &&
+                this.state.baskets[this.state.activeUser].length > 0 && (
+                  <React.Fragment>
+                    <Snackbar
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "left"
+                      }}
+                      open={this.state.snackbarOpen}
+                      onClose={this.handleSnackbarClose}
+                      autoHideDuration={1000}
+                      message={
+                        this.props.party.length > 0 ? (
+                          <span>
+                            Dodano{" "}
+                            {
+                              this.state.baskets[this.state.activeUser][
+                                this.state.baskets[this.state.activeUser]
+                                  .length - 1
+                              ].name
+                            }{" "}
+                            do koszyka {activeUser.name}
+                          </span>
+                        ) : (
+                          <span>
+                            Dodano{" "}
+                            {
+                              this.state.baskets[this.state.activeUser][
+                                this.state.baskets[this.state.activeUser]
+                                  .length - 1
+                              ].name
+                            }{" "}
+                            do Twojego koszyka
+                          </span>
+                        )
+                      }
+                    />
+                  </React.Fragment>
+                )}
+              <FloatingCart
+                style={{
+                  visibility: this.state.basketDrawerOpen ? "hidden" : "visible"
+                }}
+                variant="contained"
+                color="primary"
+                onClick={this.handleToggleBasketDrawer}
+              >
+                {this.state.baskets[this.state.activeUser] && (
+                  <Badge
+                    style={{ right: "-2.5rem", top: "-1rem" }}
+                    color="secondary"
+                    badgeContent={this.state.baskets[
+                      this.state.activeUser
+                    ].reduce((a, b) => a + (b.quantity || 0), 0)}
+                  />
+                )}
+                <FloatingCartIcon />
+              </FloatingCart>
+              <BasketDrawer
+                open={this.state.basketDrawerOpen}
+                toggle={this.handleToggleBasketDrawer}
+                baskets={this.state.baskets}
+                users={
+                  this.props.party.length > 1
+                    ? this.props.party
+                    : [this.props.auth.profile]
+                }
+                activeUser={this.state.activeUser}
+                handleRemoveItem={this.handleRemoveItemFromCart}
+                finalizeOrder={this.handleFinalizeOrder}
+                leader={this.props.leader}
+              >
+                {" "}
+                <Recaptcha
+                  style={{
+                    visibility: this.state.basketDrawerOpen
+                      ? "visible"
+                      : "hidden"
+                  }}
+                  badge={"bottomleft"}
+                  ref={ref => (this.recaptcha = ref)}
+                  sitekey="6Ldy0ssUAAAAAKSZNuXULGv4U1PBI35BbvbWhT9x"
+                  onResolved={this.onCaptchaResolved}
                 />
-              )}
-              <FloatingCartIcon />
-            </FloatingCart>
-            <BasketDrawer
-              open={this.state.basketDrawerOpen}
-              toggle={this.handleToggleBasketDrawer}
-              baskets={this.state.baskets}
-              users={
-                this.props.party.length > 1
-                  ? this.props.party
-                  : [this.props.auth.profile]
-              }
-              activeUser={this.state.activeUser}
-              handleRemoveItem={this.handleRemoveItemFromCart}
-              finalizeOrder={this.handleFinalizeOrder}
-              leader={this.props.leader}
-            >                     <Recaptcha
-            style={{visibility: this.state.basketDrawerOpen ? 'visible':'hidden'}}
-            badge={'bottomleft'}
-         ref={ ref => this.recaptcha = ref }
-         sitekey="6Ldy0ssUAAAAAKSZNuXULGv4U1PBI35BbvbWhT9x"
-         onResolved={ this.onCaptchaResolved }
-     /></BasketDrawer>
-          </ScrollingProvider>
-        )}
-        
-        <ScrollModal
-          open={this.state.showScrollModal}
-          handleClose={this.handleScrollModalToggle}
-          scrolls={activeUser.bag.filter(
-            item => item.itemModel.type === "scroll"
+              </BasketDrawer>
+            </ScrollingProvider>
           )}
-          equippedScrollId={activeUser.equipped.scroll}
-          handleScrollSelect={this.handleScrollSelect}
-        />
 
-      </div>
-    );
+          <ScrollModal
+            open={this.state.showScrollModal}
+            handleClose={this.handleScrollModalToggle}
+            scrolls={activeUser.bag.filter(
+              item => item.itemModel.type === "scroll"
+            )}
+            equippedScrollId={activeUser.equipped.scroll}
+            handleScrollSelect={this.handleScrollSelect}
+          />
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <Button
+            fullWidth
+            variant="contained"
+            style={{
+              marginTop: "0.5rem",
+              marginBottom: "1rem",
+              borderRadius: 0
+            }}
+            onClick={this.handleLeaveShop}
+          >{`< Wyjście`}</Button>
+        </div>
+      );
+    }
   }
 }
 
@@ -1195,10 +1252,13 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onGetShop: () => dispatch(getShop()),
-    onActivateOrder: (baskets, token) => dispatch(activateOrder(baskets, token)),
+    onActivateOrder: (baskets, token) =>
+      dispatch(activateOrder(baskets, token)),
     onLeaveShop: () => dispatch(leaveShop()),
-    onLeaderScrollToggle: (id, category, equipped) => dispatch(toggleItem(id, category, equipped, false)),
-    onPartyMemberScrollToggle: (id, category, equipped, memberId) => dispatch(toggleItem(id, category, equipped, memberId))
+    onLeaderScrollToggle: (id, category, equipped) =>
+      dispatch(toggleItem(id, category, equipped, false)),
+    onPartyMemberScrollToggle: (id, category, equipped, memberId) =>
+      dispatch(toggleItem(id, category, equipped, memberId))
   };
 };
 

@@ -13,8 +13,9 @@ const Attribute = (props) => {
 
   return (
     <Paper square style={{width:'100%'}}>
-      <Typography variant="subtitle1">{props.attributeName}</Typography>
+      <img src={props.attributeIcon} style={{width: '2rem', paddingTop: '0.4rem'}}/>
       <Typography variant="h5" style={{color: fontColor}}>{props.attributeValue + props.attributeModifier}</Typography>
+      <Typography variant="caption">{props.attributeName}</Typography>
     </Paper>
   )
 }

@@ -201,10 +201,10 @@ const EquipmentListItem = props => {
                               {perk.time
                                 .slice()
                                 .reverse()
-                                .map(period => (
+                                .map((period, index) => (
                                   <Grid
                                     container
-                                    
+                                    key={JSON.stringify(period)+index}
                                   >
                                     <Grid item>
                                       {`${dayLabels[period.startDay]}`}

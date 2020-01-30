@@ -642,10 +642,6 @@ router.patch("/myItems/equip", auth, async (req, res) => {
     const category = req.body.category;
     const equipped = req.body.equipped;
 
-  
-    //2. czy w dobrym miejscu
-
-
 
     const missionInstance = await MissionInstance.findOne(
       {party: {$elemMatch: {profile: user._id}}}    

@@ -63,7 +63,7 @@ router.get("/", auth, async (req, res, next) => {
         path: "party",
         populate: {
           path: "leader members",
-          select: "_id name avatar attributes experience userPerks equipped"
+          select: "_id name avatar attributes experience userPerks equipped bag"
         }
       })
       .populate({
@@ -74,6 +74,9 @@ router.get("/", auth, async (req, res, next) => {
      
      for(let i=0; i<user.party.members.length; i++){
       user.party.members[i].equipped = pick(user.party.members[i].equipped, 'scroll')
+      user.party.members[i].bag = user.party.members[i].bag.filter(item => {
+        return item.itemModel.type === 'scroll'
+      })
      }
      user.party.leader.equipped = pick(user.party.leader.equipped, 'scroll')
 
