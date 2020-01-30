@@ -413,7 +413,7 @@ export const userStandardPopulate = async user => {
   await user
     .populate({
       path: "bag",
-      populate: { path: "itemModel", select: '_id description imgSrc name perks type twoHanded', populate: { path: "perks.target.disc-product", select: '_id name' } }
+      populate: { path: "itemModel", select: '_id description imgSrc appearanceSrc name perks type twoHanded', populate: { path: "perks.target.disc-product", select: '_id name' } }
     })
     .execPopulate();
   if(user.statistics.amuletCounters && user.statistics.amuletCounters.length){

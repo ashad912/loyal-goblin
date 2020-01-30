@@ -222,9 +222,9 @@ const AdminOrders = () => {
           />
         </Toolbar>
         {orders.length > 0 ? (
-          <List style={{ border: "1px solid grey" }} alignItems="flex-start">
+          <List style={{ border: "1px solid grey", alignItems: "flex-start" }} >
             {orders.map(order => {
-              return ( <OrderListItem order={order} />);
+              return ( <OrderListItem key={order._id} order={order} />);
             })}
           </List>
         ) : (<Typography>Brak zamówień!</Typography>)}

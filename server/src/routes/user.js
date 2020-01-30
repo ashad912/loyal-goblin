@@ -5,7 +5,7 @@ import sharp from "sharp";
 import fs from 'fs'
 import validator from 'validator'
 import axios from 'axios'
-
+import {differenceBy} from 'lodash'
 import { User } from "../models/user";
 import { Party } from "../models/party";
 import { Item } from "../models/item";
@@ -551,7 +551,7 @@ router.patch("/party/equip", auth, async (req, res) => {
     const leader = req.user
     const itemId = req.body.id;
     const category = req.body.category;
-    const equipped = req.body.equipped;
+    //const equipped = req.body.equipped;
 
     if(!req.body.memberId){
       throw new Error('No memberId field!')
@@ -599,13 +599,13 @@ router.patch("/party/equip", auth, async (req, res) => {
     }
 
     //WARNING!: u can pass anything in equipped object, without verification
-    user.equipped = { ...equipped };
+    user.equipped.scroll = itemId
     user.userPerks = await designateUserPerks(user);
     user.userPerks = await updatePerks(user, true);
     await user.save();
     user = await userStandardPopulate(user);
     //Depopulate equipped key
-    user.equipped = { ...equipped };
+    user.equipped.scroll = itemId
 
     
       
@@ -642,6 +642,11 @@ router.patch("/myItems/equip", auth, async (req, res) => {
     const category = req.body.category;
     const equipped = req.body.equipped;
 
+  
+    //2. czy w dobrym miejscu
+
+
+
     const missionInstance = await MissionInstance.findOne(
       {party: {$elemMatch: {profile: user._id}}}    
     )
@@ -662,6 +667,13 @@ router.patch("/myItems/equip", auth, async (req, res) => {
       throw new Error('Item does not exist!')
     }
 
+    const checkEq = differenceBy(Object.values(equipped), user.bag, (item => item && item.toString()))
+    if(checkEq.some(item => typeof item === 'string')){
+      throw new Error("Equipped items do not match bag!")
+    }
+
+    // await user.populate({path: 'equipped.scroll'}).execPopulate()
+    // console.log(user.equipped)
     const itemToEquip = user.bag.find(item => {
       return item.toString() === itemId;
     });
@@ -669,6 +681,31 @@ router.patch("/myItems/equip", auth, async (req, res) => {
     if (!itemToEquip) {
       throw new Error('There is no such item in bag!')
     }
+
+    await item.populate({path: 'itemModel'}).execPopulate()
+    await asyncForEach(Object.keys(equipped), async slot => {
+
+      await user
+        .populate({
+          path: "equipped." + slot,
+          populate: { path: "itemModel" }
+        })
+        .execPopulate();
+
+        if(user.equipped[slot] && user.equipped[slot].itemModel.category){
+          const slotToCategory = slot.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').split('-')[0]
+
+          if(user.equipped[slot].itemModel.category !== slotToCategory){
+            console.log(user.equipped[slot].itemModel.category, slotToCategory)
+            throw new Error("Nieprawidłowa kategoria przedmiotu w ekwipunku!")
+          }
+        }
+
+    });
+
+
+
+
 
     //WARNING!: u can pass anything in equipped object, without verification
       

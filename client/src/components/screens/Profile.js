@@ -34,7 +34,7 @@ import NewRallyAwardsDialog from "./profile/NewRallyAwardsDialog";
 
 import { updateParty, removeMember } from "../../store/actions/partyActions";
 import {createAvatarPlaceholder, designateUserLevel, bagArrayToCategories} from "../../utils/methods";
-import {appearancePath, usersPath, classThemes, uiPaths} from '../../utils/definitions'
+import {appearancePath, usersPath, classThemes, uiPaths, appearancePaths} from '../../utils/definitions'
 import maleBody from "../../assets/profile/male-body.png";
 
 import {
@@ -443,7 +443,7 @@ const Profile = props => {
       }
 
       if (loadedEquippedItem) {
-        equipment[category] = loadedEquippedItem.itemModel.imgSrc;
+        equipment[category] = loadedEquippedItem.itemModel.appearanceSrc;
         if (
           loadedEquippedItem.itemModel.hasOwnProperty("perks") &&
           loadedEquippedItem.itemModel.perks.length > 0
@@ -461,7 +461,6 @@ const Profile = props => {
 
   const handleItemToggle = (id, isEquipped, category, twoHanded) => {
     const tempPlayer = { ...props.auth.profile };
-
     if(props.party && props.party.inShop){
       return
     }else{
@@ -470,6 +469,7 @@ const Profile = props => {
           if(isEquipped){
             tempPlayer.equipped.weaponRight = null;
             tempPlayer.equipped.weaponLeft = null;
+
           }else{
 
             tempPlayer.equipped.weaponRight = id;
@@ -657,7 +657,7 @@ const Profile = props => {
       >
         <Paper xs={8} className={classes.avatarCard}>
           {/* body */}
-          <img src={maleBody} alt="male-body" className={classes.avatarImage} />
+          <img src={appearancePaths[props.auth.profile.sex]} className={classes.avatarImage} />
           {/* legs */}
           {equippedItems && equippedItems.legs && (
             <img
@@ -689,6 +689,7 @@ const Profile = props => {
               />
             )}
           {/* Main-hand weapon */}
+          {console.log(equippedItems, equippedItems&&equippedItems.weaponRight)}
           {equippedItems && equippedItems.weaponRight && (
             <img
               className={classes.avatarImage}

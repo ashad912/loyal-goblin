@@ -2,7 +2,7 @@ import express from "express";
 import { Product } from "../models/product";
 import { adminAuth } from "../middleware/adminAuth";
 import { auth } from "../middleware/auth";
-import isEqual from "lodash/isEqual";
+import {isEqual, pick} from "lodash";
 import moment from "moment";
 import {
   asyncForEach,
@@ -382,6 +382,16 @@ router.get("/shop", auth, async (req, res) => {
           }
         })
         .execPopulate();
+        for(let i=0; i<user.party.members.length; i++){
+          user.party.members[i].equipped = pick(user.party.members[i].equipped, 'scroll')
+          user.party.members[i].bag = user.party.members[i].bag.filter(item => {
+            return item.itemModel.type === 'scroll'
+          })
+         }
+         user.party.leader.equipped = pick(user.party.leader.equipped, 'scroll')
+         user.party.leader.bag = user.party.leader.bag.filter(item => {
+          return item.itemModel.type === 'scroll'
+        })
     }
     if (user.party && !user.party.inShop) {
       user.party.inShop = true;
@@ -397,6 +407,7 @@ router.get("/shop", auth, async (req, res) => {
       activeOrder: user.activeOrder
     });
   } catch (e) {
+    console.log(e.message)
     res.status(400).send(e.message);
   }
 });

@@ -52,11 +52,7 @@ const StyledMenuItem = withStyles(theme => ({
 }))(MenuItem);
 
 const useStyles = makeStyles(theme => ({
-  listItem: {
-    borderTop: "1px solid grey",
-    borderBottom: "1px solid grey",
-    marginBottom: "0.2rem"
-  },
+
   optionsIcon: {
     margin: "0 auto"
   }
@@ -100,7 +96,8 @@ const EquipmentListItem = props => {
       button={props.itemCategory !== "amulet"}
       alignItems="flex-start"
       className={classes.listItem}
-      style={{ background: props.equipped ? palette.background.equipped : "" }}
+      //style={{ boxShadow: props.equipped ? `inset 0px 0px 22px 3px ${palette.primary.main}`  : "" }}
+      style={{background: props.equipped ? "#388e3ccf" : '', color: props.equipped ? 'white' : 'black', borderBottom: "1px solid rgb(192, 192, 192)", borderTop: props.isFirst ? "1px solid rgb(192, 192, 192)" : ""}}
       equipped={props.equipped ? 1 : 0}
       onClick={() =>
         props.itemCategory !== "amulet" &&
@@ -160,7 +157,7 @@ const EquipmentListItem = props => {
                 <Grid item xs={2}>
                   <ListItemIcon onClick={handleClick}>
                     <Button>
-                      <MoreHorizIcon className={classes.optionsIcon} />
+                      <MoreHorizIcon className={classes.optionsIcon} style={{color: props.equipped ? 'white' : 'black'}}/>
                     </Button>
                   </ListItemIcon>
                 </Grid>
@@ -176,16 +173,17 @@ const EquipmentListItem = props => {
                 maxHeight: "8rem",
                 overflow: "auto",
                 width: "100%",
-                border: "1px solid grey",
+                
                 padding: "0.5rem",
                 boxSizing: "border-box",
                 background: "rgba(255, 255, 255, 0.198)"
               }}
             >
-              <Typography>
+              <Typography component="div">
               {item.itemModel.perks.map((perk, index) => {
                 return (
                   <Box
+                  key={JSON.stringify(perk.target)+index}
                     border={0}
                     borderColor="primary.main"
                     style={{ margin: "0.2rem 0", fontSize: "0.8rem" }}
