@@ -70,7 +70,7 @@ class EventCreator extends Component {
     unique: false,
     title: "",
     description: "",
-    minLevel: "",
+    minLevel: 1,
     iconView: "",
     minPlayers: 1,
     maxPlayers: 8,
@@ -649,7 +649,9 @@ class EventCreator extends Component {
         attributeValue = parseInt(e.target.value);
       }
     }
-    this.setState({ [attr]: attributeValue });
+    if(attributeValue > -1){
+      this.setState({ [attr]: attributeValue });
+    }
   };
 
   handleMakeDirtyField = (field) => {
@@ -673,9 +675,12 @@ class EventCreator extends Component {
   };
 
   handleMinLevelChange = e => {
-    this.setState({ minLevel: e.target.value.trim(), dirtyFields: this.handleMakeDirtyField('minLevel') }, () => {
-      this.validateRequiredFields();
-    });
+    if(/^\d+$/.test(e.target.value)){
+
+      this.setState({ minLevel: e.target.value.trim(), dirtyFields: this.handleMakeDirtyField('minLevel') }, () => {
+        this.validateRequiredFields();
+      });
+    }
   };
 
   handleNameChange = e => {
@@ -845,7 +850,7 @@ class EventCreator extends Component {
                   margin="dense"
                   label="Minimalny poziom"
                   type="number"
-                  inputProps={{ min: "1" }}
+                  inputProps={{ min: "1", type: "number" }}
                   required
                   error={this.state.dirtyFields.minLevel && this.state.validationErrors.minLevel ? true : false}
                   helperText={this.state.dirtyFields.minLevel && this.state.validationErrors.minLevel}

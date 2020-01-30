@@ -142,8 +142,9 @@ let content = null
                 unmountOnExit
               >
                 <List component="div" disablePadding>
-                  {items[itemCategory].map(item => (
+                  {items[itemCategory].map((item, index) => (
                     <EquipmentItem
+                    isFirst={index===0}
                       key={item._id}
                       equipped={Object.values(props.equipped).find(
                         id => id === item._id
@@ -173,8 +174,9 @@ let content = null
                 unmountOnExit
               >
                 <List component="div" disablePadding>
-                  {stackedItems.map(item => (
+                  {stackedItems.map((item, index) => (
                     <EquipmentItem
+                    isFirst={index===0}
                       key={item._id}
                       stacked={true}
                       item={item}

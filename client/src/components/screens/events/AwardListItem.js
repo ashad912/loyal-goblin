@@ -95,10 +95,11 @@ const AwardListItem = props => {
                 background: "rgba(255, 255, 255, 0.198)"
               }}
             >
-            <Typography>
+            <Typography component="div">
               {item.itemModel.perks.map((perk, index) => {
                 return (
                   <Box
+                  key={JSON.stringify(perk.target)+index}
                     border={0}
                     borderColor="primary.main"
                     style={{ margin: "0.2rem 0", fontSize: "0.8rem" }}

@@ -5,6 +5,7 @@ import { adminAuth } from '../middleware/adminAuth';
 import { MissionInstance } from "../models/missionInstance";
 import { Party } from "../models/party";
 import { asyncForEach } from '../utils/methods'
+import {pick} from 'lodash'
 
 import _ from "lodash";
 var ObjectId = require("mongoose").Types.ObjectId;
@@ -67,9 +68,15 @@ router.get("/", auth, async (req, res, next) => {
       })
       .populate({
         path: "bag",
-        populate: { path: "itemModel", select: '_id description imgSrc name perks type twoHanded', populate: { path: "perks.target.disc-product", select: '_id name' } }
+        populate: { path: "itemModel", select: '_id description appearanceSrc imgSrc name perks type twoHanded', populate: { path: "perks.target.disc-product", select: '_id name' } }
       })
       .execPopulate();
+     
+     for(let i=0; i<user.party.members.length; i++){
+      user.party.members[i].equipped = pick(user.party.members[i].equipped, 'scroll')
+     }
+     user.party.leader.equipped = pick(user.party.leader.equipped, 'scroll')
+
 
     res.send({party: user.party, bag: user.bag});
   } catch (e) {

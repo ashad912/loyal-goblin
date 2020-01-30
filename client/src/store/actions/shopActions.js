@@ -1,6 +1,7 @@
 
 import axios from 'axios'
 import {partyRefreshEmit, instanceRefreshEmit} from '../../socket'
+import {pick, cloneDeep} from 'lodash'
 
 export const getShop = () => {
     return async dispatch => {
@@ -43,14 +44,23 @@ export const leaveShop = () => {
 export const activateOrder = (order, token) => {
     return async dispatch => {
         try {
-            const arrayOrder = Object.keys(order).map(user => {
-                order[user].forEach(product => {
-                    product.product = product._id
-                    delete product._id
-                });
+            const tempOrder = cloneDeep(order)
+            const arrayOrder = Object.keys(tempOrder).map(user => {
+                // order[user].map(product => {
+                //     product.product = product._id
+                //     //delete product._id
+                //     product = pick(product, ['product', 'quantity'])
+                //     console.log(product)
+                //     return(product)
+                // });
                 
-                console.log(order[user])
-                return {profile: user, products: order[user]}
+                for(let i=0; i<tempOrder[user].length; i++){
+                    tempOrder[user][i].product = tempOrder[user][i]._id
+                    tempOrder[user][i] = pick(tempOrder[user][i], ['product', 'quantity'])
+                }
+
+               // console.log(tempOrder[user])
+                return {profile: user, products: tempOrder[user]}
             })
 
             const res = await axios.patch('/product/activate', {order: arrayOrder, token})
