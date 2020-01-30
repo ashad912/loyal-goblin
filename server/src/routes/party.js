@@ -4,7 +4,7 @@ import { auth } from "../middleware/auth";
 import { adminAuth } from '../middleware/adminAuth';
 import { MissionInstance } from "../models/missionInstance";
 import { Party } from "../models/party";
-import { asyncForEach } from '../utils/methods'
+import { asyncForEach, removeMissionInstanceIfExits, validatePartyAndLeader, } from '../utils/methods'
 import {pick} from 'lodash'
 
 import _ from "lodash";
@@ -110,13 +110,8 @@ router.post("/create", auth, async (req, res) => {
     }
 
     //Remove party's existing mission instance if present on user add
-    const missionInstance = await MissionInstance.findOne({ //ASHAD ADD
-        party: { $elemMatch: { profile: leader._id } } //remove existing mInstance 
-    });
-
-    if (missionInstance) {
-      await missionInstance.remove();
-    }
+    await removeMissionInstanceIfExits(leader._id)
+    
 
     //Create new party with name from request and leader from auth
     const party = new Party({ name: req.body.name, leader: leader._id });
@@ -133,12 +128,13 @@ router.post("/create", auth, async (req, res) => {
 });
 
 //Called when leader scans member qr-code
-//TODO: Send info about new member to other members
 router.patch("/addMember", auth, async (req, res) => {
   try {
-    const party = await Party.findById(req.body.partyId);
-
     const leader = req.user
+
+    const party = await validatePartyAndLeader(leader, false);
+
+    
 
     if(leader._id.toString() !== party.leader._id.toString()){ //ASHAD
       throw new Error('You are not the leader!')
@@ -202,12 +198,13 @@ router.patch("/addMember", auth, async (req, res) => {
 });
 
 router.patch("/leader", auth, async (req, res) => {
+  const leader = req.user
   try {
-    const party = await Party.findById(req.body.partyId);
-
     if (!ObjectId.isValid(req.body.memberId)) {
       throw new Error("Nieprawidłowy identyfikator użytkownika");
     }
+
+    await validatePartyAndLeader(leader, false);
 
     const user = await User.findById(req.body.memberId);
 
@@ -229,27 +226,17 @@ router.patch("/leader", auth, async (req, res) => {
 
     await Party.updateOne(
       { _id: req.body.partyId },
-      { $set: { "members.$[elem]": party.leader } },
+      { $set: { "members.$[elem]": leader._id, leader: req.body.memberId } },
       { arrayFilters: [{ elem: { $eq: req.body.memberId } }], multi: false }
     );
 
-    party.leader = req.body.memberId;
+    //party.leader = req.body.memberId;
 
-    // await User.updateOne(
-    //   { _id: req.body.memberId },
-    //   { $set: { party: req.body.partyId } }
-    // );
 
     //Remove party's existing mission instance if present on user add
-    const missionInstance = await MissionInstance.findOne({
-      party: { $elemMatch: { profile: user._id } }
-    });
+    await removeMissionInstanceIfExits(user._id)
 
-    if (missionInstance) {
-      missionInstance.remove();
-    }
-
-    await party.save();
+    const party = await Party.findById(req.body.partyId)
     await party
       .populate({
         path: "leader members",
@@ -281,12 +268,7 @@ router.patch("/leave", auth, async (req, res) => {
     await User.updateOne({ _id: req.body.memberId }, { $set: { party: null } });
 
     //Remove party's existing mission instance if present on user leave
-    const missionInstance = await MissionInstance.findOne({
-      party: { $elemMatch: { profile: req.body.memberId } }
-    });
-    if (missionInstance) {
-      missionInstance.remove();
-    }
+    await removeMissionInstanceIfExits(req.body.memberId)
 
     await party
       .populate({
@@ -313,15 +295,15 @@ router.delete("/remove", auth, async (req, res) => {
   const user = req.user;
 
   try {
-    const party = await Party.findById(user.party);
+    const party = await validatePartyAndLeader(user);;
 
-    if (!party) {
-      throw new Error("No party!");
-    }
+    // if (!party) {
+    //   throw new Error("No party!");
+    // }
 
-    if (user._id.toString() !== party.leader.toString()) {
-      throw new Error("You are not the leader!");
-    }
+    // if (user._id.toString() !== party.leader.toString()) {
+    //   throw new Error("You are not the leader!");
+    // }
 
 
     await party.remove(); //look at middleware

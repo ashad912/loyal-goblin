@@ -35,7 +35,6 @@ import NewRallyAwardsDialog from "./profile/NewRallyAwardsDialog";
 import { updateParty, removeMember } from "../../store/actions/partyActions";
 import {createAvatarPlaceholder, designateUserLevel, bagArrayToCategories} from "../../utils/methods";
 import {appearancePath, usersPath, classThemes, uiPaths, appearancePaths} from '../../utils/definitions'
-import maleBody from "../../assets/profile/male-body.png";
 
 import {
   toggleItem,

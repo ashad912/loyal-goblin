@@ -724,7 +724,26 @@ class Shop extends React.Component {
 
   async componentDidUpdate(prevProps, prevState) {
     if (prevProps.party !== this.props.party && this.state.activeUser) {
-      this.handleChangeactiveUser(null, this.state.activeUser);
+      if(prevProps.party.length !== this.props.party.length){
+
+        const tempBaskets = {...this.state.baskets}
+        Object.keys(tempBaskets).filter(basket => {
+          if(this.props.party.findIndex(member => member._id === basket) === -1){
+            delete tempBaskets[basket]
+          }
+        })
+        this.setState({baskets: tempBaskets})
+
+        this.handleChangeactiveUser(
+          null,
+          this.props.party.length > 0 && this.props.party[0]
+            ? this.props.party[0]._id
+            : this.props.auth.uid
+        );
+      }else{
+        this.handleChangeactiveUser(null, this.state.activeUser);
+      }
+      
     }
   }
 
@@ -932,7 +951,7 @@ class Shop extends React.Component {
         : this.props.auth.profile;
 
     let equippedScroll;
-    if (activeUser.bag) {
+    if (activeUser && activeUser.bag) {
       equippedScroll = activeUser.bag.find(
         item => item._id === activeUser.equipped.scroll
       );
@@ -946,7 +965,7 @@ class Shop extends React.Component {
           <ScrollingProvider>
             <Button
               variant="contained"
-              style={{ marginTop: "1rem" }}
+              style={{ marginTop: "1rem", marginBottom: '0.5rem' }}
               onClick={this.handleLeaveShop}
             >{`< Wyjście`}</Button>
             {this.props.party && this.props.party.length > 1 && (

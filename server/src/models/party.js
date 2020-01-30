@@ -40,21 +40,9 @@ PartySchema.pre('remove', async function (next){
         }}
     )
 
-    const allInPartyIds = [party.leader, ...party.members]
-
-    //missionInstance
-    const missionInstance = await MissionInstance.findOne({party: {$elemMatch: {profile: {$in: allInPartyIds}}}})
-    // .populate({
-    //     path: "items"
-    // })
-
-    if(missionInstance){
-        //BELOW IS DONE IN MISSION INSTANCE REMOVE MIDDLEWARE
-        // await asyncForEach((missionInstance.items), async item => {
-        //     await User.updateOne({_id: item.owner}, {$addToSet: {bag: item._id}})
-        // })
-        
+    const missionInstance = await MissionInstance.findOne({party: {$elemMatch: {profile: {$in: [party.leader, ...party.members]}}}})
     
+    if(missionInstance){
         missionInstance.remove()
     }
 

@@ -510,6 +510,44 @@ export const validateInShopPartyStatus = (userId, newStatus) => {
   });
 };
 
+export const removeMissionInstanceIfExits = (id) => {
+  return new Promise (async (resolve, reject)=> {
+    try{
+      const missionInstance = await MissionInstance.findOne(
+        {party: {$elemMatch: {profile: id}}}    
+      )
+      
+      if(missionInstance){
+        await missionInstance.remove()
+      }
+      
+
+      resolve()
+    }catch(e){
+      reject(e)
+    }
+  })
+}
+
+export const validatePartyAndLeader = (user, inShop) => {
+  return new Promise (async (resolve, reject)=> {
+    try{
+      
+      const party = inShop !== undefined
+        ? (await Party.findOne({inShop: inShop, _id: user.party, leader: user._id}))
+        : (await Party.findOne({_id: user.party, leader: user._id}))
+      
+      if(!party){
+        throw new Error('Invalid party conditions!')
+      }
+      
+      resolve(party)
+    }catch(e){
+      reject(e)
+    }
+  })
+}
+
 export const saveImage = async (
   imageFile,
   ownerId,

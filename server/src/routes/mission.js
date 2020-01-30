@@ -7,7 +7,18 @@ import { auth } from '../middleware/auth';
 import { MissionInstance } from '../models/missionInstance';
 import { Item } from '../models/item'
 import { ItemModel } from '../models/itemModel'
-import { asyncForEach, designateUserPerks, isNeedToPerksUpdate, designateUserLevel, designateExperienceMods, saveImage, removeImage, designateNewLevels, updateAmuletCounters } from '../utils/methods'
+import { 
+    asyncForEach,
+    designateUserPerks,
+    isNeedToPerksUpdate, 
+    designateUserLevel, 
+    designateExperienceMods, 
+    saveImage, 
+    removeImage, 
+    designateNewLevels, 
+    updateAmuletCounters, 
+    validatePartyAndLeader
+} from '../utils/methods'
 
 import isEqual from 'lodash/isEqual'
 import moment from 'moment'
@@ -432,7 +443,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
         let leader = null
 
         if(user.party){
-            const party = await Party.findById(user.party)
+            const party = await validatePartyAndLeader(user, false)
             membersIds = [...party.members]
             leader = party.leader
         }else{
@@ -620,7 +631,7 @@ router.delete('/deleteInstance', auth, async (req, res) => {
         let leader = null
 
         if(user.party){
-            const party = await Party.findById(user.party)
+            const party = await validatePartyAndLeader(user)
             leader = party.leader
         }else{
             leader = user._id

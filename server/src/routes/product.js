@@ -11,7 +11,9 @@ import {
   removeImage,
   saveImage,
   verifyCaptcha,
-  designateNewLevels
+  designateNewLevels, 
+  validatePartyAndLeader,
+  removeMissionInstanceIfExits
 } from "../utils/methods";
 import { Rally } from "../models/rally";
 import { User } from "../models/user";
@@ -321,31 +323,77 @@ const calculateOrder = async user => {
   }
 };
 
+const verifyParty = (leader, membersIds, order) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const members = await User.find({
+        $and: [
+          { _id: { $in: membersIds } },
+          { activeOrder: { $size: 0 } } //checking active order - party
+        ]
+      });
+
+      if (members.length !== membersIds.length) {
+        throw new Error(
+          "Not every member found OR member has another active order!"
+        );
+      }
+
+      // MORE COMPLEX WAY
+      // await asyncForEach(membersIds, async (memberId) => {
+      //     const member = await User.findById(memberId)
+      //     if(!member){
+      //         throw new Error(`Member ${member} does not exist!`)
+      //     }
+
+      //     if(member.activeOrder.length){
+      //         throw new Error(`Another active order exists (user: ${memberId})!`)
+      //     }
+      // })
+
+      //checking if order profiles match party
+
+      const party = [
+        leader.toString(),
+        ...membersIds.map(member => member.toString())
+      ];
+      let orderParty = [];
+      await asyncForEach(order, async user => {
+        const memberId = user.profile._id; //works when order is MongoObject -> when depopulated can be: user.profile or user.profile._id, when populated only - user.profile._id
+                                              //for JSObject -> user.profile would be a String - only clear user.profile is accepted here
+                                              //CONCLUSION: this method works only with order as MongoObject
+        orderParty = [...orderParty, memberId.toString()];
+      });
+      if (!isEqual(orderParty, party)) {
+        throw Error("Invalid party!");
+      }
+
+      resolve(members);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+
+ 
+
+
 //OK
 router.get("/shop", auth, async (req, res) => {
   const user = req.user;
   try {
 
     if(user.party){
-      const party = await Party.findOne({_id: user.party, leader: user._id})
-
-      if(!party){
-        throw new Error('Invalid party conditions!')
-      }
+      await validatePartyAndLeader(user)
     }
-
+    
     const shop = await Product.find({}).populate({
       path: "awards.itemModel",
       populate: { path: "perks.target.disc-product", select: "_id name" }
     });
 
-    const missionInstance = await MissionInstance.findOne(
-      {party: {$elemMatch: {profile: user._id}}}    
-    )
-
-    if(missionInstance){
-      await missionInstance.remove()
-    }
+    await removeMissionInstanceIfExits(user._id)
 
     await updatePerks(user, false);
 
@@ -444,57 +492,9 @@ router.patch("/leave", auth, async (req, res) => {
   }
 });
 
-const verifyParty = (leader, membersIds, order) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const members = await User.find({
-        $and: [
-          { _id: { $in: membersIds } },
-          { activeOrder: { $size: 0 } } //checking active order - party
-        ]
-      });
 
-      if (members.length !== membersIds.length) {
-        throw new Error(
-          "Not every member found OR member has another active order!"
-        );
-      }
 
-      // MORE COMPLEX WAY
-      // await asyncForEach(membersIds, async (memberId) => {
-      //     const member = await User.findById(memberId)
-      //     if(!member){
-      //         throw new Error(`Member ${member} does not exist!`)
-      //     }
 
-      //     if(member.activeOrder.length){
-      //         throw new Error(`Another active order exists (user: ${memberId})!`)
-      //     }
-      // })
-
-      //checking if order profiles match party
-
-      const party = [
-        leader.toString(),
-        ...membersIds.map(member => member.toString())
-      ];
-      let orderParty = [];
-      await asyncForEach(order, async user => {
-        const memberId = user.profile._id; //works when order is MongoObject -> when depopulated can be: user.profile or user.profile._id, when populated only - user.profile._id
-                                              //for JSObject -> user.profile would be a String - only clear user.profile is accepted here
-                                              //CONCLUSION: this method works only with order as MongoObject
-        orderParty = [...orderParty, memberId.toString()];
-      });
-      if (!isEqual(orderParty, party)) {
-        throw Error("Invalid party!");
-      }
-
-      resolve(members);
-    } catch (e) {
-      reject(e);
-    }
-  });
-};
 
 //OK
 router.patch("/activate", auth, async (req, res) => {
@@ -524,17 +524,19 @@ router.patch("/activate", auth, async (req, res) => {
     let leader = null;
 
     if (user.party) {
-      const party = await Party.findById(user.party);
+
+      const party = await validatePartyAndLeader(user, true)
+      
       membersIds = [...party.members];
       leader = party.leader;
     } else {
       leader = user._id;
     }
 
-    if (leader && leader.toString() !== user._id.toString()) {
-      //here are objectIDs - need to be string
-      throw new Error("User is not the leader!");
-    }
+    // if (leader && leader.toString() !== user._id.toString()) {
+    //   //here are objectIDs - need to be string
+    //   throw new Error("User is not the leader!");
+    // }
     //const party = await verifyParty(leader, membersIds, order); <- here is JS 
     const momentDate = moment
       .utc(new Date())
@@ -575,7 +577,7 @@ router.patch("/activate", auth, async (req, res) => {
             user.activeOrder = []
             await user.save()
         }, 5*60*1000); //removing activeOrder after 5 minutes
-        */
+    */
 
     res.send(user.activeOrder);
   } catch (e) {
@@ -586,6 +588,11 @@ router.patch("/activate", auth, async (req, res) => {
 router.patch("/cancel", auth, async (req, res) => {
   const user = req.user;
   try {
+
+    if(user.party){
+      await validatePartyAndLeader(user)
+    }
+
     if (user.activeOrder.length <= 0) {
       throw new Error(`No active order exists (user: ${user._id})!`);
     }
@@ -618,11 +625,9 @@ router.get("/verify/:id", barmanAuth, async (req, res) => {
       throw new Error('Invalid order conditions!')
     }
 
-    // await user
-    // .populate({
-    //   path: "activeOrder.awards.itemModel", select: "name imgSrc"
-    // }).populate({path: 'activeOrder.profile', select: '_id name avatar equipped'})
-    // .execPopulate();
+    if(user.party){
+      await validatePartyAndLeader(user)
+    }
 
     await user
       .populate({
@@ -657,31 +662,20 @@ router.get("/verify/:id", barmanAuth, async (req, res) => {
 router.post("/finalize", barmanAuth, async (req, res) => {
 
   
-
-  const user = await User.findOne({
-    $and: [
-      { _id: req.body.userId },
-      //{party: partyId},
-      { activeOrder: { $not: { $size: 0 } } } //size does not accept ranges
-    ]
-  });
-
-  if(!user){
-    throw new Error('Invalid order conditions!')
-  }
-
-  const frontEndOrder = req.body.currentOrder
-
-
-  
   try {
-    //const order = await ArchiveOrder.findById(req.body.order)
-    const activeRally = await Rally.findOne({
+    const user = await User.findOne({
       $and: [
-        { startDate: { $lte: moment() } },
-        { expiryDate: { $gte: moment() } }
+        { _id: req.body.userId },
+        { activeOrder: { $not: { $size: 0 } } } //size does not accept ranges
       ]
     });
+  
+    if(!user){
+      throw new Error('Invalid order conditions!')
+    }
+  
+    const frontEndOrder = req.body.currentOrder
+    
 
 
     if(user.activeOrder.length <= 0){
@@ -695,17 +689,17 @@ router.post("/finalize", barmanAuth, async (req, res) => {
     })
 
 
-    let party = await Party.findById(user.party)
-  
 
     const orderPartyIds = user.activeOrder.map(basket => basket.profile.toString())
     
-    if(!party){
+    if(!user.party){
       if(orderPartyIds.length > 1){
         throw new Error("Wielokrotne koszyki dla pojedynczego użytkownika!")
       }
 
     }else{
+
+      const party = await validatePartyAndLeader(user)
       party.members = [party.leader, ...party.members]
 
       if(party.leader.toString() !== orderPartyIds[0] ){
@@ -720,21 +714,13 @@ router.post("/finalize", barmanAuth, async (req, res) => {
     }
     
 
-    // else{
-    //   await user.populate({path: "party"}).execPopulate()
-    // }
-    // // console.log(party.members, user.party.members)
-    // if (
-    //   party.name !== user.party.name ||
-    //   party.leader.toString() !== user.party.leader.toString() ||
-    //   isEqual(party.members, user.party.members)
-    // ) {
-      
-    // }
-
-
-
-    
+    const activeRally = await Rally.findOne({
+      $and: [
+        { startDate: { $lte: moment() } },
+        { expiryDate: { $gte: moment() } }
+      ]
+    });
+ 
     const archive = {leader: req.body.userId, totalPrice: 0, users: []}
 
     await asyncForEach(user.activeOrder, async basket => {
@@ -760,6 +746,7 @@ router.post("/finalize", barmanAuth, async (req, res) => {
           $inc: { experience: exp, levelNotifications: newLevels }
         }
       );
+
 
       if (activeRally && !activeRally.users.includes(member._id.toString() /*!!! toString() - to CHECK! */)) {
         activeRally.users = [...activeRally.users, member._id];
