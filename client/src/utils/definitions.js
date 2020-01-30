@@ -23,7 +23,11 @@ const iconPaths = {
     addMember: 'add-member.svg',
     statistics: 'statistics.svg',
     ranking: 'ranking.svg',
-    goExp: 'go-exp.svg'
+    goExp: 'go-exp.svg',
+    deleteBlack: 'delete-black.svg',
+    deleteWhite: 'delete-white.svg',
+    deleteRed: 'delete-red.svg',
+    transferLeader: 'transfer-leader.svg'
 }
 
 Object.keys(iconPaths).forEach(path => {

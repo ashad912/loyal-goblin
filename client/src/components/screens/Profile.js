@@ -1,5 +1,5 @@
 import React from "react";
-import styled from 'styled-components'
+import styled from "styled-components";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
@@ -10,11 +10,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Fab from "@material-ui/core/Fab";
-import ColorizeIcon from "@material-ui/icons/Colorize";
-import GroupAddIcon from "@material-ui/icons/GroupAdd";
-import EmojiPeopleIcon from "@material-ui/icons/EmojiPeople";
-import EmojiEventsIcon from "@material-ui/icons/EmojiEvents";
-import EqualizerIcon from "@material-ui/icons/Equalizer";
+import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
@@ -44,7 +40,8 @@ import {
   usersPath,
   classThemes,
   uiPaths,
-  uiAppearancePaths
+  uiAppearancePaths,
+  palette
 } from "../../utils/definitions";
 
 import {
@@ -56,11 +53,9 @@ import {
 import { authCheck } from "../../store/actions/authActions";
 import { classLabels } from "../../utils/labels";
 
-
 const FabIcon = styled.img`
-width: 2rem;
-`
-
+  width: 2rem;
+`;
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -68,7 +63,6 @@ const useStyles = makeStyles(theme => ({
     position: "relative"
   },
   avatarCard: {
-    flex: 0.9,
     alignSelf: "stretch",
     marginBottom: "1rem",
     display: "grid",
@@ -409,7 +403,7 @@ const Profile = props => {
   const [
     missionInstanceWarningDialog,
     setMissionInstanceWarningDialog
-  ] = React.useState({action: null, text: ''});
+  ] = React.useState({ action: null, text: "" });
 
   React.useEffect(() => {
     if (
@@ -648,7 +642,7 @@ const Profile = props => {
   };
 
   const handleMissionInstanceWarningDialog = (action, text) => {
-    setMissionInstanceWarningDialog({action, text});
+    setMissionInstanceWarningDialog({ action, text });
   };
 
   return (
@@ -660,6 +654,57 @@ const Profile = props => {
       className={classes.wrapper}
       spacing={2}
     >
+              {(props.party &&
+            props.party.leader &&
+            (props.party.leader._id === props.auth.uid ||
+              props.party.leader === props.auth.uid)) ||
+          (!props.party.leader && !props.party.members.length) ? (
+            <Button
+              variant="contained"
+              color="primary"
+              style={{ marginBottom: "1rem" }}
+              onClick={
+                props.mission.activeInstanceId
+                  ? () =>
+                      handleMissionInstanceWarningDialog(() => handleOpenShop(), "Otworzenie sklepu")
+                  : handleOpenShop
+              }
+            >
+              <img
+              src={uiPaths.goExp}
+                style={{
+                  width: '2rem',
+                  paddingRight: '1rem',
+                }}
+              />
+              Idziemy expić!
+              <img
+              src={uiPaths.goExp}
+                style={{
+                  paddingRight: '1rem',
+                  width: '2rem',
+                  transform: "scaleX(-1.0)"
+                }}
+              />
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              disabled
+              style={{ marginTop: "1rem" }}
+            >
+              Idziemy expić!
+              <img
+              src={uiPaths.goExp}
+                style={{
+                  width: '2rem',
+                  transition: "transform 500ms ease-out",
+                  transform: goExp ? "rotate(540deg)" : "rotate(0deg)"
+                }}
+              />
+            </Button>
+          )}
       <Typography variant="h5">
         {" "}
         Poziom {userLevel}{" "}
@@ -681,9 +726,9 @@ const Profile = props => {
         xs={12}
         direction="row"
         justify="space-between"
-        alignItems="flex-start"
+        alignItems="center"
       >
-        <Paper xs={8} className={classes.avatarCard}>
+        <Paper style={{ width: "100%" }} className={classes.avatarCard}>
           {/* body */}
           <img
             src={uiAppearancePaths[props.auth.profile.sex]}
@@ -720,7 +765,7 @@ const Profile = props => {
               />
             )}
           {/* Main-hand weapon */}
-          
+
           {equippedItems && equippedItems.weaponRight && (
             <img
               className={classes.avatarImage}
@@ -735,84 +780,56 @@ const Profile = props => {
               style={{ transform: "scaleX(-1)" }}
             />
           )}
-        </Paper>
-        <Grid
-          container
-          item
-          xs={4}
-          direction="column"
-          justify="flex-start"
-          alignItems="center"
-        >
-          <Attribute
-            attributeName="Siła"
-            attributeIcon={uiPaths.strength}
-            attributeValue={props.auth.profile.attributes.strength}
-            attributeModifier={props.auth.profile.userPerks.attrStrength}
-          />
-          <Attribute
-            attributeName="Zręczność"
-            attributeIcon={uiPaths.dexterity}
-            attributeValue={props.auth.profile.attributes.dexterity}
-            attributeModifier={props.auth.profile.userPerks.attrDexterity}
-          />
-          <Attribute
-            attributeName="Magia"
-            attributeIcon={uiPaths.magic}
-            attributeValue={props.auth.profile.attributes.magic}
-            attributeModifier={props.auth.profile.userPerks.attrMagic}
-          />
-          <Attribute
-            attributeName="Wytrzymałość"
-            attributeIcon={uiPaths.endurance}
-            attributeValue={props.auth.profile.attributes.endurance}
-            attributeModifier={props.auth.profile.userPerks.attrEndurance}
-          />
 
-          {(props.party &&
-            props.party.leader &&
-            (props.party.leader._id === props.auth.uid ||
-              props.party.leader === props.auth.uid)) ||
-          (!props.party.leader && !props.party.members.length) ? (
-            <Button
-              variant="contained"
-              color="primary"
-              style={{ marginTop: "1rem" }}
-              onClick={
-                props.mission.activeInstanceId
-                  ? () =>
-                      handleMissionInstanceWarningDialog(() => handleOpenShop(), "Otworzenie sklepu")
-                  : handleOpenShop
-              }
-            >
-              Idziemy expić!
-              <img
-              src={uiPaths.goExp}
-                style={{
-                  width: '2rem',
-                  transition: "transform 500ms ease-out",
-                  transform: goExp ? "rotate(540deg)" : "rotate(0deg)"
-                }}
-              />
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              color="primary"
-              disabled
-              style={{ marginTop: "1rem" }}
-            >
-              Idziemy expić!
-              <ColorizeIcon
-                style={{
-                  fontSize: "2rem",
-                  transition: "transform 500ms ease-out",
-                  transform: goExp ? "rotate(540deg)" : "rotate(180deg)"
-                }}
-              />
-            </Button>
-          )}
-        </Grid>
+          <Grid
+            container
+            item
+            style={{ width: "100%" }}
+            direction="column"
+            justify="flex-start"
+            alignItems="center"
+          >
+            <Grid container item style={{borderTop: palette.border, paddingTop: '0.4rem'}}>
+              <Grid item xs={6}>
+                <Attribute
+                  attributeName="Siła"
+                  attributeIcon={uiPaths.strength}
+                  attributeValue={props.auth.profile.attributes.strength}
+                  attributeModifier={props.auth.profile.userPerks.attrStrength}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <Attribute
+                  attributeName="Zręczność"
+                  attributeIcon={uiPaths.dexterity}
+                  attributeValue={props.auth.profile.attributes.dexterity}
+                  attributeModifier={props.auth.profile.userPerks.attrDexterity}
+                />
+              </Grid>
+            </Grid>
+
+            <Grid container item style={{ paddingTop: '0.4rem', paddingBottom: '0.6rem'}}>
+              <Grid item xs={6}>
+                <Attribute
+                  attributeName="Magia"
+                  attributeIcon={uiPaths.magic}
+                  attributeValue={props.auth.profile.attributes.magic}
+                  attributeModifier={props.auth.profile.userPerks.attrMagic}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <Attribute
+                  attributeName="Wytrzymałość"
+                  attributeIcon={uiPaths.endurance}
+                  attributeValue={props.auth.profile.attributes.endurance}
+                  attributeModifier={props.auth.profile.userPerks.attrEndurance}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+        </Paper>
+
+
       </Grid>
       {activePerks.length > 0 && (
         <React.Fragment>
@@ -928,16 +945,17 @@ const Profile = props => {
             <Fab
               color="primary"
               onClick={
-
                 props.mission.activeInstanceId
                   ? () =>
-                      handleMissionInstanceWarningDialog(() => setIsJoiningParty(prev => !prev), "Poszukiwanie drużyny")
+                      handleMissionInstanceWarningDialog(
+                        () => setIsJoiningParty(prev => !prev),
+                        "Poszukiwanie drużyny"
+                      )
                   : () => setIsJoiningParty(prev => !prev)
-              
-                }
+              }
             >
               {/* <EmojiPeopleIcon /> */}
-              <FabIcon src={uiPaths.lookForGroup} style={{width: '2rem'}}/>
+              <FabIcon src={uiPaths.lookForGroup} style={{ width: "2rem" }} />
             </Fab>
             <Typography variant="caption" style={{ marginTop: "0.4rem" }}>
               Szukaj drużyny
@@ -947,16 +965,17 @@ const Profile = props => {
             <Fab
               color="primary"
               onClick={
-
                 props.mission.activeInstanceId
                   ? () =>
-                      handleMissionInstanceWarningDialog(() => setIsCreatingParty(prev => !prev), "Tworzenie drużyny")
+                      handleMissionInstanceWarningDialog(
+                        () => setIsCreatingParty(prev => !prev),
+                        "Tworzenie drużyny"
+                      )
                   : () => setIsCreatingParty(prev => !prev)
-              
-                }
+              }
             >
               {/* <GroupAddIcon /> */}
-              <FabIcon src={uiPaths.addMember} style={{width: '2rem'}}/>
+              <FabIcon src={uiPaths.addMember} style={{ width: "2rem" }} />
             </Fab>
             <Typography variant="caption" style={{ marginTop: "0.4rem" }}>
               Utwórz drużynę
@@ -969,7 +988,7 @@ const Profile = props => {
         <Grid item container direction="column" alignItems="center" xs={6}>
           <Fab color="primary" onClick={() => setShowRankDialog(prev => !prev)}>
             {/* <EmojiEventsIcon /> */}
-            <FabIcon src={uiPaths.ranking} style={{width: '2rem'}}/>
+            <FabIcon src={uiPaths.ranking} style={{ width: "2rem" }} />
           </Fab>
           <Typography variant="caption" style={{ marginTop: "0.4rem" }}>
             Ranking
@@ -981,7 +1000,7 @@ const Profile = props => {
             onClick={() => setShowStatsDialog(prev => !prev)}
           >
             {/* <EqualizerIcon /> */}
-            <FabIcon src={uiPaths.statistics} style={{width: '2rem'}}/>
+            <FabIcon src={uiPaths.statistics} style={{ width: "2rem" }} />
           </Fab>
           <Typography variant="caption" style={{ marginTop: "0.4rem" }}>
             Statystyki
@@ -1041,7 +1060,9 @@ const Profile = props => {
 
       <ProfileMissionInstanceWarningDialog
         open={Boolean(missionInstanceWarningDialog.action)}
-        handleClose={()=>setMissionInstanceWarningDialog({action:null, text: ''})}
+        handleClose={() =>
+          setMissionInstanceWarningDialog({ action: null, text: "" })
+        }
         handleAction={missionInstanceWarningDialog.action}
         text={missionInstanceWarningDialog.text}
       />

@@ -35,6 +35,7 @@ import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 
 import PartyMissionInstanceWarningDialog from "./PartyMissionInstanceWarningDialog"
+import { uiPaths } from "../../../utils/definitions";
 
 
 
@@ -239,13 +240,15 @@ const PartyCreationDialog = props => {
       >
         <StyledMenuItem onClick={props.activeMission ? ()=>handleWarningDialogAction(()=>handleRemoveFromParty) : handleRemoveFromParty} >
           <ListItemIcon>
-            <HighlightOffIcon color="secondary"/>
+            {/* <HighlightOffIcon color="secondary"/> */}
+            <img src={uiPaths.deleteRed} style={{width: '2rem'}}/>
           </ListItemIcon>
           <ListItemText primary="Wyrzuć z drużyny" />
         </StyledMenuItem>
         <StyledMenuItem onClick={props.activeMission ? ()=>handleWarningDialogAction(()=>handleGiveLeader) : handleGiveLeader} >
           <ListItemIcon >
-            <TransferWithinAStationIcon color="primary"/>
+            {/* <TransferWithinAStationIcon color="primary"/> */}
+            <img src={uiPaths.transferLeader} style={{width: '2rem'}}/>
           </ListItemIcon>
           <ListItemText primary="Przekaż stanowisko lidera" />
         </StyledMenuItem>
