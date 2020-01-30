@@ -93,14 +93,14 @@ const EquipmentListItem = props => {
       : null;
   return (
     <ListItem
-      button={props.itemCategory !== "amulet"}
+      button={props.itemCategory !== "amulet" && props.itemCategory !== "torpedo"}
       alignItems="flex-start"
       className={classes.listItem}
       //style={{ boxShadow: props.equipped ? `inset 0px 0px 22px 3px ${palette.primary.main}`  : "" }}
       style={{background: props.equipped ? "#388e3ccf" : '', color: props.equipped ? 'white' : 'black', borderTop: palette.border}}
       equipped={props.equipped ? 1 : 0}
       onClick={() =>
-        props.itemCategory !== "amulet" &&
+        props.itemCategory !== "amulet" && props.itemCategory !== "torpedo" &&
         props.handleItemToggle(
           item._id,
           props.equipped,
@@ -149,7 +149,7 @@ const EquipmentListItem = props => {
                     }
                   />
                 </Grid>
-                {props.itemCategory !== "amulet" && (
+                {props.itemCategory !== "amulet" && props.itemCategory !== "torpedo" && (
                   <Grid item xs={1}>
                     <TouchAppIcon />
                   </Grid>

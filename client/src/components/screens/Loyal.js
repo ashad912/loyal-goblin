@@ -3,6 +3,7 @@ import boardsvg from '../../assets/board/statki.svg'
 import Loading from '../layout/Loading';
 import TorpedoList from './loyal/TorpedoList'
 import LoadedTorpedo from './loyal/LoadedTorpedo'
+import LoyalAwardDialog from './loyal/LoyalAwardDialog'
 import Button from "@material-ui/core/Button";
 import { Typography } from '@material-ui/core';
 import styled from 'styled-components'
@@ -107,10 +108,11 @@ class Loyal extends Component {
         dialogOpen: false,
         userTorpedos: [],
         loadedTorpedo: undefined,
-        showTorpedosModal: false
+        showTorpedosModal: false,
+        award: false,
+        
     }
-    //open console
-    //have to add 'id' props in .svg for each key object
+    
 
     componentWillUnmount(){
         if(this.state.seconds !== 0){
@@ -121,6 +123,28 @@ class Loyal extends Component {
     componentDidMount = () => {
         this.setState({
             userTorpedos: this.props.bag.filter((item) => item.itemModel.type === "torpedo"),
+            serverFields: [
+                {id: 1, name: 'D1', pressed: this.props.loyal['D1']},
+                {id: 2, name: 'E3', pressed: this.props.loyal['E3']},
+                {id: 3, name: 'I1', pressed: this.props.loyal['I1']},
+                {id: 4, name: 'I2', pressed: this.props.loyal['I2']},
+                {id: 5, name: 'I3', pressed: this.props.loyal['I3']},
+                {id: 6, name: 'I4', pressed: this.props.loyal['I4']},
+                {id: 7, name: 'E4', pressed: this.props.loyal['E4']},
+                {id: 8, name: 'E5', pressed: this.props.loyal['E5']},
+                {id: 9, name: 'G7', pressed: this.props.loyal['G7']},
+                {id: 10, name: 'H7', pressed: this.props.loyal['H7']},
+                {id: 11, name: 'C1', pressed: this.props.loyal['C1']},
+                {id: 12, name: 'B9', pressed: this.props.loyal['B9']},
+                {id: 13, name: 'C9', pressed: this.props.loyal['C9']},
+                {id: 14, name: 'D9', pressed: this.props.loyal['D9']},
+                {id: 15, name: 'E9', pressed: this.props.loyal['E9']},
+                {id: 16, name: 'F9', pressed: this.props.loyal['F9']},
+                {id: 17, name: 'B4', pressed: this.props.loyal['B4']},
+                {id: 18, name: 'B5', pressed: this.props.loyal['B5']},
+                {id: 19, name: 'B6', pressed: this.props.loyal['B6']},
+                {id: 20, name: 'B7', pressed: this.props.loyal['B7']},
+            ]
         })
     }
 
@@ -151,32 +175,32 @@ class Loyal extends Component {
         // ]
         //
 
-        let serverFields = [
-            {id: 1, name: 'D1', pressed: this.props.loyal['D1']},
-            {id: 2, name: 'E3', pressed: this.props.loyal['E3']},
-            {id: 3, name: 'I1', pressed: this.props.loyal['I1']},
-            {id: 4, name: 'I2', pressed: this.props.loyal['I2']},
-            {id: 5, name: 'I3', pressed: this.props.loyal['I3']},
-            {id: 6, name: 'I4', pressed: this.props.loyal['I4']},
-            {id: 7, name: 'E4', pressed: this.props.loyal['E4']},
-            {id: 8, name: 'E5', pressed: this.props.loyal['E5']},
-            {id: 9, name: 'G7', pressed: this.props.loyal['G7']},
-            {id: 10, name: 'H7', pressed: this.props.loyal['H7']},
-            {id: 11, name: 'C1', pressed: this.props.loyal['C1']},
-            {id: 12, name: 'B9', pressed: this.props.loyal['B9']},
-            {id: 13, name: 'C9', pressed: this.props.loyal['C9']},
-            {id: 14, name: 'D9', pressed: this.props.loyal['D9']},
-            {id: 15, name: 'E9', pressed: this.props.loyal['E9']},
-            {id: 16, name: 'F9', pressed: this.props.loyal['F9']},
-            {id: 17, name: 'B4', pressed: this.props.loyal['B4']},
-            {id: 18, name: 'B5', pressed: this.props.loyal['B5']},
-            {id: 19, name: 'B6', pressed: this.props.loyal['B6']},
-            {id: 20, name: 'B7', pressed: this.props.loyal['B7']},
-        ]
+        // let serverFields = [
+        //     {id: 1, name: 'D1', pressed: this.props.loyal['D1']},
+        //     {id: 2, name: 'E3', pressed: this.props.loyal['E3']},
+        //     {id: 3, name: 'I1', pressed: this.props.loyal['I1']},
+        //     {id: 4, name: 'I2', pressed: this.props.loyal['I2']},
+        //     {id: 5, name: 'I3', pressed: this.props.loyal['I3']},
+        //     {id: 6, name: 'I4', pressed: this.props.loyal['I4']},
+        //     {id: 7, name: 'E4', pressed: this.props.loyal['E4']},
+        //     {id: 8, name: 'E5', pressed: this.props.loyal['E5']},
+        //     {id: 9, name: 'G7', pressed: this.props.loyal['G7']},
+        //     {id: 10, name: 'H7', pressed: this.props.loyal['H7']},
+        //     {id: 11, name: 'C1', pressed: this.props.loyal['C1']},
+        //     {id: 12, name: 'B9', pressed: this.props.loyal['B9']},
+        //     {id: 13, name: 'C9', pressed: this.props.loyal['C9']},
+        //     {id: 14, name: 'D9', pressed: this.props.loyal['D9']},
+        //     {id: 15, name: 'E9', pressed: this.props.loyal['E9']},
+        //     {id: 16, name: 'F9', pressed: this.props.loyal['F9']},
+        //     {id: 17, name: 'B4', pressed: this.props.loyal['B4']},
+        //     {id: 18, name: 'B5', pressed: this.props.loyal['B5']},
+        //     {id: 19, name: 'B6', pressed: this.props.loyal['B6']},
+        //     {id: 20, name: 'B7', pressed: this.props.loyal['B7']},
+        // ]
+
+        const serverFields = this.state.serverFields
 
         
-
-        console.log(serverFields)
 
         const svgRawObject = this.refs.boardsvg
         const doc = svgRawObject.contentDocument
@@ -185,7 +209,7 @@ class Loyal extends Component {
 
         for(let i=1; i < serverFields.length +1; i++){
             const field = doc.getElementById(`${i}`) //assuming id as in serverFields array
-            console.log(field)
+            
             const fieldServerData = serverFields.find(field => {
                 return field.id === i
             })
@@ -197,7 +221,7 @@ class Loyal extends Component {
             field.addEventListener('click', this.handleClick) //setting listener
             fields = [...fields, field]
         }
-        console.log(fields)
+        
 
         this.setState({
             loading: false
@@ -297,14 +321,24 @@ class Loyal extends Component {
     endAnimation = async () => {
         const svgRawObject = this.refs.boardsvg
         const doc = svgRawObject.contentDocument
+        
         const field = doc.getElementsByName(this.state.loadedTorpedo.itemModel.name)[0] //assuming id as in serverFields array
         try{
             
             const award = await this.props.shootShip(this.state.loadedTorpedo.itemModel.name)
             if(award){
-                console.log('award granted')
+                this.setState({
+                    award: award
+                })
+                for(let i=1; i < this.state.serverFields.length + 1; i++){
+                    const field = doc.getElementById(`${i}`) //assuming id as in serverFields array
+                    field.style.fill = 'black'
+                }
+
+            }else{
+                field.style.fill = 'red'
             }
-            field.style.fill = 'red'
+            
             this.handleTorpedoDelete(this.state.loadedTorpedo._id)
         }catch(e){
             console.log(e)
@@ -330,7 +364,7 @@ class Loyal extends Component {
 
     render() { 
         const userTorpedos = this.state.userTorpedos
-        //console.log(this.state.seconds)
+        
         return ( 
             <React.Fragment>
                 {this.state.loading && <Loading/>}
@@ -358,6 +392,13 @@ class Loyal extends Component {
                             handleTorpedoDelete={this.handleTorpedoDelete}
                         />
                     </React.Fragment>)}
+            {this.state.award && 
+                <LoyalAwardDialog
+                    open={this.state.award}
+                    handleClose={() => {this.setState({award: null})}}
+                    award={this.state.award}
+                /> 
+            }      
             </React.Fragment>      
         );
     }

@@ -729,9 +729,21 @@ router.post("/finalize", barmanAuth, async (req, res) => {
 
       const exp = basket.experience;
       const items = [];
-      await asyncForEach(basket.awards, async award => {
-        for(let i = 0; i < award.quantity; i++){
-          const newAward = await Item({itemModel: award.itemModel, owner: member._id})
+      let newShopAwards = []
+      if(member.shopNotifications.awards && member.shopNotifications.awards.length){
+          newShopAwards = [...member.shopNotifications.awards]
+      }
+      await asyncForEach(basket.awards, async item => {
+
+        const index = newShopAwards.findIndex((award) => award.itemModel.toString() === item.itemModel.toString())
+        if(index > -1){
+            newShopAwards[index].quantity += item.quantity
+        }else{
+            newShopAwards = [...newShopAwards, {quantity: item.quantity, itemModel: item.itemModel}] 
+        }
+
+        for(let i = 0; i < item.quantity; i++){
+          const newAward = await Item({itemModel: item.itemModel, owner: member._id})
           await newAward.save()
           items.push(newAward._id)
         }
@@ -739,11 +751,13 @@ router.post("/finalize", barmanAuth, async (req, res) => {
 
 
       const newLevels = designateNewLevels(member.experience, exp);
-  
-      await member.updateOne(
+
+      await User.updateOne(
+        {_id: member._id},
         {
           $addToSet: { bag: { $each: items } },
-          $inc: { experience: exp, levelNotifications: newLevels }
+          $inc: { experience: exp, levelNotifications: newLevels, 'shopNotifications.experience': exp },
+          $set: {'shopNotifications.isNew': true, 'shopNotifications.awards': newShopAwards},
         }
       );
 

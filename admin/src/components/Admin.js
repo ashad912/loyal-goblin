@@ -46,6 +46,7 @@ const useStyles = makeStyles(theme => ({
 const Content = styled.div`
   flex-grow: 1;
   padding: 1rem;
+  text-align: center;
 `;
 
 const menuItems = [

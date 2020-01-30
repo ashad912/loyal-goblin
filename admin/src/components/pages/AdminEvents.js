@@ -583,7 +583,7 @@ if(eventId){
 
             <Paper
               style={{
-                width: "70%",
+                width: "80%",
                 margin: "1rem auto",
                 padding: "1rem",
                 boxSizing: "border-box"
@@ -651,7 +651,7 @@ if(eventId){
             {this.state.events.length > 0 && (
               <List
                 style={{
-                  width: "70%",
+                  width: "80%",
                   border: "1px solid grey",
                   margin: "0 auto"
                 }}

@@ -96,8 +96,8 @@ const Equipment = props => {
   };
 
   const items = props.items;
-let content = null
-  if(Object.keys(items).length > 0){
+  let content = null
+  if(Object.keys(items).length > 0 ){
     if(props.leaderInShop ){
       content = (<Typography
               variant="caption"
@@ -120,11 +120,11 @@ let content = null
       content = (
         <List component="nav" className={classes.root}>
         { Object.keys(items).map(itemCategory => {
-          const chest = itemCategory === "amulet";
-          const torpedo = itemCategory === "torpedo";
+          const chest = itemCategory === "amulet" || itemCategory === "torpedo";
+          /* const torpedo = itemCategory === "torpedo";
           if (torpedo) {
             return null;
-          }
+          }  */
           let stackedItems;
           if (chest) {
             stackedItems = convertToStack(items[itemCategory]);

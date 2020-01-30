@@ -433,6 +433,15 @@ export const userStandardPopulate = async user => {
       })
       .execPopulate();
   }
+  if (user.shopNotifications.awards && user.shopNotifications.awards.length) {
+    await user
+      .populate({
+        path: "shopNotifications.awards.itemModel",
+        select: '_id description imgSrc name perks',
+        populate: { path: "perks.target.disc-product", select: '_id name' },
+      })
+      .execPopulate();
+  }
 
   // const userObj = user.toObject() 
   // delete userObj.lastActivityDate
