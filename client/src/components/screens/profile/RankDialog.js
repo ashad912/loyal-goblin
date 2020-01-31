@@ -108,9 +108,9 @@ const RankDialog = props => {
                                         <Typography style={{width: '100%', fontSize: '0.7rem'}}>{index+1}</Typography>
                                     </Grid>
                                     <Grid item xs={2}>
-                                    {props.profile.avatar ? 
-                                        <img style={{width: '16px', height: '16px', paddingLeft: '0.2rem'}} alt="avatar" src={usersPath + user.profile.avatar} /> :
-                                        <Avatar style={{width: '16px', height: '16px', fontSize: '0.6rem'}}>{createAvatarPlaceholder(user.profile.name)}</Avatar>
+                                    {user.avatar ? 
+                                        <img style={{width: '16px', height: '16px', paddingLeft: '0.2rem'}} alt="avatar" src={usersPath + user.avatar} /> :
+                                        <Avatar style={{width: '16px', height: '16px', fontSize: '0.6rem'}}>{createAvatarPlaceholder(user.name)}</Avatar>
                                     }
                                     </Grid>
                                     <Grid item xs={5}>

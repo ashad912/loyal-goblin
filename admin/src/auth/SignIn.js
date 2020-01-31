@@ -199,7 +199,7 @@ class SignIn extends Component {
                                     
                                 </FormControl>
                                 <FormControl fullWidth style={{marginTop: '1rem', marginBottom: "0.5rem"}}>
-                                    <InputLabel htmlFor="input-password" error={this.state.error.password}>Password *</InputLabel>
+                                    <InputLabel htmlFor="input-password" error={this.state.error.password}>Hasło *</InputLabel>
                                     <Input id="password" aria-describedby="password" type="password" required error={this.state.error.password} onChange={this.handleChange}/>
                                     {this.state.error.password ? (<FormHelperText error id="my-helper-text">{this.state.formError.password}</FormHelperText>) : (null)}
                                 </FormControl>
