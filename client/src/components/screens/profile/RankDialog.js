@@ -18,7 +18,7 @@ import {designateUserLevel} from '../../../utils/methods'
 import { getRankedUsers } from "../../../store/actions/profileActions";
 
 import {createAvatarPlaceholder} from "../../../utils/methods";
-import {usersPath} from '../../../utils/definitions'
+import {usersPath, palette} from '../../../utils/definitions'
 
 const RankDialog = props => {
   
@@ -47,11 +47,11 @@ const RankDialog = props => {
 
 
     return (
-        <Dialog style={{margin: '-24px'}} fullWidth open={props.open} onClose={props.handleClose}>
+        <Dialog   maxWidth="xl" fullWidth open={props.open} onClose={props.handleClose} PaperProps={{style: {width: '100%', margin: '1rem', maxHeight: '70vh', height: '70vh'}}}>
         <DialogTitle style={{padding: '1rem 1rem 0 1rem'}}>TopGoblin</DialogTitle>
         <DialogContent style={{padding: '1rem 1rem'}}>
             
-            <List style={{ border: "1px solid grey", padding: '0' }} alignItems="flex-start">
+            <List style={{  padding: '0' }} alignItems="flex-start">
                 <ListItem >
                     <Grid container style={{alignItems: 'center'}}>
                         <Grid item xs={1}>
@@ -101,7 +101,7 @@ const RankDialog = props => {
                 {users.map((user, index) => {
                     return (
                         <React.Fragment key={user._id}>
-                            <ListItem key={user._id}>
+                            <ListItem key={user._id} style={{background: index%2 === 1 && palette.background.lightGrey}}>
                                         
                                 <Grid container style={{alignItems: 'center'}}>
                                     <Grid item xs={1}>
@@ -133,8 +133,8 @@ const RankDialog = props => {
             </List>
         </DialogContent>
         <DialogActions>
-            <Button onClick={props.handleClose} variant="contained" color="primary">
-                Wróć
+            <Button onClick={props.handleClose} color="primary">
+                Zamknij
             </Button>
         </DialogActions>
         </Dialog>

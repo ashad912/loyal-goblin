@@ -401,7 +401,7 @@ router.get("/shop", auth, async (req, res) => {
       await user
         .populate({
           path: "activeOrder.profile",
-          select: "_id name avatar bag equipped userPerks"
+          select: "_id name avatar bag equipped userPerks attributes"
         })
         .populate({
           path: "activeOrder.awards.itemModel",
@@ -416,7 +416,7 @@ router.get("/shop", auth, async (req, res) => {
           path: "party",
           populate: {
             path: "leader members",
-            select: "bag equipped name _id avatar bag userPerks",
+            select: "bag equipped name _id avatar bag userPerks attributes",
             populate: {
               path: "bag",
               populate: {
@@ -622,7 +622,7 @@ router.get("/verify/:id", barmanAuth, async (req, res) => {
     });
 
     if(!user){
-      throw new Error('Invalid order conditions!')
+      throw new Error('Nie znaleziono zamówienia!')
     }
 
     if(user.party){
@@ -671,7 +671,7 @@ router.post("/finalize", barmanAuth, async (req, res) => {
     });
   
     if(!user){
-      throw new Error('Invalid order conditions!')
+      throw new Error('Użytkownik anulował zamówienie!')
     }
   
     const frontEndOrder = req.body.currentOrder
@@ -757,7 +757,7 @@ router.post("/finalize", barmanAuth, async (req, res) => {
         {
           $addToSet: { bag: { $each: items } },
           $inc: { experience: exp, levelNotifications: newLevels, 'shopNotifications.experience': exp },
-          $set: {'shopNotifications.isNew': true, 'shopNotifications.awards': newShopAwards},
+          $set: {'shopNotifications.isNew': true, 'shopNotifications.awards': newShopAwards, 'activeOrder': []},
         }
       );
 
@@ -780,8 +780,8 @@ router.post("/finalize", barmanAuth, async (req, res) => {
 
     const newArchiveOrder = new ArchiveOrder(archive)
     await newArchiveOrder.save()
-    user.activeOrder = []
-    await user.save()
+   // user.activeOrder = []
+    //await user.save()
 
 
     res.send();

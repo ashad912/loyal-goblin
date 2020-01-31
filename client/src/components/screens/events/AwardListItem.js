@@ -17,7 +17,7 @@ import TouchAppIcon from '@material-ui/icons/TouchApp';
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import Divider from '@material-ui/core/Divider';
 import { dayLabels, categoryLabels, roomLabels, perkLabels } from "../../../utils/labels";
-import {itemsPath} from '../../../utils/definitions'
+import {itemsPath, palette} from '../../../utils/definitions'
 import { getValue, getTarget } from "../../../utils/methods";
 
 
@@ -31,10 +31,10 @@ const AwardListItem = props => {
     <ListItem
       alignItems="flex-start"
       style={{
-        border: "1px solid rgb(63, 81, 181)",
         width: '100%',
         marginBottom: "0.2rem",
-        padding: '1rem'
+        padding: '1rem',
+        //borderTop: palette.border
       }}
     >
     <Grid container direction="column">
@@ -90,7 +90,6 @@ const AwardListItem = props => {
                 width: "100%",
                 padding: '0',
                 marginTop: '0.5rem',
-                border: "1px solid grey",
                 boxSizing: "border-box",
                 background: "rgba(255, 255, 255, 0.198)"
               }}

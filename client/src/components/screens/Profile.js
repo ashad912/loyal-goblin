@@ -425,6 +425,12 @@ const Profile = props => {
     setRelativeThreshold(levelData.relativeThreshold);
   }, [props.auth.profile.experience]);
 
+  React.useEffect(()=>{
+    if(props.party.inShop && props.party.leader._id === props.auth.uid){
+      history.push("/shop", { id: props.auth.uid });
+    }
+  }, [props.party.inShop])
+
   const updateEquippedItems = () => {
     const equipment = {
       head: null,

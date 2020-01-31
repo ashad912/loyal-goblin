@@ -242,6 +242,7 @@ router.post('/create', adminAuth, async (req, res) =>{
         await updateRallyQueue()
         res.status(201).send(rally._id)
     } catch (e) {
+        console.log(e)
         res.status(400).send(e.message)
     }
 })
@@ -298,7 +299,7 @@ router.patch("/update", adminAuth, async (req, res, next) => {
       const rally = await Rally.findById(id)
   
       if(!rally){
-        res.status(404).send()
+        return res.status(404).send()
       }
 
       updates.forEach(update => {

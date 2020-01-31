@@ -8,7 +8,7 @@ import Avatar from '@material-ui/core/Avatar';
 import { Badge } from '@material-ui/core';
 import styled from 'styled-components'
 import moment from 'moment'
-import { ralliesPath } from '../../../utils/definitions';
+import { ralliesPath, palette } from '../../../utils/definitions';
 
 
 const StyledCard = styled(Card)`
@@ -18,7 +18,7 @@ const StyledCard = styled(Card)`
 `
 
 const ActiveRallyTypo = styled(Typography)`
-    color: ${props => props.active ? ('red') : ('#3f51b5')};
+    color: ${props => props.active ? (palette.secondary.main) : (palette.primary.main)};
 `
 
 const RallyPlaceholder = styled.div`

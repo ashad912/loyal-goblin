@@ -144,11 +144,12 @@ export const forgotPassword = (email) => {
 }
             
 
-export const changePassword = (oldPassword, password, confirmPassword) => {
+export const changePassword = (oldPassword, password, confirmPassword, token) => {
     return async dispatch => {
         try {
             if(password === confirmPassword){
-                const res = await axios.patch('/user/changePassword', {oldPassword, password, confirmPassword})
+                //console.log(oldPassword, password, confirmPassword, token)
+                const res = await axios.patch('/user/changePassword', {oldPassword, password, confirmPassword, token})
                 if(res){
                     signOut()
                 }

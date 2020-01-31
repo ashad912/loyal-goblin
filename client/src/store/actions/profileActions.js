@@ -77,7 +77,8 @@ export const toggleItem = (id, category, equipped, memberId) => {
             
             if(memberId){
                 const res = await axios.patch('/user/party/equip', {id, category, equipped, memberId})
-                dispatch({type: "UPDATE_PARTY", party: res.data.party})
+                console.log(res.data)
+                dispatch({type: "UPDATE_PARTY", party: res.data})
                 partyRefreshEmit(res.data._id)
             }else{
                 const res = await axios.patch('/user/myItems/equip', {id, category, equipped})

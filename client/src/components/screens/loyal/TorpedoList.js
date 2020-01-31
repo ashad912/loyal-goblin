@@ -151,10 +151,15 @@ const TorpedoList = props => {
               Zatwierdź
             </Button>
           )} */}
-          
-          <Button onClick={handleSave} color="primary" autoFocus>
-              Powrót
+          {activeTorpedo ?
+          <Button onClick={handleSave} color="primary" autoFocus variant="contained">
+            Załaduj
           </Button>
+          :
+          <Button onClick={handleSave}  autoFocus >
+          Zamknij
+        </Button>
+        }
         </DialogActions>
         <Dialog
             open={deleteDialog}

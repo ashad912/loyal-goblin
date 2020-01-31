@@ -41,6 +41,9 @@ const goblinTheme = createMuiTheme({
       dark: palette.secondary.dark,
       contrastText: palette.secondary.contrastText
     }
+  },
+  typography: {
+    fontFamily: "\"Pinto\", \"Helvetica\", \"Arial\", sans-serif"
   }
 });
 

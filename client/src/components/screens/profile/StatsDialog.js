@@ -139,8 +139,8 @@ const StatsDialog = props => {
             
         </DialogContent>
         <DialogActions>
-            <Button onClick={props.handleClose} variant="contained" color="primary">
-                Wróć
+            <Button onClick={props.handleClose}  color="primary">
+                Zamknij
             </Button>
         </DialogActions>
         </Dialog>

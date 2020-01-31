@@ -1,15 +1,15 @@
 export const dayLabels = [null, 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela']
 
 export const perkLabels = {
-    'attr-strength': 'Atrybut: Siła',
-    'attr-dexterity': 'Atrybut: Zręczność',
-    'attr-magic': 'Atrybut: Magia',
-    'attr-endurance': 'Atrybut: Wytrzymałość',
-    experience: 'Doświadczenie',
-    'disc-product': 'Zniżka: Produkt',
-    'disc-category': 'Zniżka: Kategoria produktów',
-    'disc-rent': 'Zniżka: Rezerwacja pokoi',
-    'custom': 'Własny',
+    'attr-strength': 'Siła ',
+    'attr-dexterity': 'Zręczność ',
+    'attr-magic': 'Magia ',
+    'attr-endurance': 'Wytrzymałość',
+    'experience': 'Doświadczenie',
+    'disc-product': 'Zniżka ',
+    'disc-category': 'Zniżka ',
+    'disc-rent': 'Zniżka ',
+    'custom': 'Specjalne ',
 }
 
 
@@ -31,7 +31,7 @@ export const classLabels = {
 export const equippableItems = ['weapon', 'feet', 'hands', 'head', 'chest', 'legs', 'ring']
 
 export const roomLabels = {
-    medieval: 'Pokój średniowieczny',
+    'medieval': 'Pokój średniowieczny',
     'sci-fi': 'Pokój Sci-Fi',
     'post-apo': 'Pokój Post-Apo',
 }

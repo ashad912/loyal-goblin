@@ -15,6 +15,7 @@ import { InputLabel } from '@material-ui/core';
 import { Divider } from '@material-ui/core';
 import ErrorIcon from '@material-ui/icons/Error';
 import {asyncForEach} from '../../utils/methods'
+import { palette, uiPaths } from '../../utils/definitions';
 
 
 //import {labels} from '../strings/labels'
@@ -24,7 +25,8 @@ const FormContainer = styled(Container)`
     display: flex;
     justify-content: center;
     flex-direction: column;
-    margin: 3rem 0 3rem 0;
+    align-items: center;
+    background: ${palette.primary.main};
 `
 
 const StyledPaper = styled(Paper)`
@@ -43,11 +45,12 @@ const ErrorPaper = styled(Paper)`
 const ActionBar = styled.div`
     display: flex;
     justify-content: space-between;
+    margin-top: 2rem;
 `
 const StyledLink = styled(Link)`
-color: #249123;
+color: white;
 &:visited {
-  color: #249123;
+  color: white;
 }
 `
 
@@ -201,20 +204,23 @@ class SignIn extends Component {
         
         return (
             <div style={{display: 'flex', justifyContent: 'center', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`}}>
-                <FormContainer  maxWidth="xs">
+                <FormContainer  maxWidth="xs" >
+                <img src={uiPaths.logo} style={{width: '50vw', flexBasis: '20%'}} alt="logo"/>
                     <form onSubmit={this.handleSubmit} className="white">
                     
-                        <Typography variant="h5" style={{textAlign: 'left', marginBottom: '1rem'}}>Zaloguj</Typography>
-                            <StyledPaper elevation={0}>
+                        {/* <Typography variant="h5" style={{textAlign: 'left', marginBottom: '1rem'}}>Zaloguj</Typography> */}
+                            {/* <StyledPaper elevation={0}> */}
+                            <div>
+
                                 <FormControl fullWidth style={{marginTop: '1rem', marginBottom: "0.5rem"}}>
-                                    <InputLabel htmlFor="input-email" error={this.state.error.email}>Email *</InputLabel>
-                                    <Input id="email" aria-describedby="email" required error={this.state.error.email} onChange={this.handleChange}/>
+                                    {/* <InputLabel htmlFor="input-email" error={this.state.error.email}>Email *</InputLabel> */}
+                                    <Input id="email" placeholder="Email" aria-describedby="email" required error={this.state.error.email} onChange={this.handleChange} inputProps={{style:{textAlign:'center', fontSize: '1.2rem', fontWeight: 'bolder'}}}/>
                                     {this.state.error.email ? (<FormHelperText error id="my-helper-text">{this.state.formError.email}</FormHelperText>) : (null)}
                                     
                                 </FormControl>
                                 <FormControl fullWidth style={{marginTop: '1rem', marginBottom: "0.5rem"}}>
-                                    <InputLabel htmlFor="input-password" error={this.state.error.password}>Hasło *</InputLabel>
-                                    <Input id="password" aria-describedby="password" type="password" required error={this.state.error.password} onChange={this.handleChange}/>
+                                    {/* <InputLabel htmlFor="input-password" error={this.state.error.password}>Hasło *</InputLabel> */}
+                                    <Input id="password" placeholder="Hasło" aria-describedby="password" type="password" required error={this.state.error.password} onChange={this.handleChange} inputProps={{style:{textAlign:'center', fontSize: '1.2rem', fontWeight: 'bolder'}}}/>
                                     {this.state.error.password ? (<FormHelperText error id="my-helper-text">{this.state.formError.password}</FormHelperText>) : (null)}
                                 </FormControl>
                                 
@@ -227,15 +233,15 @@ class SignIn extends Component {
                                 
                                 <Button 
                                     fullWidth
-                                    style={{ justifyContent: 'center', marginTop: "1.5rem"}}
+                                    style={{ justifyContent: 'center', marginTop: "1.5rem", background: 'black', color: 'white', fontSize: '1.2rem', padding: '0.2rem'}}
                                     onClick={this.handleSubmit} 
                                     variant="contained" 
-                                    color="primary" 
+ 
                                     >
                                     Zaloguj
                                     
                                 </Button> 
-                                <Divider style={{marginTop: '1.5rem', marginBottom: '1rem'}}/>
+                                {/* <Divider style={{marginTop: '1.5rem', marginBottom: '1rem'}}/> */}
                                 <ActionBar>
                                     <Typography>
                                         <StyledLink to='/lost-password' style={{ textDecoration: 'none'}}>
@@ -244,11 +250,13 @@ class SignIn extends Component {
                                     </Typography>
                                     <Typography>
                                         <StyledLink to='/signup' style={{ textDecoration: 'none'}}>
-                                            Nie masz konta? Zarejestruj się!
+                                        <span style={{color: 'black'}}>Nie masz konta?</span>
+                    <span> Zarejestruj się!</span>
                                         </StyledLink>
                                     </Typography>
                                 </ActionBar>
-                            </StyledPaper>                 
+                            </div>
+                            {/* </StyledPaper>                  */}
                     </form>
                 </FormContainer>
             </div>

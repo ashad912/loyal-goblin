@@ -27,6 +27,7 @@ import {
   leaveShop
 } from "../../store/actions/shopActions";
 import { toggleItem } from "../../store/actions/profileActions";
+import { uiPaths } from "../../utils/definitions";
 
 const Menu = styled(Paper)`
   flex-grow: 1;
@@ -1009,7 +1010,7 @@ class Shop extends React.Component {
                   handleChipClick={this.handleChangeactiveUser}
                 />
               )}
-              {!activeUser.equipped.scroll && activeUser.bag.length > 0 ? (
+              {!activeUser.equipped.scroll && activeUser.bag.filter(item=>item.itemModel.type==="scroll").length > 0 ? (
                 <Box>
                   <Button
                     style={{ margin: "1rem 0" }}
@@ -1021,10 +1022,10 @@ class Shop extends React.Component {
                   </Button>
                 </Box>
               ) : (
-                activeUser.bag.length > 0 && (
+                activeUser.bag.filter(item=>item.itemModel.type==="scroll").length > 0 && (
                   <Grid
                     container
-                    alignItems="center"
+                    
                     style={{
                       width: "100%",
                       margin: "1rem 0",
@@ -1036,11 +1037,11 @@ class Shop extends React.Component {
                       <ScrollListItem inactive scroll={equippedScroll} />
                     </Grid>
                     <Grid item>
-                      <HighlightOffIcon
+                      <img src={uiPaths.deleteRed}
                         onClick={() =>
                           this.handleScrollSelect(equippedScroll._id)
                         }
-                        style={{ fontSize: "3rem", color: "#be0000" }}
+                        style={{ width: "2.5rem", paddingTop: '0.5rem'}}
                       />
                     </Grid>
                   </Grid>

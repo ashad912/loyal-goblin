@@ -64,13 +64,13 @@ const EventMissionListItem = ({
 
   let active, archive, isPermanent
   const now = moment()
-  if(moment(activationDate).isSameOrAfter(now) && moment(expiryDate).isAfter(now)){
+  if(moment(now).isSameOrAfter(activationDate) && moment(now).isBefore(expiryDate)){
     active = true
   }
-  if(moment(activationDate).isBefore(now)){
+  if(moment(now).isAfter(expiryDate)){
     archive = true
   }
-  if(moment(expiryDate).isAfter(moment().add(100, 'y'))){
+  if(moment(moment().add(100, 'y')).isBefore(expiryDate)){
     isPermanent = true
   }
 
@@ -137,10 +137,12 @@ const EventMissionListItem = ({
                 </Typography>
               </Grid>
               <Grid item>
-                <Typography>{`Czas publikacji: ${ activationDate}`}</Typography>
+                <Typography>{`Czas publikacji: ${ moment(activationDate).format(
+                        "L, LTS"
+                      )}`}</Typography>
               </Grid>
               <Grid item>
-                <Typography>{`Czas zakończenia: ${isPermanent ? "misja bezterminowa" : expiryDate}`}</Typography>
+                <Typography>{`Czas zakończenia: ${isPermanent ? "misja bezterminowa" : moment(expiryDate).format("L, LTS")}`}</Typography>
               </Grid>
               {!active && (
                 <Grid item>

@@ -9,6 +9,7 @@ const basicPath = '/images/icons/'
 
 
 const iconPaths = {
+    logo: 'logo.svg',
     male: 'male.svg',
     female: 'female.svg',
     warrior: 'warrior.svg',
@@ -53,7 +54,7 @@ export const levelingEquation = { //y = a*(x*pow) + b
 export const palette = {
     primary: {
         light: "#66bb6a",
-        main: "#388e3c",
+        main: "#5aaa32",
         mainTransparent: "#388e3ccf",
         dark: "#1b5e20",
         contrastText: "#fff"
@@ -66,7 +67,9 @@ export const palette = {
     },
     background: {
         equipped: '#e6dc8d',
-        standard: '#eeeeee'
+        standard: '#eeeeee',
+        lightGrey: '#ededed',
+        grey: '#c0c0c0'
     },
     border: "1px solid rgb(192, 192, 192)"
 }

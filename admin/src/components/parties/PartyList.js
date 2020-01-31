@@ -9,7 +9,7 @@ const PartyList = (props) => {
 
 
   return (
-    <List dense style={{ border: "1px solid grey" }} alignItems="flex-start">
+    <List dense style={{ border: "1px solid grey", alignItems:"flex-start" }} >
     <ListItem >
         <Grid container style={{alignItems: 'center'}}>
             <Grid item xs={3} style={{textAlign: 'left'}}>
@@ -22,7 +22,7 @@ const PartyList = (props) => {
         </Grid>
     </ListItem>
     {props.parties.map(party => {
-      return <PartyListItem party={party} handleDelete={props.handleDelete}/>
+      return <PartyListItem key={party._id} party={party} handleDelete={props.handleDelete}/>
     })}
     </List>
   );

@@ -17,6 +17,7 @@ import {socket, instanceRefreshSubscribe} from '../../socket'
 import Rally from './events/Rally'
 import { getFirstRally } from '../../store/actions/rallyActions'
 import { authCheck } from "../../store/actions/authActions";
+import { designateUserLevel } from '../../utils/methods'
 
 
 const itemLabelHeight = 468.4 //REFACTOR: need to be changed to 'dimensionLabel'
@@ -59,6 +60,11 @@ const Events = (props) => {
 
     const fetchMissions = async () => {
         const missionObject = await getMissionList()
+        const levelData = designateUserLevel(props.userExperience, true);
+
+        missionObject.missions.sort(function(a, b){
+            return Math.abs(levelData.level-b.level) - Math.abs(levelData.level-a.level);
+        });
         setMissionListData(missionObject.missions)
 
         if(missionObject.missionInstanceId){
@@ -222,6 +228,7 @@ const Events = (props) => {
 
 const mapStateToProps = state => {
     return {
+        userExperience: state.auth.profile.experience,
         activeInstanceId: state.mission.activeInstanceId,
         multipleSession: state.auth.multipleSession,
         party: state.party

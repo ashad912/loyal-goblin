@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -7,53 +7,70 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import Recaptcha from 'react-google-invisible-recaptcha';
 import { Typography } from "@material-ui/core";
 import { changePassword, signOut } from "../../store/actions/authActions";
 
-const ChangePasswordModal = (props) => {
-    const open = props.open
-    const handleClose = props.handleClose
-    const [oldPassword, setOldPassword] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatedPassword, setRepeatedPassword] = useState("");
-  const [showError, setShowError] = useState(false);
 
-  const handleOldPasswordChange = e => {
-    setOldPassword(e.target.value);
+class ChangePasswordModal extends React.Component {
+
+  state = {
+    oldPassword: '',
+    password: '',
+    repeatedPassword: '',
+    showError: false
+  }
+
+
+  
+  handleOldPasswordChange = e => {
+    this.setState({oldPassword: e.target.value});
   };
 
-  const handlePasswordChange = e => {
-    setPassword(e.target.value);
-    if (password && repeatedPassword && showError) {
-      if (e.target.value === repeatedPassword) {
-        setShowError(false);
+  handlePasswordChange = e => {
+    this.setState({password: e.target.value});
+    if (this.state.password && this.state.repeatedPassword && this.state.showError) {
+      if (e.target.value === this.state.repeatedPassword) {
+        this.setState({showError: false});
       }
     }
   };
-  const handleRepeatedPasswordChange = e => {
-    setRepeatedPassword(e.target.value);
-    if (password && repeatedPassword && showError) {
-      if (e.target.value === password) {
-        setShowError(false);
+
+  handleRepeatedPasswordChange = e => {
+    this.setState({repeatedPassword: e.target.value});
+    if(this.state.password && e.target.value && this.state.password !== e.target.value){
+      this.setState({showError: true});
+    }
+    if (this.state.password && this.state.repeatedPassword && this.state.showError) {
+      if (e.target.value === this.state.password) {
+        this.setState({showError: false});
       }
     }
   };
-  const handleSubmit = async e => {
-    if (password === repeatedPassword && oldPassword && password.length >= 7 && repeatedPassword.length >= 7) {
-      setShowError(false);
-     await props.onChangePassword(oldPassword, password, repeatedPassword);
-      handleClose()
-      setOldPassword('')
-      setPassword('')
-      setRepeatedPassword('')
-      props.signOut()
+  handleSubmit = async e => {
+    if (this.state.password === this.state.repeatedPassword && this.state.oldPassword && this.state.password.length >= 7 && this.state.repeatedPassword.length >= 7) {
+      this.recaptcha.execute();
+
     } else {
-      setShowError(true);
+      this.setState({showError: true});
+      this.recaptcha.reset();
     }
   };
+  
+  onCaptchaResolved = async () => {
+    await this.props.onChangePassword(this.state.oldPassword, this.state.password, this.state.repeatedPassword, this.recaptcha.getResponse());
+    this.setState({showError: false, oldPassword: '', password: '', repeatedPassword: ''});
+    this.props.handleClose()
+    this.props.signOut()
+  }
+  
+  
+  render() {
+    const open = this.props.open
+    const handleClose = this.props.handleClose
 
-  return (
-    <Dialog
+    return (
+<Dialog
       open={open}
       onClose={handleClose}
       aria-labelledby="form-dialog-title"
@@ -64,14 +81,14 @@ const ChangePasswordModal = (props) => {
           Wpisz aktualne hasło oraz nowe hasło, majace minimum 7 znaków i różniące się od
           aktualnego. Po zatwierdzeniu nastąpi wylogowanie.
         </DialogContentText>
-        {showError && (
+        {this.state.showError && (
           <Typography variant="caption" style={{ color: "#c30000" }}>
             Podane hasła nie są takie same
           </Typography>
         )}
         <TextField
-          value={oldPassword}
-          onChange={handleOldPasswordChange}
+          value={this.state.oldPassword}
+          onChange={this.handleOldPasswordChange}
           autoFocus
           margin="dense"
           label="Aktualne hasło"
@@ -79,16 +96,16 @@ const ChangePasswordModal = (props) => {
           fullWidth
         />
         <TextField
-          value={password}
-          onChange={handlePasswordChange}
+          value={this.state.password}
+          onChange={this.handlePasswordChange}
           margin="dense"
           label="Nowe hasło"
           type="password"
           fullWidth
         />
         <TextField
-          value={repeatedPassword}
-          onChange={handleRepeatedPasswordChange}
+          value={this.state.repeatedPassword}
+          onChange={this.handleRepeatedPasswordChange}
           margin="dense"
           label="Powtórz nowe hasło"
           type="password"
@@ -100,24 +117,34 @@ const ChangePasswordModal = (props) => {
           Anuluj
         </Button>
         <Button
-          onClick={handleSubmit}
+          onClick={this.handleSubmit}
           color="primary"
           variant="contained"
           disabled={
-            password.length <= 0 || repeatedPassword.length <= 0 || showError
+            this.state.password.length <= 0 || this.state.repeatedPassword.length <= 0 || this.state.showError
           }
         >
           Zatwierdź
         </Button>
       </DialogActions>
+      <Recaptcha
+                  ref={ ref => this.recaptcha = ref }
+                  sitekey="6Ldy0ssUAAAAAKSZNuXULGv4U1PBI35BbvbWhT9x"
+                  onResolved={ this.onCaptchaResolved }
+              />
     </Dialog>
-  );
-};
+    )
+  }
+}
+
+
+
+
 
 const mapDispatchToProps = dispatch => {
   return {
-    onChangePassword: (oldPassword, password, repeatedPassword) =>
-      dispatch(changePassword(oldPassword, password, repeatedPassword)),
+    onChangePassword: (oldPassword, password, repeatedPassword, token) =>
+      dispatch(changePassword(oldPassword, password, repeatedPassword, token)),
     signOut: () => dispatch(signOut())
   };
 };

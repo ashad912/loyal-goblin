@@ -50,7 +50,7 @@ const PartyListItem = (props) => {
         {party.members.map(member => {
           return (
             
-              <UserListItem user={member} hideBan={true}  style={{ paddingLeft: "3rem" }}/>
+              <UserListItem key={member._id} user={member} hideBan={true}  style={{ paddingLeft: "3rem" }}/>
             
           );
         })}

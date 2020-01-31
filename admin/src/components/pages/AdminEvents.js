@@ -662,10 +662,8 @@ if(eventId){
                       key={event._id}
                       isLast={this.state.events.length - 1 === index}
                       event={event}
-                      activationDate={moment(event.activationDate).format(
-                        "L, LTS"
-                      )}
-                      expiryDate={moment(event.expiryDate).format("L, LTS")}
+                      activationDate={event.activationDate}
+                      expiryDate={event.expiryDate}
                       activateNow={this.handleShowActivateNowDialog}
                       editEvent={this.handleEditEventCreator}
                       deleteEvent={this.handleShowDeleteDialog}
@@ -678,11 +676,9 @@ if(eventId){
                       key={event._id}
                       isLast={this.state.events.length - 1 === index}
                       event={event}
-                      activationDate={moment(event.activationDate).format(
-                        "L, LTS"
-                      )}
-                      startDate={moment(event.startDate).format("L, LTS")}
-                      expiryDate={moment(event.expiryDate).format("L, LTS")}
+                      activationDate={event.activationDate}
+                      startDate={event.startDate}
+                      expiryDate={event.expiryDate}
                       activateNow={this.handleShowActivateNowDialog}
                       editEvent={this.handleEditEventCreator}
                       deleteEvent={this.handleShowDeleteDialog}

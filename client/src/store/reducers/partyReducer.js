@@ -2,7 +2,8 @@ const initState = {
   _id: "",
   name: "",
   leader: null,
-  members: []
+  members: [],
+  inShop: false
 };
 
 const partyReducer = (state = initState, action) => {
@@ -38,6 +39,11 @@ const partyReducer = (state = initState, action) => {
       return {
         ...initState
       };
+      case "LEAVE_SHOP":
+        return {
+          ...state,
+          inShop: false
+        };
     default:
       return state;
   }

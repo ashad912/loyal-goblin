@@ -13,15 +13,19 @@ const ScrollModal = ({open, handleClose, scrolls, equippedScrollId, handleScroll
     <Dialog
       open={open}
       onClose={handleClose}
+      fullWidth
+      maxWidth="xl"
+      PaperProps={{style: {width: '100%', margin: '1rem'}}}
+
     >
       <DialogTitle>
         Zarządzaj zwojami
       </DialogTitle>
       <DialogContent>
-        {scrolls.length > 0 ? scrolls.map(scroll => {
+        {scrolls.length > 0 ? scrolls.map((scroll, index) => {
 
           return (
-        <ScrollListItem key={scroll._id} scroll= {scroll} equipped={scroll._id === equippedScrollId} handleScrollSelect={handleScrollSelect}/>
+        <ScrollListItem key={scroll._id} isFirst={index===0} scroll= {scroll} equipped={scroll._id === equippedScrollId} handleScrollSelect={handleScrollSelect}/>
     )
 }) :
 <DialogContentText> Brak zwojów w ekwipunku </DialogContentText>

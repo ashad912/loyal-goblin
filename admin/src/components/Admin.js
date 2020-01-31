@@ -137,6 +137,7 @@ const Admin = (props) => {
         menuItems={menuItems}
         onClick={handlePageChange}
         width={drawerWidth}
+        currentPage={currentPage}
       />
       <Content>
         <div className={classes.toolbar} />

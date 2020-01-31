@@ -6,12 +6,13 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Menu from "@material-ui/core/Menu";
+import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import MenuItem from "@material-ui/core/MenuItem";
 import { getTarget, getValue } from "../../../utils/methods";
-import { perkLabels } from "../../../utils/labels";
-import {itemsPath} from '../../../utils/definitions'
+import { perkLabels, dayLabels } from "../../../utils/labels";
+import {itemsPath, palette} from '../../../utils/definitions'
 
 const StyledMenu = withStyles({
   paper: {
@@ -46,9 +47,8 @@ const StyledMenuItem = withStyles(theme => ({
 
 const useStyles = makeStyles(theme => ({
   listItem: {
-    borderTop: "1px solid grey",
-    borderBottom: "1px solid grey",
-    marginBottom: "0.2rem"
+    marginBottom: "0.2rem",
+    fontFamily: "\"Pinto\", \"Helvetica\", \"Arial\", sans-serif"
   },
   optionsIcon: {
     margin: "0 auto"
@@ -66,7 +66,7 @@ const ScrollListItem = props => {
         button
         alignItems="flex-start"
         className={classes.listItem}
-        style={{ background: props.equipped ? "#e6dc8d" : "" }}
+        style={{ background: props.equipped && palette.primary.light, borderTop: !props.isFirst && palette.border }}
         equipped={props.equipped ? 1 : 0}
         onClick={() =>props.inactive ? ()=> {} : props.handleScrollSelect(scroll._id)}
       >
@@ -77,7 +77,7 @@ const ScrollListItem = props => {
             src={`${itemsPath}${scroll.itemModel.imgSrc}`}
           />
         </ListItemAvatar>
-        <Grid container direction="column">
+        <Grid container direction="column" style={{color: props.equipped &&  'white'}}>
           <Grid item container>
             <Grid item xs={12}>
               <ListItemText
@@ -93,45 +93,77 @@ const ScrollListItem = props => {
               />
             </Grid>
           </Grid>
-          <Grid item >
-            {scroll.itemModel.perks.length > 0 && (
-              <List
-                dense
-                style={{
-                  maxHeight: "8rem",
-                  overflow: "auto",
-                  width: "100%",
-                  border: "1px solid grey",
-                  padding: "0.5rem",
-                  boxSizing: "border-box",
-                  background: "rgba(255, 255, 255, 0.198)"
-                }}
-              >
-                {scroll.itemModel.perks.map((perk, index) => {
-                  return (
-                    <Box
-                    key={perk.perkType+index}
-                      border={1}
-                      borderColor="primary.main"
-                      style={{ margin: "0.2rem 0", fontSize: "0.8rem" }}
-                    >
-                      <ListItem>
-                        <Grid container justify="space-around">
-                          <Grid item>{perkLabels[perk.perkType]}</Grid>
-                          <Grid item>{getValue(perk.perkType, perk.value)}</Grid>
-                          <Grid item>
-                            {getTarget(perk.perkType, perk.target)}
-                          </Grid>
-                          
+          <Grid item style={{width: '100%'}}>
+          {scroll.itemModel.perks.length > 0 && (
+            <List
+              dense
+              style={{
+                maxHeight: "8rem",
+                overflow: "auto",
+                width: "100%",
+                padding: "0rem",
+                boxSizing: "border-box",
+                background: "rgba(255, 255, 255, 0.198)"
+              }}
+            >
+              <Typography component="div">
+              {scroll.itemModel.perks.map((perk, index) => {
+                return (
+                  <Box
+                  key={JSON.stringify(perk.target)+index}
+                    border={0}
+                    borderColor="primary.main"
+                    style={{ margin: "0.2rem 0", fontSize: "0.8rem" }}
+                  >
+                    <ListItem style={{padding: '0.4rem'}}>
+                      <Grid container justify="flex-start">
+                        <Grid item xs={6}>{perkLabels[perk.perkType]}</Grid>
+                        <Grid item xs={3}>{getValue(perk.perkType, perk.value)}</Grid>
+                        <Grid item xs={3}>
+                          {getTarget(perk.perkType, perk.target)}
                         </Grid>
-                      </ListItem>
-                    </Box>
-                  );
-                })}
-              </List>
-            )}
-          </Grid>
+                        <Grid item xs={12}>
+                          {perk.time.length > 0 && (
+                            <React.Fragment>
+                              {perk.time
+                                .slice()
+                                .reverse()
+                                .map((period, index) => (
+                                  <Grid
+                                    container
+                                    key={JSON.stringify(period)+index}
+                                  >
+                                    <Grid item>
+                                      {`${dayLabels[period.startDay]}`}
+                                    </Grid>
+                                    {!(
+                                      period.startHour === 12 &&
+                                      period.lengthInHours === 24
+                                    ) ? (
+                                      <Grid item>
+                                        {`, ${
+                                          period.startHour
+                                        }:00 - ${(period.startHour +
+                                          period.lengthInHours) %
+                                          24}:00`}
+                                      </Grid>
+                                    ) : null}
+                                  </Grid>
+                                ))}
+                            </React.Fragment>
+                          )}
+                        </Grid>
+                      </Grid>
+                    </ListItem>
+                    {scroll.itemModel.perks.length !== index+1 && <Divider />}
+                  </Box>
+                );
+              })}
+              </Typography>
+            </List>
+          )}
         </Grid>
+      </Grid>
   
         
       </ListItem>

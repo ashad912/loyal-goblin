@@ -4,14 +4,40 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Button from "@material-ui/core/Button";
-import styled from 'styled-components'
-import {itemsPath} from '../../../utils/definitions'
+import styled, {keyframes} from 'styled-components'
+import {itemsPath, palette} from '../../../utils/definitions'
+import { duration } from "@material-ui/core/styles";
 
-const StyledListItem = styled(ListItem)`
-    marginBottom: 0.2rem;
-    border: 1px solid rgb(63, 81, 181);
+const glowReady = keyframes`
+0%{
+  box-shadow: 0px 0px 4px 0px ${palette.primary.main}
+}
+100%{
+  box-shadow: 0px 0px 10px 1px ${palette.primary.main}
+}
 `
 
+const glowWarning = keyframes`
+0%{
+  box-shadow: 0px 0px 4px 0px ${palette.secondary.main}
+}
+100%{
+  box-shadow: 0px 0px 10px 1px ${palette.secondary.main}
+}
+`
+
+
+
+const StyledListItem = styled(ListItem)`
+    margin-bottom: 0.2rem;
+`
+const LaunchButton = styled(Button)`
+animation-name: ${props => props.disabled ? glowWarning : glowReady};
+animation-duration: 1s;
+animation-direction: alternate;
+animation-iteration-count: infinite;
+transition: all 0.2s ease-out;
+`
 
 
 const LoadedTorpedo = (props) => {
@@ -22,6 +48,9 @@ const LoadedTorpedo = (props) => {
     
     const torpedo = props.torpedo;
   
+    const torpedoField = props.fields.find(field=>{
+      return field.name === torpedo.itemModel.name
+    })
     //console.log(torpedo)
   
   
@@ -44,9 +73,9 @@ const LoadedTorpedo = (props) => {
           secondary={<span>{torpedo.itemModel.description}</span>}
         />
         <ListItemIcon>
-          <Button color="primary" disabled={props.inProgress}>
+          <LaunchButton color="primary" disabled={props.inProgress || torpedoField.pressed}>
             {!props.inProgress ? ('Strzelaj!') : ('Uwaga!')}
-          </Button>
+          </LaunchButton>
         </ListItemIcon>
         
       </StyledListItem>

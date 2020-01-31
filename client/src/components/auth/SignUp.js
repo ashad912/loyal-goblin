@@ -15,38 +15,41 @@ import { InputLabel } from "@material-ui/core";
 import { Divider } from "@material-ui/core";
 import ErrorIcon from "@material-ui/icons/Error";
 import {asyncForEach} from '../../utils/methods'
-
+import { palette, uiPaths } from '../../utils/definitions';
 //import {labels} from '../strings/labels'
 
 const FormContainer = styled(Container)`
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  margin: 3rem 0 3rem 0;
-`;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    background: ${palette.primary.main};
+`
 
 const StyledPaper = styled(Paper)`
     padding: 1rem;
     border: 1px solid #eeeeee;
-`;
+`
 
 const ErrorPaper = styled(Paper)`
-  display: flex;
-  margin: 1rem 0 0 0;
-  padding: 0.5rem;
-  background-color: #ffe7e7;
-  text-align: left;
-`;
+    display: flex;
+    margin: 1rem 0 0 0;
+    padding: 0.5rem;
+    background-color: #ffe7e7; 
+    text-align: left;
+`
 
 const ActionBar = styled.div`
-  display: flex;
-  justify-content: flex-end;
-`;
-
+    display: flex;
+    flex-direction: column;
+    align-items: center
+    justify-content: center;
+    margin-top: 1rem;
+`
 const StyledLink = styled(Link)`
-color: #249123;
+color: white;
 &:visited {
-  color: #249123;
+  color: white;
 }
 `
 
@@ -237,84 +240,45 @@ class SignUp extends Component {
     const { authError } = this.props;
 
     return (
-      <div style={{ display: "flex", justifyContent: "center", minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)` }}>
-        <FormContainer maxWidth="xs">
+      <div style={{display: 'flex', justifyContent: 'center', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`}}>
+      <FormContainer  maxWidth="xs" >
+      <img src={uiPaths.logo} style={{width: '50vw', flexBasis: '20%'}} alt="logo"/>
           <form onSubmit={this.handleSubmit} className="white">
-            <Typography
-              variant="h5"
-              style={{ textAlign: "left", marginBottom: "1rem" }}
-            >
-              Utwórz konto
-            </Typography>
-            <StyledPaper elevation={0}>
+          
+              {/* <Typography variant="h5" style={{textAlign: 'left', marginBottom: '1rem'}}>Zaloguj</Typography> */}
+                  {/* <StyledPaper elevation={0}> */}
+                  <div>
+
+                      <FormControl fullWidth style={{marginTop: '1rem', marginBottom: "0.5rem"}}>
+                          {/* <InputLabel htmlFor="input-email" error={this.state.error.email}>Email *</InputLabel> */}
+                          <Input id="email" placeholder="Email" aria-describedby="email" required error={this.state.error.email} onChange={this.handleChange} inputProps={{style:{textAlign:'center', fontSize: '1.2rem', fontWeight: 'bolder'}}}/>
+                          {this.state.error.email ? (<FormHelperText error id="my-helper-text">{this.state.formError.email}</FormHelperText>) : (null)}
+                          
+                      </FormControl>
+                      <FormControl fullWidth style={{marginTop: '1rem', marginBottom: "0.5rem"}}>
+                          {/* <InputLabel htmlFor="input-password" error={this.state.error.password}>Hasło *</InputLabel> */}
+                          <Input id="password" placeholder="Hasło" aria-describedby="password" type="password" required error={this.state.error.password} onChange={this.handleChange} inputProps={{style:{textAlign:'center', fontSize: '1.2rem', fontWeight: 'bolder'}}}/>
+                          {this.state.error.password ? (<FormHelperText error id="my-helper-text">{this.state.formError.password}</FormHelperText>) : (null)}
+                      </FormControl>
               <FormControl
                 fullWidth
                 style={{ marginTop: "1rem", marginBottom: "0.5rem" }}
               >
-                <InputLabel
-                  htmlFor="input-email"
-                  error={this.state.error.email}
-                >
-                  Email *
-                </InputLabel>
-                <Input
-                  id="email"
-                  aria-describedby="email"
-                  required
-                  error={this.state.error.email}
-                  onChange={this.handleChange}
-                />
-                {this.state.error.email ? (
-                  <FormHelperText error id="my-helper-text">
-                    {this.state.formError.email}
-                  </FormHelperText>
-                ) : (
-                  <FormHelperText id="my-helper-text">
-                    Nigdy nie udostępniamy Twoich danych.
-                  </FormHelperText>
-                )}
-              </FormControl>
-              <FormControl
-                fullWidth
-                style={{ marginTop: "1rem", marginBottom: "0.5rem" }}
-              >
-                <InputLabel
-                  htmlFor="input-password"
-                  error={this.state.error.password}
-                >
-                  Hasło *
-                </InputLabel>
-                <Input
-                  id="password"
-                  aria-describedby="password"
-                  type="password"
-                  required
-                  error={this.state.error.password}
-                  onChange={this.handleChange}
-                />
-                {this.state.error.password ? (
-                  <FormHelperText error id="my-helper-text">
-                    {this.state.formError.password}
-                  </FormHelperText>
-                ) : null}
-              </FormControl>
-              <FormControl
-                fullWidth
-                style={{ marginTop: "1rem", marginBottom: "0.5rem" }}
-              >
-                <InputLabel
+                {/* <InputLabel
                   htmlFor="input-password"
                   error={this.state.error.confirmPassword}
                 >
                   Potwierdź hasło *
-                </InputLabel>
+                </InputLabel> */}
                 <Input
                   id="confirmPassword"
                   aria-describedby="confirm-password"
                   type="password"
                   required
+                  placeholder="Powtórz hasło"
                   error={this.state.error.confirmPassword}
                   onChange={this.handleChange}
+                  inputProps={{style:{textAlign:'center', fontSize: '1.2rem', fontWeight: 'bolder'}}}
                 />
                 {this.state.error.confirmPassword ? (
                   <FormHelperText error id="my-helper-text">
@@ -322,30 +286,33 @@ class SignUp extends Component {
                   </FormHelperText>
                 ) : null}
               </FormControl>
+                      
+                      { authError ? (
+                          <ErrorPaper>
+                              <ErrorIcon style={{marginRight: '0.5rem', color: '#ff001f'}}/>
+                              <Typography>{authError}</Typography>
+                          </ErrorPaper>
+                      ) : null}
+                      
+                      <Button 
+                          fullWidth
+                          style={{ justifyContent: 'center', marginTop: "1.5rem", background: 'black', color: 'white', fontSize: '1.2rem', padding: '0.2rem'}}
+                          onClick={this.handleSubmit} 
+                          variant="contained" 
 
-              {authError ? (
-                <ErrorPaper>
-                  <ErrorIcon
-                    style={{ marginRight: "0.5rem", color: "#ff001f" }}
-                  />
-                  <Typography>{authError}</Typography>
-                </ErrorPaper>
-              ) : null}
+                          >
+                          Zaloguj
+                          
+                      </Button> 
 
-              <Button
-                fullWidth
-                style={{ justifyContent: "center", marginTop: "1.5rem" }}
-                onClick={this.handleSubmit}
-                variant="contained"
-                color="primary"
-              >
-                Zarejestruj
-              </Button>
-              <Divider style={{ marginTop: "1.5rem", marginBottom: "1rem" }} />
+
+
+            
               <ActionBar>
                 <Typography>
                   <StyledLink to="/signin" style={{ textDecoration: 'none'}}>
-                    Masz już konto? Zaloguj się!
+                    <span style={{color: 'black'}}>Masz już konto?</span>
+                    <span> Zaloguj się!</span>
                   </StyledLink>
                 </Typography>
               </ActionBar>
@@ -354,7 +321,7 @@ class SignUp extends Component {
                   sitekey="6Ldy0ssUAAAAAKSZNuXULGv4U1PBI35BbvbWhT9x"
                   onResolved={ this.onResolved }
               />
-            </StyledPaper>
+            </div>
           </form>
         </FormContainer>
       </div>

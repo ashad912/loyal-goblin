@@ -197,6 +197,10 @@ router.patch("/character", auth, async (req, res) => {
     if(characterClass === 'cleric' && attributes.endurance <= 1){
       throw new Error("Nieprawidłowa wartość atrybutu klasowego")
     }
+    const sameNameUser = await User.findOne({name: req.body.name})
+    if(sameNameUser){
+      throw new Error("Postać o podanym imieniu już istnieje")
+    }
 
 
     user.name = name
@@ -345,6 +349,21 @@ router.patch("/changePassword", auth, async (req, res, next) => {
   const newPassword = req.body.password;
   const repeatedNewPassword = req.body.confirmPassword
 
+
+  
+  const secretKey = process.env.SECRET_RECAPTCHA_KEY;
+  const recaptchaToken = req.body.token;
+  const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
+
+
+  try{
+    await verifyCaptcha(url)
+  }catch(e){
+    console.log(e);
+    res.status(400).send(e);
+    return
+  }
+
   try {
     if (oldPassword === newPassword) {
       throw new Error("Nowe i stare hasła nie mogą być takie same");
@@ -356,6 +375,7 @@ router.patch("/changePassword", auth, async (req, res, next) => {
       await user.save();
       res.send(user);
     } catch (e) {
+      console.log(e)
       res.status(400).send(e);
     }
   });
@@ -599,13 +619,13 @@ router.patch("/party/equip", auth, async (req, res) => {
     }
 
     //WARNING!: u can pass anything in equipped object, without verification
-    user.equipped.scroll = itemId
+    user.equipped.scroll = user.equipped.scroll ? null : itemId
     user.userPerks = await designateUserPerks(user);
     user.userPerks = await updatePerks(user, true);
     await user.save();
     user = await userStandardPopulate(user);
     //Depopulate equipped key
-    user.equipped.scroll = itemId
+    user.equipped.scroll = user.equipped.scroll ? null : itemId
 
     
       
@@ -688,11 +708,11 @@ router.patch("/myItems/equip", auth, async (req, res) => {
         })
         .execPopulate();
 
-        if(user.equipped[slot] && user.equipped[slot].itemModel.category){
-          const slotToCategory = slot.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').split('-')[0]
+        if(user.equipped[slot] && user.equipped[slot].itemModel.type){
+          const slotToType = slot.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').split('-')[0]
 
-          if(user.equipped[slot].itemModel.category !== slotToCategory){
-            console.log(user.equipped[slot].itemModel.category, slotToCategory)
+          if(user.equipped[slot].itemModel.type !== slotToType){
+            console.log(user.equipped[slot].itemModel.type, slotToType)
             throw new Error("Nieprawidłowa kategoria przedmiotu w ekwipunku!")
           }
         }

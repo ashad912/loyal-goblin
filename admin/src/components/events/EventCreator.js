@@ -708,7 +708,7 @@ class EventCreator extends Component {
     if (this.state.dirtyFields.title && this.state.title.trim() !== "") {
       validationErrors.title = "";
     }
-    if (this.state.dirtyFields.minLevel && this.state.minLevel.trim() !== "") {
+    if (this.state.minLevel !== -1) {
       validationErrors.minLevel = "";
     }
     if(this.state.isRally){
@@ -803,14 +803,19 @@ class EventCreator extends Component {
         <Container>
           <Typography component="div">
             <Grid component="label" container alignItems="center" spacing={1}>
-              <Grid item>Misja</Grid>
-              <Grid item>
-                <Switch
-                  checked={this.state.isRally}
-                  onChange={this.handleToggleRaid}
-                />
-              </Grid>
-              <Grid item>Rajd</Grid>
+              {!this.props.isEdit ?
+              <React.Fragment>
+                <Grid item>Misja</Grid>
+                <Grid item>
+                  <Switch
+                    checked={this.state.isRally}
+                    onChange={this.handleToggleRaid}
+                  />
+                </Grid>
+                <Grid item>Rajd</Grid>
+              </React.Fragment> :
+  <Grid item>{this.state.isRally ? 'Rajd' : 'Misja'}</Grid>
+              }
               <Grid item>
                 {!this.state.isRally && (
                   <FormControlLabel

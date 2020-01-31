@@ -21,8 +21,8 @@ import {palette, itemsPath, missionsPath} from '../../../utils/definitions'
 
 
 const RequiredAttribute = styled(Typography)`
-    margin: 0 0.5rem 0 0
-    color: ${props => props.attr ? 'green' : 'red' } 
+    margin: 0 0.5rem 0 0;
+    color: ${props => props.attr ? 'green' : 'red' } ;
 `
 const Background = styled.div`
     background-color: ${palette.primary.main};
@@ -191,6 +191,7 @@ const MissionDetails = (props) => {
                     direction="row"
                     style={{margin: '0.2rem 0'}}
                 >
+                    {mission.amulets && mission.amulets.length > 0 &&
                     <Grid item>
                         <Typography 
                             variant='body1'
@@ -218,7 +219,7 @@ const MissionDetails = (props) => {
                                 })
                             ):(null)
                         }
-                    </Grid>
+                    </Grid>}
                 </Grid>
             </Grid>
             <Divider style={{margin: '0.5rem 0'}}/>
@@ -296,7 +297,7 @@ const MissionDetails = (props) => {
         <DialogActions style={{justifyContent: 'space-between'}}>
             
             <Button onClick={props.handleClose} color="secondary">
-                Wróć
+                Zamknij
             </Button>
             {props.activeInstanceId !== null && (props.leader || props.party.members.length === 0) && (<Button color="secondary" onClick={() => props.handleMissionLeave()}>Opuść</Button>)}
             <Button variant="contained" color="primary" onClick={() => props.handleMissionClick(mission._id)} disabled={props.multipleSession || !props.isMissionActive || (!props.leader && !props.activeInstanceId)}>{props.activeInstanceId ? 'Dołącz!' : 'Wyrusz!'}</Button>

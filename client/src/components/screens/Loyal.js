@@ -370,7 +370,7 @@ class Loyal extends Component {
                 {this.state.loading && <Loading/>}
                 <LoadedTorpedoContainer>
                     {this.state.loadedTorpedo ? (
-                        <LoadedTorpedo torpedo={this.state.loadedTorpedo} handleShoot={this.handleShoot} inProgress={this.state.seconds > 0}/>
+                        <LoadedTorpedo torpedo={this.state.loadedTorpedo} handleShoot={this.handleShoot} inProgress={this.state.seconds > 0} fields={this.state.serverFields}/>
                     ): (
                         <Typography variant='h5' >Wybierz i załaduj torpedę!</Typography>
                     )}

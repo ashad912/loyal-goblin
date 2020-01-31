@@ -17,10 +17,10 @@ import styled from 'styled-components'
 
 import AwardListItem from './AwardListItem'
 import { classLabelsAny } from '../../../utils/labels';
-import { ralliesPath } from '../../../utils/definitions'
+import { ralliesPath, palette } from '../../../utils/definitions'
 
 const Background = styled.div`
-    background-color: #3f51b5;
+    background-color: ${palette.primary.main};
     color: white;
 `
 
@@ -96,7 +96,7 @@ const RallyDetails = (props) => {
                             direction="column"
                         >
                             <Grid item style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`${ralliesPath}${rally.imgSrc}`} />
+                                <Avatar alt="avatar" style={{width: '5rem', height: '5rem', borderRadius: '0'}} variant="square"  src={`${ralliesPath}${rally.imgSrc}`} />
                             </Grid>
                         </Grid>
                     </Grid>
@@ -203,7 +203,7 @@ const RallyDetails = (props) => {
         
         <DialogActions style={{justifyContent: 'flex-end'}}>
             <Button onClick={props.handleClose}  color="primary">
-                Wróć
+                Zamknij
             </Button>
         </DialogActions>
         </Dialog>

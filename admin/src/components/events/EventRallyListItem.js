@@ -59,15 +59,16 @@ const EventRallyListItem = ({
 
   let active, running, archive
   const now = moment()
-  if(moment(activationDate).isSameOrAfter(now) && moment(expiryDate).isAfter(now)){
+  if(moment(now).isSameOrAfter(activationDate) && moment(now).isBefore(expiryDate)){
     active = true
-    if(moment(startDate).isSameOrAfter(now)){
+    if(moment(now).isSameOrAfter(startDate)){
       running = true
     }
   }
-  if(moment(activationDate).isBefore(now)){
+  if(moment(now).isAfter(activationDate)){
     archive = true
   }
+
 
   let shouldRender = false
 
@@ -127,13 +128,13 @@ const EventRallyListItem = ({
                 </Typography>
               </Grid>
               <Grid item>
-                <Typography>{`Czas publikacji: ${activationDate}`}</Typography>
+                <Typography>{`Czas publikacji: ${moment(event.activationDate).format("L, LTS")}`}</Typography>
               </Grid>
               <Grid item>
-                <Typography>{`Czas rozpoczęcia: ${startDate}`}</Typography>
+                <Typography>{`Czas rozpoczęcia: ${moment(event.startDate).format("L, LTS")}`}</Typography>
               </Grid>
               <Grid item>
-                <Typography>{`Czas zakończenia: ${expiryDate}`}</Typography>
+                <Typography>{`Czas zakończenia: ${moment(event.expiryDate).format("L, LTS")}`}</Typography>
               </Grid>
               {!active && (
                 <Grid item>

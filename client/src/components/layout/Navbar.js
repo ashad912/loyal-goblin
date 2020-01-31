@@ -35,7 +35,7 @@ const StyledMenuItem = styled(MenuItem)`
 `
   
 const StyledAppBar = styled(AppBar)`
-    
+    display: ${props=>props.hide && 'none'};
     
 `
 
@@ -65,7 +65,11 @@ const Navbar = (props) => {
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [showPasswordChangeModal, setShowPasswordChangeModal] = React.useState(false)
-    
+    const [hideNavbar, setHideNavbar] = React.useState(false)
+
+    React.useEffect(()=>{
+        handleNavbarHide()
+    }, [props.auth.uid])
 
     const handleClick = event => {
         event.stopPropagation();
@@ -129,8 +133,23 @@ const Navbar = (props) => {
     const avatar = true
     //console.log(props.auth)
 
+    const handleNavbarHide = () => {
+        let hideNavbar = false
+    if (typeof window !== 'undefined') {
+        const signInPath = window.location.origin.toString()+"/signin"
+        const signUpPath = window.location.origin.toString()+"/signup"
+        if(signInPath === window.location.href || signUpPath === window.location.href){
+            hideNavbar = true
+            
+        }
+      } else {
+        // work out what you want to do server-side...
+      }
+      setHideNavbar(hideNavbar)
+    }
+
     return(
-        <StyledAppBar  position="static" id="navbar">
+        <StyledAppBar  position="static" id="navbar" hide={hideNavbar}>
         <Toolbar>
             {props.auth.uid && props.auth.profile.name ? (
                 <React.Fragment>
