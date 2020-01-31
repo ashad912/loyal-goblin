@@ -7,7 +7,7 @@ export const updateParty = (params, socketAuthReconnect) => {
     return async dispatch => {
         
             try {
-                console.log('updateParty')
+                
                 const query = params && params.autoFetch ? '?autoFetch=true' : ''
                 const res = await axios.get('/party' + query)
                 
@@ -50,7 +50,7 @@ export const createParty =  (name, leader) => {
             dispatch({type: "CREATE_PARTY", name, partyId: res.data.partyId, leader})
 
             if(!socket.connected){
-                console.log('connect from createParty')
+                //console.log('connect from createParty')
                 socket.open()
                 socket.emit('authentication', {});
             }     
@@ -85,7 +85,7 @@ export const addMember =  (partyId, memberId) => {
     return async dispatch => {
         try {
             const res = await axios.patch('/party/addMember', {partyId, memberId})
-            console.log(res.data)
+            
             dispatch({type: "ADD_MEMBER", party: res.data})
             partyRefreshEmit(res.data._id)
             instanceRefreshEmit(res.data._id)
@@ -100,30 +100,25 @@ export const addMember =  (partyId, memberId) => {
 export const removeMember =  (partyId, memberId) => {
     return async dispatch => {
         try {
-                const res = await axios.patch('/party/leave', {partyId, memberId})
-                console.log(res.data, res.data.length) //res.data returns string -> if null string length:0
-                
-                if(res.data){ //check also string length
-                    
-                    
-                    dispatch({type: "REMOVE_MEMBER", party: res.data}) //updating leader redux - he has just dropped the member
-                    leaveRoomEmit(memberId, partyId)  //from party point of view - some user left the party with success - take his id and trigger leave event
-                    //instanceRefreshEmit(partyId)
-                }else{
-                    
-                    //instanceRefreshEmit(partyId)
-                    leaveRoomEmit(memberId, partyId)
-                    
-                    // if(socket.connected){
-                    //     socket.disconnect()
-                    // }
-                    dispatch({type: "DELETE_PARTY"}) //clearing member redux - he has just left (only for member!)
+            const res = await axios.patch('/party/leave', {partyId, memberId})
+            //console.log(res.data, res.data.length) //res.data returns string -> if null string length:0
+            
+            if(res.data){ //check also string length
+                dispatch({type: "REMOVE_MEMBER", party: res.data}) //updating leader redux - he has just dropped the member
+                leaveRoomEmit(memberId, partyId)  //from party point of view - some user left the party with success - take his id and trigger leave event
+                //instanceRefreshEmit(partyId)
+            }else{
+                //instanceRefreshEmit(partyId)
+                leaveRoomEmit(memberId, partyId)
+                // if(socket.connected){
+                //     socket.disconnect()
+                // }
+                dispatch({type: "DELETE_PARTY"}) //clearing member redux - he has just left (only for member!)
                 }
 
                 
         }catch (e) {
             console.log(e)
-            
             dispatch( {type: "NO_CONNECTION", error: e})     
         }
     }
@@ -133,22 +128,15 @@ export const removeMember =  (partyId, memberId) => {
 export const giveLeader =  (partyId, memberId) => {
     return async dispatch => {
         try {
-                const res = await axios.patch('/party/leader', {partyId, memberId})
-                console.log(res.data, res.data.length) //res.data returns string -> if null string length:0
-                
-                if(res.data){ 
-                    
-                    
-                    dispatch({type: "GIVE_LEADER", party: res.data}) //updating leader redux - he has just dropped the member
-                    partyRefreshEmit(res.data._id)
-                    instanceRefreshEmit(res.data._id)
-                    
-                }
-               
-                
+            const res = await axios.patch('/party/leader', {partyId, memberId})
+            
+            if(res.data){ 
+                dispatch({type: "GIVE_LEADER", party: res.data}) //updating leader redux - he has just dropped the member
+                partyRefreshEmit(res.data._id)
+                instanceRefreshEmit(res.data._id)   
+            }        
         }catch (e) {
             console.log(e)
-            
             dispatch( {type: "NO_CONNECTION", error: e})     
         }
     }

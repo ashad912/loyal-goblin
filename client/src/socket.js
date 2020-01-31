@@ -26,9 +26,9 @@ export const leaveRoomSubscribe = (id) => {
     })
 }
 
-export const partyRefreshSubscribe = (roomId) => {
-    socket.on('partyRefresh', roomId, () => {
-        return  roomId
+export const partyRefreshSubscribe = (data) => {
+    socket.on('partyRefresh', data, () => {
+        return data
     })
 }
 
@@ -89,8 +89,8 @@ export const leaveRoomEmit = (id, roomId) => {
     socket.emit('leaveRoom', data)
 }
 
-export const partyRefreshEmit = (roomId) => {
-    socket.emit('partyRefresh', roomId)
+export const partyRefreshEmit = (roomId, authCheck) => {
+    socket.emit('partyRefresh', {roomId, authCheck})
 }
 
 export const deleteRoomEmit = (roomId) => {

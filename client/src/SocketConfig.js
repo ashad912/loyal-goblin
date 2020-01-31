@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from "react-redux";
 import { updateParty } from "./store/actions/partyActions";
 import {socket, joinRoomEmit, joinRoomSubscribe, instanceRefreshEmit, leaveRoomSubscribe, partyRefreshSubscribe, deleteRoomSubscribe} from './socket'
-import { setMultipleSession } from './store/actions/authActions';
+import {authCheck, setMultipleSession } from './store/actions/authActions';
 
 class SocketConfig extends React.Component {
   state = {};
@@ -38,9 +38,12 @@ class SocketConfig extends React.Component {
       this.props.onPartyUpdate()
     })
 
-    partyRefreshSubscribe((roomId) => {
+    partyRefreshSubscribe((data) => {
         console.log('partyRefresh')
         this.props.onPartyUpdate()
+        if(data.authCheck){
+          this.props.authCheck()
+        }
     })
 
     deleteRoomSubscribe((roomId) => {
@@ -71,6 +74,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onPartyUpdate: () => dispatch(updateParty()),
+    authCheck: () => dispatch(authCheck()),
     setMultipleSession: () => dispatch(setMultipleSession()),
   };
 };

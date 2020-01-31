@@ -28,6 +28,7 @@ import {
 } from "../../store/actions/shopActions";
 import { toggleItem } from "../../store/actions/profileActions";
 import { uiPaths } from "../../utils/definitions";
+import {socket} from '../../socket'
 
 const Menu = styled(Paper)`
   flex-grow: 1;
@@ -667,7 +668,7 @@ class Shop extends React.Component {
     this.menuRef = React.createRef();
   }
 
-  backToEvents = history => {
+  backToShop = history => {
     history.push({
       pathname: "/",
       state: { indexRedirect: 0 }
@@ -675,10 +676,16 @@ class Shop extends React.Component {
   };
 
   handleBack = () => {
-    this.backToEvents(this.props.history);
+    this.backToShop(this.props.history);
+  };
+
+  handleLeaveShop = async () => {
+    await this.props.onLeaveShop();
+    this.handleBack()
   };
 
   async componentDidMount() {
+
     if (
       !this.props.location.state ||
       this.props.location.state.id === undefined
@@ -693,14 +700,23 @@ class Shop extends React.Component {
 
     if (!leader) {
       this.handleBack();
+      return;
+    }
+
+    const socketConnectedStatus = socket.connected
+    console.log(socketConnectedStatus)
+
+    try{
+      await this.props.onGetShop(socketConnectedStatus);
+    }catch(e){
+      this.handleLeaveShop();
+      return;
     }
 
     let menuTopOffset = this.menuRef.current && this.menuRef.current.offsetTop;
     this.setState({ menuTopOffset }, () => {
       window.addEventListener("scroll", this.handleScrollPosition);
     });
-
-    await this.props.onGetShop();
 
     //backend call for players in party
     //await this.props.onUpdateParty();
@@ -931,10 +947,7 @@ class Shop extends React.Component {
     this.handleChangeactiveUser(null, this.state.activeUser);
   };
 
-  handleLeaveShop = async () => {
-    await this.props.onLeaveShop();
-    this.props.history.push("/");
-  };
+  
 
   render() {
     const shotList = this.state.products.filter(product => {
@@ -1252,7 +1265,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onGetShop: () => dispatch(getShop()),
+    onGetShop: (socketConnectedStatus) => dispatch(getShop(socketConnectedStatus)),
     onActivateOrder: (baskets, token) =>
       dispatch(activateOrder(baskets, token)),
     onLeaveShop: () => dispatch(leaveShop()),

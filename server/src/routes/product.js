@@ -416,7 +416,7 @@ router.get("/shop", auth, async (req, res) => {
           path: "party",
           populate: {
             path: "leader members",
-            select: "bag equipped name _id avatar bag userPerks attributes",
+            select: "bag equipped name _id avatar attributes userPerks",
             populate: {
               path: "bag",
               populate: {
@@ -477,12 +477,16 @@ router.patch("/leave", auth, async (req, res) => {
   const user = req.user;
   try {
     if (user.party) {
-      await user.populate({ path: "party" }).execPopulate();
-      user.party.inShop = false;
-      await user.party.save();
-      //TO CHECK
-      //await Party.updateOne({_id: user.party._id}, {$set: {inShop: false}})
-      res.send(user.party._id);
+      const party = await validatePartyAndLeader(user)
+      
+      party.inShop = false;
+      
+      //ALTERNATIVE:
+      //await user.populate({ path: "party" }).execPopulate();
+      //await user.party.save();
+      
+      await party.save()
+      res.send(party._id);
     } else {
       res.sendStatus(200);
     }
@@ -572,12 +576,21 @@ router.patch("/activate", auth, async (req, res) => {
 
 
     //WORKING! AS COMMENT FOR TESTS
-    /*
-        setTimeout(async () => {
-            user.activeOrder = []
-            await user.save()
-        }, 5*60*1000); //removing activeOrder after 5 minutes
-    */
+    //DEVELOP: prevents removing valid order - TIMER IS NOT CLEANED
+    setTimeout(async () => {
+      try{
+        const result = await User.updateOne(
+          {_id: user._id, 'activeOrder': {$elemMatch: {createdAt: user.activeOrder[0].createdAt}}},
+          {$set: {activeOrder: []}}
+        )
+        console.log(result)
+      }catch(e){
+        console.log(e.message)
+      }
+        
+      
+    }, 5*60*1000 + 1000); //removing activeOrder after 5 minutes (+1 second)
+    
 
     res.send(user.activeOrder);
   } catch (e) {
@@ -752,12 +765,14 @@ router.post("/finalize", barmanAuth, async (req, res) => {
 
       const newLevels = designateNewLevels(member.experience, exp);
 
+      const isNewFlag = exp > 0 || newShopAwards.length ? true : false
+
       await User.updateOne(
         {_id: member._id},
         {
           $addToSet: { bag: { $each: items } },
           $inc: { experience: exp, levelNotifications: newLevels, 'shopNotifications.experience': exp },
-          $set: {'shopNotifications.isNew': true, 'shopNotifications.awards': newShopAwards, 'activeOrder': []},
+          $set: {'shopNotifications.isNew': isNewFlag, 'shopNotifications.awards': newShopAwards, 'activeOrder': []},
         }
       );
 

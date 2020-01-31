@@ -123,15 +123,15 @@ export const designateUserPerks = async user => {
           let endTimeLocale = moment(startTimeLocale)
             .clone()
             .add(time.lengthInHours, "hours");
-          console.log(
-            "Local hours:",
-            startTimeLocale.hour(),
-            endTimeLocale.hour()
-          );
+          // console.log(
+          //   "Local hours:",
+          //   startTimeLocale.hour(),
+          //   endTimeLocale.hour()
+          // );
 
           let startTime = moment.utc(startTimeLocale);
           let endTime = moment.utc(endTimeLocale);
-          console.log("UTC hours:", startTime.hour(), endTime.hour());
+          //console.log("UTC hours:", startTime.hour(), endTime.hour());
           //console.log(startTime, endTime)
           //console.log(time.startDay, nowDay)
           if (time.startDay === nowDay) {

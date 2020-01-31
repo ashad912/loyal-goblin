@@ -13,8 +13,8 @@ const Attribute = props => {
 
   return (
     <Box style={{ width: "100%" }}>
-      <Grid container directon="column">
-        <Grid item container direction="column" xs={6}>
+      <Grid container directon="column" >
+        <Grid item container direction="column" xs={6} >
           <Grid item>
             <img
               src={props.attributeIcon}
@@ -26,7 +26,7 @@ const Attribute = props => {
           </Grid>
         </Grid>
         <Grid item xs={6} >
-          <Typography variant="h3" style={{ color: fontColor }}>
+          <Typography variant="h3" >
             {props.attributeValue + props.attributeModifier}
           </Typography>
         </Grid>
