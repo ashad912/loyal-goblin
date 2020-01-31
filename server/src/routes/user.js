@@ -1,10 +1,6 @@
 import express from "express";
 import bcrypt from "bcryptjs";
-import multer from "multer";
-import sharp from "sharp";
-import fs from 'fs'
 import validator from 'validator'
-import axios from 'axios'
 import {differenceBy} from 'lodash'
 import { User } from "../models/user";
 import { Party } from "../models/party";
@@ -15,15 +11,13 @@ import { auth } from "../middleware/auth";
 import { adminAuth } from '../middleware/adminAuth';
 import {
   asyncForEach,
-  designateUserPerks,
   userStandardPopulate,
   updatePerks,
   saveImage,
   removeImage,
-  verifyCaptcha
+  verifyCaptcha,
 } from "../utils/methods";
 import moment from "moment";
-import { resolve } from "url";
 import createEmail from '../emails/createEmail'
 
 const router = express.Router();
@@ -134,9 +128,6 @@ router.post("/create", async (req, res) => {
       return
     }
   }
-
-  
-  
 
   try {
     const user = new User({
@@ -306,38 +297,7 @@ router.get("/me", auth, async (req, res, next) => {
   }
 });
 
-// router.patch("/me", auth, async (req, res, next) => {
-//   const updates = Object.keys(req.body);
-//   const allowedUpdates = ["name", "password"];
 
-//   const isValidOperation = updates.every(update => {
-//     return allowedUpdates.includes(update);
-//   });
-
-//   if (!isValidOperation) {
-//     return res.status(400).send({ error: "Invalid update!" });
-//   }
-
-//   try {
-//     let user = req.user;
-//     updates.forEach(async (update) => {
-//       if(update === "password"){
-
-//           user = await req.user.updatePassword(req.body.password.oldPassword, req.body.password.newPassword)
-// console.log(user)
-
-//       }else{
-//         user[update] = req.body[update]; //user[update] -> user.name, user.password itd.
-//       }
-//     });
-
-//     await user.save();
-
-//     res.send(user);
-//   } catch (e) {
-//     res.status(400).send(e);
-//   }
-// });
 
 router.patch("/changePassword", auth, async (req, res, next) => {
   let user = req.user;
@@ -444,10 +404,9 @@ router.patch('/reset', async (req, res) => {
       user.passwordChangeToken = null
       user.password = req.body.password
 
-          user.save()
-          res.sendStatus(200)
-      } 
-   catch (error) {
+      user.save()
+      res.sendStatus(200)
+  } catch (error) {
       console.log(error)
       res.status(400).send(error)
   }
@@ -477,15 +436,15 @@ router.post("/me/avatar", auth, async (req, res) => {
       throw new Error("Brak pliku")
     }
     let user = req.user
-      //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
-      let avatar = await req.files.avatar.data;
+    //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
+    let avatar = await req.files.avatar.data;
 
-      const avatarName = await saveImage(avatar, user._id, uploadPath, user.avatar)
-      
-      user.avatar = avatarName;
-      await user.save();
-      user = await userStandardPopulate(user);
-      res.send(user);
+    const avatarName = await saveImage(avatar, user._id, uploadPath, user.avatar)
+    
+    user.avatar = avatarName;
+    await user.save();
+    user = await userStandardPopulate(user);
+    res.send(user);
 
     
   } catch (err) {
@@ -514,44 +473,11 @@ router.delete("/me/avatar", auth, async (req, res) => {
 
 
 
-// router.patch("/deleteUserItem", auth, async (req, res) => {
-//   try {
-//     const user = req.user
-
-//     user.bag = user.bag.filter(item => {
-//       return item.toString() !== req.body.item;
-//     });
-
-//     await user.save();
-//     res.send();
-//   } catch (e) {
-//     console.log(e.message);
-//     res.status(400).send();
-//   }
-// });
-
-//WIP not working
-router.get("/myItems", auth, async (req, res) => {
-  let user = req.user;
-
-  try {
-    user = await userStandardPopulate(user);
-
-    const items = { bag: user.bag, equipped: user.equipped };
-    res.send(items);
-  } catch (error) {
-    res.status(400).send();
-  }
-});
-
-
 router.patch("/party/equip", auth, async (req, res) => {
   try {
 
     const leader = req.user
     const itemId = req.body.id;
-    const category = req.body.category;
-    //const equipped = req.body.equipped;
 
     if(!req.body.memberId){
       throw new Error('No memberId field!')
@@ -581,12 +507,16 @@ router.patch("/party/equip", auth, async (req, res) => {
       throw new Error('Cannot equip item during mission!')
     }
 
-    const item = await Item.findOne({_id: itemId}).populate({
+    const item = await Item.findOne({_id: itemId, owner: req.body.memberId}).populate({
       path: 'itemModel',
       select: '_id type'
     })
 
-    if(!item || item.itemModel.type !== 'scroll'){
+    if(!item){
+      throw new Error('Item not found or invalid owner prop!')
+    }
+
+    if(item.itemModel && item.itemModel.type !== 'scroll'){
       throw new Error('Item to equip must be a scroll!')
     }
   
@@ -600,7 +530,6 @@ router.patch("/party/equip", auth, async (req, res) => {
 
     //WARNING!: u can pass anything in equipped object, without verification
     user.equipped.scroll = itemId
-    user.userPerks = await designateUserPerks(user);
     user.userPerks = await updatePerks(user, true);
     await user.save();
     user = await userStandardPopulate(user);
@@ -629,17 +558,16 @@ router.patch("/party/equip", auth, async (req, res) => {
 
     
   } catch (e) {
-    console.log(e.message);
+    console.log(e);
     res.sendStatus(400);
   }
 });
 
-router.patch("/myItems/equip", auth, async (req, res) => {
+router.patch("/items/equip", auth, async (req, res) => {
   try {
 
     let user = req.user;
     const itemId = req.body.id;
-    const category = req.body.category;
     const equipped = req.body.equipped;
 
 
@@ -651,62 +579,105 @@ router.patch("/myItems/equip", auth, async (req, res) => {
       throw new Error('Cannot equip item during mission!')
     }
 
-    const party = await Party.findOne({inShop: true, members: {$elemMatch: {$eq: user._id}}})
+    //const party = await Party.findOne({inShop: true, members: {$elemMatch: {$eq: user._id}}})
+    const party = await Party.findById(user.party) //even user.party is null
 
-    if(party){
+    //check if user is party member when party is in shop
+    if(party && party.inShop && party.members.map((memberId) => memberId.toString()).includes(user._id.toString())){
       throw new Error('Cannot equip item during shopping!')
     }
+      
 
-    const item = await Item.findOne({_id: itemId}, {_id: 1})
+    const item = await Item.findOne({_id: itemId, owner: user._id}).populate({
+      path: 'itemModel',
+      select: '_id type'
+    })
 
     if (!item) {
-      throw new Error('Item does not exist!')
+      throw new Error('Item not found or invalid owner prop!')
     }
 
-    const checkEq = differenceBy(Object.values(equipped), user.bag, (item => item && item.toString()))
-    if(checkEq.some(item => typeof item === 'string')){
-      throw new Error("Equipped items do not match bag!")
+    //check if party inShop leader equip scroll item type 
+    if(party && party.inShop){
+      if(item.itemModel && item.itemModel.type !== 'scroll'){
+        throw new Error('Item to equip must be a scroll!')
+      }
     }
 
-    // await user.populate({path: 'equipped.scroll'}).execPopulate()
-    // console.log(user.equipped)
     const itemToEquip = user.bag.find(item => {
-      return item.toString() === itemId;
+      return item._id.toString() === itemId;
     });
 
     if (!itemToEquip) {
       throw new Error('There is no such item in bag!')
     }
 
-    await item.populate({path: 'itemModel'}).execPopulate()
-    await asyncForEach(Object.keys(equipped), async slot => {
+    const checkEq = differenceBy(Object.values(equipped), user.bag, (item => item && item.toString()))
+    if(checkEq.some(item => typeof item === 'string')){
+      throw new Error("Equipped items do not match bag!")
+    }
+ 
+    if(equipped.ringLeft && equipped.ringRight && equipped.ringLeft === equipped.ringRight){
+      throw new Error("Duplicated ring want to be equipped!")
+    }
 
+    if(equipped.weaponLeft && equipped.weaponRight && equipped.weaponLeft === equipped.weaponRight){
+      throw new Error("Duplicated weapon want to be equipped!")
+    }
+
+    if(equipped.weaponRight){
+      const weapon = await Item.findById(equipped.weaponRight).populate({
+        path: 'itemModel',
+        select: '_id twoHanded'
+      })
+
+      if(!weapon){
+        throw new Error('Legacy weapon item id detected!')
+      }
+    
+      if(weapon.itemModel.twoHanded && equipped.weaponLeft){
+        throw new Error('Detected additional weapon on left hand when twohanded weapon is equipped!')
+      }
+    }
+
+    if(equipped.weaponLeft){
+      const weapon = await Item.findById(equipped.weaponLeft).populate({
+        path: 'itemModel',
+        select: '_id twoHanded'
+      })
+
+      if(!weapon){
+        throw new Error('Legacy weapon item id detected!')
+      }
+    
+      if(weapon.itemModel.twoHanded){
+        throw new Error('Two handed weapon cannot be equipped on the left hand!')
+      }
+    }
+
+    user.equipped = { ...equipped };
+
+    await asyncForEach(Object.keys(equipped), async slot => {
+      console.log(slot)
       await user
         .populate({
           path: "equipped." + slot,
           populate: { path: "itemModel" }
         })
         .execPopulate();
-
-        if(user.equipped[slot] && user.equipped[slot].itemModel.category){
-          const slotToCategory = slot.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').split('-')[0]
-
-          if(user.equipped[slot].itemModel.category !== slotToCategory){
-            console.log(user.equipped[slot].itemModel.category, slotToCategory)
-            throw new Error("Nieprawidłowa kategoria przedmiotu w ekwipunku!")
+        
+        if(user.equipped[slot] && user.equipped[slot].itemModel.type){
+          //exclude ringLeft, ringRight, weaponRight, weaponLeft
+          const slotToType = slot.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').split('-')[0]  
+          
+          if(user.equipped[slot].itemModel.type !== slotToType){
+            
+            throw new Error("Inapprioprate itemModel type in equipped object!")
           }
         }
 
     });
 
-
-
-
-
-    //WARNING!: u can pass anything in equipped object, without verification
-      
-    user.equipped = { ...equipped };
-    user.userPerks = await designateUserPerks(user);
     user.userPerks = await updatePerks(user, true);
     await user.save();
     user = await userStandardPopulate(user);
@@ -719,17 +690,31 @@ router.patch("/myItems/equip", auth, async (req, res) => {
       
     
   } catch (e) {
-    console.log(e.message);
+    console.log(e);
     res.sendStatus(400);
   }
 });
 
-router.delete("/deleteUserItem", auth, async (req, res) => {
+router.delete("/items/remove", auth, async (req, res) => {
+  let user = req.user
   try {
-    const item = await Item.findById({ _id: req.body.id });
+    const party = await Party.findOne({_id: user.party, inShop: true})
+
+    if(party){
+      throw new Error("Cannot remove item when party is in shop!")
+    }
+
+    const missionInstance = await MissionInstance.findOne(
+      {party: {$elemMatch: {profile: user._id}}}    
+    )
+
+    if(missionInstance){
+      throw new Error('Cannot delete item during mission!')
+    }
+
+    const item = await Item.findById({ _id: req.body.itemId });
     await item.remove();
-    let user = await User.findById({ _id: req.user._id });
-    user = await userStandardPopulate(user);
+    user = await userStandardPopulate(req.user);
     res.status(200).send(user);
   } catch (error) {
     console.log(error);
@@ -879,10 +864,11 @@ router.patch("/loyal", auth, async (req, res) => {
       throw new Error("Field already shoted!");
     }
 
-    await item.remove(); //user bag and equipped cleared by remove middleware
+    await item.remove(); //user bag cleared by remove middleware
 
     let updatedUser = await User.findById(user._id);
     //updated by item removing middleware -> have to pass to resposne 'fresh' object
+    console.log(updatedUser.bag)
     updatedUser.loyal[fieldName] = true;
     const isAward = allFieldsTrue(updatedUser.loyal.toJSON());
 
@@ -951,7 +937,7 @@ router.get('/users', auth, async(req, res) => {
 
 ///TESTS
 
-router.patch("/addUserItem", auth, async (req, res) => {
+router.patch("/addUserItem", adminAuth, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
@@ -965,10 +951,55 @@ router.patch("/addUserItem", auth, async (req, res) => {
   }
 });
 
+//WIP not working
+router.get("/myItems", adminAuth, async (req, res) => {
+  let user = req.user;
 
+  try {
+    user = await userStandardPopulate(user);
 
+    const items = { bag: user.bag, equipped: user.equipped };
+    res.send(items);
+  } catch (error) {
+    res.status(400).send();
+  }
+});
 
-router.patch("/testUpdateUser", auth, async (req, res) => {
+router.patch("/me", adminAuth, async (req, res, next) => {
+  //TEST DEVELOP: get user from user id
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ["name", "password"];
+
+  const isValidOperation = updates.every(update => {
+    return allowedUpdates.includes(update);
+  });
+
+  if (!isValidOperation) {
+    return res.status(400).send({ error: "Invalid update!" });
+  }
+
+  try {
+    let user = req.user;
+    updates.forEach(async (update) => {
+      if(update === "password"){
+
+          user = await req.user.updatePassword(req.body.password.oldPassword, req.body.password.newPassword)
+console.log(user)
+
+      }else{
+        user[update] = req.body[update]; //user[update] -> user.name, user.password itd.
+      }
+    });
+
+    await user.save();
+
+    res.send(user);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+router.patch("/testUpdateUser", adminAuth, async (req, res) => {
   const user = req.user;
 
   //await Item.deleteMany({owner: user._id})

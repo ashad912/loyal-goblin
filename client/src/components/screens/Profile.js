@@ -694,7 +694,7 @@ const Profile = props => {
               variant="contained"
               color="primary"
               disabled
-              style={{ marginTop: "1rem" }}
+              style={{ marginBottom: "1rem" }}
             >
               Idziemy expić!
               <img

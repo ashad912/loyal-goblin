@@ -99,23 +99,23 @@ const Equipment = props => {
   let content = null
   if(Object.keys(items).length > 0 ){
     if(props.leaderInShop ){
-      content = (<Typography
-              variant="caption"
-              component="p"
-              style={{  padding: "1rem", color:"rgb(139, 0, 0)" }}
-            >
-              Nie można zmieniać ekwuipunku w trakcie zakupów.
-    </Typography>
-      )
+      content = (
+      <Typography
+        variant="caption"
+        component="p"
+        style={{  padding: "1rem", color:"rgb(139, 0, 0)" }}
+      >
+        Nie można zmieniać ekwipunku w trakcie expienia.
+    </Typography>)
     }else if(props.activeMission){
-      content = (<Typography
-      variant="caption"
-      component="p"
-      style={{  padding: "1rem", color:"rgb(139, 0, 0)" }}
-    >
-        Nie można zmieniać ekwipunku w trakcie aktywnej misji.
-      </Typography>
-      )
+      content = (
+      <Typography
+        variant="caption"
+        component="p"
+        style={{  padding: "1rem", color:"rgb(139, 0, 0)" }}
+      >
+        Nie można zmieniać ekwipunku w trakcie misji.
+      </Typography>)
     }else{
       content = (
         <List component="nav" className={classes.root}>

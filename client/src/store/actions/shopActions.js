@@ -3,10 +3,17 @@ import axios from 'axios'
 import {partyRefreshEmit, instanceRefreshEmit} from '../../socket'
 import {pick, cloneDeep} from 'lodash'
 
-export const getShop = () => {
+export const getShop = (socketStatusConnection) => {
     return async dispatch => {
         try {
             const res = await axios.get('/product/shop')
+        
+            
+            if(socketStatusConnection !== undefined){
+                if(res.data.party.members.length && !socketStatusConnection){ //if client of multiplayer mission is not connected to socket
+                    throw new Error('Leader not connected to party members.')
+                }
+            }
 
             dispatch({type: 'GET_SHOP', shop:res.data.shop})
             dispatch({type: 'UPDATE_ACTIVE_ORDER', activeOrder: res.data.activeOrder})
@@ -15,10 +22,12 @@ export const getShop = () => {
                 partyRefreshEmit(res.data.party._id)
                 instanceRefreshEmit(res.data.party._id)
             }
-
         } catch (e) {
             console.log(e)
-            dispatch( {type: "NO_CONNECTION", error: e})     
+            if(e.message === 'Leader not connected to party members.'){
+                throw new Error(e)   
+            }
+            dispatch( {type: "NO_CONNECTION", error: e})    
         }
     }
 }
@@ -30,7 +39,7 @@ export const leaveShop = () => {
 
             dispatch({type: 'LEAVE_SHOP'})
             if(res.data){
-                partyRefreshEmit(res.data)
+                partyRefreshEmit(res.data, true)
             }
 
         } catch (e) {

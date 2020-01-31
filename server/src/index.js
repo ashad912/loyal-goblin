@@ -157,10 +157,10 @@ const postAuthenticate = socket => {
   });
 
 
-  socket.on("partyRefresh", async (roomId) => {
+  socket.on("partyRefresh", async (data) => {
     try{
         console.log('Party has been changed!');
-        socket.broadcast.to(roomId).emit("partyRefresh", roomId);
+        socket.broadcast.to(data.roomId).emit("partyRefresh", data);
     }catch(e){
       console.log(e)
     }

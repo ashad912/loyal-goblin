@@ -89,7 +89,11 @@ const VerificationPage = props => {
   const [showCancelDialog, setShowCancelDialog] = React.useState(false)
   const [timer, setTimer] = React.useState('')
   const [orderFinalized, setOrderFinalized] = React.useState(false)
+  
   const [qrCode, setQrCode] = React.useState(null)
+  const leaveShopTimeout = React.useRef(false)
+
+
   var opts = {
     errorCorrectionLevel: 'H',
     type: 'image/jpeg',
@@ -104,27 +108,35 @@ const VerificationPage = props => {
       setQrCode(url)
     })
     calculateTimeLeft()
+    
+    
     const orderTimeout = setInterval(() => {
       calculateTimeLeft()
     }, 1000);
     const checkOrderFinalized = setInterval(() => {
       checkActiveOrder()
     }, 5000);
+
+    
     return () => {
       clearInterval(orderTimeout)
       clearInterval(checkOrderFinalized)
+      clearTimeout(leaveShopTimeout.current)
     }
   }, [])
 
   const checkActiveOrder = async () => {
-    const res = await axiosInstance.get('/product/activeOrder')
-    if(!res.data){
-      setOrderFinalized(true)
-      setTimeout(async() => {
-        await props.onLeaveShop()
-        history.push("/", {authCheck: true});
-      }, 5000);
-    }
+    
+      const res = await axiosInstance.get('/product/activeOrder')
+      if(!res.data){
+        setOrderFinalized(true)
+        
+        leaveShopTimeout.current = setTimeout(async() => {
+            await props.onLeaveShop()
+            history.push("/", {authCheck: true});
+        }, 5000);
+      }
+    
   }
 
 

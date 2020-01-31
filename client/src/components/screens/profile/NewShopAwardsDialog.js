@@ -22,7 +22,7 @@ const NewShopAwardsDialog = props => {
 
   const {shopNotifications} = props.profile
   return (
-    <Dialog style={{margin: '-24px'}} fullWidth open={props.open} onClose={handleClose}>
+    <Dialog style={{margin: '-24px -24px 10px -24px'}} fullWidth open={props.open} onClose={handleClose}>
       <DialogTitle variant='h5'>Expienie zakończone!</DialogTitle>
       <DialogContent>
         {shopNotifications.experience > 0 &&

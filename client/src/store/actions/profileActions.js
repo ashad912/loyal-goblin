@@ -1,12 +1,9 @@
 import axios from 'axios'
 import {partyRefreshEmit} from '../../socket'
 
-
-
 export const getRankedUsers = () => {
     return new Promise (async (resolve, reject) => {
         try {
-            console.log('getRankedUsers')
             const res = await axios.get('/user/users')
             console.log(res.data)
             resolve(res.data)
@@ -21,18 +18,16 @@ export const updateAvatar = (avatar) => {
         return new Promise( async (resolve, reject) => {
             
             try {
-                console.log(avatar)
-                
-                let res
-                if(avatar){
-                    res = await axios.post('/user/me/avatar', avatar, {
+                const res = avatar ?
+                (
+                    await axios.post('/user/me/avatar', avatar, {
                         headers: {
                             'Content-Type': 'multipart/form-data'
                         }
                       })
-                }else{
-                    res = await axios.delete('/user/me/avatar')
-                }
+                ):(
+                     await axios.delete('/user/me/avatar')
+                )
                 
                 const profile = res.data
                 delete profile._id
@@ -80,7 +75,7 @@ export const toggleItem = (id, category, equipped, memberId) => {
                 dispatch({type: "UPDATE_PARTY", party: res.data.party})
                 partyRefreshEmit(res.data._id)
             }else{
-                const res = await axios.patch('/user/myItems/equip', {id, category, equipped})
+                const res = await axios.patch('/user/items/equip', {id, category, equipped})
                 const profile = res.data
                 delete profile._id
                 dispatch({type: 'UPDATE_PROFILE_DATA', profile})
@@ -96,7 +91,7 @@ export const toggleItem = (id, category, equipped, memberId) => {
 export const deleteItem = (id) => {
     return async dispatch => {
         try {
-            const res = await axios.delete('/user/deleteUserItem', {data: {id}})
+            const res = await axios.delete('/user/items/remove', {data: {itemId: id}})
             const profile = res.data
             
             delete profile._id
@@ -112,7 +107,7 @@ export const deleteItem = (id) => {
 export const clearRallyAwards = () => {
     return async dispatch => {
         try {
-            console.log('clearUserAwards')
+            
             const res = await axios.patch('/user/clearRallyAwards')
             const profile = res.data
             
@@ -128,7 +123,7 @@ export const clearRallyAwards = () => {
 export const clearShopAwards = () => {
     return async dispatch => {
         try {
-            console.log('clearUserAwards')
+            
             const res = await axios.patch('/user/clearShopAwards')
             const profile = res.data
             
@@ -144,7 +139,7 @@ export const clearShopAwards = () => {
 export const confirmLevel = (pointType) => {
     return async dispatch => {
         try {
-            console.log('confirmLevel' + pointType)
+            //console.log('confirmLevel' + pointType)
             const res = await axios.patch('/user/confirmLevel', {pointType})
             const profile = res.data
             

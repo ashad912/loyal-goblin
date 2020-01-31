@@ -14,15 +14,12 @@ const RootSnackbar = props => {
         }, 1000);
         return () => clearTimeout(timer);
     }, []);
-
-    // useEffect(() => {
-    //     if(delay){
-    //         const multipleSession = props.party && props.party.hasOwnProperty('leader') && props.party.leader && props.party.leader.hasOwnProperty('_id') && !props.socket.connected
-    //         if(!multipleSession){
-    //             props.setMultipleSession()
-    //         }
-    //     }   
-    // }, [delay])
+    const profile = props.profile
+    const conditions = delay && ((props.screen === 1) || (props.screen === 0))
+                        && !profile.rallyNotifications.isNew 
+                        && !profile.shopNotifications.isNew
+                        && !profile.levelNotifications 
+    
     
     const notTheLeader = 
          props.party.members.length && props.party.leader.hasOwnProperty('_id') && (props.party.leader._id !== props.auth.uid)
@@ -30,21 +27,26 @@ const RootSnackbar = props => {
     const multipleSession = props.auth.multipleSession
     return (
         <React.Fragment>
-            {delay && ((props.screen === 1) || (props.screen === 0)) && (
+            {conditions && (
                 <Snackbar
                     anchorOrigin={{
                     vertical: "bottom",
                     horizontal: "left"
                 }}
-                open={(notTheLeader === true && (!props.activeInstanceId) && (props.screen === 1)) || (notTheLeader === true && (props.screen === 0)) || multipleSession}
-                //onClose={!notTheLeader || !multipleSession}
-                //autoHideDuration={10000}
+                open={(notTheLeader === true && (!props.activeInstanceId) && (props.screen === 1))
+                    || (notTheLeader === true && (props.screen === 0)) || multipleSession}
                 message={
                     <React.Fragment>
-                        {notTheLeader === true && (!props.activeInstanceId) && (props.screen === 1) && (<p style={{margin: '0'}}>Tylko lider drużyny, może rozpocząć nową misję.</p>)}
-                        {notTheLeader === true && (props.screen === 0) && (<p style={{margin: '0'}}>Tylko lider drużyny, może rozpocząć zakupy.</p>)}
-                        {(props.screen === 1) && multipleSession === true && (<p style={{margin: '0'}}>Wielokrotna sesja. Zamknij inne karty, a następnie odśwież, aby zarządzać misjami.</p>)}
-                        {(props.screen === 0) && multipleSession === true && (<p style={{margin: '0'}}>Wielokrotna sesja. Zamknij inne karty, a następnie odśwież, aby zarządzać drużyną.</p>)}
+                        {notTheLeader === true && (!props.activeInstanceId) && (props.screen === 1)
+                         && (<p style={{margin: '0'}}>Tylko lider drużyny, może rozpocząć misję.</p>)}
+                        {notTheLeader === true && (props.screen === 0) && (!props.party.inShop)
+                         && (<p style={{margin: '0'}}>Tylko lider drużyny, może rozpocząć expienie.</p>)}
+                         {notTheLeader === true && (props.screen === 0) && (props.party.inShop)
+                         && (<p style={{margin: '0'}}>Lider rozpoczął expienie.</p>)}
+                        {(props.screen === 1) && multipleSession === true
+                         && (<p style={{margin: '0'}}>Wielokrotna sesja. Zamknij inne karty, a następnie odśwież, aby zarządzać misjami.</p>)}
+                        {(props.screen === 0) && multipleSession === true &&
+                         (<p style={{margin: '0'}}>Wielokrotna sesja. Zamknij inne karty, a następnie odśwież, aby zarządzać drużyną.</p>)}
                     </React.Fragment>
                 }
             />
@@ -64,6 +66,7 @@ const mapStateToProps = state => {
     return {
         activeInstanceId: state.mission.activeInstanceId,
         auth: state.auth,
+        profile: state.auth.profile,
         party: state.party,
     };
   };
