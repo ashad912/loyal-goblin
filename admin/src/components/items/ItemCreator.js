@@ -57,7 +57,6 @@ const FileInputButton = styled(Button)`
 `;
 
 const AddIcon = styled(AddCircleIcon)`
-  color: #3f51b5;
   width: 1.5rem;
   transition: transform 0.2s ease-in-out;
   transform: scale(1.8);
@@ -647,6 +646,7 @@ class ItemCreator extends Component {
             <Typography variant="h6">Efekty przedmiotu</Typography>
             <AddIcon
                 style={{marginRight: '0.5rem'}}
+                color="primary"
                 onClick={this.handleAddPerk}
             />
             </Grid>

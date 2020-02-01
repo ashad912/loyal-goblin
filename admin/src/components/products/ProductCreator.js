@@ -59,7 +59,6 @@ const StyledFormControl = styled(FormControl)`
 `
 
 const AddIcon = styled(AddCircleIcon)`
-  color: #3f51b5;
   width: 1.5rem;
   transition: transform 0.2s ease-in-out;
   transform: scale(1.8);
@@ -419,6 +418,7 @@ class ProductCreator extends Component {
             <AddIcon
                 style={{marginRight: '0.5rem'}}
                 onClick={this.handleToggleItemsModal}
+                color="primary"
             />
             </Grid>
             </Grid> 

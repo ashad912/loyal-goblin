@@ -23,7 +23,6 @@ import {perkLabels, dayLabels, categoryLabels, roomLabels} from '../../utils/lab
 import {rentRooms, productCategories, perkTypes} from '../../utils/modelArrays'
 
 const AddIcon = styled(AddCircleIcon)`
-  color: #3f51b5
   width: 1.5rem;
   transition: transform 0.2s ease-in-out;
   transform: scale(1.8);
@@ -539,6 +538,7 @@ const createNumberList = (startNum, endNum, isWeekDay, isHour, startHour) => {
               <Grid item >
                 <AddIcon
                   style={{marginLeft: '2.5rem', marginTop: '1.5rem'}}
+                  color='primary'
                   onClick={this.handleAddTimePeriod}
                 />
               </Grid>

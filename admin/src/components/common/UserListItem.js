@@ -9,7 +9,7 @@ import Button from "@material-ui/core/Button";
 
 import {designateUserLevel} from '../../utils/methods'
 import {createAvatarPlaceholder} from '../../utils/methods'
-import { usersPath } from '../../utils/definitions';
+import { palette, usersPath } from '../../utils/definitions';
 
 const leaderIcon = (
     <Badge
@@ -20,7 +20,7 @@ const leaderIcon = (
             horizontal: 'right',
         }}
     >
-         <Avatar style={{height: 30, width:30, fontSize: '0.9rem', backgroundColor: '#3f51b5'}}>L</Avatar>
+         <Avatar style={{height: 30, width:30, fontSize: '0.9rem', backgroundColor: palette.primary.main}}>L</Avatar>
     </Badge>
 ) 
 
