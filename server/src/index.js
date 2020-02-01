@@ -69,11 +69,26 @@ app.use((err, req, res, next) => {
   res.status(422).send({ error: err.message });
 });
 
-// app.get('*', (req, res) => {
+if(process.env.NODE_ENV === 'dev'){
+  console.log(process.env.NODE_ENV)
+  app.set('subdomain offset', 1);
+}
 
+app.get('*', (req, res) => {
+
+  if(req.subdomains[0]==='admin'){
+    res.sendFile(path.join(__dirname, '../../admin/build/index.html'));
+  }else if(req.subdomains[0]==='barman'){
+    res.sendFile(path.join(__dirname, '../../barman/build/index.html'));
+  }else{
+    res.sendFile(path.join(__dirname, '../../client/build/index.html'));
+  }
+})
+
+// app.get('*', (req, res) => {
 //   res.sendFile(path.join(__dirname, '../../client/build/index.html'));
- 
 // })
+
 var allClients = []; //all socket clients
 
 

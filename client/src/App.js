@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import { StylesProvider, ThemeProvider } from "@material-ui/styles";
 import { createMuiTheme } from "@material-ui/core/styles";
+import styled from "styled-components";
 import "./App.css";
 
 import SocketConfig from "./SocketConfig";
@@ -21,7 +22,7 @@ import SignUp from "./components/auth/SignUp";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import MissionInstance from "./components/screens/events/MissionInstance";
 
-import {palette} from './utils/definitions'
+import { palette } from "./utils/definitions";
 
 import { authCheck } from "./store/actions/authActions";
 import { resetConnectionError } from "./store/actions/connectionActions";
@@ -43,9 +44,22 @@ const goblinTheme = createMuiTheme({
     }
   },
   typography: {
-    fontFamily: "\"Pinto\", \"Helvetica\", \"Arial\", sans-serif"
+    fontFamily: '"Pinto", "Helvetica", "Arial", sans-serif'
   }
 });
+
+const Toast = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  background: black;
+  color: rgba(255, 255, 255, 1);
+  display: none;
+  text-align: center;
+  padding: 2rem 0;
+  font-size: 2rem;
+`;
 
 class App extends React.Component {
   state = {};
@@ -90,6 +104,10 @@ class App extends React.Component {
     // }
   }
 
+  closeToast = () => {
+    document.getElementById("toast").style.display = "none";
+  };
+
   render() {
     return (
       <BrowserRouter>
@@ -127,6 +145,18 @@ class App extends React.Component {
             />
             <ConnectionSpinnerDialog />
             <SocketConfig />
+            <Toast id="toast" onClick={this.closeToast}>
+              Dostępna aktualizacja!
+              <p
+                style={{
+                  fontSize: "1.2rem",
+                  fontWeight: "lighter",
+                  color: "rgba(220, 220, 220, 1)"
+                }}
+              >
+                Zamknij aplikację i uruchom ją ponownie.
+              </p>
+            </Toast>
           </ThemeProvider>
         </StylesProvider>
       </BrowserRouter>

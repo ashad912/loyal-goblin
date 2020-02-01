@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import { StylesProvider, ThemeProvider } from "@material-ui/styles";
 import { createMuiTheme } from "@material-ui/core/styles";
-
+import styled from "styled-components";
 //import Footer from "./components/layout/Footer";
 import SignIn from "./auth/SignIn";
 import Admin from "./components/Admin";
@@ -35,6 +35,20 @@ const goblinTheme = createMuiTheme({
 });
 
 
+const Toast = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  background: black;
+  color: rgba(255, 255, 255, 1);
+  display: none;
+  text-align: center;
+  padding: 2rem 0;
+  font-size: 2rem;
+`;
+
+
 class App extends React.Component {
   state = {
 
@@ -63,6 +77,11 @@ class App extends React.Component {
     // }
   }
 
+  
+  closeToast = () => {
+    document.getElementById("toast").style.display = "none";
+  };
+
   render() {
     return (
       <BrowserRouter>
@@ -79,6 +98,18 @@ class App extends React.Component {
           
           <ConnectionSnackbar resetConnectionError = {() => this.props.resetConnectionError()}/>
           <ConnectionSpinnerDialog />
+          <Toast id="toast" onClick={this.closeToast}>
+              Dostępna aktualizacja!
+              <p
+                style={{
+                  fontSize: "1.2rem",
+                  fontWeight: "lighter",
+                  color: "rgba(220, 220, 220, 1)"
+                }}
+              >
+                Zamknij aplikację i uruchom ją ponownie.
+              </p>
+            </Toast>
         </ThemeProvider>
         </StylesProvider>
       </BrowserRouter>

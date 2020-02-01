@@ -68,7 +68,11 @@ const Navbar = (props) => {
     const [hideNavbar, setHideNavbar] = React.useState(false)
 
     React.useEffect(()=>{
-        handleNavbarHide()
+        if(!props.auth.uid){
+            setHideNavbar(true)
+        }else{
+            setHideNavbar(false)
+        }
     }, [props.auth.uid])
 
     const handleClick = event => {
@@ -133,20 +137,7 @@ const Navbar = (props) => {
     const avatar = true
     //console.log(props.auth)
 
-    const handleNavbarHide = () => {
-        let hideNavbar = false
-    if (typeof window !== 'undefined') {
-        const signInPath = window.location.origin.toString()+"/signin"
-        const signUpPath = window.location.origin.toString()+"/signup"
-        if(signInPath === window.location.href || signUpPath === window.location.href){
-            hideNavbar = true
-            
-        }
-      } else {
-        // work out what you want to do server-side...
-      }
-      setHideNavbar(hideNavbar)
-    }
+
 
     return(
         <StyledAppBar  position="static" id="navbar" hide={hideNavbar}>

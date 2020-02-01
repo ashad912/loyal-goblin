@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { StylesProvider, ThemeProvider } from "@material-ui/styles";
 import { createMuiTheme } from "@material-ui/core/styles";
+import styled from "styled-components";
 import axios from "axios";
 import moment from "moment";
 import SignIn from "./auth/SignIn";
@@ -33,6 +34,20 @@ const goblinTheme = createMuiTheme({
     }
   }
 });
+
+const Toast = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  background: black;
+  color: rgba(255, 255, 255, 1);
+  display: none;
+  text-align: center;
+  padding: 2rem 0;
+  font-size: 2rem;
+`;
+
 
 function App(props) {
   const [connection, setConnection] = useState({
@@ -206,6 +221,11 @@ function App(props) {
     }
   }
 
+  
+  const closeToast = () => {
+    document.getElementById("toast").style.display = "none";
+  };
+
   return (
     <OrderContext.Provider
       value={{
@@ -264,6 +284,18 @@ function App(props) {
             connection={connection}
           />
           <ConnectionSpinnerDialog connection={connection} />
+          <Toast id="toast" onClick={closeToast}>
+              Dostępna aktualizacja!
+              <p
+                style={{
+                  fontSize: "1.2rem",
+                  fontWeight: "lighter",
+                  color: "rgba(220, 220, 220, 1)"
+                }}
+              >
+                Zamknij aplikację i uruchom ją ponownie.
+              </p>
+            </Toast>
         </BrowserRouter>
       </ThemeProvider>
     </OrderContext.Provider>

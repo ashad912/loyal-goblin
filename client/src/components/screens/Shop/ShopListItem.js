@@ -27,7 +27,7 @@ const ShopListItem = props => {
   return (
     <ListItem>
       <ListItemIcon>
-        <img src={productsPath+imgSrc} style={{width: '2rem'}}/>
+        <img src={productsPath+imgSrc} style={{width: '2rem', height: '2rem'}}/>
       </ListItemIcon>
       <Grid container direction="column">
         <ListItemText primary={name} />
