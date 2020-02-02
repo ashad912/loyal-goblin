@@ -15,6 +15,7 @@ import PageNotFound from "./components/PageNotFound";
 
 import { authCheck} from "./store/actions/authActions";
 import { resetConnectionError } from "./store/actions/connectionActions";
+import OfflineModal from "./auth/OfflineModal";
 
 
 const goblinTheme = createMuiTheme({
@@ -50,20 +51,40 @@ const Toast = styled.div`
 
 
 class App extends React.Component {
-  state = {
+  constructor(props){
+    super(props);
+    this.handleOnlineState = this.handleOnlineState.bind(this); 
+    this.handleOfflineState = this.handleOfflineState.bind(this); 
+}
 
-  };
+  state = {
+    online: true
+  }
+  
 
   async componentDidMount() {
-
+    window.addEventListener('online', this.handleOnlineState, false);
+    window.addEventListener('offline', this.handleOfflineState, false);
 
     //CHECK AUTH ON APP LOAD
-    await this.props.authCheck();
+    if(navigator.onLine){
+      //CHECK AUTH ON APP LOAD
+      await this.props.authCheck();
+    }
 
+
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('online', this.handleOnlineState, false);
+    window.removeEventListener('offline', this.handleOfflineState, false);
   }
 
 
   componentDidUpdate(prevProps, prevState) {
+    if(prevState.online !== this.state.online && this.state.online){
+      window.location.reload()
+    }
     //USEFUL COMPONENT UPDATE DIAGNOSTICS
     // Object.entries(this.props).forEach(
     //   ([key, val]) =>
@@ -81,6 +102,15 @@ class App extends React.Component {
   closeToast = () => {
     document.getElementById("toast").style.display = "none";
   };
+
+  handleOnlineState = () => {
+    this.setState({online: true})
+  }
+
+  handleOfflineState = () => {
+    this.setState({online: false})
+  }
+
 
   render() {
     return (
@@ -110,6 +140,7 @@ class App extends React.Component {
                 Zamknij aplikację i uruchom ją ponownie.
               </p>
             </Toast>
+            <OfflineModal open={!this.state.online}/>
         </ThemeProvider>
         </StylesProvider>
       </BrowserRouter>

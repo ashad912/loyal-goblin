@@ -140,7 +140,7 @@ const Navbar = (props) => {
 
 
     return(
-        <StyledAppBar  position="static" id="navbar" hide={hideNavbar}>
+        <StyledAppBar  position="static" id="navbar" hide={hideNavbar ? 1 : 0}>
         <Toolbar>
             {props.auth.uid && props.auth.profile.name ? (
                 <React.Fragment>

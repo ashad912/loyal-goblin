@@ -32,6 +32,10 @@ if ('function' === typeof importScripts) {
     }
   }
 
+  self.addEventListener('fetch', event => {
+    event.respondWith(fetch(event.request))
+  })
+
 // self.addEventListener('notificationclick', function (e) {
 //     var notification = e.notification;
 //     notification.close();

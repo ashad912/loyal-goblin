@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { StylesProvider, ThemeProvider } from "@material-ui/styles";
 import { createMuiTheme } from "@material-ui/core/styles";
@@ -15,6 +15,7 @@ import PageNotFound from "./PageNotFound";
 import ConnectionSnackbar from "./layout/ConnectionSnackbar";
 import ConnectionSpinnerDialog from "./layout/ConnectionSpinnerDialog";
 import Settings from "./components/Settings";
+import OfflineModal from "./auth/OfflineModal";
 
 export const OrderContext = React.createContext(null);
 
@@ -48,6 +49,13 @@ const Toast = styled.div`
   font-size: 2rem;
 `;
 
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
 
 function App(props) {
   const [connection, setConnection] = useState({
@@ -61,7 +69,15 @@ function App(props) {
   const [userId, setUserId] = useState(null);
   const [redirect, setRedirect] = useState(false);
   const [orderError, setOrderError] = useState('')
+  const [online, setOnline] = useState(true)
+  const prevOnline = usePrevious(online);
 
+
+  useEffect(() => {
+    if(prevOnline!== undefined && prevOnline !== online && online){
+      window.location.reload()
+    }
+  }, [online])
 
   useEffect(() => {
 
@@ -71,33 +87,48 @@ function App(props) {
   }, [orderError])
 
   useEffect(() => {
-    axios.defaults.baseURL = process.env.REACT_APP_API_URL;
-    axios.interceptors.request.use(
-      function(config) {
-        setLoading(true);
-        return config;
-      },
-      function(error) {
-        setLoading(false);
-        return Promise.reject(error);
-      }
-    );
 
-    // Add a response interceptor
-    axios.interceptors.response.use(
-      function(response) {
-        setLoading(false);
-        return response;
-      },
-      function(error) {
-        setLoading(false);
-        return Promise.reject(error);
+    window.addEventListener('online', handleOnlineState, false);
+    window.addEventListener('offline', handleOfflineState, false);
+
+    if(navigator.onLine){
+
+      axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+      axios.interceptors.request.use(
+        function(config) {
+          setLoading(true);
+          return config;
+        },
+        function(error) {
+          setLoading(false);
+          return Promise.reject(error);
+        }
+      );
+  
+      // Add a response interceptor
+      axios.interceptors.response.use(
+        function(response) {
+          setLoading(false);
+          return response;
+        },
+        function(error) {
+          setLoading(false);
+          return Promise.reject(error);
+        }
+      );
+      checkAuth();
+      if (localStorage.getItem("lastUserId")) {
+        handleGetOrder(localStorage.getItem("lastUserId"));
       }
-    );
-    checkAuth();
-    if (localStorage.getItem("lastUserId")) {
-      handleGetOrder(localStorage.getItem("lastUserId"));
+    }else{
+      setOnline(false)
     }
+
+    return(()=>{
+      window.removeEventListener('online', handleOnlineState, false);
+      window.removeEventListener('offline', handleOfflineState, false);
+    })
+
   }, []);
 
   useEffect(() => {
@@ -226,6 +257,16 @@ function App(props) {
     document.getElementById("toast").style.display = "none";
   };
 
+
+  const handleOnlineState = () => {
+    setOnline(true)
+  }
+
+  const handleOfflineState = () => {
+    setOnline(false)
+  }
+
+
   return (
     <OrderContext.Provider
       value={{
@@ -296,6 +337,7 @@ function App(props) {
                 Zamknij aplikację i uruchom ją ponownie.
               </p>
             </Toast>
+            <OfflineModal open={!online}/>
         </BrowserRouter>
       </ThemeProvider>
     </OrderContext.Provider>
