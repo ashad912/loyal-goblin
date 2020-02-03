@@ -358,15 +358,16 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
 
         //custom sorting for specific user
         const getMinExperience = (party) => {
-            return new Promise (async (resolve, rejct) => {
+            return new Promise (async (resolve, reject) => {
                 try{
                     await party.populate({
                         path: 'leader members',
                         select: "_id experience"
-                    })
+                    }).execPopulate()
 
                     const membersExp = party.members.map((member) => member.experience)
-                    resolve(Math.min([leader.experience, ...membersExp]))
+                    const partyExp = [party.leader.experience, ...membersExp]
+                    resolve(Math.min(...partyExp))
                 }catch(e){
                     reject(e)
                 }
@@ -377,7 +378,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
         const level = party ? designateUserLevel(await getMinExperience(party)) : designateUserLevel(user.experience);
 
         missions.sort(function(a, b){
-            return Math.abs(level-b.level) - Math.abs(level-a.level);
+            return Math.abs(level-a.level) - Math.abs(level-b.level);
         });
         
         //population on all colection saved to missions var

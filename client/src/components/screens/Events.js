@@ -17,7 +17,9 @@ import {socket, instanceRefreshSubscribe} from '../../socket'
 import Rally from './events/Rally'
 import { getFirstRally } from '../../store/actions/rallyActions'
 import { authCheck } from "../../store/actions/authActions";
-import { designateUserLevel } from '../../utils/methods'
+
+import IconButton from '@material-ui/core/IconButton';
+import RefreshIcon from '@material-ui/icons/Refresh';
 
 
 const itemLabelHeight = 468.4 //REFACTOR: need to be changed to 'dimensionLabel'
@@ -60,11 +62,7 @@ const Events = (props) => {
 
     const fetchMissions = async () => {
         const missionObject = await getMissionList()
-        // const levelData = designateUserLevel(props.userExperience, true);
-
-        // missionObject.missions.sort(function(a, b){
-        //     return Math.abs(levelData.level-b.level) - Math.abs(levelData.level-a.level);
-        // });
+        
         setMissionListData(missionObject.missions)
 
         if(missionObject.missionInstanceId){
@@ -124,9 +122,10 @@ const Events = (props) => {
         
     }
 
-    // const updateActiveInstanceId = (id) => {
-    //     props.updateActiveInstanceId(id)
-    // }
+    const handleRefresh = () => {
+        fetchMissions()
+        fetchRally()
+    }
 
     const handleMissionLeave = async () => {
         await deleteInstance(props.party._id)
@@ -194,10 +193,20 @@ const Events = (props) => {
 
             {rally !== null && (<Rally rally={rally} handleRallyDetailsOpen={handleRallyDetailsOpen} handleRallyDetailsClose={handleRallyDetailsClose} refreshProfile={() => props.authCheck()}/>)}
 
-            <Typography variant="h6">
-                {missionList.length ? (props.activeInstanceId ? 'Aktywna misja' : 'Dostępne misje') : 'Brak dostępnych misji!'}
-            </Typography>
-
+            <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                <IconButton
+                    onClick={handleRefresh}
+                    aria-label="Odśwież"
+                    style={{padding: '0.5rem'}}
+                >
+                    <RefreshIcon/>
+                </IconButton>
+                <Typography variant="h6">
+                    {missionList.length ? (props.activeInstanceId ? 'Aktywna misja' : 'Dostępne misje') : 'Brak dostępnych misji!'}
+                </Typography>
+            </div>
+            
+           
             <StyledList> 
                 {missionList}
             </StyledList>
