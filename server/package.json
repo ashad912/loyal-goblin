@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "env-cmd -f ./config/dev.env nodemon -r esm src/index.js",
+    "prod": "env-cmd -f ./config/prod.env node -r esm src/index.js",
     "debug": "env-cmd -f ./config/dev.env nodemon -r esm  --inspect src/index.js"
   },
   "repository": {
