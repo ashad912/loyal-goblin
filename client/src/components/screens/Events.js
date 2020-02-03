@@ -60,11 +60,11 @@ const Events = (props) => {
 
     const fetchMissions = async () => {
         const missionObject = await getMissionList()
-        const levelData = designateUserLevel(props.userExperience, true);
+        // const levelData = designateUserLevel(props.userExperience, true);
 
-        missionObject.missions.sort(function(a, b){
-            return Math.abs(levelData.level-b.level) - Math.abs(levelData.level-a.level);
-        });
+        // missionObject.missions.sort(function(a, b){
+        //     return Math.abs(levelData.level-b.level) - Math.abs(levelData.level-a.level);
+        // });
         setMissionListData(missionObject.missions)
 
         if(missionObject.missionInstanceId){

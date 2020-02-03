@@ -276,9 +276,13 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
             res.send({missions: mission, missionInstanceId: missionInstance.mission}) //return only one mission - of which the user is a participant (as array for compatibility)
             return
         }
+        const party = await Party.findById(user.party)
 
-        if(user.party){
-            const party = await Party.findById(user.party)
+        if(user.party && !party){
+            throw new Error('Party ref error!')
+        }
+
+        if(party){  
             partyIds = [...partyIds, ...party.members]
         }
         
@@ -351,7 +355,30 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
         missions = missions.filter((mission) => {
             return !excludedMissions.includes(mission._id.toString())
         })
-        //
+
+        //custom sorting for specific user
+        const getMinExperience = (party) => {
+            return new Promise (async (resolve, rejct) => {
+                try{
+                    await party.populate({
+                        path: 'leader members',
+                        select: "_id experience"
+                    })
+
+                    const membersExp = party.members.map((member) => member.experience)
+                    resolve(Math.min([leader.experience, ...membersExp]))
+                }catch(e){
+                    reject(e)
+                }
+            })
+        }
+        
+
+        const level = party ? designateUserLevel(await getMinExperience(party)) : designateUserLevel(user.experience);
+
+        missions.sort(function(a, b){
+            return Math.abs(level-b.level) - Math.abs(level-a.level);
+        });
         
         //population on all colection saved to missions var
         await ItemModel.populate(missions, { //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
