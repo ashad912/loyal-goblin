@@ -26,10 +26,6 @@ import {
   setActiveInstance
 } from "../../../store/actions/missionActions";
 import QRreaderView from "./QRreaderView";
-import {
-  SwipeableList,
-  SwipeableListItem
-} from "@sandstreamdev/react-swipeable-list";
 import TransferWithinAStationIcon from "@material-ui/icons/TransferWithinAStation";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
