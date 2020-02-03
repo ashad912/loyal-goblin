@@ -1,4 +1,5 @@
 import express from "express";
+import subdomain from 'express-subdomain'
 import fileUpload from "express-fileupload"
 import { adminRouter } from "./routes/admin";
 import { userRouter } from "./routes/user";
@@ -48,9 +49,9 @@ app.use(
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, "../../static")));
+app.use(subdomain('barman', express.static(path.join(__dirname, "../../barman/build"))));
+app.use(subdomain('admin', express.static(path.join(__dirname, "../../admin/build"))));
 app.use(express.static(path.join(__dirname, "../../client/build")));
-app.use(express.static(path.join(__dirname, "../../admin/build")));
-app.use(express.static(path.join(__dirname, "../../barman/build")));
 
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -75,7 +76,7 @@ if(process.env.NODE_ENV === 'dev'){
 }
 
 app.get('*', (req, res) => {
-
+  
   if(req.subdomains[0]==='admin'){
     res.sendFile(path.join(__dirname, '../../admin/build/index.html'));
   }else if(req.subdomains[0]==='barman'){
