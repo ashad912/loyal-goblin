@@ -49,8 +49,8 @@ app.use(
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, "../../static")));
-app.use(subdomain('barman', express.static(path.join(__dirname, "../../barman/build"))));
-app.use(subdomain('admin', express.static(path.join(__dirname, "../../admin/build"))));
+app.use(subdomain('goblinbarman', express.static(path.join(__dirname, "../../barman/build"))));
+app.use(subdomain('goblinadmin', express.static(path.join(__dirname, "../../admin/build"))));
 app.use(express.static(path.join(__dirname, "../../client/build")));
 
 app.use(bodyParser.json());
