@@ -77,9 +77,9 @@ if(process.env.NODE_ENV === 'dev'){
 
 app.get('*', (req, res) => {
   
-  if(req.subdomains[0]==='admin'){
+  if(req.subdomains[0]==='goblinadmin'){
     res.sendFile(path.join(__dirname, '../../admin/build/index.html'));
-  }else if(req.subdomains[0]==='barman'){
+  }else if(req.subdomains[0]==='goblinbarman'){
     res.sendFile(path.join(__dirname, '../../barman/build/index.html'));
   }else{
     res.sendFile(path.join(__dirname, '../../client/build/index.html'));
