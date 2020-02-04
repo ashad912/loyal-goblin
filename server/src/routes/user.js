@@ -2,7 +2,7 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import validator from 'validator'
 import {differenceBy} from 'lodash'
-import { User } from "../models/user";
+import { User, userClasses, userSexes } from "../models/user";
 import { Party } from "../models/party";
 import { Item } from "../models/item";
 import { ItemModel } from "../models/itemModel";
@@ -98,9 +98,7 @@ router.post("/create", async (req, res) => {
   //registerKey used in biometrica, hwvr we may allow registration for ppl with key from qrcode - i left it
 
   
-
-  
-  if(req.body.registerKey){
+  if(process.env.NODE_ENV === "dev" && req.body.registerKey){
     const isMatch = await bcrypt.compare(
       req.body.registerKey,
       process.env.REGISTER_KEY
@@ -131,7 +129,7 @@ router.post("/create", async (req, res) => {
 
   try {
     const user = new User({
-      email: req.body.email,
+      email: req.body.email.toLowerCase(),
       password: req.body.password,
       active: true,
       perksUpdatedAt: moment().toISOString(),
@@ -165,10 +163,18 @@ router.get("/allNames", auth, async(req,res) => {
 router.patch("/character", auth, async (req, res) => {
   try {
     const user = req.user
-    const name = req.body.name
+    const name = req.body.name.toLowerCase()
     const sex = req.body.sex
     const characterClass = req.body.characterClass
     const attributes = req.body.attributes
+
+    if(!userClasses.includes(characterClass)){
+      throw new Error('Invalid class form data field!')
+    }
+
+    if(!userSexes.includes(sex)){
+      throw new Error('Invalid sex form data field!')
+    }
 
     if(!name || !sex || !characterClass || !attributes){
       throw new Error("Niepełne dane tworzenia postaci")
@@ -188,7 +194,7 @@ router.patch("/character", auth, async (req, res) => {
     if(characterClass === 'cleric' && attributes.endurance <= 1){
       throw new Error("Nieprawidłowa wartość atrybutu klasowego")
     }
-    const sameNameUser = await User.findOne({name: req.body.name})
+    const sameNameUser = await User.findOne({name: name})
     if(sameNameUser){
       throw new Error("Postać o podanym imieniu już istnieje")
     }

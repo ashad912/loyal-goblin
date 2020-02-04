@@ -301,7 +301,7 @@ class SignUp extends Component {
                           variant="contained" 
 
                           >
-                          Zaloguj
+                          Zarejestruj
                           
                       </Button> 
 

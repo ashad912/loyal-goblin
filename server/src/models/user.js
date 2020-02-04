@@ -12,10 +12,9 @@ import {LoyalSchema} from '../schemas/LoyalSchema'
 import arrayUniquePlugin from 'mongoose-unique-array'
 import { asyncForEach } from '../utils/methods'
 
-const userClasses = ['warrior', 'mage', 'rogue', 'cleric']
+export const userClasses = ['warrior', 'mage', 'rogue', 'cleric']
 
-const userStatuses = ['home', 'away', 'banned', 'nonactivated']
-
+export const userSexes = ['male', 'female']
 
 export const UserSchema = new mongoose.Schema({
     
