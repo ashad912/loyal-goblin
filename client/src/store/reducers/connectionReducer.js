@@ -10,22 +10,22 @@ const initState = {
 const connectionReducer = (state = initState, action) => {
     switch (action.type){ //it ll generate thing to authReducer not firebaseReducer remember!
         case 'NO_CONNECTION':
-            console.log("no connection")
+            //console.log("no connection")
             return {
                 ...state,
                 connectionError: true,
         }
         case 'RESET_CONNECTION_ERROR':
-            console.log("reset connection error")
+            //console.log("reset connection error")
             return {
                 ...state,
                 connectionError: null,
         }
         case 'LOADING':
             if(action.loading){
-                console.log('loading start')
+                //console.log('loading start')
             }else{
-                console.log('loading end')
+               // console.log('loading end')
             }
             return {
                 ...state,

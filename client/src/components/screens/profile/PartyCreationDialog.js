@@ -98,13 +98,13 @@ const PartyCreationDialog = props => {
 
   const handlePartyNameChange = e => {
     if (e.target.value.length < 30) {
-      setPartyName(e.target.value.trim());
+      setPartyName(e.target.value);
     }
   };
 
   const handleQRscanStart = () => {
     setShowScanner(prev => !prev);
-    console.log(props.activeMission)
+    //console.log(props.activeMission)
   };
 
   const handleMoreClick = (event, memberId) => {
@@ -150,7 +150,7 @@ const PartyCreationDialog = props => {
   };
 
   const handlePartyCreateConfirm = () => {
-    props.onPartyCreate(partyName, {
+    props.onPartyCreate(partyName.trim(), {
       _id: props.auth.uid,
       name: props.auth.profile.name,
       avatar: props.auth.profile.avatar
