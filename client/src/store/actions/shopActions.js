@@ -10,7 +10,7 @@ export const getShop = (socketStatusConnection) => {
         
             
             if(socketStatusConnection !== undefined){
-                if(res.data.party.members.length && !socketStatusConnection){ //if client of multiplayer mission is not connected to socket
+                if(res.data.party && res.data.party.members.length && !socketStatusConnection){ //if client of multiplayer mission is not connected to socket
                     throw new Error('Leader not connected to party members.')
                 }
             }
