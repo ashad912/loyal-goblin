@@ -163,10 +163,16 @@ router.get("/allNames", auth, async(req,res) => {
 router.patch("/character", auth, async (req, res) => {
   try {
     const user = req.user
+
+    if(user.name){
+      throw new Error("User has already filled character data!")
+    }
+    
     const name = req.body.name.toLowerCase()
     const sex = req.body.sex
     const characterClass = req.body.characterClass
     const attributes = req.body.attributes
+
 
     if(!userClasses.includes(characterClass)){
       throw new Error('Invalid class form data field!')
@@ -218,7 +224,7 @@ router.patch("/character", auth, async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
-    let user = await User.findByCredentials(req.body.email, req.body.password);
+    let user = await User.findByCredentials(req.body.email.toLowerCase(), req.body.password);
     const token = await user.generateAuthToken(); //on instancegenerateAuthToken
     user = await userStandardPopulate(user);
     user.userPerks = await updatePerks(user, true);
