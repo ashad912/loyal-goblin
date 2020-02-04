@@ -43,7 +43,7 @@ app.use(
     useTempFiles: false,
     abortOnLimit: true,
     //4 mb file upload limit
-    limits: {fileSize: 4 * 1024 * 1024}
+    limits: {fileSize: 6 * 1024 * 1024}
   })
 );
 
