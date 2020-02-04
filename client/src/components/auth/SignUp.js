@@ -318,7 +318,7 @@ class SignUp extends Component {
               </ActionBar>
               <Recaptcha
                   ref={ ref => this.recaptcha = ref }
-                  sitekey="6Ldy0ssUAAAAAKSZNuXULGv4U1PBI35BbvbWhT9x"
+                  sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
                   onResolved={ this.onResolved }
               />
             </div>

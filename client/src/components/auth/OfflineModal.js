@@ -9,10 +9,10 @@ const OfflineModal = ({open}) => {
 <Dialog
         open={open}
       >
-        <DialogTitle>Brak połączenia z internetem</DialogTitle>
+        <DialogTitle>Brak połączenia z Internetem!</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Do korzystania z aplikacji konieczne jest aktywne połączenie z internetem.
+            Do korzystania z aplikacji konieczne jest aktywne połączenie z Internetem.
           </DialogContentText>
         </DialogContent>
 
