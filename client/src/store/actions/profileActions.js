@@ -181,9 +181,11 @@ export const createCharacter = (name, sex, characterClass, attributes) => {
             
             delete profile._id
             dispatch({type: 'UPDATE_PROFILE_DATA', profile})
+            return true
             
         }catch (e) {
             dispatch( {type: "NO_CONNECTION", error: e})      
+            return false
         } 
     }
 }

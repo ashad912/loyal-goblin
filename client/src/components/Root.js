@@ -85,6 +85,7 @@ function Root(props) {
     
   }, []);
 
+
   useEffect(() => {
     if (!showCharacterCreationModal) {
       if (!showCharacterCreationModal) {
@@ -109,15 +110,18 @@ function Root(props) {
   };
 
   const handleCharacterCreationFinish = async (name, sex, charClass, attributes) => {
-    props.onClearAllNames()
-    await props.onCreateCharacter(name, sex, charClass, attributes)
-    await props.onAuthCheck()
-    setShowCharacterCreationModal(false);
+    const characterCreated = await props.onCreateCharacter(name, sex, charClass, attributes)
+    if(characterCreated){
+      props.onClearAllNames()
+      await props.onAuthCheck()
+      setShowCharacterCreationModal(false)
+    }
   };
 
   const updateActiveInstanceId = (id) => {
     setActiveInstanceId(id)
   }
+
   return (
     <div className={classes.root}>
       {showCharacterCreationModal ? (
