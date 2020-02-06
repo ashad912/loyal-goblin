@@ -11,6 +11,7 @@ import Step2 from "./characterCreation/Step2";
 import Step3 from "./characterCreation/Step3";
 import Step4 from "./characterCreation/Step4";
 import Step5 from "./characterCreation/Step5";
+import { Typography } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -49,6 +50,17 @@ const CharacterCreation = props => {
     magic: 1,
     endurance: 1
   });
+
+  React.useEffect(()=>{
+    if(props.submitError){
+      setActiveStep(0)
+      setTimeout(() => {
+        props.resetSubmitError()
+      }, 5000);
+    }
+  }, [props.submitError])
+
+
 
   const handleNameChange = event => {
     if (
@@ -216,7 +228,13 @@ const CharacterCreation = props => {
           minHeight: `calc(100vh - ${stepperHeight}px)`
         }}
       >
-        <Paper className={classes.paper}>{steps[activeStep]}</Paper>
+        <Paper className={classes.paper}>
+
+        {props.submitError && 
+        <Typography  color="secondary" style={{textAlign: 'center', marginBottom:'2rem'}}>Błąd finalizacji tworzenia postaci. Sprawdź poprawność danych i spróbuj jeszcze raz.</Typography>
+        }
+          {steps[activeStep]}
+          </Paper>
       </Container>
       <MobileStepper
         id="stepper"

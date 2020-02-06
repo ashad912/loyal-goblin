@@ -40,7 +40,10 @@ const BasketDrawer = ({ open, toggle, baskets, users, activeUser, handleRemoveIt
     <Drawer open={open} onClose={toggle} >
       <DrawerContents style={{maxWidth: '80vw'}}>
         <Typography variant="h6">Zamówienie</Typography>
-        <Divider />
+        {!emptyOrder ? 
+        <Divider />:
+        <Typography style={{marginTop: '3rem', color: 'grey'}}>Brak produktów w koszyku</Typography>
+        }
         <List component="nav" style={{ width: "75vw" }}>
           {Object.keys(baskets).map(user => {
 
@@ -72,7 +75,9 @@ const BasketDrawer = ({ open, toggle, baskets, users, activeUser, handleRemoveIt
             }
           })}
         </List>
+        {!emptyOrder && 
         <Divider />
+        }
         <TotalPriceText variant="body1">
           Całkowity koszt zamówienia: {totalPrice.toFixed(2) + " ZŁ"}
         </TotalPriceText>

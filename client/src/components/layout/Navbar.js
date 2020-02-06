@@ -9,9 +9,8 @@ import Input from '@material-ui/core/Input';
 import Menu from "@material-ui/core/Menu";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
 import MenuItem from "@material-ui/core/MenuItem";
+import Snackbar from '@material-ui/core/Snackbar';
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import MenuIcon from "@material-ui/icons/Menu";
@@ -66,6 +65,7 @@ const Navbar = (props) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [showPasswordChangeModal, setShowPasswordChangeModal] = React.useState(false)
     const [hideNavbar, setHideNavbar] = React.useState(false)
+    const [showAlertSnackbar, setShowAlertSnackbar] = React.useState(false)
 
     React.useEffect(()=>{
         if(!props.auth.uid){
@@ -88,13 +88,21 @@ const Navbar = (props) => {
     const handleAvatarChange = async e => {
         if (e.target.files.length > 0) {
             const avatar = e.target.files[0]
+            const avatarSize = avatar.size / 1024 / 1024; // in MB
 
-            const formData = new FormData()
-            formData.append("avatar", avatar)
-            e.stopPropagation();
-            setAnchorEl(null);
-            //window.location.reload();
-            await props.updateAvatar(formData); 
+            
+            if(avatarSize < 6){
+                const formData = new FormData()
+                formData.append("avatar", avatar)
+                e.stopPropagation();
+                setAnchorEl(null);
+                //window.location.reload();
+                await props.updateAvatar(formData)
+
+
+            }else{
+                setShowAlertSnackbar(true)
+            }
             
             
         }
@@ -133,6 +141,11 @@ const Navbar = (props) => {
         setShowPasswordChangeModal(prev => !prev)
         setAnchorEl(null)
     }
+
+    const handleCloseAlertSnackbar = () => {
+        setShowAlertSnackbar(prev => !prev)
+    }
+
 
     const avatar = true
     //console.log(props.auth)
@@ -260,6 +273,16 @@ const Navbar = (props) => {
             )}
         </Toolbar>
         <ChangePasswordModal open={showPasswordChangeModal} handleClose={togglePasswordChangeModal}/>
+        <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        open={showAlertSnackbar}
+        autoHideDuration={6000}
+       onClose={handleCloseAlertSnackbar}
+       message="Maksymalna wielkosć pliku to 6 MB!"
+        />
         </StyledAppBar>
         
        

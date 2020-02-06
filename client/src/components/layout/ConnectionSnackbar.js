@@ -12,7 +12,7 @@ const ConnectionSnackbar = props => {
       open={props.connection.connectionError}
       onClose={props.resetConnectionError}
       autoHideDuration={3000}
-      message={<span>Brak połączenia z serwerem.</span>}
+    message={<span>{props.connection.message}</span>}
     />
   );
 };

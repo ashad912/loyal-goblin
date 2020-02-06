@@ -63,6 +63,7 @@ function Root(props) {
     setShowCharacterCreationModal
   ] = React.useState(true);
   const [fullHeightCorrection, setFullHeightCorrection] = React.useState(0);
+  const [characterCreationError, setCharacterCreationError] = React.useState(false)
 
   const [activeInstanceId, setActiveInstanceId] = React.useState(null)
   useEffect(() => {
@@ -115,6 +116,8 @@ function Root(props) {
       props.onClearAllNames()
       await props.onAuthCheck()
       setShowCharacterCreationModal(false)
+    }else{
+      setCharacterCreationError(true)
     }
   };
 
@@ -130,7 +133,7 @@ function Root(props) {
           open={showCharacterCreationModal}
           onClose={handleCharacterCreationFinish}
         >
-          <CharacterCreation onFinish={handleCharacterCreationFinish} allNames={props.auth.allNames}/>
+          <CharacterCreation onFinish={handleCharacterCreationFinish} allNames={props.auth.allNames} submitError={characterCreationError} resetSubmitError={()=>setCharacterCreationError(false)}/>
         </Dialog>
       ) : (
         <React.Fragment>

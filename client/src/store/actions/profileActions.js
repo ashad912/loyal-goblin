@@ -33,9 +33,11 @@ export const updateAvatar = (avatar) => {
                 delete profile._id
 
                 dispatch( {type: "UPDATE_PROFILE_DATA", profile}) //DISPATCH IS SYNCHRONOUS!!!
+                return true
             } catch (e) {
                 console.log(e)
-                dispatch( {type: "NO_CONNECTION", error: e})               
+                dispatch( {type: "NO_CONNECTION", error: e})
+                          
             }
             
             resolve()
