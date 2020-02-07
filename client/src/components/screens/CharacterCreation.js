@@ -63,15 +63,16 @@ const CharacterCreation = props => {
 
 
   const handleNameChange = event => {
+    const value = event.target.value.toLowerCase()
     if (
-      (/^[a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ0-9][a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ0-9\s]*$/.test(
-        event.target.value
+      (/^[a-ząćęłńóśźż0-9][a-ząćęłńóśźż0-9\s]*$/.test(
+        value
       ) ||
-        event.target.value === "") &&
-      event.target.value.length <= 20
+      value === "") &&
+      value.length <= 20
     ) {
-      if (event.target.value.split(" ").length < 3) {
-        setName(event.target.value);
+      if (value.split(" ").length < 3) {
+        setName(value);
         setNameTaken(false);
       }
     }
@@ -79,7 +80,7 @@ const CharacterCreation = props => {
 
   const handleCheckAllNames = useCallback(
     _.debounce(value => {
-      if (!props.allNames.find(name => name === value)) {
+      if (!props.allNames.find(name => name === value.toLowerCase())) {
         setNameTaken(false);
       } else {
         setNameTaken(true);

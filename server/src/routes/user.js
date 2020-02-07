@@ -168,7 +168,7 @@ router.patch("/character", auth, async (req, res) => {
       throw new Error("User has already filled character data!")
     }
     
-    const name = req.body.name
+    const name = req.body.name.toLowerCase()
     const sex = req.body.sex
     const characterClass = req.body.characterClass
     const attributes = req.body.attributes
