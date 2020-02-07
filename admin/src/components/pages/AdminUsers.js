@@ -238,7 +238,7 @@ const AdminUsers = () => {
             return ( <UserListItem key={user._id} user={user} handleToggleBan={handleToggleBan}/>);
           })}
         </List>) : (
-          <Typography>Brak zarejstrowanych użytkowników!</Typography>
+          <Typography>Brak użytkowników!</Typography>
         )}
         
       </Grid>

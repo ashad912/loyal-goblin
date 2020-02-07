@@ -33,7 +33,7 @@ export const updateAvatar = (avatar) => {
                 delete profile._id
 
                 dispatch( {type: "UPDATE_PROFILE_DATA", profile}) //DISPATCH IS SYNCHRONOUS!!!
-                return true
+                
             } catch (e) {
                 console.log(e)
                 dispatch( {type: "NO_CONNECTION", error: e})
@@ -175,19 +175,22 @@ export const clearAllNames = () => {
 }
 
 export const createCharacter = (name, sex, characterClass, attributes) => {
-    return async dispatch => {
-        try {
+    return dispatch => {
+        return new Promise(async (resolve, reject) => {
+            try {
            
-            const res = await axios.patch('/user/character', {name, sex, characterClass, attributes})
-            const profile = res.data
-            
-            delete profile._id
-            dispatch({type: 'UPDATE_PROFILE_DATA', profile})
-            return true
-            
-        }catch (e) {
-            dispatch( {type: "NO_CONNECTION", error: e})      
-            return false
-        } 
+                const res = await axios.patch('/user/character', {name, sex, characterClass, attributes})
+                const profile = res.data
+                
+                delete profile._id
+                dispatch({type: 'UPDATE_PROFILE_DATA', profile})
+                resolve()
+                
+            }catch (e) {
+                dispatch( {type: "NO_CONNECTION", error: e})      
+                reject()
+            } 
+        })
+        
     }
 }

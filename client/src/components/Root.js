@@ -111,19 +111,16 @@ function Root(props) {
   };
 
   const handleCharacterCreationFinish = async (name, sex, charClass, attributes) => {
-    const characterCreated = await props.onCreateCharacter(name, sex, charClass, attributes)
-    if(characterCreated){
+    try{
+      await props.onCreateCharacter(name, sex, charClass, attributes)
       props.onClearAllNames()
       await props.onAuthCheck()
       setShowCharacterCreationModal(false)
-    }else{
+    }catch(e){
       setCharacterCreationError(true)
     }
+    
   };
-
-  const updateActiveInstanceId = (id) => {
-    setActiveInstanceId(id)
-  }
 
   return (
     <div className={classes.root}>

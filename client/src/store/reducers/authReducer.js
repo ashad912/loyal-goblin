@@ -14,13 +14,13 @@ const authReducer = (state = initState, action) => {
     action.type //it ll generate thing to authReducer not firebaseReducer remember!
   ) {
     case "LOGIN_ERROR":
-      console.log("login error");
+      //console.log("login error");
       return {
         ...state,
         authError: "Logowanie nieudane"
       };
     case "SIGNUP_ERROR":
-      console.log("signup error");
+      //console.log("signup error");
       let message = "Błąd rejestracji"
 
       switch (action.messageCode) {
@@ -36,7 +36,7 @@ const authReducer = (state = initState, action) => {
         authError: message
       };
     case "LOGIN_SUCCESS":
-      console.log("login success");
+      //console.log("login success");
       return {
         ...state,
         profile: action.profile,
@@ -44,14 +44,14 @@ const authReducer = (state = initState, action) => {
         authError: null
       };
     case "LOGOUT_SUCCESS":
-      console.log("signout success");
+      //console.log("signout success");
       return {
         ...state,
         profile: {},
         uid: null
       };
     case "NO_AUTH":
-      console.log("no auth");
+      //console.log("no auth");
       return {
         ...state,
         profile: {},
@@ -59,7 +59,7 @@ const authReducer = (state = initState, action) => {
         init: false
       };
     case "AUTH_SUCCESS":
-      console.log("auth success");
+      //console.log("auth success");
       return {
         ...state,
         profile: action.profile,

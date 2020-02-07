@@ -12,8 +12,16 @@ import axios from 'axios'
 
 export const initCleaning = async () => {
   try{
-    //await Party.deleteMany() //drop() did not work on 'model' / remove() depracated
-    //await MissionInstance.deleteMany()
+    // const parties = await Party.find({})
+    // await asyncForEach((parties), party => {
+    //   await party.remove() //to start pre remove middleware
+    // })
+
+    // const missionInstances = await MissionInstance.find({})
+    // await asyncForEach(missionInstances, (missionInstance) => {
+    //   await missionInstance.remove()
+    // })
+    
     console.log('Initialization completed!')
     
   }catch(e){

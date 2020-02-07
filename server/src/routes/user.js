@@ -32,7 +32,7 @@ const uploadPath = "../static/images/avatars/"
 
 router.get('/adminUsers', adminAuth, async (req, res) => {
   try{
-    const users = await User.aggregate().match({}).project({
+    const users = await User.aggregate().match({}).sort({"lastActivityDate": -1}).project({
       '_id': 1,
       'name': 1,
       'avatar': 1,

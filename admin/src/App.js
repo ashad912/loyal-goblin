@@ -30,7 +30,7 @@ const goblinTheme = createMuiTheme({
       light: "#f44336",
       main: "#e53935",
       dark: "#b71c1c",
-      contrastText: "#000"
+      contrastText: "#fff"
     }
   }
 });

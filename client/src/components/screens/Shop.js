@@ -704,7 +704,6 @@ class Shop extends React.Component {
     }
 
     const socketConnectedStatus = socket.connected
-    console.log(socketConnectedStatus)
 
     try{
       await this.props.onGetShop(socketConnectedStatus);

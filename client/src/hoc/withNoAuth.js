@@ -9,7 +9,6 @@ const withNoAuth = WrappedComponent => {
 
 
     render() {
-      console.log(this.props.auth)
       if ((this.props.connection.loading && this.props.auth.uid) || this.props.auth.init) {
         return <Loading />;
       }

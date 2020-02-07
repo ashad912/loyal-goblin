@@ -13,6 +13,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
+import Badge from "@material-ui/core/Badge";
 import styled from 'styled-components'
 import AwardListItem from './AwardListItem'
 import { classLabelsAny } from '../../../utils/labels';
@@ -101,7 +102,7 @@ const MissionDetails = (props) => {
                                 direction="column"
                             >
                                 <Grid item style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                    <imgSrc alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`${missionsPath}${mission.imgSrc}`} />
+                                    <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`${missionsPath}${mission.imgSrc}`} />
                                 </Grid>
                             </Grid>
                         </Grid> 
@@ -198,27 +199,41 @@ const MissionDetails = (props) => {
                             component="span"
                             style={{display: 'inline-flex', margin: '0 0.3rem 0 0'}}
                         >
-                        {`A: `}  
+                        {mission.amulets && mission.amulets.length > 0 && `A: `} 
                         </Typography>
                         
-                        {mission.amulets ? (
-                            mission.amulets.map(amulet => {
-
-                                return(
-                                    <Typography 
-                                        variant='body1'
-                                        component="span"
-                                        style={{display: 'inline-flex', margin: '0 0.2rem 0 0'}}
-                                        key={amulet.itemModel.id}
-                                    >
-                                        {`${amulet.quantity}x`}
-                                        <img style={{height: 20, width: 20, marginLeft: '0.1rem'}} src={`${itemsPath}${amulet.itemModel.imgSrc}`} alt='icon'/>
-                                        {` `}
-                                    </Typography>
-                                    )
-                                })
-                            ):(null)
-                        }
+                        {mission.amulets.map(amulet => {
+                            return (
+                                <Badge
+                                    color="primary"
+                                    badgeContent={amulet.quantity}
+                                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                                    style={{ marginRight: "1rem", transform: 'scale(0.9)' }}
+                                    invisible={amulet.quantity <= 1}
+                                >
+                                <Typography
+                                    variant="body2"
+                                    component="div"
+                                    style={{
+                                        display: "inline-flex",
+                                        margin: "0 0.2rem 0 0"
+                                    }}
+                                    key={amulet.itemModel.id}
+                                >
+                                <img
+                                    style={{
+                                        height: 20,
+                                        width: 20,
+                                        marginLeft: "0.1rem"
+                                    }}
+                                    src={`${itemsPath}${amulet.itemModel.imgSrc}`}
+                                    alt="icon"
+                                />
+                                {` `}
+                                </Typography>
+                                </Badge>
+                            );
+                        })}
                     </Grid>}
                 </Grid>
             </Grid>
