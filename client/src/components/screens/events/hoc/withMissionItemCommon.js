@@ -45,13 +45,6 @@ const withMissionItemCommon = (WrappedComponent, mission) => {
             const currentPlayersInParty = this.props.party.members.length + 1; //returned from backend (read from user profile -> user.party.members.length + 1 [1 for leader] EXPERIMENTAL)
             const leader = !this.props.party.leader  || (this.props.auth.uid === this.props.party.leader._id) //only leader can enter mission - from backend as above
             
-            
-            //one shot to events can be separated (rally, missions) on back/front
-            
-            //party.map -> sum = sum + user.strength -> totalStrength
-
-            
-            
             let totalStrength = user.attributes.strength + user.userPerks.attrStrength
             let totalDexterity = user.attributes.dexterity + user.userPerks.attrDexterity
             let totalMagic = user.attributes.magic + user.userPerks.attrMagic
@@ -63,7 +56,6 @@ const withMissionItemCommon = (WrappedComponent, mission) => {
                 return (member && member._id !== this.props.auth.uid)
             })
 
-            console.log(party)
 
             party.forEach((member) => {
                 totalStrength += member.attributes.strength + member.userPerks.attrStrength
@@ -74,13 +66,6 @@ const withMissionItemCommon = (WrappedComponent, mission) => {
             })
 
             //console.log(totalStrength, totalDexterity, totalMagic, totalEndurance, minUserLevelInParty)
-
-
-            // const totalStrength = 4
-            // const totalDexterity = 4
-            // const totalMagic = 4
-            // const totalEndurance = 4
-            // const minUserLevelInParty = 2;
 
             const appropriatePlayers = isAppropriatePlayers(mission.minPlayers, mission.maxPlayers)
             const appropriateLevel = minUserLevelInParty >= mission.level;

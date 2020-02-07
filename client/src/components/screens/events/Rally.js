@@ -81,8 +81,7 @@ class Rally extends Component {
         if(this.props.rally){
             const startDate = moment(this.props.rally.startDate)
             const expiryDate = moment(this.props.rally.expiryDate)
-            console.log(startDate)
-            console.log(expiryDate)
+            
             this.setState({
                 startDate,
                 expiryDate,

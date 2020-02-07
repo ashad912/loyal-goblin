@@ -960,9 +960,6 @@ router.delete('/finishInstance', auth, async (req,res) => {
                 //     { $addToSet: { completedByUsers: user._id }}
                 // )
 
-                // PREVIOUS VERSION
-                // user.bag = [...user.bag, ...items]
-                // await user.save()
             }
               
         })

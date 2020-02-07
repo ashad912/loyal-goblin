@@ -132,7 +132,7 @@ const RallyDetails = (props) => {
                 </Grid>
                 <Grid item style={{marginTop: '0.5rem'}}>
                 {!rally.awardsAreSecret && rally.awardsLevels.sort((a, b)=> (a.level > b.level) ? 1 : -1).map((awardsLevel, index) => {
-                    console.log(awardsLevel)
+                    
                     return(
                         <Grid
                             container
