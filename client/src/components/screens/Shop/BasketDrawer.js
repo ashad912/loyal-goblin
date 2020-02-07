@@ -22,7 +22,7 @@ const FinalizeButton = styled(Button)`
 `;
 
 const BasketDrawer = ({ open, toggle, baskets, users, activeUser, handleRemoveItem, finalizeOrder, leader, children }) => {
- 
+
   let totalPrice = 0.0;
   const allBaskets = Object.values(baskets)
   let emptyOrder = true
@@ -30,7 +30,7 @@ const BasketDrawer = ({ open, toggle, baskets, users, activeUser, handleRemoveIt
     emptyOrder = Object.values(baskets).reduce((a,b)=>a.concat(b)).length <= 0
   }
   let notLeader = true
-  //console.log(activeUser, leader)
+
   if(activeUser === leader){
     notLeader = false
   }

@@ -17,6 +17,7 @@ const AddIcon = styled(AddCircleIcon)`
 `;
 
 const ShopListItem = props => {
+  
   const price = props.price;
   const exp = props.experience
   let priceModified = props.priceModified

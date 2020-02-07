@@ -24,12 +24,11 @@ const ScrollModal = ({open, handleClose, scrolls, equippedScrollId, handleScroll
       <DialogContent>
         {scrolls.length > 0 ? scrolls.map((scroll, index) => {
 
-          return (
-        <ScrollListItem key={scroll._id} isFirst={index===0} scroll= {scroll} equipped={scroll._id === equippedScrollId} handleScrollSelect={handleScrollSelect}/>
-    )
-}) :
-<DialogContentText> Brak zwojów w ekwipunku </DialogContentText>
-}
+        return (
+          <ScrollListItem key={scroll._id} isFirst={index===0} scroll= {scroll} equipped={scroll._id === equippedScrollId} handleScrollSelect={handleScrollSelect}/>
+        )}) :
+          <DialogContentText> Brak zwojów w ekwipunku </DialogContentText>
+        }
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} variant="contained" color="primary">

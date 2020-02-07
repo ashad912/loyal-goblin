@@ -6,7 +6,6 @@ const Item = styled.div`
 border-bottom: ${props => props.selected ? '2px solid #e91e63' : 'none'};
 font-family: 'Pinto';
 `
-
 const MenuItem = ({ section, children }) => {
   return (
     <SectionLink section={section}>

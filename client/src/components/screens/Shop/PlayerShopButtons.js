@@ -11,6 +11,7 @@ margin: 0.5rem auto;
 box-sizing: border-box;
 `
 
+
 const PlayerShopButtons = ({ users, activeUser, handleChipClick }) => {
   return (
     <Container >

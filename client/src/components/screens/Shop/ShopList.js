@@ -4,6 +4,7 @@ import ListItem from "@material-ui/core/ListItem";
 import Typography from "@material-ui/core/Typography";
 import ShopListItem from "./ShopListItem";
 
+
 const ShopList = ({title, list, handleAddItem}) => {
   return (
     <List>

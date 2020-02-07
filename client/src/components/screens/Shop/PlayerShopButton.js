@@ -5,9 +5,9 @@ import {usersPath} from '../../../utils/definitions'
 
 const PlayerShopButton = ({id, avatar, name, active, handleClick}) => {
 
-    let initials = name.split(" ").map(word => {
-        return word.charAt(0)
-    })
+  let initials = name.split(" ").map(word => {
+      return word.charAt(0)
+  })
   return (
     <Chip
     style={{margin: '0.1rem'}} 

@@ -57,7 +57,6 @@ const useStyles = makeStyles(theme => ({
 
 const ScrollListItem = props => {
   const classes = useStyles();
-
   const scroll = props.scroll;
   if(scroll){
 

@@ -17,7 +17,6 @@ const BasketListItem = ({activeUsersBasket, name, summedPrice, basket, handleRem
     setOpen(prev => !prev)
   }
 
-
   const removeItem = (e, id) => {
     e.stopPropagation()
    handleRemoveItem(id)

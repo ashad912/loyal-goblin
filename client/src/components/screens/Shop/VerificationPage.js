@@ -93,7 +93,6 @@ const VerificationPage = props => {
   const [qrCode, setQrCode] = React.useState(null)
   const leaveShopTimeout = React.useRef(false)
 
-
   var opts = {
     errorCorrectionLevel: 'H',
     type: 'image/jpeg',
