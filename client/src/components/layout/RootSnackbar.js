@@ -15,7 +15,7 @@ const RootSnackbar = props => {
         return () => clearTimeout(timer);
     }, []);
     const profile = props.profile
-    const conditions = delay && ((props.screen === 1) || (props.screen === 0))
+    const conditions = !props.hide && delay && ((props.screen === 1) || (props.screen === 0))
                         && !profile.rallyNotifications.isNew 
                         && !profile.shopNotifications.isNew
                         && !profile.levelNotifications 

@@ -70,11 +70,17 @@ class ChangePasswordModal extends React.Component {
     const handleClose = this.props.handleClose
 
     return (
-<Dialog
+      
+  <Dialog
       open={open}
       onClose={handleClose}
+      fullScreen
+      style={{zIndex: 2000}}
+      // style={{margin: '-40px -40px 10px -40px'}}
+      //maxWidth="lg"
       aria-labelledby="form-dialog-title"
     >
+    
       <DialogTitle id="form-dialog-title">Zmiana hasła</DialogTitle>
       <DialogContent>
         <DialogContentText>
@@ -128,10 +134,11 @@ class ChangePasswordModal extends React.Component {
         </Button>
       </DialogActions>
       <Recaptcha
-                  ref={ ref => this.recaptcha = ref }
-                  sitekey="6Ldy0ssUAAAAAKSZNuXULGv4U1PBI35BbvbWhT9x"
-                  onResolved={ this.onCaptchaResolved }
-              />
+          ref={ ref => this.recaptcha = ref }
+          sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+          onResolved={ this.onCaptchaResolved }
+          badge='bottomleft'
+      />
     </Dialog>
     )
   }

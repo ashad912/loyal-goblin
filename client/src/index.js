@@ -20,25 +20,26 @@ const {dispatch} = store
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL
 axios.interceptors.request.use(function (config) {
-    dispatch(setLoading(true))
-    return config;
-  }, function (error) {
-    dispatch(setLoading(false))
-    return Promise.reject(error);
-  });
+  dispatch(setLoading(true))
+  return config;
+}, function (error) {
+  dispatch(setLoading(false))
+  return Promise.reject(error);
+});
 
 // Add a response interceptor
 axios.interceptors.response.use(function (response) {
-    dispatch(setLoading(false))
-    return response;
-  }, function (error) {
-    dispatch(setLoading(false))
-    return Promise.reject(error);
-  });
+  dispatch(setLoading(false))
+  return response;
+}, function (error) {
+  dispatch(setLoading(false))
+  return Promise.reject(error);
+});
 
+if(process.env.NODE_ENV === 'production'){
   window.oncontextmenu = function() { return false; }
-
-
+}
+ 
 ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change

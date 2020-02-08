@@ -65,7 +65,23 @@ function Root(props) {
   const [fullHeightCorrection, setFullHeightCorrection] = React.useState(0);
   const [characterCreationError, setCharacterCreationError] = React.useState(false)
 
-  const [activeInstanceId, setActiveInstanceId] = React.useState(null)
+  const [footerReached, setFooterReached] = React.useState(false)
+
+  const trackScrolling = () => {
+    const isTop = (el) => {
+      return el.getBoundingClientRect().top <= window.innerHeight;
+    }
+
+    const wrappedElement = document.getElementById('footer');
+    if (isTop(wrappedElement)) {  
+      setFooterReached(true)
+      //document.removeEventListener('scroll', this.trackScrolling);
+    }else{
+      setFooterReached(false)
+    }
+  };
+
+
   useEffect(() => {
     //change tab, when returing from specific event
     if (props.location.state && props.location.state.hasOwnProperty("indexRedirect")) {
@@ -83,7 +99,11 @@ function Root(props) {
     }else{
       props.onGetAllNames()
     }
-    
+    document.addEventListener('scroll', trackScrolling);
+
+    return () => {
+      document.removeEventListener('scroll', trackScrolling);
+    }
   }, []);
 
 
@@ -172,7 +192,7 @@ function Root(props) {
       )}
 
         
-    <RootSnackbar socket={socket} screen={value} />
+    <RootSnackbar socket={socket} screen={value} hide={footerReached} />
     </div>
   );
 }
