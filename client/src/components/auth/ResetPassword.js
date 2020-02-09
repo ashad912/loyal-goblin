@@ -26,6 +26,7 @@ import { asyncForEach } from "../../utils/methods";
 //import {labels} from '../strings/labels'
 
 import {validatePasswordChangeToken} from "../../store/actions/authActions";
+import { uiPaths, palette } from "../../utils/definitions";
 
 const FormContainer = styled(Container)`
   display: flex;
@@ -34,10 +35,7 @@ const FormContainer = styled(Container)`
   margin: 3rem 0 3rem 0;
 `;
 
-const StyledPaper = styled(Paper)`
-  padding: 1rem;
-  border: 1px solid #eeeeee;
-`;
+
 
 const ErrorPaper = styled(Paper)`
   display: flex;
@@ -239,20 +237,22 @@ class ResetPassword extends Component {
 
     return (
         this.state.tokenChecked &&
-      <div
+        <div
         style={{
           display: "flex",
           justifyContent: "center",
-          minHeight: `calc(100vh - ${this.state.fullHeightCorrection}px)`
+          flexDirection: 'column',
+          alignItems: 'center',
+          minHeight: `calc(100vh - ${this.state.fullHeightCorrection}px)`,
+          background: palette.primary.main
         }}
-      >
+      ><img src={uiPaths.logo} style={{width: '50vw', flexBasis: '20%'}} alt="logo"/>
           {this.state.tokenExpired ? 
           <FormContainer>
-
-        <StyledPaper elevation={0}>
-            <Typography variant="h6">Link umożliwiający reset hasła wygasł.</Typography>
-            <Typography variant="caption">Za chwilę nastąpi przekierowanie na stronę logowania.</Typography>
-        </StyledPaper>
+        <div >
+            <Typography variant="h5" style={{color: 'white', marginBottom: "2rem"}}>Link umożliwiający reset hasła wygasł.</Typography>
+            <Typography variant="h6">Za chwilę nastąpi przekierowanie na stronę logowania...</Typography>
+        </div>
           </FormContainer>
           :
 
@@ -260,11 +260,11 @@ class ResetPassword extends Component {
           <form onSubmit={this.handleSubmit} className="white">
             <Typography
               variant="h5"
-              style={{ textAlign: "left", marginBottom: "1rem" }}
+              style={{ textAlign: "center", marginBottom: "1rem", color: 'white' }}
             >
               Reset hasła
             </Typography>
-            <StyledPaper elevation={0}>
+            <div >
               <React.Fragment>
                 {authError ? (
                   <ErrorPaper>
@@ -280,16 +280,13 @@ class ResetPassword extends Component {
                   fullWidth
                   style={{ marginTop: "1rem", marginBottom: "0.5rem" }}
                 >
-                  <InputLabel
-                    htmlFor="password"
-                    error={this.state.error.password}
-                  >
-                    Nowe hasło *
-                  </InputLabel>
+
+
                   <Input
                     id="password"
                     type="password"
                     required
+                    placeholder="Nowe hasło *"
                     error={this.state.error.password}
                     onChange={this.handleChange}
                     inputProps={{style:{textAlign:'center', fontSize: '1.3rem', fontFamily: 'Futura'}}}
@@ -304,16 +301,12 @@ class ResetPassword extends Component {
                   fullWidth
                   style={{ marginTop: "1rem", marginBottom: "0.5rem" }}
                 >
-                  <InputLabel
-                    htmlFor="confirmPassword"
-                    error={this.state.error.confirmPassword}
-                  >
-                    Powtórz nowe hasło *
-                  </InputLabel>
+
                   <Input
                     id="confirmPassword"
                     type="password"
                     required
+                    placeholder="Powtórz nowe hasło *"
                     error={this.state.error.confirmPassword}
                     onChange={this.handleChange}
                     inputProps={{style:{textAlign:'center', fontSize: '1.3rem', fontFamily: 'Futura'}}}
@@ -327,7 +320,7 @@ class ResetPassword extends Component {
 
                 <Button
                   fullWidth
-                  style={{ justifyContent: "center", marginTop: "1.5rem" }}
+                  style={{ justifyContent: 'center', marginTop: "1.5rem", background: 'black', color: 'white', fontSize: '1.2rem', padding: '0.2rem'}}
                   onClick={this.handleSubmit}
                   variant="contained"
                   color="primary"
@@ -335,7 +328,7 @@ class ResetPassword extends Component {
                   Zatwierdź
                 </Button>
               </React.Fragment>
-            </StyledPaper>
+            </div>
           </form>
         </FormContainer>
         }

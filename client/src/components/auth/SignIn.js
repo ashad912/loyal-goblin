@@ -203,7 +203,7 @@ class SignIn extends Component {
         const authError = this.props.auth.authError
         
         return (
-            <div style={{display: 'flex', justifyContent: 'center', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`}}>
+            <div style={{background: palette.primary.main,display: 'flex', flexDirection:'column', justifyContent: 'flex-end', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`, position: 'relative'}}>
                 <FormContainer  maxWidth="xs" >
                 <img src={uiPaths.logo} style={{width: '50vw', flexBasis: '20%'}} alt="logo"/>
                     <form onSubmit={this.handleSubmit} className="white">
@@ -258,6 +258,7 @@ class SignIn extends Component {
                             </div>
                             {/* </StyledPaper>                  */}
                     </form>
+                <img src={uiPaths.people} style={{width:'100%' }} alt=""/>
                 </FormContainer>
             </div>
         )
