@@ -90,7 +90,7 @@ const Events = (props) => {
         
     
         instanceRefreshSubscribe(async (roomId) => {
-            console.log('mission refreshed')
+            //console.log('mission refreshed')
             fetchMissions()
             await props.authCheck()
             
@@ -105,13 +105,13 @@ const Events = (props) => {
     
 
     const handleMissionClick = async (id) => {
-        console.log('clicked',  id) 
+        //console.log('clicked',  id) 
         if(!props.activeInstanceId){
             try{
                 const response = await createInstance(id, props.party._id) //shot to backend - verify party quantity and leader status (amulets verifed inside the mission), redirect to mission
                 setMissionId(response.mission)
             }catch(e){
-                console.log(e)
+                //console.log(e)
                 fetchMissions()
             }
             
@@ -132,7 +132,7 @@ const Events = (props) => {
         if(!socket.connected){
             fetchMissions()
         }
-        console.log('leave')
+       // console.log('leave')
     }
 
     const handleMissionDetailsOpen = (index) => {

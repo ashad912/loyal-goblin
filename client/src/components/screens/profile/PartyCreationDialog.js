@@ -11,7 +11,6 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Menu from "@material-ui/core/Menu";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -26,8 +25,6 @@ import {
   setActiveInstance
 } from "../../../store/actions/missionActions";
 import QRreaderView from "./QRreaderView";
-import TransferWithinAStationIcon from "@material-ui/icons/TransferWithinAStation";
-import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 
 import PartyMissionInstanceWarningDialog from "./PartyMissionInstanceWarningDialog"
@@ -78,7 +75,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const PartyCreationDialog = props => {
-  const classes = useStyles();
   const [partyName, setPartyName] = React.useState(props.partyName);
   const [party, setParty] = React.useState([]);
   const [isManagingParty, setIsManagingParty] = React.useState(

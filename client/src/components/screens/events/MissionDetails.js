@@ -51,7 +51,7 @@ const MissionDetails = (props) => {
 
     return(
         <Dialog
-            open={props.open}
+            open={Boolean(props.open)}
             onClose={props.handleClose}
             fullWidth
             style={{margin: '-40px -40px 10px -40px'}}
@@ -174,16 +174,16 @@ const MissionDetails = (props) => {
                     style={{margin: '0.1rem 0'}}
                 >
                     <Grid item xs={3}>
-                        <RequiredAttribute variant="body1" attr={props.appropriateStrength} >{`S: ${props.totalStrength}/${mission.strength}`}</RequiredAttribute>
+                        <RequiredAttribute variant="body1" attr={props.appropriateStrength ? 1:0} >{`S: ${props.totalStrength}/${mission.strength}`}</RequiredAttribute>
                     </Grid>
                     <Grid item xs={3}>
-                        <RequiredAttribute variant="body1" attr={props.appropriateDexterity} >{`Z: ${props.totalDexterity}/${mission.dexterity}`}</RequiredAttribute>
+                        <RequiredAttribute variant="body1" attr={props.appropriateDexterity ? 1:0} >{`Z: ${props.totalDexterity}/${mission.dexterity}`}</RequiredAttribute>
                     </Grid>
                     <Grid item xs={3}>
-                        <RequiredAttribute variant="body1" attr={props.appropriateMagic} >{`M: ${props.totalMagic}/${mission.magic}`}</RequiredAttribute> 
+                        <RequiredAttribute variant="body1" attr={props.appropriateMagic ? 1:0} >{`M: ${props.totalMagic}/${mission.magic}`}</RequiredAttribute> 
                     </Grid>
                     <Grid item xs={3}>
-                        <RequiredAttribute variant="body1" attr={props.appropriateEndurance} >{`W: ${props.totalEndurance}/${mission.endurance}`}</RequiredAttribute>
+                        <RequiredAttribute variant="body1" attr={props.appropriateEndurance ? 1:0} >{`W: ${props.totalEndurance}/${mission.endurance}`}</RequiredAttribute>
                     </Grid>
                 </Grid>
                 
@@ -205,6 +205,7 @@ const MissionDetails = (props) => {
                         {mission.amulets.map(amulet => {
                             return (
                                 <Badge
+                                    key={amulet.itemModel._id}
                                     color="primary"
                                     badgeContent={amulet.quantity}
                                     anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
@@ -218,7 +219,7 @@ const MissionDetails = (props) => {
                                         display: "inline-flex",
                                         margin: "0 0.2rem 0 0"
                                     }}
-                                    key={amulet.itemModel.id}
+ 
                                 >
                                 <img
                                     style={{
@@ -260,9 +261,10 @@ const MissionDetails = (props) => {
                 </Grid>
                 <Grid item style={{marginTop: '0.5rem'}}>
                 {/*mission.hasOwnProperty('awards') &&*/ Object.keys(mission.awards).map((className)=> {
-                    console.log(className)
+  
                     return(
                         <Grid
+                        key={className}
                             container
                             direction="column"
                             style={{marginBottom: '0.2rem'}}

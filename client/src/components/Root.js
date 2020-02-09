@@ -108,14 +108,14 @@ function Root(props) {
 
 
   useEffect(() => {
-    if (!showCharacterCreationModal) {
+
       if (!showCharacterCreationModal) {
         const appBar = document.getElementById("app-bar").offsetHeight;
         const navbar = document.getElementById("navbar").offsetHeight;
         const footer = document.getElementById("footer").offsetHeight;
         setFullHeightCorrection(appBar + navbar + footer);
       }
-    }
+    
   }, [showCharacterCreationModal]);
 
   const classes = useStyles();

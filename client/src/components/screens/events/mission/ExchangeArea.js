@@ -233,7 +233,7 @@ export default class ExchangeArea extends React.Component {
       return
     }
     const id = result.draggableId
-    console.log(id)
+   // console.log(id)
     //console.log(this.state.missionItems.filter((item) => item._id !== id).length)
     //console.log(this.state.userItems.filter((item) => item._id !== id))
  

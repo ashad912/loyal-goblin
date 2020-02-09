@@ -35,13 +35,13 @@ const TitleBar = styled.div`
 `
 
 const StyledImg = styled.img`
-  margin: 0 0.5rem 0 0
+  margin: 0 0.5rem 0 0;
   height: 32px;
   width: 32px;
 `
 
 const StyledItemIcon = styled.img`
-  margin: 0 0.1rem 0 0.5rem
+  margin: 0 0.1rem 0 0.5rem;
   height: 32px;
   width: 32px;
 `
@@ -57,7 +57,7 @@ const StyledItemsIndicator = styled.span`
       }else{
         return('black')
       }}
-    }
+    };
 `
 
 const MissionBar = styled.div`
@@ -75,7 +75,7 @@ const ButtonBar = styled.div`
   flex-direction: row;
   text-align: left;
   align-items: center;
-  justify-content: space-between
+  justify-content: space-between;
   margin: 0.5rem 1.5rem 0.5rem 1.5rem;
 `
 
@@ -158,16 +158,16 @@ class MissionInstance extends React.Component {
     }
 
     modifyUserStatus = (user, users) => {
-        console.log(user)
+        //console.log(user)
         
-        console.log(users)
+        //console.log(users)
         const modifyUserArrayIndex = users.findIndex(
             specificUser => {
-                console.log(specificUser.profile._id, user._id)
+                //console.log(specificUser.profile._id, user._id)
                 return specificUser.profile._id === user._id;
             }
         );
-        console.log(modifyUserArrayIndex)
+        //console.log(modifyUserArrayIndex)
         if(user.hasOwnProperty('readyStatus')){
             users[modifyUserArrayIndex].readyStatus = user.readyStatus;
         }
@@ -198,12 +198,12 @@ class MissionInstance extends React.Component {
             const response = await togglePresenceInInstance(user, this.props.party._id, socketConnectedStatus)
             const missionInstance = response.missionInstance
             const amulets = response.amulets
-            console.log(amulets)
+            //console.log(amulets)
             const instanceUsers = this.modifyUserStatus(user, missionInstance.party)
-            console.log(instanceUsers)
+            //console.log(instanceUsers)
             this.setState({
                 instanceUsers: [...instanceUsers],
-                instanceItems: [...missionInstance.items],
+                instanceItems: [...missionInstance.items],  
                 userItems: [...amulets],
                 missionObject: missionInstance.mission,//this.props.location.state.id,
                 leader: leader,
@@ -220,7 +220,7 @@ class MissionInstance extends React.Component {
                 })
 
                 finishMissionSubscribe((awards) => {
-                    console.log('finishMission sub')
+                    //console.log('finishMission sub')
                     this.setState({ 
                         missionAwards: awards
                     }, () => {
@@ -231,7 +231,7 @@ class MissionInstance extends React.Component {
                 })
             })
         }catch(e){
-            console.log(e)
+            //console.log(e)
             this.handleBack()
         }
 
@@ -276,7 +276,7 @@ class MissionInstance extends React.Component {
                     })
                 });
             }catch(e){
-                console.log(e)
+                //console.log(e)
                 this.handleBack()
             }   
         }else{
@@ -310,8 +310,8 @@ class MissionInstance extends React.Component {
                 return item.itemModel._id === amulets[index].itemModel._id
             })
 
-            console.log(amulets[index].itemModel.name, amulets[index].quantity)
-            console.log(specificAmuletInstances)
+            //console.log(amulets[index].itemModel.name, amulets[index].quantity)
+            //console.log(specificAmuletInstances)
 
             amulets[index].inBox = specificAmuletInstances.length
 
@@ -332,7 +332,7 @@ class MissionInstance extends React.Component {
 
     checkPartyCondition = () => {
 
-        console.log(this.state.instanceUsers)
+        //console.log(this.state.instanceUsers)
         let partyCondition = true
         this.state.instanceUsers.forEach((member) => {
             if((member.profile._id !== this.props.auth.uid) && !member.readyStatus){
@@ -379,7 +379,7 @@ class MissionInstance extends React.Component {
         
         const isRequiredItemsCollected = this.checkItemsCondition()
         const isAllPartyReady = this.state.leader ? this.checkPartyCondition() : true
-        console.log(isAllPartyReady)
+        //console.log(isAllPartyReady)
 
         
         return(

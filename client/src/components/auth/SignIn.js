@@ -214,13 +214,13 @@ class SignIn extends Component {
 
                                 <FormControl fullWidth style={{marginTop: '1rem', marginBottom: "0.5rem"}}>
                                     {/* <InputLabel htmlFor="input-email" error={this.state.error.email}>Email *</InputLabel> */}
-                                    <Input id="email" placeholder="Email" aria-describedby="email" required error={this.state.error.email} onChange={this.handleChange} inputProps={{style:{textAlign:'center', fontSize: '1.2rem', fontWeight: 'bolder'}}}/>
+                                    <Input id="email" placeholder="Email" aria-describedby="email" required error={this.state.error.email} onChange={this.handleChange} inputProps={{style:{textAlign:'center', fontSize: '1.3rem', fontFamily: 'Futura'}}}/>
                                     {this.state.error.email ? (<FormHelperText error id="my-helper-text">{this.state.formError.email}</FormHelperText>) : (null)}
                                     
                                 </FormControl>
                                 <FormControl fullWidth style={{marginTop: '1rem', marginBottom: "0.5rem"}}>
                                     {/* <InputLabel htmlFor="input-password" error={this.state.error.password}>Hasło *</InputLabel> */}
-                                    <Input id="password" placeholder="Hasło" aria-describedby="password" type="password" required error={this.state.error.password} onChange={this.handleChange} inputProps={{style:{textAlign:'center', fontSize: '1.2rem', fontWeight: 'bolder'}}}/>
+                                    <Input id="password" placeholder="Hasło" aria-describedby="password" type="password" required error={this.state.error.password} onChange={this.handleChange} inputProps={{style:{textAlign:'center', fontSize: '1.3rem',  fontFamily: 'Futura'}}}/>
                                     {this.state.error.password ? (<FormHelperText error id="my-helper-text">{this.state.formError.password}</FormHelperText>) : (null)}
                                 </FormControl>
                                 

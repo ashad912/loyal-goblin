@@ -177,7 +177,7 @@ const Equipment = props => {
                   {stackedItems.map((item, index) => (
                     <EquipmentItem
                     isFirst={index===0}
-                      key={item._id}
+                      key={item.itemModel._id}
                       stacked={true}
                       item={item}
                       handleItemToggle={props.handleItemToggle}

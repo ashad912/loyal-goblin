@@ -45,7 +45,7 @@ const goblinTheme = createMuiTheme({
     }
   },
   typography: {
-    fontFamily: '"Pinto", "Helvetica", "Arial", sans-serif'
+    fontFamily: '"Pinto", "Helvetica", "Arial", sans-serif',
   }
 });
 

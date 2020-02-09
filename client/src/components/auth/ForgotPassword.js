@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Redirect, Link } from "react-router-dom";
+import Recaptcha from 'react-google-invisible-recaptcha';
 import Container from "@material-ui/core/Container";
 import { Typography } from "@material-ui/core";
 import { TextField } from "@material-ui/core";
@@ -141,19 +142,26 @@ class ForgotPassword extends Component {
     });
 
     if (!this.state.error.email) {
-      const res = await this.props.onConfirm(this.state.email);
-      if (res === "jwt not expired") {
-        this.setState({ jwtNotExpiredError: true });
-        setTimeout(() => {
-            this.props.history.push('/')
-        }, 6500);
-      } else {
-        this.setState({
-          passwordSent: true
-        });
-      }
+      this.recaptcha.execute();
+    }else{
+      this.recaptcha.reset();
     }
+    
   };
+  
+  onResolved = async () => {
+    const res = await this.props.onConfirm(this.state.email, this.recaptcha.getResponse());
+    if (res === "jwt not expired") {
+      this.setState({ jwtNotExpiredError: true });
+      setTimeout(() => {
+          this.props.history.push('/')
+      }, 6500);
+    } else {
+      this.setState({
+        passwordSent: true
+      });
+    }
+  }
 
   render() {
     const { authError } = this.props;
@@ -204,7 +212,7 @@ class ForgotPassword extends Component {
                         folder SPAM, lub spróbuj ponownie za godzinę.
                       </Typography>
                       <Typography variant="caption">
-                        Za chwilę nastąpi przekierowanie na stronę logowania
+                        Za chwilę nastąpi przekierowanie na stronę logowania...
                       </Typography>
                     </React.Fragment>
                   ) : (
@@ -230,6 +238,7 @@ class ForgotPassword extends Component {
                           required
                           error={this.state.error.email}
                           onChange={this.handleChange}
+                          inputProps={{style:{textAlign:'center', fontSize: '1.3rem', fontFamily: 'Futura'}}}
                         />
                         {this.state.error.email ? (
                           <FormHelperText error id="my-helper-text">
@@ -269,6 +278,11 @@ class ForgotPassword extends Component {
             </StyledPaper>
           </form>
         </FormContainer>
+        <Recaptcha
+                  ref={ ref => this.recaptcha = ref }
+                  sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                  onResolved={ this.onResolved }
+              />
       </div>
     );
   }
@@ -283,7 +297,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onConfirm: email => dispatch(forgotPassword(email))
+    onConfirm: (email, recaptchaToken) => dispatch(forgotPassword(email, recaptchaToken))
   };
 };
 

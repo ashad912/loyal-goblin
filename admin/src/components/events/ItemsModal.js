@@ -129,8 +129,8 @@ const ItemsModal = props => {
   const handleAdd = (item, characterClass) =>  {
     props.handleAddItem(item, characterClass, props.currentAwardTier);
   };
-
-  const eventItems = props.isRally? (props.currentAwardTier > -1 && props.awardsLevels[props.currentAwardTier].awards) : props.eventItemsList
+//console.log(props.currentAwardTier, props.awardsLevels[props.currentAwardTier])
+  const eventItems = props.isRally? (props.currentAwardTier > -1 && props.awardsLevels[props.currentAwardTier] && props.awardsLevels[props.currentAwardTier].awards) : props.eventItemsList
 
   return (
     <Dialog
@@ -275,7 +275,7 @@ const ItemsModal = props => {
         </div>
         <div style={{ flexBasis: "40%", overflow: "auto" }}>
           <List dense style={{ padding: "1rem" }}>
-            {Object.keys(eventItems).map(characterClass => {
+            {eventItems && Object.keys(eventItems).map(characterClass => {
               return (
                 eventItems[characterClass].length > 0 && (
                   <React.Fragment key={characterClass}>

@@ -196,25 +196,25 @@ const MissionListItem = props => {
             <Grid item xs={3}>
               <RequiredAttribute
                 variant="body1"
-                attr={props.appropriateStrength}
+                attr={props.appropriateStrength ? 1: 0}
               >{`S: ${props.totalStrength}/${mission.strength}`}</RequiredAttribute>
             </Grid>
             <Grid item xs={3}>
               <RequiredAttribute
                 variant="body1"
-                attr={props.appropriateDexterity}
+                attr={props.appropriateDexterity ? 1: 0}
               >{`Z: ${props.totalDexterity}/${mission.dexterity}`}</RequiredAttribute>
             </Grid>
             <Grid item xs={3}>
               <RequiredAttribute
                 variant="body1"
-                attr={props.appropriateMagic}
+                attr={props.appropriateMagic ? 1: 0}
               >{`M: ${props.totalMagic}/${mission.magic}`}</RequiredAttribute>
             </Grid>
             <Grid item xs={3}>
               <RequiredAttribute
                 variant="body1"
-                attr={props.appropriateEndurance}
+                attr={props.appropriateEndurance ? 1: 0}
               >{`W: ${props.totalEndurance}/${mission.endurance}`}</RequiredAttribute>
             </Grid>
           </Grid>
@@ -232,7 +232,7 @@ const MissionListItem = props => {
                 {mission.amulets.map(amulet => {
                   return (
                     <Badge
-                      
+                      key={amulet.itemModel._id}
                       color="primary"
                       badgeContent={amulet.quantity}
                       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
@@ -246,7 +246,7 @@ const MissionListItem = props => {
                           display: "inline-flex",
                           margin: "0 0.2rem 0 0"
                         }}
-                        key={amulet.itemModel.id}
+        
                       >
                         <img
                           style={{
@@ -283,6 +283,7 @@ const MissionListItem = props => {
           {Object.keys(mission.awards).map(className => {
             return (
               <Grid
+              key={className}
                 container
                 direction="row"
                 style={{ marginBottom: "0.2rem" }}
@@ -309,6 +310,7 @@ const MissionListItem = props => {
                         for (let i = 0; i < award.quantity; i++) {
                           const copy = (
                             <img
+                            key={award._id}
                               style={{
                                 height: 20,
                                 width: 20,

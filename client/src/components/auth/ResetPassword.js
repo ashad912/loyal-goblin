@@ -8,6 +8,7 @@ setConnectionError
   } from "../../store/actions/connectionActions";
   import axios from 'axios'
 import { Redirect, Link } from "react-router-dom";
+import Recaptcha from 'react-google-invisible-recaptcha';
 import Container from "@material-ui/core/Container";
 import { Typography } from "@material-ui/core";
 import { TextField } from "@material-ui/core";
@@ -221,14 +222,17 @@ class ResetPassword extends Component {
     });
 
     if (!this.state.error.password && !this.state.error.confirmPassword) {
-      await this.props.onConfirm(
-        this.props.match.params.token,
-        this.state.password,
-        this.state.confirmPassword
-      );
-      this.props.history.push("/");
-    }
+      
+        this.recaptcha.execute();
+      }else{
+        this.recaptcha.reset();
+      }
   };
+  
+  onResolved = async () => {
+    await this.props.onConfirm(this.props.match.params.token,this.state.password,this.state.confirmPassword, this.recaptcha.getResponse());
+    this.props.history.push("/");
+  }
 
   render() {
     const { authError } = this.props;
@@ -288,6 +292,7 @@ class ResetPassword extends Component {
                     required
                     error={this.state.error.password}
                     onChange={this.handleChange}
+                    inputProps={{style:{textAlign:'center', fontSize: '1.3rem', fontFamily: 'Futura'}}}
                   />
                   {this.state.error.password ? (
                     <FormHelperText error>
@@ -311,6 +316,7 @@ class ResetPassword extends Component {
                     required
                     error={this.state.error.confirmPassword}
                     onChange={this.handleChange}
+                    inputProps={{style:{textAlign:'center', fontSize: '1.3rem', fontFamily: 'Futura'}}}
                   />
                   {this.state.error.confirmPassword ? (
                     <FormHelperText error>
@@ -333,6 +339,11 @@ class ResetPassword extends Component {
           </form>
         </FormContainer>
         }
+                      <Recaptcha
+                  ref={ ref => this.recaptcha = ref }
+                  sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                  onResolved={ this.onResolved }
+              />
       </div>
     );
   }
@@ -348,8 +359,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
       onConnectionErrorSet: (error) => dispatch(setConnectionError(error)),
-      onConfirm: (token, password, confirmPassword) =>
-        dispatch(resetPassword(token, password, confirmPassword))
+      onConfirm: (token, password, confirmPassword, recaptchaToken) =>
+        dispatch(resetPassword(token, password, confirmPassword, recaptchaToken))
   };
 };
 

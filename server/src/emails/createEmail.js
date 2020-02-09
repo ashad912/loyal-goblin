@@ -4,17 +4,30 @@ const path = require('path')
 var nodemailerSendgrid  = require('nodemailer-sendgrid');
 
 const createEmail = (res, userEmail, subject, template, strings)=> {
-    const options =  {api_key: process.env.SENDGRID_API_KEY}
-    const client = nodemailer.createTransport(nodemailerSendgrid (options));
+    //const options =  {api_key: process.env.SENDGRID_API_KEY}
+    //const client = nodemailer.createTransport(nodemailerSendgrid (options));
+    const client = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.SENDER_GMAIL,
+            pass: process.env.EMAIL_PASS
+        }
+    })
     
     const email = new Email({
         message: {
-            from: 'Pub Goblin <no-reply@pubgoblin.pl>',
+            from: 'Pub Goblin <no-reply@goblin.hhgstudio.com>',
             to: userEmail,
             subject: subject
         },
-        send: false,
-        transport: client
+        send: process.env.NODE_ENV === 'dev' ? true : true,
+        transport: client,
+        // preview: {
+        //     open: {
+        //       app: 'chrome',
+        //       wait: false
+        //     }
+        // }
     });
 
 
@@ -23,10 +36,11 @@ const createEmail = (res, userEmail, subject, template, strings)=> {
         template:  path.join(__dirname, template),
         locals: strings
     })
-    .then(res => {
-        res.sendStatus(200)
+    .then(() => {
+        res.status(200).send()
     })
     .catch(err => {
+        console.log(err)
         if (Object.keys(err).length === 0) {
             res.sendStatus(200);
         } else {

@@ -337,9 +337,12 @@ router.patch("/changePassword", auth, async (req, res, next) => {
   }
 
   try {
-    if (oldPassword === newPassword) {
-      throw new Error("Nowe i stare hasła nie mogą być takie same");
-    } 
+    // if (oldPassword === newPassword) {
+    //   throw new Error("Nowe i stare hasła nie mogą być takie same");
+    // } 
+    if(!oldPassword || !newPassword || !repeatedNewPassword){
+      throw new Error("Podano niekompletne dane")
+    }
     if(newPassword !== repeatedNewPassword){
       throw new Error("Hasła nie zgadzają się")
     }
@@ -370,7 +373,19 @@ router.patch("/changePassword", auth, async (req, res, next) => {
 
 router.post("/forgotPassword", async (req, res) => {
   try {
-    
+    const secretKey = process.env.SECRET_RECAPTCHA_KEY;
+    const recaptchaToken = req.body.recaptchaToken;
+    const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
+  
+  
+    try{
+      await verifyCaptcha(url)
+    }catch(e){
+      console.log(e);
+      res.status(400).send(e);
+      return
+    }
+
     const email = req.body.email
     if(!validator.isEmail(email)){
       throw new Error("Nieprawidłowy adres email")
@@ -422,6 +437,19 @@ router.post("/validatePasswordChangeToken", async(req, res) => {
 
 router.patch('/reset', async (req, res) => {
   try {
+    const secretKey = process.env.SECRET_RECAPTCHA_KEY;
+    const recaptchaToken = req.body.recaptchaToken;
+    const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
+  
+  
+    try{
+      await verifyCaptcha(url)
+    }catch(e){
+      console.log(e);
+      res.status(400).send(e);
+      return
+    }
+
     const token = req.body.token
     if (!token) {
         throw new Error("Brak tokena resetu hasła")
@@ -429,10 +457,13 @@ router.patch('/reset', async (req, res) => {
     if(req.body.password !== req.body.confirmPassword){
       throw new Error("Hasła się nie zgadzają")
     }
-      const user = await User.findByPasswordChangeToken(token)
-      if (!user) {
-        throw new Error('Nie znaleziono użytkownika')
-      }
+    const user = await User.findByPasswordChangeToken(token)
+    if (!user) {
+      throw new Error('Nie znaleziono użytkownika')
+    }
+
+
+
       user.passwordChangeToken = null
       user.password = req.body.password
 

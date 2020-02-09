@@ -46,7 +46,7 @@ const TorpedoList = props => {
   };
 
   const handleShowDeleteDialog = (id, name) => {
-    console.log(parentDialog)
+   // console.log(parentDialog)
     setItemToDelete({id, name})
     setDeleteDialog(true)
 
