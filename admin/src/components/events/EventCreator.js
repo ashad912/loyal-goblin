@@ -656,20 +656,21 @@ class EventCreator extends Component {
     toEdit.level = input
     this.setState({
       editableAwardLevelExperienceInput: input,
-      awardsLevels: tempAwardsLevels}, () => {
-        this[level].focus()
-      })
+      awardsLevels: tempAwardsLevels})
 
   }
 
   handleAwardLevelExperienceToggle = (e, level) => {
+
     const tempAwardsLevels = [...this.state.awardsLevels]
     const toEdit = tempAwardsLevels.find(tal => tal.level === level)
     if(toEdit.hasOwnProperty('allowChangeExperience') && toEdit.allowChangeExperience){
       toEdit.allowChangeExperience = false
+      tempAwardsLevels.sort((a, b) => a.level - b.level);
     }else{
       toEdit.allowChangeExperience = true
     }
+
     this.setState({
       awardsLevels: tempAwardsLevels,
       editableAwardLevelExperienceInput:  toEdit.allowChangeExperience ? toEdit.level : 0
@@ -1200,7 +1201,7 @@ class EventCreator extends Component {
                         <Grid item >
                           {awardLevel.hasOwnProperty('allowChangeExperience') && awardLevel.allowChangeExperience ?
                           <TextField
-                          ref={ref=>this[awardLevel.level] = ref}
+                          autoFocus={true}
                           value={this.state.editableAwardLevelExperienceInput}
                           onChange={(e) => this.handleChangeEditableAwardLevelExperienceInput(e, awardLevel.level)}
                           margin="dense"

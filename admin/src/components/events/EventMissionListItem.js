@@ -126,8 +126,8 @@ const EventMissionListItem = ({
                 >{`${event.minPlayers} - ${event.maxPlayers}`}</Typography>{" "}
                 <PeopleIcon />
                 <Typography style={{ marginLeft: "1rem" }}>
-                  Poziom {event.minLevel} + |{" "}
-                  {`S: ${event.strength} / Z: ${event.dexterity} / M: ${event.magic} / W: ${event.endurance}`}
+                  Poziom {event.level} |
+                  {`  S: ${event.strength} / Z: ${event.dexterity} / M: ${event.magic} / W: ${event.endurance}`}
                 </Typography>
               </Box>
             </Grid>
@@ -242,6 +242,9 @@ const EventMissionListItem = ({
                 {event.awardsAreSecret ? "Nagrody ukryte" : "Nagrody jawne"}
               </Typography>
                 }
+                <Typography variant="h6" style={{textAlign:'center'}}>
+                  + {event.experience} PD
+                </Typography>
                 <Popover
                   open={Boolean(itemPopover)}
                   anchorEl={itemPopover}
