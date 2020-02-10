@@ -12,7 +12,7 @@ const AwardsContainer = styled(Container)`
     display: flex;
     justify-content: center;
     flex-direction: column;
-    margin: 6rem 0 6rem 0;
+    margin: 1rem 0 1rem 0;
 `
 
 const StyledPaper = styled(Paper)`
@@ -73,7 +73,7 @@ const VerificationPage = props => {
           {missionAwards.length > 0 &&
             <React.Fragment>
               <Typography style={{marginBottom: '0.5rem'}}>Zdobyte przedmioty:</Typography>
-              <List component="nav" style={{ width: "100%", marginBottom: '1rem' }}>
+              <List component="nav" style={{ width: "100%", maxHeight: '40vh', overflowY: 'scroll', marginBottom: '1rem' }}>
                 {missionAwards.map(award => {
                   return (
                     <AwardListItem key={award.itemModel._id} item={award} />
@@ -91,7 +91,6 @@ const VerificationPage = props => {
             color="primary" 
           >
             Dzięki
-
           </Button>
         </StyledPaper>
       </AwardsContainer>

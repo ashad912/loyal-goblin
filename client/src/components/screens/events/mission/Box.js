@@ -4,6 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import styled from 'styled-components'
 import { Paper } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
+import Typography from '@material-ui/core/Typography';
 import {createAvatarPlaceholder} from '../../../../utils/methods'
 import {palette, itemsPath, usersPath} from '../../../../utils/definitions'
 
@@ -151,14 +152,14 @@ const Box = (props) => {
                                     >
                                     
                                     <img style={{height: 40, width:40}} src={`${itemsPath}${item.model.imgSrc}`} alt='icon'/>
-                                    {!snapshot.isDragging && (<span>{item.instancesIds.length}</span>)}
+                                    {!snapshot.isDragging && (<span><Typography display="inline">{item.instancesIds.length}</Typography></span>)}
 
                                   </Item>
 
                                   {snapshot.isDragging && (
                                     <Clone>
                                       <img style={{height: 40, width:40}} src={`${itemsPath}/${item.model.imgSrc}`} alt='icon'/>
-                                      <span>{item.instancesIds.length - 1}</span>
+                                      <span><Typography display="inline">{item.instancesIds.length - 1}</Typography></span>
                                     </Clone>
                                   )}
                                   
@@ -167,7 +168,7 @@ const Box = (props) => {
                           </Draggable>
                       )})):(
                         <PlaceholderText>
-                          Przeciągnij tutaj!
+                          <Typography>Przeciągnij tutaj!</Typography>
                         </PlaceholderText>
                       )}
                       

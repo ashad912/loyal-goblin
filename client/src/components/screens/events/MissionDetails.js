@@ -30,6 +30,10 @@ const Background = styled.div`
     color: white;
 `
 
+const StyledBadge = styled(Badge)`
+    margin-right: ${props => props.invisible ? '0rem' : '1rem'};
+`
+
 
 const MissionDetails = (props) => {
 
@@ -204,11 +208,11 @@ const MissionDetails = (props) => {
                         
                         {mission.amulets.map(amulet => {
                             return (
-                                <Badge
+                                <StyledBadge
                                     color="primary"
                                     badgeContent={amulet.quantity}
                                     anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                                    style={{ marginRight: "1rem", transform: 'scale(0.9)' }}
+                                    style={{transform: 'scale(0.9)' }}
                                     invisible={amulet.quantity <= 1}
                                 >
                                 <Typography
@@ -231,7 +235,7 @@ const MissionDetails = (props) => {
                                 />
                                 {` `}
                                 </Typography>
-                                </Badge>
+                                </StyledBadge>
                             );
                         })}
                     </Grid>}

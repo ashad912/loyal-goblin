@@ -46,7 +46,7 @@ const StyledItemIcon = styled.img`
   width: 32px;
 `
 const StyledItemsIndicator = styled.span`
-  font-size: 10px
+  font-size: 10px;
   color: ${(props) => { 
       const green = props.inBox === props.required
       const red = props.inBox > props.required
@@ -407,7 +407,7 @@ class MissionInstance extends React.Component {
                                 <React.Fragment key={amulet.itemModel.id}>
                                     
                                     <StyledItemIcon src={`${itemsPath}${amulet.itemModel.imgSrc}`}/>
-                                    <StyledItemsIndicator required={amulet.quantity} inBox={amulet.inBox}>{` ${amulet.inBox}/${amulet.quantity}`}</StyledItemsIndicator>
+                                    <StyledItemsIndicator required={amulet.quantity} inBox={amulet.inBox}><Typography style={{fontSize: '0.8rem'}}>{` ${amulet.inBox}/${amulet.quantity}`}</Typography></StyledItemsIndicator>
                                     {statusIcon(amulet.readyStatus)}
                                 </React.Fragment>
                             )

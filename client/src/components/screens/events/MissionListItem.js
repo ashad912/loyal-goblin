@@ -39,6 +39,10 @@ const StyledBox = styled(Box)`
       : palette.background.standard};
 `;
 
+const StyledBadge = styled(Badge)`
+    margin-right: ${props => props.invisible ? '0rem' : '1rem'};
+`
+
 const MissionListItem = props => {
   const mission = props.mission;
   return (
@@ -231,12 +235,12 @@ const MissionListItem = props => {
                 </Typography>
                 {mission.amulets.map(amulet => {
                   return (
-                    <Badge
+                    <StyledBadge
                       
                       color="primary"
                       badgeContent={amulet.quantity}
                       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                      style={{ marginRight: "1rem", transform: 'scale(0.9)' }}
+                      style={{ transform: 'scale(0.9)' }}
                       invisible={amulet.quantity <= 1}
                     >
                       <Typography
@@ -259,7 +263,7 @@ const MissionListItem = props => {
                         />
                         {` `}
                       </Typography>
-                    </Badge>
+                    </StyledBadge>
                   );
                 })}
               </React.Fragment>
