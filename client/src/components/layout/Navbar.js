@@ -60,13 +60,11 @@ const FileInputButton = styled(Typography)`
 
 const Navbar = (props) => {
 
-
-
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [showPasswordChangeModal, setShowPasswordChangeModal] = React.useState(false)
     const [hideNavbar, setHideNavbar] = React.useState(false)
     const [showAlertSnackbar, setShowAlertSnackbar] = React.useState(false)
-
+    const [alertMessage, setAlertMessage] = React.useState('')
     React.useEffect(()=>{
         if(!props.auth.uid){
             setHideNavbar(true)
@@ -89,33 +87,27 @@ const Navbar = (props) => {
         if (e.target.files.length > 0) {
             const avatar = e.target.files[0]
             const avatarSize = avatar.size / 1024 / 1024; // in MB
-
             
-            if(avatarSize < 6){
+            if(avatarSize >= 6){
+                setAlertMessage("Maksymalna wielkosć pliku to 6 MB!")
+                setShowAlertSnackbar(true)  
+            }else if(!avatar.type.includes('image/')){
+                setAlertMessage("Nieprawidłowe rozszerzenie pliku!")
+                setShowAlertSnackbar(true)   
+            }else{
                 const formData = new FormData()
                 formData.append("avatar", avatar)
                 e.stopPropagation();
                 setAnchorEl(null);
-                //window.location.reload();
                 await props.updateAvatar(formData)
-
-
-            }else{
-                setShowAlertSnackbar(true)
             }
-            
-            
         }
     };
 
     const handleAvatarDelete = async e => {
         e.stopPropagation();
         setAnchorEl(null);
-        //window.location.reload(); 
-        await props.updateAvatar();
-        
-        
-        
+        await props.updateAvatar();      
     };
 
     const handleLogout = async e => {
@@ -144,6 +136,7 @@ const Navbar = (props) => {
 
     const handleCloseAlertSnackbar = () => {
         setShowAlertSnackbar(prev => !prev)
+        setAlertMessage('')
     }
 
 
@@ -273,16 +266,16 @@ const Navbar = (props) => {
             )}
         </Toolbar>
         <ChangePasswordModal open={showPasswordChangeModal} handleClose={togglePasswordChangeModal}/>
-        <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        open={showAlertSnackbar}
-        autoHideDuration={6000}
-       onClose={handleCloseAlertSnackbar}
-       message="Maksymalna wielkosć pliku to 6 MB!"
-        />
+        {showAlertSnackbar && <Snackbar
+            anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+            }}
+            open={showAlertSnackbar}
+            autoHideDuration={6000}
+            onClose={handleCloseAlertSnackbar}
+            message={alertMessage}
+        />}
         </StyledAppBar>
         
        
