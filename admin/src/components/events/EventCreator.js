@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import moment from "moment";
-import styled from "styled-components";
+import styled, {keyframes} from "styled-components";
 import MomentUtils from "@date-io/moment";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
@@ -11,6 +11,7 @@ import Switch from "@material-ui/core/Switch";
 import Grid from "@material-ui/core/Grid";
 import Input from "@material-ui/core/Input";
 import Slider from "@material-ui/core/Slider";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import List from "@material-ui/core/List";
@@ -18,7 +19,10 @@ import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import { MuiPickersUtilsProvider} from "@material-ui/pickers";
+import IconButton from '@material-ui/core/IconButton';
+import { MuiPickersUtilsProvider, DateTimePicker} from "@material-ui/pickers";
+import EditIcon from '@material-ui/icons/Edit';
+import EventIcon from '@material-ui/icons/Event';
 
 import AttributeBox from "./AttributeBox";
 import AmuletsModal from "./AmuletsModal";
@@ -35,6 +39,15 @@ import { getItemModels } from "../../store/actions/itemActions";
 import "moment/locale/pl";
 moment.locale("pl");
 
+const alertAnimation = keyframes`
+0%{
+  color: rgb(231, 0, 0)
+}
+100%{
+  color: rgba(231, 0, 0, 0.3);
+}
+
+`
 
 
 const FileInputWrapper = styled.div`
@@ -63,6 +76,10 @@ const FileInputButton = styled(Button)`
   width: 14rem;
 `;
 
+const DateErrorMessage = styled(Typography)`
+animation: ${alertAnimation} 1s ease-out infinite alternate;
+`
+
 class EventCreator extends Component {
   state = {
     _id: null,
@@ -83,6 +100,7 @@ class EventCreator extends Component {
     showItemsModal: false,
     experience: 0,
     awardLevelExperienceInput: 0,
+    editableAwardLevelExperienceInput: 0,
     awardsAreSecret: false,
     fullItemsList: {},
     items: { any: [], warrior: [], mage: [], rogue: [], cleric: [] },
@@ -117,8 +135,17 @@ class EventCreator extends Component {
       iconView: false
     },
     disableSubmit: true,
-    rallies: []
+    rallies: [],
+    dateErrorClearingTimeout: null
   };
+
+
+  componentWillUnmount() {
+    if(this.state.dateErrorClearingTimeout){
+      clearTimeout(this.state.dateErrorClearingTimeout)
+    }
+  }
+  
 
  async componentDidMount() {
     //fetch things from back end
@@ -129,7 +156,7 @@ class EventCreator extends Component {
       delete itemModel._id
     })
     itemModels = convertItemModelsToCategories(itemModels)
-    console.log(itemModels)
+    //console.log(itemModels)
     this.setState(
       {
         amulets: itemModels.hasOwnProperty('amulet') && itemModels.amulet.length ? [...itemModels.amulet] : [],
@@ -139,7 +166,7 @@ class EventCreator extends Component {
       () => {
         if (this.props.isEdit) {
           const event = { ...this.props.eventToEdit };
-          console.log(event)
+          //console.log(event)
           if (event.hasOwnProperty("level") && event.level) {
             //MISSION
             Object.keys(event.awards).forEach(awardClass => {
@@ -191,7 +218,7 @@ class EventCreator extends Component {
               },
               activationDate: moment(event.activationDate).format("YYYY-MM-DDTHH:mm"),
               expiryDate: moment(event.expiryDate).format("YYYY-MM-DDTHH:mm"),
-              isPermanent: event.isPermanent,
+              isPermanent: moment(event.expiryDate).isSameOrAfter('2220-01-01', 'year'),
               awardsAreSecret: event.awardsAreSecret
             }, () => {
 
@@ -206,6 +233,17 @@ class EventCreator extends Component {
               })
             });
           } else {
+            event.awardsLevels.forEach(awardLevel => {
+              //console.log(awardLevel)
+              Object.keys(awardLevel.awards).forEach(awardClass => {
+                awardLevel.awards[awardClass] = awardLevel.awards[awardClass].map(award => {
+                  const id = award.itemModel._id 
+                  delete award.itemModel._id 
+                  return {...award.itemModel, quantity: award.quantity, itemModel: id}
+                })
+              })
+            })
+
             this.setState({
               _id: event._id,
               isRally: true,
@@ -248,19 +286,16 @@ class EventCreator extends Component {
     const errors = { ...this.state.dateErrors };
     errors[type] = ["",""]
 
-    const newEventActivation = event.activationDate.valueOf();
-    const newEventStart = isRally ? event.startDate.valueOf() : null;
-    const newEventEnd = event.expiryDate.valueOf();
 
     switch (type) {
       case "activationDate":
-        if (newEventActivation >= newEventEnd) {
+        if ( event.activationDate.isSameOrAfter(event.expiryDate)) {
           errors.activationDate[0] =
             "Czas publikacji nie może być późniejszy niż czas zakończenia";
         } else {
           errors.activationDate[0] = "";
         }
-        if (isRally && newEventActivation > newEventStart) {
+        if (isRally && event.activationDate.isAfter(event.startDate)) {
           errors.activationDate[1] =
             "Czas publikacji nie może być późniejszy niż czas rozpoczęcia";
         } else {
@@ -269,13 +304,13 @@ class EventCreator extends Component {
 
         break;
       case "startDate":
-        if (newEventStart < newEventActivation) {
+        if ( isRally && event.startDate.isBefore(event.activationDate)) {
           errors.startDate[0] =
             "Czas rozpoczęcia nie może być wcześniejszy niż czas publikacji";
         } else {
           errors.startDate[0] = "";
         }
-        if (newEventStart >= newEventEnd) {
+        if (isRally && event.startDate.isSameOrAfter(event.expiryDate)) {
           errors.startDate[1] =
             "Czas rozpoczęcia nie może być późniejszy niż czas zakończenia";
         } else {
@@ -284,13 +319,13 @@ class EventCreator extends Component {
         break;
 
       case "expiryDate":
-        if (newEventEnd <= newEventActivation) {
+        if (event.expiryDate.isSameOrBefore(event.activationDate)) {
           errors.expiryDate[0] =
             "Czas zakończenia nie może być wcześniejszy niż czas publikacji";
         } else {
           errors.expiryDate[0] = "";
         }
-        if (isRally && newEventEnd <= newEventStart) {
+        if (isRally && event.expiryDate.isSameOrBefore(event.startDate)) {
           errors.expiryDate[1] =
             "Czas zakończenia nie może być wcześniejszy niż czas rozpoczęcia";
         } else {
@@ -300,7 +335,21 @@ class EventCreator extends Component {
 
       default:
         break;
+
     }
+    if(this.state.dateErrorClearingTimeout){
+      clearTimeout(this.state.dateErrorClearingTimeout)
+    }
+
+    const dateErrorClearingTimeout = setTimeout(() => {
+      this.setState({dateErrors: {
+        activationDate: ["", ""],
+        startDate: ["", ""],
+        expiryDate: ["", ""]
+      },})
+    }, 3500);
+
+    this.setState({dateErrorClearingTimeout})
 
     if (
      errors[type]
@@ -330,7 +379,8 @@ class EventCreator extends Component {
 
         let causingRallyList = [];
         this.state.rallies.forEach(rallyItem => {
-          if(this.state.isEdit && this.state._id === rallyItem._id){
+          
+          if(this.props.isEdit && this.state._id === rallyItem._id){
             return
           }
           const existingRallyActiviation = moment(rallyItem.activationDate).valueOf();
@@ -355,9 +405,13 @@ class EventCreator extends Component {
           this.setState({
             collisionRallyList: [...causingRallyList],
             disableSubmit: true
+          }, () => {
+            this.validateRequiredFields()
           });
         } else {
-          this.setState({ collisionRallyList: []});
+          this.setState({ collisionRallyList: []}, () => {
+            this.validateRequiredFields()
+          });
         }
  
     }
@@ -369,9 +423,10 @@ class EventCreator extends Component {
     });
   };
 
-  handleEndDateChange = e => {
+  handleEndDateChange = input => {
+    const date = input.format("YYYY-MM-DDTHH:mm")
     const result = this.handleValidateDates(
-      e.target.value,
+      date,
       "expiryDate",
       this.state.isRally
     );
@@ -386,14 +441,17 @@ class EventCreator extends Component {
       () => {
         if (this.state.isRally) {
           this.handleCheckRallyDates();
+        }else{
+          this.validateRequiredFields()
         }
       }
     );
   };
 
-  handleRaidStartTimeChange = e => {
+  handleRaidStartTimeChange = (input, cb) => {
+    const date = input.format("YYYY-MM-DDTHH:mm")
     const result = this.handleValidateDates(
-      e.target.value,
+      date,
       "startDate",
       this.state.isRally
     );
@@ -408,17 +466,24 @@ class EventCreator extends Component {
       () => {
         if (this.state.isRally) {
           this.handleCheckRallyDates();
+        }else{
+          this.validateRequiredFields()
+        }
+        if(cb && this.state.dateErrors.startDate.every(err => err==="")){
+          cb()
         }
       }
     );
   };
 
-  handleActivationDateChange = e => {
+  handleActivationDateChange = (input, cb) => {
+    const date = input.format("YYYY-MM-DDTHH:mm")
     const result = this.handleValidateDates(
-      e.target.value,
+      date,
       "activationDate",
       this.state.isRally
     );
+
 
     this.setState(
       prevState => {
@@ -426,12 +491,19 @@ class EventCreator extends Component {
           activationDate: result.value
             ? result.value
             : prevState.activationDate,
+            startDate: result.value && this.state.isRally && this.state.raidIsInstantStart ? result.value : prevState.startDate,
           dateErrors: { ...result.errors }
         };
       },
       () => {
+        
         if (this.state.isRally) {
           this.handleCheckRallyDates();
+        }else{
+          this.validateRequiredFields()
+        }
+        if(cb && this.state.dateErrors.activationDate.every(err => err==="")){
+          cb()
         }
       }
     );
@@ -441,24 +513,32 @@ class EventCreator extends Component {
     this.setState(prevState => {
       return { isPermanent: !prevState.isPermanent };
     }, () => {
-      this.handleEndDateChange({target: {value: moment().add(200, 'y').format("YYYY-MM-DDTHH:mm")}})
+      this.handleEndDateChange(moment().add(200, 'y'))
     });
   };
 
   handleRaidInstantStart = () => {
-    this.setState(prevState => {
-      return { raidIsInstantStart: !prevState.raidIsInstantStart };
-    }, () => {
-      this.handleRaidStartTimeChange({target: {value: moment().format("YYYY-MM-DDTHH:mm")}})
-    });
+    if(this.state.collisionRallyList.length <= 0){
+      this.handleRaidStartTimeChange(moment(this.state.activationDate), () => {
+        this.setState(prevState => {
+          return { raidIsInstantStart: !prevState.raidIsInstantStart };
+        })
+
+      })
+
+    }
   };
 
   handleInstantChange = () => {
-    this.setState(prevState => {
-      return { isInstant: !prevState.isInstant };
-    }, () => {
-      this.handleActivationDateChange({target: {value: moment().format("YYYY-MM-DDTHH:mm")}})
-    });
+    if(this.state.collisionRallyList.length <= 0){
+
+      this.handleActivationDateChange(moment(), () => {
+        this.setState(prevState => {
+          return { isInstant: !prevState.isInstant };
+        })
+      })
+    }
+
   };
 
   handlePartySizeSliderChange = (event, newValue) => {
@@ -568,6 +648,34 @@ class EventCreator extends Component {
       this.setState({ awardLevelExperienceInput: 0, awardsLevels });
     }
   };
+
+  handleChangeEditableAwardLevelExperienceInput = (e, level)=>{
+    const input = e.target.value.replace(/^0+/, "").trim()
+    const tempAwardsLevels = [...this.state.awardsLevels]
+    const toEdit = tempAwardsLevels.find(tal => tal.level === level)
+    toEdit.level = input
+    this.setState({
+      editableAwardLevelExperienceInput: input,
+      awardsLevels: tempAwardsLevels})
+
+  }
+
+  handleAwardLevelExperienceToggle = (e, level) => {
+
+    const tempAwardsLevels = [...this.state.awardsLevels]
+    const toEdit = tempAwardsLevels.find(tal => tal.level === level)
+    if(toEdit.hasOwnProperty('allowChangeExperience') && toEdit.allowChangeExperience){
+      toEdit.allowChangeExperience = false
+      tempAwardsLevels.sort((a, b) => a.level - b.level);
+    }else{
+      toEdit.allowChangeExperience = true
+    }
+
+    this.setState({
+      awardsLevels: tempAwardsLevels,
+      editableAwardLevelExperienceInput:  toEdit.allowChangeExperience ? toEdit.level : 0
+    });
+  }
 
   handleChangeAwardLevelExperienceInput = e => {
     this.setState({
@@ -698,6 +806,8 @@ class EventCreator extends Component {
     });
   };
 
+
+
   validateRequiredFields = () => {
     const validationErrors = {
       title: "Pole wymagane",
@@ -791,6 +901,13 @@ class EventCreator extends Component {
 
   };
 
+// shouldComponentUpdate(nextProps, nextState) {
+//   if(this.state.editableAwardLevelExperienceInput !== nextState.editableAwardLevelExperienceInput){
+//     return false
+//   }
+// }
+
+
   render() {
     let amuletListEmpty =
       this.state.amulets.filter(amulet => amulet.quantity > 0).length === 0;
@@ -804,17 +921,18 @@ class EventCreator extends Component {
           <Typography component="div">
             <Grid component="label" container alignItems="center" spacing={1}>
               {!this.props.isEdit ?
-              <React.Fragment>
-                <Grid item>Misja</Grid>
-                <Grid item>
-                  <Switch
-                    checked={this.state.isRally}
-                    onChange={this.handleToggleRaid}
-                  />
-                </Grid>
-                <Grid item>Rajd</Grid>
-              </React.Fragment> :
-  <Grid item>{this.state.isRally ? 'Rajd' : 'Misja'}</Grid>
+                <React.Fragment>
+                  <Grid item>Misja</Grid>
+                  <Grid item>
+                    <Switch
+                      checked={this.state.isRally}
+                      onChange={this.handleToggleRaid}
+                    />
+                  </Grid>
+                  <Grid item>Rajd</Grid>
+                </React.Fragment> 
+              :
+                <Grid item>{this.state.isRally ? 'Rajd' : 'Misja'}</Grid>
               }
               <Grid item>
                 {!this.state.isRally && (
@@ -880,7 +998,7 @@ class EventCreator extends Component {
           <Grid container spacing={2}>
             {this.state.dirtyFields.iconView && this.state.validationErrors.iconView && 
             <Grid item>
-  <Typography variant="caption" style={{ color: "rgb(206, 0, 0)" }}>{this.state.validationErrors.iconView}</Typography>
+  <Typography style={{ color: "rgb(206, 0, 0)" }}>{this.state.validationErrors.iconView}</Typography>
             </Grid>
             }
             <Grid item>
@@ -1068,7 +1186,7 @@ class EventCreator extends Component {
               this.state.awardsLevels.map((awardLevel, index) => {
                 return (
                   <Paper
-                    key={awardLevel.level}
+                    key={index}
                     style={{
                       width: "100%",
                       padding: "1rem",
@@ -1080,8 +1198,35 @@ class EventCreator extends Component {
                       <Grid item xs={2}>
                         <Typography variant="h6">Próg {index + 1}.</Typography>
                       </Grid>
-                      <Grid item xs={4}>
-                        <Typography variant="h6">{`Minimum ${awardLevel.level} PD`}</Typography>
+                      <Grid item xs={4} container>
+                        <Grid item >
+                          {awardLevel.hasOwnProperty('allowChangeExperience') && awardLevel.allowChangeExperience ?
+                          <TextField
+                          autoFocus={true}
+                          value={this.state.editableAwardLevelExperienceInput}
+                          onChange={(e) => this.handleChangeEditableAwardLevelExperienceInput(e, awardLevel.level)}
+                          margin="dense"
+                          label="Wymagane doświadczenie"
+                          type="number"
+                          inputProps={{ min: "0" }}
+                          onBlur={e=>this.handleAwardLevelExperienceToggle(e, awardLevel.level)}
+                        />:
+                        <Typography variant="h6" style={{marginRight: '1rem'}}>{`Minimum ${awardLevel.level} PD`}</Typography>
+                        }
+
+                          </Grid>
+                          <Grid item >
+                          
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          onClick={e =>
+                            this.handleAwardLevelExperienceToggle(e, awardLevel.level)
+                          }
+                        >
+                          <EditIcon />
+                        </Button>
+                          </Grid>
                       </Grid>
                       <Grid item xs={6} container direction="row" justify="space-evenly">
                         <Grid item style={{marginBottom: '1rem'}}>
@@ -1232,7 +1377,7 @@ class EventCreator extends Component {
                         onChange={this.handleChangeAwardsAreSecret}
                       />
                     }
-                    label="Nagrody są tajne"
+                    label="Nagrody ukryte"
                   />
                 </Grid>
               </Grid>
@@ -1337,6 +1482,8 @@ class EventCreator extends Component {
             currentAwardTier={this.state.currentAwardTier}
           />
           <Divider style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+              
           <Grid
             container
             justify="space-around"
@@ -1351,12 +1498,12 @@ class EventCreator extends Component {
                 </Typography>
                 {this.state.collisionRallyList.map(rally => {
                   return (
-                    <p
+                    <Typography
                       style={{ color: "rgb(157, 0, 0)" }}
                       key={rally.title}
                     >{`${rally.title}: od ${moment(rally.activationDate).format(
                       "lll"
-                    )} do ${moment(rally.expiryDate).format("lll")}`}</p>
+                    )} do ${moment(rally.expiryDate).format("lll")}`}</Typography>
                   );
                 })}
               </Grid>
@@ -1367,12 +1514,12 @@ class EventCreator extends Component {
                   (dateError, index) => {
                     return (
                       <Grid item key={index}>
-                        <Typography
-                          variant="caption"
+                        <DateErrorMessage
+                          
                           style={{ color: "rgb(206, 0, 0)" }}
                         >
                           {dateError}
-                        </Typography>
+                        </DateErrorMessage>
                       </Grid>
                     );
                   }
@@ -1381,17 +1528,35 @@ class EventCreator extends Component {
 
               {!this.state.isInstant && (
                 <React.Fragment>
-                  <Typography>
+                  {/* <Typography>
                     Czas publikacji {this.state.isRally ? "rajdu:" : "misji:"}
-                  </Typography>
-                  <TextField
+                  </Typography> */}
+                  {/* <TextField
                   onBlur={this.state.isRally && this.handleCheckRallyDates}
                     type="datetime-local"
                     value={this.state.activationDate}
                     onChange={this.handleActivationDateChange}
+                  /> */}
+                  <DateTimePicker
+                    cancelLabel={'Anuluj'}
+                    ampm={false}
+                    label={` Czas publikacji ${this.state.isRally ? "rajdu:" : "misji:"}`}
+                    value={this.state.activationDate}
+                    onChange={this.handleActivationDateChange}
+                    format="YYYY-MM-DD HH:mm"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton>
+                            <EventIcon/>
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 </React.Fragment>
               )}
+              {this.state.collisionRallyList.length <= 0 &&
               <FormControlLabel
                 style={{ marginLeft: "2rem" }}
                 control={
@@ -1402,6 +1567,8 @@ class EventCreator extends Component {
                 }
                 label="Publikuj natychmiast"
               />
+              
+              }
             </Grid>
             {this.state.isRally && (
               <Grid item style={{ textAlign: "left" }}>
@@ -1409,27 +1576,45 @@ class EventCreator extends Component {
                   {this.state.dateErrors.startDate.map((dateError, index) => {
                     return (
                       <Grid item key={index}>
-                        <Typography
-                          variant="caption"
+                        <DateErrorMessage
+                          
                           style={{ color: "rgb(206, 0, 0)" }}
                         >
                           {dateError}
-                        </Typography>
+                        </DateErrorMessage>
                       </Grid>
                     );
                   })}
                 </Grid>
                 {!this.state.raidIsInstantStart && (
                   <React.Fragment>
-                    <Typography>Czas rozpoczęcia rajdu:</Typography>
+                    {/* <Typography>Czas rozpoczęcia rajdu:</Typography>
 
                     <TextField
                       type="datetime-local"
                       value={this.state.startDate}
                       onChange={this.handleRaidStartTimeChange}
-                    />
+                    /> */}
+                  <DateTimePicker
+                    cancelLabel={'Anuluj'}
+                    ampm={false}
+                    label={"Czas rozpoczęcia rajdu:"}
+                    value={this.state.startDate}
+                    onChange={this.handleRaidStartTimeChange}
+                    format="YYYY-MM-DD HH:mm"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton>
+                            <EventIcon/>
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
                   </React.Fragment>
                 )}
+                {this.state.collisionRallyList.length <= 0 &&
                 <FormControlLabel
                   style={{ marginLeft: "2rem" }}
                   control={
@@ -1438,8 +1623,8 @@ class EventCreator extends Component {
                       onChange={this.handleRaidInstantStart}
                     />
                   }
-                  label="Rozpocznij natychmiast"
-                />
+                  label="Rozpocznij w momencie publikacji"
+                />}
               </Grid>
             )}
             <Grid item style={{ textAlign: "left" }}>
@@ -1447,19 +1632,19 @@ class EventCreator extends Component {
                 {this.state.dateErrors.expiryDate.map((dateError, index) => {
                   return (
                     <Grid item key={index}>
-                      <Typography
-                        variant="caption"
+                      <DateErrorMessage
+                        
                         style={{ color: "rgb(206, 0, 0)" }}
                       >
                         {dateError}
-                      </Typography>
+                      </DateErrorMessage>
                     </Grid>
                   );
                 })}
               </Grid>
               {!this.state.isPermanent && (
                 <React.Fragment>
-                  <Typography>
+                  {/* <Typography>
                     Czas zakończenia {this.state.isRally ? "rajdu:" : "misji:"}
                   </Typography>
 
@@ -1468,6 +1653,23 @@ class EventCreator extends Component {
                     type="datetime-local"
                     value={this.state.expiryDate}
                     onChange={this.handleEndDateChange}
+                  /> */}
+                  <DateTimePicker
+                    cancelLabel={'Anuluj'}
+                    ampm={false}
+                    label={` Czas zakończenia ${this.state.isRally ? "rajdu:" : "misji:"}`}
+                    value={this.state.expiryDate}
+                    onChange={this.handleEndDateChange}
+                    format="YYYY-MM-DD HH:mm"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton>
+                            <EventIcon/>
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 </React.Fragment>
               )}
@@ -1485,6 +1687,7 @@ class EventCreator extends Component {
               )}
             </Grid>
           </Grid>
+
           <Grid
             container
             justify="center"

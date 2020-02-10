@@ -30,7 +30,7 @@ const RankDialog = props => {
             const data = await getRankedUsers()
             setMyUserIndex(data.userIndex)
             setUsers(data.users)
-            console.log(data.users)
+      //  console.log(data.users)
         }
 
         fetchRankedUsers()

@@ -16,6 +16,7 @@ import { Divider } from "@material-ui/core";
 import ErrorIcon from "@material-ui/icons/Error";
 import {asyncForEach} from '../../utils/methods'
 import { palette, uiPaths } from '../../utils/definitions';
+
 //import {labels} from '../strings/labels'
 
 const FormContainer = styled(Container)`
@@ -198,13 +199,13 @@ class SignUp extends Component {
   }
 
   handleSubmit = async e => {
-    console.log(this.state);
+   // console.log(this.state);
     e.preventDefault();
 
     const targets = ["email", "password", "confirmPassword"];
     await asyncForEach(targets, async target => {
-      console.log(this.state.error);
-      console.log(this.state.error[target]);
+     // console.log(this.state.error);
+     // console.log(this.state.error[target]);
       if (this.state[target].length === 0) {
         await this.setState({
           error: {
@@ -231,7 +232,6 @@ class SignUp extends Component {
   }
 
   onResolved = () => {
-    console.log("sign up");
     this.props.signUp({email: this.state.email, password: this.state.password, token: this.recaptcha.getResponse()})
   }
 
@@ -240,9 +240,9 @@ class SignUp extends Component {
     const { authError } = this.props;
 
     return (
-      <div style={{display: 'flex', justifyContent: 'center', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`}}>
+      <div style={{background: palette.primary.main,display: 'flex', flexDirection:'column', justifyContent: 'flex-end', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`, position: 'relative'}}>
       <FormContainer  maxWidth="xs" >
-      <img src={uiPaths.logo} style={{width: '50vw', flexBasis: '20%'}} alt="logo"/>
+      <img src={uiPaths.logo} style={{width: '50vw', flexBasis: '20%', marginBottom: '-1.2rem'}} alt="logo"/>
           <form onSubmit={this.handleSubmit} className="white">
           
               {/* <Typography variant="h5" style={{textAlign: 'left', marginBottom: '1rem'}}>Zaloguj</Typography> */}
@@ -251,13 +251,13 @@ class SignUp extends Component {
 
                       <FormControl fullWidth style={{marginTop: '1rem', marginBottom: "0.5rem"}}>
                           {/* <InputLabel htmlFor="input-email" error={this.state.error.email}>Email *</InputLabel> */}
-                          <Input id="email" placeholder="Email" aria-describedby="email" required error={this.state.error.email} onChange={this.handleChange} inputProps={{style:{textAlign:'center', fontSize: '1.2rem', fontWeight: 'bolder'}}}/>
+                          <Input id="email" placeholder="Email" aria-describedby="email" required error={this.state.error.email} onChange={this.handleChange} inputProps={{style:{textAlign:'center', fontSize: '1.3rem', fontFamily: 'Futura'}}}/>
                           {this.state.error.email ? (<FormHelperText error id="my-helper-text">{this.state.formError.email}</FormHelperText>) : (null)}
                           
                       </FormControl>
                       <FormControl fullWidth style={{marginTop: '1rem', marginBottom: "0.5rem"}}>
                           {/* <InputLabel htmlFor="input-password" error={this.state.error.password}>Hasło *</InputLabel> */}
-                          <Input id="password" placeholder="Hasło" aria-describedby="password" type="password" required error={this.state.error.password} onChange={this.handleChange} inputProps={{style:{textAlign:'center', fontSize: '1.2rem', fontWeight: 'bolder'}}}/>
+                          <Input id="password" placeholder="Hasło" aria-describedby="password" type="password" required error={this.state.error.password} onChange={this.handleChange} inputProps={{style:{textAlign:'center', fontSize: '1.3rem', fontFamily: 'Futura'}}}/>
                           {this.state.error.password ? (<FormHelperText error id="my-helper-text">{this.state.formError.password}</FormHelperText>) : (null)}
                       </FormControl>
               <FormControl
@@ -278,7 +278,7 @@ class SignUp extends Component {
                   placeholder="Powtórz hasło"
                   error={this.state.error.confirmPassword}
                   onChange={this.handleChange}
-                  inputProps={{style:{textAlign:'center', fontSize: '1.2rem', fontWeight: 'bolder'}}}
+                  inputProps={{style:{textAlign:'center', fontSize: '1.3rem', fontFamily: 'Futura'}}}
                 />
                 {this.state.error.confirmPassword ? (
                   <FormHelperText error id="my-helper-text">
@@ -304,10 +304,6 @@ class SignUp extends Component {
                           Zarejestruj
                           
                       </Button> 
-
-
-
-            
               <ActionBar>
                 <Typography>
                   <StyledLink to="/signin" style={{ textDecoration: 'none'}}>
@@ -323,6 +319,7 @@ class SignUp extends Component {
               />
             </div>
           </form>
+          <img src={uiPaths.people} style={{width:'100%' }} alt=""/>
         </FormContainer>
       </div>
     );

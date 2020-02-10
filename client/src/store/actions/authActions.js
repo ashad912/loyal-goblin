@@ -95,7 +95,7 @@ export const authCheck =  (params) => {
 
         return new Promise( async (resolve, reject) => {
             try {
-                console.log('authCheck')
+               // console.log('authCheck')
                 let query = ''
                 if(params && params.autoFetch){
                     query ='?autoFetch=true'
@@ -123,11 +123,11 @@ export const authCheck =  (params) => {
 
 
 
-export const forgotPassword = (email) => {
+export const forgotPassword = (email, recaptchaToken) => {
     return async dispatch => {
         try {
             if(email){
-                const res = await axios.post('/user/forgotPassword', {email})
+                await axios.post('/user/forgotPassword', {email, recaptchaToken})
 
             }
 
@@ -164,11 +164,11 @@ export const changePassword = (oldPassword, password, confirmPassword, token) =>
 
 
 
-export const resetPassword = (token, password, confirmPassword) => {
+export const resetPassword = (token, password, confirmPassword, recaptchaToken) => {
     return async dispatch => {
         try {
             if(password === confirmPassword){
-                const res = await axios.patch('/user/reset', {token, password, confirmPassword})
+                const res = await axios.patch('/user/reset', {token, password, confirmPassword, recaptchaToken})
                 if(res){
                     //signOut()
                 }

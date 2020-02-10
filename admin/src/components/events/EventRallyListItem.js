@@ -154,6 +154,7 @@ const EventRallyListItem = ({
               direction="column"
               justify="flex-start"
               alignItems="flex-start"
+              spacing={2}
               xs={2}
             >
               <Grid item>
@@ -164,6 +165,9 @@ const EventRallyListItem = ({
                 >
                   {"Nagrody"}
                 </Button>
+                <Typography style={{textAlign:'center', marginTop: '0.5rem'}}>
+                  +{event.experience} PD
+                </Typography>
               </Grid>
 
               <Popover
@@ -264,7 +268,7 @@ const EventRallyListItem = ({
                 </List>
               </Popover>
             </Grid>
-            <Grid item container direction="column" xs={2} spacing={2}>
+            <Grid item container direction="column" xs={2} spacing={2} alignItems="flex-end">
               <Grid item>
                 <Button color="primary" onClick={e => editEvent(event._id)}>
                   Edytuj

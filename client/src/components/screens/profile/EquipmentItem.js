@@ -59,6 +59,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const EquipmentListItem = props => {
+
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -124,6 +125,7 @@ const EquipmentListItem = props => {
                     style={{ width: "4rem", height: "4rem" }}
                     // alt={item.itemModel.name}
                     src={itemsPath + item.itemModel.imgSrc}
+                    alt=""
                   />
                 </ListItemAvatar>
               </Badge>

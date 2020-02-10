@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -100,6 +100,7 @@ class ChangePasswordModal extends React.Component {
           label="Aktualne hasło"
           type="password"
           fullWidth
+          inputProps={{style:{fontFamily: 'Futura'}}}
         />
         <TextField
           value={this.state.password}
@@ -108,6 +109,7 @@ class ChangePasswordModal extends React.Component {
           label="Nowe hasło"
           type="password"
           fullWidth
+          inputProps={{style:{fontFamily: 'Futura'}}}
         />
         <TextField
           value={this.state.repeatedPassword}
@@ -116,6 +118,7 @@ class ChangePasswordModal extends React.Component {
           label="Powtórz nowe hasło"
           type="password"
           fullWidth
+          inputProps={{style:{fontFamily: 'Futura'}}}
         />
       </DialogContent>
       <DialogActions>

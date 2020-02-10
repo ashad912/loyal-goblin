@@ -10,9 +10,10 @@ import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 import PeopleIcon from "@material-ui/icons/People";
 
-import { missionsPath, classThemes } from "../../utils/definitions";
+import { missionsPath, classThemes, itemsPath } from "../../utils/definitions";
 
 
 const pulse = keyframes`
@@ -97,6 +98,14 @@ const EventMissionListItem = ({
       break;
   }
 
+  let awardsDisabled = true
+  Object.keys(event.awards).forEach(awardClass => {
+    if(event.awards[awardClass].length > 0){
+      awardsDisabled = false
+    }
+  })
+  
+
   return (
     shouldRender ? 
     <React.Fragment>
@@ -117,8 +126,8 @@ const EventMissionListItem = ({
                 >{`${event.minPlayers} - ${event.maxPlayers}`}</Typography>{" "}
                 <PeopleIcon />
                 <Typography style={{ marginLeft: "1rem" }}>
-                  Poziom {event.minLevel} + |{" "}
-                  {`S: ${event.strength} / Z: ${event.dexterity} / M: ${event.magic} / W: ${event.endurance}`}
+                  Poziom {event.level} |
+                  {`  S: ${event.strength} / Z: ${event.dexterity} / M: ${event.magic} / W: ${event.endurance}`}
                 </Typography>
               </Box>
             </Grid>
@@ -160,7 +169,9 @@ const EventMissionListItem = ({
               item
               container
               direction="column"
-              justify="space-around"
+              //justify="space-around"
+              justify="flex-start"
+              alignItems="flex-start"
               xs={2}
               spacing={2}
             >
@@ -190,18 +201,31 @@ const EventMissionListItem = ({
                     container
                     direction="column"
                     spacing={1}
-                    style={{ width: "10vw", padding: "0.5rem" }}
+                    style={{ width: "20vw", padding: "0 1rem 0 1rem" }}
                   >
+                    <List dense>
+
                     {event.amulets.map(amulet => {
                       return (
-                        <Grid item key={amulet._id}>
-                          <ListItemText
-                            primary={amulet.itemModel.name}
-                            secondary={"x" + amulet.quantity}
-                          />
-                        </Grid>
-                      );
+
+                          <ListItem
+                          style={{ padding: "0" }}
+                            key={amulet.itemModel._id}
+                          >
+                           <ListItemIcon>
+                             <img alt="" src={itemsPath + amulet.itemModel.imgSrc} style={{width: '2rem'}} />
+                             </ListItemIcon>
+
+                            <ListItemText
+                              primary={amulet.itemModel.name}
+                              secondary={"x" + amulet.quantity}
+                            />
+
+                          </ListItem>
+                        );
                     })}
+                      </List>
+
                   </Grid>
                 </Popover>
               </Grid>
@@ -210,12 +234,19 @@ const EventMissionListItem = ({
                   variant="contained"
                   color="primary"
                   onClick={handleItemPopover}
+                  disabled={awardsDisabled}
                 >
                   Nagrody
                 </Button>
-                <Typography>
-                {event.awardsAreSecret ? "Nagrody ukryte" : "Nagrody jawne"}
-              </Typography>
+                <Typography style={{textAlign:'center', marginTop: '0.5rem'}}>
+                  +{event.experience} PD
+                </Typography>
+                {!awardsDisabled && 
+                  <Typography style={{marginTop: '0.5rem'}}>
+                    {event.awardsAreSecret ? "Nagrody ukryte" : "Nagrody jawne"}
+                  </Typography>
+                }
+        
                 <Popover
                   open={Boolean(itemPopover)}
                   anchorEl={itemPopover}
@@ -233,7 +264,7 @@ const EventMissionListItem = ({
                     container
                     direction="column"
                     spacing={1}
-                    style={{ width: "10vw", padding: "0.5rem" }}
+                    style={{ width: "20vw" }}
                   >
                     {Object.keys(event.awards).map(awardClass => {
                       const data = event.awards[awardClass];
@@ -245,12 +276,17 @@ const EventMissionListItem = ({
                             }}
                             key={awardClass}
                           >
-                            <List style={{ paddingLeft: "1rem" }} dense>
+                            <List style={{ padding: "0" }} dense>
                               {data.map(item => {
                                 return (
                                   <ListItem
+                                  style={{ padding: "0" }}
                                     key={item.itemModel._id}
                                   >
+                                   <ListItemIcon>
+                                     <img alt="" src={itemsPath + item.itemModel.imgSrc} style={{width: '2rem'}} />
+                                     </ListItemIcon>
+
                                     <ListItemText
                                       primary={item.itemModel.name}
                                       secondary={"x" + item.quantity}
@@ -288,7 +324,7 @@ const EventMissionListItem = ({
                 </Popover>
               </Grid>
             </Grid>
-            <Grid item container direction="column" xs={2} spacing={2}>
+            <Grid item container direction="column" xs={2} spacing={2} alignItems="flex-end">
               <Grid item>
                 <Button color="primary" onClick={e => editEvent(event._id)}>
                   Edytuj

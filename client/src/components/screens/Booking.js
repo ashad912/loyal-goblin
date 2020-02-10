@@ -383,13 +383,13 @@ const Booking = () => {
                 const time = timeArray[i];
                 let startTime = moment(`${time.startHour}:00`, 'HH:mm')
                 let endTime = moment(startTime).clone().add(time.lengthInHours, 'hours')
-                console.log(startTime.hour(), endTime.hour())
+               // console.log(startTime.hour(), endTime.hour())
                 //console.log(startTime, endTime)
                 if(time.startDay === nowDay){
                     if(startTime.isBefore(endTime)){
                         //console.log('before midnight')
                         let isTime = moment().isBetween(startTime, endTime, null, "[]");
-                        console.log(isTime)
+                       // console.log(isTime)
                         if(isTime){
                             return true
                         }
@@ -399,9 +399,9 @@ const Booking = () => {
                         //console.log('after midnight')
                         let startTimeMinusDay = startTime.clone().subtract(1, 'd')
                         let endTimeMinusDay = endTime.clone().subtract(1, 'd')
-                        console.log(startTimeMinusDay, endTimeMinusDay)
+                      //  console.log(startTimeMinusDay, endTimeMinusDay)
                         let isTime = moment().isBetween(startTimeMinusDay, endTimeMinusDay, null, "[]");
-                        console.log(isTime)
+                       // console.log(isTime)
                         if(isTime){
                             return true
                         }
@@ -431,7 +431,7 @@ const Booking = () => {
                     result = mod
                 }
                 
-                console.log(result)
+              //  console.log(result)
             }else{
                 perkValue = parseFloat(perkValue)
                 if(isCurrency){
@@ -441,7 +441,7 @@ const Booking = () => {
                 }
 
                 result = perkValue
-                console.log(result)
+               // console.log(result)
             }
 
             return result
@@ -454,7 +454,7 @@ const Booking = () => {
                 exp.percent = `${parseFloat(exp.percent) + perkValue}%`
                 
                 
-                console.log(exp.percent)
+               // console.log(exp.percent)
             }else{
                 perkValue = truncCurrency(parseFloat(perkValue))
                 exp.absolute = `${parseFloat(exp.absolute) + perkValue}`
@@ -467,9 +467,9 @@ const Booking = () => {
         Object.keys(equippedItems).forEach((itemKey) => {
             if(equippedItems[itemKey].hasOwnProperty('itemModel') && equippedItems[itemKey].itemModel.hasOwnProperty('perks') && equippedItems[itemKey].itemModel.perks && equippedItems[itemKey].itemModel.perks.length){
                 const perks = equippedItems[itemKey].itemModel.perks
-                console.log(perks)
+              //  console.log(perks)
                 perks.forEach((perk) => {
-                    console.log(perk.perkType)
+                 //   console.log(perk.perkType)
                     if(isTime(perk.time)){
                         switch(perk.perkType){
                             case 'attr-strength':
@@ -487,7 +487,7 @@ const Booking = () => {
                             case 'experience':
 
                                 modelPerks.rawExperience = countRawExperience(modelPerks.rawExperience, perk.value)
-                                console.log(modelPerks)
+                              //  console.log(modelPerks)
                                 break
                             case 'disc-product':
 
@@ -508,7 +508,6 @@ const Booking = () => {
     
                                 break
                             case 'disc-category':
-                                console.log('haleczko')
                                 const productsInCategory = products.filter((product) => {
                                     return product.category === perk.target
                                 })
@@ -555,7 +554,7 @@ const Booking = () => {
 
         }
 
-        console.log(modelPerks)
+        //console.log(modelPerks)
     }
 
     return(

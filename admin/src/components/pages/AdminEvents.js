@@ -4,13 +4,6 @@ import "moment/locale/pl";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -19,9 +12,7 @@ import Paper from "@material-ui/core/Paper";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
 import SearchIcon from "@material-ui/icons/Search";
-
 import EventCreator from "../events/EventCreator";
 import EventMissionListItem from "../events/EventMissionListItem";
 import EventRallyListItem from "../events/EventRallyListItem";
@@ -32,6 +23,8 @@ import {
   createEvent,
   deleteEvent
 } from "../../store/actions/eventActions";
+import EventManagementDialog from "../events/EventManagementDialog";
+
 moment.locale("pl");
 
 
@@ -44,29 +37,20 @@ class AdminEvents extends Component {
     statusFilter: "all",
     nameFilter: "",
     currentEvent: null,
+    currentEventDates: {
+      activationDate: '',
+      startDate: '',
+      expiryDate: ''
+    },
     currentEventIsRally: false,
     showActivateNowDialog: false,
-    activationDate: moment().format("YYYY-MM-DDTHH:mm"),
-    changeStartDate: false,
-    startDate: moment()
-      .add(1, "d")
-      .format("YYYY-MM-DDTHH:mm"),
-    changeExpiryDate: false,
-    expiryDate: moment()
-      .add(2, "d")
-      .format("YYYY-MM-DDTHH:mm"),
-    dateErrors: {
-      activationDate: ["", ""],
-      startDate: ["", ""],
-      expiryDate: ["", ""]
-    },
-    disableEventDateChange: false,
-    awaitingRallyList: false,
+    showDeleteDialog: false,
     collisionRallyList: [],
     fetchInterval: null,
     copyMission: false,
-    copiedEventName: '',
-    showDeleteDialog: false
+
+
+
   };
   // const [showNewEventCreator, setShowNewEventCreator] = React.useState("");
   // const [events, setEvents] = React.useState(mockEvents);
@@ -98,223 +82,37 @@ class AdminEvents extends Component {
   }
   
 
-  handleValidateDates = (value, type) => {
-    const isRally = this.state.currentEventIsRally;
-    const event = {
-      activationDate: moment(this.state.activationDate),
-      startDate: isRally ? moment(this.state.startDate) : null,
-      expiryDate: moment(this.state.expiryDate)
-    };
 
-    event[type] = moment(value);
 
-    const errors = { ...this.state.dateErrors };
 
-    const newEventActivation = event.activationDate.valueOf();
-    const newEventStart = isRally ? event.startDate.valueOf() : null;
-    const newEventEnd = event.expiryDate.valueOf();
 
-    switch (type) {
-      case "activationDate":
-        if (newEventActivation >= newEventEnd) {
-          errors.activationDate[0] =
-            "Czas publikacji nie może być późniejszy niż czas zakończenia";
-        } else {
-          errors.activationDate[0] = "";
-        }
-        if (isRally && newEventActivation >= newEventStart) {
-          errors.activationDate[1] =
-            "Czas publikacji nie może być późniejszy niż czas rozpoczęcia";
-        } else {
-          errors.activationDate[1] = "";
-        }
 
-        break;
-      case "startDate":
-        if (newEventStart < newEventActivation) {
-          errors.startDate[0] =
-            "Czas rozpoczęcia nie może być wcześniejszy niż czas publikacji";
-        } else {
-          errors.startDate[0] = "";
-        }
-        if (newEventStart >= newEventEnd) {
-          errors.startDate[1] =
-            "Czas rozpoczęcia nie może być późniejszy niż czas zakończenia";
-        } else {
-          errors.startDate[1] = "";
-        }
-        break;
 
-      case "expiryDate":
-        if (newEventEnd <= newEventActivation) {
-          errors.expiryDate[0] =
-            "Czas zakończenia nie może być wcześniejszy niż czas publikacji";
-        } else {
-          errors.expiryDate[0] = "";
-        }
-        if (isRally && newEventEnd <= newEventStart) {
-          errors.expiryDate[1] =
-            "Czas zakończenia nie może być wcześniejszy niż czas rozpoczęcia";
-        } else {
-          errors.expiryDate[1] = "";
-        }
-        break;
 
-      default:
-        break;
-    }
 
-    if (
-      errors[type]
-         .every(error => error === "")
-     ) {
-       return { value, errors };
-     } else {
-       return { value: null, errors };
-     }
-  };
 
-  toggleChangeStartDate = () => {
-    this.setState(prevState => {
-      return { changeStartDate: !prevState.changeStartDate };
-    });
-  };
 
-  toggleChangeExpiryDate = () => {
-    this.setState(prevState => {
-      return { changeExpiryDate: !prevState.changeExpiryDate };
-    });
-  };
-
-  handleExpiryDateChange = e => {
-    const result = this.handleValidateDates(e.target.value, "expiryDate");
-
-    this.setState(
-      prevState => {
-        return {
-          expiryDate: result.value ? result.value : prevState.expiryDate,
-          dateErrors: { ...result.errors }
-        };
-      },
-      () => {
-        this.handleCheckDateErrors();
-        if(this.state.currentEventIsRally){
-          this.handleCheckRallyDates()
-        }
-      }
-    );
-  };
-
-  handleStartDateChange = e => {
-    const result = this.handleValidateDates(e.target.value, "startDate");
-
-    this.setState(
-      prevState => {
-        return {
-          startDate: result.value ? result.value : prevState.startDate,
-          dateErrors: { ...result.errors }
-        };
-      },
-      () => {
-        this.handleCheckDateErrors();
-        if(this.state.currentEventIsRally){
-          this.handleCheckRallyDates()
-        }
-      }
-    );
-  };
-
-  handleActivationDateChange= e => {
-    const result = this.handleValidateDates(e.target.value, "activationDate");
-
-    this.setState(
-      prevState => {
-        return {
-          activationDate: result.value ? result.value : prevState.activationDate,
-          dateErrors: { ...result.errors }
-        };
-      },
-      () => {
-        this.handleCheckDateErrors();
-      }
-    );
-  };
-
-  handleCheckRallyDates = () => {
-    if (
-      this.state.activationDate &&
-      this.state.expiryDate &&
-      this.state.startDate
-    ) {
-      this.setState({ awaitingRallyList: true },  () => {
-        const rallyList = this.state.events.filter(event => !event.hasOwnProperty('level'))
-
-        const rally = {
-          activationDate: moment(this.state.activationDate),
-          expiryDate: moment(this.state.expiryDate)
-        };
-
-        const newRallyActivation = rally.activationDate.valueOf();
-        const newRallyEnd = rally.expiryDate.valueOf();
-
-        let causingRallyList = [];
-        rallyList.forEach(rallyItem => {
-          if (rallyItem._id === this.state.currentEvent) {
-            return;
-          }
-          const existingRallyActiviation = moment(rallyItem.activationDate).valueOf();
-          const existingRallyEnd = moment(rallyItem.expiryDate).valueOf();
-
-          if (
-            !(
-              (existingRallyActiviation < newRallyActivation &&
-                existingRallyEnd < newRallyActivation) ||
-              (existingRallyEnd > newRallyEnd &&
-                existingRallyActiviation > newRallyEnd)
-            )
-          ) {
-            causingRallyList = [...causingRallyList, rallyItem]; //assembling list of 'bad' rallies :<<
-          }
-        });
-
-        if (causingRallyList.length) {
-
-          this.setState({
-            collisionRallyList: [...causingRallyList],
-            awaitingRallyList: false,
-            disableEventDateChange: true
-          });
-        } else {
-          this.setState({ collisionRallyList: [], awaitingRallyList: false });
-        }
-      });
-    }
-  };
-
-  handleCheckDateErrors = () => {
-    let dateValidation = Object.values(this.state.dateErrors)
-      .reduce((a, b) => a.concat(b))
-      .every(error => error === "");
-
-    this.setState({ disableEventDateChange: !dateValidation }, () => {
-      if (this.state.currentEventIsRally) {
-        this.handleCheckRallyDates();
-      }
-    });
-  };
 
   handleSetCurrentEvent = (id, cb) => {
     if (id) {
-      const isRally = !this.state.events
-        .find(event => event._id === id)
-        .hasOwnProperty("level");
-      this.setState(
-        { currentEvent: id, currentEventIsRally: isRally },
-        () => cb
-      );
+
+      const theEvent = this.state.events.find(event => event._id === id)
+      if(theEvent){
+        const isRally = !theEvent.hasOwnProperty("level");
+        const currentEventDates = {activationDate: theEvent.activationDate, expiryDate: theEvent.expiryDate, startDate: isRally?theEvent.startDate : ''}
+
+        this.setState(
+          { currentEvent: id, currentEventIsRally: isRally, currentEventDates },
+          () => cb
+        );
+      }
     } else {
       this.setState(
-        { currentEvent: null, currentEventIsRally: null },
+        { currentEvent: null, currentEventIsRally: null, currentEventDates:{
+          activationDate: '',
+          startDate: '',
+          expiryDate: ''
+        } },
         () => cb
       );
     }
@@ -325,11 +123,6 @@ class AdminEvents extends Component {
       null,
       this.setState({
         showActivateNowDialog: false,
-        activationDate: "",
-        startDate: "",
-        expiryDate: "",
-        changeStartDate: false,
-        changeExpiryDate: false,
         copyMission: false
       })
     );
@@ -338,30 +131,25 @@ class AdminEvents extends Component {
   handleShowActivateNowDialog = id => {
     this.handleSetCurrentEvent(
       id,
-      this.setState({
-        showActivateNowDialog: true,
-        activationDate: moment().format("YYYY-MM-DDTHH:mm"),
-        startDate: moment()
-          .add(1, "d")
-          .format("YYYY-MM-DDTHH:mm"),
-        expiryDate: moment()
-          .add(2, "d")
-          .format("YYYY-MM-DDTHH:mm")
-      }, () => {
-        this.state.currentEventIsRally && this.handleCheckRallyDates()
-      })
+      this.setState({showActivateNowDialog: true})
     );
   };
 
   handleEditEventCreator = id => {
     this.handleSetCurrentEvent(
       id,
-      this.setState({ showNewEventCreator: "edit" })
-    );
+      this.setState({ showNewEventCreator: "edit", typeFilter: "all",
+      statusFilter: "all",
+      nameFilter: ""})
+      );
+
   };
 
   handleNewEventCreator = e => {
-    this.setState({ showNewEventCreator: "new" });
+    this.setState({ showNewEventCreator: "new", typeFilter: "all",
+    statusFilter: "all",
+    nameFilter: "",
+    currentEvent: null });
   };
 
   handleCloseEventCreator = e => {
@@ -369,21 +157,21 @@ class AdminEvents extends Component {
     this.setState({ showNewEventCreator: "" });
   };
 
-  handleActivateNow = async () => {
+  handleActivateNow = async (payload) => {
     const tempEvents = [...this.state.events];
     const eventIndex = tempEvents.findIndex(
       event => event._id === this.state.currentEvent
     );
-    tempEvents[eventIndex].activationDate = this.state.activationDate;
+    tempEvents[eventIndex].activationDate = payload.activationDate;
 
-    if (!tempEvents[eventIndex].hasOwnProperty('level') && this.state.changeStartDate && this.state.startDate) {
-      tempEvents[eventIndex].startDate = moment(this.state.startDate).format(
+    if (!tempEvents[eventIndex].hasOwnProperty('level') && payload.changeStartDate && payload.startDate) {
+      tempEvents[eventIndex].startDate = moment(payload.startDate).format(
         "YYYY-MM-DDTHH:mm"
       );
     }
 
-    if (this.state.changeExpiryDate && this.state.expiryDate) {
-      tempEvents[eventIndex].expiryDate = moment(this.state.expiryDate).format(
+    if (payload.changeExpiryDate && payload.expiryDate) {
+      tempEvents[eventIndex].expiryDate = moment(payload.expiryDate).format(
         "YYYY-MM-DDTHH:mm"
       );
     }
@@ -430,21 +218,20 @@ class AdminEvents extends Component {
 
   handleCopyEventDialog = id => {
     this.setState({copyMission: true}, () => {
-      this.handleCheckDateErrors()
       this.handleShowActivateNowDialog(id)
     })
   }
 
   
-  handleCopyMission = async () => {
+  handleCopyMission = async (payload) => {
     const tempEvents = [...this.state.events];
     const eventIndex = tempEvents.findIndex(
       event => event._id === this.state.currentEvent
     );
-    tempEvents[eventIndex].activationDate = this.state.activationDate;
+    tempEvents[eventIndex].activationDate = payload.activationDate;
 
-    if (this.state.changeExpiryDate && this.state.expiryDate) {
-      tempEvents[eventIndex].expiryDate = moment(this.state.expiryDate).format(
+    if (payload.changeExpiryDate && payload.expiryDate) {
+      tempEvents[eventIndex].expiryDate = moment(payload.expiryDate).format(
         "YYYY-MM-DDTHH:mm"
       );
     }
@@ -452,7 +239,7 @@ class AdminEvents extends Component {
       ...tempEvents[eventIndex],
       activationDate: tempEvents[eventIndex].activationDate,
       expiryDate: tempEvents[eventIndex].expiryDate,
-      title: this.state.copiedEventName
+      title: payload.copiedEventName
     };
     delete event._id
    
@@ -467,9 +254,7 @@ if(eventId){
 }
   };
 
-  handleCopiedEventName = e => {
-    this.setState({copiedEventName: e.target.value})
-  }
+
 
 
   handleArchiveEvent = id => {
@@ -525,34 +310,18 @@ if(eventId){
       default:
         break;
     }
-    // switch (this.state.statusFilter) {
-    //   case "all":
-    //     break;
-    //   case "ready":
-    //     tempEvents = tempEvents.filter(event => event.status === "ready");
 
-    //     break;
-    //   case "active":
-    //     tempEvents = tempEvents.filter(event => event.status === "active");
-    //     break;
-    //   case "running":
-    //     tempEvents = tempEvents.filter(event => event.status === "running");
-    //     break;
-    //   case "archive":
-    //     tempEvents = tempEvents.filter(event => event.status === "archive");
-    //     break;
-    //   default:
-    //     break;
-    // }
     if (this.state.nameFilter.length > 0) {
-      tempEvents = tempEvents.filter(
-        event => event.title.toLowerCase().search(this.state.nameFilter) !== -1
-      );
+      //console.log(tempEvents)
+      tempEvents = tempEvents.filter(event => event.title.toLowerCase().search(this.state.nameFilter) !== -1);
     }
     this.setState({ events: [...tempEvents] });
   };
 
   render() {
+
+    const currentEventTitle = this.state.currentEvent && this.state.events.length > 0 && this.state.events.find(event => event._id === this.state.currentEvent) && this.state.events.find(event => event._id === this.state.currentEvent).title
+
     return (
       <div>
         {this.state.showNewEventCreator ? (
@@ -692,170 +461,22 @@ if(eventId){
           </div>
         )}
         {this.state.currentEvent && (
-          <React.Fragment>
-          <Dialog
-            open={this.state.showActivateNowDialog}
+          <EventManagementDialog 
+            open = {this.state.showActivateNowDialog}
             onClose={this.handleHideActivateNowDialog}
-          >
-            <DialogTitle>
-        {this.state.copyMission ? "Kopiuj wydarzenie " : "Opublikuj wydarzenie "}
-                {this.state.events.find(
-                  event => event._id === this.state.currentEvent
-                ).title
-              }
-            </DialogTitle>
-            <DialogContent>
-              {this.state.copyMission && <TextField style={{ marginBottom: "1rem" }}
-              value={this.state.copiedEventName}
-                  onChange={this.handleCopiedEventName}
-                  margin="dense"
-                  label="Nowa nazwa misji"
-                  type="text"/>}
-              <DialogContentText id="alert-dialog-description">
-                {this.state.copyMission ? 
-              <React.Fragment>
-              <Typography>Czas publikacji misji: </Typography>
-              <TextField
-                type="datetime-local"
-                value={this.state.activationDate}
-                onChange={this.handleActivationDateChange}
-                style={{ marginBottom: "1rem" }}
-              />
-            </React.Fragment>
-            :
-            <div>
-              Wydarzenie zostanie opublikowane{" "}
-              {moment().format("YYYY-MM-DD, HH:mm")}.
-            </div>  
-              }
-              </DialogContentText>
-              {this.state.currentEventIsRally && this.state.collisionRallyList.length > 0 && (
-                <div >
-                  <Typography style={{ color: "rgb(206, 0, 0)" }}>
-                    Rajdy kolidujące czasowo:
-                  </Typography>
-                  {this.state.collisionRallyList.map(rally => {
-                    return (
-                      <p
-                        style={{ color: "rgb(157, 0, 0)" }}
-                        key={rally.title}
-                      >{`${rally.title}: od ${moment(rally.activationDate).format(
-                        "lll"
-                      )} do ${moment(rally.expiryDate).format("lll")}`}</p>
-                    );
-                  })}
-                </div>
-              )}
-              
-              {this.state.currentEventIsRally && (
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={this.state.changeStartDate}
-                      onChange={this.toggleChangeStartDate}
-                    />
-                  }
-                  label="Zmienić datę rozpoczęcia?"
-                />
-              )}
-              {!this.state.copyMission && 
-              
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={this.state.changeExpiryDate}
-                    onChange={this.toggleChangeExpiryDate}
-                  />
-                }
-                label="Zmienić datę zakończenia?"
-              />
-              }
-              {this.state.currentEventIsRally && this.state.changeStartDate && (
-                <React.Fragment>
-                  <Grid direction="column" container>
-                {this.state.dateErrors.startDate.map((dateError, index) => {
-                  return (
-                    <Grid item key={index}>
-                      <Typography
-                        variant="caption"
-                        style={{ color: "rgb(206, 0, 0)" }}
-                      >
-                        {dateError}
-                      </Typography>
-                    </Grid>
-                  );
-                })}
-              </Grid>
-                  <Typography>Czas rozpoczęcia rajdu: </Typography>
-                  <TextField
-                    type="datetime-local"
-                    value={this.state.startDate}
-                    onChange={this.handleStartDateChange}
-                    style={{ marginBottom: "1rem" }}
-                  />
-                </React.Fragment>
-              )}
-              {(this.state.changeExpiryDate || this.state.copyMission) && (
-                <React.Fragment>
-                  <Grid direction="column" container>
-                {this.state.dateErrors.expiryDate.map((dateError, index) => {
-                  return (
-                    <Grid item key={index}>
-                      <Typography
-                        variant="caption"
-                        style={{ color: "rgb(206, 0, 0)" }}
-                      >
-                        {dateError}
-                      </Typography>
-                    </Grid>
-                  );
-                })}
-              </Grid>
-                  <Typography>Czas zakończenia {this.state.currentEventIsRally ? 'rajdu' : 'misji'}: </Typography>
-                  <TextField
-                    type="datetime-local"
-                    value={this.state.expiryDate}
-                    onChange={this.handleExpiryDateChange}
-                  />
-                </React.Fragment>
-              )}
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={this.handleHideActivateNowDialog}
-                color="secondary"
-              >
-                Anuluj
-              </Button>
-              <Button
-                onClick={this.state.copyMission ? this.handleCopyMission : this.handleActivateNow}
-                color="primary"
-                disabled={this.state.disableEventDateChange || (this.state.copyMission && this.state.copiedEventName.trim().length <= 0)}
-              >
-                Zatwierdź
-              </Button>
-            </DialogActions>
-          </Dialog>
-          <Dialog
-        open={this.state.showDeleteDialog}
-        onClose={this.handleHideDeleteDialog}
-      >
-        <DialogTitle >        Usuń wydarzenie{" "}
-                {this.state.events.find(
-                  event => event._id === this.state.currentEvent
-                ).title
-              }</DialogTitle>
-
-        <DialogActions>
-          <Button onClick={this.handleHideDeleteDialog} color="secondary">
-            Anuluj
-          </Button>
-          <Button onClick={this.handleDeleteEvent} color="primary" variant="contained" autoFocus>
-            Zatwierdź
-          </Button>
-        </DialogActions>
-      </Dialog>
-      </React.Fragment>
+            currentEvent={this.state.currentEvent}
+            currentEventDates={this.state.currentEventDates}
+            copyMission={this.state.copyMission}
+            handleCopyMission={this.handleCopyMission}
+            handleActivateNow={this.handleActivateNow}
+            currentEventIsRally={this.state.currentEventIsRally}
+            currentEventTitle={currentEventTitle}
+            dateErrors={this.state.dateErrors}
+            showDeleteDialog={this.state.showDeleteDialog}
+            handleHideDeleteDialog={this.handleHideDeleteDialog}
+            handleDeleteEvent={this.handleDeleteEvent}
+            rallyList = {this.state.events.filter(event => !event.hasOwnProperty("level"))}
+          />
 
         )}
       </div>

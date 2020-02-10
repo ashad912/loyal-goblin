@@ -3,6 +3,11 @@
   src: local("Pinto"), url(./assets/fonts/Pinto-NO_1.otf);
 }
 
+@font-face{
+  font-family: "Futura";
+  src: local("Futura"), url(./assets/fonts/Futura-Med.otf);
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",

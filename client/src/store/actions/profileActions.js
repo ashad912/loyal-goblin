@@ -5,7 +5,7 @@ export const getRankedUsers = () => {
     return new Promise (async (resolve, reject) => {
         try {
             const res = await axios.get('/user/users')
-            console.log(res.data)
+           // console.log(res.data)
             resolve(res.data)
         }catch (e) {
             reject(e)     
@@ -74,7 +74,7 @@ export const toggleItem = (id, category, equipped, memberId) => {
             
             if(memberId){
                 const res = await axios.patch('/user/party/equip', {id, category, equipped, memberId})
-                console.log(res.data)
+              //  console.log(res.data)
                 dispatch({type: "UPDATE_PARTY", party: res.data})
                 partyRefreshEmit(res.data._id)
             }else{

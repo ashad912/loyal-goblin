@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Redirect, Link } from "react-router-dom";
+import Recaptcha from 'react-google-invisible-recaptcha';
 import Container from "@material-ui/core/Container";
-import { Typography } from "@material-ui/core";
+import { Typography, Backdrop } from "@material-ui/core";
 import { TextField } from "@material-ui/core";
 import { Button } from "@material-ui/core";
 import { Paper } from "@material-ui/core";
@@ -15,6 +16,7 @@ import { Divider } from "@material-ui/core";
 import ErrorIcon from "@material-ui/icons/Error";
 import { asyncForEach } from "../../utils/methods";
 import { forgotPassword } from "../../store/actions/authActions";
+import { palette, uiPaths } from "../../utils/definitions";
 
 //import {labels} from '../strings/labels'
 
@@ -25,10 +27,7 @@ const FormContainer = styled(Container)`
   margin: 3rem 0 3rem 0;
 `;
 
-const StyledPaper = styled(Paper)`
-  padding: 1rem;
-  border: 1px solid #eeeeee;
-`;
+
 
 const ErrorPaper = styled(Paper)`
   display: flex;
@@ -51,9 +50,9 @@ const ActionBar = styled.div`
   justify-content: space-between;
 `;
 const StyledLink = styled(Link)`
-  color: #249123;
+  color: white;
   &:visited {
-    color: #249123;
+    color: white;
   }
 `;
 
@@ -141,19 +140,26 @@ class ForgotPassword extends Component {
     });
 
     if (!this.state.error.email) {
-      const res = await this.props.onConfirm(this.state.email);
-      if (res === "jwt not expired") {
-        this.setState({ jwtNotExpiredError: true });
-        setTimeout(() => {
-            this.props.history.push('/')
-        }, 6500);
-      } else {
-        this.setState({
-          passwordSent: true
-        });
-      }
+      this.recaptcha.execute();
+    }else{
+      this.recaptcha.reset();
     }
+    
   };
+  
+  onResolved = async () => {
+    const res = await this.props.onConfirm(this.state.email, this.recaptcha.getResponse());
+    if (res === "jwt not expired") {
+      this.setState({ jwtNotExpiredError: true });
+      setTimeout(() => {
+          this.props.history.push('/')
+      }, 6500);
+    } else {
+      this.setState({
+        passwordSent: true
+      });
+    }
+  }
 
   render() {
     const { authError } = this.props;
@@ -163,18 +169,22 @@ class ForgotPassword extends Component {
         style={{
           display: "flex",
           justifyContent: "center",
-          minHeight: `calc(100vh - ${this.state.fullHeightCorrection}px)`
+          flexDirection: 'column',
+          alignItems: 'center',
+          minHeight: `calc(100vh - ${this.state.fullHeightCorrection}px)`,
+          background: palette.primary.main
         }}
       >
+         <img src={uiPaths.logo} style={{width: '50vw', marginBottom:"-1rem"}} alt="logo"/>
         <FormContainer maxWidth="xs">
           <form onSubmit={this.handleSubmit} className="white">
             <Typography
               variant="h5"
-              style={{ textAlign: "left", marginBottom: "1rem" }}
+              style={{ textAlign: "left", marginBottom: "1rem", color: 'white' }}
             >
               Odzyskiwanie dostępu
             </Typography>
-            <StyledPaper elevation={0}>
+            <div >
               {this.state.passwordSent ? (
                 <React.Fragment>
                   <SentPaper>
@@ -204,7 +214,7 @@ class ForgotPassword extends Component {
                         folder SPAM, lub spróbuj ponownie za godzinę.
                       </Typography>
                       <Typography variant="caption">
-                        Za chwilę nastąpi przekierowanie na stronę logowania
+                        Za chwilę nastąpi przekierowanie na stronę logowania...
                       </Typography>
                     </React.Fragment>
                   ) : (
@@ -218,18 +228,20 @@ class ForgotPassword extends Component {
                         fullWidth
                         style={{ marginTop: "1rem", marginBottom: "0.5rem" }}
                       >
-                        <InputLabel
+                        {/* <InputLabel
                           htmlFor="input-email"
                           error={this.state.error.email}
                         >
                           Email *
-                        </InputLabel>
+                        </InputLabel> */}
                         <Input
                           id="email"
                           aria-describedby="email"
                           required
+                          placeholder="Email"
                           error={this.state.error.email}
                           onChange={this.handleChange}
+                          inputProps={{style:{textAlign:'center', fontSize: '1.3rem', fontFamily: 'Futura'}}}
                         />
                         {this.state.error.email ? (
                           <FormHelperText error id="my-helper-text">
@@ -240,10 +252,9 @@ class ForgotPassword extends Component {
 
                       <Button
                         fullWidth
-                        style={{
-                          justifyContent: "center",
-                          marginTop: "1.5rem"
-                        }}
+                        style={{ justifyContent: 'center', marginTop: "1.5rem", background: 'black', color: 'white', fontSize: '1.2rem', padding: '0.2rem'}}
+
+                        
                         onClick={this.handleSubmit}
                         variant="contained"
                         color="primary"
@@ -255,20 +266,25 @@ class ForgotPassword extends Component {
                 </React.Fragment>
               )}
 
-              <Divider style={{ marginTop: "1.5rem", marginBottom: "1rem" }} />
-              <ActionBar>
+             
+              <ActionBar style={{marginTop: '2rem' }}>
                 <Typography>
                   <StyledLink
                     to="/signin"
-                    style={{ textDecoration: "none", textAlign: "left" }}
+                    style={{ textDecoration: "none", textAlign: "left"}}
                   >
                     Pamiętasz hasło?
                   </StyledLink>
                 </Typography>
               </ActionBar>
-            </StyledPaper>
+            </div>
           </form>
         </FormContainer>
+        <Recaptcha
+            ref={ ref => this.recaptcha = ref }
+            sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+            onResolved={ this.onResolved }
+        />
       </div>
     );
   }
@@ -283,7 +299,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onConfirm: email => dispatch(forgotPassword(email))
+    onConfirm: (email, recaptchaToken) => dispatch(forgotPassword(email, recaptchaToken))
   };
 };
 

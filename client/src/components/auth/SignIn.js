@@ -16,7 +16,7 @@ import { Divider } from '@material-ui/core';
 import ErrorIcon from '@material-ui/icons/Error';
 import {asyncForEach} from '../../utils/methods'
 import { palette, uiPaths } from '../../utils/definitions';
-
+import Recaptcha from 'react-google-invisible-recaptcha';
 
 //import {labels} from '../strings/labels'
 
@@ -192,18 +192,23 @@ class SignIn extends Component {
         })
 
         if(!this.state.error.email && !this.state.error.password){
-            this.props.signIn({email: this.state.email, password: this.state.password})
+            this.recaptcha.execute();
+        }else{
+            this.recaptcha.reset();
         }
         
     }
 
+    onResolved = () => {
+        this.props.signIn({email: this.state.email, password: this.state.password})
+    }
 
 
     render() {
         const authError = this.props.auth.authError
         
         return (
-            <div style={{display: 'flex', justifyContent: 'center', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`}}>
+            <div style={{background: palette.primary.main,display: 'flex', flexDirection:'column', justifyContent: 'flex-end', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`, position: 'relative'}}>
                 <FormContainer  maxWidth="xs" >
                 <img src={uiPaths.logo} style={{width: '50vw', flexBasis: '20%'}} alt="logo"/>
                     <form onSubmit={this.handleSubmit} className="white">
@@ -214,13 +219,13 @@ class SignIn extends Component {
 
                                 <FormControl fullWidth style={{marginTop: '1rem', marginBottom: "0.5rem"}}>
                                     {/* <InputLabel htmlFor="input-email" error={this.state.error.email}>Email *</InputLabel> */}
-                                    <Input id="email" placeholder="Email" aria-describedby="email" required error={this.state.error.email} onChange={this.handleChange} inputProps={{style:{textAlign:'center', fontSize: '1.2rem', fontWeight: 'bolder'}}}/>
+                                    <Input id="email" placeholder="Email" aria-describedby="email" required error={this.state.error.email} onChange={this.handleChange} inputProps={{style:{textAlign:'center', fontSize: '1.3rem', fontFamily: 'Futura'}}}/>
                                     {this.state.error.email ? (<FormHelperText error id="my-helper-text">{this.state.formError.email}</FormHelperText>) : (null)}
                                     
                                 </FormControl>
                                 <FormControl fullWidth style={{marginTop: '1rem', marginBottom: "0.5rem"}}>
                                     {/* <InputLabel htmlFor="input-password" error={this.state.error.password}>Hasło *</InputLabel> */}
-                                    <Input id="password" placeholder="Hasło" aria-describedby="password" type="password" required error={this.state.error.password} onChange={this.handleChange} inputProps={{style:{textAlign:'center', fontSize: '1.2rem', fontWeight: 'bolder'}}}/>
+                                    <Input id="password" placeholder="Hasło" aria-describedby="password" type="password" required error={this.state.error.password} onChange={this.handleChange} inputProps={{style:{textAlign:'center', fontSize: '1.3rem',  fontFamily: 'Futura'}}}/>
                                     {this.state.error.password ? (<FormHelperText error id="my-helper-text">{this.state.formError.password}</FormHelperText>) : (null)}
                                 </FormControl>
                                 
@@ -250,14 +255,21 @@ class SignIn extends Component {
                                     </Typography>
                                     <Typography>
                                         <StyledLink to='/signup' style={{ textDecoration: 'none'}}>
-                                        <span style={{color: 'black'}}>Nie masz konta?</span>
-                    <span> Zarejestruj się!</span>
+                                            <span style={{color: 'black'}}>Nie masz konta?</span>
+                                            <span> Zarejestruj się!</span>
                                         </StyledLink>
                                     </Typography>
                                 </ActionBar>
+                                <Recaptcha
+                                    ref={ ref => this.recaptcha = ref }
+                                    sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                                    onResolved={ this.onResolved }
+                                    
+                                />
                             </div>
                             {/* </StyledPaper>                  */}
                     </form>
+                <img src={uiPaths.people} style={{width:'100%' }} alt=""/>
                 </FormContainer>
             </div>
         )

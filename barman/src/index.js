@@ -5,7 +5,9 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 
-window.oncontextmenu = function() { return false; }
+if(process.env.NODE_ENV === 'production'){
+    window.oncontextmenu = function() { return false; }
+}
 
 
 ReactDOM.render(<App  />, document.getElementById('root'));
