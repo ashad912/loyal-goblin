@@ -37,7 +37,9 @@ axios.interceptors.response.use(function (response) {
   });
 
 
+if(process.env.NODE_ENV === 'production'){
   window.oncontextmenu = function() { return false; }
+}
 
 
 ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementById('root'));

@@ -16,7 +16,7 @@ import { Divider } from '@material-ui/core';
 import ErrorIcon from '@material-ui/icons/Error';
 import {asyncForEach} from '../../utils/methods'
 import { palette, uiPaths } from '../../utils/definitions';
-
+import Recaptcha from 'react-google-invisible-recaptcha';
 
 //import {labels} from '../strings/labels'
 
@@ -192,11 +192,16 @@ class SignIn extends Component {
         })
 
         if(!this.state.error.email && !this.state.error.password){
-            this.props.signIn({email: this.state.email, password: this.state.password})
+            this.recaptcha.execute();
+        }else{
+            this.recaptcha.reset();
         }
         
     }
 
+    onResolved = () => {
+        this.props.signIn({email: this.state.email, password: this.state.password})
+    }
 
 
     render() {
@@ -250,11 +255,17 @@ class SignIn extends Component {
                                     </Typography>
                                     <Typography>
                                         <StyledLink to='/signup' style={{ textDecoration: 'none'}}>
-                                        <span style={{color: 'black'}}>Nie masz konta?</span>
-                    <span> Zarejestruj się!</span>
+                                            <span style={{color: 'black'}}>Nie masz konta?</span>
+                                            <span> Zarejestruj się!</span>
                                         </StyledLink>
                                     </Typography>
                                 </ActionBar>
+                                <Recaptcha
+                                    ref={ ref => this.recaptcha = ref }
+                                    sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                                    onResolved={ this.onResolved }
+                                    
+                                />
                             </div>
                             {/* </StyledPaper>                  */}
                     </form>

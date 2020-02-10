@@ -1496,12 +1496,12 @@ class EventCreator extends Component {
                 </Typography>
                 {this.state.collisionRallyList.map(rally => {
                   return (
-                    <p
+                    <Typography
                       style={{ color: "rgb(157, 0, 0)" }}
                       key={rally.title}
                     >{`${rally.title}: od ${moment(rally.activationDate).format(
                       "lll"
-                    )} do ${moment(rally.expiryDate).format("lll")}`}</p>
+                    )} do ${moment(rally.expiryDate).format("lll")}`}</Typography>
                   );
                 })}
               </Grid>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
+import Recaptcha from 'react-google-invisible-recaptcha';
 import Container from '@material-ui/core/Container';
 import { Typography } from '@material-ui/core';
 import { Button } from '@material-ui/core';
@@ -13,6 +14,7 @@ import ErrorIcon from '@material-ui/icons/Error';
 
 import { signIn } from '../store/actions/authActions'
 import {asyncForEach} from '../utils/methods'
+
 
 
 const FormContainer = styled(Container)`
@@ -175,12 +177,16 @@ class SignIn extends Component {
         })
 
         if(!this.state.error.email && !this.state.error.password){
-            this.props.signIn({email: this.state.email, password: this.state.password})
+            this.recaptcha.execute();
+        }else{
+            this.recaptcha.reset();
         }
         
     }
 
-
+    onResolved = () => {
+        this.props.signIn({email: this.state.email, password: this.state.password})
+    }
 
     render() {
         const authError = this.props.auth.authError
@@ -222,8 +228,14 @@ class SignIn extends Component {
                                     
                                 </Button> 
                                 
-                            </StyledPaper>                 
+                            </StyledPaper>
+                            <Recaptcha
+                                ref={ ref => this.recaptcha = ref }
+                                sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                                onResolved={ this.onResolved }
+                            />              
                     </form>
+
                 </FormContainer>
             </div>
         )

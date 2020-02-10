@@ -16,6 +16,7 @@ import { Divider } from "@material-ui/core";
 import ErrorIcon from "@material-ui/icons/Error";
 import {asyncForEach} from '../../utils/methods'
 import { palette, uiPaths } from '../../utils/definitions';
+
 //import {labels} from '../strings/labels'
 
 const FormContainer = styled(Container)`
@@ -231,7 +232,6 @@ class SignUp extends Component {
   }
 
   onResolved = () => {
-    //console.log("sign up");
     this.props.signUp({email: this.state.email, password: this.state.password, token: this.recaptcha.getResponse()})
   }
 

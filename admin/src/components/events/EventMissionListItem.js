@@ -211,7 +211,7 @@ const EventMissionListItem = ({
                             key={amulet.itemModel._id}
                           >
                            <ListItemIcon>
-                             <img src={itemsPath + amulet.itemModel.imgSrc} style={{width: '2rem'}} />
+                             <img alt="" src={itemsPath + amulet.itemModel.imgSrc} style={{width: '2rem'}} />
                              </ListItemIcon>
 
                             <ListItemText
@@ -279,7 +279,7 @@ const EventMissionListItem = ({
                                     key={item.itemModel._id}
                                   >
                                    <ListItemIcon>
-                                     <img src={itemsPath + item.itemModel.imgSrc} style={{width: '2rem'}} />
+                                     <img alt="" src={itemsPath + item.itemModel.imgSrc} style={{width: '2rem'}} />
                                      </ListItemIcon>
 
                                     <ListItemText

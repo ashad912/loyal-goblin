@@ -281,10 +281,10 @@ class ForgotPassword extends Component {
           </form>
         </FormContainer>
         <Recaptcha
-                  ref={ ref => this.recaptcha = ref }
-                  sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
-                  onResolved={ this.onResolved }
-              />
+            ref={ ref => this.recaptcha = ref }
+            sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+            onResolved={ this.onResolved }
+        />
       </div>
     );
   }
