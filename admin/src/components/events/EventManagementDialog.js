@@ -167,7 +167,7 @@ class EventManagementDialog extends Component {
           if(this.state.isPermanent){
               this.handleExpiryDateChange(moment().add(200, "y"));
           }else{
-            this.handleExpiryDateChange(moment().add(2, "d"));
+            this.handleExpiryDateChange(moment(this.state.activationDate).add(2, "d"));
           }
       }
     );
