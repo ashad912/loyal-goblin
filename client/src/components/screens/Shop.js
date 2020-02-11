@@ -284,12 +284,13 @@ class Shop extends React.Component {
               activeUser.userPerks.products[modifiedProduct].hasOwnProperty(
                 "priceMod"
               )
-            ) {
+            ) 
+            {
               products[modifyIndex].price +=
-                activeUser.userPerks.products[modifiedProduct].priceMod;
+              activeUser.userPerks.products[modifiedProduct].priceMod;
               products[modifyIndex].priceModified =
                 activeUser.userPerks.products[modifiedProduct].priceMod > 0
-                  ? "#c10000"
+                  ? "inherit"
                   : "#28a52e";
               if (products[modifyIndex].price < 0) {
                 products[modifyIndex].price = 0.0;

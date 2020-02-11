@@ -10,7 +10,7 @@ const Attribute = props => {
   } else if (props.attributeModifier < 0) {
     fontColor = "rgb(178, 34, 34)";
   }
-
+  console.log(props.attributeModifier)
   return (
     <Box style={{ width: "100%" }}>
       <Grid container directon="column" >
@@ -26,7 +26,7 @@ const Attribute = props => {
           </Grid>
         </Grid>
         <Grid item xs={6} >
-          <Typography variant="h3" >
+          <Typography variant="h3" style={{color: fontColor}}>
             {props.attributeValue + props.attributeModifier}
           </Typography>
         </Grid>

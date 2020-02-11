@@ -8,7 +8,7 @@ const Footer = (props) => {
         <div style={{backgroundColor: 'black', padding: '0 1rem 0 1rem', display: 'flex'}} id="footer">
             <Divider/>
             <Typography style={{textAlign: 'left', color: 'white', flexGrow: '6'}} variant="body1">© 2019-2020 HHG Studio</Typography>
-            <Typography style={{textAlign: 'right', color: 'white', flexGrow: '6'}} variant="body1">v1.0.0-ALPHA</Typography>
+            <Typography style={{textAlign: 'right', color: 'white', flexGrow: '6'}} variant="body1">v1.0.1-ALPHA</Typography>
         </div>
     )
 }

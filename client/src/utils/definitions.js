@@ -38,10 +38,6 @@ Object.keys(iconPaths).forEach(path => {
 
 export const uiPaths = {...iconPaths}
 
-export const uiAppearancePaths = {
-    male: '/images/appearance/male-body.png',
-    female: '/images/appearance/female-body.png'
-}
 
 
 
