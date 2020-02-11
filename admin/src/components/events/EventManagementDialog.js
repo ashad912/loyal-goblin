@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import styled, {keyframes} from 'styled-components';
 import MomentUtils from "@date-io/moment";
 import moment from "moment";
 import "moment/locale/pl";
@@ -20,6 +21,19 @@ import {
 } from "@material-ui/core";
 import EventIcon from '@material-ui/icons/Event'
 
+const alertAnimation = keyframes`
+0%{
+  color: rgb(231, 0, 0)
+}
+100%{
+  color: rgba(231, 0, 0, 0.3);
+}
+
+`
+
+const DateErrorMessage = styled(Typography)`
+animation: ${alertAnimation} 1s ease-out infinite alternate;
+`
 
 moment.locale("pl");
 
@@ -45,8 +59,17 @@ class EventManagementDialog extends Component {
       .format("YYYY-MM-DDTHH:mm"),
     disableEventDateChange: false,
     awaitingRallyList: false,
-    collisionRallyList: []
+    collisionRallyList: [],
+    dateErrorClearingTimeout: null
   };
+
+
+  componentWillUnmount() {
+    if(this.state.dateErrorClearingTimeout){
+      clearTimeout(this.state.dateErrorClearingTimeout)
+    }
+  }
+  
 
   componentDidMount() {
     if (this.props.currentEventIsRally) {
@@ -237,7 +260,7 @@ class EventManagementDialog extends Component {
           )
         : null,
       expiryDate: moment(
-        this.state.changeExpiryDate
+        this.state.changeExpiryDate || this.props.copyMission
           ? this.state.expiryDate
           : this.props.currentEventDates.expiryDate
       )
@@ -296,6 +319,20 @@ class EventManagementDialog extends Component {
       default:
         break;
     }
+   
+    if(this.state.dateErrorClearingTimeout){
+      clearTimeout(this.state.dateErrorClearingTimeout)
+    }
+
+    const dateErrorClearingTimeout = setTimeout(() => {
+      this.setState({dateErrors: {
+        activationDate: ["", ""],
+        startDate: ["", ""],
+        expiryDate: ["", ""]
+      },})
+    }, 3500);
+
+    this.setState({dateErrorClearingTimeout})
 
     if (errors[type].every(error => error === "")) {
       return { value, errors };
@@ -360,6 +397,18 @@ class EventManagementDialog extends Component {
             <DialogContentText component="div" color="textPrimary">
               {this.props.copyMission ? (
                 <React.Fragment>
+                  {this.state.dateErrors.activationDate.map((dateError, index) => {
+                    return (
+                      <Grid item key={index}>
+                        <DateErrorMessage
+                          variant="caption"
+                          style={{ color: "rgb(206, 0, 0)" }}
+                        >
+                          {dateError}
+                        </DateErrorMessage>
+                      </Grid>
+                    );
+                  })}
                   {!this.state.isInstant && (
                     <DateTimePicker
                       cancelLabel={"Anuluj"}
@@ -446,12 +495,12 @@ class EventManagementDialog extends Component {
                   {this.state.dateErrors.startDate.map((dateError, index) => {
                     return (
                       <Grid item key={index}>
-                        <Typography
+                        <DateErrorMessage
                           variant="caption"
                           style={{ color: "rgb(206, 0, 0)" }}
                         >
                           {dateError}
-                        </Typography>
+                        </DateErrorMessage>
                       </Grid>
                     );
                   })}
@@ -494,12 +543,12 @@ class EventManagementDialog extends Component {
                   {this.state.dateErrors.expiryDate.map((dateError, index) => {
                     return (
                       <Grid item key={index}>
-                        <Typography
+                        <DateErrorMessage
                           variant="caption"
                           style={{ color: "rgb(206, 0, 0)" }}
                         >
                           {dateError}
-                        </Typography>
+                        </DateErrorMessage>
                       </Grid>
                     );
                   })}
