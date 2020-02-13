@@ -114,25 +114,30 @@ const StatsDialog = props => {
                 <Divider/>
     
                 {props.profile.statistics.amuletCounters.map((amuletCounter, index) => {
-                    return (
-                        <React.Fragment key={amuletCounter._id}>
-                            <ListItem style={{paddingTop: '0.75rem', paddingBottom: '0.75rem'}}>
-                                        
-                                <Grid container>
-                                <Grid item xs={11} style={{display: 'flex', alignItems: 'center'}}>
-                                    <Typography>Wydane</Typography>
-                                    <img src={itemsPath + amuletCounter.amulet.imgSrc} style={{width: '20px', height: '20px', padding: '0 0.2rem 0 0.2rem'}}/>
-                                </Grid>
-                                <Grid item xs={1}>
-                                    <Typography style={{width: '100%', fontWeight: 'bold'}}>{amuletCounter.counter}</Typography>
-                                </Grid>
-                                
-                                </Grid>
-                                        
-                            </ListItem>
-                             <Divider/>
-                        </React.Fragment>
-                    );
+                    if(amuletCounter.amulet){
+
+                        return (
+                            <React.Fragment key={amuletCounter._id}>
+                                <ListItem style={{paddingTop: '0.75rem', paddingBottom: '0.75rem'}}>
+                                            
+                                    <Grid container>
+                                    <Grid item xs={11} style={{display: 'flex', alignItems: 'center'}}>
+                                        <Typography>Wydane</Typography>
+                                        <img src={itemsPath + amuletCounter.amulet.imgSrc} style={{width: '20px', height: '20px', padding: '0 0.2rem 0 0.2rem'}}/>
+                                    </Grid>
+                                    <Grid item xs={1}>
+                                        <Typography style={{width: '100%', fontWeight: 'bold'}}>{amuletCounter.counter}</Typography>
+                                    </Grid>
+                                    
+                                    </Grid>
+                                            
+                                </ListItem>
+                                 <Divider/>
+                            </React.Fragment>
+                        )
+                    }else{
+                        return null
+                    }
                 })}
             </List>
 
