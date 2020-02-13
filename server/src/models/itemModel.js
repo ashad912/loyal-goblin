@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 import { asyncForEach } from '../utils/methods'
-import validator from "validator";
 import { Mission } from "./mission";
 import { Rally } from '../models/rally';
 import { Product } from '../models/product';
 import { Item } from '../models/item'
+import { User } from '../models/user'
 
 export const itemModelTypes = [
   "amulet",
@@ -239,6 +239,18 @@ ItemModelSchema.pre('remove', async function (next){
     {
       $pull: {
         'awards':  {'itemModel': itemModel._id},
+      }
+    }
+  )
+
+  //clear stats
+  await User.updateMany(
+    {
+      'statistics.amuletCounters': {$elemMatch: {'amulet': itemModel._id}},
+    },
+    {
+      $pull: {
+        'statistics.amuletCounters':  {'amulet': itemModel._id},
       }
     }
   )
