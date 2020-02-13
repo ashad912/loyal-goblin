@@ -41,7 +41,6 @@ import {
   usersPath,
   classThemes,
   uiPaths,
-  uiAppearancePaths,
   palette
 } from "../../utils/definitions";
 
@@ -54,6 +53,8 @@ import {
 } from "../../store/actions/profileActions";
 import { authCheck } from "../../store/actions/authActions";
 import { classLabels } from "../../utils/labels";
+import maleBody from '../../assets/profile/male-body.png';
+import femaleBody from '../../assets/profile/female-body.png';
 
 const FabIcon = styled.img`
   width: 2rem;
@@ -84,295 +85,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const createTempPlayer = (attributes, bag, equipped) => {
-  return {
-    firstName: "Mirosław",
-    lastName: "Szczepaniak",
-    level: 8,
-    ...attributes,
-    equipment: bag,
-    equipped,
-    currentExp: 1300,
-    currentExpBasis: 2100,
-    nextLevelAtExp: 3400
-  };
-};
 
-const createTempBag = () => {
-  return [
-    {
-      _id: 1,
-      owner: 11111,
-      itemModel: {
-        _id: 101,
-        type: "amulet",
-        name: "Diament",
-        fluff: "Najlepszy przyjaciel dziewyczyny",
-        imgSrc: "diamond-amulet.png",
-        perks: []
-      }
-    },
-    {
-      _id: 2,
-      owner: 11111,
-      itemModel: {
-        _id: 101,
-        type: "amulet",
-        name: "Diament",
-        fluff: "Najlepszy przyjaciel dziewyczyny",
-        imgSrc: "diamond-amulet.png",
-        perks: []
-      }
-    },
-    {
-      _id: 3,
-      owner: 11111,
 
-      itemModel: {
-        _id: 102,
-        type: "amulet",
-        name: "Perła",
-        fluff: "Perła prosto z lodówki, znaczy z małży",
-        imgSrc: "pearl-amulet.png",
-        perks: []
-      }
-    },
-    {
-      _id: 4,
-      owner: 11111,
-
-      itemModel: {
-        _id: 201,
-        type: "weapon",
-        name: "Krótki miecz",
-        fluff: "Przynajmniej nie masz kompleksów",
-        imgSrc: "short-sword.png",
-        perks: []
-      }
-    },
-    {
-      _id: 14,
-      owner: 11111,
-
-      itemModel: {
-        _id: 202,
-        type: "weapon",
-        name: "Wielki miecz",
-        fluff: "Zdecydowanie masz kompleksy",
-        imgSrc: "short-sword.png",
-        class: "warrior",
-        twoHanded: true,
-        perks: [
-          {
-            _id: 1,
-            perkType: "attr-strength",
-            target: undefined,
-            time: [],
-            value: "+1"
-          }
-        ]
-      }
-    },
-    {
-      _id: 20,
-      owner: 11111,
-
-      itemModel: {
-        _id: 206,
-        type: "weapon",
-        name: "Żelazna tarcza",
-        fluff: "Twarda na zewnątrz, miękka w środku. Zupełnie jak Ty <3",
-        imgSrc: "iron-shield.png",
-        class: "warrior",
-        perks: [
-          {
-            _id: 1,
-            perkType: "attr-endurance",
-            target: undefined,
-            time: [],
-            value: "-1"
-          }
-        ]
-      }
-    },
-    {
-      _id: 5,
-      owner: 11111,
-
-      itemModel: {
-        _id: 301,
-        type: "chest",
-        name: "Skórzana kurta",
-        fluff: "Lale za takimi szaleją",
-        imgSrc: "leather-jerkin.png",
-        perks: []
-      }
-    },
-    {
-      _id: 6,
-      owner: 11111,
-
-      itemModel: {
-        _id: 401,
-        type: "legs",
-        name: "Lniane spodnie",
-        fluff: "Zwykłe spodnie, czego jeszcze chcesz?",
-        imgSrc: "linen-trousers.png",
-        perks: []
-      }
-    },
-    {
-      _id: 7,
-      owner: 11111,
-
-      itemModel: {
-        _id: 501,
-        type: "feet",
-        name: "Wysokie buty",
-        fluff: "Skórzane, wypastowane, lśniące",
-        imgSrc: "high-boots.png",
-        perks: []
-      }
-    },
-    {
-      _id: 8,
-      owner: 11111,
-
-      itemModel: {
-        _id: 601,
-        type: "head",
-        name: "Czapka z piórkiem",
-        fluff: "Wesoła kompaniaaaa",
-        imgSrc: "feathered-hat.png",
-        perks: []
-      }
-    },
-    {
-      _id: 9,
-      owner: 11111,
-
-      itemModel: {
-        _id: 602,
-        type: "head",
-        name: "Kaptur czarodzieja",
-        fluff: "Kiedyś nosił go czarodziej. Już nie nosi.",
-        imgSrc: "wizard-coul.png",
-        perks: [
-          {
-            perkType: "experience",
-            target: undefined,
-            time: [
-              {
-                _id: 1,
-                hoursFlag: false,
-                lengthInHours: 24,
-                startDay: 5,
-                startHour: 12
-              }
-            ],
-            value: "+10%"
-          },
-          {
-            perkType: "experience",
-            target: undefined,
-            time: [
-              {
-                _id: 2,
-                hoursFlag: false,
-                lengthInHours: 24,
-                startDay: 6,
-                startHour: 12
-              }
-            ],
-            value: "+20%"
-          }
-        ]
-      }
-    },
-    {
-      _id: 10,
-      owner: 11111,
-
-      itemModel: {
-        _id: 701,
-        type: "ring",
-        name: "Pierścień siły",
-        fluff: "Całuj mój sygnet potęgi",
-        imgSrc: "strength-ring.png",
-        perks: [
-          {
-            _id: 1,
-            perkType: "disc-product",
-            target: { name: "Wóda2" },
-            time: [
-              {
-                hoursFlag: true,
-                lengthInHours: 2,
-                startDay: 1,
-                startHour: 18
-              },
-              { hoursFlag: true, lengthInHours: 5, startDay: 3, startHour: 7 }
-            ],
-            value: "-15%"
-          }
-        ]
-      }
-    },
-    {
-      _id: 1321,
-      owner: 11111,
-      itemModel: {
-        _id: 801,
-        type: "scroll",
-        name: "Zwój małej zniżki na Wóde",
-        fluff: "Opis swoju",
-        imgSrc: "scroll.png",
-        perks: [
-          {
-            _id: 23143,
-            perkType: "disc-product",
-            target: "1",
-            value: "-5%",
-            time: []
-          }
-        ]
-      }
-    },
-    {
-      _id: 3423321,
-      owner: 11111,
-      itemModel: {
-        _id: 801,
-        type: "scroll",
-        name: "Zwój małej zniżki na Wóde",
-        fluff: "Opis swoju",
-        imgSrc: "scroll.png",
-        perks: [
-          {
-            _id: 23143,
-            perkType: "disc-product",
-            target: "1",
-            value: "-5%",
-            time: []
-          }
-        ]
-      }
-    }
-  ];
-};
-
-const createTempEquipped = () => {
-  return {
-    head: 9,
-    chest: 5,
-    weaponRight: 4,
-    weaponLeft: 20,
-    legs: 6,
-    feet: 7,
-    ringRight: 10,
-    scroll: null
-  };
-};
 
 const Profile = props => {
   const history = useHistory();
@@ -739,7 +453,7 @@ const Profile = props => {
         <Paper style={{ width: "100%" }} className={classes.avatarCard}>
           {/* body */}
           <img
-            src={uiAppearancePaths[props.auth.profile.sex]}
+            src={props.auth.profile.sex === 'female' ? femaleBody : maleBody}
             className={classes.avatarImage}
           />
           {/* legs */}

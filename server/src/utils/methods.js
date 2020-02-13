@@ -177,7 +177,7 @@ export const designateUserPerks = async user => {
         return Math.trunc(100 * value) / 100;
       };
 
-      const countValue = (source, perkValue, isCurrency) => {
+      const countValue = (source, perkValue, isCurrency, onlyDiscount) => {
         let result = 0;
 
         if (perkValue.includes("%")) {
@@ -263,13 +263,13 @@ export const designateUserPerks = async user => {
                   break;
                 case "disc-product":
                   const product = products.find(product => {
-                    return product._id.toString() === perk.target['disc-product'];
+                    return product._id.toString() === perk.target['disc-product']._id.toString();
                   });
 
                   if (product) {
-                    const priceMod = countValue(
+                    const priceMod = (-1) * countValue( //to get disocunt
                       product.price,
-                      perk.value,
+                      perk.value, 
                       true
                     );
                     if (!modelPerks.products.hasOwnProperty(product._id)) {
@@ -290,9 +290,9 @@ export const designateUserPerks = async user => {
 
                   for (let i = 0; i < productsInCategory.length; i++) {
                     const product = productsInCategory[i];
-                    const priceMod = countValue(
+                    const priceMod = (-1) * countValue( //to get disocunt
                       product.price,
-                      perk.value,
+                      perk.value , 
                       true
                     );
                     if (!modelPerks.products.hasOwnProperty(product._id)) {

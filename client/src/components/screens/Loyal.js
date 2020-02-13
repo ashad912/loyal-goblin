@@ -300,7 +300,7 @@ class Loyal extends Component {
                     )}
                 </LoadedTorpedoContainer>
                 <object data={boardsvg} onLoad={this.handleLoad} type="image/svg+xml"
-                id="boardsvg" ref='boardsvg' width="100%" height="100%">Board</object> 
+                id="boardsvg" ref='boardsvg' width="100%" height="100%" style={{pointerEvents: 'none'}}>Board</object> 
                 
                 {this.state.seconds === 0 && (
                     <React.Fragment>
