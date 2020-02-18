@@ -429,7 +429,7 @@ if(eventId){
                   margin: "0 auto"
                 }}
               >
-                {this.state.events.map((event, index) => {
+                {this.state.events.reverse().map((event, index) => {
                   return event.hasOwnProperty("level") && event.level ? (
                     <EventMissionListItem
                       key={event._id}

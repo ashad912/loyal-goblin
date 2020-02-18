@@ -201,7 +201,7 @@ const AdminBarmans = () => {
       <List
         style={{ width: "50%", margin: "3rem auto", border: "1px solid grey" }}
       >
-        {barmans.map(barman => {
+        {barmans.reverse().map(barman => {
           return (
             <ListItem key={barman._id}>
               <ListItemText primary={barman.userName} />

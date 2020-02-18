@@ -252,7 +252,7 @@ const AdminProducts = () => {
                   margin: "0 auto"
                 }}
               >
-              {filteredProducts.map((product, index) => {
+              {filteredProducts.reverse().map((product, index) => {
                 return (
                   <React.Fragment key={product._id}>
                   <ProductListItem

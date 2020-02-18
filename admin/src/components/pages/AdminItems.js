@@ -258,7 +258,7 @@ const AdminItems = () => {
                   margin: "0 auto"
                 }}
               >
-              {filteredItems.map((item, index) => {
+              {filteredItems.reverse().map((item, index) => {
                 return (
                   <React.Fragment key={item._id}>
                   <ItemListItem
