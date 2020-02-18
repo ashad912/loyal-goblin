@@ -272,13 +272,24 @@ export const designateUserPerks = async user => {
                       perk.value, 
                       true
                     );
-                    if (!modelPerks.products.hasOwnProperty(product._id)) {
-                      modelPerks.products[product._id] = { priceMod: priceMod };
-                    } else if (!modelPerks.products[product._id].hasOwnProperty("priceMod")) {
-                      modelPerks.products[product._id]["priceMod"] = priceMod;
-                    } else {
-                      modelPerks.products[product._id]["priceMod"] += priceMod;
+                    if(equippedItems[itemKey].itemModel.type === "scroll"){
+                      if (!modelPerks.products.hasOwnProperty(product._id)) {
+                        modelPerks.products[product._id] = {priceMod: {first: priceMod, standard: 0 }};
+                      } else if (!modelPerks.products[product._id].hasOwnProperty("priceMod")) {
+                        modelPerks.products[product._id].priceMod.first = priceMod;
+                      } else {
+                        modelPerks.products[product._id].priceMod.first += priceMod;
+                      }
+                    }else{
+                      if (!modelPerks.products.hasOwnProperty(product._id)) {
+                        modelPerks.products[product._id] = {priceMod: {first: 0, standard: priceMod }};
+                      } else if (!modelPerks.products[product._id].hasOwnProperty("priceMod")) {
+                        modelPerks.products[product._id].priceMod.standard = priceMod;
+                      } else {
+                        modelPerks.products[product._id].priceMod.standard += priceMod;
+                      }
                     }
+                    
                   }
 
                   break;
@@ -292,15 +303,25 @@ export const designateUserPerks = async user => {
                     const product = productsInCategory[i];
                     const priceMod = (-1) * countValue( //to get disocunt
                       product.price,
-                      perk.value , 
+                      perk.value, 
                       true
                     );
-                    if (!modelPerks.products.hasOwnProperty(product._id)) {
-                      modelPerks.products[product._id] = { priceMod: priceMod };
-                    } else if (!modelPerks.products[product._id].hasOwnProperty("priceMod")) {
-                      modelPerks.products[product._id]["priceMod"] = priceMod;
-                    } else {
-                      modelPerks.products[product._id]["priceMod"] += priceMod;
+                    if(equippedItems[itemKey].itemModel.type === "scroll"){
+                      if (!modelPerks.products.hasOwnProperty(product._id)) {
+                        modelPerks.products[product._id] = {priceMod: {first: priceMod, standard: 0 }};
+                      } else if (!modelPerks.products[product._id].hasOwnProperty("priceMod")) {
+                        modelPerks.products[product._id].priceMod.first = priceMod;
+                      } else {
+                        modelPerks.products[product._id].priceMod.first += priceMod;
+                      }
+                    }else{
+                      if (!modelPerks.products.hasOwnProperty(product._id)) {
+                        modelPerks.products[product._id] = {priceMod: {first: 0, standard: priceMod }};
+                      } else if (!modelPerks.products[product._id].hasOwnProperty("priceMod")) {
+                        modelPerks.products[product._id].priceMod.standard = priceMod;
+                      } else {
+                        modelPerks.products[product._id].priceMod.standard += priceMod;
+                      }
                     }
                   }
 
@@ -547,7 +568,7 @@ export const removeMissionInstanceIfExits = (id) => {
 }
 
 export const validatePartyAndLeader = (user, inShop) => {
-  return new Promise (async (resolve, reject)=> {
+  return new Promise (async (resolve, reject) => {
     try{
       
       const party = inShop !== undefined
