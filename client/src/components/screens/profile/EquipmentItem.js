@@ -93,6 +93,7 @@ const EquipmentListItem = props => {
       ? item.instancesIds.length
       : null;
   return (
+    item ? 
     <ListItem
       button={props.itemCategory !== "amulet" && props.itemCategory !== "torpedo"}
       alignItems="flex-start"
@@ -252,7 +253,7 @@ const EquipmentListItem = props => {
           <ListItemText primary="Wyrzuć" />
         </StyledMenuItem>
       </StyledMenu>
-    </ListItem>
+    </ListItem> : null
   );
 };
 
