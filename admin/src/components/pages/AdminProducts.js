@@ -61,15 +61,18 @@ const AdminProducts = () => {
   };
 
   React.useEffect(() => {
-    let tempItemsList = applyStatusFilter(statusFilter);
+    let tempProductsList = applyStatusFilter(statusFilter);
     if (nameFilter.trim().length > 0) {
-      tempItemsList = tempItemsList.filter(
-        item => item.name.search(nameFilter) !== -1
-      );
-      setFilteredProducts(tempItemsList)
+      
+      tempProductsList = tempProductsList.filter( (product) => {
+        const reg = new RegExp(nameFilter, 'gi')
+        return product.hasOwnProperty('name') && product.name.match(reg)
+      });
+
+      setFilteredProducts(tempProductsList)
     }else{
       
-      setFilteredProducts(tempItemsList);
+      setFilteredProducts(tempProductsList);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nameFilter]);

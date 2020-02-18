@@ -463,7 +463,13 @@ UserSchema.pre('save', async function(next){//middleware, working with static Us
 //OK!
 UserSchema.pre('remove', async function(next){
     const user = this
-    await Item.deleteMany({owner: user._id})
+
+    const items = await Item.find({owner: user._id}) //if deleteMany runs remove middleware? -> NO
+
+    await asyncForEach((items), async item => {
+        await item.remove() //running 'pre remove' instance middleware
+    })
+    //await Item.deleteMany({owner: user._id})
    
 
     const party = await Party.findById(user.party)

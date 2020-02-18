@@ -13,7 +13,7 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import AddCircleIcon from "@material-ui/icons/AddCircle";
+import CreateIcon from "@material-ui/icons/Create";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import { MuiPickersUtilsProvider} from "@material-ui/pickers";
@@ -58,8 +58,9 @@ const StyledFormControl = styled(FormControl)`
   min-width: 10rem;
 `
 
-const AddIcon = styled(AddCircleIcon)`
+const StyledCreateIcon = styled(CreateIcon)`
   width: 1.5rem;
+  cursor: pointer;
   transition: transform 0.2s ease-in-out;
   transform: scale(1.8);
   &:active {
@@ -415,7 +416,7 @@ class ProductCreator extends Component {
            <Grid item xs={8} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
           
             <Typography variant="h6">Nagrody produktu</Typography>
-            <AddIcon
+            <StyledCreateIcon
                 style={{marginRight: '0.5rem'}}
                 onClick={this.handleToggleItemsModal}
                 color="primary"

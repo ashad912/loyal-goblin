@@ -32,4 +32,19 @@ const ProductSchema = new mongoose.Schema({ //instance of ItemModel
 })
 
 
+ProductSchema.pre('remove', async function(next){
+    const product = this
+
+
+    await ItemModel.updateMany(
+        {perks: { $elemMatch: {'target.disc-product': product._id}}}, 
+        {$pull: {
+            perks: {'target.disc-product': product._id}
+        }}
+    )
+
+    next()
+})
+
 export const Product = new mongoose.model('product', ProductSchema)
+

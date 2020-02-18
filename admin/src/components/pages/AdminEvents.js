@@ -313,7 +313,11 @@ if(eventId){
 
     if (this.state.nameFilter.length > 0) {
       //console.log(tempEvents)
-      tempEvents = tempEvents.filter(event => event.title.toLowerCase().search(this.state.nameFilter) !== -1);
+      tempEvents = tempEvents.filter( (event) => {
+        const reg = new RegExp(this.state.nameFilter, 'gi')
+        return event.hasOwnProperty('title') && event.title.match(reg)
+      });
+      //tempEvents = tempEvents.filter(event => event.title.toLowerCase().search(this.state.nameFilter) !== -1);
     }
     this.setState({ events: [...tempEvents] });
   };

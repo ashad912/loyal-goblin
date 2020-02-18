@@ -70,9 +70,10 @@ const AdminItems = () => {
   React.useEffect(() => {
     let tempItemsList = applyStatusFilter(statusFilter);
     if (nameFilter.trim().length > 0) {
-      tempItemsList = tempItemsList.filter(
-        item => item.name.search(nameFilter) !== -1
-      );
+      tempItemsList = tempItemsList.filter( (item) => {
+        const reg = new RegExp(nameFilter, 'gi')
+        return item.hasOwnProperty('name') && item.name.match(reg)
+      });
       setFilteredItems(tempItemsList)
     }else{
       
