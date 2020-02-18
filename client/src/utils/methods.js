@@ -90,7 +90,7 @@ export const getTarget = (perkType, target) => {
   if(targetPerks.includes(perkType)){
     switch(perkType) {
       case 'disc-product':
-        return target['disc-product'].name
+        return target['disc-product'] && target['disc-product'].name
       case 'disc-category':
         return categoryLabels[target['disc-category']]
       case 'disc-rent':
