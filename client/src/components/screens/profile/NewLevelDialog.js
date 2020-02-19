@@ -1,11 +1,9 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -42,10 +40,10 @@ const NewLevelDialog = props => {
         <FormControl component="fieldset" >
         <FormLabel component="legend">Teraz czas wybrać, który atrybut rozwijasz:</FormLabel>
         <RadioGroup  name="attribute-choice" value={value} onChange={handleChange}>
-          <FormControlLabel value="strength" control={<Radio />} label="Siła" />
-          <FormControlLabel value="dexterity" control={<Radio />} label="Zręczność" />
-          <FormControlLabel value="magic" control={<Radio />} label="Magia" />
-          <FormControlLabel value="endurance" control={<Radio />} label="Wytrzymałość" />
+          <FormControlLabel value="strength" control={<Radio />} label={`Siła [${props.attributes.strength}]`} />
+          <FormControlLabel value="dexterity" control={<Radio />} label={`Zręczność [${props.attributes.dexterity}]`} />
+          <FormControlLabel value="magic" control={<Radio />} label={`Magia [${props.attributes.magic}]`} />
+          <FormControlLabel value="endurance" control={<Radio />} label={`Wytrzymałość [${props.attributes.endurance}]`} />
         </RadioGroup>
       </FormControl>
       </DialogContent>

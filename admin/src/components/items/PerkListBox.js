@@ -32,6 +32,7 @@ const HeadersContainer = styled.div`
 
 const PerkListBox = (props) => {
 
+  const perks = props.perks
     return(
         <Grid item xs={12}>
               <StyledPaper elevation={0}>
@@ -58,7 +59,7 @@ const PerkListBox = (props) => {
                   </HeadersContainer>}
                   <List dense style={{maxHeight: '8rem', overflow: 'auto', width: '100%'}}>
                     
-                      {props.perks.map((perk, index) => {
+                      {perks.map((perk, index) => {
                  
                           return(
                             <StyledBox border={1} borderColor="primary.main">
@@ -77,7 +78,7 @@ const PerkListBox = (props) => {
                                   <Grid item xs={props.timeWidth}>
                                     {perk.time.length ? (
                                       <React.Fragment>
-                                        {perk.time.slice().reverse().map((period)=>(
+                                        {perk.time.map((period)=>(
                                         <Grid container style={{justifyContent: 'center'}}>
                                           <Grid item>
                                             {`${dayLabels[period.startDay]}`}

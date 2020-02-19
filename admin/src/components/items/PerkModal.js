@@ -72,7 +72,7 @@ class PerkModal extends React.Component {
   }
 
   componentDidMount = () => {
-    
+   
   }
 
   componentDidUpdate = (prevProps) => {
@@ -86,6 +86,8 @@ class PerkModal extends React.Component {
       }else{
         timeActive = false
       }
+      
+      
       if(perk.perkType === null){
         perk.perkType = perkTypes[0]
       }
@@ -93,6 +95,16 @@ class PerkModal extends React.Component {
       this.setState({
         perk: this.props.perkToModal,
         timeActive: timeActive
+      }, () => {
+        if(perk.perkType === 'disc-product'){
+          this.setState({
+            perk: {
+              ...this.state.perk,
+              target: setTarget(this.state.perk.target, 'disc-product', this.props.products.find(product => product._id === perk.target['disc-product']._id))
+            }
+          })
+          
+        }
       })
     }
   }

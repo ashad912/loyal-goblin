@@ -52,7 +52,7 @@ const AmuletsModal = props => {
           <div style={{display: 'flex', overflow: 'hidden'}}>
             <div style={{ borderRight: "1px solid grey", flexBasis: '40%', overflow: 'auto'}}>
               <List dense >
-                {props.amuletList.map(amulet => {
+                {props.amuletList.filter(amulet => amulet.class === 'any').map(amulet => {
                   return (
                     <ListItem key={amulet.itemModel}>
                       <ListItemAvatar>

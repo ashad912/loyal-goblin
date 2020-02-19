@@ -206,7 +206,7 @@ const AdminItems = () => {
 
           <Paper
             style={{
-              width: "70%",
+              width: "90%",
               margin: "1rem auto",
               padding: "1rem",
               boxSizing: "border-box"
@@ -253,7 +253,7 @@ const AdminItems = () => {
             {filteredItems.length > 0 && (
               <List
                 style={{
-                  width: "70%",
+                  width: "90%",
                   border: "1px solid grey",
                   margin: "0 auto"
                 }}
@@ -284,7 +284,7 @@ const AdminItems = () => {
             <DialogContent>
               <DialogContentText >
                       <span>Czy na pewno chcesz usunąć przedmiot {itemToDelete.name}?</span>< br/>
-                      Przedmiot zostanie usunięty z misji, rajdów, produktów oraz ekwipunku wszystkich użytkowników.
+                      Przedmiot zostanie usunięty z misji, rajdów, produktów oraz ekwipunku i statystyk wszystkich użytkowników.
               </DialogContentText>
             </DialogContent>
             <DialogActions>

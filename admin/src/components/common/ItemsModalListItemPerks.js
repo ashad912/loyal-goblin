@@ -36,15 +36,21 @@ const ItemsModalListItemPerks = ({perk}) => {
     <ListItem style={{fontSize: '0.8rem'}}>
       <Grid container spacing={1}>
         <Grid item>
-        <Typography style={{fontSize: '0.8rem'}}>
-          {perkLabels[perk.perkType]}{" "}
-          {getTarget(perk.perkType, perk.target)}
-        </Typography>
+          <Typography style={{fontSize: '0.8rem'}}>
+            {perkLabels[perk.perkType]}{" "}
+            {getTarget(perk.perkType, perk.target)}
+          </Typography>
         </Grid>
-        <Grid item>{getValue(perk.perkType, perk.value)}</Grid>
+        <Grid item>
+          <Typography style={{fontSize: '0.8rem'}}>
+            {getValue(perk.perkType, perk.value)}
+          </Typography>
+        </Grid>
         {hasTime && (
           <Grid item container direction="column">
-            {timeText}
+            <Typography style={{fontSize: '0.8rem'}}>
+              {timeText}
+            </Typography>
           </Grid>
         )}
       </Grid>

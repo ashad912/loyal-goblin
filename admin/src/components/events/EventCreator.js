@@ -998,7 +998,7 @@ class EventCreator extends Component {
           <Grid container spacing={2}>
             {this.state.dirtyFields.iconView && this.state.validationErrors.iconView && 
             <Grid item>
-  <Typography style={{ color: "rgb(206, 0, 0)" }}>{this.state.validationErrors.iconView}</Typography>
+              <Typography style={{ color: "rgb(206, 0, 0)" }}>{this.state.validationErrors.iconView}</Typography>
             </Grid>
             }
             <Grid item>

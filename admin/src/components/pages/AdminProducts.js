@@ -200,7 +200,7 @@ const AdminProducts = () => {
 
           <Paper
             style={{
-              width: "70%",
+              width: "90%",
               margin: "1rem auto",
               padding: "1rem",
               boxSizing: "border-box"
@@ -247,7 +247,7 @@ const AdminProducts = () => {
             {filteredProducts.length > 0 && (
               <List
                 style={{
-                  width: "70%",
+                  width: "90%",
                   border: "1px solid grey",
                   margin: "0 auto"
                 }}
@@ -278,7 +278,7 @@ const AdminProducts = () => {
             <DialogContent>
               <DialogContentText >
                       <span>Czy na pewno chcesz usunąć produkt {productToDelete.name}?</span>< br/>
-                      Produkt zostanie usunięty ze sklepu.
+                      Produkt zostanie usunięty ze sklepu oraz z powiązanych zniżek przedmiotów!
               </DialogContentText>
             </DialogContent>
             <DialogActions>

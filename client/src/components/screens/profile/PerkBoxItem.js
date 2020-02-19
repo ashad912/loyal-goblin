@@ -28,7 +28,7 @@ const PerkBoxItem = ({ perk, isFirst }) => {
   if (perk.time.length > 0) {
     secondaryText = (
       <div>
-        {perk.time.map(time => {
+        {perk.time.slice().reverse().map(time => {
           let timeString = "";
           timeString += dayLabels[time.startDay];
           if (time.startHour !== 12 && time.lengthInHours !== 24) {

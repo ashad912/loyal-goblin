@@ -85,6 +85,7 @@ class ItemCreator extends Component {
     appearanceView: '',
     loyalAward: false,
     class: 'any',
+    classItem: false,
     modifyingIndex: null,
     showPerkModal: false,
     perks: [],
@@ -107,6 +108,7 @@ class ItemCreator extends Component {
         description: item.description,
         type: item.type ? (item.type) : (Object.keys(itemTypeLabels)[0]),
         class: item.class,
+        classItem: item.class !== 'any' ? true : false,
         loyalAward: item.loyalAward ? true : false,
         perks: item.perks,
         iconView: item.imgSrc ? (itemsPath + item.imgSrc) : null, 
@@ -200,20 +202,21 @@ class ItemCreator extends Component {
   }
   handleTogglePerkModal = async e => {
 
-    const products = !this.state.showPerkModal && !this.state.products.length ? await getProducts({onlyNames: true}) : []
+    const products = !this.state.showPerkModal && !this.state.products.length ? await getProducts({onlyNames: true}) : this.state.products
 
-    this.setState(prevState => {
-      return { 
-        showPerkModal: !prevState.showPerkModal,
-        modifyingIndex: prevState.showPerkModal ? null : prevState.modifyingIndex
-       };
+    
+    this.setState({
+      products: products    
     }, () => {
-      if(products.length){
-        this.setState({
-          products: products
-        })
-      }
-    });
+      this.setState(prevState => {
+        return { 
+          showPerkModal: !prevState.showPerkModal,
+          modifyingIndex: prevState.showPerkModal ? null : prevState.modifyingIndex
+        };
+      })
+    })
+    
+    
   };
 
   handleIconChange = e => {
@@ -290,9 +293,13 @@ class ItemCreator extends Component {
 
  
   updatePerks = (perk) => {
+
+    perk.time.sort((a, b) =>  a.startDay - b.startDay).sort((a, b) =>  a.startHour - b.startHour)
     
     if(this.state.modifyingIndex != null){
       const perks = this.state.perks
+
+      
 
       perks[this.state.modifyingIndex] = perk
 
@@ -305,7 +312,7 @@ class ItemCreator extends Component {
       })
     }else{
       this.setState({
-        perks: [...this.state.perks, perk]
+        perks: [perk, ...this.state.perks]
       }, () => {
         this.handleTogglePerkModal()
       })

@@ -258,7 +258,7 @@ const PartyCreationDialog = props => {
           </Button>
         )}
         <Button variant="contained" onClick={props.handleClose}>
-          Zamknij
+          Zrobione!
         </Button>
       </DialogActions>
       {showScanner && (

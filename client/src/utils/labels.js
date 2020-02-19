@@ -43,7 +43,8 @@ export const categoryLabels = {
   drinks: 'Drinki',
   'alco-free': 'Bezalkoholowe',
   beers: 'Piwa',
-  food: 'Jedzenie'
+  food: 'Jedzenie',
+  others: 'Inne',
 }
 
 export const itemTypeLabels = {

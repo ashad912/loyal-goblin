@@ -772,6 +772,7 @@ const Profile = props => {
         confirmLevel={attribute => props.confirmLevel(attribute)}
         userLevel={userLevel}
         levelNotifications={props.auth.profile.levelNotifications}
+        attributes={props.auth.profile.attributes}
       />
 
       <NewRallyAwardsDialog

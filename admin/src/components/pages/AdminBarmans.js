@@ -199,7 +199,7 @@ const AdminBarmans = () => {
       {barmans.length > 0 && 
       
       <List
-        style={{ width: "50%", margin: "3rem auto", border: "1px solid grey" }}
+        style={{ width: "90%", margin: "3rem auto", border: "1px solid grey" }}
       >
         {barmans.reverse().map(barman => {
           return (

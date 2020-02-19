@@ -166,7 +166,7 @@ const ItemsModal = props => {
                   <Grid item xs={6}>
                     <FormControl component="fieldset">
                       <FormLabel component="category-filter">
-                        Kategorie:
+                        <Typography>Kategorie:</Typography>
                       </FormLabel>
                       <FormGroup>
                         {Object.keys(categoryFilter).map(category => {

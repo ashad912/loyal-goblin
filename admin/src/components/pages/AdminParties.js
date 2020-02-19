@@ -96,7 +96,7 @@ const AdminParties = () => {
 
     return (
         <Grid container direction="column" alignItems="center">
-            <Grid item style={{ width: "80%" }}>
+            <Grid item style={{ width: "90%" }}>
             <Paper
               style={{
                 width: "100%",

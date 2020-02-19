@@ -99,7 +99,8 @@ export const itemTypeLabelsPlural = {
     drinks: 'Drinki',
     'alco-free': 'Bezalkoholowe',
     beers: 'Piwa',
-    food: 'Jedzenie'
+    food: 'Jedzenie',
+    others: 'Inne'
 }
 
 export const categoryLabelsSpecifed = {
@@ -107,5 +108,6 @@ export const categoryLabelsSpecifed = {
   drinks: 'Drinki',
   'alco-free': 'Bezalkoholowe',
   beers: 'Piwa',
-  food: 'Jedzenie'
+  food: 'Jedzenie',
+  others: 'Inne'
 }
