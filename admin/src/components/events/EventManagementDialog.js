@@ -51,11 +51,11 @@ class EventManagementDialog extends Component {
     },
     raidIsInstantStart: false,
     startDate: moment()
-      .add(1, "d")
+      .add(2, "M")
       .format("YYYY-MM-DDTHH:mm"),
     isPermanent: false,
     expiryDate: moment()
-      .add(2, "d")
+      .add(3, "M")
       .format("YYYY-MM-DDTHH:mm"),
     disableEventDateChange: false,
     awaitingRallyList: false,
@@ -190,7 +190,7 @@ class EventManagementDialog extends Component {
           if(this.state.isPermanent){
               this.handleExpiryDateChange(moment().add(200, "y"));
           }else{
-            this.handleExpiryDateChange(moment(this.state.activationDate).add(2, "d"));
+            this.handleExpiryDateChange(moment(this.state.activationDate).add(3, "M"));
           }
       }
     );
@@ -375,7 +375,7 @@ class EventManagementDialog extends Component {
   render() {
     return (
       <MuiPickersUtilsProvider utils={MomentUtils}>
-        <Dialog open={this.props.open} onClose={this.props.onClose}>
+        <Dialog open={this.props.open} onClose={this.props.onClose} PaperProps={{style: {padding: '2rem'}}}>
           <DialogTitle>
             {this.props.copyMission
               ? "Kopiuj wydarzenie "
@@ -613,11 +613,15 @@ class EventManagementDialog extends Component {
         <Dialog
           open={this.props.showDeleteDialog}
           onClose={this.props.handleHideDeleteDialog}
+          PaperProps={{style: {padding: '2rem'}}}
         >
           <DialogTitle>
             {" "}
             Usuń wydarzenie {this.props.currentEventTitle}
           </DialogTitle>
+          <DialogContent style={{paddingBottom: '1rem'}}>
+            Czy na pewno chcesz usunąć {this.props.currentEventIsRally ? 'rajd' : 'misję'} {this.props.currentEventTitle}?
+          </DialogContent>
 
           <DialogActions>
             <Button

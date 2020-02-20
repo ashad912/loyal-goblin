@@ -73,8 +73,8 @@ const AdminBarmans = () => {
     //Need to pass any external values to function (e.g. password for confirmPassword validation), if no values are in the dependencies array.
     //Values in dependencies array force an update of the function, and this makes the debounce repeat.
     _.debounce((value, field, password) => {
-      console.log('debounce')
-      console.log(password)
+     // console.log('debounce')
+     // console.log(password)
       const errors = { ...formErrors };
       if (value.length > 0) {
         switch (field) {
@@ -272,6 +272,7 @@ const AdminBarmans = () => {
       <Dialog
         open={showPasswordDialog}
         onClose={handleTogglePasswordDialog}
+        PaperProps={{style:{padding: '2rem'}}}
       >
         <DialogTitle >Zmień hasło konta barmańskiego</DialogTitle>
         <DialogContent>

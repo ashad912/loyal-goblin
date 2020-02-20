@@ -36,7 +36,7 @@ export const changeBarmanPassword = (_id, password, confirmPassword) => {
             }
             console.log('changeBarmanPassword')
             const res = await axios.patch("/barman/changePasswordAdmin/", {_id, password})
-            console.log(res.data)
+            //console.log(res.data)
             resolve(res.data)
         }catch (e) {
             reject(e)     

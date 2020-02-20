@@ -92,6 +92,9 @@ const EventRallyListItem = ({
       shouldRender = true
       break;
   }
+
+  const awardsDisabled = event.awardsLevels.length <= 0
+
   
   return (
     shouldRender ? 
@@ -103,10 +106,15 @@ const EventRallyListItem = ({
               <Typography style={{ textAlign: "center" }}>* Rajd *</Typography>
             </Grid>
             <Grid item xs={3}>
+            {archive ? 
+            <Typography>Zarchiwizowany</Typography>  :
               <Typography>{active ? "Aktywny" : "Nieaktywny"}</Typography>
+            }
             </Grid>
             <Grid item xs={3}>
+              {!archive && 
               <Typography>{running ? "Odpalony" : "Oczekujący"}</Typography>
+              }
             </Grid>
             <Grid item xs={3}>
               <Typography>
@@ -136,7 +144,7 @@ const EventRallyListItem = ({
               <Grid item>
                 <Typography>{`Czas zakończenia: ${moment(event.expiryDate).format("L, LTS")}`}</Typography>
               </Grid>
-              {!active && (
+              {!active && !archive && (
                 <Grid item>
                   <Button
                     variant="contained"
@@ -162,6 +170,7 @@ const EventRallyListItem = ({
                   variant="contained"
                   color="primary"
                   onClick={handleItemPopover}
+                  disabled={awardsDisabled}
                 >
                   {"Nagrody"}
                 </Button>

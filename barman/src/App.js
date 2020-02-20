@@ -82,7 +82,7 @@ function App(props) {
   useEffect(() => {
 
     setTimeout(() => {
-      setOrderError('')
+      handleEndOrder()
     }, 6000);
   }, [orderError])
 
@@ -139,6 +139,7 @@ function App(props) {
     setRedirect(true);
     setOrder([]);
     setUserId(null);
+    setOrderError('')
     localStorage.removeItem("lastUserId");
     setOrderFinalized(false);
     setRedirect(false);
@@ -249,7 +250,8 @@ function App(props) {
         handleChangePassword,
         handleLogout,
         orderError,
-        handleEndOrder
+        handleEndOrder,
+        loading: connection.loading
       }}
     >
       <ThemeProvider theme={goblinTheme}>

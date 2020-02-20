@@ -5,7 +5,7 @@ export const getAdminUsers = () => {
         try {
             console.log('getAdminUsers')
             const res = await axios.get('/user/adminUsers')
-            console.log(res.data)
+           // console.log(res.data)
             resolve(res.data)
         }catch (e) {
             reject(e)     

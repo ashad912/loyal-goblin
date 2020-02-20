@@ -31,6 +31,7 @@ const ItemsModal = props => {
   const [itemsList, setItemsList] = useState(props.itemsList);
   const [categoryFilter, setCategoryFilter] = useState({});
   const [perksFilter, setPerksFilter] = useState(false);
+  const [selectAll, setSelectAll] = useState(false)
 
   useEffect(()=> {
     const categories = {}
@@ -97,6 +98,19 @@ const ItemsModal = props => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [perksFilter]);
+
+
+  const handleSelectAll = (e) => {
+    const val = Boolean(e.target.checked)
+
+    const tempCategoryFilter = {...categoryFilter}
+    Object.keys(tempCategoryFilter).forEach(key => {
+      tempCategoryFilter[key] = val
+    })
+    setCategoryFilter(tempCategoryFilter)
+    setSelectAll(prev => !prev)
+    
+  }
 
   const handlePerksFilterChange = () => {
     setPerksFilter(prev => !prev);
@@ -165,6 +179,17 @@ const ItemsModal = props => {
                 <Grid container style={{ marginTop: "2rem" }}>
                   <Grid item xs={6}>
                     <FormControl component="fieldset">
+                    <FormControlLabel
+                            
+                            control={
+                              <Checkbox
+                                checked={selectAll}
+                                onChange={handleSelectAll}
+                                value="select_all"
+                              />
+                            }
+                            label="Zaznacz wszystko"
+                          />
                       <FormLabel component="category-filter">
                         <Typography>Kategorie:</Typography>
                       </FormLabel>
@@ -218,11 +243,11 @@ const ItemsModal = props => {
           <List dense style={{ padding: "1rem" }}>
             {Object.keys(itemTypeLabelsPlural)
               .map(itemCategory => {
-                console.log(itemsList)
+                
                 const categoryItems = itemsList.filter((item) => { 
-                  console.log(item.type, itemCategory)
+
                   return item.type === itemCategory})
-                console.log(categoryItems)
+
                 return categoryItems.length > 0 && categoryFilter[itemCategory] && (
                   <React.Fragment key={itemCategory}>
                     <Divider />
@@ -250,12 +275,12 @@ const ItemsModal = props => {
           <List dense style={{ padding: "1rem" }}>
             {props.productAwards.length > 0 && props.productAwards.map(award => {
               return (
-                  <React.Fragment key={award}>
+                  <React.Fragment key={award.itemModel._id}>
                     
                     <List>
                       
                        
-                          <ListItem key={award.itemModel._id}>
+                          <ListItem >
                             <Grid
                               container
                               direction="row"

@@ -116,7 +116,11 @@ const EventMissionListItem = ({
   <Typography style={{ textAlign: "center" }}>{event.unique ? "- Misja unikalna -" : "- Misja -"}</Typography>
             </Grid>
             <Grid item xs={3}>
+              {archive ? 
+            <Typography>Zarchiwizowana</Typography>  :
+
               <Typography>{active ? "Aktywna" : "Nieaktywna"}</Typography>
+            }
             </Grid>
 
             <Grid item xs={6}>
@@ -153,7 +157,7 @@ const EventMissionListItem = ({
               <Grid item>
                 <Typography>{`Czas zakończenia: ${isPermanent ? "misja bezterminowa" : moment(expiryDate).format("L, LTS")}`}</Typography>
               </Grid>
-              {!active && (
+              {!active && !archive && (
                 <Grid item>
                   <Button
                     variant="contained"

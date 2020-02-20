@@ -19,7 +19,7 @@ import { OrderContext } from "../App";
 const Order = props => {
   const history = useHistory();
   const [timer, setTimer] = useState('')
-  const { order, finalizeOrder, orderFinalized, redirect, orderError, handleEndOrder } = React.useContext(OrderContext);
+  const { order, finalizeOrder, orderFinalized, redirect, orderError, handleEndOrder, loading } = React.useContext(OrderContext);
 
   // const handleCancelOrder = async () => {
   //   history.push("/");
@@ -193,6 +193,7 @@ const Order = props => {
                               product.quantity * product.product.price;
                             return (
                               <ListItem
+                              key={product._id}
                                 style={{
                                   borderTop: "1px solid grey",
                                   borderBottom: "1px solid grey",
@@ -239,11 +240,18 @@ const Order = props => {
       </React.Fragment>
     );
   } else {
+
+    if(loading){
+      content = null
+    }else{
+
     content = <div>
       {orderFinalized ? <Typography variant="h5" style={{marginTop: '5rem'}} color="primary">Zamówienie zatwierdzone!</Typography> : <Typography variant="h5" style={{marginTop: '5rem'}} color="secondary">Zamówienie wygasło!</Typography>}
       <Typography variant="caption">Za chwilę nastąpi powrót do ekranu skanowania...</Typography>
 
     </div>
+    }
+
   }
 
   return (

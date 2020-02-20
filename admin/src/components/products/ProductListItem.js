@@ -38,7 +38,7 @@ const ProductListItem = ({
 
 
 
-  console.log(product)
+  //console.log(product)
   return (
     <React.Fragment>
 

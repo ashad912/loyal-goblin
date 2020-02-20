@@ -7,7 +7,7 @@ export const getProducts = (params) => {
 
             console.log('getProducts')
             const res = await axios.get('/product/products' + query)
-            console.log(res.data)
+          //  console.log(res.data)
             resolve(res.data)
         }catch (e) {
             reject(e)     
@@ -20,7 +20,7 @@ export const createProduct = (product) => {
         try {
             console.log('createProduct')
             const res = await axios.post('/product/create', product)
-            console.log(res.data)
+          //  console.log(res.data)
             resolve(res.data)
         }catch (e) {
             reject(e)     
@@ -33,7 +33,7 @@ export const updateProduct = (product) => {
         try {
             console.log('updateProduct')
             const res = await axios.patch('/product/update', product)
-            console.log(res.data)
+           // console.log(res.data)
             resolve(res.data)
         }catch (e) {
             reject(e)     
@@ -62,7 +62,7 @@ export const uploadProductImage = (id, formData) => {
                     'Content-Type': 'multipart/form-data'
                 }
               })
-            console.log(res.data)
+           // console.log(res.data)
             resolve(res.data)
         }catch (e) {
             reject(e)     
@@ -76,7 +76,7 @@ export const getAdminOrders = (page, rowsPerPage, fromDate, toDate, nameFilter) 
             console.log('getOrders')
             const query = `?page=${page}&rowsPerPage=${rowsPerPage}&from=${fromDate}&to=${toDate}&name=${nameFilter}`
             const res = await axios.get('/product/orders' + query)
-            console.log(res.data)
+          //  console.log(res.data)
             resolve(res.data)
         }catch (e) {
             reject(e)     

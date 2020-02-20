@@ -6,7 +6,7 @@ export const getItemModels = () => {
         try {
             console.log('getItemModels')
             const res = await axios.get('/item/itemModels')
-            console.log(res.data)
+          //  console.log(res.data)
             resolve(res.data)
         }catch (e) {
             reject(e)     
@@ -19,7 +19,7 @@ export const createItemModel = (itemModel) => {
         try {
             console.log('createItemModel')
             const res = await axios.post('/item/createModel', itemModel)
-            console.log(res.data)
+          //  console.log(res.data)
             resolve(res.data)
         }catch (e) {
             reject(e)     
@@ -32,7 +32,7 @@ export const updateItemModel = (itemModel) => {
         try {
             console.log('updateItemModel')
             const res = await axios.patch('/item/updateModel', itemModel)
-            console.log(res.data)
+           // console.log(res.data)
             resolve(res.data)
         }catch (e) {
             reject(e)     
@@ -61,7 +61,7 @@ export const uploadItemModelImages = (id, formData) => {
                     'Content-Type': 'multipart/form-data'
                 }
               })
-            console.log(res.data)
+           // console.log(res.data)
             resolve(res.data)
         }catch (e) {
             reject(e)     

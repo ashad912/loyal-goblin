@@ -120,7 +120,7 @@ const AdminProducts = () => {
   }
 
   const handleEditItemCreator = (id) => {
-    console.log(id)
+   // console.log(id)
     const index = products.findIndex((product) => {return product._id === id})
     setProductToPass(products[index])
     setModifyingIndex(index)
@@ -129,7 +129,7 @@ const AdminProducts = () => {
   }
 
   const updateProducts = (product) => {
-    console.log(product)
+    //console.log(product)
     fetchProducts()
     if(modifyingIndex != null){
       // const tempProducts = [...products]
@@ -161,7 +161,7 @@ const AdminProducts = () => {
 
   const handleProductDelete = async () => {
 
-    console.log(productToDelete)
+   // console.log(productToDelete)
     await deleteProduct(productToDelete._id)
     
    

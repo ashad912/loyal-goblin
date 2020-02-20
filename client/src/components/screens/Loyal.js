@@ -72,6 +72,13 @@ class Loyal extends Component {
         })
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if(prevProps.bag.length !== this.props.bag.length){
+            this.setState({userTorpedos: this.props.bag.filter((item) => item.itemModel.type === "torpedo")})
+      }
+    }
+    
+
     handleLoad = () => {
         
         //shot to backend - returned: field array

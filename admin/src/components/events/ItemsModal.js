@@ -36,6 +36,7 @@ const ItemsModal = props => {
   const [classFilter, setClassFilter] = useState("any");
   const [categoryFilter, setCategoryFilter] = useState({});
   const [perksFilter, setPerksFilter] = useState(false);
+  const [selectAll, setSelectAll] = useState(true)
   
   useEffect(() => {
 
@@ -95,6 +96,18 @@ const ItemsModal = props => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [perksFilter]);
+
+
+  const handleSelectAll = (e) => {
+    const val = Boolean(e.target.checked)
+    const tempCategoryFilter = {...categoryFilter}
+    Object.keys(tempCategoryFilter).forEach(key => {
+      tempCategoryFilter[key] = val
+    })
+    setCategoryFilter(tempCategoryFilter)
+    setSelectAll(prev => !prev)
+    
+  }
 
   const handlePerksFilterChange = () => {
     setPerksFilter(prev => !prev);
@@ -171,6 +184,17 @@ const ItemsModal = props => {
                 <Grid container style={{ marginTop: "2rem" }}>
                   <Grid item xs={6}>
                     <FormControl component="fieldset">
+                    <FormControlLabel
+                            
+                              control={
+                                <Checkbox
+                                  checked={selectAll}
+                                  onChange={handleSelectAll}
+                                  value="select_all"
+                                />
+                              }
+                              label="Zaznacz wszystko"
+                            />
                       <FormLabel component="category-filter">
                         <Typography>Kategorie:</Typography>
                       </FormLabel>

@@ -96,7 +96,7 @@ class ProductCreator extends Component {
     //const items = await getItemModels()
     
     
-    console.log(product)
+   // console.log(product)
     this.setState({
       _id: product._id,
       name: product.name,
@@ -251,7 +251,7 @@ class ProductCreator extends Component {
 
     await asyncForEach(validatedFields, (fieldName) => {
       if(!this.state[fieldName]){
-        console.log('halo', fieldName)
+       // console.log('halo', fieldName)
         
         this.setState({
           formError: {
@@ -404,7 +404,7 @@ class ProductCreator extends Component {
               margin="dense"
               label={`Cena produktu [PLN]`}
               type='text'
-              error={this.state.formError.price}
+              error={this.state.formError.price ? true : false}
               helperText={this.state.formError.price ? (this.state.formError.price) : ("Np. 7, 10.5, 1.25")}
               onChange={this.handleChangeNameValue}
             />

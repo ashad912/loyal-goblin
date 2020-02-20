@@ -127,7 +127,7 @@ const AdminItems = () => {
   }
 
   const handleEditItemCreator = (id) => {
-    console.log(id)
+    //console.log(id)
     const index = items.findIndex((item) => {return item._id === id})
     setItemToPass(items[index])
     setModifyingIndex(index)
@@ -136,7 +136,7 @@ const AdminItems = () => {
   }
 
   const updateItems = (item) => {
-    console.log(item)
+    //console.log(item)
 
     fetchItemModels()
 
@@ -169,7 +169,7 @@ const AdminItems = () => {
   }
 
   const handleItemDelete = async () => {
-    console.log(itemToDelete)
+    //console.log(itemToDelete)
     await deleteItemModel(itemToDelete._id)
     // const tempItems = [...items]
     // const newItems = tempItems.filter((item, itemIndex) => {

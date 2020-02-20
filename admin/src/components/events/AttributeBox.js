@@ -6,7 +6,7 @@ import TextField from "@material-ui/core/TextField";
 const AttributeBox = ({value, attrType, attrTypeText, changeValue}) => {
 
   return (
-    <Grid container spacing={4} style={{width: '40%'}}>
+    <Grid container spacing={4} >
         <Grid item xs={5} style={{textAlign: 'center'}}>
             <Button variant="contained" color="secondary" onClick={(e) => changeValue(e, attrType, -1)}>-</Button>
         </Grid>

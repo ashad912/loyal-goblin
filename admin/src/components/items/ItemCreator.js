@@ -101,7 +101,7 @@ class ItemCreator extends Component {
   componentDidMount = () => {
       const item = this.props.item
       
-      console.log(item)
+      // console.log(item)
       this.setState({
         _id: item._id,
         name: item.name,
@@ -125,7 +125,7 @@ class ItemCreator extends Component {
     if(this.state.componentMounted){
       
       if(equippableItems.includes(prevState.type) && !equippableItems.includes(this.state.type) ){
-        console.log('halo123')
+        
         this.setState({
           appearance: "",
           appearanceView: '',
@@ -181,7 +181,7 @@ class ItemCreator extends Component {
   }
 
   handleModifyPerk = (index) => {
-    console.log(this.state.perks[index])
+   // console.log(this.state.perks[index])
     this.setState({
       perkToModal: this.state.perks[index],
       modifyingIndex: index
@@ -307,7 +307,7 @@ class ItemCreator extends Component {
       this.setState({
         perks: perks,
       }, () => {
-        console.log(this.state.perks)
+        //console.log(this.state.perks)
         this.handleTogglePerkModal()
       })
     }else{
@@ -344,10 +344,10 @@ class ItemCreator extends Component {
       
 
       await asyncForEach(validatedFields, (fieldName) => {
-        console.log(fieldName)
+        //console.log(fieldName)
         if(!this.state[fieldName] || !this.state[fieldName].length){
           if(fieldName !== 'appearanceView' || (fieldName === 'appearanceView' && equippableItems.includes(this.state.type))){
-            console.log(fieldName, this.state[fieldName] === 'appearanceView', this.state.type, equippableItems.includes(this.state.type))
+            //console.log(fieldName, this.state[fieldName] === 'appearanceView', this.state.type, equippableItems.includes(this.state.type))
             this.setState({
               formError: {
                   ...this.state.formError,
@@ -399,7 +399,7 @@ class ItemCreator extends Component {
       }else{
         itemModelId = await updateItemModel(item)
       }
-      console.log(itemModelId)
+      //console.log(itemModelId)
       if(itemModelId && (this.state.icon || this.state.appearance)){
         const formData = new FormData()
         if(this.state.icon){

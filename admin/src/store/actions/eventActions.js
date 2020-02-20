@@ -32,7 +32,7 @@ export const createEvent = (eventType, event) => {
         try {
             console.log('createEvent')
             const res = await axios.post(`/${eventType}/create/`, event)
-            console.log(res.data)
+           // console.log(res.data)
             resolve(res.data)
         }catch (e) {
             reject(e)     
@@ -45,7 +45,7 @@ export const updateEvent = (eventType, event) => {
         try {
             console.log('updateEvent')
             const res = await axios.patch(`/${eventType}/update/`, event)
-            console.log(res.data)
+           // console.log(res.data)
             resolve(res.data)
         }catch (e) {
             reject(e)     
@@ -63,7 +63,7 @@ export const uploadEventIcon = (eventType, id, formData) => {
                     'Content-Type': 'multipart/form-data'
                 }
               })
-            console.log(res.data)
+           // console.log(res.data)
             resolve(res.data)
         }catch (e) {
             reject(e)     
@@ -76,7 +76,7 @@ export const deleteEvent = (eventType, _id) => {
         try {
             console.log('deleteEvent')
             const res = await axios.delete(`/${eventType}/remove/`, {data: {_id}})
-            console.log(res.data)
+           // console.log(res.data)
             resolve(res.data)
         }catch (e) {
             reject(e)     

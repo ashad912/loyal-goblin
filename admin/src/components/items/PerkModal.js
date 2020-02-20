@@ -91,7 +91,7 @@ class PerkModal extends React.Component {
       if(perk.perkType === null){
         perk.perkType = perkTypes[0]
       }
-      console.log(this.props.perkToModal)
+     // console.log(this.props.perkToModal)
       this.setState({
         perk: this.props.perkToModal,
         timeActive: timeActive
@@ -307,11 +307,11 @@ class PerkModal extends React.Component {
   }
 
   handleDeleteTimePeriod = (index) => {
-    console.log(index)
+    //console.log(index)
     const time = this.state.perk.time.filter((period, periodIndex)=> {
       return periodIndex !== index
     })
-    console.log(time)
+   // console.log(time)
     
     this.setState({
       perk: {
@@ -452,6 +452,7 @@ const createNumberList = (startNum, endNum, isWeekDay, isHour, startHour) => {
         onClose={this.handleClose}
         fullWidth
         maxWidth="lg"
+        PaperProps={{style: {padding: '1rem'}}}
       >
         <DialogTitle>Efekt przedmiotu</DialogTitle>
         <DialogContent>

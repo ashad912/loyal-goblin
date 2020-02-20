@@ -427,6 +427,10 @@ class Shop extends React.Component {
       return product.category === "food";
     });
 
+    const othersList = this.state.products.filter(product => {
+      return product.category === "others";
+    });
+
     // const activeUser =
     //   this.state.activeUser &&
     //   this.props.party.length > 0 &&
@@ -552,6 +556,9 @@ class Shop extends React.Component {
                   <Grid item>
                     <MenuItem section="food">Jedzenie</MenuItem>
                   </Grid>
+                  <Grid item>
+                    <MenuItem section="others">Inne</MenuItem>
+                  </Grid>
                 </Grid>
               </Menu>
               <ListContainer sticky={this.state.menuSticky ? 1 : 0}>
@@ -591,6 +598,14 @@ class Shop extends React.Component {
                   <ShopList
                     title="Jedzenie"
                     list={foodList}
+                    handleAddItem={this.handleAddItemToCart}
+                  />
+                </StyledSection>
+                <Divider />
+                <StyledSection id="others">
+                  <ShopList
+                    title="Inne"
+                    list={othersList}
                     handleAddItem={this.handleAddItemToCart}
                   />
                 </StyledSection>
