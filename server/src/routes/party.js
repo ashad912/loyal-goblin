@@ -193,7 +193,7 @@ router.patch("/addMember", auth, async (req, res) => {
     }
 
     party.members.push(req.body.memberId);
-    console.log(party.members);
+    //console.log(party.members);
     await party.save();
     await party
       .populate({
@@ -201,7 +201,7 @@ router.patch("/addMember", auth, async (req, res) => {
         select: "_id name avatar bag attributes experience userPerks"
       })
       .execPopulate();
-    console.log(party);
+    //console.log(party);
 
     res.status(200).send(party);
   } catch (e) {

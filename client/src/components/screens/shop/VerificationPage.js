@@ -192,7 +192,7 @@ const handleCancelOrder = async () => {
         <Divider />
         <List component="nav" style={{ width: "100%" }}>
           {props.activeOrder && props.activeOrder.map(basket => {
-            if(basket.price || basket.experience){
+            if(basket.products.length > 0){
 
               return (
                 <React.Fragment key={basket.profile._id}>

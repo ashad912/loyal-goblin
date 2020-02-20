@@ -21,6 +21,7 @@ const ShopListItem = props => {
   const price = props.price;
   const exp = props.experience
   let priceModified = props.priceModified
+  const firstDiscount = props.firstDiscount
   let experienceModified = props.experienceModified
   const name = props.name;
   const description = props.description;
@@ -41,11 +42,11 @@ const ShopListItem = props => {
       </Grid>
       <ListItemIcon>
       <Grid container direction="column">
-        <Typography variant="body1" style={{marginRight: '2rem', color: priceModified ? priceModified : 'inherit'}}>{price.toFixed(2) + " ZŁ"}</Typography>
+        <Typography variant="body1" style={{marginRight: '2rem', color: priceModified ? priceModified : 'inherit', background: firstDiscount && 'gold'}}>{price.toFixed(2) + " ZŁ"}</Typography>
         <Typography variant="body2" style={{marginRight: '2rem', color: experienceModified ? experienceModified : 'inherit'}}>+ {exp + " PD"}</Typography>
       </Grid>
       </ListItemIcon>
-      <AddIcon onClick={e => props.handleAddItem(e, props.id)} />
+      <AddIcon onClick={e => props.handleAddItem(e, props.id, firstDiscount)} />
     </ListItem>
   );
 };

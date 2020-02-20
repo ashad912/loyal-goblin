@@ -10,7 +10,7 @@ const Attribute = props => {
   } else if (props.attributeModifier < 0) {
     fontColor = "rgb(178, 34, 34)";
   }
-  console.log(props.attributeModifier)
+
   return (
     <Box style={{ width: "100%" }}>
       <Grid container directon="column" >

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Drawer from "@material-ui/core/Drawer";
+import Drawer from "@material-ui/core/SwipeableDrawer";
 import List from "@material-ui/core/List";
 import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
@@ -37,14 +37,14 @@ const BasketDrawer = ({ open, toggle, baskets, users, activeUser, handleRemoveIt
 
 
   return (
-    <Drawer open={open} onClose={toggle} >
-      <DrawerContents style={{maxWidth: '80vw'}}>
+    <Drawer open={open} onClose={()=>toggle(false)} onOpen={()=>toggle(true)} disableBackdropTransition={true}>
+      <DrawerContents style={{maxWidth: '70vw'}}>
         <Typography variant="h6">Zamówienie</Typography>
         {!emptyOrder ? 
         <Divider />:
         <Typography style={{marginTop: '3rem', color: 'grey'}}>Brak produktów w koszyku</Typography>
         }
-        <List component="nav" style={{ width: "75vw" }}>
+        <List component="nav" style={{ width: "70vw" }}>
           {Object.keys(baskets).map(user => {
 
             //const userName = users.length > 0 && users[0] && user.name 

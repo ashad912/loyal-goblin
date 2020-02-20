@@ -4,7 +4,7 @@ import { StylesProvider, ThemeProvider } from "@material-ui/styles";
 import { createMuiTheme } from "@material-ui/core/styles";
 import styled from "styled-components";
 import axios from "axios";
-import moment from "moment";
+
 import SignIn from "./auth/SignIn";
 import Menu from "./components/Menu";
 import QRReader from "./components/QRReader";
@@ -131,39 +131,9 @@ function App(props) {
 
   }, []);
 
-  useEffect(() => {
-    if (order.length > 0) {
-      calculateTimeLeft();
-      const orderTimeout = setInterval(() => {
-        calculateTimeLeft();
-      }, 1000);
-      return () => {
-        clearInterval(orderTimeout);
-      };
-    }
-  }, [order]);
+  
 
-  const calculateTimeLeft = () => {
-    if (order.length > 0) {
-      const utcDateNow = moment.utc(new Date());
-      const orderTimeMax = moment(order[0].createdAt);
-      const difference = orderTimeMax.diff(utcDateNow);
-      if (difference > 0) {
-        const minutes = Math.floor(
-          (difference % (1000 * 60 * 60)) / (1000 * 60)
-        );
-        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-        const formatted = moment(`${minutes}:${seconds}`, "mm:ss").format(
-          "mm:ss"
-        );
-        setTimer(`Zamówienie wygaśnie za ${formatted}`);
-      } else {
-        handleEndOrder();
-      }
-    } else {
-      handleEndOrder();
-    }
-  };
+
 
   const handleEndOrder = () => {
     setRedirect(true);
@@ -278,7 +248,8 @@ function App(props) {
         redirect,
         handleChangePassword,
         handleLogout,
-        orderError
+        orderError,
+        handleEndOrder
       }}
     >
       <ThemeProvider theme={goblinTheme}>
@@ -288,7 +259,7 @@ function App(props) {
               <Route
                 exact
                 path="/"
-                component={withAuth(QRReader, connection, auth)}
+                component={(withAuth(QRReader, connection, auth))}
               />
               <Route
                 exact

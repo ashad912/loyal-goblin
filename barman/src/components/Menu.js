@@ -1,5 +1,6 @@
 import React from "react";
 import {useHistory} from 'react-router'
+import moment from "moment";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
@@ -7,10 +8,46 @@ import { OrderContext } from "../App";
 
 const Menu = props => {
   const history = useHistory()
-
-  const { order, timer } = React.useContext(
+  const [timer, setTimer] = React.useState('')
+  const { order, handleEndOrder } = React.useContext(
     OrderContext
   );
+
+  React.useEffect(() => {
+    if (order.length > 0) {
+      calculateTimeLeft();
+      const orderTimeout = setInterval(() => {
+        calculateTimeLeft();
+      }, 1000);
+      return () => {
+        clearInterval(orderTimeout);
+      };
+    }
+  }, [order]);
+
+
+
+  const calculateTimeLeft = () => {
+    if (order.length > 0) {
+      const utcDateNow = moment.utc(new Date());
+      const orderTimeMax = moment(order[0].createdAt);
+      const difference = orderTimeMax.diff(utcDateNow);
+      if (difference > 0) {
+        const minutes = Math.floor(
+          (difference % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+        const formatted = moment(`${minutes}:${seconds}`, "mm:ss").format(
+          "mm:ss"
+        );
+        setTimer(`Zamówienie wygaśnie za ${formatted}`);
+      } else {
+        handleEndOrder();
+      }
+    } else {
+      handleEndOrder();
+    }
+  };
 
   return (
     <Grid

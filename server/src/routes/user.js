@@ -117,7 +117,7 @@ router.post("/create", async (req, res) => {
     const recaptchaToken = req.body.token;
     const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
 
-    console.log(secretKey)
+    //console.log(secretKey)
     try{
       await verifyCaptcha(url)
     }catch(e){
@@ -719,7 +719,7 @@ router.patch("/items/equip", auth, async (req, res) => {
     user.equipped = { ...equipped };
 
     await asyncForEach(Object.keys(equipped), async slot => {
-      console.log(slot)
+      //console.log(slot)
       await user
         .populate({
           path: "equipped." + slot,
@@ -929,7 +929,7 @@ router.patch("/loyal", auth, async (req, res) => {
 
     let updatedUser = await User.findById(user._id);
     //updated by item removing middleware -> have to pass to resposne 'fresh' object
-    console.log(updatedUser.bag)
+    //console.log(updatedUser.bag)
     updatedUser.loyal[fieldName] = true;
     const isAward = allFieldsTrue(updatedUser.loyal.toJSON());
 
@@ -1045,7 +1045,7 @@ router.patch("/me", adminAuth, async (req, res, next) => {
       if(update === "password"){
 
           user = await req.user.updatePassword(req.body.password.oldPassword, req.body.password.newPassword)
-console.log(user)
+//console.log(user)
 
       }else{
         user[update] = req.body[update]; //user[update] -> user.name, user.password itd.

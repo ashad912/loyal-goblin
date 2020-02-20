@@ -202,34 +202,49 @@ class Shop extends React.Component {
     }
   };
 
-  handleAddItemToCart = (e, id) => {
+  handleAddItemToCart = (e, id, firstDiscount) => {
     const baskets = { ...this.state.baskets };
-    const idOfProductAlreadyInBasket = baskets[this.state.activeUser].findIndex(
-      product => product._id === id
+    const productAlreadyInBasket = baskets[this.state.activeUser].find(
+      product => product._id === id && product.firstDiscount === firstDiscount
     );
-    if (idOfProductAlreadyInBasket !== -1) {
-      baskets[this.state.activeUser][idOfProductAlreadyInBasket].quantity += 1;
+    if (productAlreadyInBasket && !productAlreadyInBasket.firstDiscount) {
+      productAlreadyInBasket.quantity += 1;
     } else {
       baskets[this.state.activeUser].push({
         ...this.state.products.find(product => product._id === id),
-        quantity: 1
+        quantity: 1,
+        firstDiscount
       });
     }
 
-    this.setState({ baskets, snackbarOpen: true });
+    this.setState({ baskets, snackbarOpen: true }, () => {
+      if(firstDiscount){
+        this.handleChangeactiveUser(null, this.state.activeUser)
+      }
+    });
   };
 
-  handleRemoveItemFromCart = id => {
+  handleRemoveItemFromCart = (id, firstDiscount) => {
     const baskets = { ...this.state.baskets };
     const idOfProductInBasket = baskets[this.state.activeUser].findIndex(
-      product => product._id === id
+      product => product._id === id && product.firstDiscount === firstDiscount
     );
-    if (baskets[this.state.activeUser][idOfProductInBasket].quantity > 1) {
-      baskets[this.state.activeUser][idOfProductInBasket].quantity -= 1;
-    } else {
-      baskets[this.state.activeUser].splice(idOfProductInBasket, 1);
+    if(idOfProductInBasket > -1){
+      const productInBasket = baskets[this.state.activeUser][idOfProductInBasket]
+
+      const productInBasketWasFirstDiscount = productInBasket.firstDiscount
+      if (productInBasket.quantity > 1) {
+        productInBasket.quantity -= 1;
+      } else {
+        //baskets[this.state.activeUser] = baskets[this.state.activeUser].filter(product => product._id !== id && product.firstDiscount === firstDiscount)
+        baskets[this.state.activeUser].splice(idOfProductInBasket, 1)
+      }
+      this.setState({ baskets }, () => {
+        if(firstDiscount || productInBasketWasFirstDiscount){
+          this.handleChangeactiveUser(null, this.state.activeUser)
+        }
+      });
     }
-    this.setState({ baskets });
   };
 
   handleSnackbarClose = () => {
@@ -286,12 +301,34 @@ class Shop extends React.Component {
               )
             ) 
             {
-              products[modifyIndex].price +=
-              activeUser.userPerks.products[modifiedProduct].priceMod;
-              products[modifyIndex].priceModified =
-                activeUser.userPerks.products[modifiedProduct].priceMod > 0
-                  ? "inherit"
-                  : "#28a52e";
+              //Show price in green color when lowered if any priceMod present
+              products[modifyIndex].priceModified = "#28a52e"
+              products[modifyIndex].firstDiscount = false
+
+
+              //Apply first priceMod discount from scroll
+              if(activeUser.equipped.scroll && activeUser.userPerks.products[modifiedProduct].priceMod.hasOwnProperty('first') && activeUser.userPerks.products[modifiedProduct].priceMod.first < 0){
+                //console.log(activeUser.userPerks.products[modifiedProduct].priceMod.first)
+                if(this.state.baskets[this.state.activeUser]){
+
+                  const productInBasket = this.state.baskets[this.state.activeUser].find(basketProduct => basketProduct._id === modifiedProduct && basketProduct.quantity > 0 && basketProduct.firstDiscount)
+                  if(!productInBasket){
+                    products[modifyIndex].price += activeUser.userPerks.products[modifiedProduct].priceMod.first;
+                    products[modifyIndex].firstDiscount = true
+                  }
+                }
+
+              }
+
+              
+              
+              //Apply standard priceMod discount
+              if(activeUser.userPerks.products[modifiedProduct].priceMod.hasOwnProperty('standard') && activeUser.userPerks.products[modifiedProduct].priceMod.standard < 0){
+                products[modifyIndex].price +=
+                activeUser.userPerks.products[modifiedProduct].priceMod.standard;
+              }
+              
+              //Final check to disable negative price
               if (products[modifyIndex].price < 0) {
                 products[modifyIndex].price = 0.0;
               }
@@ -303,10 +340,8 @@ class Shop extends React.Component {
     });
   };
 
-  handleToggleBasketDrawer = () => {
-    this.setState(prevState => {
-      return { basketDrawerOpen: !prevState.basketDrawerOpen };
-    });
+  handleToggleBasketDrawer = (open) => {
+    this.setState({ basketDrawerOpen: open })
   };
 
   handleFinalizeOrder = async () => {
@@ -328,7 +363,7 @@ class Shop extends React.Component {
   onCaptchaResolved = () => {
     const token = this.recaptcha.getResponse();
     this.props.onActivateOrder(this.state.baskets, token);
-    this.handleToggleBasketDrawer();
+    this.handleToggleBasketDrawer(false);
   };
 
   handleScrollModalToggle = () => {
@@ -416,8 +451,15 @@ class Shop extends React.Component {
 
     let equippedScroll;
     if (activeUser && activeUser.bag) {
-      equippedScroll = activeUser.bag.find(
-        item => item._id === activeUser.equipped.scroll
+      equippedScroll = activeUser.bag.find(item => {
+        if(typeof activeUser.equipped.scroll === 'string'){
+          return item._id === activeUser.equipped.scroll
+        }else if(typeof activeUser.equipped.scroll === 'object'){
+          if(activeUser.equipped.scroll){
+            return item._id === activeUser.equipped.scroll._id
+          }
+        }
+      }
       );
     }
     // console.log(this.state.activeUser,activeUser, this.props.party)
@@ -600,7 +642,7 @@ class Shop extends React.Component {
                 }}
                 variant="contained"
                 color="primary"
-                onClick={this.handleToggleBasketDrawer}
+                onClick={()=>this.handleToggleBasketDrawer(true)}
               >
                 {this.state.baskets[this.state.activeUser] && (
                   <Badge

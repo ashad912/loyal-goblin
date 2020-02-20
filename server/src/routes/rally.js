@@ -79,7 +79,7 @@ const finishRally = async (rally) => {
             const user = await User.findById(rallyUser.profile._id).populate({
                 path: 'userRallies'
             }) //recoginized as an array
-            console.log(user.userRallies, rallyUser.experience)
+           // console.log(user.userRallies, rallyUser.experience)
 
             //UPDATE TO CHECK
             const index = user.userRallies.findIndex((activeRally) => activeRally._id.toString() === rally._id.toString())

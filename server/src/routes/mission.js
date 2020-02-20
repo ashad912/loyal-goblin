@@ -492,7 +492,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
 
         
 
-        console.log('got members ids', membersIds)
+        //console.log('got members ids', membersIds)
         // console.log(user.party.leader)
         // if(!membersIds.length && !user.party.leader){ //one person party - giving user leader privileges
         //     user.party.leader = user._id
@@ -627,9 +627,9 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
         
         const missionInstanceObject = {mission: mission._id, party: partyObject, items: []}
 
-        console.log(missionInstanceObject)
+       // console.log(missionInstanceObject)
         const missionInstance = new MissionInstance(missionInstanceObject)
-        console.log(missionInstance)
+        //console.log(missionInstance)
         await missionInstance.save()
 
         setTimeout( async () => {
@@ -779,7 +779,7 @@ router.patch('/enterInstance', auth, async (req, res) => {
             return amulet.itemModel._id.toString()
         })
 
-        console.log(missionAmulets)
+        //console.log(missionAmulets)
 
         //available amulets to use for user
         const amulets = user.bag.filter((item) => {

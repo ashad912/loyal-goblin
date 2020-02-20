@@ -609,7 +609,7 @@ export const saveImage = async (
         if (previousFileName) {
           fs.unlink(uploadPath + previousFileName, async function(err) {
             if (err) {console.log(err)}
-            console.log("File deleted!");
+            //console.log("File deleted!");
             resolve(imageName);
           });
         }else{
@@ -649,7 +649,7 @@ export const saveAppearanceImage = async (
         if (previousFileName) {
           fs.unlink(uploadPath + previousFileName, function(err) {
             if (err) {console.log(err)};
-            console.log("File deleted!");
+            //console.log("File deleted!");
             resolve(imageName);
           });
         }else{
@@ -676,7 +676,7 @@ export const removeImage = (uploadPath, fileName) => {
         //Remove file if found
         fs.unlink(uploadPath + fileName, async function(err) {
           if (err) throw err;
-          console.log("File deleted!");
+          //console.log("File deleted!");
           resolve(true);
       });
     });
@@ -688,7 +688,7 @@ export const verifyCaptcha = (url) => {
   return new Promise (async (resolve, reject) => {
     try{
       const res = await axios.post(url)
-      console.log(res.data)
+      //console.log(res.data)
       if(!res.data.success){
         return reject()
       }

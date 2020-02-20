@@ -268,14 +268,17 @@ const calculateOrder = async user => {
 
     await asyncForEach(partyFullObject, async partyMember => {
       //HERE IMPLEMENT PRICE AND EXPERIENCE MODS - input: activeOrder, userPerks; output: object for view
-
+      const firstDiscountIds = []
       const currentMember = user.activeOrder.findIndex(
         basket => basket.profile._id.toString() === partyMember._id.toString()
       );
 
       let modelPerks = await designateUserPerks(partyMember);
-      user.activeOrder[currentMember].products.forEach(p => {
-        const product = p.product;
+      
+      const userProducts = user.activeOrder[currentMember].products.map(product => product.toJSON())
+
+      userProducts.forEach(p => {
+        const product = p.product
 
         const productId = product._id.toString();
 
@@ -286,20 +289,32 @@ const calculateOrder = async user => {
           product.experience = product.price * 10;
         }
         if (modelPerks.products[productId].hasOwnProperty("priceMod")) {
-          product.price += modelPerks.products[productId].priceMod;
+          //Apply first discount
+ 
+          if(modelPerks.products[productId].priceMod.first < 0 && firstDiscountIds.indexOf(productId) === -1){
+            product.price += modelPerks.products[productId].priceMod.first;
+            firstDiscountIds.push(productId)
+          }
+          //Apply standard discount
+          if(modelPerks.products[productId].priceMod.standard < 0){
+            product.price += modelPerks.products[productId].priceMod.standard;
+            
+          }
+          //Zero out price if it's negative
           if (product.price < 0) {
             product.price = 0.0;
           }
         }
       });
       //currentMember.products.forEach(product => console.log(product.product.price, product.product.experience))
-      if (user.activeOrder[currentMember].products.length > 0) {
+      if (userProducts.length > 0) {
         let totalPrice = 0;
         let totalExperience = 0;
         let totalAwards = [];
-        user.activeOrder[currentMember].products.forEach(product => {
+        userProducts.forEach(product => {
+          
           totalPrice += product.product.price * product.quantity;
-
+         
           totalExperience += product.product.experience * product.quantity;
           product.product.awards.forEach(award => {
             award.quantity = award.quantity * product.quantity
@@ -313,7 +328,7 @@ const calculateOrder = async user => {
         user.activeOrder[currentMember].price = totalPrice;
         user.activeOrder[currentMember].experience = totalExperience;
         user.activeOrder[currentMember].awards = totalAwards;
-
+        user.activeOrder[currentMember].products = [...userProducts]
       }
       //calculatedOrders[partyMember._id.toString()] = {_id: partyMember._id.toString(), totalPrice: currentMember.totalPrice, totalExperience: currentMember.totalExperience, totalAwards: currentMember.totalAwards }
       // user.activeOrder.find(basket => )
@@ -583,7 +598,7 @@ router.patch("/activate", auth, async (req, res) => {
           {_id: user._id, 'activeOrder': {$elemMatch: {createdAt: user.activeOrder[0].createdAt}}},
           {$set: {activeOrder: []}}
         )
-        console.log(result)
+       // console.log(result)
       }catch(e){
         console.log(e.message)
       }
@@ -594,6 +609,7 @@ router.patch("/activate", auth, async (req, res) => {
 
     res.send(user.activeOrder);
   } catch (e) {
+    console.log(e)
     res.status(400).send(e.message);
   }
 });
@@ -641,6 +657,8 @@ router.get("/verify/:id", barmanAuth, async (req, res) => {
     if(user.party){
       await validatePartyAndLeader(user)
     }
+    
+    await calculateOrder(user);
 
     await user
       .populate({
@@ -660,8 +678,6 @@ router.get("/verify/:id", barmanAuth, async (req, res) => {
         select: "name imgSrc"
       })
       .execPopulate();
-
-    await calculateOrder(user);
 
 
 

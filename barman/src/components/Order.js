@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router";
-import axios from "axios";
-
+import moment from "moment";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
@@ -13,15 +12,14 @@ import Divider from "@material-ui/core/Divider";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
-import ConnectionSpinnerDialog from "../layout/ConnectionSpinnerDialog";
 import { itemsPath, usersPath } from "../utils/definitions";
 import { createAvatarPlaceholder } from "../utils/methods";
 import { OrderContext } from "../App";
 
 const Order = props => {
   const history = useHistory();
-
-  const { order, timer, finalizeOrder, orderFinalized, redirect, orderError } = React.useContext(OrderContext);
+  const [timer, setTimer] = useState('')
+  const { order, finalizeOrder, orderFinalized, redirect, orderError, handleEndOrder } = React.useContext(OrderContext);
 
   // const handleCancelOrder = async () => {
   //   history.push("/");
@@ -35,6 +33,39 @@ const Order = props => {
     }
   }
 
+  const calculateTimeLeft = () => {
+    if (order.length > 0) {
+      const utcDateNow = moment.utc(new Date());
+      const orderTimeMax = moment(order[0].createdAt);
+      const difference = orderTimeMax.diff(utcDateNow);
+      if (difference > 0) {
+        const minutes = Math.floor(
+          (difference % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+        const formatted = moment(`${minutes}:${seconds}`, "mm:ss").format(
+          "mm:ss"
+        );
+        setTimer(`Zamówienie wygaśnie za ${formatted}`);
+      } else {
+        handleEndOrder();
+      }
+    } else {
+      handleEndOrder();
+    }
+  };
+
+  useEffect(() => {
+    if (order.length > 0) {
+      calculateTimeLeft();
+      const orderTimeout = setInterval(() => {
+        calculateTimeLeft();
+      }, 1000);
+      return () => {
+        clearInterval(orderTimeout);
+      };
+    }
+  }, [order]);
 
   useEffect(() => {
     if(redirect){
@@ -83,7 +114,7 @@ const Order = props => {
           <Divider />
           <List component="nav" style={{ width: "100%" }}>
             {order.map(basket => {
-              if (basket.price || basket.experience) {
+              if (basket.products.length > 0 ) {
                 return (
                   <React.Fragment key={basket.profile._id}>
                     <ListItem style={{ flexDirection: "column" }}>

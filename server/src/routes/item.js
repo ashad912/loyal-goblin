@@ -185,7 +185,7 @@ router.post('/create', adminAuth, async (req, res) =>{
         }
         
         await item.save()
-        console.log(item)
+        //console.log(item)
 
         //NOTE: without using 'post save' middleware (adding to bag) due to optimalization issues - less queries for adding awards
 
