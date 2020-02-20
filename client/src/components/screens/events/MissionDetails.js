@@ -203,7 +203,7 @@ const MissionDetails = (props) => {
                             component="span"
                             style={{display: 'inline-flex', margin: '0 0.3rem 0 0'}}
                         >
-                        {mission.amulets && mission.amulets.length > 0 && `A: `} 
+                        {mission.amulets && mission.amulets.length > 0 && `Wymagane itemy: `} 
                         </Typography>
                         
                         {mission.amulets.map(amulet => {

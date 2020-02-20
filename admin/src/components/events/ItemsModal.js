@@ -51,51 +51,48 @@ const ItemsModal = props => {
   }, [props.itemsList])
 
   useEffect(() => {
-    if (searchValue.trim().length > 0) {
-      const tempItemsList = { ...itemsList };
-      for (let category in tempItemsList) {
-        tempItemsList[category] = tempItemsList[category].filter(item =>
-          item.name.search(searchValue) !== -1
-        );
+    if(classFilter !== "any" || perksFilter || searchValue.trim().length > 0){
+      const tempItemsList = { ...props.itemsList };
+      if (classFilter !== "any") {
+      
+        for (let category in tempItemsList) {
+          tempItemsList[category] = tempItemsList[category].filter(
+            item => item.class === classFilter
+          );
+        }
       }
-      setItemsList(tempItemsList);
-    } else {
-      setItemsList(props.itemsList);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue]);
 
-  useEffect(() => {
-    if (classFilter !== "any") {
-      const tempItemsList = { ...itemsList };
-      for (let category in tempItemsList) {
-        tempItemsList[category] = tempItemsList[category].filter(
-          item => item.class === classFilter
-        );
+      if (perksFilter) {
+        
+        for (let category in tempItemsList) {
+          tempItemsList[category] = tempItemsList[category].filter(
+            item =>
+              item.hasOwnProperty("perks") &&
+              item.perks.length > 0
+          );
+        }
+        
       }
+  
+      if (searchValue.trim().length > 0) {
+        //const tempItemsList = { ...props.itemsList };
+        for (let category in tempItemsList) {
+          tempItemsList[category] = tempItemsList[category].filter(item => {
+            const reg = new RegExp(searchValue, 'gi')
+            return item.hasOwnProperty('name') && item.name.match(reg)
+            //itemModel.name.search(searchValue) !== -1
+          })
+        }
+        
+      } 
       setItemsList(tempItemsList);
-    } else {
+    }else{
       setItemsList(props.itemsList);
     }
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [classFilter]);
+  }, [classFilter, perksFilter, searchValue]);
 
-  useEffect(() => {
-    if (perksFilter) {
-      const tempItemsList = { ...itemsList };
-      for (let category in tempItemsList) {
-        tempItemsList[category] = tempItemsList[category].filter(
-          item =>
-            item.hasOwnProperty("perks") &&
-            item.perks.length > 0
-        );
-      }
-      setItemsList(tempItemsList);
-    } else {
-      setItemsList(props.itemsList);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [perksFilter]);
 
 
   const handleSelectAll = (e) => {

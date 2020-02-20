@@ -56,7 +56,7 @@ export const roomLabels = {
 
 export const itemTypeLabelsPlural = {
     all: 'Wszystkie',
-    amulet: 'Amulety',
+    amulet: 'Itemy',
     weapon: 'Broń',
     feet: 'Stopy',
     hands: 'Dłonie',
@@ -69,19 +69,20 @@ export const itemTypeLabelsPlural = {
   }
 
   export const itemTypeLabelsPluralNoAll  = {
-    amulet: "Amulety",
-    weapon: "Broń",
-    chest: "Tors",
-    legs: "Nogi",
-    feet: "Stopy",
-    head: "Głowa",
-    ring: "Pierścienie",
+    amulet: 'Itemy',
+    weapon: 'Broń',
+    feet: 'Stopy',
+    hands: 'Dłonie',
+    head: 'Głowa',
+    chest: 'Korpus',
+    legs: 'Nogi',
+    ring: 'Pierścienie',
+    torpedo: 'Torpedy',
     scroll: 'Zwoje',
-    hands: 'Dłonie'
 }
 
   export const itemTypeLabels = {
-    amulet: 'Amulet',
+    amulet: 'Item',
     weapon: 'Broń',
     hands: 'Dłonie',
     head: 'Głowa',

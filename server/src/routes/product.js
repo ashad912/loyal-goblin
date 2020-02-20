@@ -783,12 +783,23 @@ router.post("/finalize", barmanAuth, async (req, res) => {
 
       const isNewFlag = exp > 0 || newShopAwards.length ? true : false
 
+      const scroll = basket.products.length > 0 && member.equipped.scroll ? await Item.findById(member.equipped.scroll) : null
+      
+      if(scroll){
+        await scroll.remove()
+      }
+      
+      const updatedUserPerks = scroll ? await updatePerks(user, true, true) : member.userPerks
+
+      
+      
+
       await User.updateOne(
         {_id: member._id},
         {
           $addToSet: { bag: { $each: items } },
           $inc: { experience: exp, levelNotifications: newLevels, 'shopNotifications.experience': exp },
-          $set: {'shopNotifications.isNew': isNewFlag, 'shopNotifications.awards': newShopAwards, 'activeOrder': []},
+          $set: {'userPerks': updatedUserPerks,'shopNotifications.isNew': isNewFlag, 'shopNotifications.awards': newShopAwards, 'activeOrder': []},
         }
       );
 
@@ -798,12 +809,7 @@ router.post("/finalize", barmanAuth, async (req, res) => {
         await activeRally.save();
       }
 
-      if(basket.products.length > 0 && member.equipped.scroll){
-        const scroll = await Item.findById(member.equipped.scroll)
-        if(scroll){
-          scroll.remove()
-        }
-      }
+      
       archive.totalPrice += basket.price
       archive.users.push(basket)
     });

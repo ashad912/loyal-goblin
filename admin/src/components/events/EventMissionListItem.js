@@ -179,14 +179,22 @@ const EventMissionListItem = ({
               xs={2}
               spacing={2}
             >
-              <Grid item>
+              <Grid 
+                item
+                style={{
+                  display: 'flex',
+                  width: '100%',
+                  justifyContent: 'flex-end',
+                }}
+              >
                 <Button
                   variant="contained"
                   color="secondary"
                   onClick={handleAmuletPopover}
                   disabled={event.amulets.length <= 0}
+                  
                 >
-                  Amulety
+                  Itemy
                 </Button>
                 <Popover
                   open={Boolean(amuletPopover)}
@@ -239,6 +247,11 @@ const EventMissionListItem = ({
                   color="primary"
                   onClick={handleItemPopover}
                   disabled={awardsDisabled}
+                  style={{
+                    display: 'flex',
+                    width: '100%',
+                    justifyContent: 'flex-end',
+                  }}
                 >
                   Nagrody
                 </Button>

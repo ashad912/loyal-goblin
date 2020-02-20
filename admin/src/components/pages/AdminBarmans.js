@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import _ from 'lodash'
-
+import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
 import Dialog from "@material-ui/core/Dialog";
@@ -190,6 +190,7 @@ const AdminBarmans = () => {
     handleToggleDeleteDialog()
   }
 
+  const barmanToDelete = barmans.find(barman => barman._id === currentBarman) && barmans.find(barman => barman._id === currentBarman).userName
 
   return (
     <div>
@@ -316,9 +317,14 @@ const AdminBarmans = () => {
       <Dialog
         open={showDeleteDialog}
         onClose={handleToggleDeleteDialog}
+        PaperProps={{style: {padding: '2rem'}}}
       >
-<DialogTitle >Usuń barmana {barmans.find(barman => barman._id === currentBarman) && barmans.find(barman => barman._id === currentBarman).userName}</DialogTitle>
-        
+        <DialogTitle >Usuń barmana {barmanToDelete}</DialogTitle>
+          <DialogContent style={{paddingBottom: '1rem'}}>
+            <Typography>
+              Czy na pewno chcesz usunąć barmana {barmanToDelete}?
+            </Typography>
+          </DialogContent>
         <DialogActions>
           <Button onClick={handleToggleDeleteDialog} color="secondary">
             Anuluj

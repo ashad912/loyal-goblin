@@ -620,7 +620,9 @@ class EventManagementDialog extends Component {
             Usuń wydarzenie {this.props.currentEventTitle}
           </DialogTitle>
           <DialogContent style={{paddingBottom: '1rem'}}>
-            Czy na pewno chcesz usunąć {this.props.currentEventIsRally ? 'rajd' : 'misję'} {this.props.currentEventTitle}?
+            <Typography>
+              Czy na pewno chcesz usunąć {this.props.currentEventIsRally ? 'rajd' : 'misję'} {this.props.currentEventTitle}?
+            </Typography>
           </DialogContent>
 
           <DialogActions>

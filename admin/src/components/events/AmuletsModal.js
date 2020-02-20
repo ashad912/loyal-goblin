@@ -48,7 +48,7 @@ const AmuletsModal = props => {
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle>Dodaj amulety misji</DialogTitle>
+        <DialogTitle>Zarządzaj itemami misji</DialogTitle>
           <div style={{display: 'flex', overflow: 'hidden'}}>
             <div style={{ borderRight: "1px solid grey", flexBasis: '40%', overflow: 'auto'}}>
               <List dense >

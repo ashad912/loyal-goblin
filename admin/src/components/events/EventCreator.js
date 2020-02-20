@@ -34,7 +34,6 @@ import {
   itemsPath,
   missionsPath,
   ralliesPath,
-  palette
 } from "../../utils/definitions";
 import {
   createEvent,
@@ -1237,8 +1236,8 @@ class EventCreator extends Component {
                     style={{ marginBottom: "1rem" }}
                   >
                     {amuletListEmpty
-                      ? "Dodaj wymagane amulety"
-                      : "Edytuj wymagane amulety"}
+                      ? "Dodaj wymagane itemy"
+                      : "Edytuj wymagane itemy"}
                   </Button>
                 </Grid>
               </Grid>
@@ -1355,7 +1354,7 @@ class EventCreator extends Component {
                   >
                     <Grid item container>
                       <Grid item xs={2}>
-                        <Typography variant="h6">Próg {index + 1}.</Typography>
+                        <Typography variant="h6">Próg {this.state.awardsLevels.length - index}.</Typography>
                       </Grid>
                       <Grid item xs={4} container>
                         <Grid item>

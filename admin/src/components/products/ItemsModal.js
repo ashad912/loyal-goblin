@@ -33,72 +33,75 @@ const ItemsModal = props => {
   const [perksFilter, setPerksFilter] = useState(false);
   const [selectAll, setSelectAll] = useState(false)
 
+  // useEffect(()=> {
+    
+  // }, [props.productCategory])
+  
+  
   useEffect(()=> {
+    setItemsList(props.itemsList)
     const categories = {}
     Object.keys(itemTypeLabelsPlural).forEach(categoryKey => {
       if(categoryKey !== 'all'){
-        if(props.productCategory === 'beers'){
-          if(categoryKey === 'torpedo'){
-            categories[categoryKey] = true
+        if(props.itemsList.filter((itemModel)=> itemModel.type === categoryKey).length){
+          if(props.productCategory === 'beers'){
+            if(categoryKey === 'torpedo'){
+              categories[categoryKey] = true
+            }else{
+              categories[categoryKey] = false
+            }
           }else{
-            categories[categoryKey] = false
-          }
-        }else{
-          if(categoryKey === 'amulet'){
-            categories[categoryKey] = true
-          }else{
-            categories[categoryKey] = false
+            if(categoryKey === 'amulet'){
+              categories[categoryKey] = true
+            }else{
+              categories[categoryKey] = false
+            }
           }
         }
+        
         
       }
       
     });
 
     setCategoryFilter(categories)
-  }, [props.productCategory])
-  
-  
-  useEffect(()=> {
-    setItemsList(props.itemsList)
-  }, [props.itemsList])
+  }, [props.itemsList, props.productCategory])
 
 
   useEffect(() => {
+    if(perksFilter || searchValue.trim().length > 0){
+      let tempItemsList = [ ...props.itemsList ];
+
+      if (perksFilter) {
+             
+        tempItemsList = tempItemsList.filter(
+          itemModel =>
+            itemModel.hasOwnProperty("perks") &&
+            itemModel.perks.length > 0
+        );
+      } 
+
       if (searchValue.trim().length > 0) {
-        let tempItemsList = [ ...itemsList ];
+        //let tempItemsList = [ ...props.itemsList ];
         
-        tempItemsList = tempItemsList.filter(itemModel =>
-          itemModel.name.search(searchValue) !== -1
-        )
         
-        setItemsList(tempItemsList);
-      } else {
-        setItemsList(itemsList);
+        tempItemsList = tempItemsList.filter(itemModel => {
+          const reg = new RegExp(searchValue, 'gi')
+          return itemModel.hasOwnProperty('name') && itemModel.name.match(reg)
+          //itemModel.name.search(searchValue) !== -1
+        })
+
       }
 
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue]);
-    
-
-
-  useEffect(() => {
-    if (perksFilter) {
-      let tempItemsList = [ ...itemsList ];
-      
-      tempItemsList = tempItemsList.filter(
-        itemModel =>
-          itemModel.hasOwnProperty("perks") &&
-          itemModel.perks.length > 0
-      );
-      
       setItemsList(tempItemsList);
-    } else {
-      setItemsList(itemsList);
+    }else{
+      setItemsList(props.itemsList);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [perksFilter]);
+      
 
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [perksFilter, searchValue]);
+    
 
   const handleSelectAll = (e) => {
     const val = Boolean(e.target.checked)

@@ -279,6 +279,7 @@ const AdminItems = () => {
           <Dialog
             open={deleteDialog}
             onClose={handleDeleteDialogClose}
+            PaperProps={{style: {padding: '2rem'}}}
           >
             <DialogTitle >Usuwanie przedmiotu</DialogTitle>
             <DialogContent>
