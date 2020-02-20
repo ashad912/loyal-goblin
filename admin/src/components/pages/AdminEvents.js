@@ -425,7 +425,6 @@ if(eventId){
               <List
                 style={{
                   width: "90%",
-                  border: "1px solid grey",
                   margin: "0 auto"
                 }}
               >

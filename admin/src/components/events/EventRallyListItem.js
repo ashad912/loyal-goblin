@@ -65,7 +65,7 @@ const EventRallyListItem = ({
       running = true
     }
   }
-  if(moment(now).isAfter(activationDate)){
+  if(moment(now).isAfter(expiryDate)){
     archive = true
   }
 

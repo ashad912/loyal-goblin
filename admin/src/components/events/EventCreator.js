@@ -743,13 +743,18 @@ class EventCreator extends Component {
   };
 
   handleChangeAwardLevelExperienceInput = e => {
-    this.setState({
-      awardLevelExperienceInput: e.target.value.replace(/^0+/, "").trim()
-    });
+
+      this.setState({
+        awardLevelExperienceInput: e.target.value.trim()
+      });
+    
   };
 
   handleChangeExperience = e => {
-    this.setState({ experience: e.target.value.replace(/^0+/, "").trim() });
+
+
+      this.setState({ experience: e.target.value.trim() });
+    
   };
 
   handleChangeAmuletQuantity = (id, quantity) => {
