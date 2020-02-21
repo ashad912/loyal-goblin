@@ -467,7 +467,7 @@ const Profile = props => {
           {equippedItems && equippedItems.feet && (
             <img
               className={classes.avatarImage}
-              src={`/${appearancePath}${equippedItems.feet}`}
+              src={`${appearancePath}${equippedItems.feet}`}
             />
           )}
           {/* chest */}
@@ -477,6 +477,7 @@ const Profile = props => {
               src={`${appearancePath}${equippedItems.chest}`}
             />
           )}
+          
           {/* head */}
           {equippedItems &&
             equippedItems.head &&
@@ -486,6 +487,15 @@ const Profile = props => {
                 src={`${appearancePath}${equippedItems.head}`}
               />
             )}
+
+          {/* hands */}
+          {equippedItems && equippedItems.hands && (
+            <img
+              className={classes.avatarImage}
+              src={`${appearancePath}${equippedItems.hands}`}
+            />
+          )}
+
           {/* Main-hand weapon */}
 
           {equippedItems && equippedItems.weaponRight && (
