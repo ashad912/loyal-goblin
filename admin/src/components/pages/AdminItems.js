@@ -220,7 +220,7 @@ const AdminItems = () => {
               alignItems="center"
             >
               <FormControl style={{ alignSelf: "flex-start" }}>
-                <InputLabel htmlFor="status-filter">Status</InputLabel>
+                <InputLabel htmlFor="status-filter">Typ</InputLabel>
                 <Select
                   value={statusFilter}
                   onChange={handleChangeStatusFilter}

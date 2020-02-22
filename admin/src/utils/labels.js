@@ -56,7 +56,7 @@ export const roomLabels = {
 
 export const itemTypeLabelsPlural = {
     all: 'Wszystkie',
-    amulet: 'Itemy',
+    amulet: 'Trofea',
     weapon: 'Broń',
     feet: 'Stopy',
     hands: 'Dłonie',
@@ -82,7 +82,7 @@ export const itemTypeLabelsPlural = {
 }
 
   export const itemTypeLabels = {
-    amulet: 'Item',
+    amulet: 'Trofeum',
     weapon: 'Broń',
     hands: 'Dłonie',
     head: 'Głowa',

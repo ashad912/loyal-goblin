@@ -16,6 +16,7 @@ import ListItem from "@material-ui/core/ListItem";
 import CreateIcon from "@material-ui/icons/Create";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import Snackbar from "@material-ui/core/Snackbar";
 import { MuiPickersUtilsProvider} from "@material-ui/pickers";
 
 import ItemsModal from './ItemsModal'
@@ -86,6 +87,7 @@ class ProductCreator extends Component {
         description: null,
         iconView: null,
     },
+    snackbarOpen: false,
     showItemsModal: false,
     awards: [],
     items: []
@@ -245,6 +247,9 @@ class ProductCreator extends Component {
     });
   };
  
+  handleSnackbarClose = () => {
+    this.setState({ snackbarOpen: false });
+  };
 
   saveProduct = async () => {
     
@@ -303,8 +308,16 @@ class ProductCreator extends Component {
       if(this.state.icon){
         formData.append('icon', this.state.icon)
       }
+
+      try{
+        await uploadProductImage(productId, formData)
+      }catch(e){
+        this.setState({
+          snackbarOpen: true,
+        })
+        return
+      }
       
-      await uploadProductImage(productId, formData)
     }
 
 
@@ -469,6 +482,16 @@ class ProductCreator extends Component {
           </Grid>
           </Grid>
         </Container>
+        <Snackbar
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center"
+          }}
+          open={this.state.snackbarOpen}
+          onClose={this.handleSnackbarClose}
+          autoHideDuration={2000}
+          message={"Obraz nie może zostać zapisany na serwerze!"}
+        />
         <ItemsModal
             open={this.state.showItemsModal}
             handleClose={this.handleToggleItemsModal}

@@ -14,6 +14,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
+import Snackbar from "@material-ui/core/Snackbar";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 
@@ -95,7 +96,8 @@ class ItemCreator extends Component {
       description: null,
       iconView: null,
       appearanceView: null,
-    }
+    },
+    snackbarOpen: false,
   };
 
   componentDidMount = () => {
@@ -234,20 +236,9 @@ class ItemCreator extends Component {
   };
 
 
-  // handleAvatarChange = async e => {
-  //   if (e.target.files.length > 0) {
-  //       const avatar = e.target.files[0]
-
-  //       const formData = new FormData()
-  //       formData.append("avatar", avatar)
-  //       e.stopPropagation();
-  //       setAnchorEl(null);
-  //       //window.location.reload();
-  //       await props.updateAvatar(formData); 
-        
-        
-  //   }
-//};
+  handleSnackbarClose = () => {
+    this.setState({ snackbarOpen: false });
+  };
 
   handleToggleLoyalAward = () => {
     this.setState(prevState => {
@@ -408,8 +399,15 @@ class ItemCreator extends Component {
         if(this.state.appearance){
           formData.append('appearance', this.state.appearance)
         }
+        try{
+          await uploadItemModelImages(itemModelId, formData)
+        }catch(e){
+          this.setState({
+            snackbarOpen: true,
+          })
+          return
+        }
         
-        await uploadItemModelImages(itemModelId, formData)
       }
 
       this.props.updateItems(item)
@@ -710,6 +708,16 @@ class ItemCreator extends Component {
           />
       
         </Container>
+        <Snackbar
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center"
+          }}
+          open={this.state.snackbarOpen}
+          onClose={this.handleSnackbarClose}
+          autoHideDuration={2000}
+          message={"Obraz nie może zostać zapisany na serwerze!"}
+        />
       </MuiPickersUtilsProvider>
     );
   }

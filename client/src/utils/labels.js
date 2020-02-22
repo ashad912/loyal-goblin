@@ -48,7 +48,7 @@ export const categoryLabels = {
 }
 
 export const itemTypeLabels = {
-    amulet: "Amulety",
+    amulet: "Trofea",
     weapon: "Broń",
     hands: 'Dłonie',
     head: "Głowa",

@@ -231,7 +231,7 @@ const MissionListItem = props => {
                   component="span"
                   style={{ display: "inline-flex", margin: "0 0.3rem 0 0" }}
                 >
-                  {mission.amulets && mission.amulets.length > 0 && `Wymagane itemy: `}
+                  {mission.amulets && mission.amulets.length > 0 && `Wymagane trofea: `}
                 </Typography>
                 {mission.amulets.map(amulet => {
                   return (

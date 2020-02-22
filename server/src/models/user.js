@@ -206,11 +206,13 @@ export const UserSchema = new mongoose.Schema({
         missionCounter: {
             type: Number,
             default: 0,
+            min: 0,
             
         },
         rallyCounter: {
             type: Number,
             default: 0,
+            min: 0,
             
         },
         amuletCounters: [{
@@ -274,7 +276,6 @@ export const UserSchema = new mongoose.Schema({
         attrStrength: {
             type: Number,
             default: 0,
-            min: 0,
             validate(value) {
                 if (!Number.isInteger(value)) {
                     throw new Error(`${value} is not an integer value!`)
@@ -284,7 +285,6 @@ export const UserSchema = new mongoose.Schema({
         attrDexterity: {
             type: Number,
             default: 0,
-            min: 0,
             validate(value) {
                 if (!Number.isInteger(value)) {
                     throw new Error(`${value} is not an integer value!`)
@@ -294,7 +294,6 @@ export const UserSchema = new mongoose.Schema({
         attrMagic: {
             type: Number,
             default: 0,
-            min: 0,
             validate(value) {
                 if (!Number.isInteger(value)) {
                     throw new Error(`${value} is not an integer value!`)
@@ -304,7 +303,6 @@ export const UserSchema = new mongoose.Schema({
         attrEndurance: {
             type: Number,
             default: 0,
-            min: 0,
             validate(value) {
                 if (!Number.isInteger(value)) {
                     throw new Error(`${value} is not an integer value!`)

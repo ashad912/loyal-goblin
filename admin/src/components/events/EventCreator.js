@@ -23,6 +23,7 @@ import IconButton from "@material-ui/core/IconButton";
 import { MuiPickersUtilsProvider, DateTimePicker } from "@material-ui/pickers";
 import EditIcon from "@material-ui/icons/Edit";
 import EventIcon from "@material-ui/icons/Event";
+import Snackbar from "@material-ui/core/Snackbar";
 
 import AttributeBox from "./AttributeBox";
 import AmuletsModal from "./AmuletsModal";
@@ -145,7 +146,8 @@ class EventCreator extends Component {
     },
     disableSubmit: true,
     rallies: [],
-    dateErrorClearingTimeout: null
+    dateErrorClearingTimeout: null,
+    snackbarOpen: false
   };
 
   componentWillUnmount() {
@@ -948,6 +950,10 @@ class EventCreator extends Component {
     this.setState({ disableSubmit: !inputAndDateValidation, validationErrors });
   };
 
+  handleSnackbarClose = () => {
+    this.setState({ snackbarOpen: false });
+  };
+
   handleSubmit = async () => {
     let event = {
       _id: this.state._id,
@@ -994,7 +1000,15 @@ class EventCreator extends Component {
         formData.append("icon", this.state.icon);
       }
 
-      await uploadEventIcon(eventType, eventId, formData);
+      
+      try{
+        await uploadEventIcon(eventType, eventId, formData);
+      }catch(e){
+        this.setState({
+          snackbarOpen: true,
+        })
+        return
+      }
     }
 
     this.props.handleClose();
@@ -1899,55 +1913,20 @@ class EventCreator extends Component {
             </Grid>
           </Grid>
         </Container>
+        <Snackbar
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center"
+          }}
+          open={this.state.snackbarOpen}
+          onClose={this.handleSnackbarClose}
+          autoHideDuration={2000}
+          message={"Obraz nie może zostać zapisany na serwerze!"}
+        />
       </MuiPickersUtilsProvider>
     );
   }
 }
 
-// const checkRallyDates = async (/*param*/) => {
-//   const rallyList = [
-//       {
-//           activationDate: moment('2019-11-19T08:00:00.000+00:00'),
-//           expiryDate: moment('2019-11-19T20:00:00.000+00:00')
-//       },
-//       {
-//           activationDate: moment('2019-11-19T21:00:00.000+00:00'),
-//           expiryDate: moment('2019-11-20T07:00:00.000+00:00')
-//       },
-//       {
-//           activationDate: moment('2019-11-20T08:00:00.000+00:00'),
-//           expiryDate: moment('2019-11-20T20:00:00.000+00:00')
-//       },
-//   ]
-
-//   const rally = {
-//       activationDate: moment('2019-11-19T20:03:00.000+00:00'),
-//       expiryDate: moment('2019-11-19T20:02:00.000+00:00')
-//   }
-
-//   const newRallyStart = rally.activationDate.valueOf()
-//   const newRallyEnd = rally.expiryDate.valueOf()
-
-//   if(newRallyStart >= newRallyEnd){
-//       console.log('swap dates, dummy boy')
-//       return
-//   }
-
-//   let causingRallyList = []
-//   await asyncForEach(rallyList, (rallyItem) => {
-//       const existingRallyStart = rallyItem.activationDate.valueOf()
-//       const existingRallyEnd = rallyItem.expiryDate.valueOf()
-
-//       if(!((existingRallyStart < newRallyStart && existingRallyEnd < newRallyStart) || (existingRallyEnd > newRallyEnd && existingRallyStart > newRallyEnd))){
-//           causingRallyList = [...causingRallyList, rallyItem] //assembling list of 'bad' rallies :<<
-//       }
-//   })
-
-//   if(causingRallyList.length){
-//       console.log(causingRallyList)
-//   }else{
-//       console.log('no problemo seniorita')
-//   }
-// }
 
 export default EventCreator;

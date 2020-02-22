@@ -373,7 +373,7 @@ if(eventId){
                   style={{ alignSelf: "flex-start", minWidth: "10vw" }}
                 >
                   <InputLabel htmlFor="type-filter">
-                    Rodzaj wydarzenia
+                    Rodzaj
                   </InputLabel>
                   <Select
                     value={this.state.typeFilter}
