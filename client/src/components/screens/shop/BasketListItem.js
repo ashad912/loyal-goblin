@@ -33,7 +33,7 @@ const BasketListItem = ({activeUsersBasket, name, summedPrice, basket, handleRem
           <List component="div" disablePadding>
             {basket.map(product => {
               return (
-                <ListItem key={product._id+product.firstDiscount} style={{ paddingLeft: "0.4rem" }}>
+                <ListItem key={product._id+product.firstDiscount+product.quantity} style={{ paddingLeft: "0.4rem" }}>
                   {activeUsersBasket && 
                   <DeleteForeverIcon style={{width: '2rem', height: '2rem', color: "#b40000"}} onClick={(e) => removeItem(e, product._id, product.firstDiscount)}/>
                   }
@@ -59,14 +59,14 @@ const BasketListItem = ({activeUsersBasket, name, summedPrice, basket, handleRem
           <List component="div" disablePadding>
             {basket.map(product => {
               return (
-                <ListItem key={product._id} style={{ paddingLeft: "2rem" }}>
+                <ListItem key={name+product._id+product.firstDiscount+product.quantity} style={{ paddingLeft: "2rem" }}>
                   {activeUsersBasket && 
-                  <DeleteForeverIcon style={{width: '2rem', height: '2rem', color: "#b40000"}} onClick={(e) => removeItem(e, product._id)}/>
+                  <DeleteForeverIcon style={{width: '2rem', height: '2rem', color: "#b40000"}} onClick={(e) => removeItem(e, product._id, product.firstDiscount)}/>
                   }
                   <ListItemText secondary={product.name} style={{flexBasis: '30%'}} />
                   <ListItemText secondary={product.quantity+"x"}  style={{flexBasis: '10%'}}/>
                   <ListItemText secondary={product.price.toFixed(2) + " ZŁ"} style={{flexBasis: '30%'}}/>
-                  <ListItemText secondary={"= " + (product.quantity * product.price).toFixed(2) + " ZŁ"} style={{flexBasis: '30%'}}/>
+                  <ListItemText secondary={"= " + (product.quantity * product.price).toFixed(2) + " ZŁ"} style={{flexBasis: '30%', background: product.firstDiscount && 'gold'}}/>
                 </ListItem>
               );
             })}

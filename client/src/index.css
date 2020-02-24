@@ -1,6 +1,11 @@
 @font-face{
-  font-family: "Pinto";
-  src: local("Pinto"), url(./assets/fonts/Pinto-NO_1.otf);
+  font-family: "Pinto-3";
+  src: local("Pinto-3"), url(./assets/fonts/Pinto-NO_1.otf);
+}
+
+@font-face{
+  font-family: "Pinto-0";
+  src: local("Pinto-0"), url(./assets/fonts/Pinto-NO.otf);
 }
 
 @font-face{

@@ -302,7 +302,7 @@ class Shop extends React.Component {
             ) 
             {
               //Show price in green color when lowered if any priceMod present
-              products[modifyIndex].priceModified = "#28a52e"
+              products[modifyIndex].priceModified = false
               products[modifyIndex].firstDiscount = false
 
 
@@ -315,6 +315,9 @@ class Shop extends React.Component {
                   if(!productInBasket){
                     products[modifyIndex].price += activeUser.userPerks.products[modifiedProduct].priceMod.first;
                     products[modifyIndex].firstDiscount = true
+                    products[modifyIndex].priceModified = "#28a52e"
+                  }else{
+                    products[modifyIndex].priceModified = false
                   }
                 }
 
@@ -326,6 +329,7 @@ class Shop extends React.Component {
               if(activeUser.userPerks.products[modifiedProduct].priceMod.hasOwnProperty('standard') && activeUser.userPerks.products[modifiedProduct].priceMod.standard < 0){
                 products[modifyIndex].price +=
                 activeUser.userPerks.products[modifiedProduct].priceMod.standard;
+                products[modifyIndex].priceModified = "#28a52e"
               }
               
               //Final check to disable negative price
