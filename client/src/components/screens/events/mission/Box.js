@@ -7,13 +7,11 @@ import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import {createAvatarPlaceholder} from '../../../../utils/methods'
 import {palette, itemsPath, usersPath} from '../../../../utils/definitions'
-
+import {PintoTypography} from '../../../../utils/fonts'
 
 
 const RootDiv = styled.div`
     flex-grow: 1;
-    margin-left: 2rem;
-    margin-right: 2rem;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
 `
@@ -22,11 +20,9 @@ const RootDiv = styled.div`
 const Item = styled.div`
 
   user-select: none;
-  padding: 0.5rem;
+  padding: 0.2rem;
   margin: 0.2rem 0.2rem 0rem 0rem;
-  line-height: 1.5;
-  border-radius: 1px;
-  border: 1px ${props => (props.isDragging ? 'dashed #000' : 'solid #ddd')};
+  border: 1px solid ${props => (props.isDragging ? palette.background.grey : palette.background.grey)};
   background: ${(props) => props.isDragging ? palette.background.equipped : 'white'};
 `
 
@@ -37,14 +33,15 @@ const Clone = styled(Item)`
 `
 
 const StyledPaper = styled(Paper)`
-    min-height: 75px;
+    min-height: 3rem;
     text-align: center;
     color: rgba(0, 0, 0, 0.54);
+    border: 1px solid ${palette.background.grey};
 `
 
 const BoxList = styled.div`
   background: ${(props) => props.isDraggingOver ? palette.background.equipped : 'white'};
-  min-height: 4rem;
+  min-height: 3rem;
   align-items: center;
   width: 96%;
   height: 96%;
@@ -108,16 +105,20 @@ const Box = (props) => {
           <Grid item xs={3}>
             {props.boxname === "userItems" ? (
               <React.Fragment>
-                {props.boxIcon ? <Avatar style={{height: 70, width: 70}} alt="avatar" src={usersPath + props.boxIcon} /> : <Avatar style={{height: 70, width: 70, fontSize: '2.5rem'}}>{createAvatarPlaceholder(props.userName)}</Avatar>}
+                {props.boxIcon ? <Avatar style={{height: '4rem', width: '4rem'}} alt="avatar" src={usersPath + props.boxIcon} /> : <Avatar style={{height: 70, width: 70, fontSize: '2.5rem'}}>{createAvatarPlaceholder(props.userName)}</Avatar>}
               </React.Fragment>
             ) : (
-              <Avatar style={{height: 70, width: 70}} alt="avatar" src={props.boxIcon} />
+              <Avatar style={{height: '4rem', width: '4rem'}} alt="avatar" src={props.boxIcon} />
             )}
             
           </Grid>
 
           <Grid item xs={9}>
-            <StyledPaper>
+            <StyledPaper
+              elevation={0}
+              variant="outlined"
+              square
+            >
               <Grid
                 container
                 direction="row"
@@ -137,7 +138,8 @@ const Box = (props) => {
                           <Draggable
                             key={item.model._id}
                             draggableId={item.instancesIds[0]}
-                            index={index}>
+                            index={index}
+                            shouldRespectForcePress={true}>
                             {(provided, snapshot) => (
                                 <React.Fragment>
                               
@@ -151,15 +153,15 @@ const Box = (props) => {
                                       isDragging = {snapshot.isDragging}
                                     >
                                     
-                                    <img style={{height: 40, width:40}} src={`${itemsPath}${item.model.imgSrc}`} alt='icon'/>
-                                    {!snapshot.isDragging && (<span><Typography display="inline">{item.instancesIds.length}</Typography></span>)}
+                                    <img style={{height: '2rem', width: '2rem'}} src={`${itemsPath}${item.model.imgSrc}`} alt='icon'/>
+                                    {!snapshot.isDragging && (<span><PintoTypography display="inline">{item.instancesIds.length}</PintoTypography></span>)}
 
                                   </Item>
 
                                   {snapshot.isDragging && (
                                     <Clone>
-                                      <img style={{height: 40, width:40}} src={`${itemsPath}/${item.model.imgSrc}`} alt='icon'/>
-                                      <span><Typography display="inline">{item.instancesIds.length - 1}</Typography></span>
+                                      <img style={{height: '2rem', width: '2rem'}} src={`${itemsPath}/${item.model.imgSrc}`} alt='icon'/>
+                                      <span><PintoTypography display="inline">{item.instancesIds.length - 1}</PintoTypography></span>
                                     </Clone>
                                   )}
                                   
@@ -168,7 +170,7 @@ const Box = (props) => {
                           </Draggable>
                       )})):(
                         <PlaceholderText>
-                          <Typography>Przeciągnij tutaj!</Typography>
+                          <PintoTypography>Przeciągnij tutaj!</PintoTypography>
                         </PlaceholderText>
                       )}
                       

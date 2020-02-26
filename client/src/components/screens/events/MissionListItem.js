@@ -1,4 +1,5 @@
 import React from "react";
+import MissionBasicInfo from './mission/MissionBasicInfo'
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import List from "@material-ui/core/List";
@@ -11,8 +12,9 @@ import StarBorderIcon from "@material-ui/icons/StarBorder";
 import styled from "styled-components";
 import { classLabelsAny } from "../../../utils/labels";
 import { palette, itemsPath, missionsPath } from "../../../utils/definitions";
+import { PintoTypography} from '../../../utils/fonts'
 
-const ShortDescription = styled(Typography)`
+const ShortDescription = styled(PintoTypography)`
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -54,53 +56,10 @@ const MissionListItem = props => {
       <Grid
         container
         direction="column"
-        style={{ padding: "1rem", textAlign: "left" }}
+        style={{ padding: "0.5rem", textAlign: "left" }}
       >
-        <Grid container direction="row">
-          <Grid item xs={9}>
-            <Grid container direction="column">
-              <Grid
-                item
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  marginBottom: "0.5rem"
-                }}
-              >
-                <Typography component="span" variant="h6" color="textPrimary">
-                  {mission.title}
-                </Typography>
-                {mission.unique && (
-                  <StarBorderIcon style={{ marginLeft: "1rem" }} />
-                )}
-              </Grid>
-              <Grid item>
-                <ShortDescription
-                  component="span"
-                  variant="body2"
-                  color="textPrimary"
-                >
-                  {mission.description}
-                </ShortDescription>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={3}>
-            <Grid container direction="column">
-              <Grid
-                item
-                style={{ display: "flex", justifyContent: "flex-end" }}
-              >
-                <Avatar
-                  alt="avatar"
-                  style={{ width: "4rem", height: "4rem", borderRadius: "0" }}
-                  variant="square"
-                  src={`${missionsPath}${mission.imgSrc}`}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
+        <MissionBasicInfo mission={mission}/>
+      
         <Grid
           container
           direction="row"

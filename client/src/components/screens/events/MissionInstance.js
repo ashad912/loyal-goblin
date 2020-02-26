@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import ExchangeArea from './mission/ExchangeArea'
 import PartyList from './mission/PartyList'
 import Loading from '../../layout/Loading';
+import MissionBasicInfo from './mission/MissionBasicInfo';
 import styled from 'styled-components'
 import Button from "@material-ui/core/Button";
 import KeyboardArrowLeftIcon from "@material-ui/icons/KeyboardArrowLeft";
@@ -10,21 +11,27 @@ import ColorizeIcon from "@material-ui/icons/Colorize";
 import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
 import VerificationPage from './mission/VerificationPage'
-import { Typography } from '@material-ui/core';
+import Avatar from "@material-ui/core/Avatar";
+import Typography from "@material-ui/core/Typography";
+import StarBorderIcon from "@material-ui/icons/StarBorder";
+import Grid from "@material-ui/core/Grid";
 
 import {itemsPath, missionsPath} from '../../../utils/definitions'
+import { PintoTypography} from '../../../utils/fonts'
 
 import { authCheck } from "../../../store/actions/authActions";
 import {togglePresenceInInstance, toggleUserReady, finishInstance} from '../../../store/actions/missionActions'
 import {socket, modifyUserStatusSubscribe, finishMissionSubscribe} from '../../../socket'
 
-// const getRandomInt = (min, max) => {
-//     min = Math.ceil(min);
-//     max = Math.floor(max);
-//     return Math.floor(Math.random() * (max - min + 1)) + min;
-//   }
-  
-// const randomUserId = getRandomInt(1, 5)
+const ShortDescription = styled(PintoTypography)`
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  height: 60;
+  overflow: hidden;
+  white-space: hidden;
+  text-overflow: ellipsis;
+`;
 
 const TitleBar = styled.div`
   display: flex;
@@ -41,9 +48,9 @@ const StyledImg = styled.img`
 `
 
 const StyledItemIcon = styled.img`
-  margin: 0 0.1rem 0 0.5rem;
-  height: 32px;
-  width: 32px;
+  margin: 0 0.1rem 0 0;
+  height: 1rem;
+  width: 1rem;
 `
 const StyledItemsIndicator = styled.span`
   font-size: 10px;
@@ -58,15 +65,15 @@ const StyledItemsIndicator = styled.span`
         return('black')
       }}
     };
+    margin-right: 0.5rem;
 `
 
 const MissionBar = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  margin: 0 1.5rem 1rem 1.5rem;
+  align-items: baseline;
+  margin: 0 0rem 0rem 0rem;
 `
 
 
@@ -76,7 +83,7 @@ const ButtonBar = styled.div`
   text-align: left;
   align-items: center;
   justify-content: space-between;
-  margin: 0.5rem 1.5rem 0.5rem 1.5rem;
+  margin: 0.5rem 0rem 0.5rem 0rem;
 `
 
 const createTempMission = () => {
@@ -381,9 +388,9 @@ class MissionInstance extends React.Component {
         const isAllPartyReady = this.state.leader ? this.checkPartyCondition() : true
         //console.log(isAllPartyReady)
 
-        
+        const mission = this.state.missionObject
         return(
-            <div style={{display: 'flex', flexDirection: 'column', alignContent: 'center', fontFamily: '"Roboto", sans-serif', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`}}>
+            <div style={{display: 'flex', flexDirection: 'column', padding: "0.5rem 2rem", alignContent: 'center', fontFamily: '"Roboto", sans-serif', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`}}>
             {this.state.showVerificationPage ? (
                 <VerificationPage 
                     missionExperience={this.state.missionObject.experience} 
@@ -395,25 +402,91 @@ class MissionInstance extends React.Component {
             ) : (
                 <React.Fragment>
                     
-                    <TitleBar>
+                    {/* <TitleBar>
                         <StyledImg src={`${missionsPath}${this.state.missionObject.imgSrc}`}/>
                         <Typography style={{display: 'inline'}} variant="h6">{this.state.missionObject.title}</Typography>
                         {statusIcon(isRequiredItemsCollected)}
                     </TitleBar>   
-                    <MissionBar>
-                        
-                        {requiredMissionItems.map((amulet) => {
-                            return (
-                                <React.Fragment key={amulet.itemModel.id}>
-                                    
-                                    <StyledItemIcon src={`${itemsPath}${amulet.itemModel.imgSrc}`}/>
-                                    <StyledItemsIndicator required={amulet.quantity} inBox={amulet.inBox}><Typography style={{fontSize: '0.8rem'}}>{` ${amulet.inBox}/${amulet.quantity}`}</Typography></StyledItemsIndicator>
-                                    {statusIcon(amulet.readyStatus)}
-                                </React.Fragment>
-                            )
-                        })}
+                     */}
+                     <Grid
+                        container
+                        direction="column"
+                        style={{ padding: "0.5rem 0 1.5rem 0", textAlign: "left" }}
+                    >
+                        {/* <Grid container direction="row">
+                            <Grid item xs={9}>
+                                <Grid container direction="column">
+                                    <Grid
+                                    item
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        marginBottom: "0.5rem"
+                                    }}
+                                    >
+                                    <Typography component="span" variant="h6" color="textPrimary">
+                                        {mission.title}
+                                    </Typography>
+                                    {mission.unique && (
+                                        <StarBorderIcon style={{ marginLeft: "1rem" }} />
+                                    )}
+                                    </Grid>
+                                    <Grid item>
+                                    <ShortDescription
+                                        component="span"
+                                        variant="body2"
+                                        color="textSecondary"
+                                    >
+                                        {mission.description}
+                                    </ShortDescription>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                                <Grid item xs={3}>
+                                <Grid container direction="column">
+                                    <Grid
+                                    item
+                                    style={{ display: "flex", justifyContent: "flex-end" }}
+                                    >
+                                    <Avatar
+                                        alt="avatar"
+                                        style={{ width: "5rem", height: "5rem", borderRadius: "0" }}
+                                        variant="square"
+                                        src={`${missionsPath}${mission.imgSrc}`}
+                                    />
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Grid> */}
+                        <MissionBasicInfo mission={mission}/>
+                    </Grid>
                     
-                    </MissionBar>
+                    <Grid
+                        container
+                        direction="row"
+                        style={{ textAlign: "left" }}
+                    >
+                        <Grid item xs={3}>
+
+                        </Grid>
+                        <Grid item xs={9}>
+                            <MissionBar>
+                            
+                            {requiredMissionItems.map((amulet) => {
+                                return (
+                                    <React.Fragment key={amulet.itemModel.id}>
+                                        
+                                        <StyledItemIcon src={`${itemsPath}${amulet.itemModel.imgSrc}`}/>
+                                        <StyledItemsIndicator required={amulet.quantity} inBox={amulet.inBox}><Typography style={{fontSize: '0.8rem'}}>{` ${amulet.inBox}/${amulet.quantity}`}</Typography></StyledItemsIndicator>
+                                        {/* {statusIcon(amulet.readyStatus)} */}
+                                    </React.Fragment>
+                                )
+                            })}
+                        
+                            </MissionBar>
+                        </Grid>
+                    </Grid>
+                   
                     
                     <ExchangeArea userId={this.props.auth.uid} avatar={this.props.auth.profile.avatar} userName={this.props.auth.profile.name} locationId={this.props.party._id} instanceItems={this.updateInstanceItems} initUserItems={this.state.userItems} initMissionItems={this.state.instanceItems} userReadyStatus={this.state.userReadyStatus} handleBack={this.handleBack}/>
                     <PartyList userId={this.props.auth.uid} instanceUsers={this.state.instanceUsers} instanceItems={this.state.instanceItems} party={this.props.party} userReadyStatus={this.state.userReadyStatus} />
