@@ -12,9 +12,8 @@ const ShortDescription = styled(PintoTypography)`
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
-  height: 60;
+  height: 60px;
   overflow: hidden;
-  white-space: hidden;
   text-overflow: ellipsis;
   padding-right: 0.5rem;
 `;
