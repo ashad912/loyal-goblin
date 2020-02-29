@@ -22,7 +22,7 @@ import IconButton from '@material-ui/core/IconButton';
 import RefreshIcon from '@material-ui/icons/Refresh';
 
 
-const itemLabelHeight = 468.4 //REFACTOR: need to be changed to 'dimensionLabel'
+const itemLabelHeight = 451.6 //REFACTOR: need to be changed to 'dimensionLabel'
 
 
 
