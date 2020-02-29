@@ -17,13 +17,14 @@ import Badge from "@material-ui/core/Badge";
 import styled from 'styled-components'
 import AwardListItem from './AwardListItem'
 import { classLabelsAny } from '../../../utils/labels';
-import {palette, itemsPath, missionsPath} from '../../../utils/definitions'
+import {palette, uiPaths, itemsPath, missionsPath} from '../../../utils/definitions'
+import {PintoTypography} from '../../../utils/fonts'
 
 
 
 const RequiredAttribute = styled(Typography)`
     margin: 0 0.5rem 0 0;
-    color: ${props => props.attr ? 'green' : 'red' } ;
+    color: ${props => props.attr ? palette.primary.main : 'red' } ;
 `
 const Background = styled.div`
     background-color: ${palette.primary.main};
@@ -62,7 +63,7 @@ const MissionDetails = (props) => {
             maxWidth="lg"
         >
         <Background>
-            <DialogContent style={{paddingTop: '2rem', paddingBottom: '2rem', maxHeight: '31vh'}}>
+            <DialogContent style={{padding: '2rem 1rem', maxHeight: '31vh'}}>
                 <Grid
                     container
                     direction="column"
@@ -90,13 +91,13 @@ const MissionDetails = (props) => {
                                     </Typography>
                                 </Grid>
                                 <Grid item >
-                                    <Typography
+                                    <PintoTypography
                                         component="p"
                                         variant="body2"
-                                        
+                                        style={{color: 'black'}}
                                     >
                                         {mission.description}
-                                    </Typography>
+                                    </PintoTypography>
                                 </Grid>
                             </Grid>   
                         </Grid> 
@@ -118,7 +119,7 @@ const MissionDetails = (props) => {
         </Background>
 
 
-        <DialogContent style={{paddingTop: '1rem', paddingBottom: '1rem'}}>
+        <DialogContent style={{padding: '0.5rem 1rem'}}>
 
             <Grid
                 container
@@ -127,7 +128,7 @@ const MissionDetails = (props) => {
                 <Grid
                     container
                     direction="row"
-                    style={{marginBottom: '0.4rem'}}
+                    style={{marginBottom: '0.5rem'}}
                 >
                     
                     <Grid item>
@@ -144,7 +145,7 @@ const MissionDetails = (props) => {
                 <Grid
                     container
                     direction="row"
-                    style={{margin: '0.1rem 0'}}
+                    style={{marginBottom: '0.5rem'}}
                 >
                     
                     <Grid item xs={3}>
@@ -155,19 +156,17 @@ const MissionDetails = (props) => {
                             variant="body1"
                             color={props.appropriateLevel ? 'textPrimary' : 'error'}
                         >
-                            {/* <img style= {{height: 20, width: 20}} src={levelIcon}/> */}
-                            {`P: ${mission.level}`}
+                            {`POZ: ${mission.level}`}
                         </Typography>
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={3} style={{display: 'inline-flex', alignItems: 'center'}}>
+                        <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.5rem'}} src={uiPaths.players}/>
                         <Typography
                             component="span"
-                            style={{display: 'inline-flex'}}
                             variant="body1"
                             color={props.appropriatePlayers ? 'textPrimary' : 'error'}
                         >
-                            {/* <img style= {{height: 20, width: 20}} src={playersIcon}/> */}
-                            {`G: ${props.playersLabel(mission.minPlayers, mission.maxPlayers)}`}
+                            {props.playersLabel(mission.minPlayers, mission.maxPlayers)}
                         </Typography>
                     </Grid>
                 </Grid>
@@ -175,29 +174,33 @@ const MissionDetails = (props) => {
                 <Grid
                     container
                     direction="row"
-                    style={{margin: '0.1rem 0'}}
+                    style={{marginBottom: '0.5rem'}}
                 >
-                    <Grid item xs={3}>
-                        <RequiredAttribute variant="body1" attr={props.appropriateStrength ? 1:0} >{`S: ${props.totalStrength}/${mission.strength}`}</RequiredAttribute>
+                    <Grid item xs={3} style={{display: 'flex', direction: 'column', alignItems: 'center'}}>
+                        <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.5rem'}} src={uiPaths.strength}/>
+                        <RequiredAttribute variant="body1" attr={props.appropriateStrength ? 1:0} >{`${props.totalStrength}/${mission.strength}`}</RequiredAttribute>
                     </Grid>
-                    <Grid item xs={3}>
-                        <RequiredAttribute variant="body1" attr={props.appropriateDexterity ? 1:0} >{`Z: ${props.totalDexterity}/${mission.dexterity}`}</RequiredAttribute>
+                    <Grid item xs={3} style={{display: 'flex', direction: 'column', alignItems: 'center'}}>
+                        <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.5rem'}} src={uiPaths.dexterity}/>
+                        <RequiredAttribute variant="body1" attr={props.appropriateDexterity ? 1:0} >{`${props.totalDexterity}/${mission.dexterity}`}</RequiredAttribute>
                     </Grid>
-                    <Grid item xs={3}>
-                        <RequiredAttribute variant="body1" attr={props.appropriateMagic ? 1:0} >{`M: ${props.totalMagic}/${mission.magic}`}</RequiredAttribute> 
+                    <Grid item xs={3} style={{display: 'flex', direction: 'column', alignItems: 'center'}}>
+                        <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.5rem'}} src={uiPaths.magic}/>
+                        <RequiredAttribute variant="body1" attr={props.appropriateMagic ? 1:0} >{`${props.totalMagic}/${mission.magic}`}</RequiredAttribute> 
                     </Grid>
-                    <Grid item xs={3}>
-                        <RequiredAttribute variant="body1" attr={props.appropriateEndurance ? 1:0} >{`W: ${props.totalEndurance}/${mission.endurance}`}</RequiredAttribute>
+                    <Grid item xs={3} style={{display: 'flex', direction: 'column', alignItems: 'center'}}>
+                        <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.5rem'}} src={uiPaths.cleric}/>
+                        <RequiredAttribute variant="body1" attr={props.appropriateEndurance ? 1:0} >{`${props.totalEndurance}/${mission.endurance}`}</RequiredAttribute>
                     </Grid>
                 </Grid>
                 
                 <Grid
                     container
                     direction="row"
-                    style={{margin: '0.2rem 0'}}
+                    style={{marginBottom: '0'}}
                 >
                     {mission.amulets && mission.amulets.length > 0 &&
-                    <Grid item>
+                    <Grid item style={{ display: "inline-flex", alignItems: 'center' }}>
                         <Typography 
                             variant='body1'
                             component="span"
@@ -317,10 +320,10 @@ const MissionDetails = (props) => {
         <DialogActions style={{justifyContent: 'space-between'}}>
             
             <Button onClick={props.handleClose} color="secondary">
-                Zamknij
+                <PintoTypography>Zamknij</PintoTypography>
             </Button>
-            {props.activeInstanceId !== null && (props.leader || props.party.members.length === 0) && (<Button color="secondary" onClick={() => props.handleMissionLeave()}>Opuść</Button>)}
-            <Button variant="contained" color="primary" onClick={() => props.handleMissionClick(mission._id)} disabled={props.multipleSession || !props.isMissionActive || (!props.leader && !props.activeInstanceId)}>{props.activeInstanceId ? 'Dołącz!' : 'Wyrusz!'}</Button>
+            {props.activeInstanceId !== null && (props.leader || props.party.members.length === 0) && (<Button color="secondary" onClick={() => props.handleMissionLeave()}><PintoTypography>Opuść</PintoTypography></Button>)}
+            <Button variant="contained" color="primary" onClick={() => props.handleMissionClick(mission._id)} disabled={props.multipleSession || !props.isMissionActive || (!props.leader && !props.activeInstanceId)}><PintoTypography>{props.activeInstanceId ? 'Dołącz' : 'Wyrusz'}</PintoTypography></Button>
         </DialogActions>
         </Dialog>
     )

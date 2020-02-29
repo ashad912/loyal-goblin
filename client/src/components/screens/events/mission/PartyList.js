@@ -27,6 +27,8 @@ const StyledGrid = styled(Grid)`
     }
     
 `
+
+
 const StyledImage = styled.img`
     height: 25px;
     width: 25px;
@@ -35,9 +37,6 @@ const StyledImage = styled.img`
 
 const StyledRoot = styled.div`
     flex-grow: 3;
-    margin-left: 1.5rem;
-    margin-right: 1.5rem;
-    margin-top: 1rem;
     margin-bottom: 1rem;
 `
 
@@ -54,7 +53,7 @@ const StyledTypo = styled(Typography)`
 `
 
 const StyledBox = styled(Box)`
-    margin: 0.5rem 0.5rem 0.5rem 0.5rem;
+    margin: 0.5rem 0;
 
 `
 
@@ -76,10 +75,10 @@ const SmallAvatar = styled(Avatar)`
 //         {
 //             inRoom: false,
 //             readyStatus: false,
-//             user: {
+//             profile: {
 //                 _id: 1,
 //                 name: 'user1',
-//                 avatar: avatarTemp,
+//                 avatar: undefined,
 //                 party: {
 //                     leader: {
 //                         _id: 1
@@ -90,10 +89,10 @@ const SmallAvatar = styled(Avatar)`
 //         {
 //             inRoom: false,
 //             readyStatus: false,
-//             user: {
+//             profile: {
 //                 _id: 2,
 //                 name: 'user2',
-//                 avatar: avatarTemp,
+//                 avatar: undefined,
 //                 party: {
 //                     leader: {
 //                         _id: 1
@@ -104,7 +103,7 @@ const SmallAvatar = styled(Avatar)`
 //         {
 //             inRoom: false,
 //             readyStatus: false,
-//             user: {
+//             profile: {
 //                 _id: 3,
 //                 name: 'user3 halo',
 //                 avatar: undefined,
@@ -118,7 +117,7 @@ const SmallAvatar = styled(Avatar)`
 //         {
 //             inRoom: false,
 //             readyStatus: false,
-//             user: {
+//             profile: {
 //                 _id: 4,
 //                 name: 'user4 halo',
 //                 avatar: undefined,
@@ -132,10 +131,10 @@ const SmallAvatar = styled(Avatar)`
 //         {
 //             inRoom: false,
 //             readyStatus: false,
-//             user: {
+//             profile: {
 //                 _id: 5,
 //                 name: 'user5',
-//                 avatar: avatarTemp,
+//                 avatar: undefined,
 //                 party: {
 //                     leader: {
 //                         _id: 1
@@ -144,7 +143,7 @@ const SmallAvatar = styled(Avatar)`
 //             }
 //         },
 //     ]
-//}
+// }
 
 
 
@@ -226,7 +225,7 @@ const PartyList = (props) => {
     return (
         <StyledRoot>
             {party.length > 0 && (
-                <Paper>
+                <Paper square elevation={0} variant="outlined">
                 <StyledTypo variant="h5">Drużyna</StyledTypo>
                 
                 <StyledList >
@@ -234,7 +233,7 @@ const PartyList = (props) => {
                     return(
                     
                         <StyledBox border={0} borderColor="primary.main" style={{background: palette.background.standard}}>
-                            <ListItem>
+                            <ListItem style={{paddingRight: '0.5rem'}}>
                             {member.inMission ? (
                                 <ListItemAvatar style={{minWidth: 32}}>
                                     {altAvatar(member.profile)}

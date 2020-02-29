@@ -29,7 +29,8 @@ const iconPaths = {
     deleteWhite: 'delete-white.svg',
     deleteRed: 'delete-red.svg',
     transferLeader: 'transfer-leader.svg',
-    people: 'ludki.svg'
+    people: 'ludki.svg',
+    players: 'people.svg'
 }
 
 Object.keys(iconPaths).forEach(path => {

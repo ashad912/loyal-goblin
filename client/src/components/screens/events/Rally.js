@@ -9,7 +9,7 @@ import { Badge } from '@material-ui/core';
 import styled from 'styled-components'
 import moment from 'moment'
 import { ralliesPath, palette } from '../../../utils/definitions';
-
+import {PintoTypography} from '../../../utils/fonts'
 
 const StyledCard = styled(Card)`
     min-width: 275px;
@@ -160,10 +160,10 @@ class Rally extends Component {
                             <Typography variant="h5">
                                 {rally.title}
                             </Typography>
-                                {rallyIsActive && <Typography >Zdobyte doświadczenie: {!rally.users.length ? '0' : rally.users[0].experience} PD</Typography>}
+                                {rallyIsActive && <PintoTypography >Zdobyte doświadczenie: {!rally.users.length ? '0' : rally.users[0].experience} PD</PintoTypography>}
                         </CardContent>
                         <CardActions style={{justifyContent: 'flex-end'}}>
-                            <Button onClick={this.props.handleRallyDetailsOpen} color="primary" fullWidth>Szczegóły i nagrody</Button>
+                            <Button onClick={this.props.handleRallyDetailsOpen} color="primary" fullWidth><PintoTypography>Szczegóły i nagrody</PintoTypography></Button>
                         </CardActions>
                         
                     </StyledCard>

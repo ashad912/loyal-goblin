@@ -11,7 +11,7 @@ import Badge from "@material-ui/core/Badge";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
 import styled from "styled-components";
 import { classLabelsAny } from "../../../utils/labels";
-import { palette, itemsPath, missionsPath } from "../../../utils/definitions";
+import { palette, itemsPath, uiPaths } from "../../../utils/definitions";
 import { PintoTypography} from '../../../utils/fonts'
 
 const ShortDescription = styled(PintoTypography)`
@@ -26,7 +26,7 @@ const ShortDescription = styled(PintoTypography)`
 
 const RequiredAttribute = styled(Typography)`
   margin: 0 0.5rem 0 0;
-  color: ${props => (props.attr ? "green" : "red")};
+  color: ${props => (props.attr ? palette.primary.main : "red")};
 `;
 
 const StyledList = styled(List)`
@@ -71,10 +71,10 @@ const MissionListItem = props => {
               disabled={props.multipleSession}
               size="small"
               color="primary"
-              style={{ paddingLeft: "0" }}
+              style={{ paddingLeft: '0', minWidth: '0'}}
               onClick={() => props.handleMissionDetailsOpen(props.index)}
             >
-              Szczegóły
+              <PintoTypography>Szczegóły</PintoTypography>
             </Button>
           </Grid>
 
@@ -88,7 +88,7 @@ const MissionListItem = props => {
                   disabled={props.multipleSession}
                   onClick={() => props.handleMissionLeave()}
                 >
-                  Opuść
+                  <PintoTypography>Opuść</PintoTypography>
                 </Button>
               )}
           </Grid>
@@ -109,7 +109,7 @@ const MissionListItem = props => {
                 (!props.leader && !props.activeInstanceId)
               }
             >
-              {props.activeInstanceId ? "Dołącz!" : "Wyrusz!"}
+              <PintoTypography>{props.activeInstanceId ? "Dołącz!" : "Wyrusz!"}</PintoTypography>
             </Button>
           </Grid>
         </Grid>
@@ -127,7 +127,7 @@ const MissionListItem = props => {
               </Typography>
             </Grid>
           </Grid>
-          <Grid container direction="row" style={{ margin: "0.1rem 0" }}>
+          <Grid container direction="row" style={{marginBottom: '0.3rem'}}>
             <Grid item xs={3}>
               <Typography
                 component="span"
@@ -135,56 +135,48 @@ const MissionListItem = props => {
                 variant="body2"
                 color={props.appropriateLevel ? "textPrimary" : "error"}
               >
-                {/* <img style= {{height: 20, width: 20}} src={levelIcon}/> */}
-                {`P: ${mission.level}`}
+               
+                {`POZ: ${mission.level}`}
               </Typography>
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={3} style={{ display: "inline-flex", alignItems: 'center' }}>
+              <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.5rem'}} src={uiPaths.players}/>
               <Typography
                 component="span"
-                style={{ display: "inline-flex" }}
                 variant="body2"
                 color={props.appropriatePlayers ? "textPrimary" : "error"}
               >
-                {/* <img style= {{height: 20, width: 20}} src={playersIcon}/> */}
-                {`G: ${props.playersLabel(
+              
+                {props.playersLabel(
                   mission.minPlayers,
                   mission.maxPlayers
-                )}`}
+                )}
               </Typography>
             </Grid>
           </Grid>
 
-          <Grid container direction="row" style={{ margin: "0.1rem 0" }}>
-            <Grid item xs={3}>
-              <RequiredAttribute
-                variant="body1"
-                attr={props.appropriateStrength ? 1: 0}
-              >{`S: ${props.totalStrength}/${mission.strength}`}</RequiredAttribute>
+          <Grid container direction="row" style={{marginBottom: '0.3rem'}}>
+            <Grid item xs={3} style={{display: 'flex', direction: 'column', alignItems: 'center'}}>
+                <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.5rem'}} src={uiPaths.strength}/>
+                <RequiredAttribute variant="body1" attr={props.appropriateStrength ? 1:0} >{`${props.totalStrength}/${mission.strength}`}</RequiredAttribute>
             </Grid>
-            <Grid item xs={3}>
-              <RequiredAttribute
-                variant="body1"
-                attr={props.appropriateDexterity ? 1: 0}
-              >{`Z: ${props.totalDexterity}/${mission.dexterity}`}</RequiredAttribute>
+            <Grid item xs={3} style={{display: 'flex', direction: 'column', alignItems: 'center'}}>
+                <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.5rem'}} src={uiPaths.dexterity}/>
+                <RequiredAttribute variant="body1" attr={props.appropriateDexterity ? 1:0} >{`${props.totalDexterity}/${mission.dexterity}`}</RequiredAttribute>
             </Grid>
-            <Grid item xs={3}>
-              <RequiredAttribute
-                variant="body1"
-                attr={props.appropriateMagic ? 1: 0}
-              >{`M: ${props.totalMagic}/${mission.magic}`}</RequiredAttribute>
+            <Grid item xs={3} style={{display: 'flex', direction: 'column', alignItems: 'center'}}>
+                <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.5rem'}} src={uiPaths.magic}/>
+                <RequiredAttribute variant="body1" attr={props.appropriateMagic ? 1:0} >{`${props.totalMagic}/${mission.magic}`}</RequiredAttribute> 
             </Grid>
-            <Grid item xs={3}>
-              <RequiredAttribute
-                variant="body1"
-                attr={props.appropriateEndurance ? 1: 0}
-              >{`W: ${props.totalEndurance}/${mission.endurance}`}</RequiredAttribute>
+            <Grid item xs={3} style={{display: 'flex', direction: 'column', alignItems: 'center'}}>
+                <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.5rem'}} src={uiPaths.cleric}/>
+                <RequiredAttribute variant="body1" attr={props.appropriateEndurance ? 1:0} >{`${props.totalEndurance}/${mission.endurance}`}</RequiredAttribute>
             </Grid>
           </Grid>
 
-          <Grid container direction="row" style={{ margin: "0.2rem 0" }}>
-            <Grid item>
-              <React.Fragment>
+          <Grid container direction="row" style={{marginBottom: '0'}}>
+            <Grid item style={{ display: "inline-flex", alignItems: 'center' }}>
+              
                 <Typography
                   variant="body2"
                   component="span"
@@ -225,7 +217,7 @@ const MissionListItem = props => {
                     </StyledBadge>
                   );
                 })}
-              </React.Fragment>
+              
             </Grid>
           </Grid>
         </Grid>

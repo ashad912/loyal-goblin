@@ -18,6 +18,7 @@ import styled from 'styled-components'
 import AwardListItem from './AwardListItem'
 import { classLabelsAny } from '../../../utils/labels';
 import { ralliesPath, palette } from '../../../utils/definitions'
+import {PintoTypography} from '../../../utils/fonts'
 
 const Background = styled.div`
     background-color: ${palette.primary.main};
@@ -55,7 +56,7 @@ const RallyDetails = (props) => {
             maxWidth="lg"
         >
         <Background>
-            <DialogContent style={{paddingTop: '2rem', paddingBottom: '2rem', maxHeight: '31vh'}}>
+            <DialogContent style={{padding: '2rem 1rem', maxHeight: '31vh'}}>
                 <Grid
                     container
                     direction="column"
@@ -81,12 +82,13 @@ const RallyDetails = (props) => {
                             </Typography>
                         </Grid>
                         <Grid item /*style={{textAlign: 'justify'}}*/> 
-                            <Typography
+                            <PintoTypography
                                 component="p"
-                                variant="body2"    
+                                variant="body2"
+                                style={{color: 'black'}}
                             >
                                 {rally.description}
-                            </Typography>
+                            </PintoTypography>
                         </Grid>
                         </Grid>   
                     </Grid> 
@@ -108,7 +110,7 @@ const RallyDetails = (props) => {
         </Background>
 
 
-        <DialogContent style={{paddingTop: '1rem', paddingBottom: '1rem'}}>
+        <DialogContent style={{padding: '0.5rem 1rem'}}>
 
             <Grid 
                 container
@@ -203,7 +205,7 @@ const RallyDetails = (props) => {
         
         <DialogActions style={{justifyContent: 'flex-end'}}>
             <Button onClick={props.handleClose}  color="primary">
-                Zamknij
+                <PintoTypography>Zamknij</PintoTypography>
             </Button>
         </DialogActions>
         </Dialog>

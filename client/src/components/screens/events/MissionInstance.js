@@ -505,11 +505,11 @@ class MissionInstance extends React.Component {
                                         transform: this.state.backButtonMouseOver ? "rotate(540deg)" : "rotate(0deg)"
                                     }}
                                 />
-                                Wyjdź
+                                <PintoTypography>Wyjdź</PintoTypography>
                                 
                             </Button>
                             <Button style={{width: '52%'}} onClick={this.handleReadyButton} disabled={this.state.leader && (!isRequiredItemsCollected || !isAllPartyReady)} variant="contained" color="primary">
-                                {buttonReadyLabel}
+                                <PintoTypography>{buttonReadyLabel}</PintoTypography>
                                 <ColorizeIcon
                                 style={{
                                     margin: '0 0 0 0.2rem',
