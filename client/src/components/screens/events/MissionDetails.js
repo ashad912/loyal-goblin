@@ -177,19 +177,19 @@ const MissionDetails = (props) => {
                     style={{marginBottom: '0.5rem'}}
                 >
                     <Grid item xs={3} style={{display: 'flex', direction: 'column', alignItems: 'center'}}>
-                        <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.5rem'}} src={uiPaths.strength}/>
+                        <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.25rem'}} src={uiPaths.strength}/>
                         <RequiredAttribute variant="body1" attr={props.appropriateStrength ? 1:0} >{`${props.totalStrength}/${mission.strength}`}</RequiredAttribute>
                     </Grid>
                     <Grid item xs={3} style={{display: 'flex', direction: 'column', alignItems: 'center'}}>
-                        <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.5rem'}} src={uiPaths.dexterity}/>
+                        <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.25rem'}} src={uiPaths.dexterity}/>
                         <RequiredAttribute variant="body1" attr={props.appropriateDexterity ? 1:0} >{`${props.totalDexterity}/${mission.dexterity}`}</RequiredAttribute>
                     </Grid>
                     <Grid item xs={3} style={{display: 'flex', direction: 'column', alignItems: 'center'}}>
-                        <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.5rem'}} src={uiPaths.magic}/>
+                        <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.25rem'}} src={uiPaths.magic}/>
                         <RequiredAttribute variant="body1" attr={props.appropriateMagic ? 1:0} >{`${props.totalMagic}/${mission.magic}`}</RequiredAttribute> 
                     </Grid>
                     <Grid item xs={3} style={{display: 'flex', direction: 'column', alignItems: 'center'}}>
-                        <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.5rem'}} src={uiPaths.cleric}/>
+                        <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.25rem'}} src={uiPaths.cleric}/>
                         <RequiredAttribute variant="body1" attr={props.appropriateEndurance ? 1:0} >{`${props.totalEndurance}/${mission.endurance}`}</RequiredAttribute>
                     </Grid>
                 </Grid>

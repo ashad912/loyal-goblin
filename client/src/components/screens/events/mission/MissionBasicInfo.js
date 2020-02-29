@@ -16,6 +16,7 @@ const ShortDescription = styled(PintoTypography)`
   overflow: hidden;
   white-space: hidden;
   text-overflow: ellipsis;
+  padding-right: 0.5rem;
 `;
 
 const MissionBasicInfo = ({mission}) => {
