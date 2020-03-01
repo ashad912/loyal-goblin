@@ -1,12 +1,15 @@
-import React from "react";
+import React, {useRef} from "react";
 import QrReader from "react-qr-reader";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
+
+
 const QRreaderView = props => {
 
-
+  const qrRef = useRef(null) 
   const [cameraDenied, setCameraDenied] = React.useState(false)
+  const [isIOS, setIsIOS] = React.useState(false)
 
   React.useEffect(() => {
     navigator.permissions.query({name: 'camera'})
@@ -18,6 +21,10 @@ const QRreaderView = props => {
  .catch((error) => {
   //console.log('Got error :', error);
  })
+ var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+ if(iOS){
+  setIsIOS(true)
+ }
   }, [])
 
    const handleScan = value => {
@@ -27,6 +34,12 @@ const QRreaderView = props => {
       }
     const  handleError = err => {
         console.error(err)
+      }
+
+      const openImageDialog = () => {
+        if(qrRef && qrRef.current){
+          qrRef.current.openImageDialog()
+        }
       }
 
   return (
@@ -39,13 +52,16 @@ const QRreaderView = props => {
     :
     
       <QrReader
+      ref={qrRef}
         delay={300}
         onError={handleError}
         onScan={handleScan}
         style={{ width: "100%" }}
+        legacyMode={isIOS}
       />
     }
-      <div style={{position: 'absolute', width: '100%', height: '10vh', bottom:'0', left:'0', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'white'}}>
+      <div style={{position: 'absolute', width: '100%', height: isIOS ? '20vh' : '10vh', bottom:'0', left:'0', display: 'flex', flexDirection: 'column', justifyContent: isIOS ? 'space-around' : 'center', alignItems: 'center', background: 'white'}}>
+     {isIOS &&  <Button variant="contained" onClick={openImageDialog}>{"Zeskanuj kod QR"}</Button>}
   <Button variant="contained" onClick={props.handleReturn}>{"< Wróć"}</Button>
       </div>
      
