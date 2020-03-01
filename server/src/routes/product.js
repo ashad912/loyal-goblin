@@ -804,9 +804,12 @@ router.post("/finalize", barmanAuth, async (req, res) => {
       );
 
 
-      if (activeRally && !activeRally.users.includes(member._id.toString() /*!!! toString() - to CHECK! */)) {
-        activeRally.users = [...activeRally.users, member._id];
-        await activeRally.save();
+      if (activeRally) {
+        if(!activeRally.users.filter((user) => user.profile.toString() === member._id.toString()).length){
+          activeRally.users = [...activeRally.users, member._id];
+          await activeRally.save();
+        }
+        
       }
 
       
