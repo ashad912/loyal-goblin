@@ -805,10 +805,14 @@ router.post("/finalize", barmanAuth, async (req, res) => {
 
 
       if (activeRally) {
-        if(!activeRally.users.filter((user) => user.profile.toString() === member._id.toString()).length){
-          activeRally.users = [...activeRally.users, member._id];
-          await activeRally.save();
+        const userIndex = activeRally.users.findIndex((user) => user.profile.toString() === member._id.toString())
+
+        if(userIndex > -1){
+          activeRally.users[userIndex].experience += exp
+        }else{
+          activeRally.users = [...activeRally.users, {profile: member._id, experience: exp}];
         }
+        await activeRally.save();
         
       }
 
