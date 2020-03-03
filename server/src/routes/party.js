@@ -63,7 +63,7 @@ router.get("/", auth, async (req, res, next) => {
         path: "party",
         populate: {
           path: "leader members",
-          select: "_id name avatar attributes experience userPerks equipped bag",
+          select: "_id name avatar attributes experience userPerks equipped bag class experience",
           populate: {
             path: "bag",
             populate: {

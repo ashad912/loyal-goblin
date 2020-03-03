@@ -35,7 +35,8 @@ const iconPaths = {
     transferLeader: 'transfer-leader.svg',
     people: 'ludki.svg',
     players: 'people.svg',
-    levelBg: 'levelBg.svg'
+    levelBg: 'levelBg.svg',
+    leader: 'leader.svg'
 }
 
 Object.keys(iconPaths).forEach(path => {

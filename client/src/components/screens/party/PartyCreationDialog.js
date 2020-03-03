@@ -28,7 +28,10 @@ import QRreaderView from "./QRreaderView";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 
 import PartyMissionInstanceWarningDialog from "./PartyMissionInstanceWarningDialog"
-import { uiPaths } from "../../../utils/definitions";
+import { uiPaths, palette, usersPath } from "../../../utils/definitions";
+import { PintoTypography } from "../../../utils/fonts";
+import { ListItemAvatar, Avatar } from "@material-ui/core";
+import { createAvatarPlaceholder } from "../../../utils/methods";
 
 
 
@@ -170,9 +173,9 @@ const PartyCreationDialog = props => {
       style={{ zIndex: 2000 }}
     >
       {!isManagingParty ? (
-        <DialogTitle>Stwórz nową drużynę</DialogTitle>
+        <DialogTitle style={{textAlign:'center'}}>Stwórz nową drużynę</DialogTitle>
       ) : (
-        <DialogTitle>Zarządzaj drużyną {partyName}</DialogTitle>
+        <DialogTitle style={{textAlign:'center'}}>Zarządzaj drużyną {partyName}</DialogTitle>
       )}
       <DialogContent>
         <Grid container direction="column" alignItems="center" spacing={2}>
@@ -190,11 +193,21 @@ const PartyCreationDialog = props => {
             <List>
               {props.party.members.map(partyMember => {
                 return (
-                  <ListItem key={partyMember._id}>
-                    <ListItemText primary={partyMember.name} />
+                  <ListItem key={partyMember._id} >
+                    <ListItemAvatar>
+                    {partyMember.avatar ? (
+                        <img src={usersPath + partyMember.avatar} width="32" />
+                      ) : (
+                        <Avatar>
+                          {createAvatarPlaceholder(partyMember.name)}
+                        </Avatar>
+                      )}
+                    </ListItemAvatar>
+                    <ListItemText primary={<PintoTypography style={{fontSize:'1.4rem'}}>{partyMember.name}</PintoTypography>} />
+                
                     <ListItemIcon onClick={e=>handleMoreClick(e, partyMember._id)}>
                       <Button>
-                        <MoreHorizIcon  />
+                        <MoreHorizIcon style={{fontSIze:'2rem',color:palette.background.darkGrey}} />
                       </Button>
                     </ListItemIcon>
                   </ListItem>
@@ -215,15 +228,18 @@ const PartyCreationDialog = props => {
             </Grid>
           )}
           {party.length <= 8 && isManagingParty && (
-            <Grid item>
+            [<Grid item>
               <Button
                 variant="contained"
-                color="primary"
+
                 onClick={props.activeMission ? ()=>handleWarningDialogAction(()=>handleQRscanStart) : handleQRscanStart}
               >
                 Dodaj osobę
               </Button>
-            </Grid>
+            </Grid>,
+            <Grid item>
+              <PintoTypography style={{fontSize:'1.2rem', color:palette.background.darkGrey,textAlign:'center'}}>By dodać osobę, zeskanuj kod QR wyświetlony na jej telefonie.</PintoTypography>
+            </Grid>]
           )}
         </Grid>
         <StyledMenu
@@ -234,19 +250,20 @@ const PartyCreationDialog = props => {
       >
         <StyledMenuItem onClick={props.activeMission ? ()=>handleWarningDialogAction(()=>handleRemoveFromParty) : handleRemoveFromParty} >
           <ListItemIcon>
-            {/* <HighlightOffIcon color="secondary"/> */}
+
             <img src={uiPaths.deleteRed} style={{width: '2rem'}}/>
           </ListItemIcon>
-          <ListItemText primary="Wyrzuć z drużyny" />
+          <ListItemText primary={<PintoTypography>Wyrzuć z drużyny</PintoTypography>} />
         </StyledMenuItem>
         <StyledMenuItem onClick={props.activeMission ? ()=>handleWarningDialogAction(()=>handleGiveLeader) : handleGiveLeader} >
           <ListItemIcon >
-            {/* <TransferWithinAStationIcon color="primary"/> */}
+
             <img src={uiPaths.transferLeader} style={{width: '2rem'}}/>
           </ListItemIcon>
-          <ListItemText primary="Przekaż stanowisko lidera" />
+          <ListItemText primary={<PintoTypography>Przekaż stanowisko lidera</PintoTypography>} />
         </StyledMenuItem>
       </StyledMenu>
+
       </DialogContent>
       
       <DialogActions>
@@ -260,7 +277,7 @@ const PartyCreationDialog = props => {
           </Button>
         )}
         <Button variant="contained" onClick={props.handleClose}>
-          Zrobione!
+          Zamknij
         </Button>
       </DialogActions>
       {showScanner && (
