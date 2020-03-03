@@ -85,6 +85,7 @@ const PartyCreationDialog = props => {
   const [activePartyMember, setActivePartyMember] = React.useState("");
   const [warningOpen, setWarningOpen] = React.useState(false)
   const [warningAction, setWarningAction] = React.useState(()=> null)
+  const [warningText, setWarningText] = React.useState('')
   React.useEffect(() => {
     setIsManagingParty(props.isManagingParty);
   }, [props.isManagingParty]);
@@ -154,8 +155,9 @@ const PartyCreationDialog = props => {
     setIsManagingParty(true);
   };
 
-  const handleWarningDialogAction = (action) => {
+  const handleWarningDialogAction = (action, text) => {
     setWarningAction(action)
+    setWarningText(text)
     setWarningOpen(true)
   }
 
@@ -252,7 +254,7 @@ const PartyCreationDialog = props => {
           <Button
             color="secondary"
             variant="contained"
-            onClick={props.activeMission ? ()=>handleWarningDialogAction(()=>handlePartyDisband ) : handlePartyDisband }
+            onClick={()=>handleWarningDialogAction(()=>handlePartyDisband, "Czy chcesz rozwiązać drużynę? Rozwiązanie drużyny" ) }
           >
             Rozwiąż drużynę
           </Button>
@@ -270,7 +272,8 @@ const PartyCreationDialog = props => {
       <PartyMissionInstanceWarningDialog
       open={warningOpen}
       handleClose={() => setWarningOpen(false)}
-      confirmAction={warningAction}
+      handleAction={warningAction}
+      text={warningText}
       />
     </Dialog>
   );

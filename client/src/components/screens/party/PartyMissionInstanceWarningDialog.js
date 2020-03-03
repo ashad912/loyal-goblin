@@ -18,7 +18,7 @@ const PartyMissionInstanceWarningDialog = ({text, open, handleClose, handleActio
 
   return (
     <Dialog open={open} onClose={handleClose} style={{zIndex: 4000}}>
-      <DialogTitle>Potwierdź wykonanie akcji</DialogTitle>
+      <DialogTitle style={{textAlign:'center'}}>Potwierdź wykonanie akcji</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
           {text} spowoduje usunięcie misji, w której obecnie
