@@ -124,7 +124,7 @@ const Party = props => {
                 {props.party.leader.avatar ? (
                   <Avatar src={usersPath + props.party.leader.avatar} style={{width:'4rem', height:'4rem'}}/>
                 ) : (
-                  <Avatar style={{width:'4rem', height:'4rem'}}>
+                  <Avatar style={{width:'4rem', height:'4rem', fontSize:'1.4rem'}}>
                     {createAvatarPlaceholder(props.party.leader.name)}
                   </Avatar>
                 )}
@@ -164,7 +164,7 @@ const Party = props => {
                         <Avatar src={usersPath + partyMember.avatar} style={{width:'4rem', height:'4rem'}}/>
                         
                       ) : (
-                        <Avatar style={{width:'4rem', height:'4rem'}}>
+                        <Avatar style={{width:'4rem', height:'4rem', fontSize:'1.4rem'}}>
                           {createAvatarPlaceholder(partyMember.name)}
                         </Avatar>
                       )}

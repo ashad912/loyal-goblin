@@ -198,7 +198,7 @@ router.patch("/addMember", auth, async (req, res) => {
     await party
       .populate({
         path: "leader members",
-        select: "_id name avatar bag attributes experience userPerks"
+        select: "_id name avatar bag attributes experience userPerks  class experience"
       })
       .execPopulate();
     //console.log(party);
@@ -253,7 +253,7 @@ router.patch("/leader", auth, async (req, res) => {
     await party
       .populate({
         path: "leader members",
-        select: "_id name avatar bag attributes experience userPerks"
+        select: "_id name avatar bag attributes experience userPerks  class experience"
       })
       .execPopulate();
 

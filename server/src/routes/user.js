@@ -607,7 +607,7 @@ router.patch("/party/equip", auth, async (req, res) => {
     await user
       .populate({
         path: "party",
-        populate: { path: "leader members", select: "_id name avatar attributes experience userPerks bag equipped", 
+        populate: { path: "leader members", select: "_id name avatar attributes experience userPerks bag equipped  class experience", 
         populate: { path: "bag", populate: { path: "itemModel", populate: { path: "perks.target.disc-product", select: '_id name' }, } } }
       })
       .execPopulate();
