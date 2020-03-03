@@ -29,7 +29,7 @@ import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 
 import PartyMissionInstanceWarningDialog from "./PartyMissionInstanceWarningDialog"
 import { uiPaths, palette, usersPath } from "../../../utils/definitions";
-import { PintoTypography } from "../../../utils/fonts";
+import { PintoTypography, PintoSerifTypography } from "../../../utils/fonts";
 import { ListItemAvatar, Avatar } from "@material-ui/core";
 import { createAvatarPlaceholder } from "../../../utils/methods";
 
@@ -172,18 +172,18 @@ const PartyCreationDialog = props => {
       fullScreen
       style={{ zIndex: 2000 }}
     >
-      {!isManagingParty ? (
-        <DialogTitle style={{textAlign:'center'}}>Stwórz nową drużynę</DialogTitle>
-      ) : (
+      {isManagingParty && (
         <DialogTitle style={{textAlign:'center'}}>Zarządzaj drużyną {partyName}</DialogTitle>
       )}
       <DialogContent>
         <Grid container direction="column" alignItems="center" spacing={2}>
           {!isManagingParty && (
             <Grid item style={{ width: "100%" }}>
+              <PintoSerifTypography variant="h5" style={{textAlign:'center', marginBottom:'2rem', marginTop:'20vh'}}>Utwórz nową drużynę</PintoSerifTypography>
               <TextField
+                inputProps={{style: {textAlign:'center'}}}
                 fullWidth
-                label="Nazwa drużyny"
+                placeholder="Nazwa drużyny"
                 value={partyName}
                 onChange={handlePartyNameChange}
               />
