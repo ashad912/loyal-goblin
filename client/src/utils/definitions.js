@@ -57,7 +57,7 @@ export const levelingEquation = { //y = a*(x*pow) + b
 
 export const palette = {
     primary: {
-        light: "#66bb6a",
+        light: "#7FCE6C",
         main: "#5aaa32",
         mainTransparent: "#388e3ccf",
         dark: "#1b5e20",

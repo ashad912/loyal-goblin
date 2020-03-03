@@ -13,16 +13,16 @@ import { PintoTypography, PintoSerifTypography } from "../../../utils/fonts";
 
 
 
-const PerkBoxItem = ({ perk, isFirst }) => {
+const PerkBoxItem = ({ perk, isFirst, isEquipment }) => {
 
 
 
-  let primaryText = [<PintoSerifTypography variant="h6">{perkLabels[perk.perkType]}: </PintoSerifTypography>]
+  let primaryText = [<Typography style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.2rem', }}>{perkLabels[perk.perkType]}: </Typography>]
   if (perk.perkType.startsWith("disc")) {
-    primaryText.push(<PintoSerifTypography variant="h6" style={{color:palette.primary.main}}>{getTarget(perk.perkType, perk.target)}</PintoSerifTypography>)
+    primaryText.push(<Typography  style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.2rem', color:palette.primary.main}}>{getTarget(perk.perkType, perk.target)}</Typography>)
   }
   if (perk.hasOwnProperty("value")) {
-    primaryText.push(<PintoSerifTypography variant="h6" style={{color:palette.primary.main}}>{getValue(perk.perkType, perk.value)}</PintoSerifTypography>)
+    primaryText.push(<Typography  style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.2rem', color:palette.primary.main}}>{getValue(perk.perkType, perk.value)}</Typography>)
   }
 
   let secondaryText;
@@ -62,13 +62,13 @@ const PerkBoxItem = ({ perk, isFirst }) => {
   }
 
   return (
-    <ListItem style={{ flexDirection: "row", alignItems: 'space-between', borderTop: isFirst ? "" : palette.border, padding:'8px' }}>
-      <PintoTypography style={{flexBasis:'25%'}}>
+    <ListItem style={{ flexDirection: "row", alignItems: 'space-between', borderTop: isFirst ? "" : isEquipment ? '1px solid black':palette.border, padding: isEquipment ? '0' : '8px' }}>
+      <PintoTypography style={{flexBasis:isEquipment?'35%':'25%'}}>
       {secondaryText}
       </PintoTypography>
       <Grid container justify="flex-end" spacing={1} >
       {primaryText.map((text, index) => {
-        return <Grid key={text+index} item ><PintoSerifTypography style={{textAlign: 'center'}}>{text}</PintoSerifTypography></Grid>
+        return <Grid key={text+index} item ><div style={{textAlign: 'center'}}>{text}</div></Grid>
       })}
       </Grid>
     </ListItem>

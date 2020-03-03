@@ -1,5 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import Drawer from "@material-ui/core/SwipeableDrawer";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Typography from "@material-ui/core/Typography";
@@ -19,6 +20,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 import {itemTypeLabels} from  "../../../utils/labels";
+import { PintoTypography } from "../../../utils/fonts";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -101,20 +103,20 @@ const Equipment = props => {
     if(props.leaderInShop ){
       content = (
       <Typography
-        variant="caption"
-        component="p"
-        style={{  padding: "1rem", color:"rgb(139, 0, 0)" }}
+        variant="h5"
+
+        style={{  padding: "1rem", color:"rgb(139, 0, 0)", textAlign:'center' }}
       >
-        Nie można zmieniać ekwipunku w trakcie expienia.
+        Zmiana ekwipunku w trakcie expienia niemożliwa
     </Typography>)
     }else if(props.activeMission){
       content = (
       <Typography
-        variant="caption"
-        component="p"
-        style={{  padding: "1rem", color:"rgb(139, 0, 0)" }}
+        variant="h5"
+
+        style={{  padding: "1rem", color:"rgb(139, 0, 0)", textAlign:'center' }}
       >
-        Nie można zmieniać ekwipunku w trakcie misji.
+        Zmiana ekwipunku w trakcie misji niemożliwa
       </Typography>)
     }else{
       content = (
@@ -133,7 +135,7 @@ const Equipment = props => {
           return !chest ? (
             <React.Fragment key={itemCategory}>
               <ListItem onClick={handleOpenList} data-value={itemCategory}>
-                <ListItemText primary={itemTypeLabels[itemCategory]} />
+          <ListItemText primary={<PintoTypography style={{fontSize:'1.4rem', fontWeight:'bolder'}}>{itemTypeLabels[itemCategory]}</PintoTypography>} />
                 {openList === itemCategory ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
               <Collapse
@@ -165,7 +167,7 @@ const Equipment = props => {
           ) : (
             <React.Fragment key={itemCategory}>
               <ListItem onClick={handleOpenList} data-value={itemCategory}>
-                <ListItemText primary={itemTypeLabels[itemCategory]} />
+              <ListItemText primary={<PintoTypography style={{fontSize:'1.4rem', fontWeight:'bolder'}}>{itemTypeLabels[itemCategory]}</PintoTypography>} />
                 {openList === itemCategory ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
               <Collapse
@@ -207,10 +209,12 @@ const Equipment = props => {
   }
 
   return (
-    <Paper className={classes.root}>
+    <Drawer anchor="right" open={props.isOpen} onClose={()=>props.toggle(false)} onOpen={()=>props.toggle(true)} disableBackdropTransition={true}>
       
-      
+      <div style={{padding: '1rem', width: '75vw'}}>
       {content}
+
+      </div>
 
       <Dialog open={deleteDialog} onClose={handleDeleteDialogClose}>
         <DialogTitle>Wyrzucanie przedmiotu</DialogTitle>
@@ -226,7 +230,7 @@ const Equipment = props => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Paper>
+    </Drawer>
   );
 };
 

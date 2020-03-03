@@ -88,6 +88,7 @@ const Profile = props => {
   const history = useHistory();
   const classes = useStyles();
 
+  const [equipmentOpen, setEquipmentOpen] = React.useState(false)
   const [bag, setBag] = React.useState(
     bagArrayToCategories(props.auth.profile.bag)
   );
@@ -362,6 +363,10 @@ const Profile = props => {
     setMissionInstanceWarningDialog({ action, text });
   };
 
+  const handleToggleEquipment = isOpen => {
+    setEquipmentOpen(isOpen)
+  }
+
   return (
     <Grid
       container
@@ -541,7 +546,7 @@ const Profile = props => {
               Przygoda
             </Button>
           )}
-          <Button variant="contained" style={{background:'white', padding: '0.6rem 1rem', width:'100%'}}>
+          <Button variant="contained" style={{background:'white', padding: '0.6rem 1rem', width:'100%'}} onClick={()=>setEquipmentOpen(prev => !prev)}>
             Ekwipunek
           </Button>
               </div>
@@ -558,7 +563,9 @@ const Profile = props => {
       )}
       
 
-      {/* <Equipment
+      <Equipment
+      toggle={handleToggleEquipment}
+      isOpen={equipmentOpen}
         items={bag}
         equipped={
           props.auth.profile.hasOwnProperty("equipped") &&
@@ -568,7 +575,7 @@ const Profile = props => {
         handleItemDelete={handleItemDelete}
         leaderInShop={props.party && props.party._id && props.party.inShop}
         activeMission={props.mission.activeInstanceId}
-      /> */}
+      />
 
 
 <div style={{marginTop:'4rem'}}/>

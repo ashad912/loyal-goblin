@@ -19,6 +19,8 @@ import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import { dayLabels, perkLabels } from "../../../utils/labels";
 import { palette, itemsPath } from "../../../utils/definitions";
 import { getValue, getTarget } from "../../../utils/methods";
+import { PintoTypography, PintoSerifTypography } from "../../../utils/fonts";
+import PerkBoxItem from "./PerkBoxItem";
 
 const StyledMenu = withStyles({
   paper: {
@@ -52,14 +54,12 @@ const StyledMenuItem = withStyles(theme => ({
 }))(MenuItem);
 
 const useStyles = makeStyles(theme => ({
-
   optionsIcon: {
     margin: "0 auto"
   }
 }));
 
 const EquipmentListItem = props => {
-
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -92,17 +92,22 @@ const EquipmentListItem = props => {
     item.instancesIds && item.instancesIds.length > 1
       ? item.instancesIds.length
       : null;
-  return (
-    item ? 
+  return item ? (
     <ListItem
-      button={props.itemCategory !== "amulet" && props.itemCategory !== "torpedo"}
+      button={
+        props.itemCategory !== "amulet" && props.itemCategory !== "torpedo"
+      }
       alignItems="flex-start"
       className={classes.listItem}
       //style={{ boxShadow: props.equipped ? `inset 0px 0px 22px 3px ${palette.primary.main}`  : "" }}
-      style={{background: props.equipped ? palette.primary.light : '', color: props.equipped ? 'white' : 'black', borderTop: palette.border}}
+      style={{
+        background: props.equipped ? palette.primary.light : "",
+        borderTop: palette.border
+      }}
       equipped={props.equipped ? 1 : 0}
       onClick={() =>
-        props.itemCategory !== "amulet" && props.itemCategory !== "torpedo" &&
+        props.itemCategory !== "amulet" &&
+        props.itemCategory !== "torpedo" &&
         props.handleItemToggle(
           item._id,
           props.equipped,
@@ -113,62 +118,63 @@ const EquipmentListItem = props => {
     >
       <Grid container directon="column">
         <Grid item container direction="row" justify="space-between">
-          <Grid item xs={3}>
-              <Badge
-                overlap="circle"
-                color="primary"
-                badgeContent={quantity}
-                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                style={{ marginRight: "0.5rem" }}
-              >
-                <ListItemAvatar>
-                  <img
-                    style={{ width: "4rem", height: "4rem" }}
-                    // alt={item.itemModel.name}
-                    src={itemsPath + item.itemModel.imgSrc}
-                    alt=""
-                  />
-                </ListItemAvatar>
-              </Badge>
+          <Grid item xs={4} >
+            <Badge
+              overlap="circle"
+              color="primary"
+              badgeContent={quantity}
+              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            >
+              <ListItemAvatar>
+                <img
+                  style={{ width: "3.5rem", height: "3.5rem" }}
+                  // alt={item.itemModel.name}
+                  src={itemsPath + item.itemModel.imgSrc}
+                  alt=""
+                />
+              </ListItemAvatar>
+            </Badge>
           </Grid>
 
-            <Grid container direction="column" item xs={9}>
-              <Grid item container>
-                <Grid item xs={9}>
-                  <ListItemText
-                    disableTypography
-                    primary={item.itemModel.name}
-                    secondary={
-                      <div>
-                        {props.twoHanded && (
-                            <Typography variant="subtitle2">
-                              Broń dwuręczna
-                            </Typography>
-                          )}
-                        <Typography variant="caption">
-                          {item.itemModel.description}
-                        </Typography>
-                      </div>
-                    }
-                  />
-                </Grid>
-                {props.itemCategory !== "amulet" && props.itemCategory !== "torpedo" && (
-                  <Grid item xs={1}>
-                    <TouchAppIcon />
-                  </Grid>
-                )}
-                <Grid item xs={2}>
-                  <ListItemIcon onClick={handleClick}>
-                    <Button>
-                      <MoreHorizIcon className={classes.optionsIcon} style={{color: props.equipped ? 'white' : 'black'}}/>
-                    </Button>
-                  </ListItemIcon>
-                </Grid>
+          <Grid container direction="column" item xs={8}>
+            <Grid item container>
+              <Grid item xs={9}>
+                <ListItemText
+                  disableTypography
+                  primary={
+                    <PintoSerifTypography style={{fontSize:'1.1rem'}}>
+                      {item.itemModel.name}
+                    </PintoSerifTypography>
+                  }
+                  secondary={
+                    <div>
+                      {props.twoHanded && (
+                        <PintoSerifTypography >
+                          Broń dwuręczna
+                        </PintoSerifTypography>
+                      )}
+                      <PintoTypography style={{color:palette.background.darkGrey}}>
+                        {item.itemModel.description}
+                      </PintoTypography>
+                    </div>
+                  }
+                />
+              </Grid>
+              
+              <Grid item xs={2}>
+                <ListItemIcon onClick={handleClick}>
+                  <Button>
+                    <MoreHorizIcon
+                      className={classes.optionsIcon}
+                      style={{ color: props.equipped ? "white" : "black" }}
+                    />
+                  </Button>
+                </ListItemIcon>
               </Grid>
             </Grid>
-          
+          </Grid>
         </Grid>
-        <Grid item style={{width: '100%'}}>
+        <Grid item style={{ width: "100%" }}>
           {item.itemModel.perks.length > 0 && (
             <List
               dense
@@ -176,65 +182,17 @@ const EquipmentListItem = props => {
                 maxHeight: "8rem",
                 overflow: "auto",
                 width: "100%",
-                
-                padding: "0.5rem",
+                padding: "0",
                 boxSizing: "border-box",
-                background: "rgba(255, 255, 255, 0.198)"
               }}
             >
               <Typography component="div">
-              {item.itemModel.perks.map((perk, index) => {
-                return (
-                  <Box
-                  key={JSON.stringify(perk.target)+index}
-                    border={0}
-                    borderColor="primary.main"
-                    style={{ margin: "0.2rem 0", fontSize: "0.8rem" }}
-                  >
-                    <ListItem style={{padding: '0.5rem'}}>
-                      <Grid container justify="flex-start">
-                        <Grid item xs={6}>{perkLabels[perk.perkType]}</Grid>
-                        <Grid item xs={3}>{getValue(perk.perkType, perk.value)}</Grid>
-                        <Grid item xs={3}>
-                          {getTarget(perk.perkType, perk.target)}
-                        </Grid>
-                        <Grid item xs={12}>
-                          {perk.time.length > 0 && (
-                            <React.Fragment>
-                              {perk.time
-                                .slice()
-                                .reverse()
-                                .map((period, index) => (
-                                  <Grid
-                                    container
-                                    key={JSON.stringify(period)+index}
-                                  >
-                                    <Grid item>
-                                      {`${dayLabels[period.startDay]}`}
-                                    </Grid>
-                                    {!(
-                                      period.startHour === 12 &&
-                                      period.lengthInHours === 24
-                                    ) ? (
-                                      <Grid item>
-                                        {`, ${
-                                          period.startHour
-                                        }:00 - ${(period.startHour +
-                                          period.lengthInHours) %
-                                          24}:00`}
-                                      </Grid>
-                                    ) : null}
-                                  </Grid>
-                                ))}
-                            </React.Fragment>
-                          )}
-                        </Grid>
-                      </Grid>
-                    </ListItem>
-                    {item.itemModel.perks.length !== index+1 && <Divider />}
-                  </Box>
-                );
-              })}
+                {item.itemModel.perks.map((perk, index) => {
+                  return (
+                    <PerkBoxItem key={perk.perkType+perk.value+perk.id} perk={perk} isFirst={index===0} isEquipment={true}/>
+                    
+                  );
+                })}
               </Typography>
             </List>
           )}
@@ -248,13 +206,13 @@ const EquipmentListItem = props => {
       >
         <StyledMenuItem onClick={handleDelete}>
           <ListItemIcon>
-            <DeleteForeverIcon />
+            <DeleteForeverIcon color="secondary"/>
           </ListItemIcon>
           <ListItemText primary="Wyrzuć" />
         </StyledMenuItem>
       </StyledMenu>
-    </ListItem> : null
-  );
+    </ListItem>
+  ) : null;
 };
 
 export default EquipmentListItem;

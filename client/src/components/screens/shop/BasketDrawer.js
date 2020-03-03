@@ -37,7 +37,7 @@ const BasketDrawer = ({ open, toggle, baskets, users, activeUser, handleRemoveIt
 
 
   return (
-    <Drawer open={open} onClose={()=>toggle(false)} onOpen={()=>toggle(true)} disableBackdropTransition={true}>
+    <Drawer  open={open} onClose={()=>toggle(false)} onOpen={()=>toggle(true)} disableBackdropTransition={true}>
       <DrawerContents style={{maxWidth: '70vw'}}>
         <Typography variant="h6">Zamówienie</Typography>
         {!emptyOrder ? 
