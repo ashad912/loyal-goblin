@@ -28,7 +28,6 @@ import StatsDialog from "./profile/StatsDialog";
 import NewRallyAwardsDialog from "./profile/NewRallyAwardsDialog";
 import NewShopAwardsDialog from "./profile/NewShopAwardsDialog";
 
-
 import { updateParty, removeMember } from "../../store/actions/partyActions";
 import {
   createAvatarPlaceholder,
@@ -52,8 +51,8 @@ import {
 } from "../../store/actions/profileActions";
 import { authCheck } from "../../store/actions/authActions";
 import { classLabels } from "../../utils/labels";
-import maleBody from '../../assets/profile/male-body.png';
-import femaleBody from '../../assets/profile/female-body.png';
+import maleBody from "../../assets/profile/male-body.png";
+import femaleBody from "../../assets/profile/female-body.png";
 
 const FabIcon = styled.img`
   width: 2rem;
@@ -80,12 +79,10 @@ const useStyles = makeStyles(theme => ({
     marginBottom: "1rem"
   },
   eqHeading: {
-    margin: "1rem 0"
+    margin: "1rem 0",
+    alignSelf:'flex-start'
   }
 }));
-
-
-
 
 const Profile = props => {
   const history = useHistory();
@@ -137,11 +134,11 @@ const Profile = props => {
     setRelativeThreshold(levelData.relativeThreshold);
   }, [props.auth.profile.experience]);
 
-  React.useEffect(()=>{
-    if(props.party.inShop && props.party.leader._id === props.auth.uid){
+  React.useEffect(() => {
+    if (props.party.inShop && props.party.leader._id === props.auth.uid) {
       history.push("/shop", { id: props.auth.uid });
     }
-  }, [props.party.inShop])
+  }, [props.party.inShop]);
 
   const updateEquippedItems = () => {
     const equipment = {
@@ -374,65 +371,19 @@ const Profile = props => {
       className={classes.wrapper}
       spacing={2}
     >
-              {(props.party &&
-            props.party.leader &&
-            (props.party.leader._id === props.auth.uid ||
-              props.party.leader === props.auth.uid)) ||
-          (!props.party.leader && !props.party.members.length) ? (
-            <Button
-              variant="contained"
-              color="primary"
-              style={{ marginBottom: "1rem" }}
-              onClick={
-                props.mission.activeInstanceId
-                  ? () =>
-                      handleMissionInstanceWarningDialog(() => handleOpenShop(), "Otworzenie sklepu")
-                  : handleOpenShop
-              }
-            >
-              <img
-              src={uiPaths.goExp}
-                style={{
-                  width: '2rem',
-                  paddingRight: '1rem',
-                }}
-              />
-              Idziemy expić!
-              <img
-              src={uiPaths.goExp}
-                style={{
-                  paddingRight: '1rem',
-                  width: '2rem',
-                  transform: "scaleX(-1.0)"
-                }}
-              />
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              color="primary"
-              disabled
-              style={{ marginBottom: "1rem" }}
-            >
-              Idziemy expić!
-              <img
-              src={uiPaths.goExp}
-                style={{
-                  width: '2rem',
-                  transition: "transform 500ms ease-out",
-                  transform: goExp ? "rotate(540deg)" : "rotate(0deg)"
-                }}
-              />
-            </Button>
-          )}
-      <Typography variant="h5">
-        {" "}
-        Poziom {userLevel}{" "}
-        <img src={uiPaths[props.auth.profile.class]} width={32} />{" "}
+      <Typography
+        variant="h5"
+        style={{ width: "100%", textAlign: "center", position: "relative" }}
+      >
+        Poziom {userLevel}
+        <img
+          src={uiPaths[props.auth.profile.class]}
+          width={42}
+          style={{ position: "absolute", right: 0 }}
+        />
       </Typography>
-
       <Typography variant="subtitle2">
-        Doświadczenie: {relativeExp + " / " + relativeThreshold}
+        PD: {relativeExp + " / " + relativeThreshold}
       </Typography>
       <LinearProgress
         variant="determinate"
@@ -441,138 +392,173 @@ const Profile = props => {
       />
 
       <Grid
-        container
         item
-        xs={12}
+        container
         direction="row"
-        justify="space-between"
-        alignItems="center"
+        justify="center"
+        alignItems="stretch"
+        style={{ padding: "0.4rem 0" }}
       >
-        <Paper style={{ width: "100%" }} className={classes.avatarCard}>
-          {/* body */}
-          <img
-            src={props.auth.profile.sex === 'female' ? femaleBody : maleBody}
-            className={classes.avatarImage}
-          />
-          {/* legs */}
-          {equippedItems && equippedItems.legs && (
+        <Grid item xs={8} style={{ padding: 0 }}>
+          <div style={{ width: "100%", height: '100%' }} className={classes.avatarCard}>
+            {/* body */}
             <img
+              src={props.auth.profile.sex === "female" ? femaleBody : maleBody}
               className={classes.avatarImage}
-              src={`${appearancePath}${equippedItems.legs}`}
             />
-          )}
-          {/* feet */}
-          {equippedItems && equippedItems.feet && (
-            <img
-              className={classes.avatarImage}
-              src={`${appearancePath}${equippedItems.feet}`}
-            />
-          )}
-          {/* chest */}
-          {equippedItems && equippedItems.chest && (
-            <img
-              className={classes.avatarImage}
-              src={`${appearancePath}${equippedItems.chest}`}
-            />
-          )}
-          
-          {/* head */}
-          {equippedItems &&
-            equippedItems.head &&
-            equippedItems.head.includes(".") && (
+            {/* legs */}
+            {equippedItems && equippedItems.legs && (
               <img
                 className={classes.avatarImage}
-                src={`${appearancePath}${equippedItems.head}`}
+                src={`${appearancePath}${equippedItems.legs}`}
+              />
+            )}
+            {/* feet */}
+            {equippedItems && equippedItems.feet && (
+              <img
+                className={classes.avatarImage}
+                src={`${appearancePath}${equippedItems.feet}`}
+              />
+            )}
+            {/* chest */}
+            {equippedItems && equippedItems.chest && (
+              <img
+                className={classes.avatarImage}
+                src={`${appearancePath}${equippedItems.chest}`}
               />
             )}
 
-          {/* hands */}
-          {equippedItems && equippedItems.hands && (
-            <img
-              className={classes.avatarImage}
-              src={`${appearancePath}${equippedItems.hands}`}
+            {/* head */}
+            {equippedItems &&
+              equippedItems.head &&
+              equippedItems.head.includes(".") && (
+                <img
+                  className={classes.avatarImage}
+                  src={`${appearancePath}${equippedItems.head}`}
+                />
+              )}
+
+            {/* hands */}
+            {equippedItems && equippedItems.hands && (
+              <img
+                className={classes.avatarImage}
+                src={`${appearancePath}${equippedItems.hands}`}
+              />
+            )}
+
+            {/* Main-hand weapon */}
+
+            {equippedItems && equippedItems.weaponRight && (
+              <img
+                className={classes.avatarImage}
+                src={`${appearancePath}${equippedItems.weaponRight}`}
+              />
+            )}
+            {/* Off-hand weapon */}
+            {equippedItems && equippedItems.weaponLeft && (
+              <img
+                className={classes.avatarImage}
+                src={`${appearancePath}${equippedItems.weaponLeft}`}
+                style={{ transform: "scaleX(-1)" }}
+              />
+            )}
+          </div>
+        </Grid>
+
+        <Grid
+          container
+          item
+          xs={4}
+          style={{ width: "100%", padding: "0 0 0 1rem" }}
+          direction="column"
+          justify="space-between"
+          alignItems="center"
+        >
+          <Grid item style={{ width: "100%" }}>
+            <Attribute
+              attributeName="Siła"
+              attributeIcon={uiPaths.strength}
+              attributeValue={props.auth.profile.attributes.strength}
+              attributeModifier={props.auth.profile.userPerks.attrStrength}
             />
-          )}
-
-          {/* Main-hand weapon */}
-
-          {equippedItems && equippedItems.weaponRight && (
-            <img
-              className={classes.avatarImage}
-              src={`${appearancePath}${equippedItems.weaponRight}`}
-            />
-          )}
-          {/* Off-hand weapon */}
-          {equippedItems && equippedItems.weaponLeft && (
-            <img
-              className={classes.avatarImage}
-              src={`${appearancePath}${equippedItems.weaponLeft}`}
-              style={{ transform: "scaleX(-1)" }}
-            />
-          )}
-
-          <Grid
-            container
-            item
-            style={{ width: "100%" }}
-            direction="column"
-            justify="flex-start"
-            alignItems="center"
-          >
-            <Grid container item style={{borderTop: palette.border, paddingTop: '0.4rem'}}>
-              <Grid item xs={6}>
-                <Attribute
-                  attributeName="Siła"
-                  attributeIcon={uiPaths.strength}
-                  attributeValue={props.auth.profile.attributes.strength}
-                  attributeModifier={props.auth.profile.userPerks.attrStrength}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Attribute
-                  attributeName="Zręczność"
-                  attributeIcon={uiPaths.dexterity}
-                  attributeValue={props.auth.profile.attributes.dexterity}
-                  attributeModifier={props.auth.profile.userPerks.attrDexterity}
-                />
-              </Grid>
-            </Grid>
-
-            <Grid container item style={{ paddingTop: '0.4rem', paddingBottom: '0.6rem'}}>
-              <Grid item xs={6}>
-                <Attribute
-                  attributeName="Magia"
-                  attributeIcon={uiPaths.magic}
-                  attributeValue={props.auth.profile.attributes.magic}
-                  attributeModifier={props.auth.profile.userPerks.attrMagic}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Attribute
-                  attributeName="Wytrzymałość"
-                  attributeIcon={uiPaths.endurance}
-                  attributeValue={props.auth.profile.attributes.endurance}
-                  attributeModifier={props.auth.profile.userPerks.attrEndurance}
-                />
-              </Grid>
-            </Grid>
           </Grid>
-        </Paper>
+          <Grid item style={{ width: "100%" }}>
+            <Attribute
+              attributeName="Zręczność"
+              attributeIcon={uiPaths.dexterity}
+              attributeValue={props.auth.profile.attributes.dexterity}
+              attributeModifier={props.auth.profile.userPerks.attrDexterity}
+            />
+          </Grid>
 
+          <Grid item style={{ width: "100%" }}>
+            <Attribute
+              attributeName="Magia"
+              attributeIcon={uiPaths.magic}
+              attributeValue={props.auth.profile.attributes.magic}
+              attributeModifier={props.auth.profile.userPerks.attrMagic}
+            />
+          </Grid>
+          <Grid item style={{ width: "100%" }}>
+            <Attribute
+              attributeName="Wytrzymałość"
+              attributeIcon={uiPaths.endurance}
+              attributeValue={props.auth.profile.attributes.endurance}
+              attributeModifier={props.auth.profile.userPerks.attrEndurance}
+            />
+          </Grid>
+          <Grid item style={{ width: "100%" }}>
+              <div style={{marginTop:'1rem', width:'100%'}}>
+
+          {(props.party &&
+            props.party.leader &&
+            (props.party.leader._id === props.auth.uid ||
+              props.party.leader === props.auth.uid)) ||
+          (!props.party.leader && !props.party.members.length) ? (
+            <Button
+              variant="contained"
+              color="primary"
+              style={{ marginBottom: "1rem" , padding: '0.6rem 1rem', width:'100%'}}
+              onClick={
+                props.mission.activeInstanceId
+                  ? () =>
+                      handleMissionInstanceWarningDialog(
+                        () => handleOpenShop(),
+                        "Otworzenie sklepu"
+                      )
+                  : handleOpenShop
+              }
+            >
+              Przygoda
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              disabled
+              style={{ marginBottom: "1rem", padding: '0.6rem 1rem', width:'100%' }}
+            >
+              Przygoda
+            </Button>
+          )}
+          <Button variant="contained" style={{background:'white', padding: '0.6rem 1rem', width:'100%'}}>
+            Ekwipunek
+          </Button>
+              </div>
+          </Grid>
+        </Grid>
       </Grid>
       {activePerks.length > 0 && (
         <React.Fragment>
-          <Typography variant="h5" className={classes.eqHeading}>
-            Aktualne efekty
+          <Typography variant="h5" className={classes.eqHeading} >
+            Aktywne efekty
           </Typography>
           <PerkBox perks={activePerks} />
         </React.Fragment>
       )}
-      <Typography variant="h5" className={classes.eqHeading}>
-        Ekwipunek
-      </Typography>
+      
 
-      <Equipment
+      {/* <Equipment
         items={bag}
         equipped={
           props.auth.profile.hasOwnProperty("equipped") &&
@@ -582,10 +568,10 @@ const Profile = props => {
         handleItemDelete={handleItemDelete}
         leaderInShop={props.party && props.party._id && props.party.inShop}
         activeMission={props.mission.activeInstanceId}
-      />
-      <Typography variant="h5" className={classes.eqHeading}></Typography>
-      
-      <Typography variant="h5" className={classes.eqHeading}></Typography>
+      /> */}
+
+
+<div style={{marginTop:'4rem'}}/>
       <Grid container justify="space-around">
         <Grid item container direction="column" alignItems="center" xs={6}>
           <Fab color="primary" onClick={() => setShowRankDialog(prev => !prev)}>
@@ -610,7 +596,6 @@ const Profile = props => {
         </Grid>
       </Grid>
 
-     
       {showRankDialog && (
         <RankDialog
           open={showRankDialog}
@@ -639,7 +624,10 @@ const Profile = props => {
       />
 
       <NewRallyAwardsDialog
-        open={props.auth.profile.rallyNotifications.isNew && !props.auth.profile.shopNotifications.isNew}
+        open={
+          props.auth.profile.rallyNotifications.isNew &&
+          !props.auth.profile.shopNotifications.isNew
+        }
         clearRallyAwards={() => props.clearRallyAwards()}
         profile={props.auth.profile}
       />
@@ -649,8 +637,6 @@ const Profile = props => {
         clearShopAwards={() => props.clearShopAwards()}
         profile={props.auth.profile}
       />
-
-
     </Grid>
   );
 };

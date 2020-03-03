@@ -7,6 +7,7 @@ import Grid from "@material-ui/core/Grid";
 import { perkLabels, dayLabels } from "../../../utils/labels";
 import { getValue, getTarget } from "../../../utils/methods";
 import { palette } from "../../../utils/definitions";
+import { PintoTypography, PintoSerifTypography } from "../../../utils/fonts";
 
 
 
@@ -16,12 +17,12 @@ const PerkBoxItem = ({ perk, isFirst }) => {
 
 
 
-  let primaryText = [perkLabels[perk.perkType]]
+  let primaryText = [<PintoSerifTypography variant="h6">{perkLabels[perk.perkType]}: </PintoSerifTypography>]
   if (perk.perkType.startsWith("disc")) {
-    primaryText.push(getTarget(perk.perkType, perk.target))
+    primaryText.push(<PintoSerifTypography variant="h6" style={{color:palette.primary.main}}>{getTarget(perk.perkType, perk.target)}</PintoSerifTypography>)
   }
   if (perk.hasOwnProperty("value")) {
-    primaryText.push(getValue(perk.perkType, perk.value))
+    primaryText.push(<PintoSerifTypography variant="h6" style={{color:palette.primary.main}}>{getValue(perk.perkType, perk.value)}</PintoSerifTypography>)
   }
 
   let secondaryText;
@@ -61,13 +62,13 @@ const PerkBoxItem = ({ perk, isFirst }) => {
   }
 
   return (
-    <ListItem style={{ flexDirection: "column", alignItems: 'flex-start', borderTop: isFirst ? "" : palette.border }}>
-      <Typography variant="caption">
+    <ListItem style={{ flexDirection: "row", alignItems: 'space-between', borderTop: isFirst ? "" : palette.border, padding:'8px' }}>
+      <PintoTypography style={{flexBasis:'25%'}}>
       {secondaryText}
-      </Typography>
-      <Grid container justify="flex-start" spacing={1} >
+      </PintoTypography>
+      <Grid container justify="flex-end" spacing={1} >
       {primaryText.map((text, index) => {
-        return <Grid key={text+index} item ><Typography style={{textAlign: 'center'}}>{text}</Typography></Grid>
+        return <Grid key={text+index} item ><PintoSerifTypography style={{textAlign: 'center'}}>{text}</PintoSerifTypography></Grid>
       })}
       </Grid>
     </ListItem>
