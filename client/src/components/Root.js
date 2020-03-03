@@ -18,6 +18,9 @@ import RootSnackbar from "./layout/RootSnackbar";
 import {socket, multipleSessionSubscribe} from '../socket'
 import { createCharacter, getAllNames, clearAllNames } from "../store/actions/profileActions";
 import { authCheck } from "../store/actions/authActions";
+import Party from "./screens/Party";
+import { uiPaths } from "../utils/definitions";
+
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -31,7 +34,7 @@ function TabPanel(props) {
       aria-labelledby={`full-width-tab-${index}`}
       {...other}
     >
-      <Box p={4}>{children}</Box>
+      <Box p={4} style={{paddingTop: (index===1 || index===3 || index===4) && '0', paddingBottom: (index===1 || index===3 || index===4) && '0' }}>{children}</Box>
     </Typography>
   );
 }
@@ -142,6 +145,8 @@ function Root(props) {
     
   };
 
+  const fullHeight = `calc(100vh - ${fullHeightCorrection}px)`
+
   return (
     <div className={classes.root}>
       {showCharacterCreationModal ? (
@@ -163,29 +168,33 @@ function Root(props) {
               aria-label="full width tabs example"
               variant="fullWidth"
             >
-              <Tab label="Postać" {...a11yProps(0)} />
-              <Tab label="Wydarzenia" {...a11yProps(1)} />
-              <Tab label="Statki" {...a11yProps(2)} />
-              <Tab label="Rezerwuj" {...a11yProps(3)} />
+              <Tab style={{fontFamily:'Pinto-0'}} label="Postać" {...a11yProps(0)}/>
+              <Tab style={{fontFamily:'Pinto-0'}} label="Drużyna" {...a11yProps(1)} />
+              <Tab style={{fontFamily:'Pinto-0'}} label="Wydarzenia" {...a11yProps(2)} />
+              <Tab style={{fontFamily:'Pinto-0'}} label="Statki" {...a11yProps(3)} />
+              <Tab style={{fontFamily:'Pinto-0'}} label="Rezerwuj" {...a11yProps(4)} />
             </Tabs>
           </AppBar>
           <SwipeableViews
             axis={theme.direction === "rtl" ? "x-reverse" : "x"}
             index={value}
             onChangeIndex={handleChangeIndex}
-            style={{ minHeight: `calc(100vh - ${fullHeightCorrection}px)` }}
+            style={{ minHeight: fullHeight }}
           >
             <TabPanel value={value} index={0} dir={theme.direction}>
-              <Profile />
+              <Profile fullHeight={fullHeight}/>
             </TabPanel>
             <TabPanel value={value} index={1} dir={theme.direction}>
-              <Events/>
+             <Party fullHeight={fullHeight}/>
             </TabPanel>
             <TabPanel value={value} index={2} dir={theme.direction}>
-              <Loyal />
+              <Events fullHeight={fullHeight}/>
             </TabPanel>
             <TabPanel value={value} index={3} dir={theme.direction}>
-              <Booking/>
+              <Loyal fullHeight={fullHeight}/>
+            </TabPanel>
+            <TabPanel value={value} index={4} dir={theme.direction}>
+              <Booking fullHeight={fullHeight}/>
             </TabPanel>
           </SwipeableViews>
         </React.Fragment>

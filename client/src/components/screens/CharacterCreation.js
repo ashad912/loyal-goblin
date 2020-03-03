@@ -20,17 +20,18 @@ const useStyles = makeStyles(theme => ({
   container: {
     display: "flex",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    position: 'relative'
   },
   paper: {
     width: "90%",
-    height: "70%",
+    height: "100%",
     padding: "0.5rem",
     boxSizing: "border-box",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-around",
-    alignItems: "center"
+    alignItems: "center",
   }
 }));
 
@@ -158,17 +159,19 @@ const CharacterCreation = props => {
   const steps = [
     <Step1 handleChange={handleNameChange} handleCheck={handleCheckAllNames} value={name} nameTaken={nameTaken}/>,
     <Step2 handleChange={handleSexChange} value={sex} />,
-    <Step3 handleChange={handleCharacterClassChange} value={characterClass} />,
+    <Step3 handleChange={handleCharacterClassChange} value={characterClass}       stepperHeight={stepperHeight}/>,
     <Step4
       handleChange={handleAttributeChange}
       values={attributes}
       attributePool={attributePool}
+
     />,
     <Step5
       name={name}
       sex={sex}
       characterClass={characterClass}
       attributes={attributes}
+      stepperHeight={stepperHeight}
     />
   ];
 
@@ -229,13 +232,13 @@ const CharacterCreation = props => {
           minHeight: `calc(100vh - ${stepperHeight}px)`
         }}
       >
-        <Paper className={classes.paper}>
+        <div className={classes.paper}>
 
         {props.submitError && 
         <Typography  color="secondary" style={{textAlign: 'center', marginBottom:'2rem'}}>Błąd finalizacji tworzenia postaci. Sprawdź poprawność danych i spróbuj jeszcze raz.</Typography>
         }
           {steps[activeStep]}
-          </Paper>
+          </div>
       </Container>
       <MobileStepper
         id="stepper"

@@ -22,13 +22,12 @@ import Attribute from "./profile/Attribute";
 import Equipment from "./profile/Equipment";
 import NewLevelDialog from "./profile/NewLevelDialog";
 import PerkBox from "./profile/PerkBox";
-import PartyCreationDialog from "./profile/PartyCreationDialog";
-import PartyJoiningDialog from "./profile/PartyJoiningDialog";
+
 import RankDialog from "./profile/RankDialog";
 import StatsDialog from "./profile/StatsDialog";
 import NewRallyAwardsDialog from "./profile/NewRallyAwardsDialog";
 import NewShopAwardsDialog from "./profile/NewShopAwardsDialog";
-import ProfileMissionInstanceWarningDialog from "./profile/ProfileMissionInstanceWarningDialog";
+
 
 import { updateParty, removeMember } from "../../store/actions/partyActions";
 import {
@@ -112,8 +111,7 @@ const Profile = props => {
   const [userLevel, setUserLevel] = React.useState(1);
   const [relativeExp, setRelativeExp] = React.useState(0);
   const [relativeThreshold, setRelativeThreshold] = React.useState(0);
-  const [isJoiningParty, setIsJoiningParty] = React.useState(false);
-  const [isCreatingParty, setIsCreatingParty] = React.useState(false);
+
   const [showRankDialog, setShowRankDialog] = React.useState(false);
   const [showStatsDialog, setShowStatsDialog] = React.useState(false);
   const [
@@ -586,134 +584,7 @@ const Profile = props => {
         activeMission={props.mission.activeInstanceId}
       />
       <Typography variant="h5" className={classes.eqHeading}></Typography>
-      {props.party && props.party.leader && props.party.leader._id && (
-        <div>
-          {props.party.leader._id === props.auth.uid ? (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setIsCreatingParty(prev => !prev)}
-              disabled={props.auth.multipleSession}
-            >
-              Zarządzaj drużyną
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleLeaveParty}
-              disabled={props.auth.multipleSession}
-            >
-              Opuść drużynę
-            </Button>
-          )}
-        </div>
-      )}
-
-      {props.party && props.party.leader && props.party.leader._id ? (
-        <Paper style={{ width: "100%", marginTop: "2rem" }}>
-          <List>
-            <ListItem>
-              <Badge
-                badgeContent="Lider"
-                color="primary"
-                anchorOrigin={{ horizontal: "right", vertical: "top" }}
-              >
-                <ListItemAvatar>
-                  {props.party.leader.avatar ? (
-                    <img
-                      src={usersPath + props.party.leader.avatar}
-                      width="32"
-                    />
-                  ) : (
-                    <Avatar>
-                      {createAvatarPlaceholder(props.party.leader.name)}
-                    </Avatar>
-                  )}
-                </ListItemAvatar>
-              </Badge>
-              <ListItemText
-                primary={props.party.leader.name}
-                style={{
-                  maxWidth: "40vw",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis"
-                }}
-              />
-            </ListItem>
-
-            {props.party.members.length > 0 &&
-              props.party.members.map(partyMember => {
-                return (
-                  <ListItem key={partyMember._id}>
-                    <ListItemAvatar>
-                      {partyMember.avatar ? (
-                        <img src={usersPath + partyMember.avatar} width="32" />
-                      ) : (
-                        <Avatar>
-                          {createAvatarPlaceholder(partyMember.name)}
-                        </Avatar>
-                      )}
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={partyMember.name}
-                      style={{
-                        maxWidth: "40vw",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis"
-                      }}
-                    />
-                  </ListItem>
-                );
-              })}
-          </List>
-        </Paper>
-      ) : (
-        <Grid container justify="space-around">
-          <Grid item container direction="column" alignItems="center" xs={6}>
-            <Fab
-              color="primary"
-              onClick={
-                props.mission.activeInstanceId
-                  ? () =>
-                      handleMissionInstanceWarningDialog(
-                        () => setIsJoiningParty(prev => !prev),
-                        "Poszukiwanie drużyny"
-                      )
-                  : () => setIsJoiningParty(prev => !prev)
-              }
-            >
-              {/* <EmojiPeopleIcon /> */}
-              <FabIcon src={uiPaths.lookForGroup} style={{ width: "2rem" }} />
-            </Fab>
-            <Typography variant="caption" style={{ marginTop: "0.4rem" }}>
-              Szukaj drużyny
-            </Typography>
-          </Grid>
-          <Grid item container direction="column" alignItems="center" xs={6}>
-            <Fab
-              color="primary"
-              onClick={
-                props.mission.activeInstanceId
-                  ? () =>
-                      handleMissionInstanceWarningDialog(
-                        () => setIsCreatingParty(prev => !prev),
-                        "Tworzenie drużyny"
-                      )
-                  : () => setIsCreatingParty(prev => !prev)
-              }
-            >
-              {/* <GroupAddIcon /> */}
-              <FabIcon src={uiPaths.addMember} style={{ width: "2rem" }} />
-            </Fab>
-            <Typography variant="caption" style={{ marginTop: "0.4rem" }}>
-              Utwórz drużynę
-            </Typography>
-          </Grid>
-        </Grid>
-      )}
+      
       <Typography variant="h5" className={classes.eqHeading}></Typography>
       <Grid container justify="space-around">
         <Grid item container direction="column" alignItems="center" xs={6}>
@@ -739,25 +610,7 @@ const Profile = props => {
         </Grid>
       </Grid>
 
-      <PartyJoiningDialog
-        open={isJoiningParty}
-        userId={props.auth.uid}
-        forcePartyUpdate={() => props.onPartyUpdate(null, true)}
-        handleClose={() => setIsJoiningParty(prev => !prev)}
-      />
-
-      <PartyCreationDialog
-        open={isCreatingParty}
-        isManagingParty={
-          props.party &&
-          props.party.leader &&
-          props.party.leader._id &&
-          props.party.leader._id === props.auth.uid
-        }
-        partyName={props.party && props.party.name}
-        handleClose={() => setIsCreatingParty(prev => !prev)}
-        activeMission={props.mission.activeInstanceId}
-      />
+     
       {showRankDialog && (
         <RankDialog
           open={showRankDialog}
@@ -797,14 +650,7 @@ const Profile = props => {
         profile={props.auth.profile}
       />
 
-      <ProfileMissionInstanceWarningDialog
-        open={Boolean(missionInstanceWarningDialog.action)}
-        handleClose={() =>
-          setMissionInstanceWarningDialog({ action: null, text: "" })
-        }
-        handleAction={missionInstanceWarningDialog.action}
-        text={missionInstanceWarningDialog.text}
-      />
+
     </Grid>
   );
 };

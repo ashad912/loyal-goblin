@@ -297,7 +297,7 @@ class Loyal extends Component {
         const userTorpedos = this.state.userTorpedos
         
         return ( 
-            <React.Fragment>
+            <div style={{minHeight: this.props.fullHeight}}>
                 {this.state.loading && <Loading/>}
                 <LoadedTorpedoContainer>
                     {this.state.loadedTorpedo ? (
@@ -330,7 +330,7 @@ class Loyal extends Component {
                     award={this.state.award}
                 /> 
             }      
-            </React.Fragment>      
+            </div>      
         );
     }
 }

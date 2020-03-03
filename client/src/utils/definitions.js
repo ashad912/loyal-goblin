@@ -16,6 +16,10 @@ const iconPaths = {
     rogue: 'rogue.svg',
     mage: 'mage.svg',
     cleric: 'cleric.svg',
+    warriorBg: 'warriorBg.svg',
+    rogueBg: 'rogueBg.svg',
+    mageBg: 'mageBg.svg',
+    clericBg: 'clericBg.svg',
     strength: 'strength.svg',
     dexterity: 'dexterity.svg',
     magic: 'magic.svg',
@@ -30,7 +34,8 @@ const iconPaths = {
     deleteRed: 'delete-red.svg',
     transferLeader: 'transfer-leader.svg',
     people: 'ludki.svg',
-    players: 'people.svg'
+    players: 'people.svg',
+    levelBg: 'levelBg.svg'
 }
 
 Object.keys(iconPaths).forEach(path => {
@@ -67,7 +72,8 @@ export const palette = {
         equipped: '#e6dc8d',
         standard: '#eeeeee',
         lightGrey: '#ededed',
-        grey: '#c0c0c0'
+        grey: '#c0c0c0',
+        darkGrey: '#808080'
     },
     border: "1px solid rgb(192, 192, 192)"
 }

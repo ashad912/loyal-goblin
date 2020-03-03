@@ -15,7 +15,7 @@ const RootSnackbar = props => {
         return () => clearTimeout(timer);
     }, []);
     const profile = props.profile
-    const conditions = !props.hide && delay && ((props.screen === 1) || (props.screen === 0))
+    const conditions = !props.hide && delay && ((props.screen === 2) || (props.screen === 0))
                         && !profile.rallyNotifications.isNew 
                         && !profile.shopNotifications.isNew
                         && !profile.levelNotifications 
@@ -33,17 +33,17 @@ const RootSnackbar = props => {
                     vertical: "bottom",
                     horizontal: "left"
                 }}
-                open={(notTheLeader === true && (!props.activeInstanceId) && (props.screen === 1))
+                open={(notTheLeader === true && (!props.activeInstanceId) && (props.screen === 2))
                     || (notTheLeader === true && (props.screen === 0)) || multipleSession}
                 message={
                     <React.Fragment>
-                        {notTheLeader === true && (!props.activeInstanceId) && (props.screen === 1)
+                        {notTheLeader === true && (!props.activeInstanceId) && (props.screen === 2)
                          && (<p style={{margin: '0'}}>Tylko lider drużyny, może rozpocząć misję.</p>)}
                         {notTheLeader === true && (props.screen === 0) && (!props.party.inShop)
                          && (<p style={{margin: '0'}}>Tylko lider drużyny, może rozpocząć expienie.</p>)}
                          {notTheLeader === true && (props.screen === 0) && (props.party.inShop)
                          && (<p style={{margin: '0'}}>Lider rozpoczął expienie.</p>)}
-                        {(props.screen === 1) && multipleSession === true
+                        {(props.screen === 2) && multipleSession === true
                          && (<p style={{margin: '0'}}>Wielokrotna sesja. Zamknij inne karty, a następnie odśwież, aby zarządzać misjami.</p>)}
                         {(props.screen === 0) && multipleSession === true &&
                          (<p style={{margin: '0'}}>Wielokrotna sesja. Zamknij inne karty, a następnie odśwież, aby zarządzać drużyną.</p>)}

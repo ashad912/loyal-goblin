@@ -14,12 +14,12 @@ const Step2 = (props) => {
 
   return (
     <React.Fragment>
-    <Typography variant="h6">Wybierz płeć swojej postaci</Typography>
-    <Divider style={{width: '90%'}}/>
+    <Typography variant="h6" style={{fontSize: '1.4rem',textAlign: 'center'}}>Wybierz płeć</Typography>
+    <Divider style={{width: '90%', margin: '0.5rem 0'}}/>
     <FormControl component="fieldset" >
         <RadioGroup aria-label="gender" name="gender" value={props.value} onChange={props.handleChange}>
-          <FormControlLabel value="female" control={<Radio />} label="Kobieta" />
-          <FormControlLabel value="male" control={<Radio />} label="Mężczyzna" />
+          <FormControlLabel value="female" control={<Radio color="primary"/>} label="Kobieta" />
+          <FormControlLabel value="male" control={<Radio color="primary"/>} label="Mężczyzna" />
         </RadioGroup>
       </FormControl>
     </React.Fragment>

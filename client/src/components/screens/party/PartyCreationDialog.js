@@ -163,7 +163,7 @@ const PartyCreationDialog = props => {
     <Dialog
       open={props.open}
       onClose={props.handleClose}
-      PaperProps={{ style: { minHeight: "50vh" } }}
+      PaperProps={{ style: { height: '100%' } }}
       fullScreen
       style={{ zIndex: 2000 }}
     >

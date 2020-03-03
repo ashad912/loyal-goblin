@@ -3,23 +3,26 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import AttributeBox from "./AttributeBox";
 import Divider from '@material-ui/core/Divider'
+import { PintoSerifTypography, PintoTypography } from "../../../utils/fonts";
+import { palette } from "../../../utils/definitions";
+
 
 const Step4 = props => {
   return (
     <React.Fragment>
-      <Typography variant="h6" style={{textAlign:'center'}}>
-        Rozdziel atrybuty swojej postaci wedle uznania
-      </Typography>
-      <Divider style={{width: '90%'}}/>
-      <Typography variant="body2" style={{margin: '1rem 0'}}>
-        Dostępne punkty: {props.attributePool}/3
+      <PintoSerifTypography variant="h6" style={{fontSize: '1.4rem',textAlign: 'center'}}>
+        Rozdziel atrybuty postaci
+      </PintoSerifTypography>
+      <Divider style={{width: '100%'}}/>
+      <Typography variant="body2" style={{margin: '1rem 0', color: palette.background.darkGrey}}>
+        Dostępne punkty: <span style={{color: 'black'}}>{props.attributePool}/3</span>
       </Typography>
       <Grid
         container
         direction="column"
         justify="center"
         alignItems="center"
-        spacing={2}
+        spacing={3}
         wrap="nowrap"
       >
         <AttributeBox
@@ -27,33 +30,33 @@ const Step4 = props => {
           values={props.values}
           attributePool={props.attributePool}
           attribute="strength"
-          attributeName="Siła [S]"
+          attributeName="Siła"
         />
         <AttributeBox
           handleChange={props.handleChange}
           values={props.values}
           attributePool={props.attributePool}
           attribute="dexterity"
-          attributeName="Zręczność [Z]"
+          attributeName="Zręczność"
         />
         <AttributeBox
           handleChange={props.handleChange}
           values={props.values}
           attributePool={props.attributePool}
           attribute="magic"
-          attributeName="Magia [M]"
+          attributeName="Magia"
         />
         <AttributeBox
           handleChange={props.handleChange}
           values={props.values}
           attributePool={props.attributePool}
           attribute="endurance"
-          attributeName="Wytrzymałość [W]"
+          attributeName="Wytrzymałość"
         />
       </Grid>
-      <Typography variant="caption" style={{textAlign: 'center', marginTop: '1rem'}}>
+      <PintoTypography style={{fontSize: '1.2rem', textAlign: 'center', marginTop: '2rem', padding: '0 2rem', color: palette.background.darkGrey}}>
         Atrybuty będą miały wpływ na dostępne dla Ciebie misje!
-      </Typography>
+      </PintoTypography>
     </React.Fragment>
   );
 };

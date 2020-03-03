@@ -390,7 +390,7 @@ class MissionInstance extends React.Component {
 
         const mission = this.state.missionObject
         return(
-            <div style={{display: 'flex', flexDirection: 'column', padding: "0.5rem 2rem", alignContent: 'center', fontFamily: '"Roboto", sans-serif', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`}}>
+            <div style={{display: 'flex', flexDirection: 'column', padding: "0.5rem 2rem", alignItems: 'center', fontFamily: '"Roboto", sans-serif', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`}}>
             {this.state.showVerificationPage ? (
                 <VerificationPage 
                     missionExperience={this.state.missionObject.experience} 

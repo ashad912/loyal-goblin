@@ -272,7 +272,7 @@ export default class ExchangeArea extends React.Component {
 
 
     return (
-      <div>
+      <div style={{width: '100%'}}>
         
         
         

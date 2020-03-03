@@ -3,6 +3,8 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import {uiPaths} from '../../../utils/definitions'
+import Divider from '@material-ui/core/Divider'
+import { PintoSerifTypography, PintoTypography } from "../../../utils/fonts";
 
 const Step5 = props => {
   let characterClass = props.characterClass;
@@ -28,19 +30,22 @@ const Step5 = props => {
 
   return (
     <React.Fragment>
-      <Typography variant="h4">Podsumowanie</Typography>
+      <PintoSerifTypography variant="h4" style={{fontSize: '2rem',textAlign: 'center'}}>Podsumowanie</PintoSerifTypography>
+      <Divider style={{width: '100%', margin: '0.5rem 0'}}/>
       <Typography variant="h6">
         {props.name}{" "}
         {props.sex === "female" ? (
-          <img src={uiPaths.female} style={{width: '1.2rem'}}/>
+          <img src={uiPaths.female} style={{height: '2rem', verticalAlign: 'bottom'}}/>
         ) : (
-          <img src={uiPaths.male} style={{width: '1.2rem'}}/>
+          <img src={uiPaths.male} style={{height: '2rem', verticalAlign: 'bottom'}}/>
         )}
       </Typography>
 
-      <Typography variant="h6">{characterClass}</Typography>
-      <img src={uiPaths[props.characterClass]} style={{width: '2rem', marginBottom: '1rem'}}/>
+      <Typography variant="h6">{characterClass} {"  "}
+      <img src={uiPaths[props.characterClass]} style={{height: '2rem', verticalAlign: 'bottom'}}/>
+      </Typography>
       <Grid
+      style={{marginTop:'2rem'}}
         container
         direction="column"
         justify="center"
@@ -55,35 +60,36 @@ const Step5 = props => {
           alignItems="center"
         >
           <Grid item xs={8}>
-            <Typography variant="h6">Siła</Typography>
+            <Typography variant="h5">Siła</Typography>
           </Grid>
 
           <Grid item xs={2}>
-            <Typography variant="h6">{props.attributes.strength}</Typography>
+            <Typography variant="h5" style={{textAlign:'right'}}>{props.attributes.strength}</Typography>
           </Grid>
           <Grid item xs={8}>
-            <Typography variant="h6">Zręczność</Typography>
+            <Typography variant="h5">Zręczność</Typography>
           </Grid>
 
           <Grid item xs={2}>
-            <Typography variant="h6">{props.attributes.dexterity}</Typography>
+            <Typography variant="h5" style={{textAlign:'right'}}>{props.attributes.dexterity}</Typography>
           </Grid>
           <Grid item xs={8}>
-            <Typography variant="h6">Magia</Typography>
+            <Typography variant="h5">Magia</Typography>
           </Grid>
 
           <Grid item xs={2}>
-            <Typography variant="h6">{props.attributes.magic}</Typography>
+            <Typography variant="h5" style={{textAlign:'right'}}>{props.attributes.magic}</Typography>
           </Grid>
           <Grid item xs={8}>
-            <Typography variant="h6">Wytrzymałość</Typography>
+            <Typography variant="h5">Wytrzymałość</Typography>
           </Grid>
 
           <Grid item xs={2}>
-            <Typography variant="h6">{props.attributes.endurance}</Typography>
+            <Typography variant="h5" style={{textAlign:'right'}}>{props.attributes.endurance}</Typography>
           </Grid>
         </Grid>
       </Grid>
+      <img src={uiPaths[props.characterClass+'Bg']} style={{width: '100%', position: 'absolute', bottom: '0', left: '0', opacity: '0.4'}}/>
     </React.Fragment>
   );
 };
