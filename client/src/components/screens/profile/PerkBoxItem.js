@@ -13,16 +13,16 @@ import { PintoTypography, PintoSerifTypography } from "../../../utils/fonts";
 
 
 
-const PerkBoxItem = ({ perk, isFirst, isEquipment }) => {
+const PerkBoxItem = ({ perk, isFirst, isEquipment, equipped }) => {
 
 
 
-  let primaryText = [<Typography style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.2rem', }}>{perkLabels[perk.perkType]}: </Typography>]
+  let primaryText = [<Typography style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.2rem', }}>{perkLabels[perk.perkType]}:<span>&nbsp;&nbsp;</span> </Typography>]
   if (perk.perkType.startsWith("disc")) {
-    primaryText.push(<Typography  style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.2rem', color:palette.primary.main}}>{getTarget(perk.perkType, perk.target)}</Typography>)
+  primaryText.push(<Typography  style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.2rem', color: equipped? 'white' : palette.primary.main}}>{getTarget(perk.perkType, perk.target)}<span>&nbsp;&nbsp;</span></Typography>)
   }
   if (perk.hasOwnProperty("value")) {
-    primaryText.push(<Typography  style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.2rem', color:palette.primary.main}}>{getValue(perk.perkType, perk.value)}</Typography>)
+    primaryText.push(<Typography  style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.2rem', color: equipped? 'white' : palette.primary.main}}>{getValue(perk.perkType, perk.value)}</Typography>)
   }
 
   let secondaryText;
@@ -62,13 +62,13 @@ const PerkBoxItem = ({ perk, isFirst, isEquipment }) => {
   }
 
   return (
-    <ListItem style={{ flexDirection: "row", alignItems: 'space-between', borderTop: isFirst ? "" : isEquipment ? '1px solid black':palette.border, padding: isEquipment ? '0' : '8px' }}>
+    <ListItem style={{ flexDirection: "row", alignItems: 'space-between', borderTop: isFirst ? "" : isEquipment ? '1px solid black':palette.border, padding: isEquipment ? '0' : '8px', boxSizing:'border-box' }}>
       <PintoTypography style={{flexBasis:isEquipment?'35%':'25%'}}>
       {secondaryText}
       </PintoTypography>
-      <Grid container justify="flex-end" spacing={1} >
+      <Grid container justify="flex-end"  >
       {primaryText.map((text, index) => {
-        return <Grid key={text+index} item ><div style={{textAlign: 'center'}}>{text}</div></Grid>
+        return <Grid key={text+index} item ><PintoTypography>{text}</PintoTypography></Grid>
       })}
       </Grid>
     </ListItem>

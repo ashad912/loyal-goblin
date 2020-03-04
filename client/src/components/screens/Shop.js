@@ -51,8 +51,8 @@ const StyledSection = styled(Section)`
 const FloatingCart = styled.div`
   position: fixed;
   z-index: 2;
-  bottom: 1rem;
-  right: 1rem;
+  bottom: 3rem;
+  right: calc(50vw - 2rem);
   background: #337de4;
   width: 4rem;
   height: 4rem;
@@ -478,16 +478,7 @@ class Shop extends React.Component {
             <VerificationPage user={this.props.auth} party={this.props.party} />
           ) : (
             <ScrollingProvider>
-              <Button
-                fullWidth
-                variant="contained"
-                style={{
-                  marginTop: "0.5rem",
-                  marginBottom: "1rem",
-                  borderRadius: 0
-                }}
-                onClick={this.handleLeaveShop}
-              >{`< Wyjście`}</Button>
+
               {this.props.party && this.props.party.length > 1 && (
                 <PlayerShopButtons
                   users={this.props.party}
@@ -549,7 +540,7 @@ class Shop extends React.Component {
                     <MenuItem section="shots">Szoty</MenuItem>
                   </Grid>
                   <Grid item>
-                    <MenuItem section="drinks">Driny</MenuItem>
+                    <MenuItem section="drinks">Drinki</MenuItem>
                   </Grid>
                   <Grid item>
                     <MenuItem section="beers">Piwa</MenuItem>
@@ -615,7 +606,7 @@ class Shop extends React.Component {
                 </StyledSection>
                 <Divider />
               </ListContainer>
-              <div style={{ marginTop: "3rem" }}></div>
+              <div style={{ marginTop: "5.5rem" }}></div>
               {this.state.baskets[this.state.activeUser] &&
                 this.state.baskets[this.state.activeUser].length > 0 && (
                   <React.Fragment>
@@ -674,6 +665,17 @@ class Shop extends React.Component {
                 )}
                 <FloatingCartIcon />
               </FloatingCart>
+              <Button
+                fullWidth
+                variant="contained"
+                style={{
+                  position:'fixed',
+                  bottom:0,
+                  left: 0,
+                  borderRadius: 0
+                }}
+                onClick={this.handleLeaveShop}
+              >{`< Wyjdź`}</Button>
               <BasketDrawer
                 open={this.state.basketDrawerOpen}
                 toggle={this.handleToggleBasketDrawer}

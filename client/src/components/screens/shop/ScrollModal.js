@@ -15,13 +15,13 @@ const ScrollModal = ({open, handleClose, scrolls, equippedScrollId, handleScroll
       onClose={handleClose}
       fullWidth
       maxWidth="xl"
-      PaperProps={{style: {width: '100%', margin: '1rem'}}}
+      PaperProps={{style: {width: '100%', margin: '1rem', padding: 0}}}
 
     >
       <DialogTitle>
         Zarządzaj zwojami
       </DialogTitle>
-      <DialogContent>
+      <DialogContent style={{padding:0}}>
         {scrolls.length > 0 ? scrolls.map((scroll, index) => {
 
         return (

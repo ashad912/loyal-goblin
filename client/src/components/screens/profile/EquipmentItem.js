@@ -189,7 +189,7 @@ const EquipmentListItem = props => {
               <Typography component="div">
                 {item.itemModel.perks.map((perk, index) => {
                   return (
-                    <PerkBoxItem key={perk.perkType+perk.value+perk.id} perk={perk} isFirst={index===0} isEquipment={true}/>
+                    <PerkBoxItem key={perk.perkType+perk.value+perk.id} perk={perk} isFirst={index===0} isEquipment={true} equipped={props.equipped}/>
                     
                   );
                 })}

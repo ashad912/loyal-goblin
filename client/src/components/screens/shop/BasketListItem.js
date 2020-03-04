@@ -1,12 +1,15 @@
 import React from "react";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@material-ui/core/Grid";
 import ListItemText from "@material-ui/core/ListItemText";
 import Collapse from "@material-ui/core/Collapse";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import { uiPaths, palette, itemsPath } from "../../../utils/definitions";
+import { PintoSerifTypography,PintoTypography } from "../../../utils/fonts";
+import { ListItemAvatar } from "@material-ui/core";
 
 const BasketListItem = ({activeUsersBasket, name, summedPrice, basket, handleRemoveItem, noParty}) => {
   const [open, setOpen] = React.useState(false);
@@ -33,14 +36,28 @@ const BasketListItem = ({activeUsersBasket, name, summedPrice, basket, handleRem
           <List component="div" disablePadding>
             {basket.map(product => {
               return (
-                <ListItem key={product._id+product.firstDiscount+product.quantity} style={{ paddingLeft: "0.4rem" }}>
+                <ListItem key={product._id+product.firstDiscount+product.quantity} style={{ paddingLeft: "0.4rem", alignItems: 'flex-start' }}>
                   {activeUsersBasket && 
-                  <DeleteForeverIcon style={{width: '2rem', height: '2rem', color: "#b40000"}} onClick={(e) => removeItem(e, product._id, product.firstDiscount)}/>
+                  <ListItemAvatar>
+                    <img src={uiPaths.trash} style={{width: '2rem', height: '2rem', marginTop:'0.4rem'}} onClick={(e) => removeItem(e, product._id, product.firstDiscount)}/>
+                  </ListItemAvatar>
                   }
-                  <ListItemText secondary={product.name} style={{flexBasis: '30%'}} />
-                  <ListItemText secondary={product.quantity+"x"}  style={{flexBasis: '10%'}}/>
-                  <ListItemText secondary={product.price.toFixed(2) + " ZŁ"} style={{flexBasis: '30%'}}/>
-                  <ListItemText secondary={"= " + (product.quantity * product.price).toFixed(2) + " ZŁ"} style={{flexBasis: '30%', background: product.firstDiscount && 'gold'}}/>
+                  <Grid container direction="column" justify="space-between" align="flex-start">
+                <Grid item>
+                  <PintoTypography variant="h5">{product.name}</PintoTypography>
+                </Grid>
+                <Grid item>
+                {product.hasOwnProperty('awards') && product.awards &&
+                      product.awards.map((prize, index) => {
+                        return <PintoTypography key={prize.itemModel._id+index} style={{color: palette.primary.main}}>{prize.itemModel.name} <span>{prize.quantity > 1 && " x"+prize.quantity}</span></PintoTypography>
+                      })}
+                </Grid>
+                <Grid item container direction="row" justify="flex-end" align="center">
+                  <PintoTypography style={{fontSize:'1.2rem'}}>{product.quantity+"x"}</PintoTypography>
+                  <PintoTypography style={{fontSize:'1.2rem'}}>{product.price.toFixed(2) + " ZŁ"}</PintoTypography>
+                  <PintoTypography style={{fontSize:'1.2rem', background: product.firstDiscount && 'gold'}}>{"= " + (product.quantity * product.price).toFixed(2) + " ZŁ"}</PintoTypography>
+                </Grid>
+              </Grid>
                 </ListItem>
               );
             })}
@@ -59,15 +76,29 @@ const BasketListItem = ({activeUsersBasket, name, summedPrice, basket, handleRem
           <List component="div" disablePadding>
             {basket.map(product => {
               return (
-                <ListItem key={name+product._id+product.firstDiscount+product.quantity} style={{ paddingLeft: "2rem" }}>
-                  {activeUsersBasket && 
-                  <DeleteForeverIcon style={{width: '2rem', height: '2rem', color: "#b40000"}} onClick={(e) => removeItem(e, product._id, product.firstDiscount)}/>
-                  }
-                  <ListItemText secondary={product.name} style={{flexBasis: '30%'}} />
-                  <ListItemText secondary={product.quantity+"x"}  style={{flexBasis: '10%'}}/>
-                  <ListItemText secondary={product.price.toFixed(2) + " ZŁ"} style={{flexBasis: '30%'}}/>
-                  <ListItemText secondary={"= " + (product.quantity * product.price).toFixed(2) + " ZŁ"} style={{flexBasis: '30%', background: product.firstDiscount && 'gold'}}/>
-                </ListItem>
+                <ListItem key={name+product._id+product.firstDiscount+product.quantity} style={{ paddingLeft: "0.4rem", alignItems: 'flex-start' }}>
+                {activeUsersBasket && 
+                <ListItemAvatar>
+                  <img src={uiPaths.trash} style={{width: '2rem', height: '2rem', marginTop:'0.4rem'}} onClick={(e) => removeItem(e, product._id, product.firstDiscount)}/>
+                </ListItemAvatar>
+                }
+                <Grid container direction="column" justify="space-between" align="flex-start">
+              <Grid item>
+                <PintoTypography variant="h5">{product.name}</PintoTypography>
+              </Grid>
+              <Grid item>
+              {product.hasOwnProperty('awards') && product.awards &&
+                    product.awards.map((prize, index) => {
+                      return <PintoTypography key={prize.itemModel._id+index} style={{color: palette.primary.main}}>{prize.itemModel.name} <span>{prize.quantity > 1 && " x"+prize.quantity}</span></PintoTypography>
+                    })}
+              </Grid>
+              <Grid item container direction="row" justify="flex-end" align="center">
+                <PintoTypography style={{fontSize:'1.2rem'}}>{product.quantity+"x"}</PintoTypography>
+                <PintoTypography style={{fontSize:'1.2rem'}}>{product.price.toFixed(2) + " ZŁ"}</PintoTypography>
+                <PintoTypography style={{fontSize:'1.2rem', background: product.firstDiscount && 'gold'}}>{"= " + (product.quantity * product.price).toFixed(2) + " ZŁ"}</PintoTypography>
+              </Grid>
+            </Grid>
+              </ListItem>
               );
             })}
           </List>
@@ -77,5 +108,7 @@ const BasketListItem = ({activeUsersBasket, name, summedPrice, basket, handleRem
     </div>
   );
 };
+
+
 
 export default BasketListItem;

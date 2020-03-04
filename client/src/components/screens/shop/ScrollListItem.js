@@ -13,6 +13,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { getTarget, getValue } from "../../../utils/methods";
 import { perkLabels, dayLabels } from "../../../utils/labels";
 import {itemsPath, palette} from '../../../utils/definitions'
+import PerkBoxItem from "../profile/PerkBoxItem";
+import { PintoSerifTypography,PintoTypography } from "../../../utils/fonts";
 
 const StyledMenu = withStyles({
   paper: {
@@ -65,29 +67,29 @@ const ScrollListItem = props => {
         button
         alignItems="flex-start"
         className={classes.listItem}
-        style={{ background: props.equipped && palette.primary.light, borderTop: !props.isFirst && palette.border }}
+        style={{ background: props.equipped && palette.primary.light}}
         equipped={props.equipped ? 1 : 0}
         onClick={() =>props.inactive ? ()=> {} : props.handleScrollSelect(scroll._id)}
       >
         <ListItemAvatar>
           <img
-            style={{ width: "32px", height: "32px" }}
+            style={{ width: "52px", height: "52px" }}
             alt={scroll.itemModel.name}
             src={`${itemsPath}${scroll.itemModel.imgSrc}`}
           />
         </ListItemAvatar>
-        <Grid container direction="column" style={{color: props.equipped &&  'white'}}>
+        <Grid container direction="column">
           <Grid item container>
             <Grid item xs={12}>
               <ListItemText
                 disableTypography
-                primary={scroll.itemModel.name}
+    primary={<PintoSerifTypography style={{fontSize:'1.2rem'}}>{scroll.itemModel.name}</PintoSerifTypography>}
                 secondary={
-                  <div>
-                    <Typography variant="caption">
+
+                    <PintoTypography style={{color:palette.background.darkGrey}}>
                       {scroll.itemModel.description}
-                    </Typography>
-                  </div>
+                    </PintoTypography>
+
                 }
               />
             </Grid>
@@ -102,60 +104,12 @@ const ScrollListItem = props => {
                 width: "100%",
                 padding: "0rem",
                 boxSizing: "border-box",
-                background: "rgba(255, 255, 255, 0.198)"
               }}
             >
               <Typography component="div">
               {scroll.itemModel.perks.map((perk, index) => {
                 return (
-                  <Box
-                  key={JSON.stringify(perk.target)+index}
-                    border={0}
-                    borderColor="primary.main"
-                    style={{ margin: "0.2rem 0", fontSize: "0.8rem" }}
-                  >
-                    <ListItem style={{padding: '0.4rem'}}>
-                      <Grid container justify="flex-start">
-                        <Grid item xs={6}>{perkLabels[perk.perkType]}</Grid>
-                        <Grid item xs={3}>{getValue(perk.perkType, perk.value)}</Grid>
-                        <Grid item xs={3}>
-                          {getTarget(perk.perkType, perk.target)}
-                        </Grid>
-                        <Grid item xs={12}>
-                          {perk.time.length > 0 && (
-                            <React.Fragment>
-                              {perk.time
-                                .slice()
-                                .reverse()
-                                .map((period, index) => (
-                                  <Grid
-                                    container
-                                    key={JSON.stringify(period)+index}
-                                  >
-                                    <Grid item>
-                                      {`${dayLabels[period.startDay]}`}
-                                    </Grid>
-                                    {!(
-                                      period.startHour === 12 &&
-                                      period.lengthInHours === 24
-                                    ) ? (
-                                      <Grid item>
-                                        {`, ${
-                                          period.startHour
-                                        }:00 - ${(period.startHour +
-                                          period.lengthInHours) %
-                                          24}:00`}
-                                      </Grid>
-                                    ) : null}
-                                  </Grid>
-                                ))}
-                            </React.Fragment>
-                          )}
-                        </Grid>
-                      </Grid>
-                    </ListItem>
-                    {scroll.itemModel.perks.length !== index+1 && <Divider />}
-                  </Box>
+                  <PerkBoxItem key={perk.perkType+perk.value+perk.id} perk={perk} isFirst={index===0} isEquipment={true} equipped={props.equipped}/>
                 );
               })}
               </Typography>

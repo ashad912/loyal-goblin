@@ -36,7 +36,8 @@ const iconPaths = {
     people: 'ludki.svg',
     players: 'people.svg',
     levelBg: 'levelBg.svg',
-    leader: 'leader.svg'
+    leader: 'leader.svg',
+    trash: 'trash.svg'
 }
 
 Object.keys(iconPaths).forEach(path => {

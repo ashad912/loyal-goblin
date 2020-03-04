@@ -5,6 +5,7 @@ import axios from 'axios'
 import moment from 'moment'
 import QRCode from 'qrcode'
 import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
@@ -21,68 +22,14 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import { PintoSerifTypography,PintoTypography } from "../../../utils/fonts";
 import { cancelOrder, leaveShop } from "../../../store/actions/shopActions";
-import {itemsPath, usersPath} from '../../../utils/definitions'
+import {itemsPath, usersPath, palette} from '../../../utils/definitions'
 import {createAvatarPlaceholder} from '../../../utils/methods'
 
 const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_URL
 })
-
-//Info z backendu
-const baskets = [
-  {
-    user: {
-      id: 1,
-      name: "Ancymon Bobrzyn"
-    },
-    price: 26.0,
-    experience: 2600,
-    amulets: [
-      {
-        itemModel: {
-          id: 101,
-          type: {
-            id: 201,
-            type: "amulet"
-          },
-          name: "Diament",
-          imgSrc: "diamond-amulet.png"
-        }
-      }
-    ]
-  },
-  {
-    user: {
-      id: 2,
-      name: "Cecylia Dedoles"
-    },
-    price: 7.0,
-    experience: 700,
-    amulets: []
-  },
-  {
-    user: {
-      id: 3,
-      name: "Ewelina"
-    },
-    price: 13.0,
-    experience: 1300,
-    amulets: [
-      {
-        itemModel: {
-          id: 101,
-          type: {
-            id: 201,
-            type: "amulet"
-          },
-          name: "Perła",
-          imgSrc: "pearl-amulet.png"
-        }
-      }
-    ]
-  }
-];
 
 const VerificationPage = props => {
   const history = useHistory();
@@ -178,7 +125,7 @@ const handleCancelOrder = async () => {
 
   return (
     <Container maxWidth="sm" style={{padding: '1rem 0.4rem'}}>
-      <Paper style={{ width: "100%", paddingTop: '1rem' }}>
+      <div style={{ width: "100%", paddingTop: '1rem' }}>
        {orderFinalized ? <Typography variant="h5" style={{width: '100%', marginBottom: '0.5rem'}} color="primary">Zamówienie zostało zatwierdzone!</Typography> :  <Typography variant="h5" style={{marginBottom: '1rem'}}>Pokaż ten kod przy barze, by otrzymać nagrody!</Typography>}
         {orderFinalized ? <CheckCircleOutlineIcon color="primary" style={{fontSize: '50vw'}}/> : 
         <img src={qrCode} style={{width: '80%', marginBottom: '1rem'}}/>
@@ -198,24 +145,31 @@ const handleCancelOrder = async () => {
                 <React.Fragment key={basket.profile._id}>
                   <ListItem style={{ flexDirection: "column"}}>
                     <List style={{ width: "100%" }}>
-                      <ListItem>
+<ListItem style={{alignItems:'flex-start', padding:0}}>
+
                         <ListItemAvatar>
-                          {basket.profile.avatar ? <img src={usersPath + basket.profile.avatar} style={{width: '3rem'}}/> : 
-                          <Avatar style={{width: '3rem', height: '3rem'}}>{createAvatarPlaceholder(basket.profile.name)}</Avatar>}
+                          {basket.profile.avatar ? <img src={usersPath + basket.profile.avatar} style={{width: '4rem', height: '4rem'}}/> : 
+                          <Avatar style={{width: '4rem', height: '4rem'}}>{createAvatarPlaceholder(basket.profile.name)}</Avatar>}
                         </ListItemAvatar>
-                        <ListItemText primary={basket.profile.name} />
-                        <ListItemText
-                          secondary={basket.price.toFixed(2) + " ZŁ"}
-                        />
-                      </ListItem>
-                    </List>
-                    <List style={{ paddingLeft: "2rem" }}>
-                      <ListItem>
-                        <ListItemText
-                          primary={"Doświadczenie: " + basket.experience + " punktów"}
-                        />
-                      </ListItem>
-                      {basket.awards.map(award => {
+                        <Grid container direction="column" alignItems="flex-start" style={{marginLeft:'2rem'}}>
+                          <Grid item>
+                           <PintoSerifTypography variant="h5" style={{marginBottom:'1rem'}}>{basket.profile.name}</PintoSerifTypography>
+                          </Grid>
+                          <Grid item style={{marginBottom:'1rem'}}>
+                            <PintoSerifTypography style={{color:palette.background.darkGrey, fontSize: '1.2rem'}}>{basket.price.toFixed(2) + " ZŁ"}</PintoSerifTypography>
+                          </Grid>
+                          <Grid item container justify="space-between">
+                            <Grid item>
+                            <PintoSerifTypography variant="h6">Doświadczenie: </PintoSerifTypography>
+                            </Grid>
+                            <Grid item>
+                            <PintoSerifTypography variant="h6" style={{color: palette.primary.main}}>{" "+basket.experience + " PD"}</PintoSerifTypography>
+                            </Grid>
+                          </Grid>
+                          <Grid item >
+                            <List dense>
+
+                          {basket.awards.map(award => {
                         return (
                           <ListItem key={award._id}>
                             <ListItemIcon>
@@ -225,9 +179,16 @@ const handleCancelOrder = async () => {
                               />
                             </ListItemIcon>
                             <ListItemText primary={award.itemModel.name} secondary={award.quantity > 1 && `x${award.quantity}`}/>
+                            
                           </ListItem>
                         );
                       })}
+                            </List>
+                          </Grid>
+                        </Grid>
+              </ListItem>
+              
+                      
                     </List>
                   </ListItem>
                   <Divider />
@@ -236,7 +197,7 @@ const handleCancelOrder = async () => {
             }
           })}
         </List>
-      </Paper>
+      </div>
       {!orderFinalized && <Button style={{marginTop: '1rem'}} color="secondary" onClick={handleCloseCancelDialog}>Anuluj zamówienie</Button>}
       <Dialog
         open={showCancelDialog}

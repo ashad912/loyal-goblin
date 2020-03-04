@@ -7,13 +7,14 @@ import ShopListItem from "./ShopListItem";
 
 const ShopList = ({title, list, handleAddItem}) => {
   return (
-    <List>
+    <List >
       <ListItem>
         <Typography variant="h5">{title}</Typography>
       </ListItem>
       {list.map(item => {
         return (
           <ShopListItem
+          
             key={item._id}
             name={item.name}
             description={item.description}

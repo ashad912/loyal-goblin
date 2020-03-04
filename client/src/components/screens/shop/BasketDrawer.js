@@ -6,6 +6,7 @@ import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import BasketListItem from "./BasketListItem";
+import { PintoSerifTypography,PintoTypography } from "../../../utils/fonts";
 
 const DrawerContents = styled.div`
   padding: 1rem;
@@ -78,9 +79,12 @@ const BasketDrawer = ({ open, toggle, baskets, users, activeUser, handleRemoveIt
         {!emptyOrder && 
         <Divider />
         }
-        <TotalPriceText variant="body1">
-          Całkowity koszt zamówienia: {totalPrice.toFixed(2) + " ZŁ"}
+        <TotalPriceText variant="body1" style={{width:'100%', textAlign:'center'}}>
+          Całkowity koszt zamówienia:
         </TotalPriceText>
+        <PintoTypography variant='h4' style={{width:'100%', textAlign:'center', color: 'black'}}>
+        {totalPrice.toFixed(2) + " ZŁ"}
+        </PintoTypography>
         {!emptyOrder && 
         <FinalizeButton variant="contained" color="primary" disabled={emptyOrder || notLeader} onClick={finalizeOrder}>
           {notLeader ? 'Tylko lider może zrealizować zamówienie' : 'Zrealizuj'}
