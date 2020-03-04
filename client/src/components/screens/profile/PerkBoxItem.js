@@ -19,17 +19,17 @@ const PerkBoxItem = ({ perk, isFirst, isEquipment, equipped }) => {
 
   let primaryText = [<Typography style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.2rem', }}>{perkLabels[perk.perkType]}:<span>&nbsp;&nbsp;</span> </Typography>]
   if (perk.perkType.startsWith("disc")) {
-  primaryText.push(<Typography  style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.2rem', color: equipped? 'white' : palette.primary.main}}>{getTarget(perk.perkType, perk.target)}<span>&nbsp;&nbsp;</span></Typography>)
+    primaryText.push(<Typography style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.2rem', color: equipped? 'white' : palette.primary.main}}>{getTarget(perk.perkType, perk.target)}<span>&nbsp;&nbsp;</span></Typography>)
   }
   if (perk.hasOwnProperty("value")) {
-    primaryText.push(<Typography  style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.2rem', color: equipped? 'white' : palette.primary.main}}>{getValue(perk.perkType, perk.value)}</Typography>)
+    primaryText.push(<Typography style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.2rem', color: equipped? 'white' : palette.primary.main}}>{getValue(perk.perkType, perk.value)}</Typography>)
   }
 
   let secondaryText;
   if (perk.time.length > 0) {
     secondaryText = (
       <div>
-        {perk.time.slice().reverse().map(time => {
+        {perk.time.map(time => {
           let timeString = "";
           timeString += dayLabels[time.startDay];
           if (time.startHour !== 12 && time.lengthInHours !== 24) {
@@ -64,7 +64,7 @@ const PerkBoxItem = ({ perk, isFirst, isEquipment, equipped }) => {
   return (
     <ListItem style={{ flexDirection: "row", alignItems: 'space-between', borderTop: isFirst ? "" : isEquipment ? '1px solid black':palette.border, padding: isEquipment ? '0' : '8px', boxSizing:'border-box' }}>
       <PintoTypography style={{flexBasis:isEquipment?'35%':'25%'}}>
-      {secondaryText}
+        {secondaryText}
       </PintoTypography>
       <Grid container justify="flex-end"  >
       {primaryText.map((text, index) => {

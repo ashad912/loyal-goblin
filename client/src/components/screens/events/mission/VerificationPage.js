@@ -10,13 +10,18 @@ import styled from 'styled-components'
 
 const AwardsContainer = styled(Container)`
     display: flex;
-    justify-content: center;
     flex-direction: column;
+    flex-grow: 12;
+    justify-content: center;
     margin: 1rem 0 1rem 0;
+    padding: 0;
 `
 
 const StyledPaper = styled(Paper)`
-    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 12;
+    padding: 2rem 1rem;
     border: 1px solid #eeeeee;
 `
 
@@ -61,19 +66,21 @@ const VerificationPage = props => {
       }} />)}
 
       <AwardsContainer maxWidth="xs">
-        <StyledPaper>
-          <Typography variant="h5" style={{marginBottom: '1rem'}}>Misja ukończona!</Typography>
+        <StyledPaper square>
+          <div id="up">
+            <Typography variant="h5" style={{marginBottom: '1rem'}}>Misja ukończona!</Typography>
 
-          {props.missionExperience > 0 &&
-            <React.Fragment>
-              <Typography style={{marginBottom: '0.5rem'}}>Zdobyte doświadczenie:</Typography>
-              <Typography variant='h6' style={{fontWeight: 'bold', marginBottom: '0.5rem'}}>+{designateExperienceMods(props.userPerks.rawExperience, props.missionExperience)} PD</Typography>
-            </React.Fragment>  
-          }
+            {props.missionExperience > 0 &&
+              <React.Fragment>
+                <Typography style={{marginBottom: '0.5rem'}}>Zdobyte doświadczenie:</Typography>
+                <Typography variant='h6' style={{fontWeight: 'bold', marginBottom: '0.5rem'}}>+{designateExperienceMods(props.userPerks.rawExperience, props.missionExperience)} PD</Typography>
+              </React.Fragment>  
+            }
+          </div>
           {missionAwards.length > 0 &&
             <React.Fragment>
               <Typography style={{marginBottom: '0.5rem'}}>Zdobyte przedmioty:</Typography>
-              <List component="nav" style={{ width: "100%", maxHeight: '40vh', overflowY: 'scroll', marginBottom: '1rem' }}>
+              <List component="nav" style={{ width: "100%", maxHeight: `calc(100vh - 446px)`, overflowY: 'scroll', marginBottom: '1rem' }}>
                 {missionAwards.map(award => {
                   return (
                     <AwardListItem key={award.itemModel._id} item={award} />
@@ -84,13 +91,14 @@ const VerificationPage = props => {
           }
           
           <Button 
+            id="down"
             style={{ justifyContent: 'center', marginTop: '1rem'}}
             variant="contained"
             fullWidth
             onClick={handleBackToMainScreen} 
             color="primary" 
           >
-            Dzięki
+            Wróć do ekranu głównego
           </Button>
         </StyledPaper>
       </AwardsContainer>

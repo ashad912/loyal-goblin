@@ -197,7 +197,7 @@ const MissionDetails = (props) => {
                 <Grid
                     container
                     direction="row"
-                    style={{marginBottom: '0'}}
+                    style={{marginBottom: '0', minHeight: '20px'}}
                 >
                     {mission.amulets && mission.amulets.length > 0 &&
                     <Grid item style={{ display: "inline-flex", alignItems: 'center' }}>

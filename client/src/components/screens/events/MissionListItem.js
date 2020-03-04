@@ -174,7 +174,7 @@ const MissionListItem = props => {
             </Grid>
           </Grid>
 
-          <Grid container direction="row" style={{marginBottom: '0'}}>
+          <Grid container direction="row" style={{marginBottom: '0', minHeight: '20px'}}>
             <Grid item style={{ display: "inline-flex", alignItems: 'center' }}>
               
                 <Typography

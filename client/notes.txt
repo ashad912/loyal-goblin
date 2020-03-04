@@ -1,3 +1,54 @@
+ {/* <Box
+                    key={JSON.stringify(perk.target)+index}
+                    border={0}
+                    borderColor="primary.main"
+                    style={{ margin: "0.2rem 0", fontSize: "0.8rem" }}
+                  >
+                    <ListItem style={{padding: '0.5rem'}}>
+                      <Grid container justify="flex-start">
+                        <Grid item xs={6}>{perkLabels[perk.perkType]}</Grid>
+                        <Grid item xs={3}>{getValue(perk.perkType, perk.value)}</Grid>
+                        <Grid item xs={3}>
+                          {getTarget(perk.perkType, perk.target)}
+                        </Grid>
+                        <Grid item xs={12}>
+                          {perk.time.length > 0 && (
+                            <React.Fragment>
+                              {perk.time
+                                .slice()
+                                .reverse()
+                                .map(period => (
+                                  <Grid
+                                    container
+                                    
+                                  >
+                                    <Grid item>
+                                      {`${dayLabels[period.startDay]}`}
+                                    </Grid>
+                                    {!(
+                                      period.startHour === 12 &&
+                                      period.lengthInHours === 24
+                                    ) ? (
+                                      <Grid item>
+                                        {`, ${
+                                          period.startHour
+                                        }:00 - ${(period.startHour +
+                                          period.lengthInHours) %
+                                          24}:00`}
+                                      </Grid>
+                                    ) : null}
+                                  </Grid>
+                                ))}
+                            </React.Fragment>
+                          )}
+                        </Grid>
+                      </Grid>
+                    </ListItem>
+                    {item.itemModel.perks.length !== index+1 && <Divider />}
+                  </Box> */}
+ 
+ 
+ 
  const missionList = missionListData ? (
         missionListData.map(mission => {
             return(

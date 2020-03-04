@@ -19,7 +19,8 @@ import Divider from '@material-ui/core/Divider';
 import { dayLabels, categoryLabels, roomLabels, perkLabels } from "../../../utils/labels";
 import {itemsPath, palette} from '../../../utils/definitions'
 import { getValue, getTarget } from "../../../utils/methods";
-
+import { PintoTypography } from "../../../utils/fonts";
+import PerkBoxItem from "../profile/PerkBoxItem";
 
 
 const AwardListItem = props => {
@@ -45,7 +46,7 @@ const AwardListItem = props => {
 
             <ListItemAvatar>
                 <img
-                style={{ width: "32px", height: "32px" }}
+                style={{ width: "3.5rem", height: "3.5rem" }}
                 alt={item.itemModel.name}
                 src={`${itemsPath}${item.itemModel.imgSrc}`}
                 />
@@ -57,7 +58,13 @@ const AwardListItem = props => {
             <Grid item container>
             <Grid item xs={12}>
                 <ListItemText
-                primary={item.itemModel.name}
+                primary={
+                  <Typography style={{fontSize: '1.1rem'}}>
+                    {item.itemModel.name}
+                  </Typography>
+
+                  
+                }
                 secondary={
                     <div>
                     {item.itemModel.hasOwnProperty("twoHanded") &&
@@ -66,9 +73,9 @@ const AwardListItem = props => {
                             Broń dwuręczna
                         </Typography>
                         )}
-                    <Typography variant="caption">
+                    <PintoTypography variant="caption">
                         {item.itemModel.description}
-                    </Typography>
+                    </PintoTypography>
                     </div>
                 }
                 />
@@ -97,54 +104,8 @@ const AwardListItem = props => {
             <Typography component="div">
               {item.itemModel.perks.map((perk, index) => {
                 return (
-                  <Box
-                  key={JSON.stringify(perk.target)+index}
-                    border={0}
-                    borderColor="primary.main"
-                    style={{ margin: "0.2rem 0", fontSize: "0.8rem" }}
-                  >
-                    <ListItem style={{padding: '0.5rem'}}>
-                      <Grid container justify="flex-start">
-                        <Grid item xs={6}>{perkLabels[perk.perkType]}</Grid>
-                        <Grid item xs={3}>{getValue(perk.perkType, perk.value)}</Grid>
-                        <Grid item xs={3}>
-                          {getTarget(perk.perkType, perk.target)}
-                        </Grid>
-                        <Grid item xs={12}>
-                          {perk.time.length > 0 && (
-                            <React.Fragment>
-                              {perk.time
-                                .slice()
-                                .reverse()
-                                .map(period => (
-                                  <Grid
-                                    container
-                                    
-                                  >
-                                    <Grid item>
-                                      {`${dayLabels[period.startDay]}`}
-                                    </Grid>
-                                    {!(
-                                      period.startHour === 12 &&
-                                      period.lengthInHours === 24
-                                    ) ? (
-                                      <Grid item>
-                                        {`, ${
-                                          period.startHour
-                                        }:00 - ${(period.startHour +
-                                          period.lengthInHours) %
-                                          24}:00`}
-                                      </Grid>
-                                    ) : null}
-                                  </Grid>
-                                ))}
-                            </React.Fragment>
-                          )}
-                        </Grid>
-                      </Grid>
-                    </ListItem>
-                    {item.itemModel.perks.length !== index+1 && <Divider />}
-                  </Box>
+                  <PerkBoxItem key={perk.perkType+perk.value+perk._id} perk={perk} isFirst={index===0} isEquipment={true} equipped={false}/>
+                  
                 );
               })}
               </Typography>

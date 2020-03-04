@@ -146,6 +146,7 @@ class MissionInstance extends React.Component {
         missionId: null,
         missionObject: null,
         leader: null,
+        fullHeightCorrection: 0,
     }
 
     async componentWillUnmount() {
@@ -196,8 +197,7 @@ class MissionInstance extends React.Component {
 
         const socketConnectedStatus = socket.connected
 
-        const navbar = document.getElementById("navbar").offsetHeight;
-        const footer = document.getElementById("footer").offsetHeight;
+        
       
 
         try{
@@ -216,8 +216,15 @@ class MissionInstance extends React.Component {
                 missionObject: missionInstance.mission,//this.props.location.state.id,
                 leader: leader,
                 loading: false,
-                fullHeightCorrection: navbar+footer,
+                
             }, () => {
+                const navbar = document.getElementById("navbar").offsetHeight;
+                const footer = document.getElementById("footer").offsetHeight;
+
+                this.setState({
+                    fullHeightCorrection: navbar+footer,
+                })
+
                 modifyUserStatusSubscribe((user) => {
             
                     const instanceUsers = this.modifyUserStatus(user, this.state.instanceUsers)
@@ -249,7 +256,7 @@ class MissionInstance extends React.Component {
         
     }
 
-    componentDidUpdate = (prevProps) => {
+    componentDidUpdate = (prevProps, prevState) => {
         if((!prevProps.party.hasOwnProperty('leader') && this.props.party.hasOwnProperty('leader')) && !socket.connected){
             this.handleBack()
         }
@@ -390,8 +397,9 @@ class MissionInstance extends React.Component {
         //console.log(isAllPartyReady)
 
         const mission = this.state.missionObject
+        const paddingUpDown= 0.5
         return(
-            <div style={{display: 'flex', flexDirection: 'column', padding: "0.5rem 2rem", alignItems: 'center', fontFamily: '"Roboto", sans-serif', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`}}>
+            <div style={{display: 'flex', flexDirection: 'column', padding: `${paddingUpDown}rem 2rem`, alignItems: 'center', minHeight:`calc(100vh - (${this.state.fullHeightCorrection}px + ${2*paddingUpDown}rem)`}}>
             {this.state.showVerificationPage ? (
                 <VerificationPage 
                     missionExperience={this.state.missionObject.experience} 
@@ -399,6 +407,8 @@ class MissionInstance extends React.Component {
                     userPerks={this.props.auth.profile.userPerks}
                     userClass={this.props.auth.profile.class} 
                     authCheck={() => this.props.authCheck()}
+                    fullHeightCorrection={this.state.fullHeightCorrection}
+                    paddingUpDown={paddingUpDown}
                 />
             ) : (
                 <React.Fragment>
