@@ -78,6 +78,7 @@ const MissionBar = styled.div`
 
 
 const ButtonBar = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: row;
   text-align: left;
@@ -156,7 +157,7 @@ class MissionInstance extends React.Component {
     backToEvents = (history) => {
         history.push({
           pathname: '/',
-          state: {indexRedirect: 1}
+          state: {indexRedirect: 2}
         }) 
     }
 

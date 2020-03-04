@@ -38,6 +38,7 @@ const StyledImage = styled.img`
 const StyledRoot = styled.div`
     flex-grow: 3;
     margin-bottom: 1rem;
+    width: 100%;
 `
 
 const StyledList = styled(List)`

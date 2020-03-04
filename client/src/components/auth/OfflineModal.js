@@ -7,6 +7,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 const OfflineModal = ({open}) => {
   return (
 <Dialog
+        style={{zIndex: 1000}}
         open={open}
       >
         <DialogTitle>Brak połączenia z Internetem!</DialogTitle>
