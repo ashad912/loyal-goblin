@@ -23,29 +23,6 @@ import { authCheck } from "../../../store/actions/authActions";
 import {togglePresenceInInstance, toggleUserReady, finishInstance} from '../../../store/actions/missionActions'
 import {socket, modifyUserStatusSubscribe, finishMissionSubscribe} from '../../../socket'
 
-const ShortDescription = styled(PintoTypography)`
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  height: 60;
-  overflow: hidden;
-  white-space: hidden;
-  text-overflow: ellipsis;
-`;
-
-const TitleBar = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  margin: 1rem 1.5rem 1rem 1.5rem;
-`
-
-const StyledImg = styled.img`
-  margin: 0 0.5rem 0 0;
-  height: 32px;
-  width: 32px;
-`
 
 const StyledItemIcon = styled.img`
   margin: 0 0.1rem 0 0;
@@ -84,7 +61,7 @@ const ButtonBar = styled.div`
   text-align: left;
   align-items: center;
   justify-content: space-between;
-  margin: 0.5rem 0rem 0.5rem 0rem;
+  margin: 0.5rem 0rem 1rem 0rem;
 `
 
 const createTempMission = () => {
@@ -250,10 +227,6 @@ class MissionInstance extends React.Component {
             this.handleBack()
         }
 
-        
-        
-    
-        
     }
 
     componentDidUpdate = (prevProps, prevState) => {
@@ -262,10 +235,6 @@ class MissionInstance extends React.Component {
         }
     }
     
-    
-    
-
-
 
 
     updateInstanceItems = (items) => {
@@ -397,9 +366,8 @@ class MissionInstance extends React.Component {
         //console.log(isAllPartyReady)
 
         const mission = this.state.missionObject
-        const paddingUpDown= 0.5
         return(
-            <div style={{display: 'flex', flexDirection: 'column', padding: `${paddingUpDown}rem 2rem`, alignItems: 'center', minHeight:`calc(100vh - (${this.state.fullHeightCorrection}px + ${2*paddingUpDown}rem)`}}>
+            <div style={{display: 'flex', flexDirection: 'column', padding: `0rem 2rem`, alignItems: 'center', minHeight:`calc(100vh - (${this.state.fullHeightCorrection}px)`}}>
             {this.state.showVerificationPage ? (
                 <VerificationPage 
                     missionExperience={this.state.missionObject.experience} 
@@ -408,10 +376,10 @@ class MissionInstance extends React.Component {
                     userClass={this.props.auth.profile.class} 
                     authCheck={() => this.props.authCheck()}
                     fullHeightCorrection={this.state.fullHeightCorrection}
-                    paddingUpDown={paddingUpDown}
+                   
                 />
             ) : (
-                <React.Fragment>
+                <React.Fragment >
                     
                     {/* <TitleBar>
                         <StyledImg src={`${missionsPath}${this.state.missionObject.imgSrc}`}/>
@@ -422,7 +390,7 @@ class MissionInstance extends React.Component {
                      <Grid
                         container
                         direction="column"
-                        style={{ padding: "0.5rem 0 1.5rem 0", textAlign: "left" }}
+                        style={{ padding: "1rem 0 1.5rem 0", textAlign: "left" }}
                     >
                         {/* <Grid container direction="row">
                             <Grid item xs={9}>

@@ -20,7 +20,6 @@ const AwardsContainer = styled(Container)`
 const StyledPaper = styled(Paper)`
     display: flex;
     flex-direction: column;
-    flex-grow: 12;
     padding: 2rem 1rem;
     border: 1px solid #eeeeee;
 `
@@ -65,7 +64,7 @@ const VerificationPage = props => {
             pathname: '/',                               
       }} />)}
 
-      <AwardsContainer maxWidth="xs">
+      <AwardsContainer maxWidth="xs" style={{padding: '0.5rem 0rem'}}>
         <StyledPaper square>
           <div id="up">
             <Typography variant="h5" style={{marginBottom: '1rem'}}>Misja ukończona!</Typography>
@@ -80,7 +79,7 @@ const VerificationPage = props => {
           {missionAwards.length > 0 &&
             <React.Fragment>
               <Typography style={{marginBottom: '0.5rem'}}>Zdobyte przedmioty:</Typography>
-              <List component="nav" style={{ width: "100%", maxHeight: `calc(100vh - 446px)`, overflowY: 'scroll', marginBottom: '1rem' }}>
+              <List component="nav" style={{ width: "100%", maxHeight: `calc(100vh - 455px)`, overflowY: 'scroll', marginBottom: '1rem' }}>
                 {missionAwards.map(award => {
                   return (
                     <AwardListItem key={award.itemModel._id} item={award} />

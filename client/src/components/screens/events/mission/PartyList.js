@@ -42,8 +42,8 @@ const StyledRoot = styled.div`
 `
 
 const StyledList = styled(List)`
-    max-height: 9rem;
     
+    max-height: calc(100vh - 530px);
     width: 100%;
     overflow: auto;
     
@@ -71,80 +71,122 @@ const SmallAvatar = styled(Avatar)`
 // && {
 //     margin: 0.5rem 2rem 0.5rem 2rem;
 // }
-// const createTempPartyList = () => {
-//     return [
-//         {
-//             inRoom: false,
-//             readyStatus: false,
-//             profile: {
-//                 _id: 1,
-//                 name: 'user1',
-//                 avatar: undefined,
-//                 party: {
-//                     leader: {
-//                         _id: 1
-//                     }
-//                 }
-//             }
-//         },
-//         {
-//             inRoom: false,
-//             readyStatus: false,
-//             profile: {
-//                 _id: 2,
-//                 name: 'user2',
-//                 avatar: undefined,
-//                 party: {
-//                     leader: {
-//                         _id: 1
-//                     }
-//                 }
-//             }
-//         },
-//         {
-//             inRoom: false,
-//             readyStatus: false,
-//             profile: {
-//                 _id: 3,
-//                 name: 'user3 halo',
-//                 avatar: undefined,
-//                 party: {
-//                     leader: {
-//                         _id: 1
-//                     }
-//                 }
-//             }
-//         },
-//         {
-//             inRoom: false,
-//             readyStatus: false,
-//             profile: {
-//                 _id: 4,
-//                 name: 'user4 halo',
-//                 avatar: undefined,
-//                 party: {
-//                     leader: {
-//                         _id: 1
-//                     }
-//                 }
-//             }
-//         },
-//         {
-//             inRoom: false,
-//             readyStatus: false,
-//             profile: {
-//                 _id: 5,
-//                 name: 'user5',
-//                 avatar: undefined,
-//                 party: {
-//                     leader: {
-//                         _id: 1
-//                     }
-//                 }
-//             }
-//         },
-//     ]
-// }
+const createTempPartyList = () => {
+    return [
+        {
+            inRoom: false,
+            readyStatus: false,
+            profile: {
+                _id: 1,
+                name: 'user1',
+                avatar: undefined,
+                party: {
+                    leader: {
+                        _id: 1
+                    }
+                }
+            }
+        },
+        {
+            inRoom: false,
+            readyStatus: false,
+            profile: {
+                _id: 2,
+                name: 'user2',
+                avatar: undefined,
+                party: {
+                    leader: {
+                        _id: 1
+                    }
+                }
+            }
+        },
+        {
+            inRoom: false,
+            readyStatus: false,
+            profile: {
+                _id: 3,
+                name: 'user3 halo',
+                avatar: undefined,
+                party: {
+                    leader: {
+                        _id: 1
+                    }
+                }
+            }
+        },
+        {
+            inRoom: false,
+            readyStatus: false,
+            profile: {
+                _id: 4,
+                name: 'user4 halo',
+                avatar: undefined,
+                party: {
+                    leader: {
+                        _id: 1
+                    }
+                }
+            }
+        },
+        {
+            inRoom: false,
+            readyStatus: false,
+            profile: {
+                _id: 5,
+                name: 'user5',
+                avatar: undefined,
+                party: {
+                    leader: {
+                        _id: 1
+                    }
+                }
+            }
+        },
+        {
+            inRoom: true,
+            readyStatus: false,
+            profile: {
+                _id: 6,
+                name: 'user6',
+                avatar: undefined,
+                party: {
+                    leader: {
+                        _id: 1
+                    }
+                }
+            }
+        },
+        {
+            inRoom: true,
+            readyStatus: false,
+            profile: {
+                _id: 8,
+                name: 'user8',
+                avatar: undefined,
+                party: {
+                    leader: {
+                        _id: 1
+                    }
+                }
+            }
+        },
+        {
+            inRoom: true,
+            readyStatus: false,
+            profile: {
+                _id: 7,
+                name: 'user7',
+                avatar: undefined,
+                party: {
+                    leader: {
+                        _id: 1
+                    }
+                }
+            }
+        },
+    ]
+}
 
 
 

@@ -297,7 +297,7 @@ class Loyal extends Component {
         const userTorpedos = this.state.userTorpedos
         
         return ( 
-            <div style={{minHeight: this.props.fullHeight}}>
+            <div style={{display: 'flex', flexDirection: 'column', minHeight: this.props.fullHeight}}>
                 {this.state.loading && <Loading/>}
                 <LoadedTorpedoContainer>
                     {this.state.loadedTorpedo ? (
@@ -307,7 +307,7 @@ class Loyal extends Component {
                     )}
                 </LoadedTorpedoContainer>
                 <object data={boardsvg} onLoad={this.handleLoad} type="image/svg+xml"
-                id="boardsvg" ref='boardsvg' width="100%" height="100%" style={{pointerEvents: 'none'}}>Board</object> 
+                id="boardsvg" ref='boardsvg'  style={{pointerEvents: 'none'}}>Board</object> 
                 
                 {this.state.seconds === 0 && (
                     <React.Fragment>

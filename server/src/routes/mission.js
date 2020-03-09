@@ -635,7 +635,9 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
         setTimeout( async () => {
             try{
                 const instance = await MissionInstance.findById(missionInstance._id)
-                await instance.remove()
+                if(instance){
+                    await instance.remove()
+                }
             }catch(e){
                 console.log(e.message)
             }    
