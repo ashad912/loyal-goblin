@@ -28,6 +28,7 @@ import {
 } from "../../store/actions/shopActions";
 import { toggleItem } from "../../store/actions/profileActions";
 import { uiPaths } from "../../utils/definitions";
+import {PintoTypography} from '../../utils/fonts'
 import {socket} from '../../socket'
 
 const Menu = styled(Paper)`
@@ -675,7 +676,7 @@ class Shop extends React.Component {
                   borderRadius: 0
                 }}
                 onClick={this.handleLeaveShop}
-              >{`< Wyjdź`}</Button>
+              >{<PintoTypography>Wyjdź</PintoTypography>}</Button>
               <BasketDrawer
                 open={this.state.basketDrawerOpen}
                 toggle={this.handleToggleBasketDrawer}
@@ -729,7 +730,7 @@ class Shop extends React.Component {
               borderRadius: 0
             }}
             onClick={this.handleLeaveShop}
-          >{`< Wyjście`}</Button>
+          >{<PintoTypography>Wyjdź</PintoTypography>}</Button>
         </div>
       );
     }

@@ -17,12 +17,12 @@ const PerkBoxItem = ({ perk, isFirst, isEquipment, equipped }) => {
 
 
 
-  let primaryText = [<Typography style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.2rem', }}>{perkLabels[perk.perkType]}:<span>&nbsp;&nbsp;</span> </Typography>]
+  let primaryText = [<Typography style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.1rem', }}>{perkLabels[perk.perkType]}:<span>&nbsp;&nbsp;</span> </Typography>]
   if (perk.perkType.startsWith("disc")) {
-    primaryText.push(<Typography style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.2rem', color: equipped? 'white' : palette.primary.main}}>{getTarget(perk.perkType, perk.target)}<span>&nbsp;&nbsp;</span></Typography>)
+    primaryText.push(<Typography style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.1rem', color: equipped? 'white' : palette.primary.main}}>{getTarget(perk.perkType, perk.target)}<span>&nbsp;&nbsp;</span></Typography>)
   }
   if (perk.hasOwnProperty("value")) {
-    primaryText.push(<Typography style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.2rem', color: equipped? 'white' : palette.primary.main}}>{getValue(perk.perkType, perk.value)}</Typography>)
+    primaryText.push(<Typography style={{fontFamily: isEquipment ? 'Pinto-0' : 'Pinto-3',fontSize: isEquipment ? '1rem':'1.1rem', color: equipped? 'white' : palette.primary.main}}>{getValue(perk.perkType, perk.value)}</Typography>)
   }
 
   let secondaryText;

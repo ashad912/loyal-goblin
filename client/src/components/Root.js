@@ -16,11 +16,16 @@ import CharacterCreation from "./screens/CharacterCreation";
 import Booking from "./screens/Booking";
 import RootSnackbar from "./layout/RootSnackbar";
 import {socket, multipleSessionSubscribe} from '../socket'
+import styled from 'styled-components'
 import { createCharacter, getAllNames, clearAllNames } from "../store/actions/profileActions";
 import { authCheck } from "../store/actions/authActions";
 import Party from "./screens/Party";
-import { uiPaths } from "../utils/definitions";
+import { uiPaths, palette } from "../utils/definitions";
 
+const StyledTab = styled(Tab)`
+  font-family: Pinto-0;
+  color: ${props => props.active ? palette.primary.main : 'black'}
+`
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -54,7 +59,7 @@ function a11yProps(index) {
 
 const useStyles = makeStyles(theme => ({
   root: {
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: '#ffffff',
     flexGrow: 1,
   }
 }));
@@ -147,6 +152,7 @@ function Root(props) {
 
   const fullHeight = `calc(100vh - ${fullHeightCorrection}px)`
 
+
   return (
     <div className={classes.root}>
       {showCharacterCreationModal ? (
@@ -159,7 +165,7 @@ function Root(props) {
         </Dialog>
       ) : (
         <React.Fragment>
-          <AppBar position="static" color="default" id="app-bar">
+          <AppBar position="static" color="white" id="app-bar">
             <Tabs
               value={value}
               onChange={handleChange}
@@ -168,11 +174,11 @@ function Root(props) {
               aria-label="full width tabs example"
               variant="fullWidth"
             >
-              <Tab style={{fontFamily:'Pinto-0'}} label="Postać" {...a11yProps(0)}/>
-              <Tab style={{fontFamily:'Pinto-0'}} label="Drużyna" {...a11yProps(1)} />
-              <Tab style={{fontFamily:'Pinto-0'}} label="Wydarzenia" {...a11yProps(2)} />
-              <Tab style={{fontFamily:'Pinto-0'}} label="Statki" {...a11yProps(3)} />
-              <Tab style={{fontFamily:'Pinto-0'}} label="Rezerwuj" {...a11yProps(4)} />
+              <StyledTab  active={value === 0 ? 1 : 0} label="Postać" {...a11yProps(0)}/>
+              <StyledTab  active={value === 1 ? 1 : 0}  label="Drużyna" {...a11yProps(1)} />
+              <StyledTab  active={value === 2 ? 1 : 0}  label="Wydarzenia" {...a11yProps(2)} />
+              <StyledTab  active={value === 3 ? 1 : 0}  label="Statki" {...a11yProps(3)} />
+              <StyledTab  active={value === 4 ? 1 : 0}  label="Rezerwuj" {...a11yProps(4)} />
             </Tabs>
           </AppBar>
           <SwipeableViews
