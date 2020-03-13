@@ -78,11 +78,12 @@ export const signOut = () => {
 
             try{
                 await axios.post('/user/logout')
-                await dispatch ( {type: "LOGOUT_SUCCESS"})
+                dispatch ( {type: "DELETE_PARTY"})
+                dispatch ( {type: "LOGOUT_SUCCESS"})
                 
                 
             } catch (e) {
-                await dispatch( {type: "NO_CONNECTION", error: e})
+                dispatch( {type: "NO_CONNECTION", error: e})
             }
 
             resolve()

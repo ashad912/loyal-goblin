@@ -8,7 +8,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
 import List from '@material-ui/core/List';
 import AwardListItem from '../events/AwardListItem'
-
+import { PintoTypography } from "../../../utils/fonts";
 
 
 
@@ -18,23 +18,31 @@ const NewShopAwardsDialog = props => {
 
   const handleClose = () => {
     props.clearShopAwards()
-  }
+} 
 
   const {shopNotifications} = props.profile
+  const minHeaderHeight = shopNotifications.experience <= 0 ? '5vh' : '15vh'
   return (
     <Dialog style={{margin: '-24px -24px 10px -24px'}} fullWidth open={props.open} onClose={handleClose}>
       <DialogTitle variant='h5'>Expienie zakończone!</DialogTitle>
-      <DialogContent>
+      <DialogContent style={{minHeight: minHeaderHeight}}>
         {shopNotifications.experience > 0 &&
           <React.Fragment>
             <DialogContentText style={{marginBottom: '0.5rem'}}>
               Zdobyte doświadczenie:
             </DialogContentText>
-            <Typography  style={{marginLeft: '1rem', fontWeight: 'bold', marginBottom: '0.5rem'}}>
+            <PintoTypography  style={{marginLeft: '1rem', fontWeight: 'bold', marginBottom: '0.5rem'}}>
               +{props.profile.shopNotifications.experience} PD
-            </Typography>
+            </PintoTypography>
           </React.Fragment>
         }
+        {shopNotifications.awards.length > 0 && 
+            <DialogContentText style={{marginBottom: '0.5rem'}}>
+              Oto Twoje nagrody!
+            </DialogContentText>
+        }
+      </DialogContent>
+      <DialogContent>
         {shopNotifications.awards.length > 0 && 
           <React.Fragment>
             <DialogContentText style={{marginBottom: '0.5rem'}}>

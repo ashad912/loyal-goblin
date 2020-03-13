@@ -74,7 +74,7 @@ const ItemListItem = ({
           </Grid>
           <Grid item xs={2}>
             <Typography >
-                {item.hasOwnProperty('loyalAward') ? (item.loyalAward ? ('Nagroda lojal.') : (null)) : null}
+                {item.hasOwnProperty('loyalAward') ? (item.loyalAward ? ('Nagroda - statki') : (null)) : null}
             </Typography>
           </Grid>
         </Grid>

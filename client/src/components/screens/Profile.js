@@ -1,45 +1,32 @@
 import React from "react";
-import styled from "styled-components";
+
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router";
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
+
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import Fab from "@material-ui/core/Fab";
-import Divider from "@material-ui/core/Divider";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemText from "@material-ui/core/ListItemText";
-import Badge from "@material-ui/core/Badge";
-import Avatar from "@material-ui/core/Avatar";
+
 
 import Attribute from "./profile/Attribute";
 import Equipment from "./profile/Equipment";
 import NewLevelDialog from "./profile/NewLevelDialog";
 import PerkBox from "./profile/PerkBox";
 
-import RankDialog from "./profile/RankDialog";
-import StatsDialog from "./profile/StatsDialog";
+
 import NewRallyAwardsDialog from "./profile/NewRallyAwardsDialog";
 import NewShopAwardsDialog from "./profile/NewShopAwardsDialog";
 
 import { updateParty, removeMember } from "../../store/actions/partyActions";
 import {
-  createAvatarPlaceholder,
   designateUserLevel,
   bagArrayToCategories
 } from "../../utils/methods";
 import {
   appearancePath,
-  usersPath,
-  classThemes,
   uiPaths,
-  palette
 } from "../../utils/definitions";
 
 import {
@@ -50,13 +37,9 @@ import {
   confirmLevel
 } from "../../store/actions/profileActions";
 import { authCheck } from "../../store/actions/authActions";
-import { classLabels } from "../../utils/labels";
 import maleBody from "../../assets/profile/male-body.png";
 import femaleBody from "../../assets/profile/female-body.png";
 
-const FabIcon = styled.img`
-  width: 2rem;
-`;
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -575,47 +558,6 @@ const Profile = props => {
         handleItemDelete={handleItemDelete}
         leaderInShop={props.party && props.party._id && props.party.inShop}
         activeMission={props.mission.activeInstanceId}
-      />
-
-
-<div style={{marginTop:'4rem'}}/>
-      <Grid container justify="space-around">
-        <Grid item container direction="column" alignItems="center" xs={6}>
-          <Fab color="primary" onClick={() => setShowRankDialog(prev => !prev)}>
-            {/* <EmojiEventsIcon /> */}
-            <FabIcon src={uiPaths.ranking} style={{ width: "2rem" }} />
-          </Fab>
-          <Typography variant="caption" style={{ marginTop: "0.4rem" }}>
-            Ranking
-          </Typography>
-        </Grid>
-        <Grid item container direction="column" alignItems="center" xs={6}>
-          <Fab
-            color="primary"
-            onClick={() => setShowStatsDialog(prev => !prev)}
-          >
-            {/* <EqualizerIcon /> */}
-            <FabIcon src={uiPaths.statistics} style={{ width: "2rem" }} />
-          </Fab>
-          <Typography variant="caption" style={{ marginTop: "0.4rem" }}>
-            Statystyki
-          </Typography>
-        </Grid>
-      </Grid>
-
-      {showRankDialog && (
-        <RankDialog
-          open={showRankDialog}
-          profile={props.auth.profile}
-          uid={props.auth.uid}
-          handleClose={() => setShowRankDialog(prev => !prev)}
-        />
-      )}
-
-      <StatsDialog
-        open={showStatsDialog}
-        profile={props.auth.profile}
-        handleClose={() => setShowStatsDialog(prev => !prev)}
       />
 
       <NewLevelDialog

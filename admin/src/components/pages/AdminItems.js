@@ -129,7 +129,7 @@ const AdminItems = () => {
   const handleEditItemCreator = (id) => {
     //console.log(id)
     const index = items.findIndex((item) => {return item._id === id})
-    setItemToPass(items[index])
+    setItemToPass({...items[index]})
     setModifyingIndex(index)
     toggleItemCreator()
     
@@ -186,7 +186,7 @@ const AdminItems = () => {
       {showNewItemCreator ? (
         <ItemCreator
           open={showNewItemCreator}
-          handleClose={toggleItemCreator}
+          handleClose={updateItems}
           item={itemToPass}
           modifyingItemIndex={modifyingIndex}
           updateItems={updateItems}

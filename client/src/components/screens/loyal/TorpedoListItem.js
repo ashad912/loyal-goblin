@@ -10,8 +10,8 @@ import Badge from "@material-ui/core/Badge";
 import MenuItem from "@material-ui/core/MenuItem";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-
 import { palette, itemsPath } from "../../../utils/definitions";
+import { PintoTypography } from "../../../utils/fonts";
 const StyledMenu = withStyles({
   paper: {
     border: "1px solid #d3d4d5"
@@ -90,21 +90,21 @@ const TorpedoListItem = props => {
       loaded={props.loadedTorpedoId === item.instancesIds[0] ? 1 : 0}
       onClick={() => props.handleTorpedoToggle(item.instancesIds[0])}
     >
-        <ListItemAvatar>
-      <Badge
-        color="primary"
-        badgeContent={item.instancesIds.length}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-        // style={{ marginRight: "1.5rem" }}
-        invisible={item.instancesIds.length <= 1}
-      >
-          <img
-            style={{ width: "32px", height: "32px" }}
-            alt={item.itemModel.name}
-            src={`${itemsPath}${item.itemModel.imgSrc}`}
-          />
-      </Badge>
-        </ListItemAvatar>
+      <ListItemAvatar>
+        <Badge
+          color="primary"
+          badgeContent={item.instancesIds.length}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          // style={{ marginRight: "1.5rem" }}
+          invisible={item.instancesIds.length <= 1}
+        >
+            <img
+              style={{ width: "32px", height: "32px" }}
+              alt={item.itemModel.name}
+              src={`${itemsPath}${item.itemModel.imgSrc}`}
+            />
+        </Badge>
+      </ListItemAvatar>
 
       {/* x${} */}
       <ListItemText
@@ -114,7 +114,7 @@ const TorpedoListItem = props => {
             ? item.itemModel.name
             : `${item.itemModel.name}`
         }
-        secondary={<span style={{color: props.loadedTorpedoId && 'white'}}>{item.itemModel.description}</span>}
+        secondary={<PintoTypography style={{color: props.loadedTorpedoId && 'white'}}>{item.itemModel.description}</PintoTypography>}
       />
       <ListItemIcon onClick={handleClick}>
         <Button>
@@ -130,7 +130,7 @@ const TorpedoListItem = props => {
           <ListItemIcon>
             <DeleteForeverIcon />
           </ListItemIcon>
-          <ListItemText primary="Wyrzuć" />
+          <ListItemText><PintoTypography>Wyrzuć</PintoTypography></ListItemText>
         </StyledMenuItem>
       </StyledMenu>
     </ListItem>

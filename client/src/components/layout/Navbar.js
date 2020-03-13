@@ -4,6 +4,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import Drawer from '@material-ui/core/Drawer'
 import Avatar from '@material-ui/core/Avatar';
 import Input from '@material-ui/core/Input';
 import Menu from "@material-ui/core/Menu";
@@ -22,7 +23,10 @@ import { Link } from '@material-ui/core';
 import {updateAvatar} from '../../store/actions/profileActions'
 import {signOut} from '../../store/actions/authActions'
 import ChangePasswordModal from '../auth/ChangePasswordModal';
-import { usersPath } from '../../utils/definitions';
+import RankDialog from "./RankDialog";
+import StatsDialog from "./StatsDialog";
+import { uiPaths, usersPath } from '../../utils/definitions';
+import { PintoTypography } from '../../utils/fonts';
 
 
 const StyledMenu = styled(Menu)`
@@ -60,7 +64,9 @@ const FileInputButton = styled(Typography)`
 
 const Navbar = (props) => {
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [showDrawer, setShowDrawer] = React.useState(null);
+    const [showRankDialog, setShowRankDialog] = React.useState(false);
+    const [showStatsDialog, setShowStatsDialog] = React.useState(false);
     const [showPasswordChangeModal, setShowPasswordChangeModal] = React.useState(false)
     const [hideNavbar, setHideNavbar] = React.useState(false)
     const [showAlertSnackbar, setShowAlertSnackbar] = React.useState(false)
@@ -75,12 +81,12 @@ const Navbar = (props) => {
 
     const handleClick = event => {
         event.stopPropagation();
-        setAnchorEl(event.currentTarget);
+        setShowDrawer(event.currentTarget);
     };
 
     const handleClose = event => {
         event.stopPropagation();
-        setAnchorEl(null);
+        setShowDrawer(null);
     };
 
     const handleAvatarChange = async e => {
@@ -98,7 +104,7 @@ const Navbar = (props) => {
                 const formData = new FormData()
                 formData.append("avatar", avatar)
                 e.stopPropagation();
-                setAnchorEl(null);
+                setShowDrawer(null);
                 await props.updateAvatar(formData)
             }
         }
@@ -106,13 +112,13 @@ const Navbar = (props) => {
 
     const handleAvatarDelete = async e => {
         e.stopPropagation();
-        setAnchorEl(null);
+        setShowDrawer(null);
         await props.updateAvatar();      
     };
 
     const handleLogout = async e => {
         e.stopPropagation();
-        setAnchorEl(null);
+        setShowDrawer(null);
         await props.signOut() 
     }
     const createAvatarPlaceholder = (name) => {
@@ -131,7 +137,7 @@ const Navbar = (props) => {
 
     const togglePasswordChangeModal = () => {
         setShowPasswordChangeModal(prev => !prev)
-        setAnchorEl(null)
+        setShowDrawer(null)
     }
 
     const handleCloseAlertSnackbar = () => {
@@ -139,9 +145,15 @@ const Navbar = (props) => {
         setAlertMessage('')
     }
 
+    const toggleStatsDialog = () => {
+        setShowStatsDialog(prev => !prev)
+        setShowDrawer(null)
+    }
 
-    const avatar = true
-    //console.log(props.auth)
+    const toggleRankDialog = () => {
+        setShowRankDialog(prev => !prev)
+        setShowDrawer(null)
+    }
 
 
 
@@ -151,7 +163,7 @@ const Navbar = (props) => {
             {props.auth.uid && props.auth.profile.name ? (
                 <React.Fragment>
                     <Badge
-                        style={{height: 30, width: 30, marginRight: '0.5rem'}}
+                        style={{height: '2rem', width: '2rem'}}
                         overlap="circle"
                         anchorOrigin={{
                             vertical: 'bottom',
@@ -160,7 +172,7 @@ const Navbar = (props) => {
                     >
                         {props.auth.profile.avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={usersPath + props.auth.profile.avatar} /> : <Avatar style={{height: 30, width: 30}}>{createAvatarPlaceholder(props.auth.profile.name)}</Avatar>}
                     </Badge>
-                    <Typography variant="h6" style={{flexGrow: 1, textAlign: 'left'}}>
+                    <Typography variant="h6" style={{flexGrow: 1, textAlign: 'left', marginLeft: '1rem'}}>
                         {props.auth.profile.name}
                     </Typography>
                     
@@ -170,79 +182,102 @@ const Navbar = (props) => {
                     >
                             <MenuIcon style={{margin: "0", color: 'white'}} />
                     </Button>
-                
-                    
-                    
-                    <StyledMenu
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                        elevation={2}
-                        getContentAnchorEl={null}
-                        anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "center"
-                        }}
-                        transformOrigin={{
-                            vertical: "top",
-                            horizontal: "center"
-                        }}
-                    >
-                        <StyledMenuItem>
-                            <ListItemIcon>
-                                
-                                <AccountBoxIcon />
-                            </ListItemIcon>
-                            <ListItemText>
-                                <FileInputButton color="primary">
-                                    {props.auth.profile.avatar ? "Zmień avatar" : "Dodaj avatar"}
-                                </FileInputButton>
-                                <HiddenFileInput
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleAvatarChange}
-                                />
-                            </ListItemText>
-                        </StyledMenuItem>
-                        {props.auth.profile.avatar && 
+                    <Drawer anchor="right" open={Boolean(showDrawer)} onClose={handleClose} disableBackdropTransition={true} >
+                        <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '45vw', height: '100%', padding: '1rem 0.5rem'}}>
                             <StyledMenuItem>
-                                
                                 <ListItemIcon>
-                                    <DeleteForeverIcon />
+                                    <img src={uiPaths.statistics} style={{width: '1.2rem', height: '1.2rem', paddingLeft: '0.2rem'}}/>
+                                </ListItemIcon>
+                                <ListItemText>
+                                    <Link onClick={toggleStatsDialog} underline='none' color="primary">
+                                        <PintoTypography>Statystyki</PintoTypography>  
+                                    </Link>
+                                </ListItemText>
+                            </StyledMenuItem>
+                            <StyledMenuItem>
+                                <ListItemIcon>
+                                    <img src={uiPaths.ranking} style={{width: '1.2rem', height: '1.2rem', paddingLeft: '0.2rem'}}/>
+                                </ListItemIcon>
+                                <ListItemText>
+                                    <Link onClick={toggleRankDialog} underline='none' color="primary">
+                                        <PintoTypography>Ranking</PintoTypography>  
+                                    </Link>
+                                </ListItemText>
+                            </StyledMenuItem>
+                            <StyledMenuItem>
+                                <ListItemIcon>
+                                    
+                                    <AccountBoxIcon />
+                                </ListItemIcon>
+                                <ListItemText>
+                                    <FileInputButton color="primary">
+                                        <PintoTypography>{props.auth.profile.avatar ? "Zmień avatar" : "Dodaj avatar"}</PintoTypography>
+                                    </FileInputButton>
+                                    <HiddenFileInput
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleAvatarChange}
+                                    />
+                                </ListItemText>
+                            </StyledMenuItem>
+                            {props.auth.profile.avatar && 
+                                <StyledMenuItem>
+                                    
+                                    <ListItemIcon>
+                                        <DeleteForeverIcon />
+                                    </ListItemIcon>
+                                    
+                                    
+                                    <ListItemText>
+                                    <Link onClick={handleAvatarDelete} underline='none' color="primary">
+                                        <PintoTypography>Usuń avatar</PintoTypography>  
+                                    </Link>
+                                    </ListItemText>
+                                </StyledMenuItem>
+                            }
+                            <StyledMenuItem>
+                                <ListItemIcon>
+                                    <LockIcon/>
+                                </ListItemIcon>
+                                <ListItemText>
+                                    <Link onClick={togglePasswordChangeModal} underline="none" color="primary">
+                                        <PintoTypography>Zmień hasło</PintoTypography>
+                                    </Link>
+                                </ListItemText>
+                            </StyledMenuItem>
+                            <StyledMenuItem>
+                                    
+                                <ListItemIcon>
+                                    <ExitToAppIcon />
                                 </ListItemIcon>
                                 
                                 
                                 <ListItemText>
-                                <Link onClick={handleAvatarDelete} underline='none' color="primary">
-                                    Usuń avatar  
+                                <Link onClick={handleLogout} underline='none' color="primary">
+                                    <PintoTypography>Wyloguj</PintoTypography>
                                 </Link>
                                 </ListItemText>
                             </StyledMenuItem>
-                        }
-                        <StyledMenuItem>
-                            <ListItemIcon>
-                                <LockIcon/>
-                            </ListItemIcon>
-                            <ListItemText>
-                                <Link onClick={togglePasswordChangeModal} underline="none" color="primary">
-                                    Zmień hasło
-                                </Link>
-                            </ListItemText>
-                        </StyledMenuItem>
-                        <StyledMenuItem>
-                                
-                            <ListItemIcon>
-                                <ExitToAppIcon />
-                            </ListItemIcon>
-                            
-                            
-                            <ListItemText>
-                            <Link onClick={handleLogout} underline='none' color="primary">
-                                Wyloguj  
-                            </Link>
-                            </ListItemText>
-                        </StyledMenuItem>
-                    </StyledMenu>
+                        </div>
+       
+                    </Drawer>
+                    
+                    {showRankDialog && (
+                        <RankDialog
+                            open={showRankDialog}
+                            profile={props.auth.profile}
+                            uid={props.auth.uid}
+                            handleClose={toggleRankDialog}
+                        />
+                    )}
+
+                        <StatsDialog
+                            open={showStatsDialog}
+                            profile={props.auth.profile}
+                            handleClose={toggleStatsDialog}
+                        />
+                    
+                   
                 </React.Fragment>
             ) : (
                 
@@ -266,16 +301,16 @@ const Navbar = (props) => {
             )}
         </Toolbar>
         <ChangePasswordModal open={showPasswordChangeModal} handleClose={togglePasswordChangeModal}/>
-        {showAlertSnackbar && <Snackbar
-            anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-            }}
-            open={showAlertSnackbar}
-            autoHideDuration={6000}
-            onClose={handleCloseAlertSnackbar}
-            message={alertMessage}
-        />}
+            {showAlertSnackbar && <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                open={showAlertSnackbar}
+                autoHideDuration={6000}
+                onClose={handleCloseAlertSnackbar}
+                message={alertMessage}
+            />}
         </StyledAppBar>
         
        

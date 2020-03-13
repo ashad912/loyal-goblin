@@ -7,6 +7,7 @@ import List from "@material-ui/core/List";
 import AwardListItem from '../AwardListItem'
 import { Redirect} from 'react-router-dom'
 import styled from 'styled-components'
+import { PintoTypography } from "../../../../utils/fonts";
 
 const AwardsContainer = styled(Container)`
     display: flex;
@@ -72,7 +73,7 @@ const VerificationPage = props => {
             {props.missionExperience > 0 &&
               <React.Fragment>
                 <Typography style={{marginBottom: '0.5rem'}}>Zdobyte doświadczenie:</Typography>
-                <Typography variant='h6' style={{fontWeight: 'bold', marginBottom: '0.5rem'}}>+{designateExperienceMods(props.userPerks.rawExperience, props.missionExperience)} PD</Typography>
+                <PintoTypography variant='h6' style={{fontWeight: 'bold', marginBottom: '0.5rem'}}>+{designateExperienceMods(props.userPerks.rawExperience, props.missionExperience)} PD</PintoTypography>
               </React.Fragment>  
             }
           </div>

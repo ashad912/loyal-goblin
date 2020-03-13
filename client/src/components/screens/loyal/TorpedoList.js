@@ -17,7 +17,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TorpedoListItem from './TorpedoListItem'
-
+import { PintoTypography } from "../../../utils/fonts";
 
 
 const useStyles = makeStyles(theme => ({
@@ -124,8 +124,8 @@ const TorpedoList = props => {
             
             <React.Fragment >
                 <ListItem onClick={handleOpenList} data-value={"Torpedy"}>
-                <ListItemText primary={'Torpedy'} />
-                <ExpandMore />
+                  <ListItemText><PintoTypography style={{fontSize:'1.1rem', fontWeight:'bolder'}}>Torpedy</PintoTypography></ListItemText>
+                  <ExpandMore />
                 </ListItem>
                 
                 <List component="div" disablePadding style={{maxHeight: '264px'}}>
@@ -153,11 +153,11 @@ const TorpedoList = props => {
           )} */}
           {activeTorpedo ?
           <Button onClick={handleSave} color="primary" autoFocus variant="contained">
-            Załaduj
+            <PintoTypography>Załaduj</PintoTypography>
           </Button>
           :
           <Button onClick={handleSave}  autoFocus >
-          Zamknij
+          <PintoTypography>Zamknij</PintoTypography>
         </Button>
         }
         </DialogActions>

@@ -208,7 +208,7 @@ const EquipmentListItem = props => {
           <ListItemIcon>
             <DeleteForeverIcon color="secondary"/>
           </ListItemIcon>
-          <ListItemText primary="Wyrzuć" />
+          <ListItemText><PintoTypography>Wyrzuć</PintoTypography></ListItemText>
         </StyledMenuItem>
       </StyledMenu>
     </ListItem>

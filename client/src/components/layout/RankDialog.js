@@ -14,11 +14,11 @@ import ListItem from "@material-ui/core/ListItem";
 import Avatar from "@material-ui/core/Avatar";
 
 
-import {designateUserLevel} from '../../../utils/methods'
-import { getRankedUsers } from "../../../store/actions/profileActions";
+import {designateUserLevel} from '../../utils/methods'
+import { getRankedUsers } from "../../store/actions/profileActions";
 
-import {createAvatarPlaceholder} from "../../../utils/methods";
-import {usersPath, palette} from '../../../utils/definitions'
+import {createAvatarPlaceholder} from "../../utils/methods";
+import {usersPath, palette} from '../../utils/definitions'
 
 const RankDialog = props => {
   

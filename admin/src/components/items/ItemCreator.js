@@ -285,7 +285,7 @@ class ItemCreator extends Component {
  
   updatePerks = (perk) => {
 
-    perk.time.sort((a, b) =>  a.startDay - b.startDay).sort((a, b) =>  a.startHour - b.startHour)
+    perk.time.sort((a, b) =>  a.startDay - b.startDay ||  a.startHour - b.startHour) //two fields sorting
     
     if(this.state.modifyingIndex != null){
       const perks = this.state.perks
@@ -558,7 +558,7 @@ class ItemCreator extends Component {
                   onChange={this.handleToggleLoyalAward}
                 />
               }
-              label="Nagroda lojalnościowa"
+              label="Uwzględnij w puli nagród statków"
             />
           </Grid>
           <Grid item xs={1} >
