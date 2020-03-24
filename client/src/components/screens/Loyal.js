@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import boardsvg from '../../assets/board/statki.svg'
+import boardsvg from '../../assets/board/statki-goblin.svg'
 import Loading from '../layout/Loading';
 import TorpedoList from './loyal/TorpedoList'
 import LoadedTorpedo from './loyal/LoadedTorpedo'
@@ -17,7 +17,12 @@ const LoadedTorpedoContainer = styled.div`
     margin-bottom: 1rem;
     min-height: 74px;
 `
-
+//ship1: B4L4 -> B4, B5, B6, B7
+//ship2: I1L4 => I1, I2, I3, I4
+//ship3: F9L5 -> F9, E9, D9, C9, B9
+//ship4: D1L2 -> D1, C1
+//ship5: E3L3 -> E3, E4, E5
+//ship6: H7L2 -> H7, G7
 
 class Loyal extends Component {
 
@@ -34,9 +39,34 @@ class Loyal extends Component {
         loadedTorpedo: undefined,
         showTorpedosModal: false,
         award: false,
+        wrecksIds: ["117", "103", "116", "101", "102", "110"],
+        wrecks: [["B4", "B5", "B6", "B7"], ["I1", "I2", "I3", "I4"], ["F9", "E9", "D9", "C9", "B9"], ["D1", "C1"], ["E3", "E4", "E5"], ["H7", "G7"]]
         
     }
-    
+
+    manageWrecks = (doc, ids, wrecks) => {
+        wrecks.forEach((wreck, index) => {
+            
+            const svgWreck = doc.getElementById(ids[index])
+
+            const isWreck = this.isWreck(wreck)
+            svgWreck.style.visibility = isWreck ? 'visible' : 'hidden'
+
+            
+            wreck.forEach((fieldName) => {
+                const field = doc.getElementsByName(fieldName)[0]
+                field.style.visibility = isWreck ? 'hidden' : 'visible'
+            })
+                
+        })
+    }
+
+    isWreck = (wreck) => {
+        const ship =  this.state.serverFields.filter((field) => {
+            return wreck.includes(field.name) && field.pressed === true
+        })
+        return ship.length === wreck.length
+    }
 
     componentWillUnmount(){
         if(this.state.seconds !== 0){
@@ -69,6 +99,28 @@ class Loyal extends Component {
                 {id: 19, name: 'B6', pressed: this.props.loyal['B6']},
                 {id: 20, name: 'B7', pressed: this.props.loyal['B7']},
             ]
+            // serverFields: [
+            //         {id: 1, name: 'D1', pressed: true},
+            //         {id: 2, name: 'E3', pressed: false},
+            //         {id: 3, name: 'I1', pressed: true},
+            //         {id: 4, name: 'I2', pressed: true},
+            //         {id: 5, name: 'I3', pressed: false},
+            //         {id: 6, name: 'I4', pressed: true},
+            //         {id: 7, name: 'E4', pressed: true},
+            //         {id: 8, name: 'E5', pressed: false},
+            //         {id: 9, name: 'G7', pressed: true},
+            //         {id: 10, name: 'H7', pressed: true},
+            //         {id: 11, name: 'C1', pressed: true},
+            //         {id: 12, name: 'B9', pressed: true},
+            //         {id: 13, name: 'C9', pressed: true},
+            //         {id: 14, name: 'D9', pressed: false},
+            //         {id: 15, name: 'E9', pressed: true},
+            //         {id: 16, name: 'F9', pressed: false},
+            //         {id: 17, name: 'B4', pressed: true},
+            //         {id: 18, name: 'B5', pressed: true},
+            //         {id: 19, name: 'B6', pressed: true},
+            //         {id: 20, name: 'B7', pressed: false},
+            //     ]
         })
     }
 
@@ -152,7 +204,9 @@ class Loyal extends Component {
             field.addEventListener('click', this.handleClick) //setting listener
             fields = [...fields, field]
         }
+
         
+        this.manageWrecks(doc, this.state.wrecksIds, this.state.wrecks)
 
         this.setState({
             loading: false
@@ -258,19 +312,48 @@ class Loyal extends Component {
             
             const award = await this.props.shootShip(this.state.loadedTorpedo.itemModel.name)
             if(award){
-                this.setState({
-                    award: award
-                })
+               
                 for(let i=1; i < this.state.serverFields.length + 1; i++){
                     const field = doc.getElementById(`${i}`) //assuming id as in serverFields array
                     field.style.fill = 'black'
                 }
+                const modifiedServerFields = [...this.state.serverFields]
+                
+                modifiedServerFields.forEach((stateField) => stateField.pressed = false)
+                
+                this.setState({
+                    award: award,
+                    serverFields: modifiedServerFields
+                }, () => {
+                    this.manageWrecks(doc, this.state.wrecksIds, this.state.wrecks)
+                    
+                })
 
             }else{
                 field.style.fill = 'red'
+                
+                const modifiedServerFields = [...this.state.serverFields]
+
+                modifiedServerFields.forEach((stateField) => {
+                    if(stateField.name === this.state.loadedTorpedo.itemModel.name){
+                        stateField.pressed = true
+                    }
+                })
+
+                this.setState({
+                    serverFields: modifiedServerFields
+                }, () => {
+                    console.log(this.state.serverFields)
+                    this.manageWrecks(doc, this.state.wrecksIds, this.state.wrecks)
+                   
+                })
+                
             }
-            
             this.handleTorpedoDelete(this.state.loadedTorpedo._id)
+            
+            
+            
+           
         }catch(e){
             console.log(e)
         }

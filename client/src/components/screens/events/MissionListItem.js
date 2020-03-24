@@ -238,7 +238,7 @@ const MissionListItem = props => {
           {Object.keys(mission.awards).map(className => {
             return (
               <Grid
-              key={className}
+                key={className}
                 container
                 direction="row"
                 style={{ marginBottom: "0.2rem" }}
@@ -253,6 +253,7 @@ const MissionListItem = props => {
                   </Typography>
                 </Grid>
                 <Grid
+                  key={className}
                   item
                   xs={8}
                   style={{ display: "flex", alignItems: "center" }}
@@ -265,7 +266,7 @@ const MissionListItem = props => {
                         for (let i = 0; i < award.quantity; i++) {
                           const copy = (
                             <img
-                            key={award._id}
+                              key={award._id}
                               style={{
                                 height: 20,
                                 width: 20,
