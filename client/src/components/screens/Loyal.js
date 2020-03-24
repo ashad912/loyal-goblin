@@ -124,12 +124,7 @@ class Loyal extends Component {
         })
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        if(prevProps.bag.length !== this.props.bag.length){
-            this.setState({userTorpedos: this.props.bag.filter((item) => item.itemModel.type === "torpedo")})
-      }
-    }
-    
+
 
     handleLoad = () => {
         
@@ -323,7 +318,7 @@ class Loyal extends Component {
                 
                 this.setState({
                     award: award,
-                    serverFields: modifiedServerFields
+                    serverFields: modifiedServerFields,
                 }, () => {
                     this.manageWrecks(doc, this.state.wrecksIds, this.state.wrecks)
                     
@@ -371,6 +366,7 @@ class Loyal extends Component {
         this.setState(prevState => {
           return { 
             showTorpedosModal: !prevState.showTorpedosModal,
+            userTorpedos: prevState.showTorpedosModal === false ? this.props.bag.filter((item) => item.itemModel.type === "torpedo") : this.state.userTorpedos
            };
         });
         
