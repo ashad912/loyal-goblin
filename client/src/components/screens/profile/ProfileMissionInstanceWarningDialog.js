@@ -5,28 +5,31 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import { PintoTypography} from "../../../utils/fonts";
+
+const ProfileMissionInstanceWarningDialog = ({text, open, handleClose, handleAction}) => {
 
 
-const PartyMissionInstanceWarningDialog = props => {
+  const handleModalAction = () => {
+    
+    handleClose()
+    handleAction()
+  }
 
-    const handleAction = () => {
-        props.handleClose()
-        props.confirmAction()
-    }
 
   return (
-    <Dialog open={props.open} onClose={props.handleClose} style={{zIndex: 4000}}>
+    <Dialog open={open} onClose={handleClose} style={{zIndex: 4000}}>
       <DialogTitle>Potwierdź wykonanie akcji</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          Modyfikacja składu drużyny spowoduje usunięcie misji, w której obecnie
-          bierzecie udział.
+          <PintoTypography>{text} spowoduje usunięcie misji, w której obecnie
+          bierzesz udział.</PintoTypography>
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={props.handleClose}>Anuluj</Button>
+        <Button onClick={handleClose}>Anuluj</Button>
         <Button
-          onClick={handleAction}
+          onClick={handleModalAction}
           color="secondary"
           variant="contained"
           autoFocus
@@ -38,4 +41,4 @@ const PartyMissionInstanceWarningDialog = props => {
   );
 };
 
-export default PartyMissionInstanceWarningDialog;
+export default ProfileMissionInstanceWarningDialog;

@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken"
 import {Item} from './item'
 import {Party} from './party'
 import {Rally} from './rally'
+import {OrderExpiredEvent} from './orderExpiredEvent'
 import {ProductsOrderSchema} from '../schemas/ProductsOrderSchema'
 import {ClassAwardsSchema} from '../schemas/ClassAwardsSchema'
 import {LoyalSchema} from '../schemas/LoyalSchema'
@@ -385,6 +386,21 @@ UserSchema.methods.updatePassword = async function(oldPassword, newPassword) {
         }
       });
     });
+}
+
+UserSchema.methods.clearActiveOrder = async function () {
+    const user = this
+    user.activeOrder = []
+    await user.save()
+
+    const orderExpiredEvent = await OrderExpiredEvent.findById(user._id)
+
+    if(orderExpiredEvent){
+        await orderExpiredEvent.remove()
+    }
+
+    return 
+
 }
 
 

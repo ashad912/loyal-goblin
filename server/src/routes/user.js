@@ -316,7 +316,7 @@ router.get("/me", auth, async (req, res, next) => {
 
 
 router.patch("/changePassword", auth, async (req, res, next) => {
-  let user = req.user;
+  
   const oldPassword = req.body.oldPassword;
   const newPassword = req.body.password;
   const repeatedNewPassword = req.body.confirmPassword
@@ -346,7 +346,7 @@ router.patch("/changePassword", auth, async (req, res, next) => {
     if(newPassword !== repeatedNewPassword){
       throw new Error("Hasła nie zgadzają się")
     }
-      user = await req.user.updatePassword(oldPassword, newPassword);
+      const user = await req.user.updatePassword(oldPassword, newPassword);
       await user.save();
       res.send(user);
     } catch (e) {

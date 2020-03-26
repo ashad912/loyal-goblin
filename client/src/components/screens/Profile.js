@@ -18,6 +18,7 @@ import PerkBox from "./profile/PerkBox";
 
 import NewRallyAwardsDialog from "./profile/NewRallyAwardsDialog";
 import NewShopAwardsDialog from "./profile/NewShopAwardsDialog";
+import ProfileMissionInstanceWarningDialog from "./profile/ProfileMissionInstanceWarningDialog";
 
 import { updateParty, removeMember } from "../../store/actions/partyActions";
 import {
@@ -338,9 +339,6 @@ const Profile = props => {
     history.push("/shop", { id: props.auth.uid });
   };
 
-  const handleLeaveParty = () => {
-    props.onRemoveMember(props.party._id, props.auth.uid);
-  };
 
   const handleMissionInstanceWarningDialog = (action, text) => {
     setMissionInstanceWarningDialog({ action, text });
@@ -585,6 +583,14 @@ const Profile = props => {
         open={props.auth.profile.shopNotifications.isNew}
         clearShopAwards={() => props.clearShopAwards()}
         profile={props.auth.profile}
+      />
+      <ProfileMissionInstanceWarningDialog
+        open={Boolean(missionInstanceWarningDialog.action)}
+        handleClose={() =>
+          setMissionInstanceWarningDialog({ action: null, text: "" })
+        }
+        handleAction={missionInstanceWarningDialog.action}
+        text={missionInstanceWarningDialog.text}
       />
     </Grid>
   );

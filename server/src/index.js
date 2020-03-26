@@ -18,21 +18,28 @@ import cron from 'node-cron'
 import socket from "socket.io";
 import { socketRoomAuth, socketConnectAuth } from "./middleware/auth";
 import { validateInMissionInstanceStatus, validateInShopPartyStatus, initCleaning } from './utils/methods' 
-
+import {ReplSet} from 'mongodb-topology-manager';
 import _ from "lodash";
+import { registerMissionInstanceWatch } from "./models/missionInstanceExpiredEvent";
+import { registerOrderWatch } from "./models/orderExpiredEvent";
 
-//TO-START: npm run-script dev
+//TO-START: npm run dev || npm run dev-standalone
 
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect(process.env.MONGODB_URL, {
+
+let options = {
   useNewUrlParser: true,
   useCreateIndex: true,
-  useFindAndModify: false
-});
+  useFindAndModify: false,
+}
 
-export const app = express();
+options = process.env.REPLICA === "true" ? {...options, replicaSet: process.env.REPLICA_NAME} : options
+
+mongoose.connect(process.env.MONGODB_URL, options);
+
+const app = express();
 const port = process.env.PORT || 4000;
 
 app.use(
@@ -42,7 +49,7 @@ app.use(
     createParentPath: true,
     useTempFiles: false,
     abortOnLimit: true,
-    //4 mb file upload limit
+    //6 mb file upload limit
     limits: {fileSize: 6 * 1024 * 1024}
   })
 );
@@ -71,7 +78,7 @@ app.use((err, req, res, next) => {
 });
 
 if(process.env.NODE_ENV === 'dev'){
-  console.log(process.env.NODE_ENV)
+  //console.log(process.env.NODE_ENV)
   app.set('subdomain offset', 1);
 }
 
@@ -97,6 +104,12 @@ const server = app.listen(port, () => {
   console.log(`Listening at ${port}`);
   initCleaning() 
   updateRallyQueue();
+
+  if(process.env.REPLICA === 'true'){
+    registerMissionInstanceWatch()
+    registerOrderWatch()
+  }
+  
 
   cron.schedule('0 0 10 * * *', () => { //every day at 10:00 AM
     initCleaning() 
@@ -221,12 +234,12 @@ const postAuthenticate = socket => {
   });
 
 
- // io.of("mission")
+// io.of("mission")
           // .to(partyId)
           // .emit("joinRoom", partyId);
 
   /////////
- 
+
 
 //socket.on("disconnect", () => {
   
@@ -258,7 +271,7 @@ async function disconnect(socket) {
       socket.broadcast.to(roomId).emit("partyRefresh", roomId);
     }
   
-     
+    
     if(await validateInMissionInstanceStatus(userId, false, false)){
       console.log(`${roomId} for user ${userId} with status inMission: false`)
       socket.broadcast.to(roomId).emit("modifyUserStatus", {_id: userId, inMission: false, readyStatus: false});
@@ -278,3 +291,4 @@ require('socketio-auth')(io, {
   disconnect: disconnect,
   timeout: 1000
 });
+

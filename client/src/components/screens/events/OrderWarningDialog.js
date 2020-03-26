@@ -7,22 +7,22 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { PintoTypography} from "../../../utils/fonts";
 
-const PartyMissionInstanceWarningDialog = ({text, open, handleClose, handleAction}) => {
+const OrderWarningDialog = ({text, open, handleClose, handleAction}) => {
 
 
   const handleModalAction = () => {
-    handleAction()
+    
     handleClose()
+    handleAction()
   }
 
 
   return (
     <Dialog open={open} onClose={handleClose} style={{zIndex: 4000}}>
-      <DialogTitle style={{textAlign:'center'}}>Potwierdź wykonanie akcji</DialogTitle>
+      <DialogTitle>Potwierdź wykonanie akcji</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-        <PintoTypography>{text} spowoduje usunięcie misji, w której obecnie
-          bierzesz udział.</PintoTypography>
+          <PintoTypography>{text} spowoduje usunięcie aktywnego zamówienia.</PintoTypography>
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -40,4 +40,4 @@ const PartyMissionInstanceWarningDialog = ({text, open, handleClose, handleActio
   );
 };
 
-export default PartyMissionInstanceWarningDialog;
+export default OrderWarningDialog;

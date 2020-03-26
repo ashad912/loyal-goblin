@@ -5,6 +5,7 @@ import { Mission } from '../models/mission';
 import { adminAuth } from '../middleware/adminAuth';
 import { auth } from '../middleware/auth';
 import { MissionInstance } from '../models/missionInstance';
+import { MissionInstanceExpiredEvent } from '../models/missionInstanceExpiredEvent';
 import { Item } from '../models/item'
 import { ItemModel } from '../models/itemModel'
 import { 
@@ -581,7 +582,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
             minUserLevelInParty = Math.min(designateUserLevel(member.experience), minUserLevelInParty)
         })
 
-        console.log('got all party', party.map((member) => member._id))
+        //console.log('got all party', party.map((member) => member._id))
 
 
         if(totalStrength < mission.strength){
@@ -607,7 +608,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
 
             //activeMission is recognized as an array due to virtualization
 
-            console.log('got activeMission field for ', member._id, member.activeMission)
+            //console.log('got activeMission field for ', member._id, member.activeMission)
 
             if(member.activeMission.length) {
                 throw new Error(`Member (${member._id}) is in another mission!`)
@@ -615,7 +616,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
 
         })
 
-        console.log('party is available')
+        //console.log('party is available')
 
         let partyIds = [leader, ...membersIds]
 
@@ -630,19 +631,23 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
        // console.log(missionInstanceObject)
         const missionInstance = new MissionInstance(missionInstanceObject)
         //console.log(missionInstance)
-        await missionInstance.save()
+        const mI = await missionInstance.save()
 
-        setTimeout( async () => {
-            try{
-                const instance = await MissionInstance.findById(missionInstance._id)
-                if(instance){
-                    await instance.remove()
-                }
-            }catch(e){
-                console.log(e.message)
-            }    
-        }, 30* 60 * 1000) //30 mins
-
+        await MissionInstanceExpiredEvent.create({_id : mI._id})
+        
+        //LEGACY NOREPLICA
+        if(process.env.REPLICA === "false"){
+            setTimeout( async () => {
+                try{
+                    const instance = await MissionInstance.findById(missionInstance._id)
+                    if(instance){
+                        await instance.remove()
+                    }
+                }catch(e){
+                    console.log(e.message)
+                }    
+            }, 30* 60 * 1000) //30 mins
+        }
         res.status(200).send(missionInstance)
   
     } catch (e) {
@@ -1027,7 +1032,7 @@ const verifySendItem = (user, missionInstance, itemId) => {
                 path: 'owner'
             })
     
-            console.log('item is existing')
+            //console.log('item is existing')
     
             
             if(item.itemModel.type !== 'amulet'){
@@ -1071,14 +1076,14 @@ router.patch('/sendItem/mission', auth, async (req, res) => {
         )
         // missionInstance.items = [...missionInstance.items, itemId]
         // await missionInstance.save()
-        console.log('item added to mission')
+        //console.log('item added to mission')
 
     
         user.bag = user.bag.filter((item) => {
             return item.toString() !== itemId
         })
         await user.save()
-        console.log('item deleted from user bag - item still has owner prop')
+        //console.log('item deleted from user bag - item still has owner prop')
 
 
         res.status(200).send({user, missionInstance})
@@ -1115,14 +1120,14 @@ router.patch('/sendItem/user', auth, async (req, res) => {
 
         // user.bag = [...user.bag, itemId]
         // await user.save()
-        console.log('item added to user')
+        //console.log('item added to user')
 
     
         missionInstance.items = missionInstance.items.filter((item) => {
             return item.toString() !== itemId
         })
         await missionInstance.save()
-        console.log('item deleted from missionInstance items')
+        //console.log('item deleted from missionInstance items')
 
 
         res.status(200).send({user})

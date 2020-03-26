@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import {User} from './user'
 import arrayUniquePlugin from 'mongoose-unique-array'
 import {asyncForEach} from '../utils/methods'
+import { MissionInstanceExpiredEvent } from './missionInstanceExpiredEvent'
 
 const MissionInstanceSchema = new mongoose.Schema({ //instance of ItemModel
 
@@ -45,6 +46,16 @@ MissionInstanceSchema.pre('remove', async function(next){
     })
     
     next()
+})
+
+MissionInstanceSchema.post('remove', async function(next){
+    const missionInstance = this
+
+    const mIEvent = await MissionInstanceExpiredEvent.findById(missionInstance._id)
+
+    if(mIEvent){
+        await mIEvent.remove()
+    }
 })
 
 export const MissionInstance = new mongoose.model('missionInstance', MissionInstanceSchema)

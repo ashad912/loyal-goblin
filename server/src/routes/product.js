@@ -17,7 +17,7 @@ import {
 } from "../utils/methods";
 import { Rally } from "../models/rally";
 import { User } from "../models/user";
-import { MissionInstance } from "../models/missionInstance";
+import { OrderExpiredEvent } from "../models/orderExpiredEvent";
 import { Party } from "../models/party";
 import { Item } from "../models/item";
 import { ArchiveOrder } from "../models/archiveOrder";
@@ -25,7 +25,12 @@ import { barmanAuth } from "../middleware/barmanAuth";
 
 const uploadPath = "../static/images/products/";
 
+const orderValidTimeInMins = "5"
+const timeUnit = "minutes"
+
 const router = new express.Router();
+
+
 
 ////ADMIN-SIDE
 
@@ -396,7 +401,7 @@ const verifyParty = (leader, membersIds, order) => {
 
 //OK
 router.get("/shop", auth, async (req, res) => {
-  const user = req.user;
+  let user = req.user;
   try {
 
     if(user.party){
@@ -412,7 +417,15 @@ router.get("/shop", auth, async (req, res) => {
 
     await updatePerks(user, false);
 
+   
+    //if user left shop before 5 min countdown and returned after countdown but before orderExpiredEvent removed user.activeOrder - clear order 
+    if(user.activeOrder.length && moment.utc().valueOf() >= moment.utc(user.activeOrder[0].createdAt).add(orderValidTimeInMins, timeUnit).valueOf()){
+      await user.clearActiveOrder()
+    }
+
+
     if (user.activeOrder.length) {
+      
       await user
         .populate({
           path: "activeOrder.profile",
@@ -559,7 +572,7 @@ router.patch("/activate", auth, async (req, res) => {
     //const party = await verifyParty(leader, membersIds, order); <- here is JS 
     const momentDate = moment
       .utc(new Date())
-      .add("5", "minutes")
+      .add(orderValidTimeInMins, timeUnit)
       .toDate();
 
     order[0].createdAt = momentDate;
@@ -581,30 +594,42 @@ router.patch("/activate", auth, async (req, res) => {
       } //is necessary here?
     })
     .populate({
-      path: "activeOrder.awards.itemModel",
+      path: "activeOrder.awards.itemModel", 
       select: "name imgSrc"
     })
     .execPopulate();
     
    
     await user.save();
+    
+    //just for sure - if order expired event from previous order still exists in db
+    const previousOrderEvent = await OrderExpiredEvent.findById(user._id)
 
+    if(previousOrderEvent){
+      await previousOrderEvent.remove()
+    }
 
-    //WORKING! AS COMMENT FOR TESTS
-    //DEVELOP: prevents removing valid order - TIMER IS NOT CLEANED
-    setTimeout(async () => {
-      try{
-        const result = await User.updateOne(
-          {_id: user._id, 'activeOrder': {$elemMatch: {createdAt: user.activeOrder[0].createdAt}}},
-          {$set: {activeOrder: []}}
-        )
-       // console.log(result)
-      }catch(e){
-        console.log(e.message)
-      }
+    //create new expired event
+    await OrderExpiredEvent.create({_id : user._id})
+
+    
+    //LEGACY NOREPLICA: prevents removing valid order - TIMER IS NOT CLEANED
+    if(process.env.REPLICA === "false"){
+      setTimeout(async () => {
+        try{
+          const result = await User.updateOne(
+            {_id: user._id, 'activeOrder': {$elemMatch: {createdAt: user.activeOrder[0].createdAt}}},
+            {$set: {activeOrder: []}}
+          )
+         // console.log(result)
+        }catch(e){
+          console.log(e.message)
+        }
+          
         
-      
-    }, 5*60*1000 + 1000); //removing activeOrder after 5 minutes (+1 second)
+      }, 5*60*1000 + 1000); //removing activeOrder after 5 minutes (+1 second)
+    }
+    
     
 
     res.send(user.activeOrder);
@@ -615,7 +640,7 @@ router.patch("/activate", auth, async (req, res) => {
 });
 
 router.patch("/cancel", auth, async (req, res) => {
-  const user = req.user;
+  let user = req.user;
   try {
 
     if(user.party){
@@ -630,16 +655,17 @@ router.patch("/cancel", auth, async (req, res) => {
       throw new Error(`Order ${user.activeOrder._id} was already verified!`);
     }
 
-    user.activeOrder = [];
-    await user.save();
+    await user.clearActiveOrder()
+
+    //user.activeOrder = [];
+    //await user.save();
     res.sendStatus(200);
-  } catch (error) {
+  } catch (e) {
     res.status(400).send(e.message);
   }
 });
 
-//DEVELOP: BARMANAUTH?!
-//OK BUT TO DEVELOP
+//OK
 router.get("/verify/:id", barmanAuth, async (req, res) => {
   try {
     const user = await User.findOne({
@@ -687,7 +713,6 @@ router.get("/verify/:id", barmanAuth, async (req, res) => {
   }
 });
 
-//DEVELOP: BARMANAUTH?!
 router.post("/finalize", barmanAuth, async (req, res) => {
 
   
@@ -802,6 +827,12 @@ router.post("/finalize", barmanAuth, async (req, res) => {
           $set: {'userPerks': updatedUserPerks,'shopNotifications.isNew': isNewFlag, 'shopNotifications.awards': newShopAwards, 'activeOrder': []},
         }
       );
+
+      const orderExpiredEvent = await OrderExpiredEvent.findById(user._id)
+
+      if(orderExpiredEvent){
+          await orderExpiredEvent.remove()
+      }
 
 
       if (activeRally) {

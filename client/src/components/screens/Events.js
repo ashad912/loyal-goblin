@@ -1,4 +1,5 @@
 import React, {useState}  from 'react'
+import moment from 'moment'
 import { Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
 import VisibilitySensor from 'react-visibility-sensor'
@@ -7,6 +8,8 @@ import RallyDetails from './events/RallyDetails'
 import MissionListItem from './events/MissionListItem'
 import withMissionItemCommon from './events/hoc/withMissionItemCommon'
 import List from '@material-ui/core/List';
+
+import OrderWarningDialog from "./events/OrderWarningDialog";
 
 import Typography from '@material-ui/core/Typography';
 import styled from 'styled-components'
@@ -54,11 +57,14 @@ const Events = (props) => {
     const [activeMissionDetails, setActiveMissionDetails] = useState(null)
     const [activeRallyDetails, setActiveRallyDetails] = useState(null)
     const [missionListData, setMissionListData] = useState([])
-   // const [activeInstanceId, setActiveInstanceId] = useState(null)
     const [rally, setRally] = useState(null)
+
+    const [
+        orderWarningDialog,
+        setOrderWarningDialog
+      ] = React.useState({ action: null, text: "" });
     
-    //const rally = createTempRally() //returned from backend
-    //const missionListData = createTempList() //returned from backend
+    
 
     const fetchMissions = async () => {
         const missionObject = await getMissionList()
@@ -102,20 +108,38 @@ const Events = (props) => {
     //     fetchMissions()
     // }, [props.party.members, props.party.leader])
 
-    
+    const handleOrderWarningDialog = (action, text) => {
+        setOrderWarningDialog({ action, text });
+      };
+
+    const handleMissionCreate = async (id) => {
+        try{
+
+            const response = await createInstance(id, props.party._id) //shot to backend - verify party quantity and leader status (amulets verifed inside the mission), redirect to mission
+            setMissionId(response.mission)
+                
+        }catch(e){
+            //console.log(e)
+            fetchMissions()
+        }
+        
+    }
 
     const handleMissionClick = async (id) => {
-        //console.log('clicked',  id) 
+        //console.log('clicked',  id) onClick={
+        const isActiveOrder = props.activeOrder.length
+        const isValidActiveOrder =
+            isActiveOrder ? moment.utc().valueOf() < moment.utc(props.activeOrder[0].createdAt).add("5", "minutes").valueOf() : false
         if(!props.activeInstanceId){
-            try{
-                const response = await createInstance(id, props.party._id) //shot to backend - verify party quantity and leader status (amulets verifed inside the mission), redirect to mission
-                setMissionId(response.mission)
-            }catch(e){
-                //console.log(e)
-                fetchMissions()
+            if(isValidActiveOrder){
+                handleOrderWarningDialog(
+                    () => handleMissionCreate(id),
+                    "Rozpoczęcie misji"
+                  )
+            }else{
+                handleMissionCreate(id)
+             
             }
-            
-            
         }else{
             setMissionId(id)
         }
@@ -230,6 +254,14 @@ const Events = (props) => {
                 />
             }    
 
+            <OrderWarningDialog
+                open={Boolean(orderWarningDialog.action)}
+                handleClose={() =>
+                    setOrderWarningDialog({ action: null, text: "" })
+                }
+                handleAction={orderWarningDialog.action}
+                text={orderWarningDialog.text}
+            />
         </React.Fragment>
       
     )
@@ -237,7 +269,7 @@ const Events = (props) => {
 
 const mapStateToProps = state => {
     return {
-        userExperience: state.auth.profile.experience,
+        activeOrder: state.auth.profile.activeOrder,
         activeInstanceId: state.mission.activeInstanceId,
         multipleSession: state.auth.multipleSession,
         party: state.party
