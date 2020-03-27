@@ -30,7 +30,7 @@ const MissionInstanceSchema = new mongoose.Schema({ //instance of ItemModel
     }]
 
 
-})
+}, {timestamps: true})
 
 MissionInstanceSchema.plugin(arrayUniquePlugin);
 

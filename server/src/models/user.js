@@ -393,11 +393,14 @@ UserSchema.methods.clearActiveOrder = async function () {
     user.activeOrder = []
     await user.save()
 
-    const orderExpiredEvent = await OrderExpiredEvent.findById(user._id)
+    if(process.env.REPLICA === "true"){
+        const orderExpiredEvent = await OrderExpiredEvent.findById(user._id)
 
-    if(orderExpiredEvent){
-        await orderExpiredEvent.remove()
+        if(orderExpiredEvent){
+            await orderExpiredEvent.remove()
+        }
     }
+    
 
     return 
 

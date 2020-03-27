@@ -602,16 +602,17 @@ router.patch("/activate", auth, async (req, res) => {
    
     await user.save();
     
-    //just for sure - if order expired event from previous order still exists in db
-    const previousOrderEvent = await OrderExpiredEvent.findById(user._id)
+    if(process.env.REPLICA === "true"){
+      //just for sure - if order expired event from previous order still exists in db
+      const previousOrderEvent = await OrderExpiredEvent.findById(user._id)
 
-    if(previousOrderEvent){
-      await previousOrderEvent.remove()
+      if(previousOrderEvent){
+        await previousOrderEvent.remove()
+      }
+
+      //create new expired event
+      await OrderExpiredEvent.create({_id : user._id})
     }
-
-    //create new expired event
-    await OrderExpiredEvent.create({_id : user._id})
-
     
     //LEGACY NOREPLICA: prevents removing valid order - TIMER IS NOT CLEANED
     if(process.env.REPLICA === "false"){
@@ -828,12 +829,14 @@ router.post("/finalize", barmanAuth, async (req, res) => {
         }
       );
 
-      const orderExpiredEvent = await OrderExpiredEvent.findById(user._id)
+      if(process.env.REPLICA === "true"){
+        const orderExpiredEvent = await OrderExpiredEvent.findById(user._id)
 
-      if(orderExpiredEvent){
-          await orderExpiredEvent.remove()
+        if(orderExpiredEvent){
+            await orderExpiredEvent.remove()
+        }
       }
-
+      
 
       if (activeRally) {
         const userIndex = activeRally.users.findIndex((user) => user.profile.toString() === member._id.toString())

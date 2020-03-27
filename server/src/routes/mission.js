@@ -30,6 +30,10 @@ import { Party } from '../models/party';
 
 const uploadPath = "../static/images/missions/"
 
+const instanceValidTimeInMins = "30"
+const timeUnit = "m"
+const timeIntUnit = timeUnit === "m" ? 60 : 1
+
 const router = new express.Router
 
 
@@ -236,7 +240,10 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
             {party: {$elemMatch: {profile: user._id}}}    
         )
 
-        if(missionInstance){
+        //if missionInstance expired
+        if(missionInstance && moment.utc().valueOf() >= moment.utc(missionInstance.createdAt).add(instanceValidTimeInMins, timeUnit).valueOf()){
+            await missionInstance.remove()
+        }else if(missionInstance){
             const mission = await Mission.aggregate().match( //return only one mission - of which the user is a participant (as array for compatibility)
                 {_id: missionInstance.mission }).project({ 
                     'title': 1,
@@ -277,6 +284,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
             res.send({missions: mission, missionInstanceId: missionInstance.mission}) //return only one mission - of which the user is a participant (as array for compatibility)
             return
         }
+
         const party = await Party.findById(user.party)
 
         if(user.party && !party){
@@ -633,7 +641,10 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
         //console.log(missionInstance)
         const mI = await missionInstance.save()
 
-        await MissionInstanceExpiredEvent.create({_id : mI._id})
+        if(process.env.REPLICA === "true"){
+            await MissionInstanceExpiredEvent.create({_id : mI._id})
+        }
+        
         
         //LEGACY NOREPLICA
         if(process.env.REPLICA === "false"){
@@ -702,7 +713,8 @@ const toggleUserInstanceStatus = (user, field, newStatus, secondField, secondNew
                 path: 'activeMission'
             }).execPopulate()
     
-            const missionInstance =  await MissionInstance.findOne({_id: user.activeMission})
+            
+            const missionInstance =  await MissionInstance.findOne({_id: user.activeMission, createdAt: {$gte: new Date(new Date().getTime()-instanceValidTimeInMins*timeIntUnit*1000) }})
     
             if(!missionInstance){
                 throw Error('There is no such mission instance!')

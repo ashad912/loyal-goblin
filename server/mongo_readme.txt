@@ -12,6 +12,8 @@ x = your version !!!
         "C:\Program Files\MongoDB\Server\4.x\bin\mongod.exe" --config "C:\Program Files\MongoDB\Server\4.x\bin\mongod.cfg"
         OR
         mongod --config "C:\Program Files\MongoDB\Server\4.x\bin\mongod.cfg"
+        mongod --config "C:\Program Files\MongoDB\Server\4.0\bin\mongod.cfg"
+        mongod --config "C:\Program Files\MongoDB\Server\4.2\bin\mongod.cfg"
         
         log: C:\Program Files\MongoDB\Server\4.x\log\mongod.log
 
@@ -19,15 +21,15 @@ x = your version !!!
 //Win10 Development - Replica set configure
 
     - allow write ops (in folder settings) for "C:\Program Files\MongoDB\"
-    - to make it easier - u can add environment variable as Path: "C:\Program Files\MongoDB\Server\4.x\bin\" - now u can type just 'mongod'
-    - add (<> means process variable) in: "C:\Program Files\MongoDB\Server\4.x\bin\mongod.cfg":
+    - to make it easier - u can add environment variable as Path (remember to swap "x" !!!): "C:\Program Files\MongoDB\Server\4.x\bin\" - now u can type just 'mongod'
+    - add (<> means process variable) in (remember to swap "x" !!!): "C:\Program Files\MongoDB\Server\4.x\bin\mongod.cfg":
 
         replication:
             replSetName: <process.env.REPLICA_NAME>
 
-    - if you added win env var, run: 
+    - if you added win env var, run (remember to swap "x" !!!): 
         mongod --config "C:\Program Files\MongoDB\Server\4.x\bin\mongod.cfg"
-    - if not, run: 
+    - if not, run (remember to swap "x" !!!): 
         "C:\Program Files\MongoDB\Server\4.x\bin\mongod.exe" --config "C:\Program Files\MongoDB\Server\4.x\bin\mongod.cfg"
     - u can see log (C:\Program Files\MongoDB\Server\4.x\log\mongod.log), if server is active
     - run in new terminal: mongo
