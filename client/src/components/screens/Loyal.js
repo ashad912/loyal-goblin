@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Parser from 'html-react-parser'
 import boardsvg from '../../assets/board/statki-goblin.svg'
 import Loading from '../layout/Loading';
 import TorpedoList from './loyal/TorpedoList'
@@ -6,9 +7,28 @@ import LoadedTorpedo from './loyal/LoadedTorpedo'
 import LoyalAwardDialog from './loyal/LoyalAwardDialog'
 import Button from "@material-ui/core/Button";
 import { Typography } from '@material-ui/core';
-import styled from 'styled-components'
+import styled, {css, keyframes, createGlobalStyle} from 'styled-components'
 import { connect } from 'react-redux';
 import {shootShip} from '../../store/actions/profileActions'
+
+const GlobalStyle = createGlobalStyle`
+ 
+`
+
+// const pulse = keyframes`
+//     from{
+//         opacity: 1;
+//     }
+//     to{
+//         opacity:0;
+//     }
+
+// `
+
+// const animation =
+//     css`
+//         ${pulse} 1s linear;
+//     `
 
 const LoadedTorpedoContainer = styled.div`
     align-items: center;
@@ -24,11 +44,15 @@ const LoadedTorpedoContainer = styled.div`
 //ship5: E3L3 -> E3, E4, E5
 //ship6: H7L2 -> H7, G7
 
+
+
+
 class Loyal extends Component {
 
     constructor() {
         super();
         this.timer = 0;
+        
     }
     
     state = {
@@ -43,6 +67,8 @@ class Loyal extends Component {
         wrecks: [["B4", "B5", "B6", "B7"], ["I1", "I2", "I3", "I4"], ["F9", "E9", "D9", "C9", "B9"], ["D1", "C1"], ["E3", "E4", "E5"], ["H7", "G7"]]
         
     }
+
+
 
     manageWrecks = (doc, ids, wrecks) => {
         wrecks.forEach((wreck, index) => {
@@ -75,7 +101,13 @@ class Loyal extends Component {
     }
 
     componentDidMount = () => {
+
+        var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+        
+
+
         this.setState({
+            iOS,
             userTorpedos: this.props.bag.filter((item) => item.itemModel.type === "torpedo"),
             serverFields: [
                 {id: 1, name: 'D1', pressed: this.props.loyal['D1']},
@@ -128,57 +160,21 @@ class Loyal extends Component {
 
     handleLoad = () => {
         
-        //shot to backend - returned: field array
-        // let serverFields = [
-        //     {id: 1, name: 'D1', pressed: true},
-        //     {id: 2, name: 'E3', pressed: false},
-        //     {id: 3, name: 'I1', pressed: true},
-        //     {id: 4, name: 'I2', pressed: true},
-        //     {id: 5, name: 'I3', pressed: false},
-        //     {id: 6, name: 'I4', pressed: true},
-        //     {id: 7, name: 'E4', pressed: true},
-        //     {id: 8, name: 'E5', pressed: false},
-        //     {id: 9, name: 'G7', pressed: true},
-        //     {id: 10, name: 'H7', pressed: true},
-        //     {id: 11, name: 'C1', pressed: false},
-        //     {id: 12, name: 'B9', pressed: true},
-        //     {id: 13, name: 'C9', pressed: true},
-        //     {id: 14, name: 'D9', pressed: false},
-        //     {id: 15, name: 'E9', pressed: true},
-        //     {id: 16, name: 'F9', pressed: false},
-        //     {id: 17, name: 'B4', pressed: false},
-        //     {id: 18, name: 'B5', pressed: false},
-        //     {id: 19, name: 'B6', pressed: false},
-        //     {id: 20, name: 'B7', pressed: false},
-        // ]
-        //
-
-        // let serverFields = [
-        //     {id: 1, name: 'D1', pressed: this.props.loyal['D1']},
-        //     {id: 2, name: 'E3', pressed: this.props.loyal['E3']},
-        //     {id: 3, name: 'I1', pressed: this.props.loyal['I1']},
-        //     {id: 4, name: 'I2', pressed: this.props.loyal['I2']},
-        //     {id: 5, name: 'I3', pressed: this.props.loyal['I3']},
-        //     {id: 6, name: 'I4', pressed: this.props.loyal['I4']},
-        //     {id: 7, name: 'E4', pressed: this.props.loyal['E4']},
-        //     {id: 8, name: 'E5', pressed: this.props.loyal['E5']},
-        //     {id: 9, name: 'G7', pressed: this.props.loyal['G7']},
-        //     {id: 10, name: 'H7', pressed: this.props.loyal['H7']},
-        //     {id: 11, name: 'C1', pressed: this.props.loyal['C1']},
-        //     {id: 12, name: 'B9', pressed: this.props.loyal['B9']},
-        //     {id: 13, name: 'C9', pressed: this.props.loyal['C9']},
-        //     {id: 14, name: 'D9', pressed: this.props.loyal['D9']},
-        //     {id: 15, name: 'E9', pressed: this.props.loyal['E9']},
-        //     {id: 16, name: 'F9', pressed: this.props.loyal['F9']},
-        //     {id: 17, name: 'B4', pressed: this.props.loyal['B4']},
-        //     {id: 18, name: 'B5', pressed: this.props.loyal['B5']},
-        //     {id: 19, name: 'B6', pressed: this.props.loyal['B6']},
-        //     {id: 20, name: 'B7', pressed: this.props.loyal['B7']},
-        // ]
-
         const serverFields = this.state.serverFields
 
-        
+        //EXERCISES: setting css rule by js (does not work for svg inside elements)
+        // const css = '.object:hover {background-color: green;}'
+        // var style = document.createElement('style');
+
+        // if (style.styleSheet) {
+        //     style.styleSheet.cssText = css;
+        // } else {
+        //     style.appendChild(document.createTextNode(css));
+        // }
+
+        // document.getElementsByTagName('head')[0].appendChild(style);
+        //
+
 
         const svgRawObject = this.refs.boardsvg
         const doc = svgRawObject.contentDocument
@@ -187,16 +183,38 @@ class Loyal extends Component {
 
         for(let i=1; i < serverFields.length +1; i++){
             const field = doc.getElementById(`${i}`) //assuming id as in serverFields array
-            
+           
             const fieldServerData = serverFields.find(field => {
                 return field.id === i
             })
+            field.style.pointerEvents = 'bounding-box'
             if(fieldServerData.pressed){
                 //style manipulation here
                 field.style.fill = 'red'
             }
+            // field.animate([
+            //     {opacity: 1},
+            //     {opacity: 0}
+            // ], {
+            //     duration: 10000,
+            //     iterations: Infinity
+            // })
+
+            
+
+
             field.setAttribute('data-pressed', fieldServerData.pressed) //element attribute
-            field.addEventListener('click', this.handleClick) //setting listener
+            //field.addEventListener('click', this.handleClick) //setting listener - does not work for g group
+            //console.log(field.style)
+
+            //EXERCISES: hover effect
+            // field.addEventListener('mouseenter', () => {
+            //     field.style.fill = 'green'
+            // })
+            // field.addEventListener('mouseleave', () => {
+            //     field.style.fill = fieldServerData.pressed ? 'red' : 'black'
+            // })
+
             fields = [...fields, field]
         }
 
@@ -208,8 +226,22 @@ class Loyal extends Component {
         })
     }
 
-    // handleClick = (e) => {
-    //     const field = e.target
+    handleClick = (e) => {
+
+    //EXERCISES: SAVING PATH HTML TO STRING
+    // console.log(e.target)
+    // this.setState({
+    //     copy: e.target.outerHTML
+    // },() => {
+    //     setTimeout(() => {
+    //         this.setState({
+    //             copy: null
+    //         })
+    //     }, 1000)
+    // })
+
+
+    //LEGACY: CLICK HANDLER
     //     console.log(field)
 
     //     const pressed_value = field.dataset.pressed === 'true' ? true : false
@@ -223,7 +255,7 @@ class Loyal extends Component {
 
     //         field.style.fill = 'red'
     //     }
-    // }
+    }
 
     handleDialogClose = () => {
         this.setState({
@@ -247,9 +279,7 @@ class Loyal extends Component {
             loadedTorpedo: loadedTorpedo
         })
     
-    
-        //TODO: Call to backend
-      };
+    };
 
     handleTorpedoToggle = (id) => {
         const torpedo = this.state.userTorpedos.find((torpedo) => {
@@ -269,19 +299,35 @@ class Loyal extends Component {
     
             const pressed_value = field.dataset.pressed === 'true' ? true : false
             if(pressed_value === false){
+                var animation;
+                if(!this.state.iOS){
+                    animation = field.animate([
+                        {fill: 'black'},
+                        {fill: 'red'}
+                    ], {
+                        duration: 500,
+                        direction: 'alternate',
+                        easing: 'ease-in-out',
+                        iterations: Infinity
+                    })
+                }else{
+                    field.style.fill = 'orange' 
+                }
                 
-                field.style.fill = 'orange'
-                this.startAnimation()
+                
+                
+                this.startAnimation(animation)
        
             }
         }
         
 
     }
-    startAnimation = () => {
+    startAnimation = (animation) => {
         this.timer = setInterval(this.countDown, 1000);
         this.setState({
             seconds: 5,
+            animation
         });
     }
 
@@ -302,12 +348,18 @@ class Loyal extends Component {
         const svgRawObject = this.refs.boardsvg
         const doc = svgRawObject.contentDocument
         
-        const field = doc.getElementsByName(this.state.loadedTorpedo.itemModel.name)[0] //assuming id as in serverFields array
+        const field = doc.getElementsByName(this.state.loadedTorpedo.itemModel.name)[0] //assuming id as in serverFields array        
+        const animation = this.state.animation
+
         try{
             
             const award = await this.props.shootShip(this.state.loadedTorpedo.itemModel.name)
             if(award){
-               
+                if(!this.state.iOS){
+                    animation.cancel()
+                }
+                
+
                 for(let i=1; i < this.state.serverFields.length + 1; i++){
                     const field = doc.getElementById(`${i}`) //assuming id as in serverFields array
                     field.style.fill = 'black'
@@ -325,6 +377,10 @@ class Loyal extends Component {
                 })
 
             }else{
+
+                if(!this.state.iOS){
+                    animation.cancel()
+                }
                 field.style.fill = 'red'
                 
                 const modifiedServerFields = [...this.state.serverFields]
@@ -338,20 +394,21 @@ class Loyal extends Component {
                 this.setState({
                     serverFields: modifiedServerFields
                 }, () => {
-                    console.log(this.state.serverFields)
                     this.manageWrecks(doc, this.state.wrecksIds, this.state.wrecks)
                    
                 })
                 
             }
+            
             this.handleTorpedoDelete(this.state.loadedTorpedo._id)
-            
-            
-            
-           
+                 
         }catch(e){
             console.log(e)
+            if(!this.state.iOS){
+                animation.cancel()
+            }
         }
+        
         
     }
 
@@ -374,9 +431,20 @@ class Loyal extends Component {
 
     render() { 
         const userTorpedos = this.state.userTorpedos
+
+        //EXERCISES: excluding part of svg
+        // to use: {copy}
+        // const copy = this.state.copy ? (
+        //     <svg version="1.1"  xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 915.8 929.2">
+        //         {Parser(this.state.copy)} 
+        //     </svg>
+        // ) : null
         
         return ( 
+            <React.Fragment>
+            
             <div style={{display: 'flex', flexDirection: 'column', minHeight: this.props.fullHeight}}>
+            <GlobalStyle/>
                 {this.state.loading && <Loading/>}
                 <LoadedTorpedoContainer>
                     {this.state.loadedTorpedo ? (
@@ -386,7 +454,7 @@ class Loyal extends Component {
                     )}
                 </LoadedTorpedoContainer>
                 <object data={boardsvg} onLoad={this.handleLoad} type="image/svg+xml"
-                id="boardsvg" ref='boardsvg'  style={{pointerEvents: 'none'}}>Board</object> 
+                id="boardsvg" ref='boardsvg'  style={{pointerEvents: 'bounding-box'}}>Board</object> 
                 
                 {this.state.seconds === 0 && (
                     <React.Fragment>
@@ -408,8 +476,10 @@ class Loyal extends Component {
                     handleClose={() => {this.setState({award: null})}}
                     award={this.state.award}
                 /> 
-            }      
-            </div>      
+            }    
+              
+            </div>
+            </React.Fragment>      
         );
     }
 }

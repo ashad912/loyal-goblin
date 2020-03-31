@@ -165,7 +165,7 @@ function Root(props) {
         </Dialog>
       ) : (
         <React.Fragment>
-          <AppBar position="static" color="white" id="app-bar">
+          <AppBar position="static" color="inherit" id="app-bar">
             <Tabs
               value={value}
               onChange={handleChange}

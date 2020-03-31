@@ -11,7 +11,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import { palette, itemsPath } from "../../../utils/definitions";
-import { PintoTypography } from "../../../utils/fonts";
+import { PintoTypography, PintoSerifTypography } from "../../../utils/fonts";
 const StyledMenu = withStyles({
   paper: {
     border: "1px solid #d3d4d5"
@@ -106,14 +106,11 @@ const TorpedoListItem = props => {
         </Badge>
       </ListItemAvatar>
 
-      {/* x${} */}
+      
       <ListItemText
-      style={{color: props.loadedTorpedoId && 'white'}}
-        primary={
-          item.instancesIds.length < 2
-            ? item.itemModel.name
-            : `${item.itemModel.name}`
-        }
+        disableTypography
+        style={{color: props.loadedTorpedoId && 'white'}}
+        primary={<PintoSerifTypography>{item.itemModel.name}</PintoSerifTypography>}         
         secondary={<PintoTypography style={{color: props.loadedTorpedoId && 'white'}}>{item.itemModel.description}</PintoTypography>}
       />
       <ListItemIcon onClick={handleClick}>

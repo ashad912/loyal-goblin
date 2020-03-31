@@ -13,18 +13,18 @@ const QRreaderView = props => {
 
   React.useEffect(() => {
     navigator.permissions.query({name: 'camera'})
- .then((permissionObj) => {
-   if(permissionObj.state === 'denied'){
-    setCameraDenied(true)
-   }
- })
- .catch((error) => {
-  //console.log('Got error :', error);
- })
- var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
- if(iOS){
-  setIsIOS(true)
- }
+      .then((permissionObj) => {
+        if(permissionObj.state === 'denied'){
+          setCameraDenied(true)
+        }
+      })
+      .catch((error) => {
+        //console.log('Got error :', error);
+      })
+      var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+      if(iOS){
+        setIsIOS(true)
+      }
   }, [])
 
    const handleScan = value => {
