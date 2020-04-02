@@ -559,7 +559,7 @@ export const removeMissionInstanceIfExits = (id) => {
         await missionInstance.remove()
       }
       
-
+      //update missions -> function for getMissionList
       resolve()
     }catch(e){
       reject(e)

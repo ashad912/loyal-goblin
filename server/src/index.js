@@ -208,7 +208,7 @@ const postAuthenticate = socket => {
   });
 
   socket.on("instanceRefresh", roomId => {
-    io.to(roomId).emit("instanceRefresh", roomId);
+    socket.broadcast.to(roomId).emit("instanceRefresh", roomId);
   });
 
 

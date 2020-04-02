@@ -659,7 +659,8 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
                 }    
             }, 30* 60 * 1000) //30 mins
         }
-        res.status(200).send(missionInstance)
+        console.log(mission.imgSrc)
+        res.status(200).send({missionInstance, imgSrc: mission.imgSrc})
   
     } catch (e) {
         console.log(e.message)

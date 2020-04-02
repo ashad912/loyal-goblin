@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { updateParty } from "./store/actions/partyActions";
 import {socket, joinRoomEmit, joinRoomSubscribe, instanceRefreshEmit, leaveRoomSubscribe, partyRefreshSubscribe, deleteRoomSubscribe} from './socket'
 import {authCheck, setMultipleSession } from './store/actions/authActions';
+import {setActiveInstance} from './store/actions/missionActions'
 
 class SocketConfig extends React.Component {
   state = {};
@@ -13,6 +14,7 @@ class SocketConfig extends React.Component {
 
     socket.on('authenticated', () => {
       joinRoomEmit(this.props.party._id)
+      setActiveInstance(null, null)
       instanceRefreshEmit(this.props.party._id)
     });
   
@@ -76,6 +78,7 @@ const mapDispatchToProps = dispatch => {
     onPartyUpdate: () => dispatch(updateParty()),
     authCheck: () => dispatch(authCheck()),
     setMultipleSession: () => dispatch(setMultipleSession()),
+    setActiveInstance: (id, imgSrc) => dispatch(setActiveInstance(id, imgSrc))
   };
 };
 

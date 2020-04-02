@@ -190,6 +190,7 @@ router.patch("/addMember", auth, async (req, res) => {
       await asyncForEach(missionInstances, async (missionInstance) => {
         missionInstance.remove();
       })  
+      //update missions -> function for getMissionList
     }
 
     party.members.push(req.body.memberId);

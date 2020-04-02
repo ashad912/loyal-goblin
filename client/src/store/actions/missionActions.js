@@ -6,6 +6,7 @@ const axiosInstance = axios.create({}); //to avoid interceptors "index.js"
 
 export const setActiveInstance = (id, imgSrc) => {
     return (dispatch) => {
+        console.log('haloo')
         dispatch( {type: "SET_INSTANCE", id, imgSrc})
     }
 }
@@ -26,9 +27,11 @@ export const getMissionList = () => {
 
                 if(missionObject.missionInstanceId){
                     const instanceIndex = missionObject.missions.findIndex((mission) => mission._id === missionObject.missionInstanceId)
-                    setActiveInstance(missionObject.missionInstanceId, missionObject.missions[instanceIndex].imgSrc)
+                    //dispatch( {type: "SET_INSTANCE", id: missionObject.missionInstanceId, imgSrc: missionObject.missions[instanceIndex].imgSrc})
+                    dispatch(setActiveInstance(missionObject.missionInstanceId, missionObject.missions[instanceIndex].imgSrc))
                 }else{
-                    setActiveInstance(null, null)
+                    //dispatch( {type: "SET_INSTANCE", id: missionObject.missionInstanceId, imgSrc: missionObject.missions[instanceIndex].imgSrc})
+                    dispatch(setActiveInstance(null, null))
                 }
 
 
@@ -44,27 +47,39 @@ export const getMissionList = () => {
 }
 
 export const createInstance = (missionId, partyId) => {
-    return new Promise (async (resolve, reject) => {
-        try {
-            const res = await axios.post('/mission/createInstance', {_id: missionId})
-            instanceRefreshEmit(partyId)
-            resolve(res.data)
-        }catch (e) {
-            reject(e)     
-        } 
-    })
+    return (dispatch) => {
+        return new Promise (async (resolve, reject) => {
+            try {
+                const res = await axios.post('/mission/createInstance', {_id: missionId})
+                const missionInstance = res.data.missionInstance
+                const imgSrc = res.data.imgSrc
+
+
+                dispatch(setActiveInstance(missionInstance, imgSrc))
+                instanceRefreshEmit(partyId)
+                resolve(missionInstance)
+            }catch (e) {
+                reject(e)     
+            } 
+        })
+    }
 }
 
 export const deleteInstance = (partyId) => {
-    return new Promise (async (resolve, reject) => {
-        try {
-            await axios.delete('/mission/deleteInstance')
-            instanceRefreshEmit(partyId)
-            resolve()
-        }catch (e) {
-            reject(e)     
-        } 
-    })
+    return (dispatch) => {
+        return new Promise (async (resolve, reject) => {
+            try {
+                await axios.delete('/mission/deleteInstance')
+    
+                dispatch(setActiveInstance(null, null))
+                instanceRefreshEmit(partyId)
+                resolve()
+            }catch (e) {
+                reject(e)     
+            } 
+        })
+    }
+    
 }
 
 export const finishInstance = (partyId) => {

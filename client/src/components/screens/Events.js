@@ -58,11 +58,7 @@ const Events = (props) => {
     const [activeRallyDetails, setActiveRallyDetails] = useState(null)
     //const [missionListData, setMissionListData] = useState([])
     const [rally, setRally] = useState(null)
-
-    const [
-        orderWarningDialog,
-        setOrderWarningDialog
-      ] = React.useState({ action: null, text: "" });
+    const [orderWarningDialog, setOrderWarningDialog] = React.useState({ action: null, text: "" });
     
     
 
@@ -118,8 +114,8 @@ const Events = (props) => {
     const handleMissionCreate = async (id) => {
         try{
 
-            const response = await createInstance(id, props.party._id) //shot to backend - verify party quantity and leader status (amulets verifed inside the mission), redirect to mission
-            setMissionId(response.mission)
+            const mInstance = await props.createInstance(id, props.party._id) //shot to backend - verify party quantity and leader status (amulets verifed inside the mission), redirect to mission
+            setMissionId(mInstance.mission)
                 
         }catch(e){
             //console.log(e)
@@ -155,7 +151,7 @@ const Events = (props) => {
     }
 
     const handleMissionLeave = async () => {
-        await deleteInstance(props.party._id)
+        await props.deleteInstance(props.party._id)
         if(!socket.connected){
             fetchMissions()
         }
@@ -284,7 +280,9 @@ const mapDispatchToProps = dispatch => {
     return {
         authCheck: () => dispatch(authCheck()),
         getMissionList : () => dispatch(getMissionList()),
-        setActiveInstance: (id, imgSrc) => dispatch(setActiveInstance(id, imgSrc))
+        setActiveInstance: (id, imgSrc) => dispatch(setActiveInstance(id, imgSrc)),
+        createInstance: (id, partyId) => dispatch(createInstance(id, partyId)),
+        deleteInstance: (partyId) => dispatch(deleteInstance(partyId))
     };
 };
   

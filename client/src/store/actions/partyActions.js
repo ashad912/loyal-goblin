@@ -1,6 +1,6 @@
 import axios from 'axios'
 import {socket, socketAuthenticateEmit, joinRoomEmit, leaveRoomEmit, partyRefreshEmit, deleteRoomEmit, instanceRefreshEmit} from '../../socket'
-import { setActiveInstanceId } from './missionActions'
+import { setActiveInstance } from './missionActions'
 
 
 export const updateParty = (params, socketAuthReconnect) => {
@@ -48,7 +48,7 @@ export const createParty =  (name, leader) => {
             const res = await axios.post('/party/create', {name})
             
             dispatch({type: "CREATE_PARTY", name, partyId: res.data.partyId, leader})
-
+            
             if(!socket.connected){
                 //console.log('connect from createParty')
                 socket.open()
@@ -69,6 +69,7 @@ export const deleteParty =  () => {
             dispatch({type: "DELETE_PARTY"})
             instanceRefreshEmit(res.data._id)
             deleteRoomEmit(res.data._id)
+            dispatch(setActiveInstance(null, null))
             
 
             if(socket.connected){
@@ -89,6 +90,7 @@ export const addMember =  (partyId, memberId) => {
             dispatch({type: "ADD_MEMBER", party: res.data})
             partyRefreshEmit(res.data._id)
             instanceRefreshEmit(res.data._id)
+            dispatch(setActiveInstance(null, null))
                 
         }catch (e) {
             console.log(e)
@@ -115,6 +117,7 @@ export const removeMember =  (partyId, memberId) => {
                 // }
                 dispatch({type: "DELETE_PARTY"}) //clearing member redux - he has just left (only for member!)
             }
+            dispatch(setActiveInstance(null, null))
 
                 
         }catch (e) {
@@ -134,6 +137,7 @@ export const giveLeader =  (partyId, memberId) => {
                 dispatch({type: "GIVE_LEADER", party: res.data}) //updating leader redux - he has just dropped the member
                 partyRefreshEmit(res.data._id)
                 instanceRefreshEmit(res.data._id)   
+                dispatch(setActiveInstance(null, null))
             }        
         }catch (e) {
             console.log(e)
