@@ -12,16 +12,35 @@ export const setActiveInstance = (id, imgSrc) => {
 
 
 export const getMissionList = () => {
-    return new Promise (async (resolve, reject) => {
-        try {
-            
-            const res = await axios.get('/mission/list')
-            //console.log(res.data)
-            resolve(res.data)
-        }catch (e) {
-            reject(e)     
-        } 
-    })
+    return dispatch => {
+        return new Promise (async (resolve, reject) => {
+            try {
+                
+                const res = await axios.get('/mission/list')
+                //console.log(res.data)
+
+                const missionObject = res.data
+        
+                //setMissionListData(missionObject.missions)
+                dispatch({type: "UPDATE_MISSIONS", missions: missionObject.missions})
+
+                if(missionObject.missionInstanceId){
+                    const instanceIndex = missionObject.missions.findIndex((mission) => mission._id === missionObject.missionInstanceId)
+                    setActiveInstance(missionObject.missionInstanceId, missionObject.missions[instanceIndex].imgSrc)
+                }else{
+                    setActiveInstance(null, null)
+                }
+
+
+                //??
+                resolve(res.data)
+
+            }catch (e) {
+                reject(e)     
+            } 
+        })
+    }
+    
 }
 
 export const createInstance = (missionId, partyId) => {

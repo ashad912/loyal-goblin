@@ -56,7 +56,7 @@ const Events = (props) => {
     const [missionId, setMissionId] = useState(null);
     const [activeMissionDetails, setActiveMissionDetails] = useState(null)
     const [activeRallyDetails, setActiveRallyDetails] = useState(null)
-    const [missionListData, setMissionListData] = useState([])
+    //const [missionListData, setMissionListData] = useState([])
     const [rally, setRally] = useState(null)
 
     const [
@@ -67,16 +67,18 @@ const Events = (props) => {
     
 
     const fetchMissions = async () => {
-        const missionObject = await getMissionList()
         
-        setMissionListData(missionObject.missions)
+        await props.getMissionList()
+        // const missionObject = await getMissionList()
+        
+        // setMissionListData(missionObject.missions)
 
-        if(missionObject.missionInstanceId){
-            const instanceIndex = missionObject.missions.findIndex((mission) => mission._id === missionObject.missionInstanceId)
-            props.setActiveInstance(missionObject.missionInstanceId, missionObject.missions[instanceIndex].imgSrc)
-        }else{
-            props.setActiveInstance(null, null)
-        }
+        // if(missionObject.missionInstanceId){
+        //     const instanceIndex = missionObject.missions.findIndex((mission) => mission._id === missionObject.missionInstanceId)
+        //     props.setActiveInstance(missionObject.missionInstanceId, missionObject.missions[instanceIndex].imgSrc)
+        // }else{
+        //     props.setActiveInstance(null, null)
+        // }
         
         
         
@@ -98,6 +100,7 @@ const Events = (props) => {
         instanceRefreshSubscribe(async (roomId) => {
             //console.log('mission refreshed')
             fetchMissions()
+            //why?? bag??
             await props.authCheck()
             
         })
@@ -160,7 +163,7 @@ const Events = (props) => {
     }
 
     const handleMissionDetailsOpen = (index) => {
-        setActiveMissionDetails(missionListData[index])
+        setActiveMissionDetails(props.missionListData[index])
     }
 
     const handleMissionDetailsClose = () => {
@@ -177,8 +180,8 @@ const Events = (props) => {
 
     //for better perfomance uses VisibilitySensor to load only visible (or partly visible) elements
     //to work need fixed listem item size (which is ok, i believe)
-    const missionList = missionListData ? (
-        missionListData.map((mission, index) => {
+    const missionList = props.missionListData ? (
+        props.missionListData.map((mission, index) => {
             const MissionListItemHoc = withMissionItemCommon(MissionListItem, mission)
             return(
                 <VisibilitySensor partialVisibility key={mission._id}>
@@ -270,6 +273,7 @@ const Events = (props) => {
 const mapStateToProps = state => {
     return {
         activeOrder: state.auth.profile.activeOrder,
+        missionListData: state.mission.missions,
         activeInstanceId: state.mission.activeInstanceId,
         multipleSession: state.auth.multipleSession,
         party: state.party
@@ -279,6 +283,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         authCheck: () => dispatch(authCheck()),
+        getMissionList : () => dispatch(getMissionList()),
         setActiveInstance: (id, imgSrc) => dispatch(setActiveInstance(id, imgSrc))
     };
 };

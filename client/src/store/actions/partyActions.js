@@ -114,7 +114,7 @@ export const removeMember =  (partyId, memberId) => {
                 //     socket.disconnect()
                 // }
                 dispatch({type: "DELETE_PARTY"}) //clearing member redux - he has just left (only for member!)
-                }
+            }
 
                 
         }catch (e) {

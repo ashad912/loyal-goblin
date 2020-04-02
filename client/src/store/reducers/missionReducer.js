@@ -1,4 +1,5 @@
 const initState = {
+    missions: [],
     activeInstanceId: null,
     activeInstanceImgSrc: null
   };
@@ -10,6 +11,11 @@ const initState = {
             ...state,
             activeInstanceId: action.id,
             activeInstanceImgSrc: action.imgSrc
+          };
+      case "UPDATE_MISSIONS":
+          return {
+            ...state,
+            missions: action.missions
           };
       default:
         return state;
