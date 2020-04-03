@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {partyRefreshEmit} from '../../socket'
+import {refreshPartyEmit} from '../../socket'
 
 export const getRankedUsers = () => {
     return new Promise (async (resolve, reject) => {
@@ -76,7 +76,7 @@ export const toggleItem = (id, category, equipped, memberId) => {
                 const res = await axios.patch('/user/party/equip', {id, category, equipped, memberId})
               //  console.log(res.data)
                 dispatch({type: "UPDATE_PARTY", party: res.data})
-                partyRefreshEmit(res.data._id)
+                refreshPartyEmit(res.data._id)
             }else{
                 const res = await axios.patch('/user/items/equip', {id, category, equipped})
                 const profile = res.data

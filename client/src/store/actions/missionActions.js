@@ -1,12 +1,11 @@
 import axios from 'axios'
-import { modifyUserStatusEmit, instanceRefreshEmit, addItemEmit, deleteItemEmit, finishMissionEmit} from '../../socket'
+import { modifyUserStatusEmit, refreshMissionsEmit, addItemEmit, deleteItemEmit, finishMissionEmit} from '../../socket'
 
 const axiosInstance = axios.create({}); //to avoid interceptors "index.js"
 
 
 export const setActiveInstance = (id, imgSrc) => {
     return (dispatch) => {
-        console.log('haloo')
         dispatch( {type: "SET_INSTANCE", id, imgSrc})
     }
 }
@@ -56,7 +55,7 @@ export const createInstance = (missionId, partyId) => {
 
 
                 dispatch(setActiveInstance(missionInstance, imgSrc))
-                instanceRefreshEmit(partyId)
+                refreshMissionsEmit(partyId)
                 resolve(missionInstance)
             }catch (e) {
                 reject(e)     
@@ -72,7 +71,7 @@ export const deleteInstance = (partyId) => {
                 await axios.delete('/mission/deleteInstance')
     
                 dispatch(setActiveInstance(null, null))
-                instanceRefreshEmit(partyId)
+                refreshMissionsEmit(partyId)
                 resolve()
             }catch (e) {
                 reject(e)     
@@ -87,8 +86,7 @@ export const finishInstance = (partyId) => {
         try {
             const res = await axios.delete('/mission/finishInstance')
             
-            finishMissionEmit(res.data, partyId)
-            //instanceRefreshEmit(partyId)
+            finishMissionEmit(res.data, partyId) // send awards to socket to broadcast it to party ? only mission id to save data
             resolve(res.data)
         }catch (e) {
             reject(e)     

@@ -14,26 +14,26 @@ export const socketUnauthorizedSubscribe = (err) => {
 }
 
 
-export const joinRoomSubscribe = (roomId) => {
-    socket.on('joinRoom', roomId, () => {
+export const joinPartySubscribe = (roomId) => {
+    socket.on('joinParty', roomId, () => {
         return  roomId
     })
 }
 
-export const leaveRoomSubscribe = (id) => {
-    socket.on('leaveRoom', id, () => {
+export const leavePartySubscribe = (id) => {
+    socket.on('leaveParty', id, () => {
         return id
     })
 }
 
-export const partyRefreshSubscribe = (data) => {
-    socket.on('partyRefresh', data, () => {
+export const refreshPartySubscribe = (data) => {
+    socket.on('refreshParty', data, () => {
         return data
     })
 }
 
-export const deleteRoomSubscribe = (roomId) => {
-    socket.on('deleteRoom', roomId, () => {
+export const deletePartySubscribe = (roomId) => {
+    socket.on('deleteParty', roomId, () => {
         return  roomId
     })
 }
@@ -62,17 +62,17 @@ export const modifyUserStatusSubscribe = (data) => {
     })
 }
 
-export const instanceRefreshSubscribe = (roomId) => {
-    socket.on('instanceRefresh', roomId, () => {
+export const refreshMissionsSubscribe = (roomId) => {
+    socket.on('refreshMissions', roomId, () => {
         return roomId
     })
 }
 
-export const multipleSessionSubscribe = (socketId) => {
-    socket.on('multipleSession', socketId, () => {
-        return socketId
-    })
-}
+// export const multipleSessionSubscribe = (socketId) => {
+//     socket.on('multipleSession', socketId, () => {
+//         return socketId
+//     })
+// }
 
 //EMIT
 
@@ -80,21 +80,21 @@ export const socketAuthenticateEmit = () => {
     socket.emit('authentication', {});
 }
 
-export const joinRoomEmit = (roomId) => {
-    socket.emit('joinRoom', roomId)
+export const joinPartyEmit = (roomId) => {
+    socket.emit('joinParty', roomId)
 }
 
-export const leaveRoomEmit = (id, roomId) => {
-    const data = {id: id, roomId: roomId}
-    socket.emit('leaveRoom', data)
+export const leavePartyEmit = (id, roomId) => {
+    const data = {id, roomId}
+    socket.emit('leaveParty', data)
 }
 
-export const partyRefreshEmit = (roomId, authCheck) => {
-    socket.emit('partyRefresh', {roomId, authCheck})
+export const refreshPartyEmit = (roomId, authCheck) => {
+    socket.emit('refreshParty', {roomId, authCheck})
 }
 
-export const deleteRoomEmit = (roomId) => {
-    socket.emit('deleteRoom', roomId)
+export const deletePartyEmit = (roomId) => {
+    socket.emit('deleteParty', roomId)
 }
 
 export const addItemEmit = (item, roomId) => {
@@ -117,6 +117,6 @@ export const modifyUserStatusEmit = ( user, roomId) => {
     socket.emit('modifyUserStatus', data)
 }
 
-export const instanceRefreshEmit = (roomId) => {
-    socket.emit('instanceRefresh', roomId)
+export const refreshMissionsEmit = (roomId) => {
+    socket.emit('refreshMissions', roomId)
 }

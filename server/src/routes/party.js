@@ -185,7 +185,7 @@ router.patch("/addMember", auth, async (req, res) => {
         {party: { $elemMatch: { profile: user._id } }} //remove existing mInstance - new user side
        ]
     });
-
+    
     if (missionInstances.length) {
       await asyncForEach(missionInstances, async (missionInstance) => {
         missionInstance.remove();
@@ -204,7 +204,7 @@ router.patch("/addMember", auth, async (req, res) => {
       .execPopulate();
     //console.log(party);
 
-    res.status(200).send(party);
+    res.status(200).send({party});
   } catch (e) {
     console.log(e);
     res.sendStatus(400);
@@ -319,6 +319,7 @@ router.delete("/remove", auth, async (req, res) => {
     //   throw new Error("You are not the leader!");
     // }
 
+   
 
     await party.remove(); //look at middleware
     res.send(party);

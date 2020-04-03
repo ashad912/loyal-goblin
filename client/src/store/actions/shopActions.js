@@ -1,6 +1,6 @@
 
 import axios from 'axios'
-import {partyRefreshEmit, instanceRefreshEmit} from '../../socket'
+import {refreshPartyEmit, refreshMissionsEmit} from '../../socket'
 import {pick, cloneDeep} from 'lodash'
 
 export const getShop = (socketStatusConnection) => {
@@ -15,12 +15,11 @@ export const getShop = (socketStatusConnection) => {
                 }
             }
 
-            dispatch({type: 'GET_SHOP', shop:res.data.shop})
+            dispatch({type: 'GET_SHOP', shop: res.data.shop})
             dispatch({type: 'UPDATE_ACTIVE_ORDER', activeOrder: res.data.activeOrder})
             dispatch({type: "UPDATE_PARTY", party: res.data.party})
             if(res.data.party){
-                partyRefreshEmit(res.data.party._id)
-                instanceRefreshEmit(res.data.party._id)
+                refreshPartyEmit(res.data.party._id)
             }
         } catch (e) {
             console.log(e)
@@ -39,7 +38,7 @@ export const leaveShop = () => {
 
             dispatch({type: 'LEAVE_SHOP'})
             if(res.data){
-                partyRefreshEmit(res.data, true)
+                refreshPartyEmit(res.data)
             }
 
         } catch (e) {

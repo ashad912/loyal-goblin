@@ -1,61 +1,60 @@
 import React from 'react'
 import { connect } from "react-redux";
 import { updateParty } from "./store/actions/partyActions";
-import {socket, joinRoomEmit, joinRoomSubscribe, instanceRefreshEmit, leaveRoomSubscribe, partyRefreshSubscribe, deleteRoomSubscribe} from './socket'
+import {socket, joinPartyEmit, joinPartySubscribe, refreshMissionsEmit, refreshMissionsSubscribe, leavePartySubscribe, refreshPartySubscribe, deletePartySubscribe} from './socket'
 import {authCheck, setMultipleSession } from './store/actions/authActions';
-import {setActiveInstance} from './store/actions/missionActions'
+import {getMissionList} from './store/actions/missionActions'
 
 class SocketConfig extends React.Component {
   state = {};
 
   async componentDidMount() {
     
-
-
     socket.on('authenticated', () => {
-      joinRoomEmit(this.props.party._id)
-      setActiveInstance(null, null)
-      instanceRefreshEmit(this.props.party._id)
+      joinPartyEmit(this.props.party._id)
+      this.props.missionsUpdate()
     });
   
     socket.on('unauthorized', (err) => {
       if(err.message === "multipleSession"){
-
-          this.props.setMultipleSession()
-
+        this.props.setMultipleSession()
       }
       console.log('Socket auth failed: ' + err.message)
     });
 
-    joinRoomSubscribe((roomId) => {
+    joinPartySubscribe((roomId) => {
       console.log("New member is now visible in socket - party: " + roomId)
-      this.props.onPartyUpdate()
+      this.props.partyUpdate()
+      this.props.missionsUpdate()
     })
 
-    leaveRoomSubscribe((socketUserIdToLeave) => {
+    leavePartySubscribe((socketUserIdToLeave) => {
       console.log(this.props.uid, socketUserIdToLeave)
-      if(this.props.uid === socketUserIdToLeave && socket.connected){
-        socket.disconnect()
-      }  
-      this.props.onPartyUpdate()
+      // if(this.props.uid === socketUserIdToLeave && socket.connected){
+      //   socket.disconnect()
+      // }  
+      this.props.partyUpdate()
+      this.props.missionsUpdate()
     })
 
-    partyRefreshSubscribe((data) => {
-        console.log('partyRefresh')
-        this.props.onPartyUpdate()
-        if(data.authCheck){
-          this.props.authCheck()
-        }
+    refreshPartySubscribe(() => {
+      console.log('partyRefresh')
+      this.props.partyUpdate()
+      this.props.missionsUpdate()
     })
 
-    deleteRoomSubscribe((roomId) => {
+    deletePartySubscribe((roomId) => {
       if(socket.connected){
         socket.disconnect()
       }
       console.log('deleteRoom')
-      this.props.onPartyUpdate()
+      this.props.partyUpdate()
+      this.props.missionsUpdate()
     })
 
+    refreshMissionsSubscribe((roomId) => {
+      this.props.missionsUpdate()
+    })
      
   }
 
@@ -75,10 +74,10 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onPartyUpdate: () => dispatch(updateParty()),
+    partyUpdate: () => dispatch(updateParty()),
+    missionsUpdate: () => dispatch(getMissionList()),
     authCheck: () => dispatch(authCheck()),
     setMultipleSession: () => dispatch(setMultipleSession()),
-    setActiveInstance: (id, imgSrc) => dispatch(setActiveInstance(id, imgSrc))
   };
 };
 

@@ -15,7 +15,7 @@ import Typography from '@material-ui/core/Typography';
 import styled from 'styled-components'
 
 import {getMissionList, createInstance, deleteInstance, setActiveInstance} from '../../store/actions/missionActions.js'
-import {socket, instanceRefreshSubscribe} from '../../socket'
+import {socket, refreshMissionsSubscribe} from '../../socket'
 
 import Rally from './events/Rally'
 import { getFirstRally } from '../../store/actions/rallyActions'
@@ -93,13 +93,7 @@ const Events = (props) => {
         fetchRally()
         
     
-        instanceRefreshSubscribe(async (roomId) => {
-            //console.log('mission refreshed')
-            fetchMissions()
-            //why?? bag??
-            await props.authCheck()
-            
-        })
+        
 
     }, []);
 
@@ -152,6 +146,7 @@ const Events = (props) => {
 
     const handleMissionLeave = async () => {
         await props.deleteInstance(props.party._id)
+        //??
         if(!socket.connected){
             fetchMissions()
         }

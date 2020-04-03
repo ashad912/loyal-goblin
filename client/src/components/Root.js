@@ -98,10 +98,6 @@ function Root(props) {
       setValue(redirectToIndex);
     }
 
-    multipleSessionSubscribe((socketId) => {
-      console.log('multipe session', socketId)
-    })
-
     if(props.auth.profile.name && props.auth.profile.class){
       setShowCharacterCreationModal(false)
     }else{
