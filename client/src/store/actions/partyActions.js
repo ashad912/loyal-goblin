@@ -59,12 +59,12 @@ export const deleteParty =  () => {
         try {
             const res = await axios.delete('/party/remove')
             
-            const party = res.data.party
+            
             dispatch({type: "DELETE_PARTY"})
             dispatch(getMissionList())   
             
             
-            deletePartyEmit(party._id)
+            deletePartyEmit(res.data._id)
             if(socket.connected){
                 socket.disconnect()
             }     

@@ -292,7 +292,8 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
         }
 
         if(party){  
-            partyIds = [...partyIds, ...party.members]
+            //swap user id by leader id -> fetching user does not have to be leader!
+            partyIds = [party.leader, ...party.members]
         }
         
         

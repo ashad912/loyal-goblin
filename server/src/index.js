@@ -131,7 +131,7 @@ var io = socket(server); //param is a server, defined upper
 
 
 async function authenticate(socket, data, callback) {
-  //console.log(socket.id, 'tried socket auth')
+  console.log(socket.id, 'tried socket auth')
   let multipleSession = false
   try{
     const user = await socketConnectAuth(socket)
@@ -150,6 +150,7 @@ async function authenticate(socket, data, callback) {
     if(multipleSession){
       return callback(new Error("multipleSession")); 
     }else{
+      console.log("Invalid party conditions")
       return callback(new Error("Invalid party conditions")); 
     }
   }
@@ -258,6 +259,8 @@ const postAuthenticate = socket => {
 async function disconnect(socket) {
   
   let i = allClients.findIndex((client) => client.socketId === socket.id);
+  console.log(socket.id)
+  console.log(allClients)
   if(i < 0){
     console.log("Client not found")
   }else{
@@ -286,6 +289,6 @@ require('socketio-auth')(io, {
   authenticate: authenticate,
   postAuthenticate: postAuthenticate,
   disconnect: disconnect,
-  timeout: 1000
+  timeout: 3000
 });
 

@@ -187,7 +187,7 @@ const MissionListItem = props => {
                 {mission.amulets.map(amulet => {
                   return (
                     <StyledBadge
-                      
+                      key={amulet.itemModel._id}
                       color="primary"
                       badgeContent={amulet.quantity}
                       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
@@ -266,7 +266,7 @@ const MissionListItem = props => {
                         for (let i = 0; i < award.quantity; i++) {
                           const copy = (
                             <img
-                              key={award._id}
+                              key={`${award._id}q${i}`}
                               style={{
                                 height: 20,
                                 width: 20,

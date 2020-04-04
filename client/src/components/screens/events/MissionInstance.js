@@ -153,6 +153,7 @@ class MissionInstance extends React.Component {
                 return specificUser.profile._id === user._id;
             }
         );
+
         //console.log(modifyUserArrayIndex)
         if(user.hasOwnProperty('readyStatus')){
             users[modifyUserArrayIndex].readyStatus = user.readyStatus;

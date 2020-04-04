@@ -204,7 +204,7 @@ router.patch("/addMember", auth, async (req, res) => {
       .execPopulate();
     //console.log(party);
 
-    res.status(200).send({party});
+    res.status(200).send(party);
   } catch (e) {
     console.log(e);
     res.sendStatus(400);
