@@ -401,11 +401,18 @@ const verifyParty = (leader, membersIds, order) => {
 
 //OK
 router.get("/shop", auth, async (req, res) => {
-  let user = req.user;
+  let user = req.user; 
+  const socketConnectionStatus = req.query.socketConnectionStatus === "true"
+ 
   try {
 
     if(user.party){
-      await validatePartyAndLeader(user)
+      const party = await validatePartyAndLeader(user)
+      if(req.query.socketConnectionStatus !== undefined){
+        if(party && party.members.length && !socketConnectionStatus){ //if client of multiplayer shopping is not connected to socket
+            throw new Error('Leader not connected to party members!')
+        }
+      }
     }
     
     const shop = await Product.find({}).populate({

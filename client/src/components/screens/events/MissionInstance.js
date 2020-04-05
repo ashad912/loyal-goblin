@@ -64,54 +64,54 @@ const ButtonBar = styled.div`
   margin: 0.5rem 0rem 1rem 0rem;
 `
 
-const createTempMission = () => {
-    return {
-        id: 2,
-        title: 'Mission2',
-        avatarSrc: 'mission.png',
-        minPlayers: 3,
-        maxPlayers: 3,
-        description: 'Super important mission. You need have things and attributes, as always loool xd',
-        amulets: [
-            {
-                quantity: 2,
-                itemModel: {
-                    _id: 103,
-                    type: {
-                        _id: 201,
-                        type: 'amulet'
-                    },
-                    name: 'sapphire',
-                    imgSrc: 'sapphire-amulet.png'
-                }
-            },
-            {
-                quantity: 1,
-                itemModel: {
-                    _id: 101,
-                    type: {
-                        _id: 201,
-                        type: 'amulet'
-                    },
-                    name: 'diamond',
-                    imgSrc: 'diamond-amulet.png'
-                }
-            },
-            {
-                quantity: 2,
-                itemModel: {
-                    _id: 102,
-                    type: {
-                        _id: 201,
-                        type: 'amulet'
-                    },
-                    name: 'pearl',
-                    imgSrc: 'pearl-amulet.png'
-                }
-            },
-        ]
-    }
-}
+// const createTempMission = () => {
+//     return {
+//         id: 2,
+//         title: 'Mission2',
+//         avatarSrc: 'mission.png',
+//         minPlayers: 3,
+//         maxPlayers: 3,
+//         description: 'Super important mission. You need have things and attributes, as always loool xd',
+//         amulets: [
+//             {
+//                 quantity: 2,
+//                 itemModel: {
+//                     _id: 103,
+//                     type: {
+//                         _id: 201,
+//                         type: 'amulet'
+//                     },
+//                     name: 'sapphire',
+//                     imgSrc: 'sapphire-amulet.png'
+//                 }
+//             },
+//             {
+//                 quantity: 1,
+//                 itemModel: {
+//                     _id: 101,
+//                     type: {
+//                         _id: 201,
+//                         type: 'amulet'
+//                     },
+//                     name: 'diamond',
+//                     imgSrc: 'diamond-amulet.png'
+//                 }
+//             },
+//             {
+//                 quantity: 2,
+//                 itemModel: {
+//                     _id: 102,
+//                     type: {
+//                         _id: 201,
+//                         type: 'amulet'
+//                     },
+//                     name: 'pearl',
+//                     imgSrc: 'pearl-amulet.png'
+//                 }
+//             },
+//         ]
+//     }
+// }
 
 class MissionInstance extends React.Component {
     
@@ -173,7 +173,7 @@ class MissionInstance extends React.Component {
             return
         }
 
-        const socketConnectedStatus = socket.connected
+        const socketConnectionStatus = socket.connected
 
         
       
@@ -181,12 +181,12 @@ class MissionInstance extends React.Component {
         try{
             const user = {_id: this.props.auth.uid, inMission: true}
             const leader = !this.props.party.leader || (this.props.party.leader._id === this.props.auth.uid)
-            const response = await togglePresenceInInstance(user, this.props.party._id, socketConnectedStatus)
+            const response = await togglePresenceInInstance(user, this.props.party._id, socketConnectionStatus)
             const missionInstance = response.missionInstance
             const amulets = response.amulets
-            //console.log(amulets)
+           
             const instanceUsers = this.modifyUserStatus(user, missionInstance.party)
-            //console.log(instanceUsers)
+            
             this.setState({
                 instanceUsers: [...instanceUsers],
                 instanceItems: [...missionInstance.items],  

@@ -131,7 +131,7 @@ var io = socket(server); //param is a server, defined upper
 
 
 async function authenticate(socket, data, callback) {
-  console.log(socket.id, 'tried socket auth')
+  //console.log(socket.id, 'tried socket auth')
   let multipleSession = false
   try{
     const user = await socketConnectAuth(socket)
@@ -259,8 +259,7 @@ const postAuthenticate = socket => {
 async function disconnect(socket) {
   
   let i = allClients.findIndex((client) => client.socketId === socket.id);
-  console.log(socket.id)
-  console.log(allClients)
+ 
   if(i < 0){
     console.log("Client not found")
   }else{

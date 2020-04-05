@@ -1,20 +1,18 @@
 
 import axios from 'axios'
-import {refreshPartyEmit, refreshMissionsEmit} from '../../socket'
+import {refreshPartyEmit} from '../../socket'
 import {pick, cloneDeep} from 'lodash'
 
-export const getShop = (socketStatusConnection) => {
+export const getShop = (socketConnectionStatus) => {
     return async dispatch => {
         try {
-            const res = await axios.get('/product/shop')
-        
-            
-            if(socketStatusConnection !== undefined){
-                if(res.data.party && res.data.party.members.length && !socketStatusConnection){ //if client of multiplayer mission is not connected to socket
-                    throw new Error('Leader not connected to party members.')
+            console.log(socketConnectionStatus)
+            const res = await axios.get(`/product/shop`, {
+                params: { //it is req.query, not req.params at backend -.-
+                    socketConnectionStatus
                 }
-            }
-
+            })
+            
             dispatch({type: 'GET_SHOP', shop: res.data.shop})
             dispatch({type: 'UPDATE_ACTIVE_ORDER', activeOrder: res.data.activeOrder})
             dispatch({type: "UPDATE_PARTY", party: res.data.party})
@@ -22,11 +20,9 @@ export const getShop = (socketStatusConnection) => {
                 refreshPartyEmit(res.data.party._id)
             }
         } catch (e) {
-            console.log(e)
-            if(e.message === 'Leader not connected to party members.'){
-                throw new Error(e)   
-            }
-            dispatch( {type: "NO_CONNECTION", error: e})    
+            console.log(e.message)
+            dispatch( {type: "NO_CONNECTION", error: e})  
+            throw new Error(e)
         }
     }
 }

@@ -1,5 +1,4 @@
 import express from 'express'
-import bcrypt from 'bcryptjs'
 import { User } from '../models/user';
 import { Mission } from '../models/mission';
 import { adminAuth } from '../middleware/adminAuth';
@@ -764,10 +763,16 @@ router.patch('/leaveInstance', auth, async (req, res) => {
 //OK
 router.patch('/enterInstance', auth, async (req, res) => {
     const user = req.user
-
+    const socketConnectionStatus = req.body.socketConnectionStatus
+    
     try{
         const missionInstance = await toggleUserInstanceStatus(user, 'inMission', true)
 
+        if(socketConnectionStatus !== undefined){
+            if(missionInstance.party.length > 1 && !socketConnectionStatus){ //if client of multiplayer mission is not connected to socket
+                throw new Error('Client is not connected to socket!')
+            }
+        }
         
         await user.populate({
             path: 'bag party',
@@ -775,7 +780,11 @@ router.patch('/enterInstance', auth, async (req, res) => {
         }).execPopulate()
 
         if(user.party){
+
+            
             const party = [user.party.leader, ...user.party.members]
+
+
     
             let missionParty = [] 
             await asyncForEach(missionInstance.party, async (memberObject) => {

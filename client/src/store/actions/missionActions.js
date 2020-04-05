@@ -119,17 +119,13 @@ export const sendItemToUser = (id, partyId) => {
     })
 }
 
-export const togglePresenceInInstance = (user, partyId, socketStatusConnection) => {
+export const togglePresenceInInstance = (user, partyId, socketConnectionStatus) => {
     return new Promise (async (resolve, reject) => {
         try {
             if(user.inMission){
+                console.log(socketConnectionStatus)
+                const res = await axiosInstance.patch('/mission/enterInstance', {socketConnectionStatus})
                 
-                const res = await axiosInstance.patch('/mission/enterInstance')
-                if(socketStatusConnection !== undefined){
-                    if(res.data.missionInstance.party.length > 1 && !socketStatusConnection){ //if client of multiplayer mission is not connected to socket
-                        reject()
-                    }
-                }
                 modifyUserStatusEmit(user, partyId)
                 resolve(res.data)
             }else{

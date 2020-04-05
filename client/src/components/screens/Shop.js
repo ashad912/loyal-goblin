@@ -126,12 +126,13 @@ class Shop extends React.Component {
       return;
     }
 
-    const socketConnectedStatus = socket.connected
+    const socketConnectionStatus = socket.connected
 
     try{
-      await this.props.onGetShop(socketConnectedStatus);
+      await this.props.onGetShop(socketConnectionStatus);
     }catch(e){
-      this.handleLeaveShop();
+      this.handleBack()
+      //this.handleLeaveShop(); REFACTORED
       return;
     }
 

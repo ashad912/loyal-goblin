@@ -40,9 +40,9 @@ const RootSnackbar = props => {
                         {notTheLeader === true && (!props.activeInstanceId) && (props.screen === 2)
                          && (<p style={{margin: '0'}}>Tylko lider drużyny, może rozpocząć misję.</p>)}
                         {notTheLeader === true && (props.screen === 0) && (!props.party.inShop)
-                         && (<p style={{margin: '0'}}>Tylko lider drużyny, może rozpocząć expienie.</p>)}
+                         && (<p style={{margin: '0'}}>Tylko lider drużyny, może rozpocząć przygodę.</p>)}
                          {notTheLeader === true && (props.screen === 0) && (props.party.inShop)
-                         && (<p style={{margin: '0'}}>Lider rozpoczął expienie.</p>)}
+                         && (<p style={{margin: '0'}}>Lider rozpoczął przygodę.</p>)}
                         {(props.screen === 2) && multipleSession === true
                          && (<p style={{margin: '0'}}>Wielokrotna sesja. Zamknij inne karty, a następnie odśwież, aby zarządzać misjami.</p>)}
                         {(props.screen === 0) && multipleSession === true &&
