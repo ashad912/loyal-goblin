@@ -16,9 +16,11 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import MenuIcon from "@material-ui/icons/Menu";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import KeyboardArrowLeftIcon from "@material-ui/icons/KeyboardArrowLeft";
 import LockIcon from '@material-ui/icons/Lock';
 import { Badge } from '@material-ui/core';
 import { connect } from 'react-redux';
+import { useHistory } from "react-router";
 import { Link } from '@material-ui/core';
 import {updateAvatar} from '../../store/actions/profileActions'
 import {signOut} from '../../store/actions/authActions'
@@ -71,6 +73,9 @@ const Navbar = (props) => {
     const [hideNavbar, setHideNavbar] = React.useState(false)
     const [showAlertSnackbar, setShowAlertSnackbar] = React.useState(false)
     const [alertMessage, setAlertMessage] = React.useState('')
+
+    const history = useHistory()
+
     React.useEffect(()=>{
         if(!props.auth.uid){
             setHideNavbar(true)
@@ -155,13 +160,49 @@ const Navbar = (props) => {
         setShowDrawer(null)
     }
 
+    
 
+    const handleBack = () => {
+        var indexRedirect = 0
+        switch (window.location.pathname) {
+            case '/mission':
+                indexRedirect = 2;
+                break;
+            default:
+                break;
+        }
+
+        history.push({
+            pathname: "/",
+            state: { indexRedirect}
+        });
+    }
+
+    const isBackButtonVisible = ['/shop', '/mission'].includes(window.location.pathname)
+    const toolbarPaddingLeft = isBackButtonVisible ? '0px' : '16px'
 
     return(
         <StyledAppBar  position="static" id="navbar" hide={hideNavbar ? 1 : 0}>
-        <Toolbar>
+        <Toolbar style={{paddingLeft: toolbarPaddingLeft}}>
+            
             {props.auth.uid && props.auth.profile.name ? (
                 <React.Fragment>
+                    {isBackButtonVisible && (
+                        <Button 
+                            onClick={handleBack}
+                            style={{
+                                minWidth: '0',
+                                
+                            }} 
+                        >  
+                            <KeyboardArrowLeftIcon
+                                style={{
+                                    color: 'white',
+                                    fontSize: '2.5rem',
+                                }}
+                            />  
+                        </Button>
+                    )}
                     <Badge
                         style={{height: '2rem', width: '2rem'}}
                         overlap="circle"

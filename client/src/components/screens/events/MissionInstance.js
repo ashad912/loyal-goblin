@@ -127,18 +127,32 @@ class MissionInstance extends React.Component {
 
 
     backToEvents = (history) => {
-        history.push({
+        
+        history.replace({
           pathname: '/',
           state: {indexRedirect: 2}
         }) 
     }
 
-    handleBack = async () => {
+    pushToEvents = history => {
+        
+        history.push({
+          pathname: "/",
+          state: { indexRedirect: 2}
+        });
+    }
+
+    handleBack = async (withStack) => {
         const user = {_id: this.props.auth.uid, inMission: false, readyStatus: false}
         await togglePresenceInInstance(user, this.props.party._id)
         await this.props.authCheck()
 
-        this.backToEvents(this.props.history)
+        
+        if(withStack){
+            this.pushToEvents(this.props.history)
+        }else{
+            this.backToEvents(this.props.history);
+        }
     }
 
     modifyUserStatus = (user, users) => {
@@ -166,7 +180,7 @@ class MissionInstance extends React.Component {
 
     async componentDidMount() {
 
-        console.log(this.props)
+        
 
         if(!this.props.location.state || (this.props.location.state.id === undefined)){
             console.log('state lack')
@@ -344,7 +358,7 @@ class MissionInstance extends React.Component {
         const statusIcon = (condition) => condition ? (
             <CheckIcon
                 style={{
-                    flexBasis: '20%',
+                    flexBasis: '10%',
                     color: "green",
                     fontSize: "2rem",
                     transition: "transform 500ms ease-out",
@@ -354,7 +368,7 @@ class MissionInstance extends React.Component {
         ) : (
             <ClearIcon
                 style={{
-                    flexBasis: '20%',
+                    flexBasis: '10%',
                     color: "red",
                     fontSize: "2rem",
                     transition: "transform 500ms ease-out",
@@ -457,7 +471,7 @@ class MissionInstance extends React.Component {
                             
                             {requiredMissionItems.map((amulet) => {
                                 return (
-                                    <React.Fragment key={amulet.itemModel.id}>
+                                    <React.Fragment key={amulet.itemModel._id}>
                                         
                                         <StyledItemIcon src={`${itemsPath}${amulet.itemModel.imgSrc}`}/>
                                         <StyledItemsIndicator required={amulet.quantity} inBox={amulet.inBox}><Typography style={{fontSize: '0.8rem'}}>{` ${amulet.inBox}/${amulet.quantity}`}</Typography></StyledItemsIndicator>
@@ -476,12 +490,13 @@ class MissionInstance extends React.Component {
                         
                     
                         <ButtonBar>
-                            <Button 
+                            {/* <Button 
+                            
                                 style={{flexBasis: '35%', marginRight: '0.5rem'}} 
-                                onClick={this.handleBack} 
+                                onClick={() => this.handleBack(true)} 
                                 variant="contained" 
                                 color="primary" >
-                                    <KeyboardArrowLeftIcon
+                                <KeyboardArrowLeftIcon
                                     style={{
                                         fontSize: "2rem",
                                         transition: "transform 500ms ease-out",
@@ -490,12 +505,26 @@ class MissionInstance extends React.Component {
                                 />
                                 <PintoTypography>Wyjdź</PintoTypography>
                                 
-                            </Button>
-                            <Button style={{display: 'flex', flexFlow: 'row nowrap', flexBasis: '65%'}} onClick={this.handleReadyButton} disabled={this.state.leader && (!isRequiredItemsCollected || !isAllPartyReady)} variant="contained" color="primary">
-                                <PintoTypography style={{flexBasis: '60%'}}>{buttonReadyLabel}</PintoTypography>
+                            </Button> */}
+                            <Button 
+                                style={{
+                                    display: 'flex',
+                                    flexFlow: 'row nowrap',
+                                    width: '100%',
+                                    position: 'absolute',
+                                    bottom: document.getElementById("footer").offsetHeight,
+                                    left: 0,
+                                    borderRadius: 0,
+                                }} 
+                                onClick={this.handleReadyButton} 
+                                disabled={this.state.leader && (!isRequiredItemsCollected || !isAllPartyReady)} 
+                                variant="contained" 
+                                color="primary"
+                            >
+                                <PintoTypography style={{flexBasis: '80%'}}>{buttonReadyLabel}</PintoTypography>
                                 <ColorizeIcon
                                     style={{
-                                        flexBasis: '20%',
+                                        flexBasis: '10%',
                                         margin: '0 0 0 0.2rem',
                                         fontSize: "2rem",
                                         transition: "transform 500ms ease-out",

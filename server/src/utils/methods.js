@@ -402,7 +402,6 @@ export const designateNewLevels = (baseExp, newExp) => {
   }
 
   const levelsData = designateUserLevel(baseExp, newExp)
-  console.log(levelsData)
   return levelsData.newLevel - levelsData.oldLevel
   
 }

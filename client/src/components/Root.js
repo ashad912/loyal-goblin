@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
-//import { useHistory } from "react-router";
+import { useHistory } from "react-router";
 import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
@@ -20,6 +20,9 @@ import {socket, multipleSessionSubscribe} from '../socket'
 import styled from 'styled-components'
 import { createCharacter, getAllNames, clearAllNames } from "../store/actions/profileActions";
 import { authCheck } from "../store/actions/authActions";
+import {
+  leaveShop
+} from "../store/actions/shopActions";
 import Party from "./screens/Party";
 import { uiPaths, palette } from "../utils/definitions";
 
@@ -77,7 +80,11 @@ function Root(props) {
 
   const [footerReached, setFooterReached] = React.useState(false)
 
-  //const history = useHistory()
+  const history = useHistory()
+
+  const classes = useStyles();
+  const theme = useTheme();
+  const [value, setValue] = React.useState(0);
 
   const trackScrolling = () => {
     const isTop = (el) => {
@@ -95,12 +102,12 @@ function Root(props) {
 
 
   useEffect(() => {
-    console.log(props)
     //change tab, when returing from specific event
     if (props.location.state && props.location.state.hasOwnProperty("indexRedirect")) {
+      
       const redirectToIndex = props.location.state.indexRedirect;
-      props.history.replace("", null);
       setValue(redirectToIndex);
+      props.history.replace("", null);
     }
 
     if(props.auth.profile.name && props.auth.profile.class){
@@ -127,17 +134,16 @@ function Root(props) {
     
   }, [showCharacterCreationModal]);
 
-  // useEffect(() => {
-  //   if (props.party.inShop && props.party.leader._id === props.auth.uid) {
-  //     history.push("/shop", { id: props.auth.uid });
-  //   }
-  // }, [props.party.inShop]);
+  useEffect(() => {
+    if (props.party.inShop && props.party.leader._id === props.auth.uid) {
+      props.onLeaveShop();
+      //history.push("/shop", { id: props.auth.uid });
+    }
+  }, [props.party.inShop]);
 
 
 
-  const classes = useStyles();
-  const theme = useTheme();
-  const [value, setValue] = React.useState(0);
+  
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -233,6 +239,7 @@ const mapDispatchToProps = dispatch => {
   return {
     onCreateCharacter: (name, sex, charClass, attributes) => dispatch(createCharacter(name, sex, charClass, attributes)),
     onAuthCheck: () => dispatch(authCheck()),
+    onLeaveShop: () => dispatch(leaveShop()),
     onGetAllNames: () => dispatch(getAllNames()),
     onClearAllNames: ()=>dispatch(clearAllNames())
   };

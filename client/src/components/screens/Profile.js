@@ -336,7 +336,6 @@ const Profile = props => {
   // };
 
   const handleOpenShop = () => {
-    console.log('Shop pushed!')
     history.push("/shop", { id: props.auth.uid });
   };
 

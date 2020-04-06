@@ -91,27 +91,38 @@ class Shop extends React.Component {
     this.menuRef = React.createRef();
   }
 
-  backToShop = history => {
-    history.push({
+  backToProfile = history => {
+    history.replace({
       pathname: "/",
       state: { indexRedirect: 0 }
     });
   };
 
-  handleBack = () => {
+  pushToProfile = history => {
+    history.push({
+      pathname: "/",
+      state: { indexRedirect: 0 }
+    });
+  }
+
+  handleBack = (withStack) => {
     window.removeEventListener("scroll", this.handleScrollPosition);
-    this.backToShop(this.props.history);
+    if(withStack){
+      this.pushToProfile(this.props.history)
+    }else{
+      this.backToProfile(this.props.history);
+    }
   };
 
   handleLeaveShop = async () => {
     if(this.props.party && this.props.party.length){
       await this.props.onLeaveShop();
     }
-    this.handleBack()
+    this.handleBack(true)
   };
 
   async componentDidMount() {
-    console.log(this.props)
+    
     if (
       !this.props.location.state ||
       this.props.location.state.id === undefined

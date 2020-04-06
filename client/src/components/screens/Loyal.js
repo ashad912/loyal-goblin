@@ -412,13 +412,6 @@ class Loyal extends Component {
         
     }
 
-    backToEvents = (history) => {
-        history.push({
-          pathname: '/',
-          state: {indexRedirect: 1}
-        }) 
-    }
-
     handleToggleTorpedosModal = e => {
         this.setState(prevState => {
           return { 
@@ -427,7 +420,7 @@ class Loyal extends Component {
            };
         });
         
-      };
+    };
 
     render() { 
         const userTorpedos = this.state.userTorpedos

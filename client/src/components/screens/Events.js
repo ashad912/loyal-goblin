@@ -190,7 +190,7 @@ const Events = (props) => {
            
 
             {missionId != null ?
-             <Redirect to={{
+             <Redirect push to={{
                   pathname: '/mission',
                   state: { id: missionId}                                      
             }} /> : null}
