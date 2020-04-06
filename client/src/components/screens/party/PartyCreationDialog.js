@@ -79,7 +79,6 @@ const useStyles = makeStyles(theme => ({
 
 const PartyCreationDialog = props => {
   const [partyName, setPartyName] = React.useState(props.partyName);
-  const [party, setParty] = React.useState([]);
   const [isManagingParty, setIsManagingParty] = React.useState(
     props.isManagingParty
   );
@@ -227,19 +226,21 @@ const PartyCreationDialog = props => {
               </Button>
             </Grid>
           )}
-          {party.length <= 8 && isManagingParty && (
-            [<Grid item>
-              <Button
-                variant="contained"
+          {props.party.members && props.party.members.length <= 7 && isManagingParty && (
+            <React.Fragment>
+              <Grid item>
+                <Button
+                  variant="contained"
 
-                onClick={props.activeMission ? ()=>handleWarningDialogAction(()=>handleQRscanStart) : handleQRscanStart}
-              >
-                Dodaj osobę
-              </Button>
-            </Grid>,
-            <Grid item>
-              <PintoTypography style={{fontSize:'1.2rem', color:palette.background.darkGrey,textAlign:'center'}}>By dodać osobę, zeskanuj kod QR wyświetlony na jej telefonie.</PintoTypography>
-            </Grid>]
+                  onClick={props.activeMission ? ()=> handleWarningDialogAction(()=>handleQRscanStart, "Zmiana liczebności drużyny") : handleQRscanStart}
+                >
+                  {props.party.members && props.party.members.length > 0 ? "Dodaj kolejną osobę" : 'Dodaj osobę'}
+                </Button>
+              </Grid>
+              <Grid item>
+                <PintoTypography style={{fontSize:'1.2rem', color: palette.background.darkGrey, textAlign:'center'}}>By dodać osobę, zeskanuj kod QR wyświetlony na jej telefonie.</PintoTypography>
+              </Grid>
+            </React.Fragment>
           )}
         </Grid>
         <StyledMenu
@@ -287,10 +288,10 @@ const PartyCreationDialog = props => {
         />
       )}
       <PartyMissionInstanceWarningDialog
-      open={warningOpen}
-      handleClose={() => setWarningOpen(false)}
-      handleAction={warningAction}
-      text={warningText}
+        open={warningOpen}
+        handleClose={() => setWarningOpen(false)}
+        handleAction={warningAction}
+        text={warningText}
       />
     </Dialog>
   );

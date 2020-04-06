@@ -9,6 +9,7 @@ import { Provider} from 'react-redux' //to wire reducer to App, and choose store
 import thunk from 'redux-thunk' //for asynchronous things
 import axios from 'axios'
 import {setLoading} from './store/actions/connectionActions'
+import { BrowserRouter, Route } from 'react-router-dom';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
@@ -39,8 +40,15 @@ axios.interceptors.response.use(function (response) {
 if(process.env.NODE_ENV === 'production'){
   window.oncontextmenu = function() { return false; }
 }
- 
-ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementById('root'));
+
+
+ReactDOM.render(
+  <Provider store={store}>
+    <BrowserRouter>
+      <Route path='/' component={App}/>
+    </BrowserRouter>
+  </Provider>,
+  document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

@@ -123,7 +123,7 @@ export const togglePresenceInInstance = (user, partyId, socketConnectionStatus) 
     return new Promise (async (resolve, reject) => {
         try {
             if(user.inMission){
-                console.log(socketConnectionStatus)
+                
                 const res = await axiosInstance.patch('/mission/enterInstance', {socketConnectionStatus})
                 
                 modifyUserStatusEmit(user, partyId)
@@ -136,6 +136,9 @@ export const togglePresenceInInstance = (user, partyId, socketConnectionStatus) 
             }
         }catch (e) {
             console.log(e)
+            console.log(e.response)
+            console.log(e.message)
+            console.log(e.name)
             reject(e)     
         } 
     })

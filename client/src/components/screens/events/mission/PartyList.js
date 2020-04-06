@@ -275,7 +275,7 @@ const PartyList = (props) => {
                 {party.map((member) => {
                     return(
                     
-                        <StyledBox border={0} borderColor="primary.main" style={{background: palette.background.standard}}>
+                        <StyledBox key={member._id} border={0} borderColor="primary.main" style={{background: palette.background.standard}}>
                             <ListItem style={{paddingRight: '0.5rem'}}>
                             {member.inMission ? (
                                 <ListItemAvatar style={{minWidth: 32}}>

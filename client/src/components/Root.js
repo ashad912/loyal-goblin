@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
+//import { useHistory } from "react-router";
 import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
@@ -21,6 +22,7 @@ import { createCharacter, getAllNames, clearAllNames } from "../store/actions/pr
 import { authCheck } from "../store/actions/authActions";
 import Party from "./screens/Party";
 import { uiPaths, palette } from "../utils/definitions";
+
 
 const StyledTab = styled(Tab)`
   font-family: Pinto-0;
@@ -75,6 +77,8 @@ function Root(props) {
 
   const [footerReached, setFooterReached] = React.useState(false)
 
+  //const history = useHistory()
+
   const trackScrolling = () => {
     const isTop = (el) => {
       return el.getBoundingClientRect().top <= window.innerHeight;
@@ -91,6 +95,7 @@ function Root(props) {
 
 
   useEffect(() => {
+    console.log(props)
     //change tab, when returing from specific event
     if (props.location.state && props.location.state.hasOwnProperty("indexRedirect")) {
       const redirectToIndex = props.location.state.indexRedirect;
@@ -121,6 +126,14 @@ function Root(props) {
       }
     
   }, [showCharacterCreationModal]);
+
+  // useEffect(() => {
+  //   if (props.party.inShop && props.party.leader._id === props.auth.uid) {
+  //     history.push("/shop", { id: props.auth.uid });
+  //   }
+  // }, [props.party.inShop]);
+
+
 
   const classes = useStyles();
   const theme = useTheme();
@@ -212,6 +225,7 @@ function Root(props) {
 const mapStateToProps = state => {
   return {
     auth: state.auth,
+    party: state.party
   };
 };
 

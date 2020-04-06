@@ -664,7 +664,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
   
     } catch (e) {
         console.log(e.message)
-        res.status(400).send(e.message)
+        res.status(400).send(e)
     }
     
 })

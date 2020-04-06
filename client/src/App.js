@@ -1,5 +1,6 @@
 import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import {compose} from 'redux'
+import { BrowserRouter, Route, Switch, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { StylesProvider, ThemeProvider } from "@material-ui/styles";
 import { createMuiTheme } from "@material-ui/core/styles";
@@ -80,6 +81,44 @@ state = {
     window.addEventListener('online', this.handleOnlineState, false);
     window.addEventListener('offline', this.handleOfflineState, false);
 
+    //HISTORY BACK PREVENT - https://medium.com/@subwaymatch/disabling-back-button-in-react-with-react-router-v5-34bb316c99d7
+    const { history } = this.props;
+    history.listen((newLocation, action) => {
+      if (action === "PUSH") {
+        if (
+          newLocation.pathname !== this.currentPathname ||
+          newLocation.search !== this.currentSearch
+        ) {
+          console.log('PUSH handler')
+          // Save new location
+          this.currentPathname = newLocation.pathname;
+          this.currentSearch = newLocation.search;
+          this.currentState = newLocation.state;
+
+          // Clone location object and push it to history
+          history.push({
+            pathname: newLocation.pathname,
+            state: newLocation.state,
+            search: newLocation.search
+          });
+        }
+      } else {
+        
+          // Send user back if they try to navigate back
+          // console.log('POP listener')
+          // this.currentPathname = '/'
+          // this.currentSearch = ''
+          // this.currentState = {indexRedirect: 0}
+
+          // history.push({
+          //   pathname: this.currentPathname, 
+          //   state: this.currentState
+          // });
+
+          history.go(1);
+      }
+    });
+
     //CHECK AUTH ON APP LOAD
     if(navigator.onLine){
 
@@ -143,7 +182,6 @@ state = {
 
   render() {
     return (
-      <BrowserRouter>
         <StylesProvider injectFirst>
           <ThemeProvider theme={goblinTheme}>
             <div className="App">
@@ -193,7 +231,6 @@ state = {
             <OfflineModal open={!this.state.online}/>
           </ThemeProvider>
         </StylesProvider>
-      </BrowserRouter>
     );
   }
 }
@@ -206,4 +243,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(App);
+export default compose(
+    withRouter,
+    connect(null, mapDispatchToProps)
+  )(App);

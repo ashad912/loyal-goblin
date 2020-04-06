@@ -41,7 +41,7 @@ const PerkBoxItem = ({ perk, isFirst, isEquipment, equipped }) => {
               ":00";
           }
           return (
-            <p
+            <PintoTypography
               style={{ margin: 0 }}
               key={
                 perk.perkType +
@@ -52,23 +52,23 @@ const PerkBoxItem = ({ perk, isFirst, isEquipment, equipped }) => {
               }
             >
               {timeString}
-            </p>
+            </PintoTypography>
           );
         })}
       </div>
     );
   } else {
-    secondaryText = <span>Efekt stały</span>;
+    secondaryText = <PintoTypography>Efekt stały</PintoTypography>;
   }
 
   return (
     <ListItem style={{ flexDirection: "row", alignItems: 'space-between', borderTop: isFirst ? "" : isEquipment ? '1px solid black':palette.border, padding: isEquipment ? '0' : '8px', boxSizing:'border-box' }}>
-      <PintoTypography style={{flexBasis:isEquipment?'35%':'25%'}}>
+      <span style={{flexBasis:isEquipment?'35%':'25%'}}>
         {secondaryText}
-      </PintoTypography>
+      </span>
       <Grid container justify="flex-end"  >
       {primaryText.map((text, index) => {
-        return <Grid key={text+index} item ><PintoTypography>{text}</PintoTypography></Grid>
+        return <Grid key={text+index} item ><span>{text}</span></Grid>
       })}
       </Grid>
     </ListItem>

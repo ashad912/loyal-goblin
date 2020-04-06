@@ -51,6 +51,7 @@ export const signUp = (credentials) => {
             } catch (e) {
                 
                 console.error(e)
+                //data -> MongoError has prop: code
                 dispatch( {type: "SIGNUP_ERROR", messageCode: e.response.data.code})
 
                 reject(e)

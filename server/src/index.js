@@ -275,8 +275,7 @@ async function disconnect(socket) {
       console.log(`${roomId} for user ${userId} with status inMission: false`)
       socket.broadcast.to(roomId).emit("modifyUserStatus", {_id: userId, inMission: false, readyStatus: false});
       console.log(`User ${userId} left the room ${roomId}`)
-      socket.broadcast.to(roomId).emit("leaveRoom", userId);
-      socket.broadcast.to(roomId).emit("instanceRefresh", roomId);
+      socket.broadcast.to(roomId).emit("refreshParty", userId);
     }
     allClients.splice(i, 1);
     
@@ -288,6 +287,6 @@ require('socketio-auth')(io, {
   authenticate: authenticate,
   postAuthenticate: postAuthenticate,
   disconnect: disconnect,
-  timeout: 3000
+  timeout: 5000
 });
 

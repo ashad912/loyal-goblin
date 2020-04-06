@@ -14,8 +14,8 @@ import OrderWarningDialog from "./events/OrderWarningDialog";
 import Typography from '@material-ui/core/Typography';
 import styled from 'styled-components'
 
-import {getMissionList, createInstance, deleteInstance, setActiveInstance} from '../../store/actions/missionActions.js'
-import {socket, refreshMissionsSubscribe} from '../../socket'
+import {getMissionList, createInstance, deleteInstance} from '../../store/actions/missionActions.js'
+import {socket} from '../../socket'
 
 import Rally from './events/Rally'
 import { getFirstRally } from '../../store/actions/rallyActions'
@@ -65,20 +65,6 @@ const Events = (props) => {
     const fetchMissions = async () => {
         
         await props.getMissionList()
-        // const missionObject = await getMissionList()
-        
-        // setMissionListData(missionObject.missions)
-
-        // if(missionObject.missionInstanceId){
-        //     const instanceIndex = missionObject.missions.findIndex((mission) => mission._id === missionObject.missionInstanceId)
-        //     props.setActiveInstance(missionObject.missionInstanceId, missionObject.missions[instanceIndex].imgSrc)
-        // }else{
-        //     props.setActiveInstance(null, null)
-        // }
-        
-        
-        
-        //updateActiveInstanceId(missionObject.missionInstanceId)
     }
 
     const fetchRally = async () => {
@@ -275,7 +261,6 @@ const mapDispatchToProps = dispatch => {
     return {
         authCheck: () => dispatch(authCheck()),
         getMissionList : () => dispatch(getMissionList()),
-        setActiveInstance: (id, imgSrc) => dispatch(setActiveInstance(id, imgSrc)),
         createInstance: (id, partyId) => dispatch(createInstance(id, partyId)),
         deleteInstance: (partyId) => dispatch(deleteInstance(partyId))
     };

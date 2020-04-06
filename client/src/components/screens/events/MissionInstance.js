@@ -47,17 +47,16 @@ const StyledItemsIndicator = styled.span`
 
 const MissionBar = styled.div`
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-flow: row wrap;
   align-items: baseline;
   margin: 0 0rem 0rem 0rem;
 `
 
 
 const ButtonBar = styled.div`
-  width: 100%;
   display: flex;
-  flex-direction: row;
+  width: 100%;
+  flex-flow: row nowrap;
   text-align: left;
   align-items: center;
   justify-content: space-between;
@@ -126,11 +125,6 @@ class MissionInstance extends React.Component {
         fullHeightCorrection: 0,
     }
 
-    async componentWillUnmount() {
-        const user = {_id: this.props.auth.uid, inMission: false, readyStatus: false}
-        await togglePresenceInInstance(user, this.props.party._id)
-        await this.props.authCheck()
-    }
 
     backToEvents = (history) => {
         history.push({
@@ -139,7 +133,11 @@ class MissionInstance extends React.Component {
         }) 
     }
 
-    handleBack = () => {
+    handleBack = async () => {
+        const user = {_id: this.props.auth.uid, inMission: false, readyStatus: false}
+        await togglePresenceInInstance(user, this.props.party._id)
+        await this.props.authCheck()
+
         this.backToEvents(this.props.history)
     }
 
@@ -168,7 +166,10 @@ class MissionInstance extends React.Component {
 
     async componentDidMount() {
 
+        console.log(this.props)
+
         if(!this.props.location.state || (this.props.location.state.id === undefined)){
+            console.log('state lack')
             this.handleBack()
             return
         }
@@ -224,7 +225,7 @@ class MissionInstance extends React.Component {
                 })
             })
         }catch(e){
-            //console.log(e)
+            console.log(e)
             this.handleBack()
         }
 
@@ -343,6 +344,7 @@ class MissionInstance extends React.Component {
         const statusIcon = (condition) => condition ? (
             <CheckIcon
                 style={{
+                    flexBasis: '20%',
                     color: "green",
                     fontSize: "2rem",
                     transition: "transform 500ms ease-out",
@@ -352,6 +354,7 @@ class MissionInstance extends React.Component {
         ) : (
             <ClearIcon
                 style={{
+                    flexBasis: '20%',
                     color: "red",
                     fontSize: "2rem",
                     transition: "transform 500ms ease-out",
@@ -474,7 +477,7 @@ class MissionInstance extends React.Component {
                     
                         <ButtonBar>
                             <Button 
-                                style={{width: '36%', marginRight: '0.5rem'}} 
+                                style={{flexBasis: '35%', marginRight: '0.5rem'}} 
                                 onClick={this.handleBack} 
                                 variant="contained" 
                                 color="primary" >
@@ -488,20 +491,22 @@ class MissionInstance extends React.Component {
                                 <PintoTypography>Wyjdź</PintoTypography>
                                 
                             </Button>
-                            <Button style={{width: '52%'}} onClick={this.handleReadyButton} disabled={this.state.leader && (!isRequiredItemsCollected || !isAllPartyReady)} variant="contained" color="primary">
-                                <PintoTypography>{buttonReadyLabel}</PintoTypography>
+                            <Button style={{display: 'flex', flexFlow: 'row nowrap', flexBasis: '65%'}} onClick={this.handleReadyButton} disabled={this.state.leader && (!isRequiredItemsCollected || !isAllPartyReady)} variant="contained" color="primary">
+                                <PintoTypography style={{flexBasis: '60%'}}>{buttonReadyLabel}</PintoTypography>
                                 <ColorizeIcon
-                                style={{
-                                    margin: '0 0 0 0.2rem',
-                                    fontSize: "2rem",
-                                    transition: "transform 500ms ease-out",
-                                    transform: this.state.userReadyStatus ? "rotate(540deg)" : "rotate(0deg)"
-                                    
-                                }}
+                                    style={{
+                                        flexBasis: '20%',
+                                        margin: '0 0 0 0.2rem',
+                                        fontSize: "2rem",
+                                        transition: "transform 500ms ease-out",
+                                        transform: this.state.userReadyStatus ? "rotate(540deg)" : "rotate(0deg)"
+                                        
+                                    }}
                                 />
+                                {!this.state.leader ? statusIcon(this.state.userReadyStatus) : statusIcon(isRequiredItemsCollected && isAllPartyReady)}
                             </Button>
                             
-                            {!this.state.leader ? statusIcon(this.state.userReadyStatus) : statusIcon(isRequiredItemsCollected && isAllPartyReady)}
+                            
                             
                             
                         </ButtonBar>

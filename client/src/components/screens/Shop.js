@@ -99,20 +99,24 @@ class Shop extends React.Component {
   };
 
   handleBack = () => {
+    window.removeEventListener("scroll", this.handleScrollPosition);
     this.backToShop(this.props.history);
   };
 
   handleLeaveShop = async () => {
-    await this.props.onLeaveShop();
+    if(this.props.party && this.props.party.length){
+      await this.props.onLeaveShop();
+    }
     this.handleBack()
   };
 
   async componentDidMount() {
-
+    console.log(this.props)
     if (
       !this.props.location.state ||
       this.props.location.state.id === undefined
     ) {
+      console.log('No state!')
       this.handleBack();
       return;
     }
@@ -192,9 +196,9 @@ class Shop extends React.Component {
     }
   }
 
-  componentWillUnmount() {
-    window.removeEventListener("scroll", this.handleScrollPosition);
-  }
+  // componentWillUnmount() {
+    
+  // }
 
   handleScrollPosition = () => {
     if (window.pageYOffset >= this.state.menuTopOffset) {

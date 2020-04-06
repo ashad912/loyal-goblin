@@ -43,6 +43,7 @@ const FabIcon = styled.img`
   width: 2rem;
 `;
 
+
 const Party = props => {
   const [isJoiningParty, setIsJoiningParty] = React.useState(false);
   const [isCreatingParty, setIsCreatingParty] = React.useState(false);
@@ -117,17 +118,19 @@ const Party = props => {
           <List>
             <ListItem style={{paddingRight:0, paddingLeft:0}}>
               <ListItemAvatar style={{ position: "relative" }}>
-                <img
-                  src={uiPaths.leader}
-                  style={{ position: "absolute", top: "-30px", left: "1rem", width:'2rem' }}
-                />
-                {props.party.leader.avatar ? (
-                  <Avatar src={usersPath + props.party.leader.avatar} style={{width:'4rem', height:'4rem'}}/>
-                ) : (
-                  <Avatar style={{width:'4rem', height:'4rem', fontSize:'1.4rem'}}>
-                    {createAvatarPlaceholder(props.party.leader.name)}
-                  </Avatar>
-                )}
+                <React.Fragment>
+                  <img
+                    src={uiPaths.leader}
+                    style={{ position: "absolute", top: "-30px", left: "1rem", width:'2rem' }}
+                  />
+                  {props.party.leader.avatar ? (
+                    <Avatar src={usersPath + props.party.leader.avatar} style={{width:'4rem', height:'4rem'}}/>
+                  ) : (
+                    <Avatar style={{width:'4rem', height:'4rem', fontSize:'1.4rem'}}>
+                      {createAvatarPlaceholder(props.party.leader.name)}
+                    </Avatar>
+                  )}
+                </React.Fragment>
               </ListItemAvatar>
 
               {/* <ListItemText

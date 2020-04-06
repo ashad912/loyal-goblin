@@ -6,7 +6,6 @@ import {pick, cloneDeep} from 'lodash'
 export const getShop = (socketConnectionStatus) => {
     return async dispatch => {
         try {
-            console.log(socketConnectionStatus)
             const res = await axios.get(`/product/shop`, {
                 params: { //it is req.query, not req.params at backend -.-
                     socketConnectionStatus
