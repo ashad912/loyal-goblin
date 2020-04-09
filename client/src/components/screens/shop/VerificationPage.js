@@ -22,7 +22,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import { PintoSerifTypography,PintoTypography } from "../../../utils/fonts";
+import { PintoSerifTypography, PintoTypography } from "../../../utils/fonts";
 import { cancelOrder, leaveShop } from "../../../store/actions/shopActions";
 import {itemsPath, usersPath, palette} from '../../../utils/definitions'
 import {createAvatarPlaceholder} from '../../../utils/methods'
@@ -205,9 +205,9 @@ const handleCancelOrder = async () => {
       >
         <DialogTitle id="alert-dialog-title">Anulować zamówienie?</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+          <PintoTypography style={{color: palette.background.darkGrey}}>
             Anulowane zamówienie zostanie utracone.
-          </DialogContentText>
+          </PintoTypography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseCancelDialog} >

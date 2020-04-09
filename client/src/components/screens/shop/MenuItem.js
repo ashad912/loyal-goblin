@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import { SectionLink } from "react-scroll-section";
 
 const Item = styled.div`
-border-bottom: ${props => props.selected ? '2px solid #e91e63' : 'none'};
-font-family: 'Pinto-0';
+  border-bottom: ${props => props.selected ? '2px solid #e91e63' : 'none'};
+  font-family: 'Pinto-0';
 `
 const MenuItem = ({ section, children }) => {
   return (

@@ -44,11 +44,8 @@ const PerkBoxItem = ({ perk, isFirst, isEquipment, equipped }) => {
             <PintoTypography
               style={{ margin: 0 }}
               key={
-                perk.perkType +
-                perk.value +
-                time.day +
-                time.startHour +
-                time.lengthInHours
+                perk._id + time._id
+                
               }
             >
               {timeString}

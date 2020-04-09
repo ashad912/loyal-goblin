@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import Recaptcha from "react-google-invisible-recaptcha";
-import { ScrollingProvider, Section } from "react-scroll-section";
+import { ScrollingProvider, Section, SectionLink } from "react-scroll-section";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
@@ -11,7 +11,7 @@ import Divider from "@material-ui/core/Divider";
 import Badge from "@material-ui/core/Badge";
 import Snackbar from "@material-ui/core/Snackbar";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
-
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 
 import MenuItem from "./shop/MenuItem";
 import ShopList from "./shop/ShopList";
@@ -33,27 +33,34 @@ import {socket} from '../../socket'
 
 const Menu = styled(Paper)`
   flex-grow: 1;
-  position: ${props => (props.sticky ? "fixed" : "static")};
-  top: 0;
+  /*position: ${props => (props.sticky ? "sticky" : "static")};*/
+  position: sticky;
+  top: ${props => props.offset}px;
   width: 100%;
   z-index: 1;
   box-sizing: border-box;
   padding: 0.5rem;
+  /*transform: ${props => props.offset ? `translate3d(0, calc(100% + ${props.offset}px), 0)` : 'translate3d(0, 0, 0)'};*/
+  transition: top 0.4s linear;
 `;
 
 const ListContainer = styled.div`
-  padding-top: ${props => (props.sticky ? "2.5rem" : "0px")};
+  /*padding-top: ${props => (props.sticky ? "2.5rem" : "0px")};*/
+  padding-top: 0px;
 `;
 
-const StyledSection = styled(Section)`
-  padding-top: 2rem;
+const StyledSection = styled.section`
+  padding: 1rem 0;
 `;
 
 const FloatingCart = styled.div`
-  position: fixed;
+  /*position: sticky;*/
   z-index: 2;
-  bottom: 3rem;
-  right: calc(50vw - 2rem);
+  /*bottom: 2rem;*/
+  /*bottom: ${props => props.bottom};*/
+  /*right: calc(50vw - 2rem);*/
+  /*right: ${props => props.right};*/
+  margin: 0 1rem;
   background: #337de4;
   width: 4rem;
   height: 4rem;
@@ -72,6 +79,11 @@ const FloatingCartIcon = styled(ShoppingCartIcon)`
   margin: 0.5rem;
 `;
 
+const Item = styled.div`
+  border-bottom: ${props => props.selected ? '2px solid #e91e63' : 'none'};
+  font-family: 'Pinto-0';
+`
+
 
 class Shop extends React.Component {
   constructor(props) {
@@ -80,15 +92,18 @@ class Shop extends React.Component {
       users: [],
       products: [],
       menuTopOffset: 0,
+      navbar: 0,
       menuSticky: false,
+      offsetEnable: false,
       baskets: {},
       snackbarOpen: false,
       activeUser: null,
       basketDrawerOpen: false,
-      //showVerificationPage: false,
+      fullHeightCorrection: 0,
       showScrollModal: false
     };
     this.menuRef = React.createRef();
+    this.shotsRef = React.createRef()
   }
 
   backToProfile = history => {
@@ -151,8 +166,12 @@ class Shop extends React.Component {
       return;
     }
 
+    const navbar = document.getElementById("navbar").offsetHeight;
+    const footer = document.getElementById("footer").offsetHeight;
+
+    
     let menuTopOffset = this.menuRef.current && this.menuRef.current.offsetTop;
-    this.setState({ menuTopOffset }, () => {
+    this.setState({ menuTopOffset, navbar, fullHeightCorrection: navbar+footer }, () => {
       window.addEventListener("scroll", this.handleScrollPosition);
     });
 
@@ -207,16 +226,17 @@ class Shop extends React.Component {
     }
   }
 
-  // componentWillUnmount() {
-    
-  // }
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.handleScrollPosition);
+  }
 
   handleScrollPosition = () => {
-    if (window.pageYOffset >= this.state.menuTopOffset) {
-      this.setState({ menuSticky: true });
+    if ((window.pageYOffset >= (/*this.state.menuTopOffset +*/ this.state.navbar))) {
+      this.setState({ menuSticky: true, lastScroll: window.pageYOffset, offsetEnable: window.pageYOffset < this.state.lastScroll });
     } else {
-      this.setState({ menuSticky: false });
+      this.setState({ menuSticky: false, lastScroll: window.pageYOffset, offsetEnable: window.pageYOffset < this.state.lastScroll });
     }
+
   };
 
   handleAddItemToCart = (e, id, firstDiscount) => {
@@ -425,7 +445,12 @@ class Shop extends React.Component {
     this.handleChangeactiveUser(null, this.state.activeUser);
   };
 
-  
+  scrollToRef = (ref) => {
+    window.scrollTo({
+      top: ref.current.offsetTop - 100,
+      behavior: 'smooth'
+    })
+  }
 
   render() {
     const shotList = this.state.products.filter(product => {
@@ -490,12 +515,12 @@ class Shop extends React.Component {
     // console.log(this.state.activeUser,activeUser, this.props.party)
     if (activeUser) {
       return (
-        <div>
+        <div style={{minHeight:`calc(100vh - (${this.state.fullHeightCorrection}px)`}}>
           {this.props.activeOrder.length > 0 && this.state.activeUser ? (
             <VerificationPage user={this.props.auth} party={this.props.party} />
           ) : (
             <ScrollingProvider>
-
+            <StyledSection id="top">
               {this.props.party && this.props.party.length > 1 && (
                 <PlayerShopButtons
                   users={this.props.party}
@@ -503,6 +528,7 @@ class Shop extends React.Component {
                   handleChipClick={this.handleChangeactiveUser}
                 />
               )}
+            </StyledSection>
               {!activeUser.equipped.scroll && activeUser.bag.filter(item=>item.itemModel.type==="scroll").length > 0 ? (
                 <Box>
                   <Button
@@ -543,6 +569,7 @@ class Shop extends React.Component {
 
               <Menu
                 square
+                offset={this.state.offsetEnable ? this.state.navbar : 0}
                 sticky={this.state.menuSticky ? 1 : 0}
                 ref={this.menuRef}
               >
@@ -554,7 +581,9 @@ class Shop extends React.Component {
                   spacing={2}
                 >
                   <Grid item>
-                    <MenuItem section="shots">Szoty</MenuItem>
+                    <Item onClick={() => this.scrollToRef(this.shotsRef)} >
+                      Szoty
+                    </Item>
                   </Grid>
                   <Grid item>
                     <MenuItem section="drinks">Drinki</MenuItem>
@@ -574,9 +603,10 @@ class Shop extends React.Component {
                 </Grid>
               </Menu>
               <ListContainer sticky={this.state.menuSticky ? 1 : 0}>
-                <StyledSection id="shots">
+                <StyledSection id="shots" ref={this.shotsRef}>
                   <ShopList
                     title="Szoty"
+                    
                     list={shotList}
                     handleAddItem={this.handleAddItemToCart}
                   />
@@ -623,7 +653,55 @@ class Shop extends React.Component {
                 </StyledSection>
                 <Divider />
               </ListContainer>
-              <div style={{ marginTop: "5.5rem" }}></div>
+              <div style={{ 
+                  position: 'sticky',
+                  bottom: '1rem',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  margin: "1rem 0",
+                  padding: '0 auto',
+                  
+                 }}>
+                 <SectionLink section="top">
+                  {link => (
+                    <FloatingCart
+                      style={{
+                        visibility: this.state.basketDrawerOpen ? "hidden" : "visible",
+                        color: 'white',
+                      }}
+                      variant="contained"
+                      color="primary"
+                      right="calc(50vw + 2rem)"
+                      bottom="1rem"
+                      onClick={link.onClick}
+                    >
+                      <ArrowUpwardIcon />
+                    </FloatingCart>
+                  )}
+                </SectionLink>
+                <FloatingCart
+                  style={{
+                    visibility: this.state.basketDrawerOpen ? "hidden" : "visible"
+                  }}
+                  variant="contained"
+                  color="primary"
+                  right="calc(50vw - 4rem)"
+                  bottom="1rem"
+                  onClick={()=>this.handleToggleBasketDrawer(true)}
+                >
+                  {this.state.baskets[this.state.activeUser] && (
+                    <Badge
+                      style={{ right: "-2.5rem", top: "-1rem" }}
+                      color="secondary"
+                      badgeContent={this.state.baskets[
+                        this.state.activeUser
+                      ].reduce((a, b) => a + (b.quantity || 0), 0)}
+                    />
+                  )}
+                  <FloatingCartIcon />
+                </FloatingCart>
+                
+              </div>
               {this.state.baskets[this.state.activeUser] &&
                 this.state.baskets[this.state.activeUser].length > 0 && (
                   <React.Fragment>
@@ -663,26 +741,8 @@ class Shop extends React.Component {
                     />
                   </React.Fragment>
                 )}
-              <FloatingCart
-                style={{
-                  visibility: this.state.basketDrawerOpen ? "hidden" : "visible"
-                }}
-                variant="contained"
-                color="primary"
-                onClick={()=>this.handleToggleBasketDrawer(true)}
-              >
-                {this.state.baskets[this.state.activeUser] && (
-                  <Badge
-                    style={{ right: "-2.5rem", top: "-1rem" }}
-                    color="secondary"
-                    badgeContent={this.state.baskets[
-                      this.state.activeUser
-                    ].reduce((a, b) => a + (b.quantity || 0), 0)}
-                  />
-                )}
-                <FloatingCartIcon />
-              </FloatingCart>
-              <Button
+             
+              {/* <Button
                 fullWidth
                 variant="contained"
                 style={{
@@ -692,7 +752,7 @@ class Shop extends React.Component {
                   borderRadius: 0
                 }}
                 onClick={this.handleLeaveShop}
-              >{<PintoTypography>Wyjdź</PintoTypography>}</Button>
+              >{<PintoTypography>Wyjdź</PintoTypography>}</Button> */}
               <BasketDrawer
                 open={this.state.basketDrawerOpen}
                 toggle={this.handleToggleBasketDrawer}
@@ -736,18 +796,7 @@ class Shop extends React.Component {
       );
     } else {
       return (
-        <div>
-          <Button
-            fullWidth
-            variant="contained"
-            style={{
-              marginTop: "0.5rem",
-              marginBottom: "1rem",
-              borderRadius: 0
-            }}
-            onClick={this.handleLeaveShop}
-          >{<PintoTypography>Wyjdź</PintoTypography>}</Button>
-        </div>
+        <div style={{minHeight:`calc(100vh - (${this.state.fullHeightCorrection}px)`}}></div>
       );
     }
   }

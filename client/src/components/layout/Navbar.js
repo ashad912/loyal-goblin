@@ -40,7 +40,12 @@ const StyledMenuItem = styled(MenuItem)`
 `
   
 const StyledAppBar = styled(AppBar)`
-    display: ${props=>props.hide && 'none'};
+    display: ${props => props.none && 'none'};
+    position: ${props => props.sticky ? 'sticky' : 'static'};
+    top: 0;
+    transform: ${props => props.show ? 'translate3d(0, 0, 0)' : 'translate3d(0, -100%, 0)'};
+    transition: transform 0.4s linear;
+
     
 `
 
@@ -70,19 +75,84 @@ const Navbar = (props) => {
     const [showRankDialog, setShowRankDialog] = React.useState(false);
     const [showStatsDialog, setShowStatsDialog] = React.useState(false);
     const [showPasswordChangeModal, setShowPasswordChangeModal] = React.useState(false)
-    const [hideNavbar, setHideNavbar] = React.useState(false)
+    const [noneNavbar, setNoneNavbar] = React.useState(false)
     const [showAlertSnackbar, setShowAlertSnackbar] = React.useState(false)
     const [alertMessage, setAlertMessage] = React.useState('')
+    const [enableSticky, setEnableSticky] = React.useState(false)
+    const [isNavbarShow, setIsNavbarShow] = React.useState(true)
 
+    const lastScroll = React.useRef(0)
+    const navbarRef = React.useRef()
+    const navbarHeight = React.useRef(0)
+    const navbarShow = React.useRef(false)
     const history = useHistory()
+
+
+    const updateNavbarSticky = (pathname) => {
+        const isEnableSticky = ['/shop'].includes(pathname)
+        if(isEnableSticky){
+            setEnableSticky(true)
+            window.addEventListener("scroll", handleScrollPosition);
+        }else{
+            setEnableSticky(false)
+            setIsNavbarShow(true)
+            navbarShow.current = true;
+            window.removeEventListener("scroll", handleScrollPosition);
+        }
+    }
+
+    history.listen((location, action) => {
+        updateNavbarSticky(location.pathname)
+    })
+
+    React.useEffect(() => {
+        
+        const height = navbarRef.current && navbarRef.current.clientHeight
+        navbarHeight.current = height
+        
+        updateNavbarSticky(window.location.pathname)
+        
+    }, [])
 
     React.useEffect(()=>{
         if(!props.auth.uid){
-            setHideNavbar(true)
+            setNoneNavbar(true)
         }else{
-            setHideNavbar(false)
+            setNoneNavbar(false)
         }
     }, [props.auth.uid])
+
+
+
+    const handleScrollPosition = () => {
+        // handleScrollPosition it's callback registred for scroll listener and we're using functional component - SIDE EFFECTS:
+
+        // handleScrollPosition cannot read updated state, however can update state
+        // handleScrollPosition can read ref.current and update ref.current
+        // <StyledAppBar></StyledAppBar> jsx element cannot read updated ref, but can read updated state
+        // that's why below...
+
+        // FOR (static<->sticky) change: (window.pageYOffset > navbarHeight.current ) || navbarShow.current) to prevent navbar 'drop' when we are very close to the top
+        
+        if (window.pageYOffset < lastScroll.current) {
+            if(!navbarShow.current){
+                //console.log('up')
+                navbarShow.current = true;
+                setIsNavbarShow(true)
+            }
+            
+            
+        } else if(window.pageYOffset > lastScroll.current ) {
+            if(navbarShow.current){
+                //console.log('down or too high')
+                navbarShow.current = false;
+                setIsNavbarShow(false)
+                
+            }
+        }
+        lastScroll.current = window.pageYOffset
+        
+    }
 
     const handleClick = event => {
         event.stopPropagation();
@@ -163,6 +233,8 @@ const Navbar = (props) => {
     
 
     const handleBack = () => {
+        window.removeEventListener("scroll", handleScrollPosition);
+
         var indexRedirect = 0
         switch (window.location.pathname) {
             case '/mission':
@@ -181,8 +253,16 @@ const Navbar = (props) => {
     const isBackButtonVisible = ['/shop', '/mission'].includes(window.location.pathname)
     const toolbarPaddingLeft = isBackButtonVisible ? '0px' : '16px'
 
+    // <StyledAppBar></StyledAppBar> jsx element cannot read updated ref, but can read updated state
     return(
-        <StyledAppBar  position="static" id="navbar" hide={hideNavbar ? 1 : 0}>
+        <StyledAppBar 
+            ref={navbarRef} 
+            position="static" 
+            id="navbar" 
+            sticky={enableSticky ? 1 : 0} 
+            show={isNavbarShow ? 1 : 0} 
+            none={noneNavbar ? 1 : 0}
+        >
         <Toolbar style={{paddingLeft: toolbarPaddingLeft}}>
             
             {props.auth.uid && props.auth.profile.name ? (
