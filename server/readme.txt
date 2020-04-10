@@ -18,7 +18,64 @@ x = your version !!!
         log: C:\Program Files\MongoDB\Server\4.x\log\mongod.log
 
 
-//Win10 Development - Replica set configure
+
+//Nginx config
+    https://www.youtube.com/watch?v=eaA8Ol6I16w
+
+    - sudo apt get install nginx
+    - /var/www/<project> <- here set ur project
+    - /etc/nginx/sites-available/<project_name_config_file>:
+        server {
+            listen 80 default_server;
+            listen [::]:80 default_server;
+
+            server_name <domain> <other_domain>;
+
+            root /var/www/<project>;
+            index index.html index.htm;
+
+            location / {
+                proxy_pass http://localhost:4000;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host $host;
+                proxy_cache_bypass $http_upgrade;
+                # try_files $uri $uri/ =404;
+                }
+            client_max_body_size 10M;
+        }
+    - delete 'default_server' phrases (second and third line) from '/etc/nginx/sites-available/default'
+    - make link (shortcut) in '/etc/nginx/sites-enabled/' catalog:
+        sudo ln -s /etc/nginx/sites-available/<project> /etc/nginx/sites-enabled/
+    - sudo service nginx restart
+    - git clone in 'var/www/<project>'
+    - in project dir, install all packages (client and server)
+    - install and config db (mongo)
+    - build client
+    - run server
+
+//Mongo Ubuntu install
+
+    - install mongodb (https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
+    - service mongod start <- run basic server
+    - adjust (add server ip) config file in /etc/mongod.conf:
+        net:
+            port: 27017
+            bindIp: 127.0.0.1, <server_ip>
+
+    - connect (<server_ip>:27017) by Robo3T to create admin and root user accounts (set passwords)
+    - enable auth in /etc/mongod.conf:
+        security:
+                authorization: enabled
+    
+    - to config replica set, look to 'MongoDB Replica set config' and edit mongod.conf
+    - run: mongo admin -u '<username>' -p '<password>' //in quotes is safer (special chars)
+    - look to 'MongoDB Replica set config' - rs.initiate(..) etc.
+
+
+
+//Win10 Development - MongoDB Replica set config
 
     - allow write ops (in folder settings) for "C:\Program Files\MongoDB\"
     - to make it easier - u can add environment variable as Path (remember to swap "x" !!!): "C:\Program Files\MongoDB\Server\4.x\bin\" - now u can type just 'mongod'
