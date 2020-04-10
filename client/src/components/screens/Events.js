@@ -131,12 +131,7 @@ const Events = (props) => {
     }
 
     const handleMissionLeave = async () => {
-        await props.deleteInstance(props.party._id)
-        //??
-        if(!socket.connected){
-            fetchMissions()
-        }
-       // console.log('leave')
+        await props.deleteInstance(props.party._id) 
     }
 
     const handleMissionDetailsOpen = (index) => {

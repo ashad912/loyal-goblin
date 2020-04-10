@@ -70,7 +70,7 @@ export const deleteInstance = (partyId) => {
             try {
                 await axios.delete('/mission/deleteInstance')
     
-                dispatch(setActiveInstance(null, null))
+                dispatch(getMissionList()) 
                 refreshMissionsEmit(partyId)
                 resolve()
             }catch (e) {

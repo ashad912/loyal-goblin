@@ -38,7 +38,7 @@ import {
   confirmLevel
 } from "../../store/actions/profileActions";
 import { authCheck } from "../../store/actions/authActions";
-import maleBody from "../../assets/profile/male-body.png";
+import maleBody from "../../assets/profile/male-body.svg";
 import femaleBody from "../../assets/profile/female-body.png";
 
 

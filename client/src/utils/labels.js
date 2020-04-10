@@ -1,15 +1,15 @@
 export const dayLabels = [null, 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela']
 
 export const perkLabels = {
-    'attr-strength': 'Siła ',
-    'attr-dexterity': 'Zręczność ',
-    'attr-magic': 'Magia ',
+    'attr-strength': 'Siła',
+    'attr-dexterity': 'Zręczność',
+    'attr-magic': 'Magia',
     'attr-endurance': 'Wytrzymałość',
     'experience': 'Doświadczenie',
-    'disc-product': 'Zniżka ',
-    'disc-category': 'Zniżka ',
-    'disc-rent': 'Zniżka ',
-    'custom': 'Specjalne ',
+    'disc-product': 'Zniżka',
+    'disc-category': 'Zniżka',
+    'disc-rent': 'Zniżka',
+    'custom': 'Specjalne',
 }
 
 

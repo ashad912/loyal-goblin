@@ -13,7 +13,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 
-import MenuItem from "./shop/MenuItem";
+import MenuGridItem from "./shop/MenuGridItem";
 import ShopList from "./shop/ShopList";
 import PlayerShopButtons from "./shop/PlayerShopButtons";
 import BasketDrawer from "./shop/BasketDrawer";
@@ -33,20 +33,16 @@ import {socket} from '../../socket'
 
 const Menu = styled(Paper)`
   flex-grow: 1;
-  /*position: ${props => (props.sticky ? "sticky" : "static")};*/
   position: sticky;
   top: ${props => props.offset}px;
   width: 100%;
   z-index: 1;
   box-sizing: border-box;
   padding: 0.5rem;
-  /*transform: ${props => props.offset ? `translate3d(0, calc(100% + ${props.offset}px), 0)` : 'translate3d(0, 0, 0)'};*/
   transition: top 0.4s linear;
 `;
 
 const ListContainer = styled.div`
-  /*padding-top: ${props => (props.sticky ? "2.5rem" : "0px")};*/
-  padding-top: 0px;
 `;
 
 const StyledSection = styled.section`
@@ -54,12 +50,7 @@ const StyledSection = styled.section`
 `;
 
 const FloatingCart = styled.div`
-  /*position: sticky;*/
   z-index: 2;
-  /*bottom: 2rem;*/
-  /*bottom: ${props => props.bottom};*/
-  /*right: calc(50vw - 2rem);*/
-  /*right: ${props => props.right};*/
   margin: 0 1rem;
   background: #337de4;
   width: 4rem;
@@ -79,10 +70,8 @@ const FloatingCartIcon = styled(ShoppingCartIcon)`
   margin: 0.5rem;
 `;
 
-const Item = styled.div`
-  border-bottom: ${props => props.selected ? '2px solid #e91e63' : 'none'};
-  font-family: 'Pinto-0';
-`
+
+
 
 
 class Shop extends React.Component {
@@ -92,7 +81,7 @@ class Shop extends React.Component {
       users: [],
       products: [],
       menuTopOffset: 0,
-      navbar: 0,
+      navbarHeight: 0,
       menuSticky: false,
       offsetEnable: false,
       baskets: {},
@@ -103,7 +92,14 @@ class Shop extends React.Component {
       showScrollModal: false
     };
     this.menuRef = React.createRef();
+
     this.shotsRef = React.createRef()
+    this.drinksRef = React.createRef()
+    this.beersRef = React.createRef()
+    this.foodRef = React.createRef()
+    this.alcoFreeRef = React.createRef()
+    this.othersRef = React.createRef()
+
   }
 
   backToProfile = history => {
@@ -166,12 +162,12 @@ class Shop extends React.Component {
       return;
     }
 
-    const navbar = document.getElementById("navbar").offsetHeight;
-    const footer = document.getElementById("footer").offsetHeight;
+    const navbarHeight = document.getElementById("navbar").offsetHeight;
+    const footerHeight = document.getElementById("footer").offsetHeight;
 
     
     let menuTopOffset = this.menuRef.current && this.menuRef.current.offsetTop;
-    this.setState({ menuTopOffset, navbar, fullHeightCorrection: navbar+footer }, () => {
+    this.setState({ menuTopOffset, navbarHeight, fullHeightCorrection: navbarHeight+footerHeight }, () => {
       window.addEventListener("scroll", this.handleScrollPosition);
     });
 
@@ -231,7 +227,7 @@ class Shop extends React.Component {
   }
 
   handleScrollPosition = () => {
-    if ((window.pageYOffset >= (/*this.state.menuTopOffset +*/ this.state.navbar))) {
+    if ((window.pageYOffset >= (/*this.state.menuTopOffset +*/ this.state.navbarHeight))) {
       this.setState({ menuSticky: true, lastScroll: window.pageYOffset, offsetEnable: window.pageYOffset < this.state.lastScroll });
     } else {
       this.setState({ menuSticky: false, lastScroll: window.pageYOffset, offsetEnable: window.pageYOffset < this.state.lastScroll });
@@ -446,8 +442,14 @@ class Shop extends React.Component {
   };
 
   scrollToRef = (ref) => {
+
+    const offset = 
+          window.pageYOffset > ref.current.offsetTop ? 
+          ref.current.offsetTop - (this.menuRef.current.clientHeight + this.state.navbarHeight) :
+          ref.current.offsetTop - this.menuRef.current.clientHeight
+    
     window.scrollTo({
-      top: ref.current.offsetTop - 100,
+      top: offset,
       behavior: 'smooth'
     })
   }
@@ -520,7 +522,6 @@ class Shop extends React.Component {
             <VerificationPage user={this.props.auth} party={this.props.party} />
           ) : (
             <ScrollingProvider>
-            <StyledSection id="top">
               {this.props.party && this.props.party.length > 1 && (
                 <PlayerShopButtons
                   users={this.props.party}
@@ -528,7 +529,6 @@ class Shop extends React.Component {
                   handleChipClick={this.handleChangeactiveUser}
                 />
               )}
-            </StyledSection>
               {!activeUser.equipped.scroll && activeUser.bag.filter(item=>item.itemModel.type==="scroll").length > 0 ? (
                 <Box>
                   <Button
@@ -552,15 +552,15 @@ class Shop extends React.Component {
                       boxSizing: "border-box"
                     }}
                   >
-                    <Grid item xs={10}>
+                    <Grid item xs={11}>
                       <ScrollListItem inactive scroll={equippedScroll} />
                     </Grid>
-                    <Grid item>
+                    <Grid item xs={1} style={{display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-end'}}>
                       <img src={uiPaths.deleteRed}
                         onClick={() =>
                           this.handleScrollSelect(equippedScroll._id)
                         }
-                        style={{ width: "2.5rem", paddingTop: '0.5rem'}}
+                        style={{ width: "2rem", padding: '0.5rem'}}
                       />
                     </Grid>
                   </Grid>
@@ -569,7 +569,7 @@ class Shop extends React.Component {
 
               <Menu
                 square
-                offset={this.state.offsetEnable ? this.state.navbar : 0}
+                offset={this.state.offsetEnable ? this.state.navbarHeight : 0}
                 sticky={this.state.menuSticky ? 1 : 0}
                 ref={this.menuRef}
               >
@@ -580,76 +580,73 @@ class Shop extends React.Component {
                   alignItems="center"
                   spacing={2}
                 >
-                  <Grid item>
-                    <Item onClick={() => this.scrollToRef(this.shotsRef)} >
-                      Szoty
-                    </Item>
-                  </Grid>
-                  <Grid item>
-                    <MenuItem section="drinks">Drinki</MenuItem>
-                  </Grid>
-                  <Grid item>
-                    <MenuItem section="beers">Piwa</MenuItem>
-                  </Grid>
-                  <Grid item>
-                    <MenuItem section="alco-free">Bez promili</MenuItem>
-                  </Grid>
-                  <Grid item>
-                    <MenuItem section="food">Jedzenie</MenuItem>
-                  </Grid>
-                  <Grid item>
-                    <MenuItem section="others">Inne</MenuItem>
-                  </Grid>
+                  <MenuGridItem onClick={() => this.scrollToRef(this.shotsRef)} section="shots">Szoty</MenuGridItem>                                    
+                  <MenuGridItem onClick={() => this.scrollToRef(this.drinksRef)} section="drinks">Drinki</MenuGridItem>                                    
+                  <MenuGridItem onClick={() => this.scrollToRef(this.beersRef)} section="beers">Piwa</MenuGridItem>                  
+                  <MenuGridItem onClick={() => this.scrollToRef(this.alcoFreeRef)} section="alco-free">Bez promili</MenuGridItem>
+                  <MenuGridItem onClick={() => this.scrollToRef(this.foodRef)} section="food">Jedzenie</MenuGridItem>
+                  <MenuGridItem onClick={() => this.scrollToRef(this.othersRef)} section="others">Inne</MenuGridItem>
                 </Grid>
               </Menu>
               <ListContainer sticky={this.state.menuSticky ? 1 : 0}>
-                <StyledSection id="shots" ref={this.shotsRef}>
-                  <ShopList
-                    title="Szoty"
-                    
-                    list={shotList}
-                    handleAddItem={this.handleAddItemToCart}
-                  />
+                <StyledSection ref={this.shotsRef}>
+                  <Section id="shots" >
+                    <ShopList
+                      title="Szoty"
+                      list={shotList}
+                      handleAddItem={this.handleAddItemToCart}
+                    />
+                  </Section>
                 </StyledSection>
                 <Divider />
-                <StyledSection id="drinks">
-                  <ShopList
-                    title="Driny"
-                    list={drinkList}
-                    handleAddItem={this.handleAddItemToCart}
-                  />
+                <StyledSection ref={this.drinksRef}>
+                  <Section id="drinks">
+                    <ShopList
+                      title="Driny"
+                      list={drinkList}
+                      handleAddItem={this.handleAddItemToCart}
+                    />
+                  </Section>
                 </StyledSection>
                 <Divider />
-                <StyledSection id="beers">
-                  <ShopList
-                    title="Piwa"
-                    list={beerList}
-                    handleAddItem={this.handleAddItemToCart}
-                  />
+                <StyledSection ref={this.beersRef}>
+                  <Section id="beers">
+                    <ShopList
+                      title="Piwa"
+                      list={beerList}
+                      handleAddItem={this.handleAddItemToCart}
+                    />
+                  </Section>
                 </StyledSection>
                 <Divider />
-                <StyledSection id="alco-free">
-                  <ShopList
-                    title="Bez promili"
-                    list={alcoholFreeList}
-                    handleAddItem={this.handleAddItemToCart}
-                  />
+                <StyledSection ref={this.alcoFreeRef}>
+                  <Section id="alco-free">
+                    <ShopList
+                      title="Bez promili"
+                      list={alcoholFreeList}
+                      handleAddItem={this.handleAddItemToCart}
+                    />
+                  </Section>
                 </StyledSection>
                 <Divider />
-                <StyledSection id="food">
-                  <ShopList
-                    title="Jedzenie"
-                    list={foodList}
-                    handleAddItem={this.handleAddItemToCart}
-                  />
+                <StyledSection ref={this.foodRef}>
+                  <Section id="food">
+                    <ShopList
+                      title="Jedzenie"
+                      list={foodList}
+                      handleAddItem={this.handleAddItemToCart}
+                    />
+                  </Section>
                 </StyledSection>
                 <Divider />
-                <StyledSection id="others">
-                  <ShopList
-                    title="Inne"
-                    list={othersList}
-                    handleAddItem={this.handleAddItemToCart}
-                  />
+                <StyledSection ref={this.othersRef}>
+                  <Section id="others">
+                    <ShopList
+                      title="Inne"
+                      list={othersList}
+                      handleAddItem={this.handleAddItemToCart}
+                    />
+                  </Section>
                 </StyledSection>
                 <Divider />
               </ListContainer>
@@ -673,7 +670,12 @@ class Shop extends React.Component {
                       color="primary"
                       right="calc(50vw + 2rem)"
                       bottom="1rem"
-                      onClick={link.onClick}
+                      onClick={() => 
+                        window.scrollTo({
+                              top: 0,
+                              behavior: 'smooth'
+                        })
+                      } 
                     >
                       <ArrowUpwardIcon />
                     </FloatingCart>

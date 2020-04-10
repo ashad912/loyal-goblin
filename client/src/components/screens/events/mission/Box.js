@@ -18,14 +18,16 @@ const RootDiv = styled.div`
 
 
 const Item = styled.div`
-
   user-select: none;
   padding: 0.2rem;
-  margin: 0.2rem 0.2rem 0rem 0rem;
+  margin: 0.2rem 0rem;
   border: 1px solid ${props => (props.isDragging ? palette.background.grey : palette.background.grey)};
   background: ${(props) => props.isDragging ? palette.background.equipped : 'white'};
+  &:active{
+    background: ${palette.background.equipped};
+  }
 `
-
+//~ preceded - poprzedzony
 const Clone = styled(Item)`
   ~ div {
     transform: none!important;

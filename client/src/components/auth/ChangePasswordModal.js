@@ -10,6 +10,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Recaptcha from 'react-google-invisible-recaptcha';
 import { Typography } from "@material-ui/core";
 import { changePassword, signOut } from "../../store/actions/authActions";
+import { PintoTypography } from "../../utils/fonts";
+import { palette } from "../../utils/definitions";
 
 
 class ChangePasswordModal extends React.Component {
@@ -83,10 +85,10 @@ class ChangePasswordModal extends React.Component {
     
       <DialogTitle id="form-dialog-title">Zmiana hasła</DialogTitle>
       <DialogContent>
-        <DialogContentText>
+        <PintoTypography style={{color: palette.background.darkGrey}}>
           Wpisz aktualne hasło oraz nowe hasło, majace minimum 7 znaków i różniące się od
-          aktualnego. Po zatwierdzeniu nastąpi wylogowanie.
-        </DialogContentText>
+          aktualnego. Po zatwierdzeniu nastąpi wylogowanie.  
+        </PintoTypography> 
         {this.state.showError && (
           <Typography variant="caption" style={{ color: "#c30000" }}>
             Podane hasła nie są takie same

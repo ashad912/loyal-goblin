@@ -510,7 +510,8 @@ class MissionInstance extends React.Component {
                                 style={{
                                     display: 'flex',
                                     flexFlow: 'row nowrap',
-                                    width: '100%',
+                                    margin: '1rem 2rem',
+                                    width: 'calc(100% - 4rem)',
                                     position: 'absolute',
                                     bottom: document.getElementById("footer").offsetHeight,
                                     left: 0,
