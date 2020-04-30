@@ -7,9 +7,8 @@ const MissionInstanceExpiredEventSchema = new mongoose.Schema({...ScheduledWithi
 
 MissionInstanceExpiredEventSchema.index({createdAt: 1}, {expireAfterSeconds: 1800});
 
-export const MissionInstanceExpiredEvent = new mongoose.model('missionInstanceExpiredEvent', MissionInstanceExpiredEventSchema)
 
-export const registerMissionInstanceWatch = () => {
+MissionInstanceExpiredEventSchema.statics.registerWatch = () => {
     let deleteOps = {
         $match: {
             operationType: "delete" 
@@ -27,4 +26,11 @@ export const registerMissionInstanceWatch = () => {
                 console.log(new Date(), mInstance._id, 'missionInstance auto-removed')
             }
         });
+
 }
+
+
+export const MissionInstanceExpiredEvent = new mongoose.model('missionInstanceExpiredEvent', MissionInstanceExpiredEventSchema)
+
+
+

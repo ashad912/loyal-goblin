@@ -10,13 +10,15 @@ import { Party } from "../models/party";
 import { MissionInstance } from "../models/missionInstance";
 import axios from 'axios'
 
+//REF
 export const initCleaning = async () => {
   try{
     // const parties = await Party.find({})
     // await asyncForEach((parties), party => {
     //   await party.remove() //to start pre remove middleware
     // })
-
+    //await Party.clear()
+    //await MissionInstance.clear()
     // const missionInstances = await MissionInstance.find({})
     // await asyncForEach(missionInstances, (missionInstance) => {
     //   await missionInstance.remove()
@@ -36,52 +38,53 @@ export async function asyncForEach(array, callback) {
   }
 }
 
+//REF
 export const updatePerks = (user, forcing, forcingWithoutParty) => {
-  //'forcing' - update without checking perksUpdatedAt
+  // //'forcing' - update without checking perksUpdatedAt
 
-  return new Promise(async (resolve, reject) => {
-    try {
-      if (forcing || isNeedToPerksUpdate(user)) {
-        user.userPerks = await designateUserPerks(user);
-        user.perksUpdatedAt = moment().toISOString(); //always in utc
-        await user.save();
-      }
+  // return new Promise(async (resolve, reject) => {
+  //   try {
+  //     if (forcing || isNeedToPerksUpdate(user)) {
+  //       user.userPerks = await designateUserPerks(user);
+  //       user.perksUpdatedAt = moment().toISOString(); //always in utc
+  //       await user.save();
+  //     }
 
-      if (user.party) {
-        //party perks updating
-        const partyObject = await Party.findById(user.party);
-        let party = [partyObject.leader, ...partyObject.members].filter(
-          memberId => {
-            //exclude 'req.user' and nulls
-            return memberId && memberId.toString() !== user._id.toString();
-          }
-        );
+  //     if (user.party) {
+  //       //party perks updating
+  //       const partyObject = await Party.findById(user.party);
+  //       let party = [partyObject.leader, ...partyObject.members].filter(
+  //         memberId => {
+  //           //exclude 'req.user' and nulls
+  //           return memberId && memberId.toString() !== user._id.toString();
+  //         }
+  //       );
 
-        if (party.length) {
-          await asyncForEach(party, async memberId => {
-            const member = await User.findById(memberId);
+  //       if (party.length) {
+  //         await asyncForEach(party, async memberId => {
+  //           const member = await User.findById(memberId);
 
-            if (!member) {
-              throw Error(`Member (${memberId} does not exist!`);
-            }
+  //           if (!member) {
+  //             throw Error(`Member (${memberId} does not exist!`);
+  //           }
 
-            if (
-              (forcing && !forcingWithoutParty) ||
-              isNeedToPerksUpdate(member)
-            ) {
-              member.userPerks = await designateUserPerks(member);
-              member.perksUpdatedAt = moment().toISOString(); //always in utc
-              await member.save();
-            }
-          });
-        }
-      }
+  //           if (
+  //             (forcing && !forcingWithoutParty) ||
+  //             isNeedToPerksUpdate(member)
+  //           ) {
+  //             member.userPerks = await designateUserPerks(member);
+  //             member.perksUpdatedAt = moment().toISOString(); //always in utc
+  //             await member.save();
+  //           }
+  //         });
+  //       }
+  //     }
 
-      resolve(user.userPerks);
-    } catch (e) {
-      reject(e);
-    }
-  });
+  //     resolve(user.userPerks);
+  //   } catch (e) {
+  //     reject(e);
+  //   }
+  // });
 };
 
 //OK
@@ -366,7 +369,7 @@ export const designateUserPerks = async user => {
   });
 };
 
-//OK
+//OK - REF
 export const isNeedToPerksUpdate = user => {
   if (user.perksUpdatedAt && user.perksUpdatedAt instanceof Date) {
     const lastUpdateDate = moment.utc(user.perksUpdatedAt);
@@ -391,6 +394,7 @@ export const isNeedToPerksUpdate = user => {
   }
 };
 
+//REF
 export const designateNewLevels = (baseExp, newExp) => {
 
   if(typeof baseExp !== 'number'){
@@ -437,51 +441,53 @@ export const updateAmuletCounters = (amuletCounters, amulets) => {
   return amuletCounters
 }
 
+//REF
 export const userStandardPopulate = async user => {
-  await user
-    .populate({
-      path: "bag",
-      populate: { path: "itemModel", select: '_id description imgSrc appearanceSrc name perks type twoHanded', populate: { path: "perks.target.disc-product", select: '_id name' } }
-    })
-    .execPopulate();
-  if(user.statistics.amuletCounters && user.statistics.amuletCounters.length){
-    await user
-      .populate({
-        path: "statistics.amuletCounters.amulet",
-        select: '_id imgSrc name'
-      })
-      .execPopulate();
-  }
-  if (user.rallyNotifications.awards && user.rallyNotifications.awards.length) {
-    await user
-      .populate({
-        path: "rallyNotifications.awards.itemModel",
-        select: '_id description imgSrc name perks',
-        populate: { path: "perks.target.disc-product", select: '_id name' },
-      })
-      .execPopulate();
-  }
-  if (user.shopNotifications.awards && user.shopNotifications.awards.length) {
-    await user
-      .populate({
-        path: "shopNotifications.awards.itemModel",
-        select: '_id description imgSrc name perks',
-        populate: { path: "perks.target.disc-product", select: '_id name' },
-      })
-      .execPopulate();
-  }
+  // await user
+  //   .populate({
+  //     path: "bag",
+  //     populate: { path: "itemModel", select: '_id description imgSrc appearanceSrc name perks type twoHanded', populate: { path: "perks.target.disc-product", select: '_id name' } }
+  //   })
+  //   .execPopulate();
+  // if(user.statistics.amuletCounters && user.statistics.amuletCounters.length){
+  //   await user
+  //     .populate({
+  //       path: "statistics.amuletCounters.amulet",
+  //       select: '_id imgSrc name'
+  //     })
+  //     .execPopulate();
+  // }
+  // if (user.rallyNotifications.awards && user.rallyNotifications.awards.length) {
+  //   await user
+  //     .populate({
+  //       path: "rallyNotifications.awards.itemModel",
+  //       select: '_id description imgSrc name perks',
+  //       populate: { path: "perks.target.disc-product", select: '_id name' },
+  //     })
+  //     .execPopulate();
+  // }
+  // if (user.shopNotifications.awards && user.shopNotifications.awards.length) {
+  //   await user
+  //     .populate({
+  //       path: "shopNotifications.awards.itemModel",
+  //       select: '_id description imgSrc name perks',
+  //       populate: { path: "perks.target.disc-product", select: '_id name' },
+  //     })
+  //     .execPopulate();
+  // }
 
-  // const userObj = user.toObject() 
-  // delete userObj.lastActivityDate
-  // delete userObj.createdAt
-  // delete userObj.updatedAt
-  // delete userObj.perksUpdatedAt
-  // delete userObj.__v
-  // console.log(userObj)
+  // // const userObj = user.toObject() 
+  // // delete userObj.lastActivityDate
+  // // delete userObj.createdAt
+  // // delete userObj.updatedAt
+  // // delete userObj.perksUpdatedAt
+  // // delete userObj.__v
+  // // console.log(userObj)
 
-  return user; //CONSIDER: return user.bag -> props: const user declaration
+  // return user; //CONSIDER: return user.bag -> props: const user declaration
 };
 
+//REF
 export const designateUserLevel = (points, addPoints) => {
   const a = levelingEquation.a;
   const b = levelingEquation.b;
@@ -508,6 +514,7 @@ export const designateUserLevel = (points, addPoints) => {
   return 1000
 };
 
+//REF
 export const validateInMissionInstanceStatus = (userId, newStatus, secondNewStatus) => {
   return new Promise(async (resolve, reject) => {
     const missionInstance = await MissionInstance.findOne({
@@ -534,6 +541,7 @@ export const validateInMissionInstanceStatus = (userId, newStatus, secondNewStat
   });
 };
 
+//REF
 export const validateInShopPartyStatus = (userId, newStatus) => {
   return new Promise(async (resolve, reject) => {
     const party = await Party.findOne({ leader: userId }); //only if leader going to be disconnected
@@ -546,7 +554,7 @@ export const validateInShopPartyStatus = (userId, newStatus) => {
     resolve(false);
   });
 };
-
+//REF
 export const removeMissionInstanceIfExits = (id) => {
   return new Promise (async (resolve, reject)=> {
     try{
@@ -566,7 +574,7 @@ export const removeMissionInstanceIfExits = (id) => {
     }
   })
 }
-
+//REF
 export const validatePartyAndLeader = (user, inShop) => {
   return new Promise (async (resolve, reject) => {
     try{
@@ -618,7 +626,7 @@ export const saveImage = async (
       })
       .catch(function(err) {
         console.log(err);
-        reject("Błąd podczas wczytywania obrazu");
+        reject("Image loading error");
       });
   }) 
 };
@@ -658,7 +666,7 @@ export const saveAppearanceImage = async (
       })
     } catch (error) {
       console.log(err);
-        throw new Error("Błąd podczas wczytywania obrazu");
+        throw new Error("Image loading error");
     }
   }) 
 };

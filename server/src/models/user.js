@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import validator from 'validator'
 import bcrypt from 'bcryptjs'
 import jwt from "jsonwebtoken"
+import moment from 'moment'
 import {Item} from './item'
 import {Party} from './party'
 import {Rally} from './rally'
@@ -11,7 +12,7 @@ import {ClassAwardsSchema} from '../schemas/ClassAwardsSchema'
 import {LoyalSchema} from '../schemas/LoyalSchema'
 
 import arrayUniquePlugin from 'mongoose-unique-array'
-import { asyncForEach } from '../utils/methods'
+import { asyncForEach, designateUserPerks } from '../utils/methods'
 
 export const userClasses = ['warrior', 'mage', 'rogue', 'cleric']
 
@@ -431,6 +432,179 @@ UserSchema.methods.checkPasswordChangeTokenExpired = (token) => {
     })
    
 }
+
+
+UserSchema.methods.standardPopulate = async function(){
+    const user = this
+
+    await user
+        .populate({
+            path: "bag",
+            populate: { path: "itemModel", select: '_id description imgSrc appearanceSrc name perks type twoHanded', populate: { path: "perks.target.disc-product", select: '_id name' } }
+        })
+        .execPopulate();
+    if(user.statistics.amuletCounters && user.statistics.amuletCounters.length){
+        await user
+        .populate({
+            path: "statistics.amuletCounters.amulet",
+            select: '_id imgSrc name'
+        })
+        .execPopulate();
+    }
+    if (user.rallyNotifications.awards && user.rallyNotifications.awards.length) {
+        await user
+        .populate({
+            path: "rallyNotifications.awards.itemModel",
+            select: '_id description imgSrc name perks',
+            populate: { path: "perks.target.disc-product", select: '_id name' },
+        })
+        .execPopulate();
+    }
+    if (user.shopNotifications.awards && user.shopNotifications.awards.length) {
+        await user
+        .populate({
+            path: "shopNotifications.awards.itemModel",
+            select: '_id description imgSrc name perks',
+            populate: { path: "perks.target.disc-product", select: '_id name' },
+        })
+        .execPopulate();
+    }
+
+    //return user; 
+}
+
+UserSchema.methods.getNewLevels = function(newExp){
+    if(typeof newExp !== 'number' || newExp < 0){
+      throw new Error('Invalid first param!')
+    }
+  
+    const levelsData = this.getLevel(newExp)
+    return levelsData.newLevel - levelsData.oldLevel
+    
+}
+
+UserSchema.methods.getLevel = function(addPoints){
+
+    const user = this
+    const points = user.experience
+
+    const {a, b, pow} = levelingEquation;
+
+    let previousThreshold = 0;
+    let oldLevel;
+    for (let i = 1; i <= 1000; i++) {
+        const bottomThreshold = previousThreshold;
+        const topThreshold = previousThreshold + (a * i ** pow + b);
+
+        if (points >= bottomThreshold && points < topThreshold) {
+            if(addPoints === undefined){
+                return i
+            }
+            oldLevel = i
+        }
+
+        if(addPoints >= 0 && points + addPoints >= bottomThreshold && points + addPoints < topThreshold){
+            return {oldLevel, newLevel: i}
+        }
+        previousThreshold = topThreshold;
+    }
+
+    return 1000
+}
+
+UserSchema.methods.validatePartyAndLeader = function(inShop){
+    const user = this
+    return new Promise (async (resolve, reject) => {
+        try{
+          
+          const party = inShop !== undefined
+            ? (await Party.findOne({inShop: inShop, _id: user.party, leader: user._id}))
+            : (await Party.findOne({_id: user.party, leader: user._id}))
+          
+          if(!party){
+            throw new Error('Invalid party conditions!')
+          }
+          
+          resolve(party)
+        }catch(e){
+          reject(e)
+        }
+    })
+}
+
+UserSchema.methods.updatePerks = async function(forcing, forcingWihoutParty){
+    //'forcing' - update without checking perksUpdatedAt
+    const user = this
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (forcing || user.isNeedToPerksUpdate()) {
+                user.userPerks = await designateUserPerks(user);
+                user.perksUpdatedAt = moment().toISOString(); //always in utc
+                await user.save();
+            }
+
+            if (user.party) {
+                //party perks updating
+                const partyObject = await Party.findById(user.party);
+                let party = [partyObject.leader, ...partyObject.members].filter(
+                memberId => {
+                    //exclude 'req.user' and nulls
+                    return memberId && memberId.toString() !== user._id.toString();
+                }
+                );
+
+                if (party.length) {
+                await asyncForEach(party, async memberId => {
+                    const member = await User.findById(memberId);
+
+                    if (!member) {
+                        throw Error(`Member (${memberId}) does not exist!`);
+                    }
+
+                    if (
+                    (forcing && !forcingWithoutParty) ||
+                    member.isNeedToPerksUpdate()
+                    ) {
+                        member.userPerks = await designateUserPerks(member);
+                        member.perksUpdatedAt = moment().toISOString(); //always in utc
+                        await member.save();
+                    }
+                });
+                }
+            }
+
+            resolve(user.userPerks);
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
+
+UserSchema.methods.isNeedToPerksUpdate = function(){
+    const user = this
+
+    if (user.perksUpdatedAt && user.perksUpdatedAt instanceof Date) {
+      const lastUpdateDate = moment.utc(user.perksUpdatedAt);
+  
+      let lastUpdateHour = lastUpdateDate.hour();
+      if (lastUpdateDate.minutes() === 0 && lastUpdateDate.seconds() === 0) {
+        //very rare super equal hour update
+        lastUpdateHour -= 1;
+      }
+  
+      const nextUpdateDate = moment.utc(
+        `${lastUpdateHour + 1}:00:01`,
+        "HH:mm:ss"
+      );
+      const now = moment.utc();
+  
+      if (now.valueOf() >= nextUpdateDate.valueOf()) {
+        return true;
+      }
+  
+      return false;
+    }
+};
 
 
 UserSchema.statics.findByCredentials = async (email, password) => {

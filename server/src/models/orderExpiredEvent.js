@@ -7,9 +7,7 @@ const OrderExpiredEventSchema = new mongoose.Schema({...ScheduledWithinSchema.ob
 
 OrderExpiredEventSchema.index({createdAt: 1}, {expireAfterSeconds: 300});
 
-export const OrderExpiredEvent = new mongoose.model('orderExpiredEvent', OrderExpiredEventSchema)
-
-export const registerOrderWatch = () => {
+OrderExpiredEventSchema.statics.registerWatch = () => {
     let deleteOps = {
         $match: {
             operationType: "delete" 
@@ -29,3 +27,5 @@ export const registerOrderWatch = () => {
             }
         });
 }
+
+export const OrderExpiredEvent = new mongoose.model('orderExpiredEvent', OrderExpiredEventSchema)

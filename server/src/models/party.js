@@ -29,6 +29,25 @@ export const PartySchema = new mongoose.Schema({
     timestamps: true
 })
 
+PartySchema.statics.validateInShopStatus = (userId, newStatus) => {
+    return new Promise(async (resolve, reject) => {
+        const party = await Party.findOne({ leader: userId }); //only if leader going to be disconnected
+
+        if (party && party.inShop !== newStatus) {
+            party.inShop = newStatus;
+            await party.save();
+            return resolve(true);
+        }
+        resolve(false);
+    });
+}
+
+PartySchema.statics.clear = async () => {
+    const parties = await Party.find({})
+    await asyncForEach((parties), async party => {
+      await party.remove() //to start pre remove middleware
+    })
+}
 
 PartySchema.pre('remove', async function (next){
     const party = this

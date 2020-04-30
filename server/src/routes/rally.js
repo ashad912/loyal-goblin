@@ -86,8 +86,7 @@ const finishRally = async (rally) => {
 
             if((user.userRallies.length) && (index >= 0) && (rallyUser.experience > 0)){ 
                 const data = await addAwards(rallyUser, rally.awardsLevels, user.rallyNotifications)
-                const items = data.items
-                const newRallyAwards = data.newRallyAwards
+                const {items, newRallyAwards} = data
 
                 const modRallyExp = designateExperienceMods(rally.experience, user.userPerks.rawExperience)
                 const newLevels = designateNewLevels(user.experience, modRallyExp)
@@ -112,11 +111,8 @@ const finishRally = async (rally) => {
     rallyFinishTask.destroy()
     await updateRallyQueue() //if update is to fast??
 
-    return
-
-    
-
 }
+
 //OK
 const designateScheduleTime = (date) => {
     

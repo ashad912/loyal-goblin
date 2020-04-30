@@ -224,10 +224,12 @@ router.patch("/character", auth, async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
-    let user = await User.findByCredentials(req.body.email.toLowerCase(), req.body.password);
+    const user = await User.findByCredentials(req.body.email.toLowerCase(), req.body.password);
     const token = await user.generateAuthToken(); //on instancegenerateAuthToken
-    user = await userStandardPopulate(user);
-    user.userPerks = await updatePerks(user, true);
+    await user.standardPopulate()
+    await user.updatePerks(true)
+    //user = await userStandardPopulate(user);
+    //user.userPerks = await updatePerks(user, true);
     if(user.passwordChangeToken){
       user.passwordChangeToken = null
       await user.save()
@@ -269,8 +271,8 @@ router.patch("/updatePerks", auth, async (req, res, next) => {
   const user = req.user;
 
   try {
-    user.userPerks = await updatePerks(user, true);
-
+    //user.userPerks = await updatePerks(user, true);
+    await user.updatePerks(true)
     res.send(user.userPerks);
   } catch (e) {
     res.status(400).send(e.message);
@@ -279,10 +281,11 @@ router.patch("/updatePerks", auth, async (req, res, next) => {
 
 router.get("/me", auth, async (req, res, next) => {
   try {
-    const user = await userStandardPopulate(req.user);
+    const user = req.user
+    await user.standardPopulate();
 
-    user.userPerks = await updatePerks(user, false);
-
+    //user.userPerks = await updatePerks(user, false);
+    await user.updatePerks(false)
     if(user.passwordChangeToken){
       user.passwordChangeToken = null
       await user.save()
@@ -498,7 +501,7 @@ router.post("/me/avatar", auth, async (req, res) => {
     if (!req.files) {
       throw new Error("Brak pliku")
     }
-    let user = req.user
+    const user = req.user
     //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
     let avatar = await req.files.avatar.data;
 
@@ -506,7 +509,7 @@ router.post("/me/avatar", auth, async (req, res) => {
     
     user.avatar = avatarName;
     await user.save();
-    user = await userStandardPopulate(user);
+    await user.standardPopulate();
     res.send(user);
 
     
@@ -517,15 +520,16 @@ router.post("/me/avatar", auth, async (req, res) => {
 });
 
 router.delete("/me/avatar", auth, async (req, res) => {
+  const user = req.user
   try {
-    if(!req.user.avatar){
+    if(!user.avatar){
       throw new Error("Użytkownik nie posiada avatara")
     }
 
-    await removeImage(uploadPath+req.user.avatar)
-    req.user.avatar = null;
-    await req.user.save();
-    const user = await userStandardPopulate(req.user);
+    await removeImage(uploadPath+user.avatar)
+    user.avatar = null;
+    await user.save();
+    await user.standardPopulate();
     res.send(user);
 
   }
@@ -592,9 +596,12 @@ router.patch("/party/equip", auth, async (req, res) => {
     }
 
     user.equipped.scroll = user.equipped.scroll ? null : itemId
-    user.userPerks = await updatePerks(user, true);
+    
+    await user.updatePerks(true)
+    //user.userPerks = await updatePerks(user, true);
     await user.save();
-    user = await userStandardPopulate(user);
+    await user.standardPopulate()
+    //user = await userStandardPopulate(user);
   
 
     
@@ -738,10 +745,11 @@ router.patch("/items/equip", auth, async (req, res) => {
         }
 
     });
-
-    user.userPerks = await updatePerks(user, true);
+    await user.updatePerks(true)
+    //user.userPerks = await updatePerks(user, true);
     await user.save();
-    user = await userStandardPopulate(user);
+    await user.standardPopulate()
+    //user = await userStandardPopulate(user);
     //Depopulate equipped key
     user.equipped = { ...equipped };
 
@@ -757,7 +765,7 @@ router.patch("/items/equip", auth, async (req, res) => {
 });
 
 router.delete("/items/remove", auth, async (req, res) => {
-  let user = req.user
+  const user = req.user
   try {
     const party = await Party.findOne({_id: user.party, inShop: true})
 
@@ -775,7 +783,9 @@ router.delete("/items/remove", auth, async (req, res) => {
 
     const item = await Item.findById({ _id: req.body.itemId });
     await item.remove();
-    user = await userStandardPopulate(req.user);
+
+    
+    await user.standardPopulate();
     res.status(200).send(user);
   } catch (error) {
     console.log(error);
@@ -784,8 +794,8 @@ router.delete("/items/remove", auth, async (req, res) => {
 });
 
 router.patch('/confirmLevel', auth, async(req, res) => {
-  let user = req.user
-  let pointType = req.body.pointType
+  const user = req.user
+  const pointType = req.body.pointType
 
   try{
     if(user.levelNotifications <= 0){
@@ -816,7 +826,7 @@ router.patch('/confirmLevel', auth, async(req, res) => {
     user.levelNotifications -= 1
   
     await user.save()
-    user = await userStandardPopulate(user)
+    await user.standardPopulate()
     res.send(user)
   }catch(e){
     console.log(e.message)
@@ -826,7 +836,7 @@ router.patch('/confirmLevel', auth, async(req, res) => {
 
 //OK
 router.patch("/clearRallyAwards", auth, async (req, res) => {
-  let user = req.user;
+  const user = req.user;
 
   try {
     if(!user.rallyNotifications.isNew){
@@ -835,7 +845,7 @@ router.patch("/clearRallyAwards", auth, async (req, res) => {
 
     user.rallyNotifications = {isNew: false, experience: 0, awards: []};
     await user.save();
-    user = await userStandardPopulate(user);
+    await user.standardPopulate();
     res.send(user);
   } catch (e) {
     res.status(400).send(e.message);
@@ -843,7 +853,7 @@ router.patch("/clearRallyAwards", auth, async (req, res) => {
 });
 
 router.patch("/clearShopAwards", auth, async (req, res) => {
-  let user = req.user;
+  const user = req.user;
 
   try {
     if(!user.shopNotifications.isNew){
@@ -852,7 +862,7 @@ router.patch("/clearShopAwards", auth, async (req, res) => {
 
     user.shopNotifications = {isNew: false, experience: 0, awards: []};
     await user.save();
-    user = await userStandardPopulate(user);
+    await user.standardPopulate();
     res.send(user);
   } catch (e) {
     res.status(400).send(e.message);
@@ -965,8 +975,7 @@ router.patch("/loyal", auth, async (req, res) => {
     }
 
     await updatedUser.save();
-
-    updatedUser = await userStandardPopulate(updatedUser);
+    await updatedUser.standardPopulate();
 
     res.send({ updatedUser, awardToPass });
   } catch (e) {
@@ -1014,10 +1023,10 @@ router.patch("/addUserItem", adminAuth, async (req, res) => {
 
 //WIP not working
 router.get("/myItems", adminAuth, async (req, res) => {
-  let user = req.user;
+  const user = req.user;
 
   try {
-    user = await userStandardPopulate(user);
+    await user.standardPopulate();
 
     const items = { bag: user.bag, equipped: user.equipped };
     res.send(items);

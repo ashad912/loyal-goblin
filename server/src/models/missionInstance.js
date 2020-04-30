@@ -32,6 +32,60 @@ const MissionInstanceSchema = new mongoose.Schema({ //instance of ItemModel
 
 }, {timestamps: true})
 
+MissionInstanceSchema.statics.removeIfExists = (userId) => {
+    return new Promise (async (resolve, reject)=> {
+        try{
+          const missionInstance = await MissionInstance.findOne(
+            {party: {$elemMatch: {profile: userId}}}    
+          )
+          
+          if(missionInstance){
+            await missionInstance.remove()
+            return resolve(true)
+          }
+          
+          resolve(false)
+        }catch(e){
+          reject(e)
+        }
+      })
+}
+
+
+MissionInstanceSchema.statics.validateInStatus = (userId, newStatus, secondNewStatus) => {
+    return new Promise(async (resolve, reject) => {
+        const missionInstance = await MissionInstance.findOne({
+          party: { $elemMatch: { profile: userId } }
+        });
+    
+        if (missionInstance) {
+          const index = missionInstance.party.findIndex(
+            user => user.profile.toString() === userId
+          );
+    
+          if (index > -1) {
+            if (missionInstance.party[index].inMission !== newStatus) {
+              missionInstance.party[index].inMission = newStatus;
+              if(secondNewStatus){
+                missionInstance.party[index].readyStatus = secondNewStatus
+              }
+              await missionInstance.save();
+              return resolve(true);
+            }
+          }
+        }
+        resolve(false);
+      });
+}
+
+
+MissionInstanceSchema.statics.clear = async () => {
+    const missionInstances = await MissionInstance.find({})
+    await asyncForEach(missionInstances, async (missionInstance) => {
+      await missionInstance.remove()
+    })
+}
+
 MissionInstanceSchema.plugin(arrayUniquePlugin);
 
 MissionInstanceSchema.pre('remove', async function(next){

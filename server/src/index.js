@@ -1,6 +1,19 @@
 import express from "express";
 import subdomain from 'express-subdomain'
 import fileUpload from "express-fileupload"
+import bodyParser from "body-parser";
+import mongoose from "mongoose";
+import path from "path";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import cron from 'node-cron'
+import socket from "socket.io";
+import socketIOAuth from 'socketio-auth'
+
+import SocketController from './SocketController'
+import { MissionInstanceExpiredEvent } from "./models/missionInstanceExpiredEvent";
+import { OrderExpiredEvent } from "./models/orderExpiredEvent";
+
 import { adminRouter } from "./routes/admin";
 import { userRouter } from "./routes/user";
 import { missionRouter } from "./routes/mission";
@@ -9,25 +22,12 @@ import { itemRouter } from "./routes/item";
 import { productRouter } from "./routes/product";
 import { partyRouter } from "./routes/party";
 import { barmanRouter } from "./routes/barman";
-import bodyParser from "body-parser";
-import mongoose from "mongoose";
-import path from "path";
-import cors from "cors";
-import cookieParser from "cookie-parser";
-import cron from 'node-cron'
-import socket from "socket.io";
-import { socketRoomAuth, socketConnectAuth } from "./middleware/auth";
-import { validateInMissionInstanceStatus, validateInShopPartyStatus, initCleaning } from './utils/methods' 
-import {ReplSet} from 'mongodb-topology-manager';
-import _ from "lodash";
-import { registerMissionInstanceWatch } from "./models/missionInstanceExpiredEvent";
-import { registerOrderWatch } from "./models/orderExpiredEvent";
 
-//TO-START: npm run dev || npm run dev-standalone
+import * as utils from './utils/methods' 
 
+//mongoDB
 
 mongoose.Promise = global.Promise;
-
 
 let options = {
   useNewUrlParser: true,
@@ -38,6 +38,8 @@ let options = {
 options = process.env.REPLICA === "true" ? {...options, replicaSet: process.env.REPLICA_NAME} : options
 
 mongoose.connect(process.env.MONGODB_URL, options);
+
+//express setup
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -54,7 +56,23 @@ app.use(
   })
 );
 
-app.use(cors());
+if(process.env.NODE_ENV === 'dev'){
+  app.use(cors());
+}else{
+  var whitelist = ['http://goblin.hhgstudio.com', 'http://goblinbarman.hhgstudio.com', 'http://goblinadmin.hhgstudio.com']
+  var corsOptions = {
+    origin: function (origin, callback) {
+      if (whitelist.indexOf(origin) !== -1) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    }
+  }
+  //app.use(cors(corsOptions));
+  app.use(cors())
+}
+
 app.use(express.static(path.join(__dirname, "../../static")));
 app.use(subdomain('goblinbarman', express.static(path.join(__dirname, "../../barman/build"))));
 app.use(subdomain('goblinadmin', express.static(path.join(__dirname, "../../admin/build"))));
@@ -93,27 +111,20 @@ app.get('*', (req, res) => {
   }
 })
 
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../../client/build/index.html'));
-// })
-
-var allClients = []; //all socket clients
-
 
 const server = app.listen(port, () => {
   console.log(`Listening at ${port}`);
-  initCleaning() 
+  utils.initCleaning() 
   updateRallyQueue();
 
   if(process.env.REPLICA === 'true'){
-    registerMissionInstanceWatch()
-    registerOrderWatch()
+    MissionInstanceExpiredEvent.registerWatch()
+    OrderExpiredEvent.registerWatch()
   }
-  
 
   cron.schedule('0 0 10 * * *', () => { //every day at 10:00 AM
-    initCleaning() 
-    allClients = []
+    utils.initCleaning() 
+    socketController.allClients = []
   },{
     scheduled: true,
     timezone: "Europe/Warsaw" ///Warsaw UTC+1/UTC+2 -> stable hour despite of the timezone change
@@ -121,172 +132,13 @@ const server = app.listen(port, () => {
 
 });
 
+const socketController = new SocketController()
 
 
 
-
-//cant refactor socket methods to separate file :<< but it worked on another computer, maybe clean and rebuild?
-
-var io = socket(server); //param is a server, defined upper
-
-
-async function authenticate(socket, data, callback) {
-  //console.log(socket.id, 'tried socket auth')
-  let multipleSession = false
-  try{
-    const user = await socketConnectAuth(socket)
-
-  
-    if(allClients.length && allClients.filter((client) => client.userId === user._id.toString()).length > 0){
-      multipleSession = true
-      throw new Error('Multiple session error')  
-    }
-  
-    const newClient = {socketId: socket.id, userId: user._id.toString(), roomId: user.party.toString()}
-  
-    allClients.push(newClient);
-    return callback(null, true)
-  }catch(e){
-    if(multipleSession){
-      return callback(new Error("multipleSession")); 
-    }else{
-      console.log("Invalid party conditions")
-      return callback(new Error("Invalid party conditions")); 
-    }
-  }
-  
-
-}
-
-
-
-//io.on("connection", socket => {
-const postAuthenticate = socket => {
-  //console.log(allClients)
-  
-  console.log("New client connected", socket.id);
-
-  socket.on("joinParty", async (roomId) => {
-    try{
-      await socketRoomAuth(socket, roomId)
-
-      socket.join(roomId, () => {
-        console.log(socket.id, "joined the room", roomId);
-        socket.broadcast.to(roomId).emit("joinParty", roomId);    
-      });
-    }catch(e){
-      console.log(e)
-    }
-  });
-
-  socket.on("leaveParty", data => {
-    console.log(`User ${data.id} left the room ${data.roomId}`)
-    socket.broadcast.to(data.roomId).emit("leaveParty", data.id);
-    
-  });
-
-
-  socket.on("refreshParty", async (data) => {
-    console.log('Party has been changed!');
-    socket.broadcast.to(data.roomId).emit("refreshParty", data);
-  });
-
-  socket.on("deleteParty", roomId => {
-    console.log('Party has been removed!');
-    socket.broadcast.to(roomId).emit("deleteParty", roomId);
-  })
-
-  socket.on("refreshMissions", roomId => {
-    socket.broadcast.to(roomId).emit("refreshMissions", roomId);
-  });
-
-
-
-
-  socket.on("modifyUserStatus", data => {
-    //console.log(`${data.roomId} for user ${data.user._id} with status ${data.user.readyStatus} or ${data.user.inMission}`)
-    socket.broadcast.to(data.roomId).emit("modifyUserStatus", data.user);
-  });
-
-  
-
-  socket.on("addItem", async data => {
-    await socketRoomAuth(socket, data.roomId)
-    socket.broadcast.to(data.roomId).emit("addItem", data.item);
-  });
-
-  socket.on("deleteItem", async data => {
-    await socketRoomAuth(socket, data.roomId)
-
-    socket.broadcast.to(data.roomId)
-      .emit("deleteItem", data.id);
-  });
-
-  socket.on("finishMission", async data => {
-    await socketRoomAuth(socket, data.roomId)
-    console.log('Mission is going to end!')
-
-    socket.broadcast
-      .to(data.roomId)
-      .emit("finishMission", data.awards);
-  });
-
-
-// io.of("mission")
-          // .to(partyId)
-          // .emit("joinRoom", partyId);
-
-  /////////
-
-
-//socket.on("disconnect", () => {
-  
-  // let i = allClients.findIndex((client) => client.socketId === socket.id);
-  // if(i < 0){
-  //   console.log("Client not found")
-  // }else{
-  //   allClients.splice(i, 1);
-  //   console.log("Client disconnected", socket.id)
-  // }
-  
-//});
-
-
-
-
-};
-
-async function disconnect(socket) {
-  
-  let i = allClients.findIndex((client) => client.socketId === socket.id);
- 
-  if(i < 0){
-    console.log("Client not found")
-  }else{
-    const userId = allClients[i].userId
-    const roomId = allClients[i].roomId
-
-    if(await validateInShopPartyStatus(userId, false)){
-      socket.broadcast.to(roomId).emit("partyRefresh", roomId);
-    }
-  
-    
-    if(await validateInMissionInstanceStatus(userId, false, false)){
-      console.log(`${roomId} for user ${userId} with status inMission: false`)
-      socket.broadcast.to(roomId).emit("modifyUserStatus", {_id: userId, inMission: false, readyStatus: false});
-      console.log(`User ${userId} left the room ${roomId}`)
-      socket.broadcast.to(roomId).emit("refreshParty", userId);
-    }
-    allClients.splice(i, 1);
-    
-    console.log("Client disconnected", socket.id)
-  }
-}
-
-require('socketio-auth')(io, {
-  authenticate: authenticate,
-  postAuthenticate: postAuthenticate,
-  disconnect: disconnect,
+socketIOAuth(socket(server), {
+  authenticate: function(socket, data, callback){socketController.authenticate(socket, data, callback)},
+  postAuthenticate: function(socket){socketController.postAuthenticate(socket)},
+  disconnect: function(socket){socketController.disconnect(socket)},
   timeout: 5000
 });
-

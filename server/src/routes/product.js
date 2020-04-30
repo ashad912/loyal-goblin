@@ -422,7 +422,7 @@ router.get("/shop", auth, async (req, res) => {
 
     await removeMissionInstanceIfExits(user._id)
 
-    await updatePerks(user, false);
+    await user.updatePerks(false);
 
    
     //if user left shop before 5 min countdown and returned after countdown but before orderExpiredEvent removed user.activeOrder - clear order 
@@ -822,7 +822,7 @@ router.post("/finalize", barmanAuth, async (req, res) => {
         await scroll.remove()
       }
       
-      const updatedUserPerks = scroll ? await updatePerks(user, true, true) : member.userPerks
+      const updatedUserPerks = scroll ? await user.updatePerks(true, true) : member.userPerks
 
       
       
