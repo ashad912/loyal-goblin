@@ -88,7 +88,7 @@ export const updatePerks = (user, forcing, forcingWithoutParty) => {
 };
 
 //OK
-export const designateUserPerks = async user => {
+export const designateUserPerks = user => {
   return new Promise(async (resolve, reject) => {
     try {
       await asyncForEach(Object.keys(user.equipped), async slot => {
