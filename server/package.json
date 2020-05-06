@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "env-cmd -f ./config/test.env jest --watch --runInBand",
     "dev": "env-cmd -f ./config/dev.env nodemon -r esm src/index.js",
     "dev-standalone": "env-cmd -f ./config/dev-standalone.env nodemon -r esm src/index.js",
     "prod": "env-cmd -f ./config/prod.env nodemon -r esm src/index.js",
@@ -62,5 +62,8 @@
     "concurrently": "^4.1.2",
     "env-cmd": "^9.0.3",
     "supertest": "^4.0.2"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }

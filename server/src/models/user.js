@@ -607,6 +607,13 @@ UserSchema.methods.isNeedToPerksUpdate = function(){
 };
 
 
+UserSchema.statics.clear = async () => {
+    const users = await User.find({})
+    await asyncForEach(users, async (user) => {
+      await user.remove()
+    })
+}
+
 UserSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne( {email: email, active: true})
     
