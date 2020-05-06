@@ -554,12 +554,20 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
             throw new Error('Unappropriate party size!')
         }
 
+<<<<<<< HEAD
         await user.updatePerks(false)
+=======
+>>>>>>> 00a402dcce5392e9c8a0a87ecaa3c48c8ff442d0
         // if(isNeedToPerksUpdate(user)){
         //     user.userPerks = await designateUserPerks(user)
         //     user.perksUpdatedAt = moment().toISOString() //always in utc
         //     await user.save()
         // }
+<<<<<<< HEAD
+=======
+
+        await user.updatePerks(false, true);
+>>>>>>> 00a402dcce5392e9c8a0a87ecaa3c48c8ff442d0
 
         let party = [user]
         let totalStrength = user.attributes.strength + user.userPerks.attrStrength
