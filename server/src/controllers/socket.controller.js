@@ -1,5 +1,5 @@
-import { socketRoomAuth, socketConnectAuth } from "./middleware/auth";
-import { validateInMissionInstanceStatus, validateInShopPartyStatus, initCleaning } from './utils/methods' 
+import { socketRoomAuth, socketConnectAuth } from "@middleware/auth";
+import { validateInMissionInstanceStatus, validateInShopPartyStatus, initCleaning } from '@utils/methods' 
 
 class SocketController{
     constructor(){

@@ -1,20 +1,22 @@
-import {app} from './app'
+import app from '@app'
 import cron from 'node-cron'
 import socket from "socket.io";
 import socketIOAuth from 'socketio-auth'
 
-import SocketController from './SocketController'
-import { MissionInstanceExpiredEvent } from "./models/missionInstanceExpiredEvent";
-import { OrderExpiredEvent } from "./models/orderExpiredEvent";
 
-import * as utils from './utils/methods' 
+import { MissionInstanceExpiredEvent } from "@models/missionInstanceExpiredEvent";
+import { OrderExpiredEvent } from "@models/orderExpiredEvent";
+
+import * as utils from '@utils/methods' 
+import rallyStore from '@store/rally.store'
+import SocketController from '@controllers/socket.controller'
 
 const port = process.env.PORT || 4000;
 
 const server = app.listen(port, () => {
   console.log(`Listening at ${port}`);
   utils.initCleaning() 
-  updateRallyQueue();
+  rallyStore.updateQueue();
 
   if(process.env.REPLICA === 'true'){
     MissionInstanceExpiredEvent.registerWatch()

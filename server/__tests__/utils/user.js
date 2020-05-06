@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import mongoose from 'mongoose'
 import moment from 'moment'
-import {User} from '../../src/models/user'
+import {User} from '@models/user'
 
 const userOneId = new mongoose.Types.ObjectId()
 export const userOne = {

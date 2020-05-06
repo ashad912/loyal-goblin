@@ -11,7 +11,7 @@ import cookieParser from "cookie-parser";
 import { adminRouter } from "./routes/admin";
 import { userRouter } from "./routes/user";
 import { missionRouter } from "./routes/mission";
-import { rallyRouter, updateRallyQueue } from "./routes/rally";
+import { rallyRouter } from "./routes/rally";
 import { itemRouter } from "./routes/item";
 import { productRouter } from "./routes/product";
 import { partyRouter } from "./routes/party";
@@ -35,7 +35,7 @@ mongoose.connect(process.env.MONGODB_URL, options);
 
 //express setup
 
-export const app = express();
+const app = express();
 
 
 app.use(
@@ -104,3 +104,5 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../../client/build/index.html'));
   }
 })
+
+export default app
