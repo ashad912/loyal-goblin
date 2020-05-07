@@ -330,7 +330,7 @@ class ItemCreator extends Component {
       await asyncForEach(validatedFields, (fieldName) => {
         //console.log(fieldName)
         if(!this.state[fieldName] || !this.state[fieldName].length){
-          if(fieldName !== 'appearanceView' || (fieldName !== 'altAppearanceView')
+          if((fieldName !== 'appearanceView' && fieldName !== 'altAppearanceView')
             || (fieldName === 'appearanceView'  && equippableItems.includes(this.state.type))
             || (fieldName === 'altAppearanceView' && !this.state.twoHanded && equippableItems.includes(this.state.type))){
             //console.log(fieldName, this.state[fieldName] === 'appearanceView', this.state.type, equippableItems.includes(this.state.type))
