@@ -5,19 +5,24 @@ import {ItemModel} from '@models/itemModel'
 import {Item} from '@models/item'
 import {Rally} from '@models/rally'
 
-const setupFinish = async () => {
-    await Rally.deleteMany({})
+export const setup = async () => {
+    
     await User.deleteMany({})
     await ItemModel.deleteMany({})
     await Item.deleteMany({})
 
-    await User.insertMany(users)
+    await User.insertMany(users) //not running middleware
     await ItemModel.insertMany(itemModels)
     const usersIds = users.map(user => user._id.toString())
     const itemModelsIds = itemModels.map(itemModel => itemModel._id.toString())
     const rally = getRally(usersIds, itemModelsIds)
-    return await new Rally(rally).save()
+    
+    return {rally: await new Rally(rally).save(), users, iModels: itemModels}
 
+}
+
+export const restore = async () => {
+    await Rally.deleteMany({})
 }
 
 const users = [
@@ -40,8 +45,25 @@ const users = [
     },
     { 
         _id: new mongoose.Types.ObjectId(), 
-        "name": "admin2",
+        "name": "user2",
         "email": "user2@test.com",
+        "password": "usertest",
+        "active": true,
+        "experience": 0,
+        "class": "warrior",
+        "bag": [],
+        "equipped": {},
+        "statistics": {
+            "rallyCounter": 0,
+            "missionCounter": 0
+        },
+        "activeOrder":  [],
+        "loyal": {}
+    },
+    { 
+        _id: new mongoose.Types.ObjectId(), 
+        "name": "user3",
+        "email": "user3@test.com",
         "password": "usertest",
         "active": true,
         "experience": 0,
@@ -87,7 +109,7 @@ const getRally = (usersIds, iModelsIds) => (
         "title" : "RallyTest1",
         "activationDate": moment().subtract(10, 's').toISOString(),
         "startDate": moment().subtract(8, 's').toISOString(),
-        "expiryDate": moment().toISOString(),
+        "expiryDate": moment().subtract(6, 's').toISOString(),
         "description" : "Super important rally",
         "experience" : 1000,
         "users" : [ 
@@ -110,7 +132,12 @@ const getRally = (usersIds, iModelsIds) => (
                 
                 "level" : 1000,
                 "awards" : {
-                    "any" : [],
+                    "any" : [
+                        {
+                            "quantity" : 1,
+                            "itemModel" : iModelsIds[0]
+                        }
+                    ],
                     "warrior" : [ 
                         {
                             "quantity" : 1,
@@ -127,7 +154,12 @@ const getRally = (usersIds, iModelsIds) => (
                 "level" : 2000,
                 "awards" : {
                     "any" : [],
-                    "warrior" : [],
+                    "warrior" : [
+                        {
+                            "quantity" : 2,
+                            "itemModel" : iModelsIds[1]
+                        }
+                    ],
                     "rogue" : [ 
                         {
                             "quantity" : 2,
@@ -143,6 +175,3 @@ const getRally = (usersIds, iModelsIds) => (
 )
 
 
-
-
-export default setupFinish

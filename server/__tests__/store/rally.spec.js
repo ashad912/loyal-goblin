@@ -6,14 +6,24 @@ import moment from 'moment'
 import mongoose from 'mongoose'
 
 
-import rallyStore from '@store/rally.store'
-import {connect, disconnect} from '@tests/utils/mongoose'
 
+import { Item } from '@models/item'
+import { User } from '@models/user'
 import {Rally} from '@models/rally'
 
-import setupFinish from '@tests/utils/rally.store.finish'
+import rallyStore from '@store/rally.store'
 
-let rallies = [
+import {connect, disconnect} from '@tests/utils/mongoose'
+import {setup, restore} from '@tests/utils/store/rally.finish'
+
+
+beforeAll(async () => {
+    await connect()
+})
+
+describe("Rally update queue", () => { 
+
+    let rallies = [
     
         {
             _id: new mongoose.Types.ObjectId(),
@@ -45,17 +55,10 @@ let rallies = [
             expiryDate: moment().subtract(6, 's').toISOString(),
         },
 
-]
+    ]   
 
-beforeAll(async () => {
-    await connect()
-})
-
-describe("Rally update queue", () => { 
-
-    beforeEach(async () => {
-        await Rally.deleteMany({})
-    })
+    beforeEach(restore)
+    afterEach(rallyStore.destroyCronTask)
 
     it('should schedule rally', async () => {
         await Rally.create(rallies[0])
@@ -89,18 +92,40 @@ describe("Rally update queue", () => {
 
 describe("Rally finish", () => { 
 
-    let rally
+    let rally, users, iModels
 
     beforeEach(async () => {
-        rally = await setupFinish()
+        const data = await setup()
+        rally = data.rally
+        users = data.users
+        iModels = data.iModels
     })
 
     it('should add appropriate awards to users', async () => {
         await rallyStore.finish(rally)
 
-        expect(true).toEqual(true)
 
-        
+        const items = await Item.find({
+            $or: [
+                {itemModel: iModels[0]._id},
+                {itemModel: iModels[1]._id}
+            ]
+        })
+
+        const user1 = await User.findById(users[0])
+        const user2 = await User.findById(users[1]).populate('bag')
+        const user3 = await User.findById(users[2]).populate('bag')
+
+        expect(items.length).toEqual(5)
+
+        expect(user1.bag.toObject()).toEqual([])
+        expect(user2.bag.length).toEqual(2)
+        expect(user3.bag.length).toEqual(3)
+
+        expect(user2.bag.filter(item => item.itemModel._id.toString() === iModels[0]._id.toString()).length).toEqual(2)
+
+        expect(user3.bag.filter(item => item.itemModel._id.toString() === iModels[0]._id.toString()).length).toEqual(1)
+        expect(user3.bag.filter(item => item.itemModel._id.toString() === iModels[1]._id.toString()).length).toEqual(2)
     })
    
 })

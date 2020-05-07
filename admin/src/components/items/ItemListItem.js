@@ -14,7 +14,7 @@ import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 
 import {itemTypeLabels, classLabels, equippableItems} from '../../utils/labels'
-import { itemsPath, appearancePath } from "../../utils/definitions";
+import { itemsPath, appearancePath, altAppearancePath } from "../../utils/definitions";
 
 
 const StyledListItem = styled(ListItem)`
@@ -80,14 +80,19 @@ const ItemListItem = ({
         </Grid>
         <Grid item container>
           <Grid item xs={2}>
-            <Grid container style={{}}>
+            <Grid container >
               <img alt=''
                 src={itemsPath + item.imgSrc}
                 width={32}
-                style={{height: '100%', marginRight: '1rem'}}
+                style={{height: '100%', marginRight: '0.7rem'}}
               />
               {equippableItems.includes(item.type) && <img alt=''
                 src={appearancePath + item.appearanceSrc}
+                width={32}
+                style={{height: '100%', marginRight: '0.7rem'}}
+              />}
+              {equippableItems.includes(item.type) && !item.twoHanded && <img alt=''
+                src={altAppearancePath + item.altAppearanceSrc}
                 width={32}
                 style={{height: '100%'}}
               />}

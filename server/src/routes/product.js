@@ -6,12 +6,9 @@ import {isEqual, pick} from "lodash";
 import moment from "moment";
 import {
   asyncForEach,
-  updatePerks,
-  designateUserPerks,
   removeImage,
   saveImage,
   verifyCaptcha,
-  designateNewLevels, 
   validatePartyAndLeader,
   removeMissionInstanceIfExits
 } from "../utils/methods";
@@ -278,7 +275,7 @@ const calculateOrder = async user => {
         basket => basket.profile._id.toString() === partyMember._id.toString()
       );
 
-      let modelPerks = await designateUserPerks(partyMember);
+      let modelPerks = await partyMember.updatePerks(true);
       
       const userProducts = user.activeOrder[currentMember].products.map(product => product.toJSON())
 
@@ -812,7 +809,7 @@ router.post("/finalize", barmanAuth, async (req, res) => {
       })
 
 
-      const newLevels = designateNewLevels(member.experience, exp);
+      const newLevels = member.getNewLevels(exp);
 
       const isNewFlag = exp > 0 || newShopAwards.length ? true : false
 

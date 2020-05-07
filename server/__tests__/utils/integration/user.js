@@ -18,7 +18,7 @@ export const userOne = {
 }
 
 
-export const setupDatabase = async () => {
+export const setup = async () => {
     await User.clear()
     await new User(userOne).save()
 }

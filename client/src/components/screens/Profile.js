@@ -27,6 +27,7 @@ import {
 } from "../../utils/methods";
 import {
   appearancePath,
+  altAppearancePath,
   uiPaths,
 } from "../../utils/definitions";
 
@@ -281,17 +282,7 @@ const Profile = props => {
   };
 
   const handleItemDelete = id => {
-    // const modifyItemArrayIndex = tempPlayer.bag[category].findIndex(
-    //   item => {
-    //     return item._id === id;
-    //   }
-    // );
 
-    // tempPlayer.bag[category].splice(modifyItemArrayIndex, 1);
-    // if (!tempPlayer.bag[category].length) {
-    //   delete tempPlayer.bag[category];
-    // }
-    // setPlayer({ ...tempPlayer });
     if (props.party && props.party.inShop) {
       return;
     } else {
@@ -300,40 +291,7 @@ const Profile = props => {
     }
   };
 
-  // const handleAddExperience = newExp => {
-  //   const tempPlayer = { ...player };
-  //   if (tempPlayer.currentExp + newExp >= tempPlayer.nextLevelAtExp) {
-  //     setPlayer({ ...handleNewLevel(tempPlayer) });
-  //     setNewLevelDialogOpen(true);
-  //   } else {
-  //     tempPlayer.currentExp += newExp;
-  //     setPlayer({ ...tempPlayer });
-  //   }
-  // };
 
-  // const handleNewLevel = player => {
-  //   player.level++;
-  //   player.currentExp = player.nextLevelAtExp - player.currentExp;
-  //   const tempCurrentExpBasis = player.nextLevelAtExp;
-  //   player.nextLevelAtExp = player.currentExpBasis + player.nextLevelAtExp;
-  //   player.currentExpBasis = tempCurrentExpBasis;
-
-  //
-
-  //   return player;
-  // };
-
-  //const handleNewLevelDialogClose = attribute => {
-  //setNewLevelDialogOpen(false);
-  // const attributes = { ...props.auth.profile.attributes };
-  // attributes[attribute]++;
-  //TODO: backend add attribute point
-  //};
-
-  // const handleGoExp = () => {
-  //   console.log(props.location.push('shop'));
-  //   setGoExp(prev => !prev);
-  // };
 
   const handleOpenShop = () => {
     history.push("/shop", { id: props.auth.uid });
@@ -347,7 +305,7 @@ const Profile = props => {
   const handleToggleEquipment = isOpen => {
     setEquipmentOpen(isOpen)
   }
-
+  const rootPath = props.auth.profile.sex === "male" ? appearancePath : altAppearancePath
   return (
     <Grid
       container
@@ -396,21 +354,21 @@ const Profile = props => {
             {equippedItems && equippedItems.legs && (
               <img
                 className={classes.avatarImage}
-                src={`${appearancePath}${equippedItems.legs}`}
+                src={`${rootPath}${equippedItems.legs}`}
               />
             )}
             {/* feet */}
             {equippedItems && equippedItems.feet && (
               <img
                 className={classes.avatarImage}
-                src={`${appearancePath}${equippedItems.feet}`}
+                src={`${rootPath}${equippedItems.feet}`}
               />
             )}
             {/* chest */}
             {equippedItems && equippedItems.chest && (
               <img
                 className={classes.avatarImage}
-                src={`${appearancePath}${equippedItems.chest}`}
+                src={`${rootPath}${equippedItems.chest}`}
               />
             )}
 
@@ -420,7 +378,7 @@ const Profile = props => {
               equippedItems.head.includes(".") && (
                 <img
                   className={classes.avatarImage}
-                  src={`${appearancePath}${equippedItems.head}`}
+                  src={`${rootPath}${equippedItems.head}`}
                 />
               )}
 
@@ -428,7 +386,7 @@ const Profile = props => {
             {equippedItems && equippedItems.hands && (
               <img
                 className={classes.avatarImage}
-                src={`${appearancePath}${equippedItems.hands}`}
+                src={`${rootPath}${equippedItems.hands}`}
               />
             )}
 
@@ -444,7 +402,7 @@ const Profile = props => {
             {equippedItems && equippedItems.weaponLeft && (
               <img
                 className={classes.avatarImage}
-                src={`${appearancePath}${equippedItems.weaponLeft}`}
+                src={`${altAppearancePath}${equippedItems.weaponLeft}`}
                 style={{ transform: "scaleX(-1)" }}
               />
             )}

@@ -7,7 +7,6 @@ import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
 import Switch from "@material-ui/core/Switch";
 import Grid from "@material-ui/core/Grid";
-import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -20,42 +19,16 @@ import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 
 import PerkModal from "./PerkModal";
 import PerkListBox from './PerkListBox'
+import ImageWrapper from '../common/ImageWrapper'
 
 import {asyncForEach} from '../../utils/methods'
-import { itemsPath, appearancePath } from "../../utils/definitions";
+import { itemsPath, appearancePath, altAppearancePath } from "../../utils/definitions";
 import {classLabels, itemTypeLabels, equippableItems} from '../../utils/labels'
 import {torpedoFields, userClasses} from '../../utils/modelArrays'
 
 import { createItemModel, updateItemModel, uploadItemModelImages } from "../../store/actions/itemActions";
 import { getProducts } from "../../store/actions/productActions";
 
-
-
-const FileInputWrapper = styled.div`
-  position: relative;
-  background: red;
-  height: 2.5rem;
-  width: 10rem;
-  margin: 1rem 0 1.3rem 0;
-`;
-
-const HiddenFileInput = styled(Input)`
-  position: absolute;
-  top: 0;
-  left: 0;
-  opacity: 0;
-  height: 2.5rem;
-  width: 10rem;
-  user-select: none;
-`;
-
-const FileInputButton = styled(Button)`
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 2.5rem;
-  width: 10rem;
-`;
 
 const AddIcon = styled(AddCircleIcon)`
   width: 1.5rem;
@@ -67,7 +40,8 @@ const AddIcon = styled(AddCircleIcon)`
 `;
 
 
-const validatedFields = ['type', 'name', 'description', 'iconView', 'appearanceView']
+const validatedFields = ['type', 'name', 'description', 'iconView', 'appearanceView', 'altAppearanceView']
+const imgFields = ['iconView', 'appearanceView', 'altAppearanceView']
 
 const nullTarget = {
   'disc-product': null,
@@ -84,9 +58,11 @@ class ItemCreator extends Component {
     appearance: "",
     iconView: "",
     appearanceView: '',
+    altAppearanceView: '',
     loyalAward: false,
     class: 'any',
     classItem: false,
+    twoHanded: false,
     modifyingIndex: null,
     showPerkModal: false,
     perks: [],
@@ -96,6 +72,7 @@ class ItemCreator extends Component {
       description: null,
       iconView: null,
       appearanceView: null,
+      altAppearanceView: null,
     },
     snackbarOpen: false,
   };
@@ -115,6 +92,7 @@ class ItemCreator extends Component {
         perks: item.perks,
         iconView: item.imgSrc ? (itemsPath + item.imgSrc) : null, 
         appearanceView: item.appearanceSrc ? (appearancePath + item.appearanceSrc) : null,
+        altAppearanceView: item.altAppearanceSrc ? (altAppearancePath + item.altAppearanceSrc) : null,
         twoHanded: item.twoHanded
       }, () => {
         this.setState({
@@ -131,11 +109,14 @@ class ItemCreator extends Component {
         this.setState({
           appearance: "",
           appearanceView: '',
+          altAppearance: "",
+          altAppearanceView: '',
         }, () => {
           this.setState({
             formError: {
               ...this.state.formError,
-              appearanceView: null
+              appearanceView: null,
+              altAppearanceView: null
             }
           })
         })
@@ -221,19 +202,26 @@ class ItemCreator extends Component {
     
   };
 
-  handleIconChange = e => {
+  handleImgChange = (e, viewName, fileName) => {
+    console.log(viewName, fileName)
     if (e.target.files.length > 0) {
       const url = URL.createObjectURL(e.target.files[0])
-      this.setState({ iconView: url, icon: e.target.files[0]}, () => this.callbacksAndValidation('iconView', url));
+      this.setState({ [viewName]: url, [fileName]: e.target.files[0]}, () => this.callbacksAndValidation(viewName, url));
     }
-  };
+  }
 
-  handleAppearanceChange = e => {
-    if (e.target.files.length > 0) {
-      const url = URL.createObjectURL(e.target.files[0])
-      this.setState({ appearanceView: url, appearance: e.target.files[0]}, () => this.callbacksAndValidation('appearanceView', url));
-    }
-  };
+  // handleIconChange = e => {
+    
+  //   // if (e.target.files.length > 0) {
+  //   //   const url = URL.createObjectURL(e.target.files[0])
+  //   //   this.setState({ iconView: url, icon: e.target.files[0]}, () => this.callbacksAndValidation('iconView', url));
+  //   // }
+  // };
+
+  // handleAppearanceChange = e => {
+  //   this.imgChange(e, 'appearanceView', 'appearance')
+  // };
+
 
 
   handleSnackbarClose = () => {
@@ -258,8 +246,16 @@ class ItemCreator extends Component {
   handleToggleWeaponHanded = e => {
     
     this.setState(prevState => {
-      return { twoHanded: prevState.twoHanded ? false : true
-             };
+      return { 
+        twoHanded: prevState.twoHanded ? false : true,
+        altAppearance: !prevState.twoHanded ? "" : this.state.altAppearance,
+        altAppearanceView: !prevState.twoHanded ? "" : this.state.altAppearanceView,
+        formError: {
+          ...this.state.formError,
+          altAppearanceView: null
+        }
+        
+      };
     });
   };
 
@@ -290,11 +286,8 @@ class ItemCreator extends Component {
     if(this.state.modifyingIndex != null){
       const perks = this.state.perks
 
-      
-
       perks[this.state.modifyingIndex] = perk
 
-   
       this.setState({
         perks: perks,
       }, () => {
@@ -312,12 +305,12 @@ class ItemCreator extends Component {
   }
 
   callbacksAndValidation = (fieldName, fieldValue, prevFieldValue) => {
-    
+
     if(validatedFields.includes(fieldName)){
       let error = ''
 
       if(fieldValue.length === 0){
-        error = (fieldName === 'iconView' || fieldName === 'appearanceView') ? ('Obraz wymagany!') : ('Pole wymagane!')
+        error = (imgFields.includes(fieldName)) ? ('Obraz wymagany!') : ('Pole wymagane!')
       }
 
       this.setState({
@@ -337,12 +330,12 @@ class ItemCreator extends Component {
       await asyncForEach(validatedFields, (fieldName) => {
         //console.log(fieldName)
         if(!this.state[fieldName] || !this.state[fieldName].length){
-          if(fieldName !== 'appearanceView' || (fieldName === 'appearanceView' && equippableItems.includes(this.state.type))){
+          if(fieldName !== 'appearanceView' || (fieldName !== 'altAppearanceView' && !this.state.twoHanded)  || (fieldName === 'appearanceView' && fieldName === 'altAppearanceView' && equippableItems.includes(this.state.type))){
             //console.log(fieldName, this.state[fieldName] === 'appearanceView', this.state.type, equippableItems.includes(this.state.type))
             this.setState({
               formError: {
                   ...this.state.formError,
-                  [fieldName]: (fieldName === 'iconView' || fieldName === 'appearanceView') ? ('Obraz wymagany!') : ('Pole wymagane!')
+                  [fieldName]: (imgFields.includes(fieldName)) ? ('Obraz wymagany!') : ('Pole wymagane!')
               },
               
             });
@@ -371,8 +364,6 @@ class ItemCreator extends Component {
         class: this.state.class,
         loyalAward: this.state.loyalAward,
         perks: this.state.perks,
-        //icon: this.state.icon,
-        //appearance: this.state.appearance,
         twoHanded: this.state.twoHanded
       }
       if(item.twoHanded === undefined){
@@ -381,6 +372,7 @@ class ItemCreator extends Component {
 
       if(!equippableItems.includes(item.type)){
         delete item.appearance
+        delete item.altAppearance
       } 
 
       let itemModelId = null
@@ -391,13 +383,16 @@ class ItemCreator extends Component {
         itemModelId = await updateItemModel(item)
       }
       //console.log(itemModelId)
-      if(itemModelId && (this.state.icon || this.state.appearance)){
+      if(itemModelId && (this.state.icon || this.state.appearance || this.state.altAppearance)){
         const formData = new FormData()
         if(this.state.icon){
           formData.append('icon', this.state.icon)
         }
         if(this.state.appearance){
           formData.append('appearance', this.state.appearance)
+        }
+        if(this.state.altAppearance){
+          formData.append('altAppearance', this.state.altAppearance)
         }
         try{
           await uploadItemModelImages(itemModelId, formData)
@@ -422,60 +417,46 @@ class ItemCreator extends Component {
         <Button onClick={this.props.handleClose}>{"< Powrót do panelu przedmiotów"}</Button>
         <Container>
           <Grid container spacing={5} style={{marginTop: '1rem'}}>
-          <Grid item xs={6} style={{textAlign: 'left'}}>
-            <FormControl style={{minWidth: '10rem'}}>
-                <InputLabel shrink={true} htmlFor="type">Typ przedmiotu</InputLabel>
-                <Select
-                    autoFocus
-                    value={this.state.type}
-                    onChange={this.handleChangeNameValue}
-                    inputProps={{
-                        name: 'type',
-                        id: 'type',
-                    }}
-                >
-                    {Object.keys(itemTypeLabels).map((itemTypeKey) => {
-                        return(
-                            <MenuItem value={itemTypeKey}>{itemTypeLabels[itemTypeKey]}</MenuItem>
-                        )
-                    })}
-                </Select>
-            </FormControl>
+            <Grid item xs={6} style={{textAlign: 'left', paddingBottom: '0rem'}}>
+              <FormControl style={{minWidth: '10rem'}}>
+                  <InputLabel shrink={true} htmlFor="type">Typ przedmiotu</InputLabel>
+                  <Select
+                      autoFocus
+                      value={this.state.type}
+                      onChange={this.handleChangeNameValue}
+                      inputProps={{
+                          name: 'type',
+                          id: 'type',
+                      }}
+                  >
+                      {Object.keys(itemTypeLabels).map((itemTypeKey) => {
+                          return(
+                              <MenuItem value={itemTypeKey}>{itemTypeLabels[itemTypeKey]}</MenuItem>
+                          )
+                      })}
+                  </Select>
+              </FormControl>
             </Grid>
             <Grid item xs={1}>
             </Grid>
             
             {equippableItems.includes(this.state.type) && (
-              <Grid item xs={5} >
-                <Grid container spacing={2}>
-                  <Grid item>
-                  <FileInputWrapper>
-                    <FileInputButton variant="contained" color="primary">
-                      {this.state.appearanceView ? "Zmień wygląd" : "Dodaj wygląd"}
-                    </FileInputButton>
-                    <HiddenFileInput
-                      type="file"
-                      onChange={this.handleAppearanceChange}
-                      inputProps={{accept:"image/svg+xml"}}
-                    />
-                    
-                  </FileInputWrapper>
-                  {this.state.formError.appearanceView && <Typography style={{color: 'red', fontSize: '0.8rem'}}>{this.state.formError.appearanceView}</Typography>}
-                </Grid>
-                <Grid
-                  item
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center"
-                  }}
-                >
-                  <img alt='' src={this.state.appearanceView} style={{ width: "64px" }} />
-                </Grid>
-              </Grid>
-           </Grid>)}
+              <Grid item xs={5} style={{paddingBottom: '0rem'}}>
+                <ImageWrapper 
+                  view={this.state.appearanceView}
+                  text={'wygląd'}
+                  secondaryText={this.state.type === 'weapon' ? '(Główna broń)': '(Męski)'}
+                  viewName={'appearanceView'}
+                  fileName={'appearance'}
+                  accept={"image/svg+xml"}
+                  error={this.state.formError.appearanceView}
+                  imageChange={this.handleImgChange}
 
-          <Grid item xs={12} style={{paddingTop: '0rem', paddingBottom: '0rem'}}>
+                />
+              </Grid>
+           )}
+
+          <Grid item xs={7} style={{paddingTop: '0rem', paddingBottom: '0rem'}}>
           {this.state.type === 'weapon' && 
             <div style={{display: 'flex'}}>
               <Typography component="div" style={{width: 'auto'}}>
@@ -501,8 +482,23 @@ class ItemCreator extends Component {
               
             </div>}
           </Grid>
+          <Grid item xs={5} style={{paddingTop: '0rem', paddingBottom: '0rem'}}>
+          {equippableItems.includes(this.state.type) && !this.state.twoHanded && (
+            <ImageWrapper 
+                view={this.state.altAppearanceView}
+                text={'wygląd'}
+                secondaryText={this.state.type === 'weapon' ? '(Druga broń)': '(Damski)'}
+                viewName={'altAppearanceView'}
+                fileName={'altAppearance'}
+                accept={"image/svg+xml"}
+                error={this.state.formError.altAppearanceView}
+                imageChange={this.handleImgChange}
 
-          <Grid item xs={6} style={{display: 'flex', flexDirection: 'column'}}>
+            />
+           )}
+           </Grid>
+
+          <Grid item xs={6} style={{display: 'flex', flexDirection: 'column', paddingTop: '0rem'}}>
             {this.state.type !== 'torpedo' ? (
               <TextField
                 value={this.state.name}
@@ -561,36 +557,20 @@ class ItemCreator extends Component {
               label="Uwzględnij w puli nagród statków"
             />
           </Grid>
-          <Grid item xs={1} >
+          <Grid item xs={1} style={{paddingTop: '0rem'}}>
           </Grid>
-          <Grid item xs={5} >
-          <Grid container spacing={2}>
-            <Grid item>
-              <FileInputWrapper>
-                <FileInputButton variant="contained" color="primary">
-                  {this.state.iconView ? "Zmień ikonę" : "Dodaj ikonę"}
-                </FileInputButton>
-                <HiddenFileInput
-                  type="file"
-                  //accept="image/*"
-                  onChange={this.handleIconChange}
-                  inputProps={{accept: 'image/*'}}
-                />
-                
-              </FileInputWrapper>
-              {this.state.formError.iconView && <Typography style={{color: 'red', fontSize: '0.8rem'}}>{this.state.formError.iconView}</Typography>}
-            </Grid>
-            <Grid
-              item
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center"
-              }}
-            >
-              <img alt='' src={this.state.iconView} style={{ width: "64px" }} />
-            </Grid>
-          </Grid>
+          <Grid item xs={5} style={{paddingTop: '0rem'}}>
+          
+          <ImageWrapper 
+            view={this.state.iconView}
+            text={'ikonę'}
+            viewName={'iconView'}
+            fileName={'icon'}
+            accept={"image/*"}
+            error={this.state.formError.iconView}
+            imageChange={this.handleImgChange}
+
+          />
           
           {this.state.type !== 'torpedo' && 
           <div style={{display: 'flex'}}>
