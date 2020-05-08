@@ -1,5 +1,6 @@
 export const itemsPath = '/images/items/'
-export const appearancePath = '/images/appearance/'
+export const appearancePath = '/images/appearance/main/'
+export const altAppearancePath = '/images/appearance/alt/'
 export const usersPath = '/images/avatars/'
 export const missionsPath = '/images/missions/'
 export const ralliesPath = '/images/rallies/'

@@ -9,13 +9,9 @@ import { Item } from '../models/item'
 import { ItemModel } from '../models/itemModel'
 import { 
     asyncForEach,
-    designateUserPerks,
-    isNeedToPerksUpdate, 
-    designateUserLevel, 
     designateExperienceMods, 
-    saveImage, 
+    savePNGImage, 
     removeImage, 
-    designateNewLevels, 
     updateAmuletCounters, 
     validatePartyAndLeader
 } from '../utils/methods'
@@ -59,11 +55,6 @@ router.get('/events', adminAuth, async (req,res) => {
 router.post('/create', adminAuth, async (req, res) =>{
 
     const mission = new Mission(req.body)
-    // if(!req.body.postman){
-    //     let icon = req.files.icon
-    //     const imgSrc = await saveImage(icon, mission._id, uploadPath, null)
-    //     mission.imgSrc = imgSrc
-    // }
     
     try {
         await mission.save() 
@@ -97,7 +88,7 @@ router.delete('/remove', adminAuth, async(req, res) => {
 router.patch('/uploadIcon/:id', adminAuth, async (req, res) => {
     try{
         if (!req.files) {
-            throw new Error("Brak ikony misji")
+            throw new Error("No mission icon provided")
         }
 
         const mission = await Mission.findById(req.params.id)
@@ -107,12 +98,10 @@ router.patch('/uploadIcon/:id', adminAuth, async (req, res) => {
 
         if(req.files.icon){
             let icon = req.files.icon.data
-            const imgSrc = await saveImage(icon, mission._id, uploadPath, mission.imgSrc)
+            const imgSrc = await savePNGImage(icon, mission._id, uploadPath, mission.imgSrc)
             mission.imgSrc = imgSrc
         }
         
-        
-
         await mission.save()
 
         res.status(200).send()
@@ -155,12 +144,6 @@ router.patch("/update", adminAuth, async (req, res, next) => {
         mission[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.
       });
 
-    //   if(req.files){
-    //     let icon = req.files.icon.data
-    //     const imgSrc = await saveImage(icon, mission._id, uploadPath, mission.imgSrc)
-    //     mission.imgSrc = imgSrc
-    //   }
-  
       await mission.save();
 
       res.send(mission._id);
@@ -355,7 +338,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
         await asyncForEach(missions, async (mission) => {
             if(mission.unique){
                 const instances = await MissionInstance.find({mission: mission._id})
-                if( instances.length){
+                if(instances.length){
                     excludedMissions = [...excludedMissions, mission._id.toString()]
                 }
             }
@@ -366,7 +349,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
         })
 
         //custom sorting for specific user
-        const getMinExperience = (party) => {
+        const getMinLevelUser = (party) => {
             return new Promise (async (resolve, reject) => {
                 try{
                     await party.populate({
@@ -374,9 +357,13 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
                         select: "_id experience"
                     }).execPopulate()
 
-                    const membersExp = party.members.map((member) => member.experience)
-                    const partyExp = [party.leader.experience, ...membersExp]
-                    resolve(Math.min(...partyExp))
+                    // const membersExp = party.members.map((member) => member.experience)
+                    // const partyExp = [party.leader.experience, ...membersExp]
+                    // resolve(Math.min(...partyExp))
+
+                    const partyArray = [party.leader, ...party.members]
+                    partyArray.sort((a, b) => a.experience < b.experience)
+                    resolve(partyArray[0])
                 }catch(e){
                     reject(e)
                 }
@@ -384,9 +371,10 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
         }
         
 
-        const level = party ? designateUserLevel(await getMinExperience(party)) : designateUserLevel(user.experience);
 
-        missions.sort(function(a, b){
+        const level = party ? (await getMinLevelUser(party)).getLevel() : user.getLevel();
+
+        missions.sort((a, b) => {
             return Math.abs(level-a.level) - Math.abs(level-b.level);
         });
         
@@ -397,7 +385,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
             options: {}
         })
         
-        //IMPORTANT: .execPopulate() does not work on array!!!!!! lost 1,5 hour on this xd
+        //IMPORTANT: .execPopulate() does not work on collection!!!!!! lost 1,5 hour on this xd
         /*missions.forEach( async (mission) => {
             console.log(mission)
             await mission.populate({ 
@@ -486,28 +474,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
         }else{
             leader = user._id
         }
-        // OVERLOADED CODE
-        // if(user.party){
-        //     const party = await Party.findById(user.party)
-        //     if(party){
-        //         membersIds = [...party.members]
-        //         leader = party.leader
-        //     }else{ //very eventually cleaning empty record
-        //         user.party = null
-        //         await user.save()
-        //     }
-            
-        // }
-
         
-
-        //console.log('got members ids', membersIds)
-        // console.log(user.party.leader)
-        // if(!membersIds.length && !user.party.leader){ //one person party - giving user leader privileges
-        //     user.party.leader = user._id
-        //     await user.save()
-        // }
-        //user.party !== null -> membersIds = []
         if(leader && (leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
             throw new Error('User is not the leader!')
         }
@@ -554,6 +521,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
             throw new Error('Unappropriate party size!')
         }
 
+
         // if(isNeedToPerksUpdate(user)){
         //     user.userPerks = await designateUserPerks(user)
         //     user.perksUpdatedAt = moment().toISOString() //always in utc
@@ -567,7 +535,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
         let totalDexterity = user.attributes.dexterity + user.userPerks.attrDexterity
         let totalMagic = user.attributes.magic + user.userPerks.attrMagic
         let totalEndurance = user.attributes.endurance + user.userPerks.attrEndurance
-        let minUserLevelInParty = designateUserLevel(user.experience)
+        let minUserLevelInParty = user.getLevel()
 
         
 
@@ -578,20 +546,27 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
                 throw Error(`Member (${memberId}) does not exist!`)
             }
 
+<<<<<<< HEAD
+=======
+            await member.updatePerks(false)
+>>>>>>> 61888c81da12c38ea98ce6935278f125825b973c
             // if(isNeedToPerksUpdate(member)){
             //     member.userPerks = await designateUserPerks(member)
             //     member.perksUpdatedAt = moment().toISOString() //always in utc
             //     await member.save()
             // }
+<<<<<<< HEAD
 
             await member.updatePerks(false, true);
+=======
+>>>>>>> 61888c81da12c38ea98ce6935278f125825b973c
 
             party = [...party, member]
             totalStrength += member.attributes.strength + member.userPerks.attrStrength
             totalDexterity += member.attributes.dexterity + member.userPerks.attrDexterity
             totalMagic += member.attributes.magic + member.userPerks.attrMagic
             totalEndurance += member.attributes.endurance + member.userPerks.attrEndurance
-            minUserLevelInParty = Math.min(designateUserLevel(member.experience), minUserLevelInParty)
+            minUserLevelInParty = Math.min(member.getLevel(), minUserLevelInParty)
         })
 
         //console.log('got all party', party.map((member) => member._id))
@@ -978,7 +953,7 @@ router.delete('/finishInstance', auth, async (req,res) => {
                 const items = await addAwards(user, missionInstance.mission.awards)
                 
                 const modMissionExp = designateExperienceMods(missionInstance.mission.experience, user.userPerks.rawExperience)
-                const newLevels = designateNewLevels(user.experience, modMissionExp)
+                const newLevels = user.getNewLevels(modMissionExp)
 
                 const statistics = user.statistics
                 statistics.missionCounter += 1

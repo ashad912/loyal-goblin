@@ -227,7 +227,7 @@ const AdminOrders = () => {
               return ( <OrderListItem key={order._id} order={order} />);
             })}
           </List>
-        ) : (<Typography>Brak zamówień!</Typography>)}
+        ) : (<Typography style={{marginTop: '1rem'}}>Brak zamówień!</Typography>)}
       </Grid>
     </Grid>
   );

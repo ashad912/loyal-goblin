@@ -1,5 +1,5 @@
 import express from 'express'
-import { saveImage, saveAppearanceImage, removeImage } from '../utils/methods'
+import { savePNGImage, saveSVGImage, removeImage } from '../utils/methods'
 import { ItemModel } from '../models/itemModel';
 import { User } from '../models/user';
 import { adminAuth } from '../middleware/adminAuth';
@@ -7,7 +7,8 @@ import { Item } from '../models/item';
 
 
 const uploadIconPath = "../static/images/items/"
-const uploadAppearancePath = "../static/images/appearance/"
+const uploadAppearancePath = "../static/images/appearance/main/"
+const uploadAltAppearancePath = "../static/images/appearance/alt/"
 
 const router = new express.Router
 
@@ -52,7 +53,7 @@ router.post('/createModel', adminAuth, async (req, res) =>{
 router.patch('/uploadModelImages/:id', adminAuth, async (req, res) => {
     try{
         if (!req.files) {
-            throw new Error("Brak ikony przedmiotu")
+            throw new Error("No file(s) provided")
         }
 
         const itemModel = await ItemModel.findById(req.params.id)
@@ -64,14 +65,20 @@ router.patch('/uploadModelImages/:id', adminAuth, async (req, res) => {
 
         if(req.files.icon){
             let icon = req.files.icon.data
-            const imgSrc = await saveImage(icon, itemModel._id, uploadIconPath, itemModel.imgSrc, date)
+            const imgSrc = await savePNGImage(icon, itemModel._id, uploadIconPath, itemModel.imgSrc, date)
             itemModel.imgSrc = imgSrc
         }
         
         if(req.files.appearance){
             let appearance = req.files.appearance.data
-            const appearanceSrc = await saveAppearanceImage(appearance, itemModel._id, uploadAppearancePath, itemModel.appearanceSrc, date)
+            const appearanceSrc = await saveSVGImage(appearance, itemModel._id, uploadAppearancePath, itemModel.appearanceSrc, date)
             itemModel.appearanceSrc = appearanceSrc
+        }
+
+        if(req.files.altAppearance){
+            let altAppearance = req.files.altAppearance.data
+            const altAppearanceSrc = await saveSVGImage(altAppearance, itemModel._id, uploadAltAppearancePath, itemModel.altAppearanceSrc, date)
+            itemModel.altAppearanceSrc = altAppearanceSrc
         }
         
 

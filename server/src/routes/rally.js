@@ -1,13 +1,9 @@
 import express from 'express'
-import cron from 'node-cron'
-import moment from 'moment'
-import { Rally } from '../models/rally';
-import { User } from '../models/user'
-import { adminAuth } from '../middleware/adminAuth';
-import { auth } from '../middleware/auth';
-import { Item } from '../models/item';
-import { asyncForEach, designateUserPerks, designateExperienceMods, designateNewLevels, removeImage, saveImage } from '../utils/methods'
-
+import { Rally } from '@models/rally';
+import { adminAuth } from '@middleware/adminAuth';
+import { auth } from '@middleware/auth';
+import {removeImage, saveImage } from '@utils/methods'
+import rallyStore from '@store/rally.store'
 
 const uploadPath = "../static/images/rallies/"
 
@@ -16,173 +12,6 @@ const router = new express.Router
 
 ////ADMIN-SIDE
 
-var rallyFinishTask
-
-//OK
-const addAwards = async (user, awardsLevels, rallyNotifications) => {
-    const prevNewRallyAwards = rallyNotifications.awards
-    let items = []
-    let newRallyAwards = []
-    if(prevNewRallyAwards && prevNewRallyAwards.length){
-        newRallyAwards = [...prevNewRallyAwards]
-    }
-    await asyncForEach(awardsLevels, async (awardsLevel) => {
-        
-        if(user.experience >= awardsLevel.level){
-            
-            await asyncForEach(Object.keys(awardsLevel.awards.toJSON()), async (className) => {
-                
-                if(user.profile.class === className || className === 'any') {
-                       
-                    await asyncForEach(awardsLevel.awards[className], async (item) => {
-
-                        const index = newRallyAwards.findIndex((award) => award.itemModel.toString() === item.itemModel.toString())
-                        if(index > -1){
-                            newRallyAwards[index].quantity += item.quantity
-                        }else{
-                            newRallyAwards = [...newRallyAwards, {quantity: item.quantity, itemModel: item.itemModel}] 
-                        }
-                        
-                        
-                        for(let i=0; i < item.quantity; i++) {
-                            const newItem = new Item({itemModel: item.itemModel, owner: user.profile._id})
-                            await newItem.save()
-                            items = [...items, newItem._id]
-                        }
-                        
-                    })
-                }
-            }) 
-        }
-    })
-    
-    
-    return {items, newRallyAwards} 
-}
-
-//OK - CHECK PARTLY
-const finishRally = async (rally) => {
-    
-
- //CHECK: IS IT POPULATING?
-    await rally.populate({
-        path: 'users.profile'
-    }).execPopulate()
-
-
-
-    const users = rally.users
-
-    await asyncForEach(users, async (rallyUser) => {
-
-        try{
-            const user = await User.findById(rallyUser.profile._id).populate({
-                path: 'userRallies'
-            }) //recoginized as an array
-           // console.log(user.userRallies, rallyUser.experience)
-
-            //UPDATE TO CHECK
-            const index = user.userRallies.findIndex((activeRally) => activeRally._id.toString() === rally._id.toString())
-
-            if((user.userRallies.length) && (index >= 0) && (rallyUser.experience > 0)){ 
-                const data = await addAwards(rallyUser, rally.awardsLevels, user.rallyNotifications)
-                const {items, newRallyAwards} = data
-
-                const modRallyExp = designateExperienceMods(rally.experience, user.userPerks.rawExperience)
-                const newLevels = designateNewLevels(user.experience, modRallyExp)
-                
-                await User.updateOne(
-                    {_id: user._id},
-                    { $addToSet: { bag: { $each: items } }, $set: {'rallyNotifications.isNew': true, 'rallyNotifications.awards': newRallyAwards}, $inc: {experience: modRallyExp, 'statistics.rallyCounter': 1, 'rallyNotifications.experience': modRallyExp, levelNotifications: newLevels}}
-                )
-                
-            }
-        }catch(e){
-            console.log(e.message)
-        }
-           
-            
-            //
-  
-    })
-
-    
-    await rally.save()
-    rallyFinishTask.destroy()
-    await updateRallyQueue() //if update is to fast??
-
-}
-
-//OK
-const designateScheduleTime = (date) => {
-    
-    const momentDate = moment.utc(date) //was moment(date) for 'Europe/Warsaw'
-    const month = momentDate.month() + 1
-    const dayOfMonth = momentDate.date()
-    const hour = momentDate.hour()
-    const minutes = momentDate.minutes()
-    const seconds = momentDate.seconds()
-    console.log(`${seconds} ${minutes} ${hour} ${dayOfMonth} ${month} *`)
-    return `${seconds} ${minutes} ${hour} ${dayOfMonth} ${month} *`
-}
-
-//OK
-export const updateRallyQueue = async () => {
-    try {
-        
-        
-        if(rallyFinishTask){ //what if is it not undefined - after restart
-            rallyFinishTask.destroy()
-        }
-        
-        const firstToStartArray = await Rally.find({ $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }]}).sort({"startDate": 1 }).limit(1)
-        const firstToExpireArray = await Rally.find({ $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }]}).sort({"expiryDate": 1 }).limit(1)
-        
-        if(!firstToStartArray.length || !firstToExpireArray.length){
-            console.log('There is no rally for update criteria!')
-            return
-        }
-
-        
-        const firstToStart = firstToStartArray[0]
-        const firstToExpire = firstToExpireArray[0]
-
-        // const firstToActivate = {
-        //     _id: 'halo1234',
-        //     activationDate: '2019-11-19T15:55:00.000+00:00',
-        //     expiryDate: '2019-11-19T15:56:00.000+00:00'
-        // }
-
-        
-        if(firstToStart._id.toString() !== firstToExpire._id.toString()){
-            console.log('Gap in frontend validation!')
-        }
-        
-        
-
-
-        //finishRally
-        rallyFinishTask = cron.schedule(designateScheduleTime(firstToExpire.expiryDate), async () => {
-            
-            try{
-                
-                await finishRally(firstToExpire)
-                
-            }catch(e) {
-                console.log(e.message)
-            }
-            
-         
-        },{
-            scheduled: true,
-            timezone: "Africa/Casablanca" //always UTC 0 //Warsaw UTC+1/UTC+2
-        }
-        );
-
-    }catch (e) {
-        console.log(e.message)
-    }
-}
 
 //OK
 router.get('/listEventCreator', adminAuth, async (req, res) => {
@@ -201,42 +30,16 @@ router.get('/listEventCreator', adminAuth, async (req, res) => {
 router.post('/create', adminAuth, async (req, res) =>{
     
     try {
-    const rally = new Rally(req.body)
+        const rally = new Rally(req.body)
 
-    const rallyList = await Rally.find({})
 
-    let causingRallyList = [];
-    const newRallyActivation = moment(rally.activationDate).valueOf()
-
-    const newRallyEnd = moment(rally.expiryDate).valueOf()
-        rallyList.forEach(rallyItem => {
-
-          const existingRallyActiviation = moment(rallyItem.activationDate).valueOf();
-          const existingRallyEnd = moment(rallyItem.expiryDate).valueOf();
-         
-          if (
-            !(
-              (existingRallyActiviation < newRallyActivation &&
-                existingRallyEnd < newRallyActivation) ||
-              (existingRallyEnd > newRallyEnd &&
-                existingRallyActiviation > newRallyEnd)
-            )
-          ) {
-
-           
-            causingRallyList = [...causingRallyList, rallyItem]; //assembling list of 'bad' rallies :<<
-          }
-
-        });
-
-    if(causingRallyList.length > 0){
-        throw new Error('Znaleziono rajd o kolidujących terminach')
-    }
+        await rally.conflictCheck()
 
         await rally.save()
         
-        await updateRallyQueue()
+        await rallyStore.updateQueue()
         res.status(201).send(rally._id)
+
     } catch (e) {
         console.log(e)
         res.status(400).send(e.message)
@@ -246,12 +49,12 @@ router.post('/create', adminAuth, async (req, res) =>{
 router.patch('/uploadIcon/:id', adminAuth, async (req, res) => {
     try{
         if (!req.files) {
-            throw new Error("Brak ikony rajdu")
+            throw new Error("No rally icon")
         }
 
         const rally = await Rally.findById(req.params.id)
         if(!rally){
-            throw new Error('Rally does not exist!')
+            throw new Error('Rally does not exist')
         }
 
         if(req.files.icon){
@@ -302,16 +105,10 @@ router.patch("/update", adminAuth, async (req, res, next) => {
         rally[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.
       });
 
-    //   if(req.files){
-    //     let icon = req.files.icon.data
-    //     const imgSrc = await saveImage(icon, rally._id, uploadPath, rally.imgSrc)
-    //     rally.imgSrc = imgSrc
-    //   }
-  
       await rally.save();
 
       if(updates.includes("activationDate") || updates.includes('expiryDate') || updates.includes('startDate')){
-        await updateRallyQueue()
+        await rallyStore.updateQueue()
       }
 
       res.send(rally._id);
@@ -333,7 +130,7 @@ router.delete('/remove', adminAuth, async (req, res) =>{
 
         await removeImage(uploadPath, rally.imgSrc)
 
-        await updateRallyQueue()
+        await rally.updateQueue()
         
         res.sendStatus(200)
     } catch (e) {

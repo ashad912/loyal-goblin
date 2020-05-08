@@ -54,6 +54,7 @@ const ItemModelSchema = new mongoose.Schema({
     type: String
   },
   appearanceSrc: String,
+  altAppearanceSrc: String,
   class: { type: String, required: true },
   twoHanded: {type: Boolean},
   loyalAward: Boolean,

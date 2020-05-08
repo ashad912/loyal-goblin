@@ -234,10 +234,12 @@ router.post("/login", async (req, res) => {
       user.passwordChangeToken = null
       await user.save()
     }
+    
     res
       .cookie("token", token, { maxAge: 2592000000, httpOnly: true })
       .send(user); //cookie lifetime: 30 days (maxAge in msc)
   } catch (e) {
+    console.log(e)
     res.status(400).send(e);
   }
 });
