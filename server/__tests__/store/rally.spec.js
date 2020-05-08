@@ -31,8 +31,8 @@ describe("Rally update queue", () => {
             description: 'desc',
             experience: 0,
             activationDate: moment().toISOString(),
-            startDate: moment().add(2, 's').toISOString(),
-            expiryDate: moment().add(4, 's').toISOString(),
+            startDate: moment().add(5, 's').toISOString(),
+            expiryDate: moment().add(9, 's').toISOString(),
         },
 
         {

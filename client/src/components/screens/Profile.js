@@ -102,12 +102,16 @@ const Profile = props => {
     setMissionInstanceWarningDialog
   ] = React.useState({ action: null, text: "" });
 
+  const authUpdate = async () => {
+    await props.onAuthCheck();
+  }
+
   React.useEffect(() => {
     if (
       history.location.state &&
       history.location.state.hasOwnProperty("authCheck")
     ) {
-      props.onAuthCheck();
+      authUpdate()
     }
     updateEquippedItems();
     props.onPartyUpdate();
@@ -164,7 +168,20 @@ const Profile = props => {
       }
 
       if (loadedEquippedItem) {
-        equipment[category] = loadedEquippedItem.itemModel.appearanceSrc;
+        if(loadedEquippedItem.itemModel.type === 'weapon'){
+          if(category === 'weaponLeft'){
+            equipment[category] = loadedEquippedItem.itemModel.appearanceSrc;
+          }else if(category === 'weaponRight'){
+            equipment[category] = loadedEquippedItem.itemModel.altAppearanceSrc;
+          }
+        }else{
+          if(props.auth.profile.sex === 'male'){
+            equipment[category] = loadedEquippedItem.itemModel.appearanceSrc;
+          }else{
+            equipment[category] = loadedEquippedItem.itemModel.altAppearanceSrc;
+          }
+        }
+        
         if (
           loadedEquippedItem.itemModel.hasOwnProperty("perks") &&
           loadedEquippedItem.itemModel.perks.length > 0

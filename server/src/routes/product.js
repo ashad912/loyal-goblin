@@ -275,12 +275,8 @@ const calculateOrder = async user => {
         basket => basket.profile._id.toString() === partyMember._id.toString()
       );
 
-<<<<<<< HEAD
       //let modelPerks = await designateUserPerks(partyMember);
       let modelPerks = await partyMember.updatePerks(false, true)
-=======
-      let modelPerks = await partyMember.updatePerks(true);
->>>>>>> 61888c81da12c38ea98ce6935278f125825b973c
       
       const userProducts = user.activeOrder[currentMember].products.map(product => product.toJSON())
 

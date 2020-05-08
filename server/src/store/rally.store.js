@@ -28,9 +28,9 @@ const updateQueue = async () => {
     try {
         
         
-        if(finishTask){ //what if is it not undefined - after restart
-            destroyCronTask()
-        }
+        
+        destroyCronTask()
+        
         
         const firstToActivateArray = await Rally.find({expiryDate: { $gte: new Date() } }).sort({"activationDate": 1 }).limit(1)
         const firstToExpireArray = await Rally.find({expiryDate: { $gte: new Date() } }).sort({"expiryDate": 1 }).limit(1)
@@ -165,7 +165,10 @@ const finish = async (rally) => {
 }
 
 const destroyCronTask = () => {
-    finishTask.destroy()
+    if(finishTask){
+        finishTask.destroy()
+    }
+    
 }
     
 export default {

@@ -546,20 +546,13 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
                 throw Error(`Member (${memberId}) does not exist!`)
             }
 
-<<<<<<< HEAD
-=======
-            await member.updatePerks(false)
->>>>>>> 61888c81da12c38ea98ce6935278f125825b973c
             // if(isNeedToPerksUpdate(member)){
             //     member.userPerks = await designateUserPerks(member)
             //     member.perksUpdatedAt = moment().toISOString() //always in utc
             //     await member.save()
             // }
-<<<<<<< HEAD
 
             await member.updatePerks(false, true);
-=======
->>>>>>> 61888c81da12c38ea98ce6935278f125825b973c
 
             party = [...party, member]
             totalStrength += member.attributes.strength + member.userPerks.attrStrength

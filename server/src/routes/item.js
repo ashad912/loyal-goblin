@@ -123,11 +123,25 @@ router.patch("/updateModel", adminAuth, async (req, res, next) => {
             itemModel[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.
       });
 
-    //   if(req.files){
-    //     let icon = req.files.icon
-    //     const imgSrc = await saveImage(icon, itemModel._id, uploadPath, itemModel.imgSrc)
-    //     itemModel.imgSrc = imgSrc
-    //   }
+      const equippableItems = ['weapon', 'feet', 'hands', 'head', 'chest', 'legs', 'ring']
+
+      if(!equippableItems.includes(itemModel.type)){
+        if(itemModel.appearanceSrc){
+            await removeImage(uploadAppearancePath, itemModel.appearanceSrc)
+            itemModel.appearanceSrc = null
+        }
+        if(itemModel.altAppearanceSrc){
+            await removeImage(uploadAltAppearancePath, itemModel.altAppearanceSrc)
+            itemModel.altAppearanceSrc = null
+        }
+      }
+
+      if(itemModel.twoHanded){
+        if(itemModel.altAppearanceSrc){
+            await removeImage(uploadAltAppearancePath, itemModel.altAppearanceSrc)
+            itemModel.altAppearanceSrc = null
+        }
+      }
   
       await itemModel.save();
 

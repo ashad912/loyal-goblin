@@ -139,7 +139,7 @@ class ItemCreator extends Component {
       let weapon = 'weapon'
       if((prevState.type === weapon && this.state.type !== weapon)){
         this.setState({
-          twoHanded: undefined
+          twoHanded: null
         })
       }
       if((prevState.type !== weapon && this.state.type === weapon)){
