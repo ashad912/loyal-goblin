@@ -278,7 +278,8 @@ const calculateOrder = async user => {
         basket => basket.profile._id.toString() === partyMember._id.toString()
       );
 
-      let modelPerks = await designateUserPerks(partyMember);
+      //let modelPerks = await designateUserPerks(partyMember);
+      let modelPerks = await partyMember.updatePerks(false, true)
       
       const userProducts = user.activeOrder[currentMember].products.map(product => product.toJSON())
 
@@ -401,7 +402,7 @@ const verifyParty = (leader, membersIds, order) => {
 
 //OK
 router.get("/shop", auth, async (req, res) => {
-  let user = req.user; 
+  const user = req.user; 
   const socketConnectionStatus = req.query.socketConnectionStatus === "true"
  
   try {
