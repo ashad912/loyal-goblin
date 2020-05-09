@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from "react-redux";
 import { updateParty } from "./store/actions/partyActions";
-import {socket, joinPartyEmit, joinPartySubscribe, refreshMissionsEmit, refreshMissionsSubscribe, leavePartySubscribe, refreshPartySubscribe, deletePartySubscribe} from './socket'
+import {socket, socketAuthenticatedSubscribe, socketUnauthorizedSubscribe, joinPartyEmit, joinPartySubscribe, refreshMissionsSubscribe, leavePartySubscribe, refreshPartySubscribe, deletePartySubscribe} from './socket'
 import {authCheck, setMultipleSession } from './store/actions/authActions';
 import {getMissionList} from './store/actions/missionActions'
 
@@ -10,12 +10,12 @@ class SocketConfig extends React.Component {
 
   async componentDidMount() {
     
-    socket.on('authenticated', () => {
+    socketAuthenticatedSubscribe(() => {
       joinPartyEmit(this.props.party._id)
       this.props.missionsUpdate()
     });
   
-    socket.on('unauthorized', (err) => {
+    socketUnauthorizedSubscribe((err) => {
       console.log(err)
       console.log(err.response)
       if(err.message === "multipleSession"){
@@ -31,10 +31,7 @@ class SocketConfig extends React.Component {
     })
 
     leavePartySubscribe((socketUserIdToLeave) => {
-      console.log(this.props.uid, socketUserIdToLeave)
-      // if(this.props.uid === socketUserIdToLeave && socket.connected){
-      //   socket.disconnect()
-      // }  
+      console.log(this.props.uid, socketUserIdToLeave) 
       this.props.partyUpdate()
       this.props.missionsUpdate()
     })

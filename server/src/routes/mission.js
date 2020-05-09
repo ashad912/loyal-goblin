@@ -468,7 +468,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
         let leader = null
 
         if(user.party){
-            const party = await validatePartyAndLeader(user, false)
+            const party = await user.validatePartyAndLeader(false)
             membersIds = [...party.members]
             leader = party.leader
         }else{
@@ -650,7 +650,7 @@ router.delete('/deleteInstance', auth, async (req, res) => {
         let leader = null
 
         if(user.party){
-            const party = await validatePartyAndLeader(user)
+            const party = await user.validatePartyAndLeader()
             leader = party.leader
         }else{
             leader = user._id

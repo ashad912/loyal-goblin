@@ -169,7 +169,7 @@ const Profile = props => {
 
       if (loadedEquippedItem) {
         if(loadedEquippedItem.itemModel.type === 'weapon'){
-          if(category === 'weaponLeft'){
+          if(category === 'weaponLeft' || loadedEquippedItem.itemModel.twoHanded){
             equipment[category] = loadedEquippedItem.itemModel.appearanceSrc;
           }else if(category === 'weaponRight'){
             equipment[category] = loadedEquippedItem.itemModel.altAppearanceSrc;
@@ -420,7 +420,6 @@ const Profile = props => {
               <img
                 className={classes.avatarImage}
                 src={`${altAppearancePath}${equippedItems.weaponLeft}`}
-                style={{ transform: "scaleX(-1)" }}
               />
             )}
           </div>

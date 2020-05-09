@@ -7,8 +7,14 @@ export const socket =  io({
 
 //SUBSCRIBE
 
+export const socketAuthenticatedSubscribe = (err) => {
+    socket.on('authenticated', () => {
+        return
+    })
+}
+
 export const socketUnauthorizedSubscribe = (err) => {
-    socket.on('unauthorized', err, () => {
+    socket.on('unauthorized', (err) => {
         return err
     })
 }
@@ -98,22 +104,22 @@ export const deletePartyEmit = (roomId) => {
 }
 
 export const addItemEmit = (item, roomId) => {
-    const data = {item: item, roomId: roomId}
+    const data = {item, roomId}
     socket.emit('addItem', data)
 }
 
 export const deleteItemEmit = (id, roomId) => {
-    const data = {id: id, roomId: roomId}
+    const data = {id, roomId}
     socket.emit('deleteItem', data)
 }
 
 export const finishMissionEmit = (awards, roomId) => {
-    const data = {awards: awards, roomId: roomId}
+    const data = {awards, roomId}
     socket.emit('finishMission', data)
 }
 
 export const modifyUserStatusEmit = ( user, roomId) => {
-    const data = {user: user, roomId: roomId}
+    const data = {user, roomId}
     socket.emit('modifyUserStatus', data)
 }
 

@@ -38,54 +38,7 @@ export async function asyncForEach(array, callback) {
   }
 }
 
-// //REF
-// export const updatePerks = (user, forcing, forcingWithoutParty) => {
-  
-// };
 
-//OK
-// //};
-
-//OK - REF
-// export const isNeedToPerksUpdate = user => {
-//   if (user.perksUpdatedAt && user.perksUpdatedAt instanceof Date) {
-//     const lastUpdateDate = moment.utc(user.perksUpdatedAt);
-
-//     let lastUpdateHour = lastUpdateDate.hour();
-//     if (lastUpdateDate.minutes() === 0 && lastUpdateDate.seconds() === 0) {
-//       //very rare super equal hour update
-//       lastUpdateHour -= 1;
-//     }
-
-//     const nextUpdateDate = moment.utc(
-//       `${lastUpdateHour + 1}:00:01`,
-//       "HH:mm:ss"
-//     );
-//     const now = moment.utc();
-
-//     if (now.valueOf() >= nextUpdateDate.valueOf()) {
-//       return true;
-//     }
-
-//     return false;
-//   }
-// };
-
-//REF
-// export const designateNewLevels = (baseExp, newExp) => {
-
-//   if(typeof baseExp !== 'number'){
-//     throw new Error('Invalid first param!')
-//   }
-
-//   if(typeof newExp !== 'number'){
-//     throw new Error('Invalid second param!')
-//   }
-
-//   const levelsData = designateUserLevel(baseExp, newExp)
-//   return levelsData.newLevel - levelsData.oldLevel
-  
-// }
 
 export const designateExperienceMods = (baseExp, rawExpMods) => {
   let modExp = baseExp
@@ -118,78 +71,7 @@ export const updateAmuletCounters = (amuletCounters, amulets) => {
   return amuletCounters
 }
 
-//REF
-//export const userStandardPopulate = async user => {
-  // await user
-  //   .populate({
-  //     path: "bag",
-  //     populate: { path: "itemModel", select: '_id description imgSrc appearanceSrc name perks type twoHanded', populate: { path: "perks.target.disc-product", select: '_id name' } }
-  //   })
-  //   .execPopulate();
-  // if(user.statistics.amuletCounters && user.statistics.amuletCounters.length){
-  //   await user
-  //     .populate({
-  //       path: "statistics.amuletCounters.amulet",
-  //       select: '_id imgSrc name'
-  //     })
-  //     .execPopulate();
-  // }
-  // if (user.rallyNotifications.awards && user.rallyNotifications.awards.length) {
-  //   await user
-  //     .populate({
-  //       path: "rallyNotifications.awards.itemModel",
-  //       select: '_id description imgSrc name perks',
-  //       populate: { path: "perks.target.disc-product", select: '_id name' },
-  //     })
-  //     .execPopulate();
-  // }
-  // if (user.shopNotifications.awards && user.shopNotifications.awards.length) {
-  //   await user
-  //     .populate({
-  //       path: "shopNotifications.awards.itemModel",
-  //       select: '_id description imgSrc name perks',
-  //       populate: { path: "perks.target.disc-product", select: '_id name' },
-  //     })
-  //     .execPopulate();
-  // }
 
-  // // const userObj = user.toObject() 
-  // // delete userObj.lastActivityDate
-  // // delete userObj.createdAt
-  // // delete userObj.updatedAt
-  // // delete userObj.perksUpdatedAt
-  // // delete userObj.__v
-  // // console.log(userObj)
-
-  // return user; //CONSIDER: return user.bag -> props: const user declaration
-//};
-
-//REF
-// export const designateUserLevel = (points, addPoints) => {
-//   const a = levelingEquation.a;
-//   const b = levelingEquation.b;
-//   const pow = levelingEquation.pow;
-//   let previousThreshold = 0;
-//   let oldLevel;
-//   for (let i = 1; i <= 1000; i++) {
-//     const bottomThreshold = previousThreshold;
-//     const topThreshold = previousThreshold + (a * i ** pow + b);
-
-//     if (points >= bottomThreshold && points < topThreshold) {
-//       if(!addPoints && addPoints !== 0){
-//         return i
-//       }
-//       oldLevel = i
-//     }
-
-//     if(addPoints > -1 && points + addPoints >= bottomThreshold && points + addPoints < topThreshold){
-//       return {oldLevel, newLevel: i}
-//     }
-//     previousThreshold = topThreshold;
-//   }
-
-//   return 1000
-// };
 
 //REF
 export const validateInMissionInstanceStatus = (userId, newStatus, secondNewStatus) => {

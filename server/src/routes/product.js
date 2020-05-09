@@ -18,6 +18,7 @@ import { OrderExpiredEvent } from "../models/orderExpiredEvent";
 import { Party } from "../models/party";
 import { Item } from "../models/item";
 import { ArchiveOrder } from "../models/archiveOrder";
+import { MissionInstance } from '@models/missionInstance'
 import { barmanAuth } from "../middleware/barmanAuth";
 
 const uploadPath = "../static/images/products/";
@@ -405,7 +406,7 @@ router.get("/shop", auth, async (req, res) => {
   try {
 
     if(user.party){
-      const party = await validatePartyAndLeader(user)
+      const party = await user.validatePartyAndLeader()
       if(req.query.socketConnectionStatus !== undefined){
         if(party && party.members.length && !socketConnectionStatus){ //if client of multiplayer shopping is not connected to socket
             throw new Error('Leader not connected to party members!')
@@ -418,7 +419,7 @@ router.get("/shop", auth, async (req, res) => {
       populate: { path: "perks.target.disc-product", select: "_id name" }
     });
 
-    await removeMissionInstanceIfExits(user._id)
+    await MissionInstance.removeIfExists(user._id)
 
     await user.updatePerks(false);
 
@@ -510,7 +511,7 @@ router.patch("/leave", auth, async (req, res) => {
   const user = req.user;
   try {
     if (user.party) {
-      const party = await validatePartyAndLeader(user)
+      const party = await user.validatePartyAndLeader()
       
       party.inShop = false;
       
@@ -562,7 +563,7 @@ router.patch("/activate", auth, async (req, res) => {
 
     if (user.party) {
 
-      const party = await validatePartyAndLeader(user, true)
+      const party = await user.validatePartyAndLeader(true)
       
       membersIds = [...party.members];
       leader = party.leader;
@@ -650,7 +651,7 @@ router.patch("/cancel", auth, async (req, res) => {
   try {
 
     if(user.party){
-      await validatePartyAndLeader(user)
+      await user.validatePartyAndLeader()
     }
 
     if (user.activeOrder.length <= 0) {
@@ -687,7 +688,7 @@ router.get("/verify/:id", barmanAuth, async (req, res) => {
     }
 
     if(user.party){
-      await validatePartyAndLeader(user)
+      await user.validatePartyAndLeader()
     }
     
     await calculateOrder(user);
@@ -759,7 +760,7 @@ router.post("/finalize", barmanAuth, async (req, res) => {
 
     }else{
 
-      const party = await validatePartyAndLeader(user)
+      const party = await user.validatePartyAndLeader()
       party.members = [party.leader, ...party.members]
 
       if(party.leader.toString() !== orderPartyIds[0] ){

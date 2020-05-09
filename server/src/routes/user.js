@@ -600,6 +600,7 @@ router.patch("/party/equip", auth, async (req, res) => {
     user.equipped.scroll = user.equipped.scroll ? null : itemId
     
     await user.updatePerks(true)
+    
     //user.userPerks = await updatePerks(user, true);
     await user.save();
     await user.standardPopulate()
@@ -748,13 +749,13 @@ router.patch("/items/equip", auth, async (req, res) => {
 
     });
     await user.updatePerks(true)
-    //user.userPerks = await updatePerks(user, true);
-    await user.save();
-    await user.standardPopulate()
-    //user = await userStandardPopulate(user);
+
     //Depopulate equipped key
     user.equipped = { ...equipped };
 
+    await user.save();
+    await user.standardPopulate()
+ 
     
     res.status(200).send(user);
 

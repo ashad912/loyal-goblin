@@ -1,5 +1,6 @@
 import { socketRoomAuth, socketConnectAuth } from "@middleware/auth";
-import { validateInMissionInstanceStatus, validateInShopPartyStatus, initCleaning } from '@utils/methods' 
+import { Party} from '@models/party'
+import { MissionInstance } from '@models/missionInstance'
 
 class SocketController{
     constructor(){
@@ -110,16 +111,16 @@ class SocketController{
             const userId = this.allClients[i].userId
             const roomId = this.allClients[i].roomId
         
-            if(await validateInShopPartyStatus(userId, false)){
-            socket.broadcast.to(roomId).emit("partyRefresh", roomId);
+            if(await Party.validateInShopStatus(userId, false)){
+              socket.broadcast.to(roomId).emit("refreshParty", roomId);
             }
         
             
-            if(await validateInMissionInstanceStatus(userId, false, false)){
-            console.log(`${roomId} for user ${userId} with status inMission: false`)
-            socket.broadcast.to(roomId).emit("modifyUserStatus", {_id: userId, inMission: false, readyStatus: false});
-            console.log(`User ${userId} left the room ${roomId}`)
-            socket.broadcast.to(roomId).emit("refreshParty", userId);
+            if(await MissionInstance.validateInStatus(userId, false, false)){
+              console.log(`${roomId} for user ${userId} with status inMission: false`)
+              socket.broadcast.to(roomId).emit("modifyUserStatus", {_id: userId, inMission: false, readyStatus: false});
+              console.log(`User ${userId} left the room ${roomId}`)
+              socket.broadcast.to(roomId).emit("refreshParty", userId);
             }
             this.allClients.splice(i, 1);
             

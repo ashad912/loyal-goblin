@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
-import Input from '@material-ui/core/Input'
+import InputBase from '@material-ui/core/Input'
 
 const FileInputWrapper = styled.div`
   position: relative;
@@ -12,18 +12,22 @@ const FileInputWrapper = styled.div`
   height: ${props => props.twoLines ? '3.7rem' : '2.5rem'};
   width: 10rem;
   margin: 1rem 0 1.3rem 0;
-  cursor: pointer;
 `;
 
-const HiddenFileInput = styled(Input)`
+const HiddenFileInput = styled(({...otherProps }) => (
+    <InputBase classes={{input: 'input'}} {...otherProps}  />
+))`
   position: absolute;
   top: 0;
   left: 0;
   opacity: 0;
   height: ${props => props.twoLines ? '3.7rem' : '2.5rem'};
   width: 10rem;
-  user-select: none;
-  cursor: pointer;
+  user-select: none; 
+  .input {
+    height: ${props => props.twoLines ? '3.7rem' : '2.5rem'};
+    cursor: pointer;
+  }
 `;
 
 const FileInputButton = styled(Button)`
@@ -32,7 +36,6 @@ const FileInputButton = styled(Button)`
   left: 0;
   height: ${props => props.twoLines ? '3.7rem' : '2.5rem'};
   width: 10rem;
-  cursor: pointer;
 `;
 
 
@@ -66,7 +69,7 @@ const ImageWrapper = ({view, text, secondaryText, viewName, fileName, accept, er
                     alignItems: "center"
                 }}
             >
-                <img alt='' src={view} style={{ width: "64px" }} />
+                <img alt='' src={view} style={{ width: "64px", height: '64px' }} />
             </Grid>
         </Grid>  
         

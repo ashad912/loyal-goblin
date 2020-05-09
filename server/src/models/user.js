@@ -443,7 +443,7 @@ UserSchema.methods.standardPopulate = async function(){
     await user
         .populate({
             path: "bag",
-            populate: { path: "itemModel", select: '_id description imgSrc appearanceSrc name perks type twoHanded', populate: { path: "perks.target.disc-product", select: '_id name' } }
+            populate: { path: "itemModel", select: '_id description imgSrc appearanceSrc altAppearanceSrc name perks type twoHanded', populate: { path: "perks.target.disc-product", select: '_id name' } }
         })
         .execPopulate();
     if(user.statistics.amuletCounters && user.statistics.amuletCounters.length){
@@ -537,46 +537,47 @@ UserSchema.methods.validatePartyAndLeader = function(inShop){
 UserSchema.methods.updatePerks = async function(forcing, withoutParty){
     //'forcing' - update without checking perksUpdatedAt
     const user = this
-    return new Promise(async (resolve, reject) => {
-        try {
-            if (forcing || user.isNeedToPerksUpdate()) {
-                await user.computePerks();
-                user.perksUpdatedAt = moment().toISOString(); //always in utc
-                await user.save();
-            }
-
-            if (user.party && !withoutParty) {
-                //party perks updating
-                const partyObject = await Party.findById(user.party);
-                let party = [partyObject.leader, ...partyObject.members].filter(
-                memberId => {
-                    //exclude 'req.user' and nulls
-                    return memberId && memberId.toString() !== user._id.toString();
-                }
-                );
-
-                if (party.length) {
-                    await asyncForEach(party, async memberId => {
-                        const member = await User.findById(memberId);
-
-                        if (!member) {
-                            throw Error(`Member (${memberId}) does not exist!`);
-                        }
-
-                        if (forcing  || member.isNeedToPerksUpdate()) {
-                            await member.computePerks();
-                            member.perksUpdatedAt = moment().toISOString(); //always in utc
-                            await member.save();
-                        }
-                    });
-                }
-            }
-
-            resolve(user.userPerks);
-        } catch (e) {
-            reject(e);
+    
+    try {
+        if (forcing || user.isNeedToPerksUpdate()) {
+            await userStore.computePerks(user);
+            console.log(user.userPerks)
+            user.perksUpdatedAt = moment().toISOString(); //always in utc
+            await user.save();
         }
-    });
+
+        if (user.party && !withoutParty) {
+            //party perks updating
+            const partyObject = await Party.findById(user.party);
+            let party = [partyObject.leader, ...partyObject.members].filter(
+            memberId => {
+                //exclude 'req.user' and nulls
+                return memberId && memberId.toString() !== user._id.toString();
+            }
+            );
+
+            if (party.length) {
+                await asyncForEach(party, async memberId => {
+                    const member = await User.findById(memberId);
+
+                    if (!member) {
+                        throw Error(`Member (${memberId}) does not exist!`);
+                    }
+
+                    if (forcing  || member.isNeedToPerksUpdate()) {
+                        member.perks = await userStore.computePerks(member);
+                        member.perksUpdatedAt = moment().toISOString(); //always in utc
+                        await member.save();
+                    }
+                });
+            }
+        }
+        
+        return user.userPerks;
+    } catch (e) {
+        throw e;
+    }
+    
 }
 
 UserSchema.methods.isNeedToPerksUpdate = function(){
@@ -605,9 +606,6 @@ UserSchema.methods.isNeedToPerksUpdate = function(){
     }
 };
 
-UserSchema.methods.computePerks = async function(){
-    return await userStore.computePerks(this)
-}
 
 UserSchema.statics.clear = async () => {
     const users = await User.find({})

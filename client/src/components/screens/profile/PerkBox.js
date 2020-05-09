@@ -9,7 +9,7 @@ const PerkBox = ({ perks }) => {
     <Paper style={{ width: "100%"}}>
     <List  >
       {perks.map((perk, index) => {
-        return <PerkBoxItem key={perk.perkType+perk.value+perk.id} perk={perk} isFirst={index===0} isEquipment={false}/>;
+        return <PerkBoxItem key={perk.perkType+perk.value+perk._id+index} perk={perk} isFirst={index===0} isEquipment={false}/>;
       })}
     </List>
     </Paper>

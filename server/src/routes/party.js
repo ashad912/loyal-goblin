@@ -123,7 +123,7 @@ router.post("/create", auth, async (req, res) => {
     }
 
     //Remove party's existing mission instance if present on user add
-    await removeMissionInstanceIfExits(leader._id)
+    await MissionInstance.removeIfExists(leader._id)
     
 
     //Create new party with name from request and leader from auth
@@ -145,7 +145,7 @@ router.patch("/addMember", auth, async (req, res) => {
   try {
     const leader = req.user
 
-    const party = await validatePartyAndLeader(leader, false);
+    const party = await leader.validatePartyAndLeader(false);
 
     
 
@@ -218,7 +218,7 @@ router.patch("/leader", auth, async (req, res) => {
       throw new Error("Nieprawidłowy identyfikator użytkownika");
     }
 
-    await validatePartyAndLeader(leader, false);
+    await leader.validatePartyAndLeader(false);
 
     const user = await User.findById(req.body.memberId);
 
@@ -248,7 +248,7 @@ router.patch("/leader", auth, async (req, res) => {
 
 
     //Remove party's existing mission instance if present on user add
-    await removeMissionInstanceIfExits(user._id)
+    await MissionInstance.removeIfExists(user._id)
 
     const party = await Party.findById(req.body.partyId)
     await party
@@ -282,7 +282,7 @@ router.patch("/leave", auth, async (req, res) => {
     await User.updateOne({ _id: req.body.memberId }, { $set: { party: null } });
 
     //Remove party's existing mission instance if present on user leave
-    await removeMissionInstanceIfExits(req.body.memberId)
+    await MissionInstance.removeIfExists(req.body.memberId)
 
     await party
       .populate({
@@ -309,17 +309,7 @@ router.delete("/remove", auth, async (req, res) => {
   const user = req.user;
 
   try {
-    const party = await validatePartyAndLeader(user);;
-
-    // if (!party) {
-    //   throw new Error("No party!");
-    // }
-
-    // if (user._id.toString() !== party.leader.toString()) {
-    //   throw new Error("You are not the leader!");
-    // }
-
-   
+    const party = await user.validatePartyAndLeader();;
 
     await party.remove(); //look at middleware
     res.send(party);

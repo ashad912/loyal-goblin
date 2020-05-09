@@ -69,17 +69,20 @@ class App extends React.Component {
     super(props);
     this.handleOnlineState = this.handleOnlineState.bind(this); 
     this.handleOfflineState = this.handleOfflineState.bind(this); 
-}
+  }
 
-state = {
-  online: true
-}
+  state = {
+    online: true
+  }
 
 
   async componentDidMount() {
-
-    window.addEventListener('online', this.handleOnlineState, false);
-    window.addEventListener('offline', this.handleOfflineState, false);
+    const online = process.env.NODE_ENV === 'production' ? navigator.onLine : true
+    if(process.env.NODE_ENV === 'production'){
+      window.addEventListener('online', this.handleOnlineState, false);
+      window.addEventListener('offline', this.handleOfflineState, false);
+    }
+    
 
     window.addEventListener("popstate", e => {
       // Reload after popstate (to update client)
@@ -90,7 +93,7 @@ state = {
     //history.listen(...), history.go(...)
 
     //CHECK AUTH ON APP LOAD
-    if(navigator.onLine){
+    if(online){
 
       await this.props.authCheck();
   
@@ -151,6 +154,15 @@ state = {
   }
 
   render() {
+    if(!this.state.online){
+      return(   
+        <StylesProvider injectFirst>
+          <ThemeProvider theme={goblinTheme}>
+            <OfflineModal open={!this.state.online}/>
+          </ThemeProvider>
+        </StylesProvider>
+      )
+    }
     return (
       <BrowserRouter>
         <StylesProvider injectFirst>
