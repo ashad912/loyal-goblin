@@ -896,7 +896,7 @@ router.delete('/finishInstance', auth, async (req,res) => {
             throw Error('No matching mission instance found!')
         }
 
-        missionInstance.partyCompare([user.party.leader, ...user.party.members], true)
+        missionInstance.partyCompare([leader, ...membersIds], true)
         // const party = [leader, ...membersIds]
     
         // let missionParty = [] 
@@ -1004,7 +1004,7 @@ const verifySendItem = (user, missionInstance, itemId) => {
                 leader = user._id
             }
 
-            missionInstance.partyCompare([user.party.leader, ...user.party.members], true)
+            missionInstance.partyCompare([leader, ...membersIds], true)
             // const party = [leader, ...membersIds]
     
             // let missionParty = [] 
@@ -1026,9 +1026,7 @@ const verifySendItem = (user, missionInstance, itemId) => {
             }).populate({
                 path: 'owner'
             })
-    
-            //console.log('item is existing')
-    
+        
             
             if(item.itemModel.type !== 'amulet'){
                 throw Error('Item has not amulet type!')
