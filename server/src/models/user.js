@@ -475,6 +475,27 @@ UserSchema.methods.standardPopulate = async function(){
 
 }
 
+UserSchema.methods.orderPopulate = async function () {
+    await user
+    .populate({
+      //populate after verification
+      path: "activeOrder.profile",
+      select: "_id name avatar"
+    })
+    .populate({
+      path: "activeOrder.products.product",
+      populate: {
+        path: "awards.itemModel",
+        populate: { path: "perks.target.disc-product", select: "_id name" }
+      } //is necessary here?
+    })
+    .populate({
+      path: "activeOrder.awards.itemModel", 
+      select: "name imgSrc"
+    })
+    .execPopulate();
+}
+
 UserSchema.methods.getNewLevels = function(newExp){
     if(typeof newExp !== 'number' || newExp < 0){
       throw new Error('Invalid first param!')
@@ -540,8 +561,7 @@ UserSchema.methods.updatePerks = async function(forcing, withoutParty){
     
     try {
         if (forcing || user.isNeedToPerksUpdate()) {
-            await userStore.computePerks(user);
-            console.log(user.userPerks)
+            user.userPerks = await userStore.computePerks(user);
             user.perksUpdatedAt = moment().toISOString(); //always in utc
             await user.save();
         }
@@ -605,6 +625,10 @@ UserSchema.methods.isNeedToPerksUpdate = function(){
       return false;
     }
 };
+
+UserSchema.methods.calculateOrder = async function(){
+    return await userStore.calculateOrder(this)
+}
 
 
 UserSchema.statics.clear = async () => {

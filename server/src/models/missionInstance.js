@@ -3,6 +3,7 @@ import {User} from './user'
 import arrayUniquePlugin from 'mongoose-unique-array'
 import {asyncForEach} from '../utils/methods'
 import { MissionInstanceExpiredEvent } from './missionInstanceExpiredEvent'
+import isEqual from 'lodash/isEqual'
 
 const MissionInstanceSchema = new mongoose.Schema({ //instance of ItemModel
 
@@ -31,6 +32,23 @@ const MissionInstanceSchema = new mongoose.Schema({ //instance of ItemModel
 
 
 }, {timestamps: true})
+
+MissionInstanceSchema.methods.partyCompare = function (party, checkPresence){
+  let missionParty = [] 
+  this.party.forEach((memberObject) => {
+      const memberId = memberObject.profile
+      missionParty = [...missionParty, memberId]
+      if(checkPresence){
+        if(memberId.toString() === user._id.toString() && memberObject.inInstance === false){
+          throw Error('User is not in the mission instance!')
+      }
+      }
+  })
+
+  if(!isEqual(missionParty, party)) {
+      throw Error('Invalid party!')
+  }
+}
 
 MissionInstanceSchema.statics.removeIfExists = (userId) => {
     return new Promise (async (resolve, reject)=> {

@@ -1,4 +1,7 @@
 import moment from "moment";
+import {isEqual} from "lodash";
+import { User } from '@models/user'
+import { Party} from '@models/party'
 import { Product } from "@models/product";
 import { asyncForEach} from '@utils/methods'
 
@@ -274,6 +277,156 @@ const computePerks = (user) =>{
     }); 
 }
 
+const calculateOrder = async user => {
+
+    const verifyParty = (leader, membersIds, order) => {
+        return new Promise(async (resolve, reject) => {
+          try {
+            const members = await User.find({
+              $and: [
+                { _id: { $in: membersIds } },
+                { activeOrder: { $size: 0 } } //checking active order - party
+              ]
+            });
+      
+            if (members.length !== membersIds.length) {
+              throw new Error(
+                "Not every member found OR member has another active order!"
+              );
+            }
+      
+            //checking if order profiles match party
+      
+            const party = [
+              leader.toString(),
+              ...membersIds.map(member => member.toString())
+            ];
+            let orderParty = [];
+            await asyncForEach(order, async user => {
+              const memberId = user.profile._id; //works when order is MongoObject -> when depopulated can be: user.profile or user.profile._id, when populated only - user.profile._id
+                                                    //for JSObject -> user.profile would be a String - only clear user.profile is accepted here
+                                                    //CONCLUSION: this method works only with order as MongoObject
+              orderParty = [...orderParty, memberId.toString()];
+            });
+            if (!isEqual(orderParty, party)) {
+              throw Error("Invalid party!");
+            }
+      
+            resolve(members);
+          } catch (e) {
+            reject(e);
+          }
+        });
+    };
+
+    try {
+      const party = await Party.findById(user.party);
+  
+      let partyId = null;
+      let leader = null;
+      let membersIds = [];
+  
+      if (party) {
+        partyId = party._id;
+        membersIds = [...party.members];
+        leader = party.leader;
+      } else {
+        leader = user._id;
+      }
+  
+      if (!user) {
+        throw Error("User not found!");
+      }
+      if (partyId && !user.party) {
+        throw Error("Użytkownik nie należy do żadnej drużyny!");
+      }
+  
+      const members = await verifyParty(leader, membersIds, user.activeOrder);
+  
+      await user
+        .populate({
+          path: "activeOrder.products.product",
+           populate: { path: "awards.itemModel", select: "name imgSrc" }
+        })
+        .execPopulate();
+  
+      const partyFullObject = [user, ...members];
+  
+      await asyncForEach(partyFullObject, async partyMember => {
+        //HERE IMPLEMENT PRICE AND EXPERIENCE MODS - input: activeOrder, userPerks; output: object for view
+        const firstDiscountIds = []
+        const currentMember = user.activeOrder.findIndex(
+          basket => basket.profile._id.toString() === partyMember._id.toString()
+        );
+  
+        //let modelPerks = await designateUserPerks(partyMember);
+        let modelPerks = await partyMember.updatePerks(false, true)
+        
+        const userProducts = user.activeOrder[currentMember].products.map(product => product.toJSON())
+  
+        userProducts.forEach(p => {
+          const product = p.product
+  
+          const productId = product._id.toString();
+  
+          if (modelPerks.products[productId].hasOwnProperty("experienceMod")) {
+            product.experience =
+              product.price * 10 + modelPerks.products[productId].experienceMod;
+          } else {
+            product.experience = product.price * 10;
+          }
+          if (modelPerks.products[productId].hasOwnProperty("priceMod")) {
+            //Apply first discount
+   
+            if(modelPerks.products[productId].priceMod.first < 0 && firstDiscountIds.indexOf(productId) === -1){
+              product.price += modelPerks.products[productId].priceMod.first;
+              firstDiscountIds.push(productId)
+            }
+            //Apply standard discount
+            if(modelPerks.products[productId].priceMod.standard < 0){
+              product.price += modelPerks.products[productId].priceMod.standard;
+              
+            }
+            //Zero out price if it's negative
+            if (product.price < 0) {
+              product.price = 0.0;
+            }
+          }
+        });
+        //currentMember.products.forEach(product => console.log(product.product.price, product.product.experience))
+        if (userProducts.length > 0) {
+          let totalPrice = 0;
+          let totalExperience = 0;
+          let totalAwards = [];
+          userProducts.forEach(product => {
+            
+            totalPrice += product.product.price * product.quantity;
+           
+            totalExperience += product.product.experience * product.quantity;
+            product.product.awards.forEach(award => {
+              award.quantity = award.quantity * product.quantity
+            })
+           
+              totalAwards = totalAwards.concat(product.product.awards);
+            
+          });
+         // console.log(totalPrice, totalExperience, totalAwards);
+  
+          user.activeOrder[currentMember].price = totalPrice;
+          user.activeOrder[currentMember].experience = totalExperience;
+          user.activeOrder[currentMember].awards = totalAwards;
+          user.activeOrder[currentMember].products = [...userProducts]
+        }
+        //calculatedOrders[partyMember._id.toString()] = {_id: partyMember._id.toString(), totalPrice: currentMember.totalPrice, totalExperience: currentMember.totalExperience, totalAwards: currentMember.totalAwards }
+        // user.activeOrder.find(basket => )
+        return user
+      });
+    } catch (e) {
+      throw Error(e, "Computing error");
+    }
+  };
+
 export default {
-    computePerks
+    computePerks,
+    calculateOrder
 }

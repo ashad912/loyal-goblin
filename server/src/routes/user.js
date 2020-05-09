@@ -11,8 +11,6 @@ import { auth } from "../middleware/auth";
 import { adminAuth } from '../middleware/adminAuth';
 import {
   asyncForEach,
-  userStandardPopulate,
-  updatePerks,
   saveImage,
   removeImage,
   verifyCaptcha,

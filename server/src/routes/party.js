@@ -4,7 +4,7 @@ import { auth } from "../middleware/auth";
 import { adminAuth } from '../middleware/adminAuth';
 import { MissionInstance } from "../models/missionInstance";
 import { Party } from "../models/party";
-import { asyncForEach, removeMissionInstanceIfExits, validatePartyAndLeader, } from '../utils/methods'
+import { asyncForEach } from '../utils/methods'
 import {pick} from 'lodash'
 
 import _ from "lodash";

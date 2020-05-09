@@ -1,6 +1,110 @@
 // import uuid from 'uuid/v1'
 // import avatarTemp from '../assets/avatar/moose.png'
 
+////TESTS
+// router.post('/testAddMockOrders', adminAuth, async(req,res) => {
+
+//   const userId = req.user._id
+
+//   const mockOrders = [
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+//     {leader: userId, totalPrice: 41.5},
+//     {leader: userId, totalPrice: 12},
+//     {leader: userId, totalPrice: 11.5},
+//     {leader: userId, totalPrice: 1000},
+//     {leader: userId, totalPrice: 141.5},
+//     {leader: userId, totalPrice: 1222},
+//     {leader: userId, totalPrice: 91.5},
+//     {leader: userId, totalPrice: 997.12},
+
+//   ];
+
+//   try{
+//     await ArchiveOrder.insertMany(mockOrders)
+//     res.send(mockOrders.map((order) =>  order.leader))
+//   }catch(e){
+//     res.status(400).send(e.message)
+//   }
+// })
 // // const createTempList = () => {
 // //     return [
 // //         {

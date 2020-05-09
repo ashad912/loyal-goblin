@@ -13,7 +13,6 @@ import {
     savePNGImage, 
     removeImage, 
     updateAmuletCounters, 
-    validatePartyAndLeader
 } from '../utils/methods'
 
 import isEqual from 'lodash/isEqual'
@@ -426,17 +425,18 @@ router.get('/amulets', auth, async(req,res) => {
             throw Error('There is no such mission instance!')
         }
 
-        const party = [user.party.leader, ...user.party.members]
+        missionInstance.partyCompare([user.party.leader, ...user.party.members], false)
+        // const party = [user.party.leader, ...user.party.members]
     
-        let missionParty = [] 
-        await asyncForEach(missionInstance.party, async (memberObject) => {
-            const memberId = memberObject.profile
-            missionParty = [...missionParty, memberId]
-        })
+        // let missionParty = [] 
+        // missionInstance.party.forEach((memberObject) => {
+        //     const memberId = memberObject.profile
+        //     missionParty = [...missionParty, memberId]
+        // })
 
-        if(!isEqual(missionParty, party)) {
-            throw Error('Invalid party!')
-        }
+        // if(!isEqual(missionParty, party)) {
+        //     throw Error('Invalid party!')
+        // }
 
         //amulets used in mission
         const missionAmulets = missionInstance.mission.amulets.map((amulet) => {
@@ -601,7 +601,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
         let partyIds = [leader, ...membersIds]
 
         let partyObject = []
-        await asyncForEach(partyIds, async (memberId) => {
+        partyIds.forEach((memberId) => {
                 const memberObject = {inMission: false, readyStatus: false, profile: memberId}
                 partyObject = [...partyObject, memberObject]
         })
@@ -724,8 +724,6 @@ router.patch('/leaveInstance', auth, async (req, res) => {
 
         const missionInstance = await toggleUserInstanceStatus(user, 'inMission', false, 'readyStatus', false)
 
-
-        
         res.send(missionInstance)
 
     }catch(e){
@@ -753,20 +751,20 @@ router.patch('/enterInstance', auth, async (req, res) => {
 
         if(user.party){
 
-            
-            const party = [user.party.leader, ...user.party.members]
+            missionInstance.partyCompare([user.party.leader, ...user.party.members], false)
+            // const party = [user.party.leader, ...user.party.members]
 
 
     
-            let missionParty = [] 
-            await asyncForEach(missionInstance.party, async (memberObject) => {
-                const memberId = memberObject.profile
-                missionParty = [...missionParty, memberId]
-            })
+            // let missionParty = [] 
+            // missionInstance.party.forEach((memberObject) => {
+            //     const memberId = memberObject.profile
+            //     missionParty = [...missionParty, memberId]
+            // })
     
-            if(!isEqual(missionParty, party)) {
-                throw Error('Invalid party!')
-            }
+            // if(!isEqual(missionParty, party)) {
+            //     throw Error('Invalid party!')
+            // }
     
 
         }
@@ -824,12 +822,12 @@ router.patch('/notReady', auth, async (req, res) => {
     }
 })
 
-const addAwards = async (user, awards) => {
+const createAwards = async (userClass, awards) => {
     let items = []
          
     await asyncForEach(Object.keys(awards.toJSON()), async (className) => {
         
-        if(user.class === className || className === 'any') {
+        if(userClass === className || className === 'any') {
             
             await asyncForEach(awards[className], async (item) => {
 
@@ -898,20 +896,21 @@ router.delete('/finishInstance', auth, async (req,res) => {
             throw Error('No matching mission instance found!')
         }
 
-        const party = [leader, ...membersIds]
+        missionInstance.partyCompare([user.party.leader, ...user.party.members], true)
+        // const party = [leader, ...membersIds]
     
-        let missionParty = [] 
-        await asyncForEach(missionInstance.party, async (memberObject) => {
-            const memberId = memberObject.profile
-            missionParty = [...missionParty, memberId]
-            if(memberId === user._id.toString() && memberObject.inInstance === false){
-                throw Error('User is not in the mission instance!')
-            }
-        })
+        // let missionParty = [] 
+        // missionInstance.party.forEach((memberObject) => {
+        //     const memberId = memberObject.profile
+        //     missionParty = [...missionParty, memberId]
+        //     if(memberId === user._id.toString() && memberObject.inInstance === false){
+        //         throw Error('User is not in the mission instance!')
+        //     }
+        // })
 
-        if(!isEqual(missionParty, party)) {
-            throw Error('Invalid party!')
-        }
+        // if(!isEqual(missionParty, party)) {
+        //     throw Error('Invalid party!')
+        // }
 
         
         //check amulets
@@ -943,7 +942,7 @@ router.delete('/finishInstance', auth, async (req,res) => {
             }) //recoginized as an array
 
             if(user.activeMission.length && (user.activeMission[0]._id.toString() === missionInstance._id.toString())){
-                const items = await addAwards(user, missionInstance.mission.awards)
+                const items = await createAwards(user.class, missionInstance.mission.awards)
                 
                 const modMissionExp = designateExperienceMods(missionInstance.mission.experience, user.userPerks.rawExperience)
                 const newLevels = user.getNewLevels(modMissionExp)
@@ -1005,20 +1004,21 @@ const verifySendItem = (user, missionInstance, itemId) => {
                 leader = user._id
             }
 
-            const party = [leader, ...membersIds]
+            missionInstance.partyCompare([user.party.leader, ...user.party.members], true)
+            // const party = [leader, ...membersIds]
     
-            let missionParty = [] 
-            await asyncForEach(missionInstance.party, async (memberObject) => {
-                const memberId = memberObject.profile
-                missionParty = [...missionParty, memberId]
-                if(memberObject.profile.toString() === user._id.toString() && memberObject.inInstance === false){
-                    throw Error('User is not in the mission instance!')
-                }
-            })
+            // let missionParty = [] 
+            // await asyncForEach(missionInstance.party, async (memberObject) => {
+            //     const memberId = memberObject.profile
+            //     missionParty = [...missionParty, memberId]
+            //     if(memberId.toString() === user._id.toString() && memberObject.inInstance === false){
+            //         throw Error('User is not in the mission instance!')
+            //     }
+            // })
     
-            if(!isEqual(missionParty, party)) {
-                throw Error('Invalid party!')
-            }
+            // if(!isEqual(missionParty, party)) {
+            //     throw Error('Invalid party!')
+            // }
     
     
             const item = await Item.findOne({_id: itemId}).populate({

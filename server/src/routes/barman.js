@@ -19,20 +19,20 @@ router.get("/", adminAuth, async (req, res) => {
 
 router.post("/register", adminAuth, async (req, res) => {
 
-    try {
-      const barman = new Barman({
-        userName: req.body.userName,
-        password: req.body.password,
-});
-    
-      await barman.save()
-        res.status(201).send(barman)
+  try {
+    const barman = new Barman({
+      userName: req.body.userName,
+      password: req.body.password,
+    });
+  
+    await barman.save()
+    res.status(201).send(barman)
 
-    } catch (e) {
-      console.log(e);
-      res.status(400).send(e);
-    }
-  });
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e);
+  }
+});
  
 
   

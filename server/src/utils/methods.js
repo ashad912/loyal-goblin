@@ -73,85 +73,85 @@ export const updateAmuletCounters = (amuletCounters, amulets) => {
 
 
 
-//REF
-export const validateInMissionInstanceStatus = (userId, newStatus, secondNewStatus) => {
-  return new Promise(async (resolve, reject) => {
-    const missionInstance = await MissionInstance.findOne({
-      party: { $elemMatch: { profile: userId } }
-    });
+// //REF
+// export const validateInMissionInstanceStatus = (userId, newStatus, secondNewStatus) => {
+//   return new Promise(async (resolve, reject) => {
+//     const missionInstance = await MissionInstance.findOne({
+//       party: { $elemMatch: { profile: userId } }
+//     });
 
-    if (missionInstance) {
-      const index = missionInstance.party.findIndex(
-        user => user.profile.toString() === userId
-      );
+//     if (missionInstance) {
+//       const index = missionInstance.party.findIndex(
+//         user => user.profile.toString() === userId
+//       );
 
-      if (index > -1) {
-        if (missionInstance.party[index].inMission !== newStatus) {
-          missionInstance.party[index].inMission = newStatus;
-          if(secondNewStatus){
-            missionInstance.party[index].readyStatus = secondNewStatus
-          }
-          await missionInstance.save();
-          return resolve(true);
-        }
-      }
-    }
-    resolve(false);
-  });
-};
+//       if (index > -1) {
+//         if (missionInstance.party[index].inMission !== newStatus) {
+//           missionInstance.party[index].inMission = newStatus;
+//           if(secondNewStatus){
+//             missionInstance.party[index].readyStatus = secondNewStatus
+//           }
+//           await missionInstance.save();
+//           return resolve(true);
+//         }
+//       }
+//     }
+//     resolve(false);
+//   });
+// };
 
-//REF
-export const validateInShopPartyStatus = (userId, newStatus) => {
-  return new Promise(async (resolve, reject) => {
-    const party = await Party.findOne({ leader: userId }); //only if leader going to be disconnected
+// //REF
+// export const validateInShopPartyStatus = (userId, newStatus) => {
+//   return new Promise(async (resolve, reject) => {
+//     const party = await Party.findOne({ leader: userId }); //only if leader going to be disconnected
 
-    if (party && party.inShop !== newStatus) {
-      party.inShop = newStatus;
-      await party.save();
-      return resolve(true);
-    }
-    resolve(false);
-  });
-};
-//REF
-export const removeMissionInstanceIfExits = (id) => {
-  return new Promise (async (resolve, reject)=> {
-    try{
-      const missionInstance = await MissionInstance.findOne(
-        {party: {$elemMatch: {profile: id}}}    
-      )
+//     if (party && party.inShop !== newStatus) {
+//       party.inShop = newStatus;
+//       await party.save();
+//       return resolve(true);
+//     }
+//     resolve(false);
+//   });
+// };
+// //REF
+// export const removeMissionInstanceIfExits = (id) => {
+//   return new Promise (async (resolve, reject)=> {
+//     try{
+//       const missionInstance = await MissionInstance.findOne(
+//         {party: {$elemMatch: {profile: id}}}    
+//       )
       
-      if(missionInstance){
-        await missionInstance.remove()
-        return resolve(true)
-      }
+//       if(missionInstance){
+//         await missionInstance.remove()
+//         return resolve(true)
+//       }
       
-      //update missions -> function for getMissionList
-      resolve(false)
-    }catch(e){
-      reject(e)
-    }
-  })
-}
-//REF
-export const validatePartyAndLeader = (user, inShop) => {
-  return new Promise (async (resolve, reject) => {
-    try{
+//       //update missions -> function for getMissionList
+//       resolve(false)
+//     }catch(e){
+//       reject(e)
+//     }
+//   })
+// }
+// //REF
+// export const validatePartyAndLeader = (user, inShop) => {
+//   return new Promise (async (resolve, reject) => {
+//     try{
       
-      const party = inShop !== undefined
-        ? (await Party.findOne({inShop: inShop, _id: user.party, leader: user._id}))
-        : (await Party.findOne({_id: user.party, leader: user._id}))
+//       const party = inShop !== undefined
+//         ? (await Party.findOne({inShop: inShop, _id: user.party, leader: user._id}))
+//         : (await Party.findOne({_id: user.party, leader: user._id}))
       
-      if(!party){
-        throw new Error('Invalid party conditions!')
-      }
+//       if(!party){
+//         throw new Error('Invalid party conditions!')
+//       }
       
-      resolve(party)
-    }catch(e){
-      reject(e)
-    }
-  })
-}
+//       resolve(party)
+//     }catch(e){
+//       reject(e)
+//     }
+//   })
+// }
 
 export const savePNGImage = async (
   imageFile,
