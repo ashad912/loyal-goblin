@@ -425,17 +425,6 @@ router.get('/amulets', auth, async(req,res) => {
         }
 
         missionInstance.partyCompare([user.party.leader, ...user.party.members], false)
-        // const party = [user.party.leader, ...user.party.members]
-    
-        // let missionParty = [] 
-        // missionInstance.party.forEach((memberObject) => {
-        //     const memberId = memberObject.profile
-        //     missionParty = [...missionParty, memberId]
-        // })
-
-        // if(!isEqual(missionParty, party)) {
-        //     throw Error('Invalid party!')
-        // }
 
         //amulets used in mission
         const missionAmulets = missionInstance.mission.amulets.map((amulet) => {
@@ -511,21 +500,9 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
             }
         }
 
-        //SOLO-MISSION
-        // if(Object.entries(user.party).length === 0 && user.party.constructor === Object){
-        //     throw new Error('No party!')
-        // }
-
         if(membersIds.length + 1 > mission.maxPlayers || membersIds.length + 1 < mission.minPlayers){ //+1 - for leader
             throw new Error('Unappropriate party size!')
         }
-
-
-        // if(isNeedToPerksUpdate(user)){
-        //     user.userPerks = await designateUserPerks(user)
-        //     user.perksUpdatedAt = moment().toISOString() //always in utc
-        //     await user.save()
-        // }
 
         await user.updatePerks(false, true);
 
@@ -544,12 +521,6 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
             if(!member){
                 throw Error(`Member (${memberId}) does not exist!`)
             }
-
-            // if(isNeedToPerksUpdate(member)){
-            //     member.userPerks = await designateUserPerks(member)
-            //     member.perksUpdatedAt = moment().toISOString() //always in utc
-            //     await member.save()
-            // }
 
             await member.updatePerks(false, true);
 
@@ -595,7 +566,6 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
 
         })
 
-        //console.log('party is available')
 
         let partyIds = [leader, ...membersIds]
 
@@ -605,11 +575,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
                 partyObject = [...partyObject, memberObject]
         })
         
-        const missionInstanceObject = {mission: mission._id, party: partyObject, items: []}
-
-       // console.log(missionInstanceObject)
-        const missionInstance = new MissionInstance(missionInstanceObject)
-        //console.log(missionInstance)
+        const missionInstance = new MissionInstance({mission: mission._id, party: partyObject, items: []})
         const mI = await missionInstance.save()
 
         if(process.env.REPLICA === "true"){
@@ -630,7 +596,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
                 }    
             }, 30* 60 * 1000) //30 mins
         }
-        console.log(mission.imgSrc)
+        
         res.status(200).send({missionInstance, imgSrc: mission.imgSrc})
   
     } catch (e) {
@@ -678,51 +644,12 @@ router.delete('/deleteInstance', auth, async (req, res) => {
     }
 })
 
-// const toggleUserInstanceStatus = (user, field, newStatus, secondField, secondNewStatus) => {
-//     return new Promise( async (resolve, reject) => {
-//         try{
-//             await user.populate({
-//                 path: 'activeMission'
-//             }).execPopulate()
-    
-            
-//             const missionInstance =  await MissionInstance.findOne({_id: user.activeMission, createdAt: {$gte: new Date(new Date().getTime()-instanceValidTimeInMins*timeIntUnit*1000) }})
-    
-//             if(!missionInstance){
-//                 throw Error('There is no such mission instance!')
-//             }
-            
-//             const index = missionInstance.party.findIndex(member => member.profile.toString() === user._id.toString())
-    
-//             if(index < 0){
-//                 throw Error('You are not in this mission!')
-//             }
-    
-//             missionInstance.party[index][field] = newStatus
-
-//             if(secondField){
-//                 missionInstance.party[index][secondField] = secondNewStatus
-//             }
-    
-//             await missionInstance.save()
-
-           
-
-//             resolve(missionInstance)
-//         }catch(e){
-//             reject(e)
-//         }
-        
-//     })
-// }
 //OK
 router.patch('/leaveInstance', auth, async (req, res) => {
     const user = req.user
 
     try{
-
-        //const missionInstance = await toggleUserInstanceStatus(user, 'inMission', false, 'readyStatus', false)
-        const missionInstance = await MissionInstance.toggleUserStatus(user, {inMission: true, readyStatus: false})
+        const missionInstance = await MissionInstance.toggleUserStatus(user, {inMission: false, readyStatus: false})
 
         res.send(missionInstance)
 
@@ -751,23 +678,7 @@ router.patch('/enterInstance', auth, async (req, res) => {
         }).execPopulate()
 
         if(user.party){
-
             missionInstance.partyCompare([user.party.leader, ...user.party.members], false)
-            // const party = [user.party.leader, ...user.party.members]
-
-
-    
-            // let missionParty = [] 
-            // missionInstance.party.forEach((memberObject) => {
-            //     const memberId = memberObject.profile
-            //     missionParty = [...missionParty, memberId]
-            // })
-    
-            // if(!isEqual(missionParty, party)) {
-            //     throw Error('Invalid party!')
-            // }
-    
-
         }
 
         await missionInstance.populate({
@@ -801,7 +712,6 @@ router.patch('/ready', auth, async (req, res) => {
     const user = req.user
 
     try{
-        //const missionInstance = await toggleUserInstanceStatus(user, 'readyStatus', true)
         const missionInstance = await MissionInstance.toggleUserStatus(user, {readyStatus: true})
 
         res.send(missionInstance)
@@ -815,7 +725,6 @@ router.patch('/notReady', auth, async (req, res) => {
     const user = req.user
 
     try{
-        //const missionInstance = await toggleUserInstanceStatus(user, 'readyStatus', false)
         const missionInstance = await MissionInstance.toggleUserStatus(user, {readyStatus: false})
         res.send(missionInstance)
 

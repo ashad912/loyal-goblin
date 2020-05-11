@@ -477,23 +477,23 @@ UserSchema.methods.standardPopulate = async function(){
 
 UserSchema.methods.orderPopulate = async function () {
     await user
-    .populate({
-      //populate after verification
-      path: "activeOrder.profile",
-      select: "_id name avatar"
-    })
-    .populate({
-      path: "activeOrder.products.product",
-      populate: {
-        path: "awards.itemModel",
-        populate: { path: "perks.target.disc-product", select: "_id name" }
-      } //is necessary here?
-    })
-    .populate({
-      path: "activeOrder.awards.itemModel", 
-      select: "name imgSrc"
-    })
-    .execPopulate();
+        .populate({
+        //populate after verification
+            path: "activeOrder.profile",
+            select: "_id name avatar"
+        })
+        .populate({
+            path: "activeOrder.products.product",
+            populate: {
+                path: "awards.itemModel",
+                populate: { path: "perks.target.disc-product", select: "_id name" }
+            }
+        })
+        .populate({
+            path: "activeOrder.awards.itemModel", 
+            select: "name imgSrc"
+        })
+        .execPopulate();
 }
 
 UserSchema.methods.getNewLevels = function(newExp){
@@ -584,7 +584,7 @@ UserSchema.methods.updatePerks = async function(forcing, withoutParty){
                         throw Error(`Member (${memberId}) does not exist!`);
                     }
 
-                    if (forcing  || member.isNeedToPerksUpdate()) {
+                    if (forcing || member.isNeedToPerksUpdate()) {
                         member.perks = await userStore.computePerks(member);
                         member.perksUpdatedAt = moment().toISOString(); //always in utc
                         await member.save();
@@ -605,6 +605,8 @@ UserSchema.methods.isNeedToPerksUpdate = function(){
 
     if (user.perksUpdatedAt && user.perksUpdatedAt instanceof Date) {
       const lastUpdateDate = moment.utc(user.perksUpdatedAt);
+      const now = moment.utc();
+
   
       let lastUpdateHour = lastUpdateDate.hour();
       if (lastUpdateDate.minutes() === 0 && lastUpdateDate.seconds() === 0) {
@@ -613,10 +615,10 @@ UserSchema.methods.isNeedToPerksUpdate = function(){
       }
   
       const nextUpdateDate = moment.utc(
-        `${lastUpdateHour + 1}:00:01`,
-        "HH:mm:ss"
+        `${lastUpdateDate.year()}-${lastUpdateDate.month()+1}-${lastUpdateDate.date()} ${lastUpdateHour + 1}:00:01`,
+        "YYYY-MM-DD HH:mm:ss"
       );
-      const now = moment.utc();
+      
   
       if (now.valueOf() >= nextUpdateDate.valueOf()) {
         return true;

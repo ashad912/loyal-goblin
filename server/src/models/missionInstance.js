@@ -71,24 +71,13 @@ MissionInstanceSchema.statics.toggleUserStatus = (user, update) => {
             throw Error('You are not in this mission!')
         }
 
-        for(const key in update){
-          console.log(key, update[key])
-          console.log(missionInstance.toObject().party[index].hasOwnProperty(key))
-          if(missionInstance.toObject().party[index].hasOwnProperty(key)){
+        for(const key in update){   
+          if(missionInstance.toObject().party[index].hasOwnProperty(key)){ //toObject - access to hasOwnProp
             missionInstance.party[index][key] = update[key]
           }
         }
 
-        console.log(missionInstance.party)
-        // missionInstance.party[index][field] = newStatus
-
-        // if(secondField){
-        //     missionInstance.party[index][secondField] = secondNewStatus
-        // }
-
         await missionInstance.save()
-
-       
 
         resolve(missionInstance)
     }catch(e){
