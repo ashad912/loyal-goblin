@@ -19,14 +19,13 @@ import isEqual from 'lodash/isEqual'
 import moment from 'moment'
 import {Rally} from '../models/rally'
 import { Party } from '../models/party';
+import missionStore from '@store/mission.store.js'
 
 
 
 const uploadPath = "../static/images/missions/"
 
-const instanceValidTimeInMins = "30"
-const timeUnit = "m"
-const timeIntUnit = timeUnit === "m" ? 60 : 1
+
 
 const router = new express.Router
 
@@ -222,7 +221,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
         )
 
         //if missionInstance expired
-        if(missionInstance && moment.utc().valueOf() >= moment.utc(missionInstance.createdAt).add(instanceValidTimeInMins, timeUnit).valueOf()){
+        if(missionInstance && moment.utc().valueOf() >= moment.utc(missionInstance.createdAt).add(missionStore.instanceValidTimeInMins, missionStore.timeUnit).valueOf()){
             await missionInstance.remove()
         }else if(missionInstance){
             const mission = await Mission.aggregate().match( //return only one mission - of which the user is a participant (as array for compatibility)
@@ -679,50 +678,51 @@ router.delete('/deleteInstance', auth, async (req, res) => {
     }
 })
 
-const toggleUserInstanceStatus = (user, field, newStatus, secondField, secondNewStatus) => {
-    return new Promise( async (resolve, reject) => {
-        try{
-            await user.populate({
-                path: 'activeMission'
-            }).execPopulate()
+// const toggleUserInstanceStatus = (user, field, newStatus, secondField, secondNewStatus) => {
+//     return new Promise( async (resolve, reject) => {
+//         try{
+//             await user.populate({
+//                 path: 'activeMission'
+//             }).execPopulate()
     
             
-            const missionInstance =  await MissionInstance.findOne({_id: user.activeMission, createdAt: {$gte: new Date(new Date().getTime()-instanceValidTimeInMins*timeIntUnit*1000) }})
+//             const missionInstance =  await MissionInstance.findOne({_id: user.activeMission, createdAt: {$gte: new Date(new Date().getTime()-instanceValidTimeInMins*timeIntUnit*1000) }})
     
-            if(!missionInstance){
-                throw Error('There is no such mission instance!')
-            }
+//             if(!missionInstance){
+//                 throw Error('There is no such mission instance!')
+//             }
             
-            const index = missionInstance.party.findIndex(member => member.profile.toString() === user._id.toString())
+//             const index = missionInstance.party.findIndex(member => member.profile.toString() === user._id.toString())
     
-            if(index < 0){
-                throw Error('You are not in this mission!')
-            }
+//             if(index < 0){
+//                 throw Error('You are not in this mission!')
+//             }
     
-            missionInstance.party[index][field] = newStatus
+//             missionInstance.party[index][field] = newStatus
 
-            if(secondField){
-                missionInstance.party[index][secondField] = secondNewStatus
-            }
+//             if(secondField){
+//                 missionInstance.party[index][secondField] = secondNewStatus
+//             }
     
-            await missionInstance.save()
+//             await missionInstance.save()
 
            
 
-            resolve(missionInstance)
-        }catch(e){
-            reject(e)
-        }
+//             resolve(missionInstance)
+//         }catch(e){
+//             reject(e)
+//         }
         
-    })
-}
+//     })
+// }
 //OK
 router.patch('/leaveInstance', auth, async (req, res) => {
     const user = req.user
 
     try{
 
-        const missionInstance = await toggleUserInstanceStatus(user, 'inMission', false, 'readyStatus', false)
+        //const missionInstance = await toggleUserInstanceStatus(user, 'inMission', false, 'readyStatus', false)
+        const missionInstance = await MissionInstance.toggleUserStatus(user, {inMission: true, readyStatus: false})
 
         res.send(missionInstance)
 
@@ -736,7 +736,8 @@ router.patch('/enterInstance', auth, async (req, res) => {
     const socketConnectionStatus = req.body.socketConnectionStatus
     
     try{
-        const missionInstance = await toggleUserInstanceStatus(user, 'inMission', true)
+        //const missionInstance = await toggleUserInstanceStatus(user, 'inMission', true)
+        const missionInstance = await MissionInstance.toggleUserStatus(user, {inMission: true})
 
         if(socketConnectionStatus !== undefined){
             if(missionInstance.party.length > 1 && !socketConnectionStatus){ //if client of multiplayer mission is not connected to socket
@@ -800,7 +801,8 @@ router.patch('/ready', auth, async (req, res) => {
     const user = req.user
 
     try{
-        const missionInstance = await toggleUserInstanceStatus(user, 'readyStatus', true)
+        //const missionInstance = await toggleUserInstanceStatus(user, 'readyStatus', true)
+        const missionInstance = await MissionInstance.toggleUserStatus(user, {readyStatus: true})
 
         res.send(missionInstance)
 
@@ -813,8 +815,8 @@ router.patch('/notReady', auth, async (req, res) => {
     const user = req.user
 
     try{
-        const missionInstance = await toggleUserInstanceStatus(user, 'readyStatus', false)
-
+        //const missionInstance = await toggleUserInstanceStatus(user, 'readyStatus', false)
+        const missionInstance = await MissionInstance.toggleUserStatus(user, {readyStatus: false})
         res.send(missionInstance)
 
     }catch(e){

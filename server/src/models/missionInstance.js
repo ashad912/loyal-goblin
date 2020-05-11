@@ -1,9 +1,10 @@
 import mongoose from 'mongoose'
 import {User} from './user'
 import arrayUniquePlugin from 'mongoose-unique-array'
-import {asyncForEach} from '../utils/methods'
+import {asyncForEach} from '@utils/methods'
 import { MissionInstanceExpiredEvent } from './missionInstanceExpiredEvent'
 import isEqual from 'lodash/isEqual'
+import missionStore from '@store/mission.store.js'
 
 const MissionInstanceSchema = new mongoose.Schema({ //instance of ItemModel
 
@@ -48,6 +49,53 @@ MissionInstanceSchema.methods.partyCompare = function (party, checkPresence){
   if(!isEqual(missionParty, party)) {
       throw Error('Invalid party!')
   }
+}
+
+MissionInstanceSchema.statics.toggleUserStatus = (user, update) => {
+  return new Promise( async (resolve, reject) => {
+    try{
+        await user.populate({
+            path: 'activeMission'
+        }).execPopulate()
+
+        const missionTime = missionStore.instanceValidTimeInMins * missionStore.timeIntUnit * 1000
+        const missionInstance =  await MissionInstance.findOne({_id: user.activeMission, createdAt: {$gte: new Date(new Date().getTime()-missionTime) }})
+
+        if(!missionInstance){
+            throw Error('There is no such mission instance!')
+        }
+        
+        const index = missionInstance.party.findIndex(member => member.profile.toString() === user._id.toString())
+
+        if(index < 0){
+            throw Error('You are not in this mission!')
+        }
+
+        for(const key in update){
+          console.log(key, update[key])
+          console.log(missionInstance.toObject().party[index].hasOwnProperty(key))
+          if(missionInstance.toObject().party[index].hasOwnProperty(key)){
+            missionInstance.party[index][key] = update[key]
+          }
+        }
+
+        console.log(missionInstance.party)
+        // missionInstance.party[index][field] = newStatus
+
+        // if(secondField){
+        //     missionInstance.party[index][secondField] = secondNewStatus
+        // }
+
+        await missionInstance.save()
+
+       
+
+        resolve(missionInstance)
+    }catch(e){
+        reject(e)
+    }
+    
+})
 }
 
 MissionInstanceSchema.statics.removeIfExists = (userId) => {

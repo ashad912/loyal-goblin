@@ -17,9 +17,10 @@ MissionInstanceExpiredEventSchema.statics.registerWatch = () => {
     
     
     
+
     MissionInstanceExpiredEvent.watch([deleteOps]).
         on('change', async data => {
-            console.log(new Date(), data.documentKey._id, 'missionInstance remove event triggered');
+            //console.log(new Date(), data.documentKey._id, 'missionInstance remove event triggered');
             const mInstance = await MissionInstance.findById(data.documentKey)
             if(mInstance){
                 await mInstance.remove()
@@ -27,6 +28,7 @@ MissionInstanceExpiredEventSchema.statics.registerWatch = () => {
             }
         });
 
+    console.log('Mission instance watch triggered')
 }
 
 

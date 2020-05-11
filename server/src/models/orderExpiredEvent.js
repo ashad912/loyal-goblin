@@ -26,6 +26,7 @@ OrderExpiredEventSchema.statics.registerWatch = () => {
                 console.log(new Date(), user._id, 'user.activeOrder auto-removed')
             }
         });
+        console.log('User active order watch triggered')
 }
 
 export const OrderExpiredEvent = new mongoose.model('orderExpiredEvent', OrderExpiredEventSchema)
