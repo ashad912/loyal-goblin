@@ -79,29 +79,6 @@ const Profile = props => {
   );
   const [equippedItems, setEquippedItems] = React.useState(null);
 
-  React.useEffect(() => {
-    setBag(bagArrayToCategories(props.auth.profile.bag));
-  }, [props.auth.profile.bag]);
-
-  React.useEffect(() => {
-    setEquippedItems(props.auth.profile.equipped);
-    updateEquippedItems();
-  }, [props.auth.profile.equipped]);
-
-  const [activePerks, setActivePerks] = React.useState([]);
-
-  const [goExp, setGoExp] = React.useState(false);
-  const [userLevel, setUserLevel] = React.useState(1);
-  const [relativeExp, setRelativeExp] = React.useState(0);
-  const [relativeThreshold, setRelativeThreshold] = React.useState(0);
-
-  const [showRankDialog, setShowRankDialog] = React.useState(false);
-  const [showStatsDialog, setShowStatsDialog] = React.useState(false);
-  const [
-    missionInstanceWarningDialog,
-    setMissionInstanceWarningDialog
-  ] = React.useState({ action: null, text: "" });
-
   const authUpdate = async () => {
     await props.onAuthCheck();
   }
@@ -118,6 +95,27 @@ const Profile = props => {
   }, []);
 
   React.useEffect(() => {
+    setBag(bagArrayToCategories(props.auth.profile.bag));
+  }, [props.auth.profile.bag]);
+
+  React.useEffect(() => {
+    updateEquippedItems(props.auth.profile);
+  }, [props.auth.profile.equipped]);
+
+  const [activePerks, setActivePerks] = React.useState([]);
+
+  const [userLevel, setUserLevel] = React.useState(1);
+  const [relativeExp, setRelativeExp] = React.useState(0);
+  const [relativeThreshold, setRelativeThreshold] = React.useState(0);
+
+  const [
+    missionInstanceWarningDialog,
+    setMissionInstanceWarningDialog
+  ] = React.useState({ action: null, text: "" });
+
+  
+
+  React.useEffect(() => {
     const levelData = designateUserLevel(props.auth.profile.experience, true);
     setUserLevel(levelData.level);
     setRelativeExp(levelData.relativeExp);
@@ -130,7 +128,7 @@ const Profile = props => {
   //   }
   // }, [props.party.inShop]);
 
-  const updateEquippedItems = () => {
+  const updateEquippedItems = (param) => {
     const equipment = {
       head: null,
       chest: null,
@@ -145,25 +143,29 @@ const Profile = props => {
     };
     const perks = [];
 
-    Object.keys(props.auth.profile.equipped).forEach(category => {
+    const profile = param ? param : props.auth.profile
+    
+
+    Object.keys(profile.equipped).forEach(category => {
+      
       let loadedEquippedItem;
       if (category.startsWith("weapon")) {
         loadedEquippedItem =
           bag.weapon &&
           bag.weapon.find(
-            item => item._id === props.auth.profile.equipped[category]
+            item => item._id === profile.equipped[category]
           );
       } else if (category.startsWith("ring")) {
         loadedEquippedItem =
           bag.ring &&
           bag.ring.find(
-            item => item._id === props.auth.profile.equipped[category]
+            item => item._id === profile.equipped[category]
           );
       } else {
         loadedEquippedItem =
           bag[category] &&
           bag[category].find(
-            item => item._id === props.auth.profile.equipped[category]
+            item => item._id === profile.equipped[category]
           );
       }
 
@@ -175,7 +177,7 @@ const Profile = props => {
             equipment[category] = loadedEquippedItem.itemModel.altAppearanceSrc;
           }
         }else{
-          if(props.auth.profile.sex === 'male'){
+          if(profile.sex === 'male'){
             equipment[category] = loadedEquippedItem.itemModel.appearanceSrc;
           }else{
             equipment[category] = loadedEquippedItem.itemModel.altAppearanceSrc;
@@ -192,7 +194,7 @@ const Profile = props => {
         }
       }
     });
-
+    
     setEquippedItems({ ...equipment });
     setActivePerks([...perks]);
   };

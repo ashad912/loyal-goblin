@@ -111,13 +111,13 @@ router.post("/create", async (req, res) => {
       return res.status(400).send();
     }
     
-    const secretKey = process.env.SECRET_RECAPTCHA_KEY;
-    const recaptchaToken = req.body.token;
-    const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
+    // const secretKey = process.env.SECRET_RECAPTCHA_KEY;
+    // const recaptchaToken = req.body.token;
+    // const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
 
-    //console.log(secretKey)
+    // //console.log(secretKey)
     try{
-      await verifyCaptcha(url)
+      await verifyCaptcha(req.body.token)
     }catch(e){
       console.log(e);
       res.status(400).send(e);
@@ -223,11 +223,11 @@ router.patch("/character", auth, async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const user = await User.findByCredentials(req.body.email.toLowerCase(), req.body.password);
-    const token = await user.generateAuthToken(); //on instancegenerateAuthToken
-    await user.standardPopulate()
+    const token = await user.generateAuthToken(); 
+    
     await user.updatePerks(true)
-    //user = await userStandardPopulate(user);
-    //user.userPerks = await updatePerks(user, true);
+    await user.standardPopulate()
+    
     if(user.passwordChangeToken){
       user.passwordChangeToken = null
       await user.save()
@@ -271,7 +271,6 @@ router.patch("/updatePerks", auth, async (req, res, next) => {
   const user = req.user;
 
   try {
-    //user.userPerks = await updatePerks(user, true);
     await user.updatePerks(true)
     res.send(user.userPerks);
   } catch (e) {
@@ -282,24 +281,20 @@ router.patch("/updatePerks", auth, async (req, res, next) => {
 router.get("/me", auth, async (req, res, next) => {
   try {
     const user = req.user
-    await user.standardPopulate();
-
-    //user.userPerks = await updatePerks(user, false);
+    
     await user.updatePerks(false)
-    if(user.passwordChangeToken){
-      user.passwordChangeToken = null
-      await user.save()
-    }
-    if(user.party){
-      await user.populate({
-        path: "party"
-      });
-    }
+    
+    // if(user.party){
+    //   await user.populate({
+    //     path: "party"
+    //   });
+    // }
 
     if (user.activeOrder.length) {
       await user.orderPopulate()
     }
 
+    await user.standardPopulate();
 
     res.send(user);
   } catch (e) {
@@ -317,13 +312,13 @@ router.patch("/changePassword", auth, async (req, res, next) => {
 
 
   
-  const secretKey = process.env.SECRET_RECAPTCHA_KEY;
-  const recaptchaToken = req.body.token;
-  const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
+  // const secretKey = process.env.SECRET_RECAPTCHA_KEY;
+  // const recaptchaToken = req.body.token;
+  // const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
 
 
   try{
-    await verifyCaptcha(url)
+    await verifyCaptcha(req.body.token)
   }catch(e){
     console.log(e);
     res.status(400).send(e);
@@ -367,13 +362,13 @@ router.patch("/changePassword", auth, async (req, res, next) => {
 
 router.post("/forgotPassword", async (req, res) => {
   try {
-    const secretKey = process.env.SECRET_RECAPTCHA_KEY;
-    const recaptchaToken = req.body.recaptchaToken;
-    const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
+    // const secretKey = process.env.SECRET_RECAPTCHA_KEY;
+    // const recaptchaToken = req.body.recaptchaToken;
+    // const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
   
   
     try{
-      await verifyCaptcha(url)
+      await verifyCaptcha(req.body.recaptchaToken)
     }catch(e){
       console.log(e);
       res.status(400).send(e);
@@ -410,7 +405,7 @@ router.post("/validatePasswordChangeToken", async(req, res) => {
   const token = req.body.token
   try {
     if (!token) {
-        throw new Error("Brak tokena resetu hasła")
+        throw new Error("No token provided")
     }
   
     const user = await User.findByPasswordChangeToken(token)
@@ -431,13 +426,13 @@ router.post("/validatePasswordChangeToken", async(req, res) => {
 
 router.patch('/reset', async (req, res) => {
   try {
-    const secretKey = process.env.SECRET_RECAPTCHA_KEY;
-    const recaptchaToken = req.body.recaptchaToken;
-    const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
+    // const secretKey = process.env.SECRET_RECAPTCHA_KEY;
+    // const recaptchaToken = req.body.recaptchaToken;
+    // const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
   
   
     try{
-      await verifyCaptcha(url)
+      await verifyCaptcha(req.body.recaptchaToken)
     }catch(e){
       console.log(e);
       res.status(400).send(e);
@@ -456,13 +451,12 @@ router.patch('/reset', async (req, res) => {
       throw new Error('Nie znaleziono użytkownika')
     }
 
+    user.passwordChangeToken = null
+    user.password = req.body.password
 
+    await user.save()
 
-      user.passwordChangeToken = null
-      user.password = req.body.password
-
-      user.save()
-      res.sendStatus(200)
+    res.sendStatus(200)
   } catch (error) {
       console.log(error)
       res.status(400).send(error)
@@ -514,7 +508,7 @@ router.delete("/me/avatar", auth, async (req, res) => {
   const user = req.user
   try {
     if(!user.avatar){
-      throw new Error("Użytkownik nie posiada avatara")
+      throw new Error("User has not got avatar")
     }
 
     await removeImage(uploadPath+user.avatar)
@@ -590,14 +584,9 @@ router.patch("/party/equip", auth, async (req, res) => {
     
     await user.updatePerks(true)
     
-    //user.userPerks = await updatePerks(user, true);
     await user.save();
     await user.standardPopulate()
-    //user = await userStandardPopulate(user);
-  
 
-    
-      
     if(!user.party){
       res.status(204).send(null)
       return
@@ -606,7 +595,7 @@ router.patch("/party/equip", auth, async (req, res) => {
     await user
       .populate({
         path: "party",
-        populate: { path: "leader members", select: "_id name avatar attributes experience userPerks bag equipped  class experience", 
+        populate: { path: "leader members", select: "_id name avatar attributes experience userPerks bag equipped class experience", 
         populate: { path: "bag", populate: { path: "itemModel", populate: { path: "perks.target.disc-product", select: '_id name' }, } } }
       })
       .execPopulate();

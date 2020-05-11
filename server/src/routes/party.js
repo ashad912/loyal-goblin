@@ -59,27 +59,25 @@ router.get("/", auth, async (req, res, next) => {
     }
 
     await user
-      .populate({
-        path: "party",
-        populate: {
-          path: "leader members",
-          select: "_id name avatar attributes experience userPerks equipped bag class experience",
-          populate: {
-            path: "bag",
-            populate: {
-              path: "itemModel",
-              populate: {
-                path: "perks.target.disc-product",
-                select: "_id name"
-              }
-            }
-          }
-        }
-      })
-      .populate({
-        path: "bag",
-        populate: { path: "itemModel", select: '_id description appearanceSrc imgSrc name perks type twoHanded', populate: { path: "perks.target.disc-product", select: '_id name' } }
-      })
+      // .populate({
+      //   path: "party",
+      //   populate: {
+      //     path: "leader members",
+      //     select: "_id name avatar attributes experience userPerks equipped bag class experience",
+      //     populate: {
+      //       path: "bag",
+      //       populate: {
+      //         path: "itemModel",
+      //         populate: {
+      //           path: "perks.target.disc-product",
+      //           select: "_id name"
+      //         }
+      //       }
+      //     }
+      //   }
+      // })
+      .partyPopulate()
+      .bagPopulate()
       .execPopulate();
      
      for(let i=0; i<user.party.members.length; i++){

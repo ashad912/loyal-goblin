@@ -50,6 +50,11 @@ export const auth = async (req, res, next) => {
         
         const user = await decodeTokenAndGetUser(token, req.query)
 
+        if(user.passwordChangeToken){
+            user.passwordChangeToken = null
+            await user.save()
+        }
+
         req.token = token //specified token - u can logout from specific device!
         req.user = user
         next()

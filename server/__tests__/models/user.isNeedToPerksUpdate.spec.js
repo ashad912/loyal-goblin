@@ -14,7 +14,7 @@ beforeAll(async () => {
 })
 
 
-describe("Perks update method", () => {
+describe("Is need to perks update method", () => {
  
     beforeAll(async () => {
         //await setup()

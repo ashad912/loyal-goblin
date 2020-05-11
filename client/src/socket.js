@@ -7,15 +7,15 @@ export const socket =  io({
 
 //SUBSCRIBE
 
-export const socketAuthenticatedSubscribe = (err) => {
+export const socketAuthenticatedSubscribe = (callback) => {
     socket.on('authenticated', () => {
-        return
+        return callback()
     })
 }
 
-export const socketUnauthorizedSubscribe = (err) => {
+export const socketUnauthorizedSubscribe = (callback) => {
     socket.on('unauthorized', (err) => {
-        return err
+        return callback(err)
     })
 }
 

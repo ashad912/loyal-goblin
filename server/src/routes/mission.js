@@ -424,7 +424,7 @@ router.get('/amulets', auth, async(req,res) => {
             throw Error('There is no such mission instance!')
         }
 
-        missionInstance.partyCompare([user.party.leader, ...user.party.members], false)
+        missionInstance.partyCompare([user.party.leader, ...user.party.members], null)
 
         //amulets used in mission
         const missionAmulets = missionInstance.mission.amulets.map((amulet) => {
@@ -678,7 +678,7 @@ router.patch('/enterInstance', auth, async (req, res) => {
         }).execPopulate()
 
         if(user.party){
-            missionInstance.partyCompare([user.party.leader, ...user.party.members], false)
+            missionInstance.partyCompare([user.party.leader, ...user.party.members], null)
         }
 
         await missionInstance.populate({
@@ -733,31 +733,34 @@ router.patch('/notReady', auth, async (req, res) => {
     }
 })
 
-const createAwards = async (userClass, awards) => {
-    let items = []
-         
-    await asyncForEach(Object.keys(awards.toJSON()), async (className) => {
-        
-        if(userClass === className || className === 'any') {
-            
-            await asyncForEach(awards[className], async (item) => {
 
-                for(let i=0; i < item.quantity; i++) {
-                    const newItem = new Item({itemModel: item.itemModel, owner: user._id})
-                    await newItem.save()
-                    items = [...items, newItem._id]
-                }
-                
-                
-            })
-        }
-    }) 
-    
-    return items  
-}
 
 //OK
 router.delete('/finishInstance', auth, async (req,res) => {
+
+    const createAwards = async (user, awards) => {
+        let items = []
+             
+        await asyncForEach(Object.keys(awards.toJSON()), async (className) => {
+            
+            if(user.class === className || className === 'any') {
+                
+                await asyncForEach(awards[className], async (item) => {
+    
+                    for(let i=0; i < item.quantity; i++) {
+                        const newItem = new Item({itemModel: item.itemModel, owner: user._id})
+                        await newItem.save()
+                        items = [...items, newItem._id]
+                    }
+                    
+                    
+                })
+            }
+        }) 
+        
+        return items  
+    }
+
     const user = req.user
 
     try{
@@ -807,22 +810,8 @@ router.delete('/finishInstance', auth, async (req,res) => {
             throw Error('No matching mission instance found!')
         }
 
-        missionInstance.partyCompare([leader, ...membersIds], true)
-        // const party = [leader, ...membersIds]
-    
-        // let missionParty = [] 
-        // missionInstance.party.forEach((memberObject) => {
-        //     const memberId = memberObject.profile
-        //     missionParty = [...missionParty, memberId]
-        //     if(memberId === user._id.toString() && memberObject.inInstance === false){
-        //         throw Error('User is not in the mission instance!')
-        //     }
-        // })
-
-        // if(!isEqual(missionParty, party)) {
-        //     throw Error('Invalid party!')
-        // }
-
+        missionInstance.partyCompare([leader, ...membersIds], user._id)
+        
         
         //check amulets
         const amulets = missionInstance.mission.amulets
@@ -853,7 +842,7 @@ router.delete('/finishInstance', auth, async (req,res) => {
             }) //recoginized as an array
 
             if(user.activeMission.length && (user.activeMission[0]._id.toString() === missionInstance._id.toString())){
-                const items = await createAwards(user.class, missionInstance.mission.awards)
+                const items = await createAwards(user, missionInstance.mission.awards)
                 
                 const modMissionExp = designateExperienceMods(missionInstance.mission.experience, user.userPerks.rawExperience)
                 const newLevels = user.getNewLevels(modMissionExp)
@@ -891,8 +880,8 @@ router.delete('/finishInstance', auth, async (req,res) => {
 
         res.send(missionInstance.mission.awards)
     }catch(e){
-        console.log(e.message)
-        res.status(400).send(e.message)
+        console.log(e)
+        res.status(400).send(e)
     }  
 })
 
@@ -915,7 +904,7 @@ const verifySendItem = (user, missionInstance, itemId) => {
                 leader = user._id
             }
 
-            missionInstance.partyCompare([leader, ...membersIds], true)
+            missionInstance.partyCompare([leader, ...membersIds], user._id)
             // const party = [leader, ...membersIds]
     
             // let missionParty = [] 

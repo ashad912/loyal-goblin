@@ -2,26 +2,30 @@ import { socketRoomAuth, socketConnectAuth } from "@middleware/auth";
 import { Party} from '@models/party'
 import { MissionInstance } from '@models/missionInstance'
 
-class SocketController{
-    constructor(){
-        this.allClients = [];
-    }
 
-    async authenticate(socket, data, callback) {
+export const allClients = []
+
+
+// class SocketController{
+//     constructor(){
+//         allClients = [];
+//     }
+
+    const authenticate = async (socket, data, callback) => {
         //console.log(socket.id, 'tried socket auth')
         let multipleSession = false
         try{
           const user = await socketConnectAuth(socket)
       
         
-          if(this.allClients.length && this.allClients.filter((client) => client.userId === user._id.toString()).length > 0){
+          if(allClients.length && allClients.filter((client) => client.userId === user._id.toString()).length > 0){
             multipleSession = true
             throw new Error('Multiple session error')  
           }
         
           const newClient = {socketId: socket.id, userId: user._id.toString(), roomId: user.party.toString()}
         
-          this.allClients.push(newClient);
+          allClients.push(newClient);
           return callback(null, true)
         }catch(e){
           if(multipleSession){
@@ -35,7 +39,7 @@ class SocketController{
       
     }
       
-    postAuthenticate(socket){
+    const postAuthenticate = (socket) => {
        
         console.log("New client connected", socket.id);
       
@@ -101,32 +105,37 @@ class SocketController{
       
     };
       
-    async disconnect(socket) {
+    const disconnect = async (socket) => {
     
-        let i = this.allClients.findIndex((client) => client.socketId === socket.id);
+        let i = allClients.findIndex((client) => client.socketId === socket.id);
         
         if(i < 0){
             console.log("Client not found")
         }else{
-            const userId = this.allClients[i].userId
-            const roomId = this.allClients[i].roomId
+            const userId = allClients[i].userId
+            const roomId = allClients[i].roomId
         
             if(await Party.validateInShopStatus(userId, false)){
               socket.broadcast.to(roomId).emit("refreshParty", roomId);
             }
         
             
-            if(await MissionInstance.validateInStatus(userId, false, false)){
+            if(await MissionInstance.validateInStatus(userId, {inMission: false, readyStatus: false})){
               console.log(`${roomId} for user ${userId} with status inMission: false`)
               socket.broadcast.to(roomId).emit("modifyUserStatus", {_id: userId, inMission: false, readyStatus: false});
               console.log(`User ${userId} left the room ${roomId}`)
               socket.broadcast.to(roomId).emit("refreshParty", userId);
             }
-            this.allClients.splice(i, 1);
+            allClients.splice(i, 1);
             
             console.log("Client disconnected", socket.id)
         }
     }
-}
+// }
 
-export default SocketController
+export default {
+  allClients,
+  authenticate,
+  postAuthenticate,
+  disconnect
+}

@@ -9,7 +9,7 @@ import { OrderExpiredEvent } from "@models/orderExpiredEvent";
 
 import * as utils from '@utils/methods' 
 import rallyStore from '@store/rally.store'
-import SocketController from '@controllers/socket.controller'
+import socketController from '@controllers/socket.controller'
 
 const port = process.env.PORT || 4000;
 
@@ -33,7 +33,7 @@ const server = app.listen(port, () => {
 
 });
 
-const socketController = new SocketController()
+//const socketController = new SocketController()
 
 
 

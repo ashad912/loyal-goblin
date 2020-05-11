@@ -420,8 +420,6 @@ UserSchema.methods.toJSON = function () { //like a middleware from express, we c
     delete userObject.password
     delete userObject.tokens
 
-    
-
     return userObject
 }
 
@@ -436,47 +434,95 @@ UserSchema.methods.checkPasswordChangeTokenExpired = (token) => {
    
 }
 
+UserSchema.methods.bagPopulate = function(){
+    return this.populate({
+            path: "bag",
+            populate: { 
+                path: "itemModel", 
+                select: '_id description imgSrc appearanceSrc altAppearanceSrc name perks type twoHanded', 
+                populate: { 
+                    path: "perks.target.disc-product", 
+                    select: '_id name'
+                } 
+            }
+    })
+    
+}
+
+
+
 
 UserSchema.methods.standardPopulate = async function(){
     const user = this
-
     await user
-        .populate({
-            path: "bag",
-            populate: { path: "itemModel", select: '_id description imgSrc appearanceSrc altAppearanceSrc name perks type twoHanded', populate: { path: "perks.target.disc-product", select: '_id name' } }
-        })
-        .execPopulate();
-    if(user.statistics.amuletCounters && user.statistics.amuletCounters.length){
-        await user
+        .bagPopulate()
         .populate({
             path: "statistics.amuletCounters.amulet",
             select: '_id imgSrc name'
         })
-        .execPopulate();
-    }
-    if (user.rallyNotifications.awards && user.rallyNotifications.awards.length) {
-        await user
         .populate({
             path: "rallyNotifications.awards.itemModel",
             select: '_id description imgSrc name perks',
             populate: { path: "perks.target.disc-product", select: '_id name' },
         })
-        .execPopulate();
-    }
-    if (user.shopNotifications.awards && user.shopNotifications.awards.length) {
-        await user
         .populate({
             path: "shopNotifications.awards.itemModel",
             select: '_id description imgSrc name perks',
             populate: { path: "perks.target.disc-product", select: '_id name' },
         })
-        .execPopulate();
-    }
+        .execPopulate()
+
+    // if(user.statistics.amuletCounters && user.statistics.amuletCounters.length){
+    //     await user
+    //     .populate({
+    //         path: "statistics.amuletCounters.amulet",
+    //         select: '_id imgSrc name'
+    //     })
+    //     .execPopulate();
+    // }
+    // // if (user.rallyNotifications.awards && user.rallyNotifications.awards.length) {
+    //     await user
+    //     .populate({
+    //         path: "rallyNotifications.awards.itemModel",
+    //         select: '_id description imgSrc name perks',
+    //         populate: { path: "perks.target.disc-product", select: '_id name' },
+    //     })
+    //     .execPopulate();
+    // // }
+    // if (user.shopNotifications.awards && user.shopNotifications.awards.length) {
+    //     await user
+    //     .populate({
+    //         path: "shopNotifications.awards.itemModel",
+    //         select: '_id description imgSrc name perks',
+    //         populate: { path: "perks.target.disc-product", select: '_id name' },
+    //     })
+    //     .execPopulate();
+    // }
 
 }
 
+UserSchema.methods.partyPopulate = function () {
+    return this.populate({
+        path: "party",
+        populate: {
+            path: "leader members",
+            select: "_id name avatar attributes experience userPerks equipped bag class experience",
+            populate: {
+            path: "bag",
+            populate: {
+                path: "itemModel",
+                populate: {
+                path: "perks.target.disc-product",
+                select: "_id name"
+                }
+            }
+            }
+        }
+    })
+}
+
 UserSchema.methods.orderPopulate = async function () {
-    await user
+    await this
         .populate({
         //populate after verification
             path: "activeOrder.profile",
@@ -585,7 +631,7 @@ UserSchema.methods.updatePerks = async function(forcing, withoutParty){
                     }
 
                     if (forcing || member.isNeedToPerksUpdate()) {
-                        member.perks = await userStore.computePerks(member);
+                        member.perks = await userStore.computePerks({...member});
                         member.perksUpdatedAt = moment().toISOString(); //always in utc
                         await member.save();
                     }

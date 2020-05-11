@@ -267,47 +267,50 @@ router.get("/shop", auth, async (req, res) => {
 
 
     if (user.activeOrder.length) {
-      
-      await user
-        .populate({
-          path: "activeOrder.profile",
-          select: "_id name avatar bag equipped userPerks attributes"
-        })
-        .populate({
-          path: "activeOrder.awards.itemModel",
-          select: "name imgSrc"
-        })
-        .execPopulate();
+      await user.orderPopulate()
+      // await user
+      //   .populate({
+      //     path: "activeOrder.profile",
+      //     select: "_id name avatar bag equipped userPerks attributes"
+      //   })
+      //   .populate({
+      //     path: "activeOrder.awards.itemModel",
+      //     select: "name imgSrc"
+      //   })
+      //   .execPopulate();
     }
 
     if (user.party) {
       await user
-        .populate({
-          path: "party",
-          populate: {
-            path: "leader members",
-            select: "bag equipped name _id avatar attributes userPerks",
-            populate: {
-              path: "bag",
-              populate: {
-                path: "itemModel",
-                populate: {
-                  path: "perks.target.disc-product",
-                  select: "_id name"
-                }
-              }
-            }
-          }
-        })
+        // .populate({
+        //   path: "party",
+        //   populate: {
+        //     path: "leader members",
+        //     select: "bag equipped name _id avatar attributes userPerks",
+        //     populate: {
+        //       path: "bag",
+        //       populate: {
+        //         path: "itemModel",
+        //         populate: {
+        //           path: "perks.target.disc-product",
+        //           select: "_id name"
+        //         }
+        //       }
+        //     }
+        //   }
+        // })
+        .partyPopulate()
         .execPopulate();
+
         for(let i=0; i<user.party.members.length; i++){
           user.party.members[i].equipped = pick(user.party.members[i].equipped, 'scroll')
           user.party.members[i].bag = user.party.members[i].bag.filter(item => {
             return item.itemModel.type === 'scroll'
           })
-         }
-         user.party.leader.equipped = pick(user.party.leader.equipped, 'scroll')
-         user.party.leader.bag = user.party.leader.bag.filter(item => {
+        }
+        
+        user.party.leader.equipped = pick(user.party.leader.equipped, 'scroll')
+        user.party.leader.bag = user.party.leader.bag.filter(item => {
           return item.itemModel.type === 'scroll'
         })
     }
@@ -375,12 +378,12 @@ router.patch("/activate", auth, async (req, res) => {
   const order = req.body.order;
   const user = req.user;
 
-  const secretKey = process.env.SECRET_RECAPTCHA_KEY;
-  const recaptchaToken = req.body.token;
-  const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
+  // const secretKey = process.env.SECRET_RECAPTCHA_KEY;
+  // const recaptchaToken = req.body.token;
+  // const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
 
   try {
-    await verifyCaptcha(url);
+    await verifyCaptcha(req.body.token);
   } catch (e) {
     console.log(e);
     res.status(400).send(e);

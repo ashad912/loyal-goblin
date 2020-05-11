@@ -34,13 +34,13 @@ const MissionInstanceSchema = new mongoose.Schema({ //instance of ItemModel
 
 }, {timestamps: true})
 
-MissionInstanceSchema.methods.partyCompare = function (party, checkPresence){
+MissionInstanceSchema.methods.partyCompare = function (party, userId){
   let missionParty = [] 
   this.party.forEach((memberObject) => {
       const memberId = memberObject.profile
       missionParty = [...missionParty, memberId]
-      if(checkPresence){
-        if(memberId.toString() === user._id.toString() && memberObject.inInstance === false){
+      if(userId){
+        if(memberId.toString() === userId.toString() && memberObject.inInstance === false){
           throw Error('User is not in the mission instance!')
       }
       }
@@ -107,31 +107,59 @@ MissionInstanceSchema.statics.removeIfExists = (userId) => {
 }
 
 
-MissionInstanceSchema.statics.validateInStatus = (userId, newStatus, secondNewStatus) => {
-    return new Promise(async (resolve, reject) => {
-        const missionInstance = await MissionInstance.findOne({
-          party: { $elemMatch: { profile: userId } }
-        });
-    
-        if (missionInstance) {
-          const index = missionInstance.party.findIndex(
-            user => user.profile.toString() === userId
-          );
-    
-          if (index > -1) {
-            if (missionInstance.party[index].inMission !== newStatus) {
-              missionInstance.party[index].inMission = newStatus;
-              if(secondNewStatus){
-                missionInstance.party[index].readyStatus = secondNewStatus
+MissionInstanceSchema.statics.validateInStatus = (userId, update) => {
+  return new Promise(async (resolve, reject) => {
+      const missionInstance = await MissionInstance.findOne({
+        party: { $elemMatch: { profile: userId } }
+      });
+  
+      if (missionInstance) {
+        const index = missionInstance.party.findIndex(
+          user => user.profile.toString() === userId
+        );
+  
+        if (index > -1) {
+          if (missionInstance.party[index].inMission !== update.inMission) {
+            for(const key in update){   
+              if(missionInstance.toObject().party[index].hasOwnProperty(key)){ //toObject - access to hasOwnProp
+                missionInstance.party[index][key] = update[key]
               }
-              await missionInstance.save();
-              return resolve(true);
             }
+            await missionInstance.save();
+            return resolve(true);
           }
         }
-        resolve(false);
-      });
+      }
+      resolve(false);
+  });
 }
+
+// MissionInstanceSchema.statics.validateInStatus = (userId, newStatus, secondNewStatus) => {
+//     return new Promise(async (resolve, reject) => {
+//         const missionInstance = await MissionInstance.findOne({
+//           party: { $elemMatch: { profile: userId } }
+//         });
+    
+//         if (missionInstance) {
+//           const index = missionInstance.party.findIndex(
+//             user => user.profile.toString() === userId
+//           );
+    
+//           if (index > -1) {
+//             if (missionInstance.party[index].inMission !== newStatus) {
+              
+//               missionInstance.party[index].inMission = newStatus;
+//               if(secondNewStatus){
+//                 missionInstance.party[index].readyStatus = secondNewStatus
+//               }
+//               await missionInstance.save();
+//               return resolve(true);
+//             }
+//           }
+//         }
+//         resolve(false);
+//       });
+// }
 
 
 MissionInstanceSchema.statics.clear = async () => {

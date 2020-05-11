@@ -12,11 +12,11 @@ const computePerks = (user) =>{
         try {
             await asyncForEach(Object.keys(user.equipped), async slot => {
                 await user
-                .populate({
-                    path: "equipped." + slot,
-                    populate: { path: "itemModel" }
-                })
-                .execPopulate();
+                  .populate({
+                      path: "equipped." + slot,
+                      populate: { path: "itemModel" }
+                  })
+                  .execPopulate();
             });
         
             const equippedItemsRaw = user.equipped;
@@ -40,12 +40,12 @@ const computePerks = (user) =>{
             };
         
             const isTime = timeArray => {
-                if (!timeArray.length) {
+              if (!timeArray.length) {
                 return true;
-                }
-                var nowDay = moment().day();
-        
-                for (let i = 0; i < timeArray.length; i++) {
+              }
+              var nowDay = moment().day();
+      
+              for (let i = 0; i < timeArray.length; i++) {
                 const time = timeArray[i];
         
                 moment.locale("pl");
@@ -66,33 +66,33 @@ const computePerks = (user) =>{
                 //console.log(time.startDay, nowDay)
                 if (time.startDay === nowDay) {
                     if (startTime.isBefore(endTime)) {
-                    //console.log('before midnight')
-                    let isTime = moment
-                        .utc()
-                        .isBetween(startTime, endTime, null, "[]");
-                    //console.log(isTime)
-                    if (isTime) {
-                        return true;
-                    }
+                      //console.log('before midnight')
+                      let isTime = moment
+                          .utc()
+                          .isBetween(startTime, endTime, null, "[]");
+                      //console.log(isTime)
+                      if (isTime) {
+                          return true;
+                      }
                     }
                 } else if (time.startDay + 1 === nowDay) {
                     if (startTime.hour >= endTime.hour) {
-                    //console.log('after midnight')
-                    let startTimeMinusDay = startTime.clone().subtract(1, "d");
-                    let endTimeMinusDay = endTime.clone().subtract(1, "d");
-                    //console.log(startTimeMinusDay, endTimeMinusDay)
-                    let isTime = moment
-                        .utc()
-                        .isBetween(startTimeMinusDay, endTimeMinusDay, null, "[]");
-                    //console.log(isTime)
-                    if (isTime) {
-                        return true;
-                    }
+                      //console.log('after midnight')
+                      let startTimeMinusDay = startTime.clone().subtract(1, "d");
+                      let endTimeMinusDay = endTime.clone().subtract(1, "d");
+                      //console.log(startTimeMinusDay, endTimeMinusDay)
+                      let isTime = moment
+                          .utc()
+                          .isBetween(startTimeMinusDay, endTimeMinusDay, null, "[]");
+                      //console.log(isTime)
+                      if (isTime) {
+                          return true;
+                      }
                     }
                 }
-                }
-        
-                return false;
+              }
+      
+              return false;
             };
         
             const truncCurrency = value => {
@@ -269,7 +269,11 @@ const computePerks = (user) =>{
                     modelPerks.products[product._id]["experienceMod"] += experienceMod;
                 }
             }
-            
+            await asyncForEach(Object.keys(user.equipped), async slot => {
+              await user.depopulate(`equipped.${slot}`)
+            });
+
+            console.log(user.equipped)
             resolve(modelPerks);
         } catch (e) {
             reject(e);

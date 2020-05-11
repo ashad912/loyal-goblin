@@ -251,7 +251,11 @@ export const removeImage = (uploadPath, fileName) => {
  
 };
 
-export const verifyCaptcha = (url) => {
+export const verifyCaptcha = (token) => {
+
+  const secretKey = process.env.SECRET_RECAPTCHA_KEY;
+  const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`;
+
   return new Promise (async (resolve, reject) => {
     try{
       const res = await axios.post(url)
