@@ -32,7 +32,19 @@ const RallyDetails = (props) => {
 
 
     const [openList, setOpenList] = React.useState("");
-    const [levelList, setLevelList] = React.useState(null);
+    
+
+    const [levelList, setLevelList] = React.useState(rally.awardsLevels.length ? 0 : null);
+
+    // const handleOpenList = (event, level) => {
+    //     if (event.currentTarget.dataset.value === openList && levelList === level) {
+    //         setOpenList("");
+    //         setLevelList(null)
+    //     } else {
+    //         setOpenList(event.currentTarget.dataset.value);
+    //         setLevelList(level)
+    //     }
+    // };
 
     const handleOpenList = (event, level) => {
         if (event.currentTarget.dataset.value === openList && levelList === level) {
@@ -44,7 +56,9 @@ const RallyDetails = (props) => {
         }
     };
 
-
+    const handleChangeLevelList = (e, level) => {
+        setLevelList(level)
+    }
 
 
     return(
@@ -121,7 +135,7 @@ const RallyDetails = (props) => {
                     direction="row"
                 >
                         
-                    <Grid item>
+                    <Grid item xs={4}>
                         <Typography
                             component="span"
                             variant="h6"
@@ -130,6 +144,18 @@ const RallyDetails = (props) => {
                         >
                             Nagrody
                         </Typography>
+                    </Grid> 
+                    <Grid item xs={8} style={{flexFlow: 'row wrap'}}>
+                        {!rally.awardsAreSecret && rally.awardsLevels.sort((a, b)=> (a.level > b.level) ? 1 : -1).map((awardsLevel, index) => {
+                                return(
+                                    <Grid item xs={4} style={{padding: '8px'}}>
+                                        <Button variant="contained" color={index !== level ? 'primary' : 'white'} handleClick={(e) => handleChangeLevelList(e, index)}>
+                                            {awardsLevel.level} PD
+                                        </Button>
+                                    </Grid>
+                                )
+                            })
+                        }
                     </Grid> 
                 </Grid>
                 <Grid item style={{marginTop: '0.5rem'}}>
