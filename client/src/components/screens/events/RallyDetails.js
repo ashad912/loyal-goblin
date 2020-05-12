@@ -149,7 +149,7 @@ const RallyDetails = (props) => {
                         {!rally.awardsAreSecret && rally.awardsLevels.sort((a, b)=> (a.level > b.level) ? 1 : -1).map((awardsLevel, index) => {
                                 return(
                                     <Grid item xs={4} style={{padding: '8px'}}>
-                                        <Button variant="contained" color={index !== level ? 'primary' : 'white'} handleClick={(e) => handleChangeLevelList(e, index)}>
+                                        <Button variant="contained" color={index !== levelList ? 'primary' : 'white'} handleClick={(e) => handleChangeLevelList(e, index)}>
                                             {awardsLevel.level} PD
                                         </Button>
                                     </Grid>
