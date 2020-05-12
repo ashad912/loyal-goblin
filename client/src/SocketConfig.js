@@ -11,7 +11,6 @@ class SocketConfig extends React.Component {
   async componentDidMount() {
     
     socketAuthenticatedSubscribe(() => {
-      console.log('halko')
       joinPartyEmit(this.props.party._id)
       this.props.missionsUpdate()
     });

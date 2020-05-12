@@ -9,6 +9,7 @@ import { asyncForEach} from '@utils/methods'
 
 const computePerks = (user) =>{
     return new Promise(async (resolve, reject) => {
+      
         try {
             await asyncForEach(Object.keys(user.equipped), async slot => {
                 await user
@@ -19,9 +20,7 @@ const computePerks = (user) =>{
                   .execPopulate();
             });
         
-            const equippedItemsRaw = user.equipped;
-        
-            const equippedItems = equippedItemsRaw.toObject(); //to behave like normal JS object: delete, hasOwnProperty
+            const equippedItems = user.equipped.toObject(); //to behave like normal JS object: delete, hasOwnProperty
         
             //console.log(equippedItems)
         
@@ -33,8 +32,8 @@ const computePerks = (user) =>{
                 attrMagic: 0,
                 attrEndurance: 0,
                 rawExperience: {
-                absolute: "0",
-                percent: "0%"
+                  absolute: "0",
+                  percent: "0%"
                 },
                 products: {}
             };

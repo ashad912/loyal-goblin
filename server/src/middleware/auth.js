@@ -13,6 +13,7 @@ const decodeTokenAndGetUser = (token, query) => {
                 throw new Error()
             }
             
+            
             const autoFetch = query && query.autoFetch && ((new Date().getTime() % 3600000) < 5000) //verify autoFetch query (available to 5 seconds after start of hour)
             
             if(!autoFetch){
@@ -49,7 +50,7 @@ export const auth = async (req, res, next) => {
         }
         
         const user = await decodeTokenAndGetUser(token, req.query)
-
+        
         if(user.passwordChangeToken){
             user.passwordChangeToken = null
             await user.save()

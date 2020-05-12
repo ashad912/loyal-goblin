@@ -282,6 +282,8 @@ router.get("/me", auth, async (req, res, next) => {
   try {
     const user = req.user
     
+    
+    
     await user.updatePerks(false)
     
     // if(user.party){
@@ -296,8 +298,11 @@ router.get("/me", auth, async (req, res, next) => {
 
     await user.standardPopulate();
 
+    
+
     res.send(user);
   } catch (e) {
+    console.log(e)
     res.status(400).send(e.message);
   }
 });

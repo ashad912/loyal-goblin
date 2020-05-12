@@ -47,12 +47,12 @@ const RallyDetails = (props) => {
     // };
 
     const handleOpenList = (event, level) => {
-        if (event.currentTarget.dataset.value === openList && levelList === level) {
+        if (event.currentTarget.dataset.value === openList /*&& levelList === level*/) {
             setOpenList("");
-            setLevelList(null)
+            
         } else {
             setOpenList(event.currentTarget.dataset.value);
-            setLevelList(level)
+            
         }
     };
 
@@ -60,6 +60,7 @@ const RallyDetails = (props) => {
         setLevelList(level)
     }
 
+    const activeAwardsLevel = rally.awardsLevels[levelList]
 
     return(
         <Dialog
@@ -145,12 +146,18 @@ const RallyDetails = (props) => {
                             Nagrody
                         </Typography>
                     </Grid> 
-                    <Grid item xs={8} style={{flexFlow: 'row wrap'}}>
+                    <Grid 
+                        item 
+                        container
+                        direction="row" 
+                        xs={8} 
+                        style={{flexFlow: 'row wrap'}}
+                    >
                         {!rally.awardsAreSecret && rally.awardsLevels.sort((a, b)=> (a.level > b.level) ? 1 : -1).map((awardsLevel, index) => {
                                 return(
                                     <Grid item xs={4} style={{padding: '8px'}}>
-                                        <Button variant="contained" color={index !== levelList ? 'primary' : 'white'} handleClick={(e) => handleChangeLevelList(e, index)}>
-                                            {awardsLevel.level} PD
+                                        <Button variant="contained" style={{padding: '5px'}} color={index === levelList ? 'primary' : 'white'} onClick={(e) => handleChangeLevelList(e, index)}>
+                                             <PintoTypography>{awardsLevel.level} PD</PintoTypography>
                                         </Button>
                                     </Grid>
                                 )
@@ -159,9 +166,8 @@ const RallyDetails = (props) => {
                     </Grid> 
                 </Grid>
                 <Grid item style={{marginTop: '0.5rem'}}>
-                {!rally.awardsAreSecret && rally.awardsLevels.sort((a, b)=> (a.level > b.level) ? 1 : -1).map((awardsLevel, index) => {
-                    
-                    return(
+                {!rally.awardsAreSecret && (
+                
                         <Grid
                             container
                             direction="column"
@@ -169,19 +175,19 @@ const RallyDetails = (props) => {
 
                         >
                             <ListItem style={{paddingLeft: '0' , paddingRight: '0'}} >
-                                <Typography variant="h6">Jeśli zdobędziesz {awardsLevel.level} PD</Typography>
+                                <Typography variant="h6">Jeśli zdobędziesz {activeAwardsLevel.level} PD</Typography>
                             </ListItem>
-                            {Object.keys(awardsLevel.awards).map((className) => {
+                            {Object.keys(activeAwardsLevel.awards).map((className) => {
                                 return(
                                     <Grid item>
-                                        {awardsLevel.awards[className].length > 0 && (
+                                        {activeAwardsLevel.awards[className].length > 0 && (
                                             <React.Fragment>
-                                                <ListItem style={{paddingRight: '0'}} onClick={(event) => handleOpenList(event, awardsLevel.level)} data-value={className}>
+                                                <ListItem style={{paddingRight: '0'}} onClick={(event) => handleOpenList(event, activeAwardsLevel.level)} data-value={className}>
                                                     <ListItemText primary={classLabelsAny[className]} />
-                                                    {openList === className && levelList === awardsLevel.level ? <ExpandLess /> : <ExpandMore />}
+                                                    {openList === className && levelList === activeAwardsLevel.level ? <ExpandLess /> : <ExpandMore />}
                                                 </ListItem>
                                                 <Collapse
-                                                    in={openList === className && levelList === awardsLevel.level}
+                                                    in={openList === className && levelList === activeAwardsLevel.level}
                                                     timeout="auto"
                                                     unmountOnExit
                                                 >
@@ -189,7 +195,7 @@ const RallyDetails = (props) => {
                                                         
                                                         <Grid item style={{width: '100%'}}>
                                                             <List component="div" disablePadding >
-                                                                {awardsLevel.awards[className].map((award)=>{
+                                                                {activeAwardsLevel.awards[className].map((award)=>{
                                                                     return (
                                                                         
                                                                         <AwardListItem key={award.itemModel._id} item={award} />
@@ -210,15 +216,16 @@ const RallyDetails = (props) => {
                                     </Grid>
                                 )
                             })}
-                            {index !== 0 && 
+
+                            {levelList !== 0 && 
                                 <ListItem style={{paddingRight: '0'}}>
                                     <ListItemText primary={'oraz łupy z niższych progów.'} style={{fontStyle: 'italic'}}/>
                                 </ListItem>
                             }
                         </Grid>
-                    )
-                        
-                    })
+                    
+                            
+                )
                 }
                 {rally.awardsAreSecret && (
                     <Typography variant="h6"> Nie mamy informacji o łupach które można zdobyć!</Typography>

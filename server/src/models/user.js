@@ -605,6 +605,7 @@ UserSchema.methods.updatePerks = async function(forcing, withoutParty){
     //'forcing' - update without checking perksUpdatedAt
     const user = this
     
+    
     try {
         if (forcing || user.isNeedToPerksUpdate()) {
             user.userPerks = await userStore.computePerks(user);
@@ -631,7 +632,7 @@ UserSchema.methods.updatePerks = async function(forcing, withoutParty){
                     }
 
                     if (forcing || member.isNeedToPerksUpdate()) {
-                        member.perks = await userStore.computePerks({...member});
+                        member.perks = await userStore.computePerks(member);
                         member.perksUpdatedAt = moment().toISOString(); //always in utc
                         await member.save();
                     }
