@@ -21,7 +21,7 @@ const PartyMissionInstanceWarningDialog = ({text, open, handleClose, handleActio
       <DialogTitle style={{textAlign:'center'}}>Potwierdź wykonanie akcji</DialogTitle>
       <DialogContent> 
         <PintoTypography style={{color: palette.background.darkGrey}}>
-          {text} spowoduje usunięcie misji, w której obecnie bierzesz udział.
+          {text} spowoduje opuszczenie misji, w której obecnie bierzesz udział.
         </PintoTypography> 
       </DialogContent>
       <DialogActions>

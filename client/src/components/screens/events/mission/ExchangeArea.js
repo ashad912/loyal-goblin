@@ -8,6 +8,8 @@ import {addItemSubscribe, deleteItemSubscribe} from '../../../../socket'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import bagImg from '../../../../assets/mission/bag.png'
 import { sendItemToMission, sendItemToUser } from '../../../../store/actions/missionActions';
+import { uiPaths } from '../../../../utils/definitions';
+
 
 
 const userItemsName = 'userItems'
@@ -294,7 +296,7 @@ export default class ExchangeArea extends React.Component {
                     items={this.socketShare(this.state.missionItems)} 
                     draggableProperty={this.state.draggableProperty}
                     boxname={missionItemsName}
-                    boxIcon={bagImg}/>    
+                    boxIcon={uiPaths['chest']}/>    
         
         </DragDropContext>
       </div>

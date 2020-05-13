@@ -110,7 +110,7 @@ const Box = (props) => {
                 {props.boxIcon ? <Avatar style={{height: '4rem', width: '4rem'}} alt="avatar" src={usersPath + props.boxIcon} /> : <Avatar style={{height: 70, width: 70, fontSize: '2.5rem'}}>{createAvatarPlaceholder(props.userName)}</Avatar>}
               </React.Fragment>
             ) : (
-              <Avatar style={{height: '4rem', width: '4rem'}} alt="avatar" src={props.boxIcon} />
+              <img style={{height: '4rem', width: '4rem'}} alt="avatar" src={props.boxIcon} />
             )}
             
           </Grid>

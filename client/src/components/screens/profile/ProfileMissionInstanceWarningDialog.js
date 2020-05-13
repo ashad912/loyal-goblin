@@ -21,7 +21,7 @@ const ProfileMissionInstanceWarningDialog = ({text, open, handleClose, handleAct
     <Dialog open={open} onClose={handleClose} style={{zIndex: 4000}}>
       <DialogTitle>Potwierdź wykonanie akcji</DialogTitle>
       <DialogContent>
-        <PintoTypography style={{color: palette.background.darkGrey}}>{text} spowoduje usunięcie misji, w której obecnie
+        <PintoTypography style={{color: palette.background.darkGrey}}>{text} spowoduje opuszczenie misji, w której obecnie
         bierzesz udział.</PintoTypography>  
       </DialogContent>
       <DialogActions>

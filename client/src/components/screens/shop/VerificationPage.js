@@ -156,8 +156,10 @@ const handleCancelOrder = async () => {
                       <Grid container>
                         <Grid container style={{padding: '0 24px'}}>
                           <Grid item xs={4}>
-                            {basket.profile.avatar ? <img src={usersPath + basket.profile.avatar} style={{width: '5rem', height: '5rem'}}/> : 
-                            <Avatar style={{width: '5rem', height: '5rem', fontSize: '2.2rem'}}>{createAvatarPlaceholder(basket.profile.name)}</Avatar>}
+                            {basket.profile.avatar ? <img src={usersPath + basket.profile.avatar} style={{width: '5rem', height: '5rem'}}/>
+                             : 
+                            <Avatar style={{width: '5rem', height: '5rem', fontSize: '2.2rem'}}>{createAvatarPlaceholder(basket.profile.name)}</Avatar>
+                            }
                           </Grid>
                           <Grid item xs={8} container direction="column" alignItems="flex-start" style={{paddingLeft: '10%'}}>
                             <Grid item>
