@@ -10,7 +10,7 @@ import Badge from "@material-ui/core/Badge";
 import MenuItem from "@material-ui/core/MenuItem";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import { palette, itemsPath } from "../../../utils/definitions";
+import { palette, itemsPath, uiPaths } from "../../../utils/definitions";
 import { PintoTypography, PintoSerifTypography } from "../../../utils/fonts";
 const StyledMenu = withStyles({
   paper: {
@@ -46,7 +46,7 @@ const StyledMenuItem = withStyles(theme => ({
 const useStyles = makeStyles(theme => ({
   listItem: {
     borderTop: palette.border,
-    marginBottom: "0.2rem"
+    padding: '0 32px',
   },
   optionsIcon: {
     margin: "0 auto"
@@ -109,13 +109,13 @@ const TorpedoListItem = props => {
       
       <ListItemText
         disableTypography
-        style={{color: props.loadedTorpedoId && 'white'}}
+        style={{color: props.loadedTorpedoId === item.instancesIds[0] && 'white'}}
         primary={<PintoSerifTypography>{item.itemModel.name}</PintoSerifTypography>}         
-        secondary={<PintoTypography style={{color: props.loadedTorpedoId && 'white'}}>{item.itemModel.description}</PintoTypography>}
+        secondary={<PintoTypography>{item.itemModel.description}</PintoTypography>}
       />
       <ListItemIcon onClick={handleClick}>
         <Button>
-          <MoreHorizIcon className={classes.optionsIcon} style={{color: props.loadedTorpedoId && 'white'}} />
+          <MoreHorizIcon className={classes.optionsIcon} style={{color: props.loadedTorpedoId === item.instancesIds[0] && 'white'}} />
         </Button>
       </ListItemIcon>
       <StyledMenu
@@ -125,7 +125,7 @@ const TorpedoListItem = props => {
       >
         <StyledMenuItem onClick={handleDelete}>
           <ListItemIcon>
-            <DeleteForeverIcon />
+            <img src={uiPaths.trash} style={{width: '1.5rem', height: '1.5rem'}}/>
           </ListItemIcon>
           <ListItemText><PintoTypography>Wyrzuć</PintoTypography></ListItemText>
         </StyledMenuItem>

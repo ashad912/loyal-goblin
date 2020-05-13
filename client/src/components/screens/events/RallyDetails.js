@@ -17,12 +17,20 @@ import styled from 'styled-components'
 
 import AwardListItem from './AwardListItem'
 import { classLabelsAny } from '../../../utils/labels';
-import { ralliesPath, palette } from '../../../utils/definitions'
+import { ralliesPath, palette, uiPaths } from '../../../utils/definitions'
 import {PintoTypography} from '../../../utils/fonts'
 
 const Background = styled.div`
     background-color: ${palette.primary.main};
     color: white;
+`
+
+const AwardsLevelButton = styled(({...otherProps})=> (
+    <Button  {...otherProps}/>
+))`
+    background-color: ${props => props.chosen ? palette.primary.main : palette.primary.contrastText } !important;
+    color: ${props => props.chosen ? palette.primary.contrastText : 'black'}!important;
+
 `
 
 
@@ -36,23 +44,12 @@ const RallyDetails = (props) => {
 
     const [levelList, setLevelList] = React.useState(rally.awardsLevels.length ? 0 : null);
 
-    // const handleOpenList = (event, level) => {
-    //     if (event.currentTarget.dataset.value === openList && levelList === level) {
-    //         setOpenList("");
-    //         setLevelList(null)
-    //     } else {
-    //         setOpenList(event.currentTarget.dataset.value);
-    //         setLevelList(level)
-    //     }
-    // };
 
     const handleOpenList = (event, level) => {
-        if (event.currentTarget.dataset.value === openList /*&& levelList === level*/) {
+        if (event.currentTarget.dataset.value === openList) {
             setOpenList("");
-            
         } else {
-            setOpenList(event.currentTarget.dataset.value);
-            
+            setOpenList(event.currentTarget.dataset.value);   
         }
     };
 
@@ -113,7 +110,7 @@ const RallyDetails = (props) => {
                             direction="column"
                         >
                             <Grid item style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                <Avatar alt="avatar" style={{width: '5rem', height: '5rem', borderRadius: '0'}} variant="square"  src={`${ralliesPath}${rally.imgSrc}`} />
+                                <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`${ralliesPath}${rally.imgSrc}`} />
                             </Grid>
                         </Grid>
                     </Grid>
@@ -125,116 +122,141 @@ const RallyDetails = (props) => {
         </Background>
 
 
-        <DialogContent style={{padding: '0.5rem 1rem'}}>
+        <DialogContent style={{padding: '0.5rem 1rem', minHeight: '122px'}}>
 
             <Grid 
                 container
-                direction='column'
+                direction='column'      
             >
-                <Grid
-                    container
-                    direction="row"
-                >
-                        
-                    <Grid item xs={4}>
-                        <Typography
-                            component="span"
-                            variant="h6"
-                            color="textPrimary"
-                            style={{fontWeight: 'bold'}}
-                        >
-                            Nagrody
-                        </Typography>
-                    </Grid> 
-                    <Grid 
-                        item 
-                        container
-                        direction="row" 
-                        xs={8} 
-                        style={{flexFlow: 'row wrap'}}
-                    >
-                        {!rally.awardsAreSecret && rally.awardsLevels.sort((a, b)=> (a.level > b.level) ? 1 : -1).map((awardsLevel, index) => {
-                                return(
-                                    <Grid item xs={4} style={{padding: '8px'}}>
-                                        <Button variant="contained" style={{padding: '5px'}} color={index === levelList ? 'primary' : 'white'} onClick={(e) => handleChangeLevelList(e, index)}>
-                                             <PintoTypography>{awardsLevel.level} PD</PintoTypography>
-                                        </Button>
-                                    </Grid>
-                                )
-                            })
-                        }
-                    </Grid> 
-                </Grid>
-                <Grid item style={{marginTop: '0.5rem'}}>
-                {!rally.awardsAreSecret && (
-                
+                {!rally.awardsAreSecret &&
+                    <React.Fragment>
                         <Grid
                             container
-                            direction="column"
-                            style={{marginBottom: '0.2rem'}}
-
+                            style={{flexFlow: 'row nowrap', marginBottom: '0.5rem'}}
                         >
-                            <ListItem style={{paddingLeft: '0' , paddingRight: '0'}} >
-                                <Typography variant="h6">Jeśli zdobędziesz {activeAwardsLevel.level} PD</Typography>
-                            </ListItem>
-                            {Object.keys(activeAwardsLevel.awards).map((className) => {
-                                return(
-                                    <Grid item>
-                                        {activeAwardsLevel.awards[className].length > 0 && (
-                                            <React.Fragment>
-                                                <ListItem style={{paddingRight: '0'}} onClick={(event) => handleOpenList(event, activeAwardsLevel.level)} data-value={className}>
-                                                    <ListItemText primary={classLabelsAny[className]} />
-                                                    {openList === className && levelList === activeAwardsLevel.level ? <ExpandLess /> : <ExpandMore />}
-                                                </ListItem>
-                                                <Collapse
-                                                    in={openList === className && levelList === activeAwardsLevel.level}
-                                                    timeout="auto"
-                                                    unmountOnExit
-                                                >
-                                                    <Grid item xs={12} style={{display: 'flex', alignItems: 'center'}}>
-                                                        
-                                                        <Grid item style={{width: '100%'}}>
-                                                            <List component="div" disablePadding >
-                                                                {activeAwardsLevel.awards[className].map((award)=>{
-                                                                    return (
-                                                                        
-                                                                        <AwardListItem key={award.itemModel._id} item={award} />
-                                                                        
-                                                                    )
-                                                                })}
-                                                                
-                                                            </List>
-                                                            </Grid>
-                                                        
-                                                    </Grid>
-                                                </Collapse>
-                                                </React.Fragment>
-                                        )}
-                                        
-                                    
-                                    
-                                    </Grid>
-                                )
-                            })}
-
-                            {levelList !== 0 && 
-                                <ListItem style={{paddingRight: '0'}}>
-                                    <ListItemText primary={'oraz łupy z niższych progów.'} style={{fontStyle: 'italic'}}/>
-                                </ListItem>
-                            }
+                                
+                            <Grid item container alignItems='center' style={{flexBasis: '30%'}} >
+                                <Grid item >
+                                    <Typography
+                                        component="span"
+                                        variant="h6"
+                                        color="textPrimary"
+                                        style={{fontWeight: 'bold'}}
+                                    >
+                                        Nagrody
+                                    </Typography>
+                                </Grid> 
+                            </Grid> 
+                            <Grid 
+                                item 
+                                container
+                                direction="row" 
+                                style={{flexFlow: 'row wrap', flexBasis: '70%'}}
+                            >
+                                {rally.awardsLevels.sort((a, b)=> (a.level > b.level) ? 1 : -1).map((awardsLevel, index) => {
+                                        return(
+                                            <Grid item style={{padding: '4px', margin: '0 auto'}}>
+                                                <AwardsLevelButton 
+                                                    variant="contained" 
+                                                    style={{padding: '3px', }} 
+                                                    chosen={index===levelList ? 1 : 0}
+                                                    backgroundColor={index === levelList ? (palette.primary.main) : (palette.primary.contrastText)} 
+                                                    onClick={(e) => handleChangeLevelList(e, index)}>
+                                                        <PintoTypography>{awardsLevel.level} PD</PintoTypography>
+                                                </AwardsLevelButton>
+                                            </Grid>
+                                        )
+                                    })
+                                }
+                            </Grid> 
                         </Grid>
-                    
-                            
+                        <Divider style={{backgroundColor: palette.background.darkGrey, height: '0.5px', 'marginLeft': '-1rem'}}/>
+                    </React.Fragment>
+                }
+                </Grid>
+            </DialogContent>
+            
+            <DialogContent style={{padding: '0.5rem 1rem'}}>
+            <Grid 
+                container
+                direction='column'      
+            >
+                <Grid item style={{marginTop: '0.5rem'}}>
+                {!rally.awardsAreSecret && (
+                    <React.Fragment>
+                        {Object.keys(activeAwardsLevel.awards).map((className) => {
+                            return(
+                                <Grid item>
+                                    {activeAwardsLevel.awards[className].length > 0 && (
+                                        <React.Fragment>
+                                            <ListItem style={{paddingLeft: '0', paddingRight: '0'}} onClick={(event) => handleOpenList(event, activeAwardsLevel.level)} data-value={className}>
+                                                <Grid container>
+                                                    <Grid item xs={4} style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                                                        <Typography variant='h6'>{classLabelsAny[className]}</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={3} style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
+                                                        <img
+                                                            src={uiPaths[className]}
+                                                            width={42}
+                                                            
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={5} style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
+                                                        {openList === className ? <ExpandLess style={{color: palette.background.grey}}/> : <ExpandMore style={{color: palette.background.darkGrey}}/>}
+                                                    </Grid>
+                                                </Grid>
+                                            </ListItem>
+                                            <Collapse
+                                                in={openList === className}
+                                                timeout="auto"
+                                                unmountOnExit
+                                                
+                                            >
+                                                <Grid item xs={12} style={{display: 'flex', alignItems: 'center'}}>
+                                                    
+                                                    <Grid item style={{width: '100%'}}>
+                                                        <List component="div" disablePadding >
+                                                            {activeAwardsLevel.awards[className].map((award)=>{
+                                                                return (
+                                                                    
+                                                                    <AwardListItem key={award.itemModel._id} item={award} />
+                                                                    
+                                                                )
+                                                            })}
+                                                            
+                                                        </List>
+                                                        </Grid>
+                                                    
+                                                </Grid>
+                                            </Collapse>
+                                            </React.Fragment>
+                                    )}
+                                    
+                                
+                                
+                                </Grid>
+                            )
+                        })}
+
+                        
+                    </React.Fragment>      
                 )
                 }
                 {rally.awardsAreSecret && (
-                    <Typography variant="h6"> Nie mamy informacji o łupach które można zdobyć!</Typography>
+                    <Typography variant="h6" align='center'> Nie mamy informacji o nagrodach, które można zdobyć!</Typography>
                 )}
                 </Grid>
             </Grid>
         </DialogContent>
-
-
+        <div>
+            {levelList !== 0 && 
+                <ListItem style={{textAlign: 'center'}}>
+                    <ListItemText disableTypography >
+                        <Typography style={{fontSize: '0.75em'}}>oraz nagrody z niższych progów</Typography>
+                    </ListItemText>
+                </ListItem>
+            }
+        </div>
         
         <DialogActions style={{justifyContent: 'flex-end'}}>
             <Button onClick={props.handleClose}  color="primary">

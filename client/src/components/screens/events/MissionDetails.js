@@ -270,41 +270,60 @@ const MissionDetails = (props) => {
   
                     return(
                         <Grid
-                        key={className}
+                            key={className}
                             container
                             direction="column"
                             style={{marginBottom: '0.2rem'}}
-
                         >
                             <Grid item>
-                                <ListItem style={{paddingLeft: '0' , paddingRight: '0'}} onClick={handleOpenList} data-value={className}>
-                                    <ListItemText primary={classLabelsAny[className]} />
-                                    {mission.awardsAreSecret ? (<Typography>?</Typography>) : (openList === className ? <ExpandLess /> : <ExpandMore />)}
-                                </ListItem>
-                                <Collapse
-                                    in={openList === className}
-                                    timeout="auto"
-                                    unmountOnExit
-                                >
-                                    <Grid item xs={12} style={{display: 'flex', alignItems: 'center'}}>
-                                        {mission.awards[className].length && !mission.awardsAreSecret ? (
-                                            <Grid item style={{width: '100%'}}>
-                                                <List component="div" disablePadding >
-                                                    {mission.awards[className].map((award)=>{
-                                                        return (
-                                                            
-                                                            <AwardListItem key={award.itemModel._id} item={award} />
-                                                            
-                                                        )
-                                                    })}
-                                                    
-                                                </List>
+                                {(mission.awards[className].length > 0 || mission.awardsAreSecret) && (
+                                    <React.Fragment>
+                                        <ListItem style={{paddingLeft: '0' , paddingRight: '0'}} onClick={handleOpenList} data-value={className}>
+                                        
+                                            <Grid container>
+                                                <Grid item xs={4} style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                                                    <Typography variant='h6'>{classLabelsAny[className]}</Typography>
                                                 </Grid>
-                                        ) : (
-                                            null
-                                        )}
-                                    </Grid>
-                                </Collapse>
+                                                <Grid item xs={3} style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
+                                                    <img
+                                                        src={uiPaths[className]}
+                                                        width={42}
+                                                        
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={5} style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
+                                                    {mission.awardsAreSecret ? (<Typography>?</Typography>) : (openList === className ? <ExpandLess style={{color: palette.background.grey}}/> : <ExpandMore style={{color: palette.background.darkGrey}}/>)}
+                                                </Grid>
+                                            </Grid>
+                                            
+                                        </ListItem>
+                                        <Collapse
+                                            in={openList === className}
+                                            timeout="auto"
+                                            unmountOnExit
+                                        >
+                                            <Grid item xs={12} style={{display: 'flex', alignItems: 'center'}}>
+                                                {mission.awards[className].length && !mission.awardsAreSecret ? (
+                                                    <Grid item style={{width: '100%'}}>
+                                                        <List component="div" disablePadding >
+                                                            {mission.awards[className].map((award)=>{
+                                                                return (
+                                                                    
+                                                                    <AwardListItem key={award.itemModel._id} item={award} />
+                                                                    
+                                                                )
+                                                            })}
+                                                            
+                                                        </List>
+                                                        </Grid>
+                                                ) : (
+                                                    null
+                                                )}
+                                            </Grid>
+                                        </Collapse>
+                                    </React.Fragment>
+                                )}
+                                
                             </Grid>
                         </Grid>
                     )

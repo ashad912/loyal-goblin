@@ -7,7 +7,7 @@ import moment from "moment";
 import {
   asyncForEach,
   removeImage,
-  saveImage,
+  savePNGImage,
   verifyCaptcha
 } from "../utils/methods";
 import { Rally } from "../models/rally";
@@ -97,7 +97,7 @@ router.patch("/update", adminAuth, async (req, res, next) => {
 
     if (req.files) {
       let icon = req.files.icon.data;
-      const imgSrc = await saveImage(
+      const imgSrc = await savePNGImage(
         icon,
         product._id,
         uploadPath,
@@ -129,7 +129,7 @@ router.patch("/uploadImage/:id", adminAuth, async (req, res) => {
 
     if (req.files.icon) {
       let icon = req.files.icon.data;
-      const imgSrc = await saveImage(
+      const imgSrc = await savePNGImage(
         icon,
         product._id,
         uploadPath,

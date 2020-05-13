@@ -11,7 +11,7 @@ import { auth } from "../middleware/auth";
 import { adminAuth } from '../middleware/adminAuth';
 import {
   asyncForEach,
-  saveImage,
+  savePNGImage,
   removeImage,
   verifyCaptcha,
 } from "../utils/methods";
@@ -495,7 +495,7 @@ router.post("/me/avatar", auth, async (req, res) => {
     //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
     let avatar = await req.files.avatar.data;
 
-    const avatarName = await saveImage(avatar, user._id, uploadPath, user.avatar)
+    const avatarName = await savePNGImage(avatar, user._id, uploadPath, user.avatar)
     
     user.avatar = avatarName;
     await user.save();

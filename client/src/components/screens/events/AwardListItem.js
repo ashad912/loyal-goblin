@@ -34,7 +34,7 @@ const AwardListItem = props => {
       style={{
         width: '100%',
         marginBottom: "0.2rem",
-        padding: '1rem',
+        padding: `${props.disableUpDownPadding ? '0 1rem': '1rem'}`,
         //borderTop: palette.border
       }}
     >
@@ -46,9 +46,9 @@ const AwardListItem = props => {
 
             <ListItemAvatar>
                 <img
-                style={{ width: "3.5rem", height: "3.5rem" }}
-                alt={item.itemModel.name}
-                src={`${itemsPath}${item.itemModel.imgSrc}`}
+                  style={{ width: `${props.smallAvatar ? '3rem': '3.5rem'}`, height: `${props.smallAvatar ? '3rem': '3.5rem'}` }}
+                  alt={item.itemModel.name}
+                  src={`${itemsPath}${item.itemModel.imgSrc}`}
                 />
             </ListItemAvatar>
         </Badge>
@@ -59,7 +59,7 @@ const AwardListItem = props => {
             <Grid item xs={12}>
                 <ListItemText
                 primary={
-                  <Typography style={{fontSize: '1.1rem'}}>
+                  <Typography style={{fontSize: '1.1rem', fontFamily: `${props.alternativeFont ? 'Pinto-0' : 'Pinto-3'}`}}>
                     {item.itemModel.name}
                   </Typography>
 
@@ -87,7 +87,8 @@ const AwardListItem = props => {
         </Grid>
         </Grid>
       </Grid>
-      <Grid item >
+      {!props.perksDisable && (
+        <Grid item >
           {item.itemModel.perks.length > 0 && (
             <List
               dense
@@ -112,7 +113,9 @@ const AwardListItem = props => {
             </List>
           )}
         </Grid>
+      )}
       </Grid>
+      
     </ListItem>
   );
 };

@@ -15,7 +15,7 @@ import FormLabel from '@material-ui/core/FormLabel';
 import {PintoTypography} from '../../../utils/fonts'
 import {uiPaths} from '../../../utils/definitions'
 
-const NewLevelDialog = props => {
+const NewLevelDrawer = props => {
 
   const [value, setValue] = React.useState('');
 
@@ -66,4 +66,4 @@ const NewLevelDialog = props => {
   );
 };
 
-export default NewLevelDialog;
+export default NewLevelDrawer;

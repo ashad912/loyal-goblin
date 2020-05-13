@@ -13,6 +13,7 @@ const iconPaths = {
     logo: 'logo.svg',
     male: 'male.svg',
     female: 'female.svg',
+    any: 'chest.svg',
     warrior: 'warrior.svg',
     rogue: 'rogue.svg',
     mage: 'mage.svg',

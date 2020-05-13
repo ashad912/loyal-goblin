@@ -35,7 +35,6 @@ const TorpedoList = props => {
 
   const classes = useStyles();
   
-  const parentDialog = React.createRef()
 
   const handleOpenList = event => {
     if (event.currentTarget.dataset.value === openList) {
@@ -46,7 +45,6 @@ const TorpedoList = props => {
   };
 
   const handleShowDeleteDialog = (id, name) => {
-   // console.log(parentDialog)
     setItemToDelete({id, name})
     setDeleteDialog(true)
 
@@ -146,19 +144,14 @@ const TorpedoList = props => {
       )}
         
         <DialogActions>
-          {/* {(props.userTorpedos.length > 0) && (
-            <Button onClick={handleSave} color="primary">
-              Zatwierdź
-            </Button>
-          )} */}
-          {activeTorpedo ?
+        {activeTorpedo ?
           <Button onClick={handleSave} color="primary" autoFocus variant="contained">
             <PintoTypography>Załaduj</PintoTypography>
           </Button>
-          :
-          <Button onClick={handleSave}  autoFocus >
-          <PintoTypography>Zamknij</PintoTypography>
-        </Button>
+            :
+          <Button onClick={handleSave} autoFocus color="primary">
+            <PintoTypography>Zamknij</PintoTypography>
+          </Button>
         }
         </DialogActions>
         <Dialog
@@ -168,15 +161,15 @@ const TorpedoList = props => {
             <DialogTitle >Wyrzucanie przedmiotu</DialogTitle>
             <DialogContent>
             <DialogContentText >
-                    Czy na pewno chcesz wyrzucić przedmiot {itemToDelete.name}?
+              Czy na pewno chcesz wyrzucić przedmiot {itemToDelete.name}?
             </DialogContentText>
             </DialogContent>
             <DialogActions>
               <Button onClick={handleDeleteDialogClose} color="secondary">
-                  Anuluj
+                Anuluj
               </Button>
               <Button onClick={handleTorpedoDelete} color="primary" autoFocus>
-                  Potwierdź
+                Potwierdź
               </Button>
             </DialogActions>
         </Dialog>

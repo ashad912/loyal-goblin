@@ -26,10 +26,8 @@ const glowWarning = keyframes`
   }
 `
 
-
-
 const StyledListItem = styled(ListItem)`
-  margin-bottom: 0.2rem;
+  padding: 12px 0;
 `
 const LaunchButton = styled(Button)`
   animation-name: ${props => props.disabled ? glowWarning : glowReady};

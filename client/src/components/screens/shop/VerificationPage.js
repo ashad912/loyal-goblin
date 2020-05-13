@@ -26,6 +26,7 @@ import { PintoSerifTypography, PintoTypography } from "../../../utils/fonts";
 import { cancelOrder, leaveShop } from "../../../store/actions/shopActions";
 import {itemsPath, usersPath, palette} from '../../../utils/definitions'
 import {createAvatarPlaceholder} from '../../../utils/methods'
+import AwardListItem from "../events/AwardListItem";
 
 const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_URL
@@ -126,17 +127,23 @@ const handleCancelOrder = async () => {
   return (
     <Container maxWidth="sm" style={{padding: '1rem 0.4rem'}}>
       <div style={{ width: "100%", paddingTop: '1rem' }}>
-       {orderFinalized ? <Typography variant="h5" style={{width: '100%', marginBottom: '0.5rem'}} color="primary">Zamówienie zostało zatwierdzone!</Typography> :  <Typography variant="h5" style={{marginBottom: '1rem'}}>Pokaż ten kod przy barze, by otrzymać nagrody!</Typography>}
-        {orderFinalized ? <CheckCircleOutlineIcon color="primary" style={{fontSize: '50vw'}}/> : 
+      {orderFinalized ? 
+        <Typography variant="h5" style={{width: '100%', marginBottom: '0.5rem'}} color="primary">Zamówienie zostało zatwierdzone!</Typography> 
+      :  
+        <Typography variant="h5" style={{marginBottom: '1rem'}}>Pokaż ten kod przy barze, by otrzymać nagrody!</Typography>
+      }
+        {orderFinalized ? 
+        <CheckCircleOutlineIcon color="primary" style={{fontSize: '50vw'}}/> 
+        : 
         <img src={qrCode} style={{width: '80%', marginBottom: '1rem'}}/>
-        }
- {!orderFinalized ?  <Typography variant="h6" style={{width: '100%', marginBottom: '1rem'}} color="secondary">{timer}</Typography>:
- <div style={{marginBottom: '2rem'}}>
-<Typography  variant="caption">Za chwilę nastąpi przekierowanie do profilu...</Typography>
- </div>
-}
+      }
+      {!orderFinalized ?  <Typography variant="h6" style={{width: '100%', marginBottom: '1rem'}} color="secondary">{timer}</Typography>:
+        <div style={{marginBottom: '2rem'}}>
+        <Typography  variant="caption">Za chwilę nastąpi przekierowanie do profilu...</Typography>
+        </div>
+      }
  
-        <Divider />
+        
         <List component="nav" style={{ width: "100%" }}>
           {props.activeOrder && props.activeOrder.map(basket => {
             if(basket.products.length > 0){
@@ -145,53 +152,47 @@ const handleCancelOrder = async () => {
                 <React.Fragment key={basket.profile._id}>
                   <ListItem style={{ flexDirection: "column"}}>
                     <List style={{ width: "100%" }}>
-<ListItem style={{alignItems:'flex-start', padding:0}}>
-
-                        <ListItemAvatar>
-                          {basket.profile.avatar ? <img src={usersPath + basket.profile.avatar} style={{width: '4rem', height: '4rem'}}/> : 
-                          <Avatar style={{width: '4rem', height: '4rem'}}>{createAvatarPlaceholder(basket.profile.name)}</Avatar>}
-                        </ListItemAvatar>
-                        <Grid container direction="column" alignItems="flex-start" style={{marginLeft:'2rem'}}>
-                          <Grid item>
-                           <PintoSerifTypography variant="h5" style={{marginBottom:'1rem'}}>{basket.profile.name}</PintoSerifTypography>
+                  <ListItem style={{alignItems:'flex-start', padding:0}}>
+                      <Grid container>
+                        <Grid container style={{padding: '0 24px'}}>
+                          <Grid item xs={4}>
+                            {basket.profile.avatar ? <img src={usersPath + basket.profile.avatar} style={{width: '5rem', height: '5rem'}}/> : 
+                            <Avatar style={{width: '5rem', height: '5rem', fontSize: '2.2rem'}}>{createAvatarPlaceholder(basket.profile.name)}</Avatar>}
                           </Grid>
-                          <Grid item style={{marginBottom:'1rem'}}>
-                            <PintoSerifTypography style={{color:palette.background.darkGrey, fontSize: '1.2rem'}}>{basket.price.toFixed(2) + " ZŁ"}</PintoSerifTypography>
-                          </Grid>
-                          <Grid item container justify="space-between">
+                          <Grid item xs={8} container direction="column" alignItems="flex-start" style={{paddingLeft: '10%'}}>
                             <Grid item>
-                            <PintoSerifTypography variant="h6">Doświadczenie: </PintoSerifTypography>
+                              <Typography variant="h5" style={{marginBottom: '0.5rem'}}>{basket.profile.name}</Typography>
                             </Grid>
                             <Grid item>
-                            <PintoSerifTypography variant="h6" style={{color: palette.primary.main}}>{" "+basket.experience + " PD"}</PintoSerifTypography>
+                              <Typography style={{color: palette.background.darkGrey}}>{basket.price.toFixed(2) + " ZŁ"}</Typography>
+                              <Typography  style={{color: palette.primary.main}}>{basket.experience + " PD"}</Typography>
                             </Grid>
                           </Grid>
-                          <Grid item >
-                            <List dense>
+                        </Grid>  
+                        <Grid item xs={12}>
+                            <List dense style={{paddingTop: '1rem', paddingBottom: '1rem'}}>
 
-                          {basket.awards.map(award => {
-                        return (
-                          <ListItem key={award._id}>
-                            <ListItemIcon>
-                              <img
-                                src={itemsPath + award.itemModel.imgSrc}
-                                width="32"
-                              />
-                            </ListItemIcon>
-                            <ListItemText primary={award.itemModel.name} secondary={award.quantity > 1 && `x${award.quantity}`}/>
-                            
-                          </ListItem>
-                        );
-                      })}
+                              {basket.awards.map(award => {
+                                return (
+                                  <AwardListItem 
+                                    key={award.itemModel._id} 
+                                    item={award} 
+                                    perksDisable 
+                                    alternativeFont 
+                                    disableUpDownPadding
+                                    smallAvatar
+                                  />
+                                );
+                              })}
                             </List>
-                          </Grid>
                         </Grid>
-              </ListItem>
+                      </Grid>
+                    </ListItem>
               
                       
                     </List>
                   </ListItem>
-                  <Divider />
+                  
                 </React.Fragment>
               );
             }

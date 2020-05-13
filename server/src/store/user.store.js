@@ -272,7 +272,6 @@ const computePerks = (user) =>{
               await user.depopulate(`equipped.${slot}`)
             });
 
-            console.log(user.equipped)
             resolve(modelPerks);
         } catch (e) {
             reject(e);

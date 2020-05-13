@@ -2,7 +2,7 @@ import express from 'express'
 import { Rally } from '@models/rally';
 import { adminAuth } from '@middleware/adminAuth';
 import { auth } from '@middleware/auth';
-import {removeImage, saveImage } from '@utils/methods'
+import {removeImage, savePNGImage } from '@utils/methods'
 import rallyStore from '@store/rally.store'
 
 const uploadPath = "../static/images/rallies/"
@@ -59,7 +59,7 @@ router.patch('/uploadIcon/:id', adminAuth, async (req, res) => {
 
         if(req.files.icon){
             let icon = req.files.icon.data
-            const imgSrc = await saveImage(icon, rally._id, uploadPath, rally.imgSrc)
+            const imgSrc = await savePNGImage(icon, rally._id, uploadPath, rally.imgSrc)
             rally.imgSrc = imgSrc
         }
         

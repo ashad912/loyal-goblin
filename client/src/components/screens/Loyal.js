@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Parser from 'html-react-parser'
 import boardsvg from '../../assets/board/statki-goblin.svg'
 import Loading from '../layout/Loading';
-import TorpedoList from './loyal/TorpedoList'
+import TorpedoDrawer from './loyal/TorpedoDrawer'
 import LoadedTorpedo from './loyal/LoadedTorpedo'
 import LoyalAwardDialog from './loyal/LoyalAwardDialog'
 import Button from "@material-ui/core/Button";
@@ -10,6 +10,9 @@ import { Typography } from '@material-ui/core';
 import styled, {css, keyframes, createGlobalStyle} from 'styled-components'
 import { connect } from 'react-redux';
 import {shootShip} from '../../store/actions/profileActions'
+import { palette } from '../../utils/definitions';
+import { PintoTypography } from '../../utils/fonts';
+
 
 const GlobalStyle = createGlobalStyle`
  
@@ -34,7 +37,7 @@ const LoadedTorpedoContainer = styled.div`
     align-items: center;
     justify-content: center;
     display: flex;
-    margin-bottom: 1rem;
+    margin: auto;
     min-height: 74px;
 `
 //ship1: B4L4 -> B4, B5, B6, B7
@@ -52,6 +55,8 @@ class Loyal extends Component {
     constructor() {
         super();
         this.timer = 0;
+        this.wrecksIds = ["117", "103", "116", "101", "102", "110"];
+        this.wrecks = [["B4", "B5", "B6", "B7"], ["I1", "I2", "I3", "I4"], ["F9", "E9", "D9", "C9", "B9"], ["D1", "C1"], ["E3", "E4", "E5"], ["H7", "G7"]]
         
     }
     
@@ -62,18 +67,15 @@ class Loyal extends Component {
         userTorpedos: [],
         loadedTorpedo: undefined,
         showTorpedosModal: false,
-        award: false,
-        wrecksIds: ["117", "103", "116", "101", "102", "110"],
-        wrecks: [["B4", "B5", "B6", "B7"], ["I1", "I2", "I3", "I4"], ["F9", "E9", "D9", "C9", "B9"], ["D1", "C1"], ["E3", "E4", "E5"], ["H7", "G7"]]
-        
+        award: false, 
     }
 
 
 
-    manageWrecks = (doc, ids, wrecks) => {
-        wrecks.forEach((wreck, index) => {
+    manageWrecks = (doc) => {
+        this.wrecks.forEach((wreck, index) => {
             
-            const svgWreck = doc.getElementById(ids[index])
+            const svgWreck = doc.getElementById(this.wrecksIds[index])
 
             const isWreck = this.isWreck(wreck)
             svgWreck.style.visibility = isWreck ? 'visible' : 'hidden'
@@ -219,7 +221,7 @@ class Loyal extends Component {
         }
 
         
-        this.manageWrecks(doc, this.state.wrecksIds, this.state.wrecks)
+        this.manageWrecks(doc)
 
         this.setState({
             loading: false
@@ -351,14 +353,18 @@ class Loyal extends Component {
         const field = doc.getElementsByName(this.state.loadedTorpedo.itemModel.name)[0] //assuming id as in serverFields array        
         const animation = this.state.animation
 
+        if(!this.state.iOS){
+            animation.cancel()
+        }
+
         try{
             
             const award = await this.props.shootShip(this.state.loadedTorpedo.itemModel.name)
+
+            
+
             if(award){
-                if(!this.state.iOS){
-                    animation.cancel()
-                }
-                
+               
 
                 for(let i=1; i < this.state.serverFields.length + 1; i++){
                     const field = doc.getElementById(`${i}`) //assuming id as in serverFields array
@@ -372,15 +378,13 @@ class Loyal extends Component {
                     award: award,
                     serverFields: modifiedServerFields,
                 }, () => {
-                    this.manageWrecks(doc, this.state.wrecksIds, this.state.wrecks)
+                    this.manageWrecks(doc)
                     
                 })
 
             }else{
 
-                if(!this.state.iOS){
-                    animation.cancel()
-                }
+                
                 field.style.fill = 'red'
                 
                 const modifiedServerFields = [...this.state.serverFields]
@@ -394,7 +398,7 @@ class Loyal extends Component {
                 this.setState({
                     serverFields: modifiedServerFields
                 }, () => {
-                    this.manageWrecks(doc, this.state.wrecksIds, this.state.wrecks)
+                    this.manageWrecks(doc)
                    
                 })
                 
@@ -404,9 +408,6 @@ class Loyal extends Component {
                  
         }catch(e){
             console.log(e)
-            if(!this.state.iOS){
-                animation.cancel()
-            }
         }
         
         
@@ -433,6 +434,7 @@ class Loyal extends Component {
         //     </svg>
         // ) : null
         
+        
         return ( 
             <React.Fragment>
             
@@ -446,23 +448,50 @@ class Loyal extends Component {
                         <Typography variant='h5' >Wybierz i załaduj torpedę!</Typography>
                     )}
                 </LoadedTorpedoContainer>
-                <object data={boardsvg} onLoad={this.handleLoad} type="image/svg+xml"
-                id="boardsvg" ref='boardsvg'  style={{pointerEvents: 'bounding-box'}}>Board</object> 
+                <object 
+                    data={boardsvg} 
+                    onLoad={this.handleLoad} 
+                    type="image/svg+xml"
+                    id="boardsvg" ref='boardsvg' 
+                    style={{pointerEvents: 'bounding-box', width: '90%', margin: 'auto'}}
+                >
+                    Board
+                </object> 
                 
-                {this.state.seconds === 0 && (
-                    <React.Fragment>
-                        <Button variant="outlined" color="primary" onClick={this.handleToggleTorpedosModal} style={{marginTop: '1.1rem'}}>
-                            Moje torpedy
-                        </Button>
-                        <TorpedoList 
-                            handleOpen={this.state.showTorpedosModal}
-                            handleClose={this.handleToggleTorpedosModal}
-                            userTorpedos={userTorpedos}
-                            loadedTorpedoId={this.state.loadedTorpedo ? this.state.loadedTorpedo._id : undefined}
-                            handleTorpedoToggle={this.handleTorpedoToggle}
-                            handleTorpedoDelete={this.handleTorpedoDelete}
-                        />
-                    </React.Fragment>)}
+                
+                <Button
+                    disabled={this.state.seconds !== 0}     
+                    variant="contained" 
+                    color="primary" 
+                    onClick={this.handleToggleTorpedosModal} 
+                    style={{
+                        margin: 'auto',
+                        padding: '1rem 0.5rem',
+                        borderRadius: '10px'
+                    }}>
+                    Moje torpedy
+                </Button>
+                <PintoTypography 
+                    style={{
+                        color: palette.background.darkGrey,
+                        fontSize: `2vh`,
+                        margin: 'auto',
+                        width: '65%'
+                    }}
+                >
+                    Pij browary w Goblinie by zdobywać torpedy i zbijać statki! 
+                    <br/>
+                    Za zbicie całej floty otrzymasz nagrodę!
+                </PintoTypography>
+                <TorpedoDrawer
+                    handleOpen={this.state.showTorpedosModal}
+                    handleClose={this.handleToggleTorpedosModal}
+                    userTorpedos={userTorpedos}
+                    loadedTorpedoId={this.state.loadedTorpedo ? this.state.loadedTorpedo._id : undefined}
+                    handleTorpedoToggle={this.handleTorpedoToggle}
+                    handleTorpedoDelete={this.handleTorpedoDelete}
+                />
+                    
             {this.state.award && 
                 <LoyalAwardDialog
                     open={this.state.award}

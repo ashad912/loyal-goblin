@@ -238,6 +238,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
                     'endurance': 1,
                     'unique': 1,
                     'amulets': 1,
+                    'awardsAreSecret': 1,
                     'awards': {
                         $cond: {
                             if: {
@@ -314,6 +315,7 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
             'endurance': 1,
             'unique': 1,
             'amulets': 1,
+            'awardsAreSecret': 1,
             'awards': {
                 $cond: {
                     if: {

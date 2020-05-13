@@ -64,7 +64,7 @@ const BasketDrawer = ({ open, toggle, baskets, users, activeUser, handleRemoveIt
               
               return (
                 <BasketListItem
-                noParty={users.length <= 1}
+                  noParty={users.length <= 1}
                   activeUsersBasket = {user === activeUser}
                   key={user}
                   name={userName}

@@ -17,7 +17,7 @@ import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import TouchAppIcon from "@material-ui/icons/TouchApp";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import { dayLabels, perkLabels } from "../../../utils/labels";
-import { palette, itemsPath } from "../../../utils/definitions";
+import { palette, itemsPath, uiPaths } from "../../../utils/definitions";
 import { getValue, getTarget } from "../../../utils/methods";
 import { PintoTypography, PintoSerifTypography } from "../../../utils/fonts";
 import PerkBoxItem from "./PerkBoxItem";
@@ -206,7 +206,7 @@ const EquipmentListItem = props => {
       >
         <StyledMenuItem onClick={handleDelete}>
           <ListItemIcon>
-            <DeleteForeverIcon color="secondary"/>
+            <img src={uiPaths.trash} style={{width: '1.5rem', height: '1.5rem'}}/>
           </ListItemIcon>
           <ListItemText><PintoTypography>Wyrzuć</PintoTypography></ListItemText>
         </StyledMenuItem>

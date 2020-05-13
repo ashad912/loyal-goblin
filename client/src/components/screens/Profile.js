@@ -12,7 +12,7 @@ import Button from "@material-ui/core/Button";
 
 import Attribute from "./profile/Attribute";
 import Equipment from "./profile/Equipment";
-import NewLevelDialog from "./profile/NewLevelDialog";
+import NewLevelDrawer from "./profile/NewLevelDrawer";
 import PerkBox from "./profile/PerkBox";
 
 
@@ -534,7 +534,7 @@ const Profile = props => {
         activeMission={props.mission.activeInstanceId}
       />
 
-      <NewLevelDialog
+      <NewLevelDrawer
         open={
           props.auth.profile.levelNotifications > 0 &&
           !props.auth.profile.rallyNotifications.isNew &&

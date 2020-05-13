@@ -537,7 +537,7 @@ UserSchema.methods.orderPopulate = async function () {
         })
         .populate({
             path: "activeOrder.awards.itemModel", 
-            select: "name imgSrc"
+            select: "name imgSrc description"
         })
         .execPopulate();
 }
