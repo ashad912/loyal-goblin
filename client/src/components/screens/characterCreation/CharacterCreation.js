@@ -6,11 +6,11 @@ import _ from "lodash";
 
 import Container from "@material-ui/core/Container";
 import Button from "@material-ui/core/Button";
-import Step1 from "./characterCreation/Step1";
-import Step2 from "./characterCreation/Step2";
-import Step3 from "./characterCreation/Step3";
-import Step4 from "./characterCreation/Step4";
-import Step5 from "./characterCreation/Step5";
+import Step1 from "./Step1";
+import Step2 from "./Step2";
+import Step3 from "./Step3";
+import Step4 from "./Step4";
+import Step5 from "./Step5";
 import { Typography } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({

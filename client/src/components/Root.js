@@ -10,11 +10,11 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Dialog from "@material-ui/core/Dialog";
-import Profile from "./screens/Profile";
-import Events from "./screens/Events";
-import Loyal from "./screens/Loyal";
-import CharacterCreation from "./screens/CharacterCreation";
-import Booking from "./screens/Booking";
+import Profile from "./screens/profile/Profile";
+import Events from "./screens/events/Events";
+import Loyal from "./screens/loyal/Loyal";
+import CharacterCreation from "./screens/characterCreation/CharacterCreation";
+import Booking from "./screens/booking/Booking";
 import RootSnackbar from "./layout/RootSnackbar";
 import {socket, multipleSessionSubscribe} from '../socket'
 import styled from 'styled-components'
@@ -23,7 +23,7 @@ import { authCheck } from "../store/actions/authActions";
 import {
   leaveShop
 } from "../store/actions/shopActions";
-import Party from "./screens/Party";
+import Party from "./screens/party/Party";
 import { uiPaths, palette } from "../utils/definitions";
 
 

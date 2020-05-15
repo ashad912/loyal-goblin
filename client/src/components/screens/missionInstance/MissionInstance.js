@@ -1,27 +1,27 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import ExchangeArea from './mission/ExchangeArea'
-import PartyList from './mission/PartyList'
-import Loading from '../../layout/Loading';
-import MissionBasicInfo from './mission/MissionBasicInfo';
 import styled from 'styled-components'
+
 import Button from "@material-ui/core/Button";
-import KeyboardArrowLeftIcon from "@material-ui/icons/KeyboardArrowLeft";
 import ColorizeIcon from "@material-ui/icons/Colorize";
 import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
-import VerificationPage from './mission/VerificationPage'
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
-import StarBorderIcon from "@material-ui/icons/StarBorder";
 import Grid from "@material-ui/core/Grid";
 
-import {itemsPath, missionsPath} from '../../../utils/definitions'
-import { PintoTypography} from '../../../utils/fonts'
+import ExchangeArea from './ExchangeArea'
+import PartyList from './PartyList'
+import VerificationPage from './VerificationPage'
+import MissionBasicInfo from './MissionBasicInfo';
 
-import { authCheck } from "../../../store/actions/authActions";
-import {togglePresenceInInstance, toggleUserReady, finishInstance} from '../../../store/actions/missionActions'
-import {socket, modifyUserStatusSubscribe, finishMissionSubscribe} from '../../../socket'
+import Loading from 'components/layout/Loading';
+import {itemsPath} from 'utils/definitions'
+import { PintoTypography} from 'utils/fonts'
+
+import { authCheck } from "store/actions/authActions";
+import {togglePresenceInInstance, toggleUserReady, finishInstance} from 'store/actions/missionActions'
+import {socket, modifyUserStatusSubscribe, finishMissionSubscribe} from 'socket'
 
 
 const StyledItemIcon = styled.img`

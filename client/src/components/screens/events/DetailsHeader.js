@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
 import { Typography } from '@material-ui/core'
@@ -9,21 +8,14 @@ import {PintoTypography} from '../../../utils/fonts'
 import DialogContent from "@material-ui/core/DialogContent";
 
 
-const Background = styled.div`
-    background-color: ${palette.primary.main};
-    color: white;
-`
-
 const DetailsHeader = ({title, description, imgSrc}) => {
     return(
-        <Background>
-            <DialogContent style={{padding: '2rem 1rem', maxHeight: '19vh'}}>
-                <Grid
-                    container
-                    direction="column"
-                    style={{textAlign: 'left'}}
-                >
-                
+        <React.Fragment>
+            <Grid
+                container
+                direction="column"
+                style={{textAlign: 'left'}}
+            >
                 <Grid
                     container
                     direction="row"
@@ -66,9 +58,8 @@ const DetailsHeader = ({title, description, imgSrc}) => {
                     
 
                 </Grid>
-                </Grid>
-            </DialogContent>
-        </Background>
+            </Grid>
+        </React.Fragment>
     )
 }
 

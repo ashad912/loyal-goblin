@@ -5,9 +5,9 @@ import styled from 'styled-components'
 import { Paper } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
-import {createAvatarPlaceholder} from '../../../../utils/methods'
-import {palette, itemsPath, usersPath} from '../../../../utils/definitions'
-import {PintoTypography} from '../../../../utils/fonts'
+import {createAvatarPlaceholder} from '../../../utils/methods'
+import {palette, itemsPath, usersPath} from '../../../utils/definitions'
+import {PintoTypography} from '../../../utils/fonts'
 
 
 const RootDiv = styled.div`

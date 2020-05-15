@@ -4,11 +4,10 @@ import React from 'react';
 import Box from './Box';
 
 import uuid from 'uuid/v1'
-import {addItemSubscribe, deleteItemSubscribe} from '../../../../socket'
+import {addItemSubscribe, deleteItemSubscribe} from 'socket'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import bagImg from '../../../../assets/mission/bag.png'
-import { sendItemToMission, sendItemToUser } from '../../../../store/actions/missionActions';
-import { uiPaths } from '../../../../utils/definitions';
+import { sendItemToMission, sendItemToUser } from 'store/actions/missionActions';
+import { uiPaths } from 'utils/definitions';
 
 
 

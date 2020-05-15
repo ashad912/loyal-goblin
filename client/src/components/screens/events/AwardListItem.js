@@ -3,7 +3,7 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
+
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Button from "@material-ui/core/Button";
@@ -35,7 +35,7 @@ const AwardListItem = props => {
         width: '100%',
         marginBottom: "0.2rem",
         padding: `${props.disableUpDownPadding ? '0 1rem': '1rem'}`,
-        //borderTop: palette.border
+        backgroundColor: props.enableBackground ? palette.background.standard : 'white',
       }}
     >
     <Grid container direction="column">
@@ -55,33 +55,32 @@ const AwardListItem = props => {
         </Grid>
         <Grid item xs={9} style={{paddingLeft: '0.5rem'}}>
         <Grid container direction="column">
-            <Grid item container>
+            
             <Grid item xs={12}>
                 <ListItemText
-                primary={
-                  <Typography style={{fontSize: '1.1rem', fontFamily: `${props.alternativeFont ? 'Pinto-0' : 'Pinto-3'}`}}>
-                    {item.itemModel.name}
-                  </Typography>
-
-                  
-                }
-                secondary={
-                    <div>
-                    {item.itemModel.hasOwnProperty("twoHanded") &&
-                        item.itemModel.twoHanded && (
-                        <Typography variant="subtitle2">
-                            Broń dwuręczna
-                        </Typography>
-                        )}
-                    <PintoTypography variant="caption">
-                        {item.itemModel.description}
-                    </PintoTypography>
-                    </div>
-                }
+                  disableTypography
+                  primary={
+                    <Typography style={{fontSize: '1.1rem', fontFamily: `${props.alternativeFont ? 'Pinto-0' : 'Pinto-3'}`}}>
+                      {item.itemModel.name}
+                    </Typography>
+                  }
+                  secondary={
+                      <div>
+                        {item.itemModel.hasOwnProperty("twoHanded") &&
+                            item.itemModel.twoHanded && (
+                            <Typography variant="subtitle2">
+                                Broń dwuręczna
+                            </Typography>
+                            )}
+                        <PintoTypography style={{color: palette.background.darkGrey}}>
+                            {item.itemModel.description}
+                        </PintoTypography>
+                      </div>
+                  }
                 />
             </Grid>
 
-            </Grid>
+            
             
         </Grid>
         </Grid>
@@ -102,14 +101,13 @@ const AwardListItem = props => {
                 background: "rgba(255, 255, 255, 0.198)"
               }}
             >
-            <Typography component="div">
+            
               {item.itemModel.perks.map((perk, index) => {
                 return (
                   <PerkBoxItem key={perk.perkType+perk.value+perk._id} perk={perk} isFirst={index===0} isEquipment={true} equipped={false}/>
-                  
                 );
               })}
-              </Typography>
+              
             </List>
           )}
         </Grid>

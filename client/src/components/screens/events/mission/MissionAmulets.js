@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import Grid from "@material-ui/core/Grid";
 import Badge from "@material-ui/core/Badge";
 import Typography from "@material-ui/core/Typography";
-import { itemsPath } from '../../../utils/definitions'
+import { itemsPath } from '../../../../utils/definitions'
 
 
 const StyledBadge = styled(Badge)`
@@ -31,6 +31,7 @@ const MissionAmulets = ({mission, variant}) => {
                     {mission.amulets.map(amulet => {
                         return (
                             <StyledBadge
+                                key={amulet._id}
                                 color="primary"
                                 badgeContent={amulet.quantity}
                                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}

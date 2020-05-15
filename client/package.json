@@ -58,6 +58,7 @@
     ]
   },
   "devDependencies": {
+    "babel-plugin-module-resolver": "^4.0.0",
     "workbox-build": "^5.0.0"
   }
 }

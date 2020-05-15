@@ -13,15 +13,15 @@ import withNoAuth from "./hoc/withNoAuth";
 import ConnectionSpinnerDialog from "./components/layout/ConnectionSpinnerDialog";
 import ConnectionSnackbar from "./components/layout/ConnectionSnackbar";
 import ResetPassword from "./components/auth/ResetPassword";
-import PageNotFound from "./components/screens/PageNotFound";
+import PageNotFound from "./components/layout/PageNotFound";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import Root from "./components/Root";
-import Shop from "./components/screens/Shop";
+import Shop from "./components/screens/shop/Shop";
 import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
 import ForgotPassword from "./components/auth/ForgotPassword";
-import MissionInstance from "./components/screens/events/MissionInstance";
+import MissionInstance from "./components/screens/missionInstance/MissionInstance";
 
 import { palette } from "./utils/definitions";
 

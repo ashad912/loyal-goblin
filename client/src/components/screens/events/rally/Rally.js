@@ -8,8 +8,8 @@ import Avatar from '@material-ui/core/Avatar';
 import { Badge } from '@material-ui/core';
 import styled from 'styled-components'
 import moment from 'moment'
-import { ralliesPath, palette } from '../../../utils/definitions';
-import {PintoTypography} from '../../../utils/fonts'
+import { ralliesPath, palette } from '../../../../utils/definitions';
+import {PintoTypography} from '../../../../utils/fonts'
 
 const StyledCard = styled(Card)`
     min-width: 275px;

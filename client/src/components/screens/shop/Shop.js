@@ -13,23 +13,23 @@ import Snackbar from "@material-ui/core/Snackbar";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 
-import MenuGridItem from "./shop/MenuGridItem";
-import ShopList from "./shop/ShopList";
-import PlayerShopButtons from "./shop/PlayerShopButtons";
-import BasketDrawer from "./shop/BasketDrawer";
-import VerificationPage from "./shop/VerificationPage";
-import ScrollModal from "./shop/ScrollModal";
-import ScrollListItem from "./shop/ScrollListItem";
+import MenuGridItem from "./MenuGridItem";
+import ShopList from "./ShopList";
+import PlayerShopButtons from "./PlayerShopButtons";
+import BasketDrawer from "./BasketDrawer";
+import VerificationPage from "./VerificationPage";
+import ScrollModal from "./ScrollModal";
+import ScrollListItem from "./ScrollListItem";
 
 import {
   getShop,
   activateOrder,
   leaveShop
-} from "../../store/actions/shopActions";
-import { toggleItem } from "../../store/actions/profileActions";
-import { uiPaths } from "../../utils/definitions";
-import {PintoTypography} from '../../utils/fonts'
-import {socket} from '../../socket'
+} from "../../../store/actions/shopActions";
+import { toggleItem } from "../../../store/actions/profileActions";
+import { uiPaths } from "../../../utils/definitions";
+import {PintoTypography} from '../../../utils/fonts'
+import {socket} from '../../../socket'
 
 const Menu = styled(Paper)`
   flex-grow: 1;

@@ -15,11 +15,11 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 
 import Badge from '@material-ui/core/Badge';
 import Avatar from '@material-ui/core/Avatar';
-import bagImg from '../../../../assets/mission/bag.png'
+import bagImg from 'assets/mission/bag.png'
 
 
-import {createAvatarPlaceholder} from '../../../../utils/methods'
-import {palette, itemsPath, usersPath} from '../../../../utils/definitions'
+import {createAvatarPlaceholder} from 'utils/methods'
+import {palette, itemsPath, usersPath} from 'utils/definitions'
 
 const StyledGrid = styled(Grid)`
     &&{

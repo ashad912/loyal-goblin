@@ -10,26 +10,26 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 
 
-import Attribute from "./profile/Attribute";
-import Equipment from "./profile/Equipment";
-import NewLevelDrawer from "./profile/NewLevelDrawer";
-import PerkBox from "./profile/PerkBox";
+import Attribute from "./Attribute";
+import Equipment from "./Equipment";
+import NewLevelDrawer from "./NewLevelDrawer";
+import PerkBox from "./PerkBox";
 
 
-import NewRallyAwardsDialog from "./profile/NewRallyAwardsDialog";
-import NewShopAwardsDialog from "./profile/NewShopAwardsDialog";
-import ProfileMissionInstanceWarningDialog from "./profile/ProfileMissionInstanceWarningDialog";
+import NewRallyAwardsDialog from "./NewRallyAwardsDialog";
+import NewShopAwardsDialog from "./NewShopAwardsDialog";
+import ProfileMissionInstanceWarningDialog from "./ProfileMissionInstanceWarningDialog";
 
-import { updateParty, removeMember } from "../../store/actions/partyActions";
+import { updateParty, removeMember } from "store/actions/partyActions";
 import {
   designateUserLevel,
   bagArrayToCategories
-} from "../../utils/methods";
+} from "utils/methods";
 import {
   appearancePath,
   altAppearancePath,
   uiPaths,
-} from "../../utils/definitions";
+} from "utils/definitions";
 
 import {
   toggleItem,
@@ -37,10 +37,10 @@ import {
   clearRallyAwards,
   clearShopAwards,
   confirmLevel
-} from "../../store/actions/profileActions";
-import { authCheck } from "../../store/actions/authActions";
-import maleBody from "../../assets/profile/male-body.svg";
-import femaleBody from "../../assets/profile/female-body.png";
+} from "store/actions/profileActions";
+import { authCheck } from "store/actions/authActions";
+import maleBody from "assets/profile/male-body.svg";
+import femaleBody from "assets/profile/female-body.png";
 
 
 const useStyles = makeStyles(theme => ({

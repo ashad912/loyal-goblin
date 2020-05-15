@@ -1,6 +1,6 @@
 import React from 'react'
-import {PintoTypography} from '../../utils/fonts'
-import {palette} from '../../utils/definitions'
+import {PintoTypography} from '../../../utils/fonts'
+import {palette} from '../../../utils/definitions'
 
 const Booking = (props) => {
 

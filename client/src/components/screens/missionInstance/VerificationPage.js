@@ -4,10 +4,10 @@ import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
-import AwardListItem from '../AwardListItem'
+import AwardListItem from '../events/AwardListItem'
 import { Redirect} from 'react-router-dom'
 import styled from 'styled-components'
-import { PintoTypography } from "../../../../utils/fonts";
+import { PintoTypography } from "../../../utils/fonts";
 
 const AwardsContainer = styled(Container)`
     display: flex;

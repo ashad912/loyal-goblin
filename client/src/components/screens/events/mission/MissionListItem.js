@@ -1,21 +1,22 @@
 import React from "react";
-import MissionBasicInfo from './mission/MissionBasicInfo'
+
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
-import List from "@material-ui/core/List";
+
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
-import Avatar from "@material-ui/core/Avatar";
+
 import Typography from "@material-ui/core/Typography";
 import Badge from "@material-ui/core/Badge";
-import StarBorderIcon from "@material-ui/icons/StarBorder";
+
 import styled from "styled-components";
-import { classLabelsAny } from "../../../utils/labels";
-import { palette, itemsPath, uiPaths } from "../../../utils/definitions";
-import { PintoTypography} from '../../../utils/fonts'
-import MissionAttribute from './MissionAttribute'
+import { classLabelsAny } from "utils/labels";
+import { palette, itemsPath, uiPaths } from "utils/definitions";
+import { PintoTypography} from 'utils/fonts'
+
+import MissionAwardsHeader from './MissionAwardsHeader'
 import MissionRequirements from './MissionRequirements';
-import MissionAmulets from "./MissionAmulets";
+import MissionBasicInfo from 'components/screens/missionInstance/MissionBasicInfo'
 
 
 const StyledBox = styled(Box)`
@@ -32,6 +33,7 @@ const StyledBadge = styled(Badge)`
 
 const MissionListItem = props => {
   const mission = props.mission;
+  
   return (
     <StyledBox
       border={0}
@@ -99,31 +101,17 @@ const MissionListItem = props => {
           </Grid>
         </Grid>
         <Divider style={{ margin: "0.5rem 0" }} />
-        
         <MissionRequirements 
-            props={props}
             mission={mission}
-            titleMargin={'0'}
             dataMargin={'0 0 0.3rem 0'}
             headerVariant='body1'
             bodyVariant='body2'
+            {...props}
         />
-
-        
-        <Divider style={{ margin: "0.5rem 0" }} />
+        <MissionAwardsHeader 
+          variant='body1'
+        />
         <Grid container direction="column">
-          <Grid container direction="row">
-            <Grid item>
-              <Typography
-                component="span"
-                variant="body1"
-                color="textPrimary"
-                style={{ fontWeight: "bold" }}
-              >
-                Nagrody
-              </Typography>
-            </Grid>
-          </Grid>
           {Object.keys(mission.awards).map(className => {
             return (
               <Grid

@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import Parser from 'html-react-parser'
-import boardsvg from '../../assets/board/statki-goblin.svg'
-import Loading from '../layout/Loading';
-import TorpedoDrawer from './loyal/TorpedoDrawer'
-import LoadedTorpedo from './loyal/LoadedTorpedo'
-import LoyalAwardDialog from './loyal/LoyalAwardDialog'
+import boardsvg from 'assets/board/statki-goblin.svg'
+import Loading from 'components/layout/Loading';
+import TorpedoDrawer from './TorpedoDrawer'
+import LoadedTorpedo from './LoadedTorpedo'
+import LoyalAwardDialog from './LoyalAwardDialog'
 import Button from "@material-ui/core/Button";
 import { Typography } from '@material-ui/core';
 import styled, {css, keyframes, createGlobalStyle} from 'styled-components'
 import { connect } from 'react-redux';
-import {shootShip} from '../../store/actions/profileActions'
-import { palette } from '../../utils/definitions';
-import { PintoTypography } from '../../utils/fonts';
+import {shootShip} from 'store/actions/profileActions'
+import { palette } from 'utils/definitions';
+import { PintoTypography } from 'utils/fonts';
 
 
 const GlobalStyle = createGlobalStyle`

@@ -3,23 +3,23 @@ import moment from 'moment'
 import { Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
 import VisibilitySensor from 'react-visibility-sensor'
-import MissionDetails from './events/MissionDetails'
-import RallyDetails from './events/RallyDetails'
-import MissionListItem from './events/MissionListItem'
-import withMissionItemCommon from './events/hoc/withMissionItemCommon'
+import MissionDetails from './mission/MissionDetails'
+import RallyDetails from './rally/RallyDetails'
+import MissionListItem from './mission/MissionListItem'
+import withMissionItemCommon from '../../../hoc/withMissionItemCommon'
 import List from '@material-ui/core/List';
 
-import OrderWarningDialog from "./events/OrderWarningDialog";
+import OrderWarningDialog from "./OrderWarningDialog";
 
 import Typography from '@material-ui/core/Typography';
 import styled from 'styled-components'
 
-import {getMissionList, createInstance, deleteInstance} from '../../store/actions/missionActions.js'
-import {socket} from '../../socket'
+import {getMissionList, createInstance, deleteInstance} from '../../../store/actions/missionActions.js'
+import {socket} from '../../../socket'
 
-import Rally from './events/Rally'
-import { getFirstRally } from '../../store/actions/rallyActions'
-import { authCheck } from "../../store/actions/authActions";
+import Rally from './rally/Rally'
+import { getFirstRally } from '../../../store/actions/rallyActions'
+import { authCheck } from "../../../store/actions/authActions";
 
 import IconButton from '@material-ui/core/IconButton';
 import RefreshIcon from '@material-ui/icons/Refresh';
@@ -213,7 +213,7 @@ const Events = (props) => {
                 
             {activeMissionDetails && 
                 <MissionDetailsHoc
-                    open={activeMissionDetails ? 1 : 0}
+                    open={activeMissionDetails ? true : false}
                     activeInstanceId = {props.activeInstanceId}
                     handleClose={handleMissionDetailsClose}
                     handleMissionClick={handleMissionClick}
@@ -223,7 +223,7 @@ const Events = (props) => {
             }
             {activeRallyDetails && 
                 <RallyDetails
-                    open={activeRallyDetails ? 1 : 0}
+                    open={activeRallyDetails ? true : false}
                     rally={activeRallyDetails}
                     handleClose={handleRallyDetailsClose}
                 />

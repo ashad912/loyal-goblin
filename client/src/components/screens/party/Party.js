@@ -18,26 +18,26 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 
-import PartyCreationDialog from "./party/PartyCreationDialog";
-import PartyJoiningDialog from "./party/PartyJoiningDialog";
-import PartyMissionInstanceWarningDialog from "./party/PartyMissionInstanceWarningDialog";
+import PartyCreationDialog from "./PartyCreationDialog";
+import PartyJoiningDialog from "./PartyJoiningDialog";
+import PartyMissionInstanceWarningDialog from "./PartyMissionInstanceWarningDialog";
 
-import { updateParty, removeMember } from "../../store/actions/partyActions";
+import { updateParty, removeMember } from "../../../store/actions/partyActions";
 import {
   createAvatarPlaceholder,
   designateUserLevel,
   bagArrayToCategories
-} from "../../utils/methods";
+} from "../../../utils/methods";
 import {
   appearancePath,
   usersPath,
   classThemes,
   uiPaths,
   palette
-} from "../../utils/definitions";
-import { authCheck } from "../../store/actions/authActions";
-import { classLabels } from "../../utils/labels";
-import { PintoSerifTypography, PintoTypography } from "../../utils/fonts";
+} from "../../../utils/definitions";
+import { authCheck } from "../../../store/actions/authActions";
+import { classLabels } from "../../../utils/labels";
+import { PintoSerifTypography, PintoTypography } from "../../../utils/fonts";
 
 const FabIcon = styled.img`
   width: 2rem;
