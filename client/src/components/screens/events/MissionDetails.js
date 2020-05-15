@@ -19,17 +19,11 @@ import AwardListItem from './AwardListItem'
 import { classLabelsAny } from '../../../utils/labels';
 import {palette, uiPaths, itemsPath, missionsPath} from '../../../utils/definitions'
 import {PintoTypography} from '../../../utils/fonts'
+import DetailsHeader from './DetailsHeader'
+import MissionAttribute from './MissionAttribute'
+import MissionRequirements from './MissionRequirements';
 
 
-
-const RequiredAttribute = styled(Typography)`
-    margin: 0 0.5rem 0 0;
-    color: ${props => props.attr ? palette.primary.main : 'red' } ;
-`
-const Background = styled.div`
-    background-color: ${palette.primary.main};
-    color: white;
-`
 
 const StyledBadge = styled(Badge)`
     margin-right: ${props => props.invisible ? '0rem' : '1rem'};
@@ -59,191 +53,25 @@ const MissionDetails = (props) => {
             open={Boolean(props.open)}
             onClose={props.handleClose}
             fullWidth
-            style={{margin: '-40px -40px 10px -40px'}}
+            style={{margin: '-40px', zIndex: 1500}}
             maxWidth="lg"
         >
-        <Background>
-            <DialogContent style={{padding: '2rem 1rem', maxHeight: '31vh'}}>
-                <Grid
-                    container
-                    direction="column"
-                    style={{textAlign: 'left'}}
-                >
-                
-                    <Grid
-                        container
-                        direction="row"
-                    >
-                            
-                        <Grid item xs={9}>
-                            <Grid
-                                container
-                                direction="column"
-                                
-                            >
-                                <Grid item style={{marginBottom: '0.5rem'}}>
-                                    <Typography
-                                        component="span"
-                                        variant="h5"
-                                        
-                                    >
-                                        {mission.title}
-                                    </Typography>
-                                </Grid>
-                                <Grid item >
-                                    <PintoTypography
-                                        component="p"
-                                        variant="body2"
-                                        style={{color: 'black'}}
-                                    >
-                                        {mission.description}
-                                    </PintoTypography>
-                                </Grid>
-                            </Grid>   
-                        </Grid> 
-                        <Grid item xs={3} >
-                            <Grid
-                                container
-                                direction="column"
-                            >
-                                <Grid item style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                    <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`${missionsPath}${mission.imgSrc}`} />
-                                </Grid>
-                            </Grid>
-                        </Grid> 
-                    </Grid>
-                    
-
-                </Grid>
-            </DialogContent>
-        </Background>
+        <DetailsHeader
+            title={mission.title}
+            description={mission.description}
+            imgSrc={`${missionsPath}${mission.imgSrc}`}
+        />
 
 
-        <DialogContent style={{padding: '0.5rem 1rem'}}>
-
-            <Grid
-                container
-                direction="column"
-            >
-                <Grid
-                    container
-                    direction="row"
-                    style={{marginBottom: '0.5rem'}}
-                >
-                    
-                    <Grid item>
-                        <Typography
-                            component="span"
-                            variant="h6"
-                            color="textPrimary"
-                            style={{fontWeight: 'bold'}}
-                        >
-                            Wymagania
-                        </Typography>
-                    </Grid> 
-                </Grid>
-                <Grid
-                    container
-                    direction="row"
-                    style={{marginBottom: '0.5rem'}}
-                >
-                    
-                    <Grid item xs={3}>
-                    
-                        <Typography
-                            component="span"
-                            style={{display: 'inline-flex'}}
-                            variant="body1"
-                            color={props.appropriateLevel ? 'textPrimary' : 'error'}
-                        >
-                            {`POZ: ${mission.level}`}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={3} style={{display: 'inline-flex', alignItems: 'center'}}>
-                        <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.5rem'}} src={uiPaths.players}/>
-                        <Typography
-                            component="span"
-                            variant="body1"
-                            color={props.appropriatePlayers ? 'textPrimary' : 'error'}
-                        >
-                            {props.playersLabel(mission.minPlayers, mission.maxPlayers)}
-                        </Typography>
-                    </Grid>
-                </Grid>
-                
-                <Grid
-                    container
-                    direction="row"
-                    style={{marginBottom: '0.5rem'}}
-                >
-                    <Grid item xs={3} style={{display: 'flex', direction: 'column', alignItems: 'center'}}>
-                        <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.25rem'}} src={uiPaths.strength}/>
-                        <RequiredAttribute variant="body1" attr={props.appropriateStrength ? 1:0} >{`${props.totalStrength}/${mission.strength}`}</RequiredAttribute>
-                    </Grid>
-                    <Grid item xs={3} style={{display: 'flex', direction: 'column', alignItems: 'center'}}>
-                        <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.25rem'}} src={uiPaths.dexterity}/>
-                        <RequiredAttribute variant="body1" attr={props.appropriateDexterity ? 1:0} >{`${props.totalDexterity}/${mission.dexterity}`}</RequiredAttribute>
-                    </Grid>
-                    <Grid item xs={3} style={{display: 'flex', direction: 'column', alignItems: 'center'}}>
-                        <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.25rem'}} src={uiPaths.magic}/>
-                        <RequiredAttribute variant="body1" attr={props.appropriateMagic ? 1:0} >{`${props.totalMagic}/${mission.magic}`}</RequiredAttribute> 
-                    </Grid>
-                    <Grid item xs={3} style={{display: 'flex', direction: 'column', alignItems: 'center'}}>
-                        <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.25rem'}} src={uiPaths.cleric}/>
-                        <RequiredAttribute variant="body1" attr={props.appropriateEndurance ? 1:0} >{`${props.totalEndurance}/${mission.endurance}`}</RequiredAttribute>
-                    </Grid>
-                </Grid>
-                
-                <Grid
-                    container
-                    direction="row"
-                    style={{marginBottom: '0', minHeight: '20px'}}
-                >
-                    {mission.amulets && mission.amulets.length > 0 &&
-                    <Grid item style={{ display: "inline-flex", alignItems: 'center' }}>
-                        <Typography 
-                            variant='body1'
-                            component="span"
-                            style={{display: 'inline-flex', margin: '0 0.3rem 0 0'}}
-                        >
-                        {mission.amulets && mission.amulets.length > 0 && `Wymagane trofea: `} 
-                        </Typography>
-                        
-                        {mission.amulets.map(amulet => {
-                            return (
-                                <StyledBadge
-                                    color="primary"
-                                    badgeContent={amulet.quantity}
-                                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                                    style={{transform: 'scale(0.9)' }}
-                                    invisible={amulet.quantity <= 1}
-                                >
-                                <Typography
-                                    variant="body2"
-                                    component="div"
-                                    style={{
-                                        display: "inline-flex",
-                                        margin: "0 0.2rem 0 0"
-                                    }}
- 
-                                >
-                                <img
-                                    style={{
-                                        height: 20,
-                                        width: 20,
-                                        marginLeft: "0.1rem"
-                                    }}
-                                    src={`${itemsPath}${amulet.itemModel.imgSrc}`}
-                                    alt="icon"
-                                />
-                                {` `}
-                                </Typography>
-                                </StyledBadge>
-                            );
-                        })}
-                    </Grid>}
-                </Grid>
-            </Grid>
+        <DialogContent style={{padding: '0.5rem 1rem', minHeight: '177px'}}>
+            <MissionRequirements 
+                props={props}
+                mission={mission}
+                titleMargin={'0 0 0.5rem 0'}
+                dataMargin={'0 0 0.5rem 0'}
+                headerVariant='h6'
+                bodyVariant='body1'
+            />
             <Divider style={{margin: '0.5rem 0'}}/>
             <Grid 
                 container
@@ -265,6 +93,13 @@ const MissionDetails = (props) => {
                         </Typography>
                     </Grid> 
                 </Grid>
+            </Grid>
+            </DialogContent>
+            <DialogContent>
+            <Grid 
+                container
+                direction='column'
+            >
                 <Grid item style={{marginTop: '0.5rem'}}>
                 {/*mission.hasOwnProperty('awards') &&*/ Object.keys(mission.awards).map((className)=> {
   

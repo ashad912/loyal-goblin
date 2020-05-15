@@ -19,6 +19,7 @@ import AwardListItem from './AwardListItem'
 import { classLabelsAny } from '../../../utils/labels';
 import { ralliesPath, palette, uiPaths } from '../../../utils/definitions'
 import {PintoTypography} from '../../../utils/fonts'
+import DetailsHeader from './DetailsHeader'
 
 const Background = styled.div`
     background-color: ${palette.primary.main};
@@ -64,62 +65,14 @@ const RallyDetails = (props) => {
             open={props.open}
             onClose={props.handleClose}
             fullWidth
-            style={{margin: '-40px'}}
+            style={{margin: '-40px', zIndex: 1500}}
             maxWidth="lg"
         >
-        <Background>
-            <DialogContent style={{padding: '2rem 1rem', maxHeight: '31vh'}}>
-                <Grid
-                    container
-                    direction="column"
-                    style={{textAlign: 'left'}}
-                >
-                
-                <Grid
-                    container
-                    direction="row"
-                >        
-                    <Grid item xs={9}>
-                        <Grid
-                            container
-                            direction="column"      
-                        >
-                        <Grid item style={{marginBottom: '0.5rem'}}>
-                            <Typography
-                                component="span"
-                                variant="h5"
-                                
-                            >
-                                {rally.title}
-                            </Typography>
-                        </Grid>
-                        <Grid item /*style={{textAlign: 'justify'}}*/> 
-                            <PintoTypography
-                                component="p"
-                                variant="body2"
-                                style={{color: 'black'}}
-                            >
-                                {rally.description}
-                            </PintoTypography>
-                        </Grid>
-                        </Grid>   
-                    </Grid> 
-                    <Grid item xs={3} >
-                        <Grid
-                            container
-                            direction="column"
-                        >
-                            <Grid item style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                <Avatar alt="avatar" style={{width: '3.5rem', height: '4rem'}} src={`${ralliesPath}${rally.imgSrc}`} />
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                    
-
-                </Grid>
-                </Grid>
-            </DialogContent>
-        </Background>
+            <DetailsHeader
+                title={rally.title}
+                description={rally.description}
+                imgSrc={`${ralliesPath}${rally.imgSrc}`}
+            />
 
 
         <DialogContent style={{padding: '0.5rem 1rem', minHeight: '122px'}}>
