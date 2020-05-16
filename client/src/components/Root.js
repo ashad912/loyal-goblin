@@ -108,6 +108,8 @@ function Root(props) {
       const redirectToIndex = props.location.state.indexRedirect;
       setValue(redirectToIndex);
       props.history.replace("", null);
+    }else if(sessionStorage.tabIndex){
+      setValue(parseInt(sessionStorage.tabIndex))
     }
 
     if(props.auth.profile.name && props.auth.profile.class){
@@ -143,14 +145,17 @@ function Root(props) {
 
 
 
-  
+  const changeValue = (newValue) => {
+    setValue(newValue);
+    sessionStorage.tabIndex = newValue
+  }
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
+    changeValue(newValue);
   };
 
   const handleChangeIndex = index => {
-    setValue(index);
+    changeValue(index);
   };
 
   const handleCharacterCreationFinish = async (name, sex, charClass, attributes) => {

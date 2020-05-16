@@ -75,12 +75,18 @@ const Admin = (props) => {
   //     }
   // }
 
+  React.useEffect(() => {
+    // if(sessionStorage.currentPage){
+      
+    // }
+  }, [])
   const handleLogout = async e => {
     await props.signOut() 
 }
 
   const handlePageChange = (e, page) => {
     setCurrentPage(page);
+    //sessionStorage.currentPage = page;
   };
 
   let page;
