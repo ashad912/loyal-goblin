@@ -9,71 +9,61 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 
-
 import Attribute from "./Attribute";
 import Equipment from "./Equipment";
 import NewLevelDrawer from "./NewLevelDrawer";
 import PerkBox from "./PerkBox";
-
 
 import NewRallyAwardsDialog from "./NewRallyAwardsDialog";
 import NewShopAwardsDialog from "./NewShopAwardsDialog";
 import ProfileMissionInstanceWarningDialog from "./ProfileMissionInstanceWarningDialog";
 
 import { updateParty, removeMember } from "store/actions/partyActions";
-import {
-  designateUserLevel,
-  bagArrayToCategories
-} from "utils/methods";
-import {
-  appearancePath,
-  altAppearancePath,
-  uiPaths,
-} from "utils/definitions";
+import { designateUserLevel, bagArrayToCategories } from "utils/methods";
+import { appearancePath, altAppearancePath, uiPaths } from "utils/definitions";
 
 import {
   toggleItem,
   deleteItem,
   clearRallyAwards,
   clearShopAwards,
-  confirmLevel
+  confirmLevel,
 } from "store/actions/profileActions";
 import { authCheck } from "store/actions/authActions";
 import maleBody from "assets/profile/male-body.svg";
 import femaleBody from "assets/profile/female-body.png";
 
-
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   wrapper: {
     flexGrow: 1,
-    position: "relative"
+    position: "relative",
   },
   avatarCard: {
     alignSelf: "stretch",
     marginBottom: "1rem",
     display: "grid",
-    grid: "100% 100% "
+    grid: "100% 100% ",
   },
   avatarImage: {
     width: "100%",
     gridColumn: 1,
-    gridRow: 1
+    gridRow: 1,
   },
   expBar: {
     width: "100%",
-    marginBottom: "1rem"
+    marginBottom: "1rem",
   },
   eqHeading: {
     margin: "1rem 0",
-    alignSelf:'flex-start'
-  }
+    alignSelf: "flex-start",
+  },
 }));
 
-const Profile = props => {
+const Profile = (props) => {
   const history = useHistory();
   const classes = useStyles();
 
-  const [equipmentOpen, setEquipmentOpen] = React.useState(false)
+  const [equipmentOpen, setEquipmentOpen] = React.useState(false);
   const [bag, setBag] = React.useState(
     bagArrayToCategories(props.auth.profile.bag)
   );
@@ -81,14 +71,14 @@ const Profile = props => {
 
   const authUpdate = async () => {
     await props.onAuthCheck();
-  }
+  };
 
   React.useEffect(() => {
     if (
       history.location.state &&
       history.location.state.hasOwnProperty("authCheck")
     ) {
-      authUpdate()
+      authUpdate();
     }
     updateEquippedItems();
     props.onPartyUpdate();
@@ -110,10 +100,8 @@ const Profile = props => {
 
   const [
     missionInstanceWarningDialog,
-    setMissionInstanceWarningDialog
+    setMissionInstanceWarningDialog,
   ] = React.useState({ action: null, text: "" });
-
-  
 
   React.useEffect(() => {
     const levelData = designateUserLevel(props.auth.profile.experience, true);
@@ -139,62 +127,57 @@ const Profile = props => {
       weaponLeft: null,
       ringRight: null,
       ringLeft: null,
-      scroll: null
+      scroll: null,
     };
     const perks = [];
 
-    const profile = param ? param : props.auth.profile
-    
+    const profile = param ? param : props.auth.profile;
 
-    Object.keys(profile.equipped).forEach(category => {
-      
+    Object.keys(profile.equipped).forEach((category) => {
       let loadedEquippedItem;
       if (category.startsWith("weapon")) {
         loadedEquippedItem =
           bag.weapon &&
-          bag.weapon.find(
-            item => item._id === profile.equipped[category]
-          );
+          bag.weapon.find((item) => item._id === profile.equipped[category]);
       } else if (category.startsWith("ring")) {
         loadedEquippedItem =
           bag.ring &&
-          bag.ring.find(
-            item => item._id === profile.equipped[category]
-          );
+          bag.ring.find((item) => item._id === profile.equipped[category]);
       } else {
         loadedEquippedItem =
           bag[category] &&
-          bag[category].find(
-            item => item._id === profile.equipped[category]
-          );
+          bag[category].find((item) => item._id === profile.equipped[category]);
       }
 
       if (loadedEquippedItem) {
-        if(loadedEquippedItem.itemModel.type === 'weapon'){
-          if(category === 'weaponLeft' || loadedEquippedItem.itemModel.twoHanded){
+        if (loadedEquippedItem.itemModel.type === "weapon") {
+          if (
+            category === "weaponLeft" ||
+            loadedEquippedItem.itemModel.twoHanded
+          ) {
             equipment[category] = loadedEquippedItem.itemModel.appearanceSrc;
-          }else if(category === 'weaponRight'){
+          } else if (category === "weaponRight") {
             equipment[category] = loadedEquippedItem.itemModel.altAppearanceSrc;
           }
-        }else{
-          if(profile.sex === 'male'){
+        } else {
+          if (profile.sex === "male") {
             equipment[category] = loadedEquippedItem.itemModel.appearanceSrc;
-          }else{
+          } else {
             equipment[category] = loadedEquippedItem.itemModel.altAppearanceSrc;
           }
         }
-        
+
         if (
           loadedEquippedItem.itemModel.hasOwnProperty("perks") &&
           loadedEquippedItem.itemModel.perks.length > 0
         ) {
-          loadedEquippedItem.itemModel.perks.forEach(perk => {
+          loadedEquippedItem.itemModel.perks.forEach((perk) => {
             perks.push(perk);
           });
         }
       }
     });
-    
+
     setEquippedItems({ ...equipment });
     setActivePerks([...perks]);
   };
@@ -217,7 +200,7 @@ const Profile = props => {
           const rightHandItem =
             tempPlayer.equipped.weaponRight &&
             bag.weapon.find(
-              item => item._id === tempPlayer.equipped.weaponRight
+              (item) => item._id === tempPlayer.equipped.weaponRight
             ).itemModel;
           if (
             rightHandItem &&
@@ -300,8 +283,7 @@ const Profile = props => {
     }
   };
 
-  const handleItemDelete = id => {
-
+  const handleItemDelete = (id) => {
     if (props.party && props.party.inShop) {
       return;
     } else {
@@ -310,21 +292,19 @@ const Profile = props => {
     }
   };
 
-
-
   const handleOpenShop = () => {
     history.push("/shop", { id: props.auth.uid });
   };
-
 
   const handleMissionInstanceWarningDialog = (action, text) => {
     setMissionInstanceWarningDialog({ action, text });
   };
 
-  const handleToggleEquipment = isOpen => {
-    setEquipmentOpen(isOpen)
-  }
-  const rootPath = props.auth.profile.sex === "male" ? appearancePath : altAppearancePath
+  const handleToggleEquipment = (isOpen) => {
+    setEquipmentOpen(isOpen);
+  };
+  const rootPath =
+    props.auth.profile.sex === "male" ? appearancePath : altAppearancePath;
   return (
     <Grid
       container
@@ -363,7 +343,19 @@ const Profile = props => {
         style={{ padding: "0.4rem 0" }}
       >
         <Grid item xs={8} style={{ padding: 0 }}>
-          <div style={{ width: "100%", height: '100%' }} className={classes.avatarCard}>
+          <div
+            style={{ width: "100%", height: "100%" }}
+            className={classes.avatarCard}
+          >
+            {/* Main-hand weapon */}
+
+            {equippedItems && equippedItems.weaponRight && (
+              <img
+                className={classes.avatarImage}
+                src={`${appearancePath}${equippedItems.weaponRight}`}
+              />
+            )}
+
             {/* body */}
             <img
               src={props.auth.profile.sex === "female" ? femaleBody : maleBody}
@@ -401,27 +393,18 @@ const Profile = props => {
                 />
               )}
 
-            {/* hands */}
-            {equippedItems && equippedItems.hands && (
-              <img
-                className={classes.avatarImage}
-                src={`${rootPath}${equippedItems.hands}`}
-              />
-            )}
-
-            {/* Main-hand weapon */}
-
-            {equippedItems && equippedItems.weaponRight && (
-              <img
-                className={classes.avatarImage}
-                src={`${appearancePath}${equippedItems.weaponRight}`}
-              />
-            )}
             {/* Off-hand weapon */}
             {equippedItems && equippedItems.weaponLeft && (
               <img
                 className={classes.avatarImage}
                 src={`${altAppearancePath}${equippedItems.weaponLeft}`}
+              />
+            )}
+            {/* hands */}
+            {equippedItems && equippedItems.hands && (
+              <img
+                className={classes.avatarImage}
+                src={`${rootPath}${equippedItems.hands}`}
               />
             )}
           </div>
@@ -470,59 +453,73 @@ const Profile = props => {
             />
           </Grid>
           <Grid item style={{ width: "100%" }}>
-              <div style={{marginTop:'1rem', width:'100%'}}>
-
-          {(props.party &&
-            props.party.leader &&
-            (props.party.leader._id === props.auth.uid ||
-              props.party.leader === props.auth.uid)) ||
-          (!props.party.leader && !props.party.members.length) ? (
-            <Button
-              variant="contained"
-              color="primary"
-              style={{ marginBottom: "1rem" , padding: '0.6rem 1rem', width:'100%'}}
-              onClick={
-                props.mission.activeInstanceId
-                  ? () =>
-                      handleMissionInstanceWarningDialog(
-                        () => handleOpenShop(),
-                        "Otworzenie sklepu"
-                      )
-                  : handleOpenShop
-              }
-            >
-              Przygoda
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              color="primary"
-              disabled
-              style={{ marginBottom: "1rem", padding: '0.6rem 1rem', width:'100%' }}
-            >
-              Przygoda
-            </Button>
-          )}
-          <Button variant="contained" style={{background:'white', padding: '0.6rem 1rem', width:'100%'}} onClick={()=>setEquipmentOpen(prev => !prev)}>
-            Ekwipunek
-          </Button>
-              </div>
+            <div style={{ marginTop: "1rem", width: "100%" }}>
+              {(props.party &&
+                props.party.leader &&
+                (props.party.leader._id === props.auth.uid ||
+                  props.party.leader === props.auth.uid)) ||
+              (!props.party.leader && !props.party.members.length) ? (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  style={{
+                    marginBottom: "1rem",
+                    padding: "0.6rem 1rem",
+                    width: "100%",
+                  }}
+                  onClick={
+                    props.mission.activeInstanceId
+                      ? () =>
+                          handleMissionInstanceWarningDialog(
+                            () => handleOpenShop(),
+                            "Otworzenie sklepu"
+                          )
+                      : handleOpenShop
+                  }
+                >
+                  Przygoda
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  disabled
+                  style={{
+                    marginBottom: "1rem",
+                    padding: "0.6rem 1rem",
+                    width: "100%",
+                  }}
+                >
+                  Przygoda
+                </Button>
+              )}
+              <Button
+                variant="contained"
+                style={{
+                  background: "white",
+                  padding: "0.6rem 1rem",
+                  width: "100%",
+                }}
+                onClick={() => setEquipmentOpen((prev) => !prev)}
+              >
+                Ekwipunek
+              </Button>
+            </div>
           </Grid>
         </Grid>
       </Grid>
       {activePerks.length > 0 && (
         <React.Fragment>
-          <Typography variant="h5" className={classes.eqHeading} >
+          <Typography variant="h5" className={classes.eqHeading}>
             Aktywne efekty
           </Typography>
           <PerkBox perks={activePerks} />
         </React.Fragment>
       )}
-      
 
       <Equipment
-      toggle={handleToggleEquipment}
-      isOpen={equipmentOpen}
+        toggle={handleToggleEquipment}
+        isOpen={equipmentOpen}
         items={bag}
         equipped={
           props.auth.profile.hasOwnProperty("equipped") &&
@@ -540,7 +537,7 @@ const Profile = props => {
           !props.auth.profile.rallyNotifications.isNew &&
           !props.auth.profile.shopNotifications.isNew
         }
-        confirmLevel={attribute => props.confirmLevel(attribute)}
+        confirmLevel={(attribute) => props.confirmLevel(attribute)}
         userLevel={userLevel}
         levelNotifications={props.auth.profile.levelNotifications}
         attributes={props.auth.profile.attributes}
@@ -572,27 +569,27 @@ const Profile = props => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     auth: state.auth,
     party: state.party,
-    mission: state.mission
+    mission: state.mission,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     onItemToggle: (id, category, equipped) =>
       dispatch(toggleItem(id, category, equipped)),
-    onItemDelete: id => dispatch(deleteItem(id)),
+    onItemDelete: (id) => dispatch(deleteItem(id)),
     onPartyUpdate: (params, socketAuthReconnect) =>
       dispatch(updateParty(params, socketAuthReconnect)),
     onRemoveMember: (partyId, memberId) =>
       dispatch(removeMember(partyId, memberId)),
     clearRallyAwards: () => dispatch(clearRallyAwards()),
     clearShopAwards: () => dispatch(clearShopAwards()),
-    confirmLevel: attribute => dispatch(confirmLevel(attribute)),
-    onAuthCheck: () => dispatch(authCheck())
+    confirmLevel: (attribute) => dispatch(confirmLevel(attribute)),
+    onAuthCheck: () => dispatch(authCheck()),
   };
 };
 

@@ -18,6 +18,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import KeyboardArrowLeftIcon from "@material-ui/icons/KeyboardArrowLeft";
 import LockIcon from '@material-ui/icons/Lock';
+import RefreshIcon from '@material-ui/icons/Refresh';
 import { Badge } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { useHistory } from "react-router";
@@ -172,9 +173,11 @@ const Navbar = (props) => {
             const avatarSize = avatar.size / 1024 / 1024; // in MB
             
             if(avatarSize >= 6){
+                setShowDrawer(null);
                 setAlertMessage("Maksymalna wielkosć pliku to 6 MB!")
                 setShowAlertSnackbar(true)  
             }else if(!avatar.type.includes('image/')){
+                setShowDrawer(null);
                 setAlertMessage("Nieprawidłowe rozszerzenie pliku!")
                 setShowAlertSnackbar(true)   
             }else{
@@ -375,6 +378,19 @@ const Navbar = (props) => {
                                     </Link>
                                 </ListItemText>
                             </StyledMenuItem>
+                            <StyledMenuItem>
+                                    
+                                    <ListItemIcon>
+                                        <RefreshIcon />
+                                    </ListItemIcon>
+                                    
+                                    
+                                    <ListItemText>
+                                    <Link onClick={()=>window.location.reload(true)} underline='none' color="primary">
+                                        <PintoTypography>Odśwież</PintoTypography>
+                                    </Link>
+                                    </ListItemText>
+                                </StyledMenuItem>
                             <StyledMenuItem>
                                     
                                 <ListItemIcon>

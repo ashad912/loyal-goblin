@@ -2,6 +2,7 @@ import React from "react";
 import {compose} from 'redux'
 import { BrowserRouter, Route, Switch, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
+import {Workbox, messageSW} from 'workbox-window';
 import { StylesProvider, ThemeProvider } from "@material-ui/styles";
 import { createMuiTheme } from "@material-ui/core/styles";
 import styled from "styled-components";
@@ -83,6 +84,49 @@ class App extends React.Component {
       window.addEventListener('offline', this.handleOfflineState, false);
     }
     
+    if ('serviceWorker' in navigator) {
+      const wb = new Workbox('/sw.js');
+      let registration;
+    
+      const showSkipWaitingPrompt = (event) => {
+        // `event.wasWaitingBeforeRegister` will be false if this is
+        // the first time the updated service worker is waiting.
+        // When `event.wasWaitingBeforeRegister` is true, a previously
+        // updated service worker is still waiting.
+        // You may want to customize the UI prompt accordingly.
+    
+        // Assumes your app has some sort of prompt UI element
+        // that a user can either accept or reject.
+
+        alert("Aplikacja została zaktualizowana! Zatwierdź, by wczytać nową wersję.")
+  
+            // Assuming the user accepted the update, set up a listener
+            // that will reload the page as soon as the previously waiting
+            // service worker has taken control.
+            wb.addEventListener('controlling', (event) => {
+              window.location.reload();
+            });
+    
+            if (registration && registration.waiting) {
+              // Send a message to the waiting service worker,
+              // instructing it to activate.  
+              // Note: for this to work, you have to add a message
+              // listener in your service worker. See below.
+              messageSW(registration.waiting, {type: 'SKIP_WAITING'});
+            }
+          
+       
+        
+        }
+        
+          // Add an event listener to detect when the registered
+          // service worker has installed but is waiting to activate.
+          wb.addEventListener('waiting', showSkipWaitingPrompt);
+          wb.addEventListener('externalwaiting', showSkipWaitingPrompt);
+        
+          registration = await wb.register();
+  }
+
 
     window.addEventListener("popstate", e => {
       // Reload after popstate (to update client)

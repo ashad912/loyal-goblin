@@ -150,10 +150,21 @@ router.get('/first', auth, async (req, res)=> {
         }
         const rally = rallyArray[0]
 
-        await rally.populate({
-            path: 'awardsLevels.awards.any.itemModel awardsLevels.awards.warrior.itemModel awardsLevels.awards.rogue.itemModel awardsLevels.awards.mage.itemModel awardsLevels.awards.cleric.itemModel',
-            populate: { path: "perks.target.disc-product", select: '_id name' },
-        }).execPopulate()
+        if(rally.awardsAreSecret){
+            rally.awardsLevels.forEach(awardLevel => {
+                awardLevel.awards.any = []
+                awardLevel.awards.warrior = []
+                awardLevel.awards.mage = []
+                awardLevel.awards.rogue = []
+                awardLevel.awards.cleric = []
+            })
+        }
+        if(!rally.awardsAreSecret){
+            await rally.populate({
+                path: 'awardsLevels.awards.any.itemModel awardsLevels.awards.warrior.itemModel awardsLevels.awards.rogue.itemModel awardsLevels.awards.mage.itemModel awardsLevels.awards.cleric.itemModel',
+                populate: { path: "perks.target.disc-product", select: '_id name' },
+            }).execPopulate()
+        }
 
         rally.users = rally.users.filter((user) => { //return only user whoes fetched request
             return user.profile.toString() === req.user._id.toString()

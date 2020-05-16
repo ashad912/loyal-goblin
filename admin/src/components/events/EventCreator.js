@@ -45,6 +45,7 @@ import {
 import { getItemModels } from "../../store/actions/itemActions";
 
 import "moment/locale/pl";
+import ImageWrapper from "../common/ImageWrapper";
 moment.locale("pl");
 
 const alertAnimation = keyframes`
@@ -1145,7 +1146,17 @@ class EventCreator extends Component {
                 </Grid>
               )}
             <Grid item>
-              <FileInputWrapper>
+              <ImageWrapper 
+              view={this.state.iconView }
+              text={this.state.isRally ? " ikonę rajdu *" : " ikonę misji *"}
+              viewName="icon"
+              fileName="icon"
+              accept="image/*"
+              error={this.state.validationErrors.iconView}
+              imageChange={this.handleIconChange}
+              wide
+              />
+              {/* <FileInputWrapper>
                 <FileInputButton variant="contained" color="primary">
                   {this.state.iconView ? "Zmień ikonę" : "Dodaj ikonę"}{" "}
                   {this.state.isRally ? " rajdu *" : " misji *"}
@@ -1155,9 +1166,9 @@ class EventCreator extends Component {
                   onChange={this.handleIconChange}
                   inputProps={{ accept: "image/*" }}
                 />
-              </FileInputWrapper>
+              </FileInputWrapper> */}
             </Grid>
-            <Grid
+            {/* <Grid
               item
               style={{
                 display: "flex",
@@ -1172,7 +1183,7 @@ class EventCreator extends Component {
                   style={{ width: "64px" }}
                 />
               )}
-            </Grid>
+            </Grid> */}
           </Grid>
           {!this.state.isRally && (
             <React.Fragment>
@@ -1323,6 +1334,20 @@ class EventCreator extends Component {
                 style={{ width: "100%" }}
               />
             </Grid>
+            {this.state.isRally &&
+            <Grid item>
+            <FormControlLabel
+              style={{ marginLeft: "4rem" }}
+              control={
+                <Checkbox
+                  checked={this.state.awardsAreSecret}
+                  onChange={this.handleChangeAwardsAreSecret}
+                />
+              }
+              label="Nagrody ukryte"
+            />
+          </Grid>
+            }
 
             {this.state.isRally && (
               <Grid
@@ -1332,6 +1357,7 @@ class EventCreator extends Component {
                 justify="flex-start"
                 spacing={2}
               >
+                
                 <Grid item style={{ minWidth: "20vw" }}>
                   <TextField
                     value={this.state.awardLevelExperienceInput}

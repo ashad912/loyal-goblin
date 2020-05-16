@@ -22,7 +22,7 @@ const HiddenFileInput = styled(({...otherProps }) => (
   left: 0;
   opacity: 0;
   height: ${props => props.twoLines ? '3.7rem' : '2.5rem'};
-  width: 10rem;
+  width: ${props => props.wide ? '20rem':'10rem'};
   user-select: none; 
   .input {
     height: ${props => props.twoLines ? '3.7rem' : '2.5rem'};
@@ -35,18 +35,18 @@ const FileInputButton = styled(Button)`
   top: 0;
   left: 0;
   height: ${props => props.twoLines ? '3.7rem' : '2.5rem'};
-  width: 10rem;
+  width: ${props => props.wide ? '20rem':'10rem'};
 `;
 
 
-const ImageWrapper = ({view, text, secondaryText, viewName, fileName, accept, error, imageChange}) => {
+const ImageWrapper = ({view, text, secondaryText, viewName, fileName, accept, error, imageChange, wide}) => {
     
     
     return(
         <Grid container spacing={2}>
             <Grid item>
                 <FileInputWrapper twoLines={secondaryText}>
-                    <FileInputButton variant="contained" color="primary" twoLines={secondaryText}>
+                    <FileInputButton variant="contained" color="primary" twoLines={secondaryText} wide={wide ? 1:0}>
                         {view ? `Zmień ${text}` : `Dodaj ${text}`}
                         <br/>
                         {secondaryText}
@@ -56,6 +56,7 @@ const ImageWrapper = ({view, text, secondaryText, viewName, fileName, accept, er
                     onChange={(e) => imageChange(e, viewName, fileName)}
                     inputProps={{accept}}
                     twoLines={secondaryText}
+                    wide={wide ? 1:0}
                 />
                 
                 </FileInputWrapper>
@@ -66,7 +67,8 @@ const ImageWrapper = ({view, text, secondaryText, viewName, fileName, accept, er
                     style={{
                     display: "flex",
                     justifyContent: "center",
-                    alignItems: "center"
+                    alignItems: "center",
+                    marginLeft: wide && '10rem'
                 }}
             >
                 <img alt='' src={view} style={{ width: "64px", height: '64px' }} />
@@ -85,7 +87,7 @@ ImageWrapper.propTypes = {
     accept: PropTypes.string.isRequired,
     error: PropTypes.string.isRequired,
     imageChange: PropTypes.func.isRequired,
-
+    wide: PropTypes.bool
 }
 
 export default ImageWrapper

@@ -12,14 +12,14 @@ const connectionReducer = (state = initState, action) => {
         case 'NO_CONNECTION':
             //console.log("no connection")
             //console.log(action.error.message)
-            let message = "Brak połączenia z serwerem."
-            if(action.error.message === "Network Error"){
-                message = "Maksymalna wielkosć pliku to 6 MB!"
-            }
+            // let message = "Brak połączenia z serwerem."
+            // if(action.error.message === "Network Error"){
+            //     message = "Maksymalna wielkosć pliku to 6 MB!"
+            // }
             return {
                 ...state,
                 connectionError: true,
-                message: message
+                //message: message
         }
         case 'RESET_CONNECTION_ERROR':
             //console.log("reset connection error")
