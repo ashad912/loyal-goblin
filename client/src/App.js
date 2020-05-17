@@ -243,7 +243,7 @@ class App extends React.Component {
             />
             <ConnectionSpinnerDialog />
             <SocketConfig />
-            <Toast id="toast" onClick={this.closeToast}>
+            {/* <Toast id="toast" onClick={this.closeToast}>
               Dostępna aktualizacja!
               <p
                 style={{
@@ -254,7 +254,7 @@ class App extends React.Component {
               >
                 Zamknij aplikację i uruchom ją ponownie.
               </p>
-            </Toast>
+            </Toast> */}
             <OfflineModal open={!this.state.online}/>
           </ThemeProvider>
         </StylesProvider>
