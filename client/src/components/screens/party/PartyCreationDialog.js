@@ -152,7 +152,9 @@ const PartyCreationDialog = props => {
     props.onPartyCreate(partyName.trim(), {
       _id: props.auth.uid,
       name: props.auth.profile.name,
-      avatar: props.auth.profile.avatar
+      avatar: props.auth.profile.avatar,
+      experience: props.auth.profile.experience,
+      class: props.auth.profile.class,
     });
     setIsManagingParty(true);
   };
