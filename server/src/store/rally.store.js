@@ -1,5 +1,6 @@
 import cron from 'node-cron'
 import moment from 'moment'
+import mongoose from 'mongoose'
 import { Rally } from '@models/rally';
 import { User } from '@models/user'
 import { Item } from '@models/item';
@@ -7,6 +8,55 @@ import { asyncForEach, designateExperienceMods} from '@utils/methods'
 
 let finishTask
 
+
+
+const rallyProjection = (userId) =>  {
+    return{
+        '_id': 1,
+        'title': 1,
+        'description': 1,
+        'imgSrc': 1,
+        'activationDate': 1,
+        'startDate': 1,
+        'expiryDate': 1,
+        'awardsAreSecret': 1,
+        'users': {
+            $filter: {
+                input: '$users',
+                as: 'user',
+                cond: {
+                    '$eq': ['$$user.profile', new mongoose.Types.ObjectId(userId)]
+                }
+            }
+        },
+        'awardsLevels': {
+            $cond: {
+                if: {
+                    '$eq': ['$awardsAreSecret', true]
+                },
+                then: {
+                    $map: {
+                        input: '$awardsLevels',
+                        as: 'awardsLevel',
+                        in: { 
+                            '_id': '$$awardsLevel._id',
+                            'level': '$$awardsLevel.level',
+                            'awards': {
+                                'any': [],
+                                'warrior': [],
+                                'rogue': [],
+                                'mage': [],
+                                'cleric': [],
+                            }
+                        }
+                    }      
+                },
+                else: '$awardsLevels'
+            }
+    },
+    }
+    
+}
 
 const updateQueue = async () => {
     
@@ -174,5 +224,6 @@ const destroyCronTask = () => {
 export default {
     updateQueue,
     finish,
-    destroyCronTask
+    destroyCronTask,
+    rallyProjection
 }

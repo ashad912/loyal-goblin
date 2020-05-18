@@ -80,7 +80,7 @@ const AwardsSections = ({awards, awardsAreSecret, openList, handleOpenList, alwa
                 })
             }
             {!alwaysShowSections && awardsAreSecret && (
-                <Typography variant="h6" align='center'> Nie mamy informacji o nagrodach, które można zdobyć!</Typography>
+                <Typography variant="body1" align='center'> Nie mamy informacji o nagrodach,<br/> które można zdobyć!</Typography>
             )}
             </Grid>
         </Grid>

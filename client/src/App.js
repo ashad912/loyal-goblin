@@ -78,13 +78,14 @@ class App extends React.Component {
 
 
   async componentDidMount() {
-    const online = process.env.NODE_ENV === 'production' ? navigator.onLine : true
+    const prod = process.env.NODE_ENV === 'production'
+    const online = prod ? navigator.onLine : true
     if(process.env.NODE_ENV === 'production'){
       window.addEventListener('online', this.handleOnlineState, false);
       window.addEventListener('offline', this.handleOfflineState, false);
     }
     
-    if ('serviceWorker' in navigator) {
+    if (prod && 'serviceWorker' in navigator) {
       const wb = new Workbox('/sw.js');
       let registration;
     

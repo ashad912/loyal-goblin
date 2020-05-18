@@ -1,29 +1,29 @@
 import express from 'express'
-import { User } from '../models/user';
-import { Mission } from '../models/mission';
-import { adminAuth } from '../middleware/adminAuth';
-import { auth } from '../middleware/auth';
-import { MissionInstance } from '../models/missionInstance';
-import { MissionInstanceExpiredEvent } from '../models/missionInstanceExpiredEvent';
-import { Item } from '../models/item'
-import { ItemModel } from '../models/itemModel'
+import moment from 'moment'
+
+import { auth } from '@middleware/auth';
+import { adminAuth } from '@middleware/adminAuth';
+
+import { User } from '@models/user';
+import { Mission } from '@models/mission';
+import { MissionInstance } from '@models/missionInstance';
+import { MissionInstanceExpiredEvent } from '@models/missionInstanceExpiredEvent';
+import { Item } from '@models/item'
+import { ItemModel } from '@models/itemModel'
+import {Rally} from '@models/rally'
+import { Party } from '@models/party';
+
+import missionStore from '@store/mission.store.js'
+
 import { 
     asyncForEach,
     designateExperienceMods, 
     savePNGImage, 
     removeImage, 
     updateAmuletCounters, 
-} from '../utils/methods'
+} from '@utils/methods'
 
-import isEqual from 'lodash/isEqual'
-import moment from 'moment'
-import {Rally} from '../models/rally'
-import { Party } from '../models/party';
-import missionStore from '@store/mission.store.js'
-
-
-
-const uploadPath = "../static/images/missions/"
+//const uploadPath = "../static/images/missions/"
 
 
 
@@ -37,8 +37,12 @@ const router = new express.Router
 //OK
 router.get('/events', adminAuth, async (req,res) => {
     try{
-        const missionList = await Mission.find({}).populate({path: 'amulets.itemModel awards.any.itemModel awards.warrior.itemModel awards.rogue.itemModel awards.mage.itemModel awards.cleric.itemModel'})
-        const rallyList = await Rally.find({}).populate({path: 'awardsLevels.awards.any.itemModel awardsLevels.awards.warrior.itemModel awardsLevels.awards.rogue.itemModel awardsLevels.awards.mage.itemModel awardsLevels.awards.cleric.itemModel'})
+        const missionList = await Mission
+            .find({})
+            .populate({path: 'amulets.itemModel awards.any.itemModel awards.warrior.itemModel awards.rogue.itemModel awards.mage.itemModel awards.cleric.itemModel'})
+        const rallyList = await Rally
+            .find({})
+            .populate({path: 'awardsLevels.awards.any.itemModel awardsLevels.awards.warrior.itemModel awardsLevels.awards.rogue.itemModel awardsLevels.awards.mage.itemModel awardsLevels.awards.cleric.itemModel'})
         //populate rallyList
 
         const eventList = [...missionList, ...rallyList]
@@ -72,7 +76,7 @@ router.delete('/remove', adminAuth, async(req, res) => {
             return res.status(404).send()
         }
         
-        await removeImage(uploadPath, mission.imgSrc)
+        await removeImage(missionStore.uploadPath, mission.imgSrc)
 
         await mission.remove()
 
@@ -96,7 +100,7 @@ router.patch('/uploadIcon/:id', adminAuth, async (req, res) => {
 
         if(req.files.icon){
             let icon = req.files.icon.data
-            const imgSrc = await savePNGImage(icon, mission._id, uploadPath, mission.imgSrc)
+            const imgSrc = await savePNGImage(icon, mission._id, missionStore.uploadPath, mission.imgSrc)
             mission.imgSrc = imgSrc
         }
         
@@ -203,9 +207,6 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
     
     const user = req.user;
 
-    
-    
-    
     try {
         //CONSIDER: move populate to middleware Mission.post('find', ...)
         // const missions = await Mission.find({completedByUsers:  {$elemMatch: {$nin: partyIds}}})
@@ -224,43 +225,18 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
         if(missionInstance && moment.utc().valueOf() >= moment.utc(missionInstance.createdAt).add(missionStore.instanceValidTimeInMins, missionStore.timeUnit).valueOf()){
             await missionInstance.remove()
         }else if(missionInstance){
-            const mission = await Mission.aggregate().match( //return only one mission - of which the user is a participant (as array for compatibility)
-                {_id: missionInstance.mission }).project({ 
-                    'title': 1,
-                    'description': 1,
-                    'imgSrc': 1,
-                    'minPlayers': 1,
-                    'maxPlayers': 1,
-                    'level': 1,
-                    'strength': 1,
-                    'dexterity': 1,
-                    'magic': 1,
-                    'endurance': 1,
-                    'unique': 1,
-                    'amulets': 1,
-                    'awardsAreSecret': 1,
-                    'awards': {
-                        $cond: {
-                            if: {
-                                '$eq': ['$awardsAreSecret', true]
-                            },
-                            then: {     
-                                "any": [],
-                                "warrior": [],
-                                "rogue": [],
-                                "mage": [],
-                                "cleric": [],
-                            },
-                            else: '$awards'
-                        }
-                    },
-            })
+            const mission = await Mission
+                .aggregate()
+                .match({_id: missionInstance.mission }) //return only one mission - of which the user is a participant (as array for compatibility)
+                .project(missionStore.missionListProjection)
 
-            await ItemModel.populate(mission, { //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
-                path: 'amulets.itemModel awards.any.itemModel awards.warrior.itemModel awards.rogue.itemModel awards.mage.itemModel awards.cleric.itemModel',
-                populate: { path: "perks.target.disc-product", select: '_id name' },
-                options: {}
-            })
+            await ItemModel.missionPopulate(mission)
+
+            // await ItemModel.populate(mission, { //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
+            //     path: 'amulets.itemModel awards.any.itemModel awards.warrior.itemModel awards.rogue.itemModel awards.mage.itemModel awards.cleric.itemModel',
+            //     populate: { path: "perks.target.disc-product", select: '_id name' },
+            //     options: {}
+            // })
             
             res.send({missions: mission, missionInstanceId: missionInstance.mission}) //return only one mission - of which the user is a participant (as array for compatibility)
             return
@@ -282,56 +258,28 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
         //console.log(partyIds)
         
         //console.log( new Date().toUTCString())
-        let missions = await Mission.aggregate().match({
-             $and: [
-                {activationDate: { $lte: new Date() } },
-                {expiryDate: { $gte: new Date() } }, 
-                {completedByUsers: 
-                    {$not: //true inverts to false; to get this mission ALL elements do not have to include any element from 'party' 
-                        {$elemMatch: //elemMatch works as 'or' - false, false, false, true => true
-                            {$in: partyIds} //if even one of completedByUsers elements includes some element from 'party' -> true
+        let missions = await Mission
+            .aggregate()
+            .match({
+                $and: [
+                    {activationDate: { $lte: new Date() } },
+                    {expiryDate: { $gte: new Date() } }, 
+                    {completedByUsers: 
+                        {$not: //true inverts to false; to get this mission ALL elements do not have to include any element from 'party' 
+                            {$elemMatch: //elemMatch works as 'or' - false, false, false, true => true
+                                {$in: partyIds} //if even one of completedByUsers elements includes some element from 'party' -> true
+                            }
                         }
+                    },
+                    {
+                        $or: [ //excluding unique missions finished by at least one user
+                            {unique: false},
+                            {completedByUsers: {$size: 0}}
+                        ]
                     }
-                },
-                {
-                    $or: [ //excluding unique missions finished by at least one user
-                        {unique: false},
-                        {completedByUsers: {$size: 0}}
-                    ]
-                }
-            ],
-        })
-        .project({
-            '_id': 1,
-            'title': 1,
-            'description': 1,
-            'imgSrc': 1,
-            'minPlayers': 1,
-            'maxPlayers': 1,
-            'level': 1,
-            'strength': 1,
-            'dexterity': 1,
-            'magic': 1,
-            'endurance': 1,
-            'unique': 1,
-            'amulets': 1,
-            'awardsAreSecret': 1,
-            'awards': {
-                $cond: {
-                    if: {
-                        '$eq': ['$awardsAreSecret', true]
-                    },
-                    then: {     
-                        "any": [],
-                        "warrior": [],
-                        "rogue": [],
-                        "mage": [],
-                        "cleric": [],
-                    },
-                    else: '$awards'
-                }
-            },
-        })
+                ],
+            })
+            .project(missionStore.missionListProjection)
 
         //excluding unique missions which instances exist
         let excludedMissions = []
@@ -377,13 +325,15 @@ router.get('/list', auth, async (req, res) => { //get active missions which are 
         missions.sort((a, b) => {
             return Math.abs(level-a.level) - Math.abs(level-b.level);
         });
+
+        await ItemModel.missionPopulate(missions)
         
         //population on all colection saved to missions var
-        await ItemModel.populate(missions, { //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
-            path: 'amulets.itemModel awards.any.itemModel awards.warrior.itemModel awards.rogue.itemModel awards.mage.itemModel awards.cleric.itemModel',
-            populate: { path: "perks.target.disc-product", select: '_id name' },
-            options: {}
-        })
+        // await ItemModel.populate(missions, { //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
+        //     path: 'amulets.itemModel awards.any.itemModel awards.warrior.itemModel awards.rogue.itemModel awards.mage.itemModel awards.cleric.itemModel',
+        //     populate: { path: "perks.target.disc-product", select: '_id name' },
+        //     options: {}
+        // })
         
         //IMPORTANT: .execPopulate() does not work on collection!!!!!! lost 1,5 hour on this xd
         /*missions.forEach( async (mission) => {

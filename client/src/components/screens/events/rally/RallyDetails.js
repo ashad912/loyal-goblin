@@ -21,8 +21,28 @@ const AwardsLevelButton = styled(({...otherProps})=> (
     <Button  {...otherProps}/>
 ))`
     padding: 3px;
-    background-color: ${props => props.chosen ? palette.primary.main : palette.primary.contrastText } !important;
-    color: ${props => props.chosen ? palette.primary.contrastText : 'black'}!important;
+    ${props => {
+        if(!props.disabled){
+            if(props.chosen){
+                return (
+                    `
+                        background-color: ${palette.primary.main} !important;
+                        color: ${palette.primary.contrastText} !important;
+                    `
+                )
+                    
+            }else{
+                return (
+                    `  
+                        background-color: ${palette.primary.contrastText} !important;
+                        color: black !important;
+                    `
+                )
+                
+            }
+        }
+        
+    }}
 `
 
 
@@ -50,7 +70,7 @@ const RallyDetails = (props) => {
             container
             direction='column'      
         >
-            {!rally.awardsAreSecret &&
+            
                 <React.Fragment>
                     <Grid
                         container
@@ -84,6 +104,7 @@ const RallyDetails = (props) => {
                                         >
                                             <AwardsLevelButton 
                                                 variant="contained" 
+                                                disabled={rally.awardsAreSecret}
                                                 chosen={index === levelList ? 1 : 0}
                                                 onClick={(e) => handleChangeLevelList(e, index)}>
                                                     <PintoTypography>{awardsLevel.level} PD</PintoTypography>
@@ -96,7 +117,7 @@ const RallyDetails = (props) => {
                     </Grid>
                     <Divider style={{backgroundColor: palette.background.darkGrey, height: '0.5px', 'marginLeft': '-1rem'}}/>
                 </React.Fragment>
-            }
+            
         </Grid>
     )
 
@@ -123,7 +144,7 @@ const RallyDetails = (props) => {
                     imgSrc={`${ralliesPath}${rally.imgSrc}`}
                 />
             }
-            minHeaderHeight='122px'
+            minHeaderHeight='max-content'
             awardsHeader={awardsHeader}
             awardsSections= {
                 <AwardsSections 

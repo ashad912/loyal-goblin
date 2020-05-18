@@ -190,7 +190,9 @@ const Events = (props) => {
                   state: { id: missionId}                                      
             }} /> : null}
 
-            {rally !== null && (<Rally rally={rally} handleRallyDetailsOpen={handleRallyDetailsOpen} handleRallyDetailsClose={handleRallyDetailsClose} refreshProfile={() => props.authCheck()}/>)}
+            {rally !== null && (
+                <Rally rally={rally} handleRallyDetailsOpen={handleRallyDetailsOpen} handleRallyDetailsClose={handleRallyDetailsClose} refreshProfile={() => props.authCheck()}/>
+            )}
 
             <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                 <IconButton

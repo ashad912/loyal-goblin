@@ -4,6 +4,7 @@ import { adminAuth } from '@middleware/adminAuth';
 import { auth } from '@middleware/auth';
 import {removeImage, savePNGImage } from '@utils/methods'
 import rallyStore from '@store/rally.store'
+import { ItemModel } from '../models/itemModel';
 
 const uploadPath = "../static/images/rallies/"
 
@@ -143,32 +144,22 @@ router.delete('/remove', adminAuth, async (req, res) =>{
 //OK
 router.get('/first', auth, async (req, res)=> {
     try{
-        const rallyArray = await Rally.find({ $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }]}).sort({"startDate": 1 }).limit(1)
+        const rallyArray = await Rally
+            .aggregate()
+            .match({ $and: [{ activationDate: { $lte: new Date() } }, {expiryDate: { $gte: new Date() } }]})
+            .project(rallyStore.rallyProjection(req.user._id))
+            .sort({"startDate": 1 })
+            .limit(1)
         if(!rallyArray.length){
             res.send("")
             return
         }
         const rally = rallyArray[0]
 
-        if(rally.awardsAreSecret){
-            rally.awardsLevels.forEach(awardLevel => {
-                awardLevel.awards.any = []
-                awardLevel.awards.warrior = []
-                awardLevel.awards.mage = []
-                awardLevel.awards.rogue = []
-                awardLevel.awards.cleric = []
-            })
-        }
         if(!rally.awardsAreSecret){
-            await rally.populate({
-                path: 'awardsLevels.awards.any.itemModel awardsLevels.awards.warrior.itemModel awardsLevels.awards.rogue.itemModel awardsLevels.awards.mage.itemModel awardsLevels.awards.cleric.itemModel',
-                populate: { path: "perks.target.disc-product", select: '_id name' },
-            }).execPopulate()
+            await ItemModel.rallyPopulate(rally)
         }
-
-        rally.users = rally.users.filter((user) => { //return only user whoes fetched request
-            return user.profile.toString() === req.user._id.toString()
-        })
+        
         res.send(rally) //can send undefined, what have to be supported by frontend
     }catch (e) {
         res.status(500).send(e.message)

@@ -163,7 +163,7 @@ class Rally extends Component {
                                 {rallyIsActive && <PintoTypography >Zdobyte doświadczenie: {!rally.users.length ? '0' : rally.users[0].experience} PD</PintoTypography>}
                         </CardContent>
                         <CardActions style={{justifyContent: 'flex-end'}}>
-                            <Button onClick={this.props.handleRallyDetailsOpen} color="primary" fullWidth><PintoTypography>Szczegóły i nagrody</PintoTypography></Button>
+                            <Button onClick={this.props.handleRallyDetailsOpen} color="primary" fullWidth><PintoTypography>Szczegóły</PintoTypography></Button>
                         </CardActions>
                         
                     </StyledCard>

@@ -117,6 +117,25 @@ const ItemModelSchema = new mongoose.Schema({
   ]
 });
 
+ItemModelSchema.statics.missionPopulate = async (mission) => {
+  await ItemModel.populate(mission, { //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
+    path: 'amulets.itemModel awards.any.itemModel awards.warrior.itemModel awards.rogue.itemModel awards.mage.itemModel awards.cleric.itemModel',
+    populate: { path: "perks.target.disc-product", select: '_id name' },
+    options: {}
+  })
+}
+
+ItemModelSchema.statics.rallyPopulate = async (rally) => {
+  await ItemModel.populate(rally, { //https://stackoverflow.com/questions/22518867/mongodb-querying-array-field-with-exclusion
+    path: 'awardsLevels.awards.any.itemModel awardsLevels.awards.warrior.itemModel awardsLevels.awards.rogue.itemModel awardsLevels.awards.mage.itemModel awardsLevels.awards.cleric.itemModel',
+    populate: { path: "perks.target.disc-product", select: '_id name' },
+    options: {}
+  })
+}
+
+
+
+
 //OK
 ItemModelSchema.pre('remove', async function (next){
   const itemModel = this
