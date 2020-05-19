@@ -3,8 +3,9 @@ import connectionReducer from './connectionReducer'
 import partyReducer from './partyReducer'
 import shopReducer from './shopReducer'
 import missionReducer from './missionReducer'
-import { combineReducers} from 'redux'
+import communicationReducer from './communicationReducer'
 
+import { combineReducers} from 'redux'
 
 
 const rootReducer = combineReducers( {
@@ -12,7 +13,8 @@ const rootReducer = combineReducers( {
     connection: connectionReducer,
     party: partyReducer,
     shop: shopReducer,
-    mission: missionReducer
+    mission: missionReducer,
+    communication: communicationReducer
 })
 
 export default rootReducer

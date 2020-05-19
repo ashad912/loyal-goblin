@@ -15,6 +15,7 @@ export const getShop = (socketConnectionStatus) => {
             dispatch({type: 'GET_SHOP', shop: res.data.shop})
             dispatch({type: 'UPDATE_ACTIVE_ORDER', activeOrder: res.data.activeOrder})
             dispatch({type: "UPDATE_PARTY", party: res.data.party})
+            dispatch({type: 'UPDATE_PERKS', userPerks: res.data.userPerks})
             if(res.data.party){
                 refreshPartyEmit(res.data.party._id)
             }

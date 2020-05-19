@@ -27,11 +27,12 @@ import {
 import QRreaderView from "./QRreaderView";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 
-import PartyMissionInstanceWarningDialog from "./PartyMissionInstanceWarningDialog"
+import WarningDialog from "./WarningDialog"
 import { uiPaths, palette, usersPath } from "../../../utils/definitions";
 import { PintoTypography, PintoSerifTypography } from "../../../utils/fonts";
 import { ListItemAvatar, Avatar } from "@material-ui/core";
 import { createAvatarPlaceholder } from "../../../utils/methods";
+import {setWarning} from 'store/actions/communicationActions'
 
 
 
@@ -86,8 +87,10 @@ const PartyCreationDialog = props => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [activePartyMember, setActivePartyMember] = React.useState("");
   const [warningOpen, setWarningOpen] = React.useState(false)
-  const [warningAction, setWarningAction] = React.useState(()=> null)
+  const [warningAction, setWarningAction] = React.useState(null)
   const [warningText, setWarningText] = React.useState('')
+  const [warningType, setWarningType] = React.useState('')
+
   React.useEffect(() => {
     setIsManagingParty(props.isManagingParty);
   }, [props.isManagingParty]);
@@ -159,10 +162,29 @@ const PartyCreationDialog = props => {
     setIsManagingParty(true);
   };
 
-  const handleWarningDialogAction = (action, text) => {
-    setWarningAction(action)
+  const handleWarningDialogAction = (action, text, type) => {
+    console.log(action)
+    setWarningAction(() => action)
     setWarningText(text)
+    setWarningType(type)
     setWarningOpen(true)
+  }
+
+  const handleActiveWarnings = (action, text) => {
+    let type = ''
+    if(props.activeMission){
+      type = 'mission'
+    }else if(props.auth.profile.activeOrder.length || (props.party.leader && props.party.leader.activeOrder.length)){
+      type = 'order'
+    }
+
+    if(type){
+      props.setWarning(() => action, text, type)
+      //handleWarningDialogAction(action, text, type )
+    }else{
+      action()
+    }
+    
   }
 
   return (
@@ -234,7 +256,7 @@ const PartyCreationDialog = props => {
                 <Button
                   variant="contained"
 
-                  onClick={props.activeMission ? ()=> handleWarningDialogAction(()=>handleQRscanStart, "Zmiana liczebności drużyny") : handleQRscanStart}
+                  onClick={()=> handleActiveWarnings(handleQRscanStart, "Zmiana liczebności drużyny")}
                 >
                   {props.party.members && props.party.members.length > 0 ? "Dodaj kolejną osobę" : 'Dodaj osobę'}
                 </Button>
@@ -251,14 +273,14 @@ const PartyCreationDialog = props => {
         onClose={handleMoreClose}
         style={{zIndex: 3000}}
       >
-        <StyledMenuItem onClick={props.activeMission ? ()=>handleWarningDialogAction(()=>handleRemoveFromParty) : handleRemoveFromParty} >
+        <StyledMenuItem onClick={() => handleActiveWarnings(handleRemoveFromParty, 'Usunięcie członka drużyny')} >
           <ListItemIcon>
 
             <img src={uiPaths.deleteRed} style={{width: '2rem'}}/>
           </ListItemIcon>
           <ListItemText primary={<PintoTypography>Wyrzuć z drużyny</PintoTypography>} />
         </StyledMenuItem>
-        <StyledMenuItem onClick={props.activeMission ? ()=>handleWarningDialogAction(()=>handleGiveLeader) : handleGiveLeader} >
+        <StyledMenuItem onClick={()=> handleActiveWarnings(handleGiveLeader, "Przekazanie tytułu lidera")} >
           <ListItemIcon >
 
             <img src={uiPaths.transferLeader} style={{width: '2rem'}}/>
@@ -274,7 +296,7 @@ const PartyCreationDialog = props => {
           <Button
             color="secondary"
             variant="contained"
-            onClick={()=>handleWarningDialogAction(()=>handlePartyDisband, "Czy chcesz rozwiązać drużynę? Rozwiązanie drużyny" ) }
+            onClick={() => handleActiveWarnings(handlePartyDisband, "Czy chcesz rozwiązać drużynę? Rozwiązanie drużyny")}
           >
             Rozwiąż drużynę
           </Button>
@@ -289,11 +311,12 @@ const PartyCreationDialog = props => {
           handleReturn={handleQRscanStart}
         />
       )}
-      <PartyMissionInstanceWarningDialog
+      <WarningDialog
         open={warningOpen}
         handleClose={() => setWarningOpen(false)}
         handleAction={warningAction}
         text={warningText}
+        type={warningType}
       />
     </Dialog>
   );
@@ -315,7 +338,8 @@ const mapDispatchToProps = dispatch => {
     onRemoveMember: (partyId, memberId) =>
       dispatch(removeMember(partyId, memberId)),
     onGiveLeader: (partyId, memberId) => dispatch(giveLeader(partyId, memberId)),
-    setActiveInstance: (id, imgSrc) => dispatch(setActiveInstance(id, imgSrc))
+    setActiveInstance: (id, imgSrc) => dispatch(setActiveInstance(id, imgSrc)),
+    setWarning: (action, text, type) => dispatch(setWarning(action, text, type))
   };
 };
 

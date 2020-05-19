@@ -1,4 +1,5 @@
 import React from "react";
+import {connect} from 'react-redux'
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -7,25 +8,33 @@ import { palette } from "../../../utils/definitions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { PintoTypography} from "../../../utils/fonts";
 
-const PartyMissionInstanceWarningDialog = ({text, open, handleClose, handleAction}) => {
+import {resetWarning} from 'store/actions/communicationActions'
 
+const WarningDialog = (props) => {
+
+  const warning = props.warning
 
   const handleModalAction = () => {
-    handleAction()
-    handleClose()
+    console.log(warning.action)
+    warning.action()
+    props.resetWarning()
   }
 
+  const endTexts = {
+    mission: 'spowoduje opuszczenie misji, w której obecnie bierzesz udział.',
+    order: 'spowoduje usunięcie aktywnego zamówienia.'
+  }
 
   return (
-    <Dialog open={open} onClose={handleClose} style={{zIndex: 4000}}>
+    <Dialog open={Boolean(warning.action)} onClose={props.resetWarning} style={{zIndex: 4000}}>
       <DialogTitle style={{textAlign:'center'}}>Potwierdź wykonanie akcji</DialogTitle>
       <DialogContent> 
         <PintoTypography style={{color: palette.background.darkGrey}}>
-          {text} spowoduje opuszczenie misji, w której obecnie bierzesz udział.
+          {warning.text} {endTexts[warning.type]}
         </PintoTypography> 
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Anuluj</Button>
+        <Button onClick={props.resetWarning}>Anuluj</Button>
         <Button
           onClick={handleModalAction}
           color="secondary"
@@ -39,4 +48,16 @@ const PartyMissionInstanceWarningDialog = ({text, open, handleClose, handleActio
   );
 };
 
-export default PartyMissionInstanceWarningDialog;
+const mapDispatchToProps = dispatch => {
+  return {
+    resetWarning: () => { dispatch(resetWarning())}
+  };
+};
+
+const mapStateToProps = state => {
+  return {
+      warning: state.communication.warning
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(WarningDialog);

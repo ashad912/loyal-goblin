@@ -33,13 +33,7 @@ const GlobalStyle = createGlobalStyle`
 //         ${pulse} 1s linear;
 //     `
 
-const LoadedTorpedoContainer = styled.div`
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    margin: auto;
-    min-height: 74px;
-`
+
 //ship1: B4L4 -> B4, B5, B6, B7
 //ship2: I1L4 => I1, I2, I3, I4
 //ship3: F9L5 -> F9, E9, D9, C9, B9
@@ -441,13 +435,10 @@ class Loyal extends Component {
             <div style={{display: 'flex', flexDirection: 'column', minHeight: this.props.fullHeight}}>
             <GlobalStyle/>
                 {this.state.loading && <Loading/>}
-                <LoadedTorpedoContainer>
-                    {this.state.loadedTorpedo ? (
-                        <LoadedTorpedo torpedo={this.state.loadedTorpedo} handleShoot={this.handleShoot} inProgress={this.state.seconds > 0} fields={this.state.serverFields}/>
-                    ): (
-                        <Typography variant='h5' >Wybierz i załaduj torpedę!</Typography>
-                    )}
-                </LoadedTorpedoContainer>
+                
+                <LoadedTorpedo torpedo={this.state.loadedTorpedo} handleShoot={this.handleShoot} inProgress={this.state.seconds > 0} fields={this.state.serverFields}/>
+                    
+                
                 <object 
                     data={boardsvg} 
                     onLoad={this.handleLoad} 

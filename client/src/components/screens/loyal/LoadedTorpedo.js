@@ -36,7 +36,13 @@ const LaunchButton = styled(Button)`
   animation-iteration-count: infinite;
   transition: all 0.2s ease-out;
 `
-
+const LoadedTorpedoContainer = styled.div`
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin: auto;
+    min-height: 74px;
+`
 
 const LoadedTorpedo = (props) => {
     
@@ -46,38 +52,43 @@ const LoadedTorpedo = (props) => {
     
     const torpedo = props.torpedo;
   
-    const torpedoField = props.fields.find(field=>{
+    const torpedoField = props.loadedTorpedo && props.fields.find(field=>{
       return field.name === torpedo.itemModel.name
     })
     //console.log(torpedo)
   
   
     return (
-      <StyledListItem
-        button
-        key={torpedo._id}
-        alignItems="flex-start"
-        onClick={handleShoot}
-      >
-        <ListItemAvatar>
-          <img
-            style={{ width: "32px", height: "32px" }}
-            alt={torpedo.itemModel.name}
-            src={`${itemsPath}${torpedo.itemModel.imgSrc}`}
-          />
-        </ListItemAvatar>
-        <ListItemText
-          disableTypography
-          primary={<PintoSerifTypography>{torpedo.itemModel.name}</PintoSerifTypography>}         
-          secondary={<PintoTypography>{torpedo.itemModel.description}</PintoTypography>}
-        />
-        <ListItemIcon>
-          <LaunchButton color="primary" disabled={props.inProgress || torpedoField.pressed}>
-            {!props.inProgress ? ('Strzelaj!') : ('Uwaga!')}
-          </LaunchButton>
-        </ListItemIcon>
-        
-      </StyledListItem>
+      <LoadedTorpedoContainer>
+        {props.loadedTorpedo ? (
+          <StyledListItem
+            button
+            alignItems="flex-start"
+            onClick={handleShoot}
+            disabled={props.inProgress || torpedoField.pressed}
+          >
+            <ListItemAvatar>
+                <img
+                  style={{ width: "32px", height: "32px" }}
+                  alt={torpedo.itemModel.name}
+                  src={`${itemsPath}${torpedo.itemModel.imgSrc}`}
+                />
+              </ListItemAvatar>
+              <ListItemText
+                disableTypography
+                primary={<PintoSerifTypography>{torpedo.itemModel.name}</PintoSerifTypography>}         
+                secondary={<PintoTypography>{torpedo.itemModel.description}</PintoTypography>}
+              />
+              <ListItemIcon>
+                <LaunchButton color="primary" disabled={props.inProgress || torpedoField.pressed}>
+                  {!props.inProgress ? ('Strzelaj!') : ('Uwaga!')}
+                </LaunchButton>
+              </ListItemIcon>
+            </StyledListItem>
+        ) : (
+          <PintoSerifTypography variant='h5' >Wybierz i załaduj torpedę!</PintoSerifTypography>
+        )}
+      </LoadedTorpedoContainer>
     );
 
 }

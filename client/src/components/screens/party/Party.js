@@ -20,7 +20,7 @@ import Avatar from "@material-ui/core/Avatar";
 
 import PartyCreationDialog from "./PartyCreationDialog";
 import PartyJoiningDialog from "./PartyJoiningDialog";
-import PartyMissionInstanceWarningDialog from "./PartyMissionInstanceWarningDialog";
+import WarningDialog from "./WarningDialog";
 
 import { updateParty, removeMember } from "../../../store/actions/partyActions";
 import {
@@ -48,8 +48,8 @@ const Party = props => {
   const [isJoiningParty, setIsJoiningParty] = React.useState(false);
   const [isCreatingParty, setIsCreatingParty] = React.useState(false);
   const [
-    missionInstanceWarningDialog,
-    setMissionInstanceWarningDialog
+    warningDialog,
+    setWarningDialog
   ] = React.useState({ action: null, text: "" });
 
   const handleLeaveParty = () => {
@@ -57,7 +57,7 @@ const Party = props => {
   };
 
   const handleMissionInstanceWarningDialog = (action, text) => {
-    setMissionInstanceWarningDialog({ action, text });
+    setWarningDialog({ action, text });
   };
 
   const partyExists =
@@ -277,13 +277,13 @@ const Party = props => {
         handleClose={() => setIsCreatingParty(prev => !prev)}
         activeMission={props.mission.activeInstanceId}
       />
-      <PartyMissionInstanceWarningDialog
-        open={Boolean(missionInstanceWarningDialog.action)}
+      <WarningDialog
+        open={Boolean(warningDialog.action)}
         handleClose={() =>
-          setMissionInstanceWarningDialog({ action: null, text: "" })
+          setWarningDialog({ action: null, text: "" })
         }
-        handleAction={missionInstanceWarningDialog.action}
-        text={missionInstanceWarningDialog.text}
+        handleAction={warningDialog.action}
+        text={warningDialog.text}
       />
     </div>
   );
