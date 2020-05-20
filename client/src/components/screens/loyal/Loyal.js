@@ -96,13 +96,17 @@ class Loyal extends Component {
         }
     }
 
+
+    
+
     componentDidMount = () => {
 
         var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
         
 
-
+        
         this.setState({
+
             iOS,
             userTorpedos: this.props.bag.filter((item) => item.itemModel.type === "torpedo"),
             serverFields: [
@@ -407,7 +411,20 @@ class Loyal extends Component {
         
     }
 
-    handleToggleTorpedosModal = e => {
+    hello = (action = 'opened') => {
+        console.log('modal', action)
+    }
+
+    handleToggleTorpedosModal = (func) => {
+
+        //EXERCISES: saving/updating function with parameter in state and invoking
+        this.setState({
+            func: func
+        }, () => {
+            this.state.func()
+        })
+        
+        
         this.setState(prevState => {
           return { 
             showTorpedosModal: !prevState.showTorpedosModal,
@@ -454,7 +471,7 @@ class Loyal extends Component {
                     disabled={this.state.seconds !== 0}     
                     variant="contained" 
                     color="primary" 
-                    onClick={this.handleToggleTorpedosModal} 
+                    onClick={() => this.handleToggleTorpedosModal(this.hello)} 
                     style={{
                         margin: 'auto',
                         padding: '1rem 0.5rem',
@@ -476,7 +493,7 @@ class Loyal extends Component {
                 </PintoTypography>
                 <TorpedoDrawer
                     handleOpen={this.state.showTorpedosModal}
-                    handleClose={this.handleToggleTorpedosModal}
+                    handleClose={() => this.handleToggleTorpedosModal(() => this.hello('closed'))}
                     userTorpedos={userTorpedos}
                     loadedTorpedoId={this.state.loadedTorpedo ? this.state.loadedTorpedo._id : undefined}
                     handleTorpedoToggle={this.handleTorpedoToggle}

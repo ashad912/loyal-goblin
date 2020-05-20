@@ -13,14 +13,16 @@ const PartyJoiningDialog = props => {
 
 
   const [qrCode, setQrCode] = React.useState(null)
-  var opts = {
-    errorCorrectionLevel: 'H',
-    type: 'image/jpeg',
-    quality: 0.9,
-    margin: 1
-  }
+  
    
   React.useEffect(() => {
+    const opts = {
+      errorCorrectionLevel: 'H',
+      type: 'image/jpeg',
+      quality: 0.9,
+      margin: 1
+    }
+
     QRCode.toDataURL(props.userId, opts, function (err, url) {
       if (err) throw err
       setQrCode(url)
@@ -50,12 +52,12 @@ const PartyJoiningDialog = props => {
             </Typography>
           </Grid>
           <Grid item style={{width: '100%'}}>
-            <img src={qrCode}  style={{width: '100%'}}/>
+            <img src={qrCode} style={{width: '100%'}}/>
           </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleCloseAndTriggerSocket}>Zamknij</Button>
+        <Button onClick={handleCloseAndTriggerSocket}><Typography>Zamknij</Typography></Button>
       </DialogActions>
     </Dialog>
   );

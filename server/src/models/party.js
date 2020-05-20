@@ -29,6 +29,13 @@ export const PartySchema = new mongoose.Schema({
     timestamps: true
 })
 
+PartySchema.methods.selectPopulate = function(select){
+    return this.populate({
+        path: "leader members",
+        select
+    })
+}
+
 PartySchema.statics.validateInShopStatus = (userId, newStatus) => {
     return new Promise(async (resolve, reject) => {
         const party = await Party.findOne({ leader: userId }); //only if leader going to be disconnected

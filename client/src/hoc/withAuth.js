@@ -20,7 +20,7 @@ const withAuth = WrappedComponent => {
 
 
     render() {
-
+      console.log('withAuth')
       if ((this.props.connection.loading && !this.props.auth.uid) || this.props.auth.init) {
         return <Loading />;
       }

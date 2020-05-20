@@ -3,6 +3,8 @@ import { connect } from "react-redux";
 import { useHistory } from "react-router";
 import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
+import styled from 'styled-components'
+
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
@@ -10,21 +12,26 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Dialog from "@material-ui/core/Dialog";
+
+import withWarning from "hoc/withWarning";
 import Profile from "./screens/profile/Profile";
+import Party from "./screens/party/Party";
 import Events from "./screens/events/Events";
 import Loyal from "./screens/loyal/Loyal";
 import CharacterCreation from "./screens/characterCreation/CharacterCreation";
 import Booking from "./screens/booking/Booking";
+
 import RootSnackbar from "./layout/RootSnackbar";
-import {socket, multipleSessionSubscribe} from '../socket'
-import styled from 'styled-components'
-import { createCharacter, getAllNames, clearAllNames } from "../store/actions/profileActions";
-import { authCheck } from "../store/actions/authActions";
-import {
-  leaveShop
-} from "../store/actions/shopActions";
-import Party from "./screens/party/Party";
-import { uiPaths, palette } from "../utils/definitions";
+import WarningDialog from "./WarningDialog";
+
+
+import {socket} from '../socket'
+
+import { createCharacter, getAllNames, clearAllNames } from "store/actions/profileActions";
+import { authCheck } from "store/actions/authActions";
+import { leaveShop } from "store/actions/shopActions";
+import { uiPaths, palette } from "utils/definitions";
+
 
 
 const StyledTab = styled(Tab)`
@@ -172,6 +179,10 @@ function Root(props) {
 
   const fullHeight = `calc(100vh - ${fullHeightCorrection}px)`
 
+  const ProfileWithWarning = withWarning(Profile)
+  const PartyWithWarning = withWarning(Party)
+  const EventsWithWarning = withWarning(Events)
+  
 
   return (
     <div className={classes.root}>
@@ -194,11 +205,11 @@ function Root(props) {
               aria-label="full width tabs example"
               variant="fullWidth"
             >
-              <StyledTab  active={value === 0 ? 1 : 0} label="Postać" {...a11yProps(0)}/>
-              <StyledTab  active={value === 1 ? 1 : 0}  label="Drużyna" {...a11yProps(1)} />
-              <StyledTab  active={value === 2 ? 1 : 0}  label="Wydarzenia" {...a11yProps(2)} />
-              <StyledTab  active={value === 3 ? 1 : 0}  label="Statki" {...a11yProps(3)} />
-              <StyledTab  active={value === 4 ? 1 : 0}  label="Rezerwuj" {...a11yProps(4)} />
+              <StyledTab active={value === 0 ? 1 : 0} label="Postać" {...a11yProps(0)}/>
+              <StyledTab active={value === 1 ? 1 : 0}  label="Drużyna" {...a11yProps(1)} />
+              <StyledTab active={value === 2 ? 1 : 0}  label="Wydarzenia" {...a11yProps(2)} />
+              <StyledTab active={value === 3 ? 1 : 0}  label="Statki" {...a11yProps(3)} />
+              <StyledTab active={value === 4 ? 1 : 0}  label="Rezerwuj" {...a11yProps(4)} />
             </Tabs>
           </AppBar>
           <SwipeableViews
@@ -211,7 +222,7 @@ function Root(props) {
               <Profile fullHeight={fullHeight}/>
             </TabPanel>
             <TabPanel value={value} index={1} dir={theme.direction}>
-             <Party fullHeight={fullHeight}/>
+             <PartyWithWarning fullHeight={fullHeight}/>
             </TabPanel>
             <TabPanel value={value} index={2} dir={theme.direction}>
               <Events fullHeight={fullHeight}/>
@@ -228,6 +239,7 @@ function Root(props) {
 
         
     <RootSnackbar socket={socket} screen={value} hide={footerReached} />
+    <WarningDialog/>
     </div>
   );
 }

@@ -37,26 +37,13 @@ const StyledList = styled(List)`
 
 
 
-
-function useDidUpdateEffect(fn, inputs) {
-    const didMountRef = React.useRef(false);
-  
-    React.useEffect(() => {
-      if (didMountRef.current)
-        fn();
-      else
-        didMountRef.current = true;
-    }, inputs);
-  }
-
-
 const Events = (props) => {
 
 
     const [missionId, setMissionId] = useState(null);
     const [activeMissionDetails, setActiveMissionDetails] = useState(null)
     const [activeRallyDetails, setActiveRallyDetails] = useState(null)
-    //const [missionListData, setMissionListData] = useState([])
+    
     const [rally, setRally] = useState(null)
     const [orderWarningDialog, setOrderWarningDialog] = React.useState({ action: null, text: "" });
     
@@ -78,14 +65,7 @@ const Events = (props) => {
         fetchMissions()
         fetchRally()
         
-    
-        
-
     }, []);
-
-    // useDidUpdateEffect(() => {
-    //     fetchMissions()
-    // }, [props.party.members, props.party.leader])
 
     const handleOrderWarningDialog = (action, text) => {
         setOrderWarningDialog({ action, text });
@@ -109,7 +89,7 @@ const Events = (props) => {
         const isActiveOrder = props.activeOrder.length
         const isValidActiveOrder =
             isActiveOrder ? moment.utc().valueOf() < moment.utc(props.activeOrder[0].createdAt).add("5", "minutes").valueOf() : false
-        if(!props.activeInstanceId){
+        if(!props.activeMissionId){
             if(isValidActiveOrder){
                 handleOrderWarningDialog(
                     () => handleMissionCreate(id),
@@ -161,7 +141,7 @@ const Events = (props) => {
                     <div>{isVisible ? ( /*inVisible defined only inside div witch is fucking kurwa crazy */
                         <MissionListItemHoc
                             index={index}
-                            activeInstanceId = {props.activeInstanceId}
+                            activeMissionId = {props.activeMissionId}
                             handleMissionClick={handleMissionClick}
                             handleMissionDetailsOpen={handleMissionDetailsOpen}
                             handleMissionLeave={handleMissionLeave}
@@ -203,7 +183,7 @@ const Events = (props) => {
                     <RefreshIcon/>
                 </IconButton>
                 <Typography variant="h6">
-                    {missionList.length ? (props.activeInstanceId ? 'Aktywna misja' : 'Dostępne misje') : 'Brak dostępnych misji!'}
+                    {missionList.length ? (props.activeMissionId ? 'Aktywna misja' : 'Dostępne misje') : 'Brak dostępnych misji!'}
                 </Typography>
             </div>
             
@@ -216,7 +196,7 @@ const Events = (props) => {
             {activeMissionDetails && 
                 <MissionDetailsHoc
                     open={activeMissionDetails ? true : false}
-                    activeInstanceId = {props.activeInstanceId}
+                    activeMissionId = {props.activeMissionId}
                     handleClose={handleMissionDetailsClose}
                     handleMissionClick={handleMissionClick}
                     handleMissionLeave={handleMissionLeave}
@@ -248,7 +228,7 @@ const mapStateToProps = state => {
     return {
         activeOrder: state.auth.profile.activeOrder,
         missionListData: state.mission.missions,
-        activeInstanceId: state.mission.activeInstanceId,
+        activeMissionId: state.mission.activeInstanceId,
         multipleSession: state.auth.multipleSession,
         party: state.party
     };

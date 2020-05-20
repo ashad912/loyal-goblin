@@ -257,7 +257,7 @@ router.get("/shop", auth, async (req, res) => {
 
     await MissionInstance.removeIfExists(user._id)
 
-    await user.updatePerks(false);
+    const userPerks = await user.updatePerks(true);
 
    
     //if user left shop before 5 min countdown and returned after countdown but before orderExpiredEvent removed user.activeOrder - clear order 
@@ -325,7 +325,8 @@ router.get("/shop", auth, async (req, res) => {
     res.send({
       shop,
       party: user.party,
-      activeOrder: user.activeOrder
+      activeOrder: user.activeOrder,
+      userPerks
     });
   } catch (e) {
     console.log(e.message)

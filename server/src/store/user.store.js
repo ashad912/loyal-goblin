@@ -180,7 +180,7 @@ const computePerks = (user) =>{
                                 modelPerks.rawExperience,
                                 perk.value
                             );
-                        // console.log(modelPerks)
+                        
                         break;
                         case "disc-product":
                             const product = products.find(product => {
@@ -215,7 +215,7 @@ const computePerks = (user) =>{
         
                         break;
                         case "disc-category":
-                        //console.log('haleczko')
+                        
                             const productsInCategory = products.filter(product => {
                                 return product.category === perk.target['disc-category'];
                             });
@@ -362,7 +362,7 @@ const calculateOrder = async user => {
         );
   
         //let modelPerks = await designateUserPerks(partyMember);
-        let modelPerks = await partyMember.updatePerks(false, true)
+        let modelPerks = await partyMember.updatePerks(true, true)
         
         const userProducts = user.activeOrder[currentMember].products.map(product => product.toJSON())
   
@@ -371,13 +371,13 @@ const calculateOrder = async user => {
   
           const productId = product._id.toString();
   
-          if (modelPerks.products[productId].hasOwnProperty("experienceMod")) {
+          if (modelPerks.products[productId] && modelPerks.products[productId].hasOwnProperty("experienceMod")) {
             product.experience =
               product.price * 10 + modelPerks.products[productId].experienceMod;
           } else {
             product.experience = product.price * 10;
           }
-          if (modelPerks.products[productId].hasOwnProperty("priceMod")) {
+          if (modelPerks.products[productId] && modelPerks.products[productId].hasOwnProperty("priceMod")) {
             //Apply first discount
    
             if(modelPerks.products[productId].priceMod.first < 0 && firstDiscountIds.indexOf(productId) === -1){

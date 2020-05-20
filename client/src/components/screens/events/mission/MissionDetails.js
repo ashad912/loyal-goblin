@@ -81,7 +81,7 @@ const MissionDetails = (props) => {
                         <PintoTypography>Zamknij</PintoTypography>
                     </Button>
 
-                    {props.activeInstanceId !== null && (props.leader || props.party.members.length === 0) && (
+                    {props.activeMissionId !== null && (props.leader || props.party.members.length === 0) && (
                         <Button color="secondary" onClick={() => props.handleMissionLeave()}>
                             <PintoTypography>Opuść</PintoTypography>
                         </Button>
@@ -90,8 +90,8 @@ const MissionDetails = (props) => {
                     <Button 
                         variant="contained" 
                         color="primary" 
-                        onClick={() => props.handleMissionClick(mission._id)} disabled={props.multipleSession || !props.isMissionActive || (!props.leader && !props.activeInstanceId)}>
-                            <PintoTypography>{props.activeInstanceId ? 'Dołącz' : 'Wyrusz'}</PintoTypography>
+                        onClick={() => props.handleMissionClick(mission._id)} disabled={props.multipleSession || !props.isMissionActive || (!props.leader && !props.activeMissionId)}>
+                            <PintoTypography>{props.activeMissionId ? 'Dołącz' : 'Wyrusz'}</PintoTypography>
                     </Button>
                 </React.Fragment>
             }

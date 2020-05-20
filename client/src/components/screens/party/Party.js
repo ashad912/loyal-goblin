@@ -1,43 +1,32 @@
 import React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
-import { useHistory } from "react-router";
+
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Fab from "@material-ui/core/Fab";
-import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemText from "@material-ui/core/ListItemText";
-import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 
 import PartyCreationDialog from "./PartyCreationDialog";
 import PartyJoiningDialog from "./PartyJoiningDialog";
-import WarningDialog from "./WarningDialog";
 
-import { updateParty, removeMember } from "../../../store/actions/partyActions";
+import { updateParty, removeMember } from "store/actions/partyActions";
+import { authCheck } from "store/actions/authActions";
 import {
   createAvatarPlaceholder,
   designateUserLevel,
-  bagArrayToCategories
-} from "../../../utils/methods";
+} from "utils/methods";
 import {
-  appearancePath,
   usersPath,
-  classThemes,
   uiPaths,
   palette
-} from "../../../utils/definitions";
-import { authCheck } from "../../../store/actions/authActions";
-import { classLabels } from "../../../utils/labels";
-import { PintoSerifTypography, PintoTypography } from "../../../utils/fonts";
+} from "utils/definitions";
+
+import { classLabels } from "utils/labels";
+import { PintoSerifTypography, PintoTypography } from "utils/fonts";
 
 const FabIcon = styled.img`
   width: 2rem;
@@ -47,17 +36,9 @@ const FabIcon = styled.img`
 const Party = props => {
   const [isJoiningParty, setIsJoiningParty] = React.useState(false);
   const [isCreatingParty, setIsCreatingParty] = React.useState(false);
-  const [
-    warningDialog,
-    setWarningDialog
-  ] = React.useState({ action: null, text: "" });
 
   const handleLeaveParty = () => {
     props.onRemoveMember(props.party._id, props.auth.uid);
-  };
-
-  const handleMissionInstanceWarningDialog = (action, text) => {
-    setWarningDialog({ action, text });
   };
 
   const partyExists =
@@ -132,16 +113,6 @@ const Party = props => {
                   )}
                 </React.Fragment>
               </ListItemAvatar>
-
-              {/* <ListItemText
-                primary={props.party.leader.name}
-                style={{
-                  maxWidth: "40vw",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis"
-                }}
-              /> */}
               <Grid container direction="column" style={{ textAlign: "right" }}>
                 <Grid item>
                   <PintoTypography style={{ fontSize: "2rem" }}>
@@ -205,13 +176,11 @@ const Party = props => {
             direction="row"
             alignItems="center"
             onClick={
-              props.mission.activeInstanceId
-                ? () =>
-                    handleMissionInstanceWarningDialog(
-                      () => setIsJoiningParty(prev => !prev),
-                      "Poszukiwanie drużyny"
-                    )
-                : () => setIsJoiningParty(prev => !prev)
+              () =>
+                props.handleWarning(
+                  () => setIsJoiningParty(prev => !prev),
+                  "Poszukiwanie drużyny"
+                )  
             }
           >
             <Fab color="primary">
@@ -227,13 +196,11 @@ const Party = props => {
             direction="row"
             alignItems="center"
             onClick={
-              props.mission.activeInstanceId
-                ? () =>
-                    handleMissionInstanceWarningDialog(
-                      () => setIsCreatingParty(prev => !prev),
-                      "Tworzenie drużyny"
-                    )
-                : () => setIsCreatingParty(prev => !prev)
+               () =>
+                props.handleWarning(
+                  () => setIsCreatingParty(prev => !prev),
+                  "Tworzenie drużyny"
+                )
             }
           >
             <Fab color="primary">
@@ -273,17 +240,10 @@ const Party = props => {
           props.party.leader._id &&
           props.party.leader._id === props.auth.uid
         }
-        partyName={props.party && props.party.name}
+        auth={props.auth}
+        party={props.party}
         handleClose={() => setIsCreatingParty(prev => !prev)}
-        activeMission={props.mission.activeInstanceId}
-      />
-      <WarningDialog
-        open={Boolean(warningDialog.action)}
-        handleClose={() =>
-          setWarningDialog({ action: null, text: "" })
-        }
-        handleAction={warningDialog.action}
-        text={warningDialog.text}
+        handleWarning={props.handleWarning}
       />
     </div>
   );

@@ -107,7 +107,7 @@ const TorpedoDrawer = props => {
             anchor="bottom"
             open={props.handleOpen}
             onClose={handleClose}
-            disableBackdropTransition={true}
+            
         >
             <div
                 style={{

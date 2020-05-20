@@ -38,7 +38,7 @@ const MissionListItem = props => {
     <StyledBox
       border={0}
       borderColor="primary.main"
-      active={props.activeInstanceId ? "1" : "0"}
+      active={props.activeMissionId ? "1" : "0"}
     >
       <Grid
         container
@@ -66,7 +66,7 @@ const MissionListItem = props => {
           </Grid>
 
           <Grid item xs={2}>
-            {props.activeInstanceId !== null &&
+            {props.activeMissionId !== null &&
               (props.leader || props.party.members.length === 0) && (
                 <Button
                   size="small"
@@ -93,10 +93,10 @@ const MissionListItem = props => {
               disabled={
                 props.multipleSession ||
                 !props.isMissionActive ||
-                (!props.leader && !props.activeInstanceId)
+                (!props.leader && !props.activeMissionId)
               }
             >
-              <PintoTypography>{props.activeInstanceId ? "Dołącz!" : "Wyrusz!"}</PintoTypography>
+              <PintoTypography>{props.activeMissionId ? "Dołącz!" : "Wyrusz!"}</PintoTypography>
             </Button>
           </Grid>
         </Grid>

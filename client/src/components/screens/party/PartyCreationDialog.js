@@ -27,7 +27,6 @@ import {
 import QRreaderView from "./QRreaderView";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 
-import WarningDialog from "./WarningDialog"
 import { uiPaths, palette, usersPath } from "../../../utils/definitions";
 import { PintoTypography, PintoSerifTypography } from "../../../utils/fonts";
 import { ListItemAvatar, Avatar } from "@material-ui/core";
@@ -67,36 +66,21 @@ const StyledMenuItem = withStyles(theme => ({
   }
 }))(MenuItem);
 
-const useStyles = makeStyles(theme => ({
-  listItem: {
-    borderTop: "1px solid grey",
-    borderBottom: "1px solid grey",
-    marginBottom: "0.2rem"
-  },
-  optionsIcon: {
-    margin: "0 auto"
-  }
-}));
-
 const PartyCreationDialog = props => {
-  const [partyName, setPartyName] = React.useState(props.partyName);
+  const [partyName, setPartyName] = React.useState(props.party ? props.party.name : '');
   const [isManagingParty, setIsManagingParty] = React.useState(
     props.isManagingParty
   );
   const [showScanner, setShowScanner] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [activePartyMember, setActivePartyMember] = React.useState("");
-  const [warningOpen, setWarningOpen] = React.useState(false)
-  const [warningAction, setWarningAction] = React.useState(null)
-  const [warningText, setWarningText] = React.useState('')
-  const [warningType, setWarningType] = React.useState('')
 
   React.useEffect(() => {
     setIsManagingParty(props.isManagingParty);
   }, [props.isManagingParty]);
-  React.useEffect(() => {
-    setPartyName(props.partyName);
-  }, [props.partyName]);
+  // React.useEffect(() => {
+  //   setPartyName(props.partyName);
+  // }, [props.partyName]);
 
   const handlePartyNameChange = e => {
     if (e.target.value.length < 30) {
@@ -106,7 +90,6 @@ const PartyCreationDialog = props => {
 
   const handleQRscanStart = () => {
     setShowScanner(prev => !prev);
-    //console.log(props.activeMission)
   };
 
   const handleMoreClick = (event, memberId) => {
@@ -144,10 +127,6 @@ const PartyCreationDialog = props => {
 
   const handlePartyDisband = () => {
     props.onPartyDelete();
-    if(props.activeMission){
-      props.setActiveInstance(null, null)
-    }
-    
     props.handleClose();
   };
 
@@ -162,30 +141,22 @@ const PartyCreationDialog = props => {
     setIsManagingParty(true);
   };
 
-  const handleWarningDialogAction = (action, text, type) => {
-    console.log(action)
-    setWarningAction(() => action)
-    setWarningText(text)
-    setWarningType(type)
-    setWarningOpen(true)
-  }
+  // const handleWarningDialogAction = (action, text, type) => {
 
-  const handleActiveWarnings = (action, text) => {
-    let type = ''
-    if(props.activeMission){
-      type = 'mission'
-    }else if(props.auth.profile.activeOrder.length || (props.party.leader && props.party.leader.activeOrder.length)){
-      type = 'order'
-    }
+  //   //saving function reference in useState is possible only by wrapping in anonymous function
+  //   //https://medium.com/swlh/how-to-store-a-function-with-the-usestate-hook-in-react-8a88dd4eede1
 
-    if(type){
-      props.setWarning(() => action, text, type)
-      //handleWarningDialogAction(action, text, type )
-    }else{
-      action()
-    }
-    
-  }
+  //   //component class state it can be achieved in classic way
+  //   // this.setState({
+  //   //   warningAction: action
+  //   // })
+
+  //   setWarningAction(() => action)
+  //   setWarningText(text)
+  //   setWarningType(type)
+  //   setWarningOpen(true)
+  // }
+
 
   return (
     <Dialog
@@ -196,7 +167,7 @@ const PartyCreationDialog = props => {
       style={{ zIndex: 2000 }}
     >
       {isManagingParty && (
-        <DialogTitle style={{textAlign:'center'}}>Zarządzaj drużyną {partyName}</DialogTitle>
+        <DialogTitle style={{textAlign:'center'}}>Zarządzaj drużyną {props.party.name}</DialogTitle>
       )}
       <DialogContent>
         <Grid container direction="column" alignItems="center" spacing={2}>
@@ -256,7 +227,7 @@ const PartyCreationDialog = props => {
                 <Button
                   variant="contained"
 
-                  onClick={()=> handleActiveWarnings(handleQRscanStart, "Zmiana liczebności drużyny")}
+                  onClick={()=> props.handleWarning(handleQRscanStart, "Zmiana liczebności drużyny")}
                 >
                   {props.party.members && props.party.members.length > 0 ? "Dodaj kolejną osobę" : 'Dodaj osobę'}
                 </Button>
@@ -273,14 +244,14 @@ const PartyCreationDialog = props => {
         onClose={handleMoreClose}
         style={{zIndex: 3000}}
       >
-        <StyledMenuItem onClick={() => handleActiveWarnings(handleRemoveFromParty, 'Usunięcie członka drużyny')} >
+        <StyledMenuItem onClick={() => props.handleWarning(handleRemoveFromParty, 'Usunięcie członka drużyny')} >
           <ListItemIcon>
 
             <img src={uiPaths.deleteRed} style={{width: '2rem'}}/>
           </ListItemIcon>
           <ListItemText primary={<PintoTypography>Wyrzuć z drużyny</PintoTypography>} />
         </StyledMenuItem>
-        <StyledMenuItem onClick={()=> handleActiveWarnings(handleGiveLeader, "Przekazanie tytułu lidera")} >
+        <StyledMenuItem onClick={()=> props.handleWarning(handleGiveLeader, "Przekazanie tytułu lidera")} >
           <ListItemIcon >
 
             <img src={uiPaths.transferLeader} style={{width: '2rem'}}/>
@@ -296,7 +267,7 @@ const PartyCreationDialog = props => {
           <Button
             color="secondary"
             variant="contained"
-            onClick={() => handleActiveWarnings(handlePartyDisband, "Czy chcesz rozwiązać drużynę? Rozwiązanie drużyny")}
+            onClick={() => props.handleWarning(handlePartyDisband, "Czy chcesz rozwiązać drużynę? Rozwiązanie drużyny")}
           >
             Rozwiąż drużynę
           </Button>
@@ -311,22 +282,13 @@ const PartyCreationDialog = props => {
           handleReturn={handleQRscanStart}
         />
       )}
-      <WarningDialog
-        open={warningOpen}
-        handleClose={() => setWarningOpen(false)}
-        handleAction={warningAction}
-        text={warningText}
-        type={warningType}
-      />
     </Dialog>
   );
 };
 
 const mapStateToProps = state => {
   return {
-    auth: state.auth,
-    party: state.party,
-    //activeMission: state.mission.activeInstanceId
+
   };
 };
 

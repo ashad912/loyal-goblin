@@ -1,22 +1,24 @@
 import React from "react";
 import {connect} from 'react-redux'
+
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import { palette } from "../../../utils/definitions";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { PintoTypography} from "../../../utils/fonts";
 
 import {resetWarning} from 'store/actions/communicationActions'
+import refStore from 'store/enhancers/refEnhancer'
+import { palette } from "utils/definitions";
+import { PintoTypography} from "utils/fonts";
+
+
 
 const WarningDialog = (props) => {
 
-  const warning = props.warning
 
   const handleModalAction = () => {
-    console.log(warning.action)
-    warning.action()
+    refStore.resolveWarning()
     props.resetWarning()
   }
 
@@ -26,11 +28,11 @@ const WarningDialog = (props) => {
   }
 
   return (
-    <Dialog open={Boolean(warning.action)} onClose={props.resetWarning} style={{zIndex: 4000}}>
+    <Dialog open={Boolean(refStore.resolveWarning)} onClose={props.resetWarning} style={{zIndex: 4000}}>
       <DialogTitle style={{textAlign:'center'}}>Potwierdź wykonanie akcji</DialogTitle>
       <DialogContent> 
         <PintoTypography style={{color: palette.background.darkGrey}}>
-          {warning.text} {endTexts[warning.type]}
+          {props.warning.text} {endTexts[props.warning.type]}
         </PintoTypography> 
       </DialogContent>
       <DialogActions>
@@ -56,7 +58,7 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
   return {
-      warning: state.communication.warning
+      warning: state.communication.warning,
   };
 };
 

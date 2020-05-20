@@ -506,7 +506,7 @@ UserSchema.methods.partyPopulate = function () {
         path: "party",
         populate: {
             path: "leader members",
-            select: "_id name avatar attributes experience userPerks equipped bag class experience",
+            select: "_id name avatar attributes experience userPerks equipped bag class experience activeOrder",
             populate: {
             path: "bag",
             populate: {
