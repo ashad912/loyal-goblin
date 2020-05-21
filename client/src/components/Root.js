@@ -102,12 +102,6 @@ function Root(props) {
       setValue(parseInt(sessionStorage.tabIndex))
     }
 
-    // if(props.auth.profile.name && props.auth.profile.class){
-    //   setShowCharacterCreationModal(false)
-    // }else{
-    //   props.onGetAllNames()
-    // }
-
     updateGlobalStore()
     document.addEventListener('scroll', trackScrolling);
 
@@ -134,7 +128,6 @@ function Root(props) {
   useEffect(() => {
     if (props.party.inShop && props.party.leader._id === props.auth.uid) {
       props.onLeaveShop();
-      //history.push("/shop", { id: props.auth.uid });
     }
   }, [props.party.inShop]);
 
