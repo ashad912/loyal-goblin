@@ -149,7 +149,7 @@ class App extends React.Component {
     if(online){
 
       const user = await this.props.authCheck();
-      const HomeComponent = user.name && user.class ? Root : CharacterCreation
+      const HomeComponent = user && user.name && user.class ? Root : CharacterCreation
 
       this.setState({
         HomeComponent
