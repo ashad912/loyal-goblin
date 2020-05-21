@@ -1,6 +1,6 @@
 import React, {useState}  from 'react'
 import moment from 'moment'
-import { Redirect} from 'react-router-dom'
+import { Redirect, useHistory} from 'react-router-dom'
 import { connect } from 'react-redux'
 import VisibilitySensor from 'react-visibility-sensor'
 import MissionDetails from './mission/MissionDetails'
@@ -9,13 +9,11 @@ import MissionListItem from './mission/MissionListItem'
 import withMissionItemCommon from '../../../hoc/withMissionItemCommon'
 import List from '@material-ui/core/List';
 
-import OrderWarningDialog from "./OrderWarningDialog";
 
 import Typography from '@material-ui/core/Typography';
 import styled from 'styled-components'
 
 import {getMissionList, createInstance, deleteInstance} from '../../../store/actions/missionActions.js'
-import {socket} from '../../../socket'
 
 import Rally from './rally/Rally'
 import { getFirstRally } from '../../../store/actions/rallyActions'
@@ -39,15 +37,10 @@ const StyledList = styled(List)`
 
 const Events = (props) => {
 
-
-    const [missionId, setMissionId] = useState(null);
     const [activeMissionDetails, setActiveMissionDetails] = useState(null)
     const [activeRallyDetails, setActiveRallyDetails] = useState(null)
-    
-    const [rally, setRally] = useState(null)
-    const [orderWarningDialog, setOrderWarningDialog] = React.useState({ action: null, text: "" });
-    
-    
+
+    const history = useHistory()
 
     const fetchMissions = async () => {
         
@@ -55,27 +48,29 @@ const Events = (props) => {
     }
 
     const fetchRally = async () => {
-        const rally = await getFirstRally() //return Object or 'undefined'
-        setRally(rally) 
+         await props.getFirstRally() //return Object or 'undefined'
     }
 
+    //https://reactjs.org/docs/hooks-faq.html#how-can-i-measure-a-dom-node
+    // const itemRef = React.useCallback(node => {
+    //     console.log(node)
+    //     if(node !== null){
+    //         setItemHeight(node.clientHeight)
+    //     }
+    // }, [])
 
-    React.useEffect(() => {
-        
-        fetchMissions()
-        fetchRally()
-        
-    }, []);
 
-    const handleOrderWarningDialog = (action, text) => {
-        setOrderWarningDialog({ action, text });
-      };
+
+    const openInstance = (id) => {
+        history.push("/mission", { id });
+    }
+
 
     const handleMissionCreate = async (id) => {
         try{
 
             const mInstance = await props.createInstance(id, props.party._id) //shot to backend - verify party quantity and leader status (amulets verifed inside the mission), redirect to mission
-            setMissionId(mInstance.mission)
+            openInstance(mInstance.mission)
                 
         }catch(e){
             //console.log(e)
@@ -85,24 +80,17 @@ const Events = (props) => {
     }
 
     const handleMissionClick = async (id) => {
-        //console.log('clicked',  id) onClick={
-        const isActiveOrder = props.activeOrder.length
-        const isValidActiveOrder =
-            isActiveOrder ? moment.utc().valueOf() < moment.utc(props.activeOrder[0].createdAt).add("5", "minutes").valueOf() : false
         if(!props.activeMissionId){
-            if(isValidActiveOrder){
-                handleOrderWarningDialog(
-                    () => handleMissionCreate(id),
-                    "Rozpoczęcie misji"
-                  )
-            }else{
-                handleMissionCreate(id)
-             
-            }
+            
+            props.handleWarning(
+                () => handleMissionCreate(id),
+                "Rozpoczęcie misji"
+                )
+            
+            
         }else{
-            setMissionId(id)
-        }
-        
+            openInstance(id)
+        }  
     }
 
     const handleRefresh = () => {
@@ -123,13 +111,14 @@ const Events = (props) => {
     }
 
     const handleRallyDetailsOpen = () => {
-        setActiveRallyDetails(rally)
+        setActiveRallyDetails(props.rally)
     }
 
     const handleRallyDetailsClose = () => {
         setActiveRallyDetails(null)
     }
 
+    
     //for better perfomance uses VisibilitySensor to load only visible (or partly visible) elements
     //to work need fixed listem item size (which is ok, i believe)
     const missionList = props.missionListData ? (
@@ -138,7 +127,7 @@ const Events = (props) => {
             return(
                 <VisibilitySensor partialVisibility key={mission._id}>
                 {({isVisible}) =>
-                    <div>{isVisible ? ( /*inVisible defined only inside div witch is fucking kurwa crazy */
+                    <div>{isVisible ? ( /*inVisible defined only inside div which is fucking kurwa crazy */
                         <MissionListItemHoc
                             index={index}
                             activeMissionId = {props.activeMissionId}
@@ -146,6 +135,7 @@ const Events = (props) => {
                             handleMissionDetailsOpen={handleMissionDetailsOpen}
                             handleMissionLeave={handleMissionLeave}
                             multipleSession={props.multipleSession}
+                            
                         />   
                     ) : (<div style={{height: itemLabelHeight}}></div>)   /*empty div with the same height - IMPORTANT */
                     }
@@ -158,20 +148,13 @@ const Events = (props) => {
 
 
     const MissionDetailsHoc = activeMissionDetails ? (withMissionItemCommon(MissionDetails, activeMissionDetails)) : (null)
-  
+
     return (
         
         <React.Fragment>
-           
 
-            {missionId != null ?
-             <Redirect push to={{
-                  pathname: '/mission',
-                  state: { id: missionId}                                      
-            }} /> : null}
-
-            {rally !== null && (
-                <Rally rally={rally} handleRallyDetailsOpen={handleRallyDetailsOpen} handleRallyDetailsClose={handleRallyDetailsClose} refreshProfile={() => props.authCheck()}/>
+            {props.rally !== null && (
+                <Rally rally={props.rally} handleRallyDetailsOpen={handleRallyDetailsOpen} handleRallyDetailsClose={handleRallyDetailsClose} refreshProfile={() => props.authCheck()}/>
             )}
 
             <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
@@ -211,14 +194,6 @@ const Events = (props) => {
                 />
             }    
 
-            <OrderWarningDialog
-                open={Boolean(orderWarningDialog.action)}
-                handleClose={() =>
-                    setOrderWarningDialog({ action: null, text: "" })
-                }
-                handleAction={orderWarningDialog.action}
-                text={orderWarningDialog.text}
-            />
         </React.Fragment>
       
     )
@@ -226,6 +201,7 @@ const Events = (props) => {
 
 const mapStateToProps = state => {
     return {
+        rally: state.rally.rally,
         activeOrder: state.auth.profile.activeOrder,
         missionListData: state.mission.missions,
         activeMissionId: state.mission.activeInstanceId,
@@ -238,6 +214,7 @@ const mapDispatchToProps = dispatch => {
     return {
         authCheck: () => dispatch(authCheck()),
         getMissionList : () => dispatch(getMissionList()),
+        getRally: () => dispatch(getFirstRally()),
         createInstance: (id, partyId) => dispatch(createInstance(id, partyId)),
         deleteInstance: (partyId) => dispatch(deleteInstance(partyId))
     };

@@ -1,17 +1,24 @@
 import React, { useState, useCallback } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import MobileStepper from "@material-ui/core/MobileStepper";
-import Paper from "@material-ui/core/Paper";
+import { connect } from "react-redux";
 import _ from "lodash";
 
+
+import { makeStyles } from "@material-ui/core/styles";
+import MobileStepper from "@material-ui/core/MobileStepper";
 import Container from "@material-ui/core/Container";
 import Button from "@material-ui/core/Button";
+import { Typography, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@material-ui/core";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
 import Step3 from "./Step3";
 import Step4 from "./Step4";
 import Step5 from "./Step5";
-import { Typography } from "@material-ui/core";
+import { createCharacter, getAllNames, clearAllNames } from "store/actions/profileActions";
+import { authCheck } from "store/actions/authActions";
+
+
+
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -37,7 +44,8 @@ const useStyles = makeStyles(theme => ({
 
 const CharacterCreation = props => {
   const classes = useStyles();
-  const [stepperHeight, setStepperHeight] = useState(0);
+
+  const [characterCreationError, setCharacterCreationError] = React.useState(false)
   const [activeStep, setActiveStep] = useState(0);
   const [nextDisabled, setNextDisabled] = useState(true);
   const [name, setName] = useState("");
@@ -52,14 +60,48 @@ const CharacterCreation = props => {
     endurance: 1
   });
 
-  React.useEffect(()=>{
-    if(props.submitError){
+  const stepperRef = React.useRef()
+
+  React.useEffect(() => {
+    props.onGetAllNames()
+  }, [])
+
+  React.useEffect(() => {
+    let buttonDisabled = true;
+    if (name.length > 1 && activeStep === 0 && !nameTaken) {
+      buttonDisabled = false;
+    }
+    if (sex !== "" && activeStep === 1) {
+      buttonDisabled = false;
+    }
+    if (characterClass !== "" && activeStep === 2) {
+      buttonDisabled = false;
+    }
+    if (attributePool === 0 && activeStep === 3) {
+      buttonDisabled = false;
+    }
+    if (activeStep === 4) {
+      buttonDisabled = false;
+    }
+
+    setNextDisabled(buttonDisabled);
+  }, [activeStep, name, sex, characterClass, attributePool, nameTaken]);
+
+
+  const handleCharacterCreationFinish = async (name, sex, charClass, attributes) => {
+    try{
+      await props.onCreateCharacter(name, sex, charClass, attributes)
+      props.onClearAllNames()
+      await props.onAuthCheck()
+      
+    }catch(e){
+      setCharacterCreationError(true)
       setActiveStep(0)
       setTimeout(() => {
-        props.resetSubmitError()
+        setCharacterCreationError(false)
       }, 5000);
     }
-  }, [props.submitError])
+  }
 
 
 
@@ -81,7 +123,7 @@ const CharacterCreation = props => {
 
   const handleCheckAllNames = useCallback(
     _.debounce(value => {
-      if (!props.allNames.find(name => name === value.toLowerCase())) {
+      if (!props.auth.allNames.find(name => name === value.toLowerCase())) {
         setNameTaken(false);
       } else {
         setNameTaken(true);
@@ -156,6 +198,8 @@ const CharacterCreation = props => {
     setAttributePool(prev => prev - value);
   };
 
+  const stepperHeight =  stepperRef.current ? stepperRef.current.clientHeight : '0'
+
   const steps = [
     <Step1 handleChange={handleNameChange} handleCheck={handleCheckAllNames} value={name} nameTaken={nameTaken}/>,
     <Step2 handleChange={handleSexChange} value={sex} />,
@@ -180,7 +224,7 @@ const CharacterCreation = props => {
   const handleNext = () => {
     
     if(activeStep === 0){
-      if (!props.allNames.find(otherName => otherName === name)) {
+      if (!props.auth.allNames.find(otherName => otherName === name)) {
         setNameTaken(false);
       } else {
         setNameTaken(true);
@@ -189,7 +233,7 @@ const CharacterCreation = props => {
     }
 
     if (activeStep === maxSteps - 1) {
-      props.onFinish(name, sex, characterClass, attributes);
+      handleCharacterCreationFinish(name, sex, characterClass, attributes);
     }
 
     setActiveStep(prevActiveStep => prevActiveStep + 1);
@@ -199,49 +243,34 @@ const CharacterCreation = props => {
     setActiveStep(prevActiveStep => prevActiveStep - 1);
   };
 
-  React.useEffect(() => {
-    let buttonDisabled = true;
-    if (name.length > 1 && activeStep === 0 && !nameTaken) {
-      buttonDisabled = false;
-    }
-    if (sex !== "" && activeStep === 1) {
-      buttonDisabled = false;
-    }
-    if (characterClass !== "" && activeStep === 2) {
-      buttonDisabled = false;
-    }
-    if (attributePool === 0 && activeStep === 3) {
-      buttonDisabled = false;
-    }
-    if (activeStep === 4) {
-      buttonDisabled = false;
-    }
-
-    setNextDisabled(buttonDisabled);
-  }, [activeStep, name, sex, characterClass, attributePool, nameTaken]);
-
-  React.useEffect(() => {
-    setStepperHeight(document.getElementById("stepper").offsetHeight);
-  }, []);
+  
+  
 
   return (
+    
+      <Dialog
+            fullScreen
+            open={!props.auth.profile.name || !props.auth.profile.class}
+            onClose={handleCharacterCreationFinish}
+      >
     <div className={classes.root}>
       <Container
         className={classes.container}
         style={{
-          minHeight: `calc(100vh - ${stepperHeight}px)`
+          minHeight: `calc(100vh - ${stepperRef.current ? stepperRef.current.clientHeight: '0'}px)`,
         }}
       >
-        <div className={classes.paper}>
+      <div className={classes.paper}>
 
-        {props.submitError && 
-        <Typography  color="secondary" style={{textAlign: 'center', marginBottom:'2rem'}}>Błąd finalizacji tworzenia postaci. Sprawdź poprawność danych i spróbuj jeszcze raz.</Typography>
+        {characterCreationError && 
+          <Typography  color="secondary" style={{textAlign: 'center', marginBottom:'2rem'}}>Błąd finalizacji tworzenia postaci. Sprawdź poprawność danych i spróbuj jeszcze raz.</Typography>
         }
-          {steps[activeStep]}
-          </div>
+        {steps[activeStep]}
+      </div>
       </Container>
       <MobileStepper
-        id="stepper"
+        ref={stepperRef}
+        //id="stepper"
         steps={maxSteps}
         position="static"
         variant="dots"
@@ -269,7 +298,24 @@ const CharacterCreation = props => {
         }
       />
     </div>
+      </Dialog>
+    
   );
 };
 
-export default CharacterCreation;
+const mapStateToProps = state => {
+  return {
+    auth: state.auth,
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    authCheck: () => dispatch(authCheck()),
+    onCreateCharacter: (name, sex, charClass, attributes) => dispatch(createCharacter(name, sex, charClass, attributes)),
+    onGetAllNames: () => dispatch(getAllNames()),
+    onClearAllNames: ()=> dispatch(clearAllNames()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CharacterCreation);

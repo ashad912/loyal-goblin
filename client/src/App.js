@@ -23,6 +23,8 @@ import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import MissionInstance from "./components/screens/missionInstance/MissionInstance";
+import Loading from "components/layout/Loading";
+
 
 import { palette } from "./utils/definitions";
 
@@ -30,6 +32,7 @@ import { authCheck } from "./store/actions/authActions";
 import { resetConnectionError } from "./store/actions/connectionActions";
 import { updateParty } from "./store/actions/partyActions";
 import OfflineModal from "./components/auth/OfflineModal";
+import CharacterCreation from "components/screens/characterCreation/CharacterCreation";
 
 const goblinTheme = createMuiTheme({
   palette: {
@@ -73,16 +76,25 @@ class App extends React.Component {
   }
 
   state = {
-    online: true
+    online: true,
+    HomeComponent: Loading
   }
 
 
   async componentDidMount() {
     const prod = process.env.NODE_ENV === 'production'
     const online = prod ? navigator.onLine : true
-    if(process.env.NODE_ENV === 'production'){
+
+    window.addEventListener("popstate", e => {
+      // Reload after popstate (to update client)
+      window.location.reload()
+    });
+
+
+    if(prod){
       window.addEventListener('online', this.handleOnlineState, false);
       window.addEventListener('offline', this.handleOfflineState, false);
+      
     }
     
     if (prod && 'serviceWorker' in navigator) {
@@ -126,37 +138,41 @@ class App extends React.Component {
           wb.addEventListener('externalwaiting', showSkipWaitingPrompt);
         
           registration = await wb.register();
-  }
+    }
 
 
-    window.addEventListener("popstate", e => {
-      // Reload after popstate (to update client)
-      window.location.reload()
-    });
-
+    
     //HISTORY BACK PREVENT - https://medium.com/@subwaymatch/disabling-back-button-in-react-with-react-router-v5-34bb316c99d7
     //history.listen(...), history.go(...)
 
     //CHECK AUTH ON APP LOAD
     if(online){
 
-      await this.props.authCheck();
-  
-      //Update profile data on first full hour and after next 60 minutes
-      this.firstUpdate = setTimeout(() => {
-        this.props.authCheck({ autoFetch: true });
-        this.props.onPartyUpdate({ autoFetch: true });
-        this.nextUpdates = setInterval(() => {
+      const user = await this.props.authCheck();
+      const HomeComponent = user.name && user.class ? Root : CharacterCreation
+
+      this.setState({
+        HomeComponent
+      }, () => {
+        //Update profile data on first full hour and after next 60 minutes
+        this.firstUpdate = setTimeout(() => {
           this.props.authCheck({ autoFetch: true });
           this.props.onPartyUpdate({ autoFetch: true });
-        }, 3600000);
-      }, 3601000 - (new Date().getTime() % 3600000));
+          this.nextUpdates = setInterval(() => {
+            this.props.authCheck({ autoFetch: true });
+            this.props.onPartyUpdate({ autoFetch: true });
+          }, 3600000);
+        }, 3601000 - (new Date().getTime() % 3600000));
+
+
+        //For testing
+        // setTimeout(() => {
+        //   this.props.authCheck();
+        //   this.props.onPartyUpdate()
+        // }, 5000);
+      })
   
-      //For testing
-      // setTimeout(() => {
-      //   this.props.authCheck();
-      //   this.props.onPartyUpdate()
-      // }, 5000);
+      
     }else{
       this.setState({online: false})
     }
@@ -199,6 +215,8 @@ class App extends React.Component {
   }
 
   render() {
+    
+
     if(!this.state.online){
       return(   
         <StylesProvider injectFirst>
@@ -208,6 +226,8 @@ class App extends React.Component {
         </StylesProvider>
       )
     }
+
+
     return (
       <BrowserRouter>
         <StylesProvider injectFirst>
@@ -215,7 +235,7 @@ class App extends React.Component {
             <div className="App">
               <Navbar />
               <Switch>
-                <Route exact path="/" component={withAuth(Root)} />
+                <Route exact path="/" component={withAuth(this.state.HomeComponent)} />
                 <Route exact path="/shop" component={withAuth(Shop)} />
                 <Route
                   exact

@@ -405,17 +405,17 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
     try{
         //if user.party get Party
         let membersIds = []
-        let leader = null
+        let leaderId = null
 
         if(user.party){
             const party = await user.validatePartyAndLeader(false)
             membersIds = [...party.members]
-            leader = party.leader
+            leaderId = party.leader
         }else{
-            leader = user._id
+            leaderId = user._id
         }
         
-        if(leader && (leader.toString() !== user._id.toString())){ //here are objectIDs - need to be string
+        if(leaderId && (leaderId.toString() !== user._id.toString())){ //here are objectIDs - need to be string
             throw new Error('User is not the leader!')
         }
 
@@ -427,7 +427,7 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
                 {completedByUsers: 
                     {$not: //true inverts to false; to get this mission ALL elements do not have to include any element from 'party' 
                         {$elemMatch: //elemMatch works as 'or' - false, false, false, true => true
-                            {$in: [...membersIds, leader]} //if even one of completedByUsers elements includes some element from 'party' -> true
+                            {$in: [...membersIds, leaderId]} //if even one of completedByUsers elements includes some element from 'party' -> true
                         }
                     }
                     
@@ -518,8 +518,10 @@ router.post('/createInstance', auth, async (req, res) => { //mission id passed f
 
         })
 
+        //Remove leader active order
+        if (user.activeOrder.length) await user.clearActiveOrder()
 
-        let partyIds = [leader, ...membersIds]
+        let partyIds = [leaderId, ...membersIds]
 
         let partyObject = []
         partyIds.forEach((memberId) => {

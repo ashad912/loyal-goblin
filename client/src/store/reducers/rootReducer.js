@@ -4,8 +4,10 @@ import partyReducer from './partyReducer'
 import shopReducer from './shopReducer'
 import missionReducer from './missionReducer'
 import communicationReducer from './communicationReducer'
+import rallyReducer from './rallyReducer'
 
 import { combineReducers} from 'redux'
+
 
 
 const rootReducer = combineReducers( {
@@ -14,6 +16,7 @@ const rootReducer = combineReducers( {
     party: partyReducer,
     shop: shopReducer,
     mission: missionReducer,
+    rally: rallyReducer,
     communication: communicationReducer
 })
 

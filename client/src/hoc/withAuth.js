@@ -2,7 +2,7 @@ import React from "react";
 import { compose } from "redux";
 import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
-import Loading from "../components/layout/Loading";
+import Loading from "components/layout/Loading";
 
 const withAuth = WrappedComponent => {
   return class extends React.Component {
@@ -20,7 +20,7 @@ const withAuth = WrappedComponent => {
 
 
     render() {
-      console.log('withAuth')
+
       if ((this.props.connection.loading && !this.props.auth.uid) || this.props.auth.init) {
         return <Loading />;
       }

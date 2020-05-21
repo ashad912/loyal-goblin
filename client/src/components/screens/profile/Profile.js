@@ -16,7 +16,6 @@ import PerkBox from "./PerkBox";
 
 import NewRallyAwardsDialog from "./NewRallyAwardsDialog";
 import NewShopAwardsDialog from "./NewShopAwardsDialog";
-import ProfileMissionInstanceWarningDialog from "./ProfileMissionInstanceWarningDialog";
 
 import { updateParty, removeMember } from "store/actions/partyActions";
 import { designateUserLevel, bagArrayToCategories } from "utils/methods";
@@ -69,19 +68,25 @@ const Profile = (props) => {
   );
   const [equippedItems, setEquippedItems] = React.useState(null);
 
-  const authUpdate = async () => {
-    await props.onAuthCheck();
-  };
+  const [activePerks, setActivePerks] = React.useState([]);
+
+  const [userLevel, setUserLevel] = React.useState(1);
+  const [relativeExp, setRelativeExp] = React.useState(0);
+  const [relativeThreshold, setRelativeThreshold] = React.useState(0);
+
+  // const authUpdate = async () => {
+  //   await props.onAuthCheck();
+  // };
 
   React.useEffect(() => {
-    if (
-      history.location.state &&
-      history.location.state.hasOwnProperty("authCheck")
-    ) {
-      authUpdate();
-    }
+    // if (
+    //   history.location.state &&
+    //   history.location.state.hasOwnProperty("authCheck")
+    // ) {
+    //   authUpdate();
+    // }
     updateEquippedItems();
-    props.onPartyUpdate();
+    //props.onPartyUpdate();
   }, []);
 
   React.useEffect(() => {
@@ -92,16 +97,7 @@ const Profile = (props) => {
     updateEquippedItems(props.auth.profile);
   }, [props.auth.profile.equipped]);
 
-  const [activePerks, setActivePerks] = React.useState([]);
-
-  const [userLevel, setUserLevel] = React.useState(1);
-  const [relativeExp, setRelativeExp] = React.useState(0);
-  const [relativeThreshold, setRelativeThreshold] = React.useState(0);
-
-  const [
-    missionInstanceWarningDialog,
-    setMissionInstanceWarningDialog,
-  ] = React.useState({ action: null, text: "" });
+ 
 
   React.useEffect(() => {
     const levelData = designateUserLevel(props.auth.profile.experience, true);
@@ -109,12 +105,6 @@ const Profile = (props) => {
     setRelativeExp(levelData.relativeExp);
     setRelativeThreshold(levelData.relativeThreshold);
   }, [props.auth.profile.experience]);
-
-  // React.useEffect(() => {
-  //   if (props.party.inShop && props.party.leader._id === props.auth.uid) {
-  //     history.push("/shop", { id: props.auth.uid });
-  //   }
-  // }, [props.party.inShop]);
 
   const updateEquippedItems = (param) => {
     const equipment = {
@@ -296,9 +286,6 @@ const Profile = (props) => {
     history.push("/shop", { id: props.auth.uid });
   };
 
-  const handleMissionInstanceWarningDialog = (action, text) => {
-    setMissionInstanceWarningDialog({ action, text });
-  };
 
   const handleToggleEquipment = (isOpen) => {
     setEquipmentOpen(isOpen);
@@ -468,13 +455,12 @@ const Profile = (props) => {
                     width: "100%",
                   }}
                   onClick={
-                    props.mission.activeInstanceId
-                      ? () =>
-                          handleMissionInstanceWarningDialog(
-                            () => handleOpenShop(),
-                            "Otworzenie sklepu"
-                          )
-                      : handleOpenShop
+                    () =>
+                      props.handleWarning(
+                        () => handleOpenShop(),
+                        "Otworzenie sklepu"
+                      )
+                     
                   }
                 >
                   Przygoda
@@ -556,14 +542,6 @@ const Profile = (props) => {
         open={props.auth.profile.shopNotifications.isNew}
         clearShopAwards={() => props.clearShopAwards()}
         profile={props.auth.profile}
-      />
-      <ProfileMissionInstanceWarningDialog
-        open={Boolean(missionInstanceWarningDialog.action)}
-        handleClose={() =>
-          setMissionInstanceWarningDialog({ action: null, text: "" })
-        }
-        handleAction={missionInstanceWarningDialog.action}
-        text={missionInstanceWarningDialog.text}
       />
     </Grid>
   );
