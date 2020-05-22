@@ -4,7 +4,7 @@ const initState = {
 
 const rallyReducer = (state = initState, action) => {
     switch(action.type){
-        case 'GET_RALLY': 
+        case 'UPDATE_RALLY': 
             return{
                 rally: action.rally
             }

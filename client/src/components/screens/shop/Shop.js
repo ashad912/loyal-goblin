@@ -17,7 +17,7 @@ import MenuGridItem from "./MenuGridItem";
 import ShopList from "./ShopList";
 import PlayerShopButtons from "./PlayerShopButtons";
 import BasketDrawer from "./BasketDrawer";
-import VerificationPage from "./VerificationPage";
+import ShopVerification from "./ShopVerification";
 import ScrollModal from "./ScrollModal";
 import ScrollListItem from "./ScrollListItem";
 
@@ -519,7 +519,7 @@ class Shop extends React.Component {
       return (
         <div style={{minHeight:`calc(100vh - (${this.state.fullHeightCorrection}px)`}}>
           {this.props.activeOrder.length > 0 && this.state.activeUser ? (
-            <VerificationPage user={this.props.auth} party={this.props.party} />
+            <ShopVerification user={this.props.auth} party={this.props.party} />
           ) : (
             <ScrollingProvider>
               {this.props.party && this.props.party.length > 1 && (

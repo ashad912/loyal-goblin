@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
-import AwardListItem from './AwardListItem'
+import AwardListItem from '../AwardListItem'
 import { classLabelsAny } from '../../../utils/labels';
 import {palette, uiPaths} from '../../../utils/definitions'
 

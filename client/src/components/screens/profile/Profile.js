@@ -14,8 +14,7 @@ import Equipment from "./Equipment";
 import NewLevelDrawer from "./NewLevelDrawer";
 import PerkBox from "./PerkBox";
 
-import NewRallyAwardsDialog from "./NewRallyAwardsDialog";
-import NewShopAwardsDialog from "./NewShopAwardsDialog";
+import AwardsDialog from "./AwardsDialog";
 
 import { updateParty, removeMember } from "store/actions/partyActions";
 import { designateUserLevel, bagArrayToCategories } from "utils/methods";
@@ -79,21 +78,16 @@ const Profile = (props) => {
   // };
 
   React.useEffect(() => {
-    // if (
-    //   history.location.state &&
-    //   history.location.state.hasOwnProperty("authCheck")
-    // ) {
-    //   authUpdate();
-    // }
     updateEquippedItems();
-    //props.onPartyUpdate();
   }, []);
 
   React.useEffect(() => {
+    
     setBag(bagArrayToCategories(props.auth.profile.bag));
   }, [props.auth.profile.bag]);
 
   React.useEffect(() => {
+    
     updateEquippedItems(props.auth.profile);
   }, [props.auth.profile.equipped]);
 
@@ -292,6 +286,8 @@ const Profile = (props) => {
   };
   const rootPath =
     props.auth.profile.sex === "male" ? appearancePath : altAppearancePath;
+
+  console.log('profile')
   return (
     <Grid
       container
@@ -514,7 +510,7 @@ const Profile = (props) => {
         handleItemToggle={handleItemToggle}
         handleItemDelete={handleItemDelete}
         leaderInShop={props.party && props.party._id && props.party.inShop}
-        activeMission={props.mission.activeInstanceId}
+        activeMission={props.activeMissionId}
       />
 
       <NewLevelDrawer
@@ -529,19 +525,21 @@ const Profile = (props) => {
         attributes={props.auth.profile.attributes}
       />
 
-      <NewRallyAwardsDialog
+      <AwardsDialog
         open={
           props.auth.profile.rallyNotifications.isNew &&
           !props.auth.profile.shopNotifications.isNew
         }
-        clearRallyAwards={() => props.clearRallyAwards()}
-        profile={props.auth.profile}
+        handleClose={() => props.clearRallyAwards()}
+        title="Rajd zakończony!"
+        notifications={props.auth.profile.rallyNotifications}
       />
 
-      <NewShopAwardsDialog
+      <AwardsDialog
         open={props.auth.profile.shopNotifications.isNew}
-        clearShopAwards={() => props.clearShopAwards()}
-        profile={props.auth.profile}
+        handleClose={() => props.clearShopAwards()}
+        title="Przygoda zakończona!"
+        notifications={props.auth.profile.shopNotifications}
       />
     </Grid>
   );
@@ -551,7 +549,7 @@ const mapStateToProps = (state) => {
   return {
     auth: state.auth,
     party: state.party,
-    mission: state.mission,
+    activeMissionId: state.mission.activeInstanceId,
   };
 };
 

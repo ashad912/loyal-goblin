@@ -22,7 +22,7 @@ import Loyal from "./screens/loyal/Loyal";
 import Booking from "./screens/booking/Booking";
 
 import RootSnackbar from "./layout/RootSnackbar";
-import WarningDialog from "./WarningDialog";
+import WarningDialog from "./screens/WarningDialog";
 
 
 import {socket} from '../socket'
@@ -35,6 +35,8 @@ import { getMissionList } from "store/actions/missionActions";
 import { updateParty } from "store/actions/partyActions";
 
 import { uiPaths, palette } from "utils/definitions";
+import WithWarning from "hoc/withWarning";
+import Loading from "./layout/Loading";
 
 
 
@@ -82,6 +84,7 @@ const useStyles = makeStyles(theme => ({
 
 function Root(props) {
 
+  const [loaded, setLoaded] = React.useState(false)
   const [footerReached, setFooterReached] = React.useState(false)
   const [value, setValue] = React.useState(0);
 
@@ -92,38 +95,24 @@ function Root(props) {
   
  
   useEffect(() => {
+    updateGlobalStore()
+    console.log(props.location)
     //change tab, when returing from specific event
     if (props.location.state && props.location.state.hasOwnProperty("indexRedirect")) {
-      
-      const redirectToIndex = props.location.state.indexRedirect;
-      setValue(redirectToIndex);
-      history.replace("", null);
+      changeValue(props.location.state.indexRedirect); 
     }else if(sessionStorage.tabIndex){
-      setValue(parseInt(sessionStorage.tabIndex))
+      changeValue(parseInt(sessionStorage.tabIndex))
     }
 
-    updateGlobalStore()
+    history.replace("", null);
+    console.log(props.location)
     document.addEventListener('scroll', trackScrolling);
 
+    setLoaded(true)
     return () => {
       document.removeEventListener('scroll', trackScrolling);
     }
   }, []);
-
-
-  // useEffect(() => {
-
-  //     if (!showCharacterCreationModal) {
-  //       const appBar = document.getElementById("app-bar").offsetHeight;
-  //       const navbar = document.getElementById("navbar").offsetHeight;
-  //       const footer = document.getElementById("footer").offsetHeight;
-  //       setFullHeightCorrection(appBar + navbar + footer);
-
-
-  //       //updateGlobalStore()
-  //     }
-    
-  // }, [showCharacterCreationModal]);
 
   useEffect(() => {
     if (props.party.inShop && props.party.leader._id === props.auth.uid) {
@@ -134,24 +123,28 @@ function Root(props) {
 
   const updateGlobalStore = async () => {
 
-  
-    if (
-      history.location.state &&
-      history.location.state.hasOwnProperty("authCheck")
-    ) {
-      await Promise.all([
-        props.authCheck(),
-        props.onPartyUpdate(),
-        props.getMissionList(),
-        props.getRally()
-      ])
-    }else{
-      await Promise.all([
-        props.onPartyUpdate(),
-        props.getMissionList(),
-        props.getRally()
-      ])
+    try{
+      if (
+        props.location.state &&
+        props.location.state.hasOwnProperty("authCheck")
+      ) {
+        await Promise.all([
+          props.onAuthCheck(),
+          props.onPartyUpdate(),
+          props.getMissionList(),
+          props.getRally()
+        ])
+      }else{
+        await Promise.all([
+          props.onPartyUpdate(),
+          props.getMissionList(),
+          props.getRally()
+        ])
+      }
+    }catch(e){
+      console.log(e)
     }
+    
 
   }
 
@@ -182,76 +175,71 @@ function Root(props) {
     changeValue(index);
   };
 
-  // const handleCharacterCreationFinish = async (name, sex, charClass, attributes) => {
-  //   try{
-  //     await props.onCreateCharacter(name, sex, charClass, attributes)
-  //     props.onClearAllNames()
-  //     await props.onAuthCheck()
-  //     setShowCharacterCreationModal(false)
-  //   }catch(e){
-  //     setCharacterCreationError(true)
-  //   }
-    
-  // };
 
   const appBar = document.getElementById("app-bar") ? document.getElementById("app-bar").offsetHeight : '0';
   const navbar = document.getElementById("navbar") ? document.getElementById("navbar").offsetHeight : '0'
   const footer = document.getElementById("footer") ? document.getElementById("footer").offsetHeight : '0'
   const fullHeight = `calc(100vh - ${appBar + navbar + footer}px)`
 
-  const ProfileWithWarning = withWarning(Profile)
-  const PartyWithWarning = withWarning(Party)
-  const EventsWithWarning = withWarning(Events)
+  // const ProfileWithWarning = withWarning(Profile)
+  // const PartyWithWarning = withWarning(Party)
+  // const EventsWithWarning = withWarning(Events)
   
+  if(!loaded){
+    return <Loading/>
+  }
 
   return (
+    
     <div className={classes.root}>
       
-      <React.Fragment>
-        <AppBar position="static" color="inherit" id="app-bar">
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            indicatorColor="primary"
-            textColor="primary"
-            aria-label="full width tabs example"
-            variant="fullWidth"
-          >
-            <StyledTab active={value === 0 ? 1 : 0} label="Postać" {...a11yProps(0)}/>
-            <StyledTab active={value === 1 ? 1 : 0}  label="Drużyna" {...a11yProps(1)} />
-            <StyledTab active={value === 2 ? 1 : 0}  label="Wydarzenia" {...a11yProps(2)} />
-            <StyledTab active={value === 3 ? 1 : 0}  label="Statki" {...a11yProps(3)} />
-            <StyledTab active={value === 4 ? 1 : 0}  label="Rezerwuj" {...a11yProps(4)} />
-          </Tabs>
-        </AppBar>
-        <SwipeableViews
-          axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-          index={value}
-          onChangeIndex={handleChangeIndex}
-          style={{ minHeight: fullHeight }}
-        >
-          <TabPanel value={value} index={0} dir={theme.direction}>
-            <ProfileWithWarning fullHeight={fullHeight}/>
-          </TabPanel>
-          <TabPanel value={value} index={1} dir={theme.direction}>
-            <PartyWithWarning fullHeight={fullHeight}/>
-          </TabPanel>
-          <TabPanel value={value} index={2} dir={theme.direction}>
-            <EventsWithWarning fullHeight={fullHeight}/>
-          </TabPanel>
-          <TabPanel value={value} index={3} dir={theme.direction}>
-            <Loyal fullHeight={fullHeight}/>
-          </TabPanel>
-          <TabPanel value={value} index={4} dir={theme.direction}>
-            <Booking fullHeight={fullHeight}/>
-          </TabPanel>
-        </SwipeableViews>
-      </React.Fragment>
       
+      <AppBar position="static" color="inherit" id="app-bar">
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          indicatorColor="primary"
+          textColor="primary"
+          aria-label="full width tabs example"
+          variant="fullWidth"
+        >
+          <StyledTab active={value === 0 ? 1 : 0} label="Postać" {...a11yProps(0)}/>
+          <StyledTab active={value === 1 ? 1 : 0}  label="Drużyna" {...a11yProps(1)} />
+          <StyledTab active={value === 2 ? 1 : 0}  label="Wydarzenia" {...a11yProps(2)} />
+          <StyledTab active={value === 3 ? 1 : 0}  label="Statki" {...a11yProps(3)} />
+          <StyledTab active={value === 4 ? 1 : 0}  label="Rezerwuj" {...a11yProps(4)} />
+        </Tabs>
+      </AppBar>
+      <SwipeableViews
+        axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+        index={value}
+        onChangeIndex={handleChangeIndex}
+        style={{ minHeight: fullHeight }}
+      >
+        <TabPanel value={value} index={0} dir={theme.direction}>
+          <WithWarning component={Profile} fullHeight={fullHeight}/>
+        </TabPanel>
+        <TabPanel value={value} index={1} dir={theme.direction}>
+          <WithWarning component={Party} fullHeight={fullHeight}/>
+        </TabPanel>
+        <TabPanel value={value} index={2} dir={theme.direction}>
+          <WithWarning component={Events} fullHeight={fullHeight}/>
+        </TabPanel>
+        <TabPanel value={value} index={3} dir={theme.direction}>
+          <Loyal fullHeight={fullHeight}/>
+        </TabPanel>
+        <TabPanel value={value} index={4} dir={theme.direction}>
+          <Booking fullHeight={fullHeight}/>
+        </TabPanel>
+      </SwipeableViews>
+    
+      <RootSnackbar 
+        socket={socket} 
+        screen={value} 
+        hide={footerReached} 
+      />
 
-        
-    <RootSnackbar socket={socket} screen={value} hide={footerReached} />
-    <WarningDialog/>
+      <WarningDialog/>
     </div>
   );
 }

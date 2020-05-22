@@ -26,13 +26,13 @@ import { PintoSerifTypography, PintoTypography } from "../../../utils/fonts";
 import { cancelOrder, leaveShop } from "../../../store/actions/shopActions";
 import {itemsPath, usersPath, palette} from '../../../utils/definitions'
 import {createAvatarPlaceholder} from '../../../utils/methods'
-import AwardListItem from "../events/AwardListItem";
+import AwardListItem from "../AwardListItem";
 
 const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_URL
 })
 
-const VerificationPage = props => {
+const ShopVerification = props => {
   const history = useHistory();
   const [showCancelDialog, setShowCancelDialog] = React.useState(false)
   const [timer, setTimer] = React.useState('')
@@ -81,7 +81,7 @@ const VerificationPage = props => {
         leaveShopTimeout.current = setTimeout(async() => {
             await props.onLeaveShop()
             history.push("/", {authCheck: true});
-        }, 5000);
+        }, 3000);
       }
     
   }
@@ -102,9 +102,7 @@ const VerificationPage = props => {
         const formatted = moment(`${minutes}:${seconds}`, "mm:ss").format('mm:ss')
         setTimer(`Zamówienie wygaśnie za ${formatted}`)
       }else{
-  
-          handleCancelOrder()
-  
+        handleCancelOrder()
       }
     }
   }
@@ -240,4 +238,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(VerificationPage);
+export default connect(mapStateToProps, mapDispatchToProps)(ShopVerification);

@@ -24,7 +24,7 @@ import { connect } from 'react-redux';
 import { useHistory } from "react-router";
 import { Link } from '@material-ui/core';
 import {updateAvatar} from '../../store/actions/profileActions'
-import {authCheck, signOut} from '../../store/actions/authActions'
+import {signOut} from '../../store/actions/authActions'
 import {togglePresenceInInstance} from '../../store/actions/missionActions'
 import {leaveShop} from '../../store/actions/shopActions'
 import ChangePasswordModal from '../auth/ChangePasswordModal';
@@ -240,13 +240,18 @@ const Navbar = (props) => {
     const handleBack = async () => {
         window.removeEventListener("scroll", handleScrollPosition);
 
-        let indexRedirect = 0
+        let state = {}
         switch (window.location.pathname) {
             case '/mission':
-                const user = {_id: props.auth.uid, inMission: false, readyStatus: false}
-                await togglePresenceInInstance(user, props.party._id)
-                await props.authCheck()
-                indexRedirect = 2;
+                if(props.activeMission){
+                    const user = {_id: props.auth.uid, inMission: false, readyStatus: false}
+                    await togglePresenceInInstance(user, props.party._id)   
+                    state.indexRedirect = 2 
+                }else{
+                    state.authCheck = true
+                    state.indexRedirect = 0    
+                }
+                
                 break;
             case '/shop':
                 if(props.party && props.party.length){
@@ -258,7 +263,7 @@ const Navbar = (props) => {
 
         history.push({
             pathname: "/",
-            state: { indexRedirect}
+            state
         });
     }
 
@@ -469,7 +474,8 @@ const Navbar = (props) => {
 const mapStateToProps = (state) => {
     return {
         auth: state.auth,
-        party: state.party
+        party: state.party,
+        activeMission: state.mission.activeInstanceId,
     }
 }
 
@@ -478,7 +484,6 @@ const mapDispatchToProps = (dispatch) => {
         updateAvatar: (avatar) => dispatch(updateAvatar(avatar)),
         signOut: () => dispatch(signOut()),
         onLeaveShop: () => dispatch(leaveShop()),
-        authCheck: () => {dispatch(authCheck())}
 
     }
 }

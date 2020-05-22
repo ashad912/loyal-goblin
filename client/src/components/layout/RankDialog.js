@@ -30,20 +30,10 @@ const RankDialog = props => {
             const data = await getRankedUsers()
             setMyUserIndex(data.userIndex)
             setUsers(data.users)
-      //  console.log(data.users)
         }
 
         fetchRankedUsers()
     }, [])
-
-
-    // let sortedUsers = users.sort((a, b)=> (a.experience < b.experience) ? 1 : -1)
-    // const myUserIndex = sortedUsers.findIndex((user) => {
-    //     return user._id === props.uid
-    // })
-    // sortedUsers = sortedUsers.slice(0, 100)
-
-
 
 
     return (

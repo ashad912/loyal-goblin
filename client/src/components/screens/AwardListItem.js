@@ -16,11 +16,11 @@ import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import TouchAppIcon from '@material-ui/icons/TouchApp';
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import Divider from '@material-ui/core/Divider';
-import { dayLabels, categoryLabels, roomLabels, perkLabels } from "../../../utils/labels";
-import {itemsPath, palette} from '../../../utils/definitions'
-import { getValue, getTarget } from "../../../utils/methods";
-import { PintoTypography } from "../../../utils/fonts";
-import PerkBoxItem from "../profile/PerkBoxItem";
+import { dayLabels, categoryLabels, roomLabels, perkLabels } from "../../utils/labels";
+import {itemsPath, palette} from '../../utils/definitions'
+import { getValue, getTarget } from "../../utils/methods";
+import { PintoTypography } from "../../utils/fonts";
+import PerkBoxItem from "./profile/PerkBoxItem";
 
 
 const AwardListItem = props => {

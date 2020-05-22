@@ -199,7 +199,7 @@ const Party = props => {
                () =>
                 props.handleWarning(
                   () => setIsCreatingParty(prev => !prev),
-                  "Tworzenie drużyny"
+                  "Utworzenie drużyny"
                 )
             }
           >

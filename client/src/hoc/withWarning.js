@@ -1,45 +1,45 @@
 import React from 'react'
 import moment from 'moment'
-import { compose } from "redux";
 import { connect } from "react-redux";
+
 import {setWarning} from 'store/actions/communicationActions'
 
 
 
-const withWarning = (WrappedComponent) => {
-    return class extends React.Component {
+const withWarning = (props) => {
+    
+        const WrappedComponent = props.component
 
-        isValidOrder = (order) => {
+        const isValidOrder = (order) => {
             return moment.utc().valueOf() < moment.utc(order[0].createdAt).add("5", "minutes").valueOf()
         }
 
-        handleWarning = (action, text) => {
+        const handleWarning = (action, text) => {
             let type = ''
-            if(this.props.activeMissionId){
+            if(props.activeMissionId){
               type = 'mission'
             }else if(
-                (this.props.activeOrder.length && this.isValidOrder(this.props.activeOrder))
-                || (this.props.leader && this.props.leader.activeOrder.length && this.isValidOrder(this.props.leader.activeOrder))
+                (props.activeOrder.length && isValidOrder(props.activeOrder))
+                || (props.leader && props.leader.activeOrder.length && isValidOrder(props.leader.activeOrder))
                 ){
               type = 'order'
             }
         
             if(type){
-              this.props.setWarning(action, text, type)
+                props.setWarning(action, text, type)
             }else{
-              action()
+                action()
             }   
         }
 
-        render(){
-            return(
-                <WrappedComponent
-                    handleWarning={this.handleWarning}
-                    {...this.props}
-                />   
-            )
-        }
-    }
+        return(
+            <WrappedComponent
+                handleWarning={handleWarning}
+                fullHeight={props.fullHeight}          
+            />   
+        )
+        
+    
 }
 
 const mapStateToProps = state => {
@@ -47,7 +47,6 @@ const mapStateToProps = state => {
       activeOrder: state.auth.profile.activeOrder,
       leader: state.party.leader,
       activeMissionId: state.mission.activeInstanceId
-
     };
 };
 
@@ -59,10 +58,6 @@ const mapDispatchToProps = dispatch => {
 }
   
   
-export default compose(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps
-    ),
-    withWarning
-);
+export default connect(mapStateToProps, mapDispatchToProps)(withWarning)
+    
+

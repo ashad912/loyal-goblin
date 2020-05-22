@@ -82,16 +82,20 @@ export const deleteInstance = (partyId) => {
 }
 
 export const finishInstance = (partyId) => {
-    return new Promise (async (resolve, reject) => {
-        try {
-            const res = await axios.delete('/mission/finishInstance')
-            
-            finishMissionEmit(res.data, partyId) // send awards to socket to broadcast it to party ? only mission id to save data
-            resolve(res.data)
-        }catch (e) {
-            reject(e)     
-        } 
-    })
+    return (dispatch) => {
+        return new Promise (async (resolve, reject) => {
+            try {
+                const res = await axios.delete('/mission/finishInstance')
+                
+                dispatch(setActiveInstance(null, null))
+                finishMissionEmit(res.data, partyId) // send awards to socket to broadcast it to party ? only mission id to save data
+                resolve(res.data)
+            }catch (e) {
+                reject(e)     
+            } 
+        })
+    }
+    
 }
 
 

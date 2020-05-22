@@ -12,7 +12,7 @@ import Grid from "@material-ui/core/Grid";
 
 import ExchangeArea from './ExchangeArea'
 import PartyList from './PartyList'
-import VerificationPage from './VerificationPage'
+import MissionAwards from './MissionAwards'
 import MissionBasicInfo from './MissionBasicInfo';
 
 import Loading from 'components/layout/Loading';
@@ -20,7 +20,7 @@ import {itemsPath} from 'utils/definitions'
 import { PintoTypography} from 'utils/fonts'
 
 import { authCheck } from "store/actions/authActions";
-import {togglePresenceInInstance, toggleUserReady, finishInstance} from 'store/actions/missionActions'
+import {togglePresenceInInstance, toggleUserReady, finishInstance, setActiveInstance} from 'store/actions/missionActions'
 import {socket, modifyUserStatusSubscribe, finishMissionSubscribe} from 'socket'
 
 
@@ -123,6 +123,7 @@ class MissionInstance extends React.Component {
         missionObject: null,
         leader: null,
         fullHeightCorrection: 0,
+        showAwards: false
     }
 
 
@@ -130,7 +131,7 @@ class MissionInstance extends React.Component {
         
         history.replace({
           pathname: '/',
-          state: {indexRedirect: 2}
+          state: {indexRedirect: 2, authCheck: true}
         }) 
     }
 
@@ -138,16 +139,23 @@ class MissionInstance extends React.Component {
         
         history.push({
           pathname: "/",
-          state: { indexRedirect: 2}
+          state: { indexRedirect: 2, authCheck: true}
         });
     }
 
     handleBack = async (withStack) => {
         const user = {_id: this.props.auth.uid, inMission: false, readyStatus: false}
-        await togglePresenceInInstance(user, this.props.party._id)
-        await this.props.authCheck()
+        try{
+            await togglePresenceInInstance(user, this.props.party._id)
+            await this.props.authCheck()
 
-        
+            if(withStack){
+                this.pushToEvents(this.props.history)
+            }else{
+                this.backToEvents(this.props.history);
+            }
+        }catch(e){}
+
         if(withStack){
             this.pushToEvents(this.props.history)
         }else{
@@ -183,15 +191,11 @@ class MissionInstance extends React.Component {
         
 
         if(!this.props.location.state || (this.props.location.state.id === undefined)){
-            console.log('state lack')
             this.handleBack()
             return
         }
 
         const socketConnectionStatus = socket.connected
-
-        
-      
 
         try{
             const user = {_id: this.props.auth.uid, inMission: true}
@@ -229,11 +233,12 @@ class MissionInstance extends React.Component {
 
                 finishMissionSubscribe((awards) => {
                     //console.log('finishMission sub')
+                    this.props.setActiveInstance(null, null)
                     this.setState({ 
                         missionAwards: awards
                     }, () => {
                         this.setState({ 
-                            showVerificationPage: true,
+                            showAwards: true,
                         })
                     });
                 })
@@ -267,12 +272,13 @@ class MissionInstance extends React.Component {
             try{
                 const user = {_id: this.props.auth.uid, readyStatus: !this.state.userReadyStatus}
                 await toggleUserReady(user, this.props.party._id)
-                const awards = await finishInstance(this.props.party._id)
+                const awards = await this.props.finishInstance(this.props.party._id)
+                console.log(awards)
                 this.setState({ 
                     missionAwards: awards
                 }, () => {
                     this.setState({ 
-                        showVerificationPage: true,
+                        showAwards: true,
                     })
                 });
             }catch(e){
@@ -280,8 +286,9 @@ class MissionInstance extends React.Component {
                 this.handleBack()
             }   
         }else{
-            const user = {_id: this.props.auth.uid, readyStatus: !this.state.userReadyStatus}
+            
             try{
+                const user = {_id: this.props.auth.uid, readyStatus: !this.state.userReadyStatus}
                 await toggleUserReady(user, this.props.party._id)
 
                 const instanceUsers = this.modifyUserStatus(user, this.state.instanceUsers)
@@ -291,11 +298,7 @@ class MissionInstance extends React.Component {
                 })
             }catch(e){
                 this.handleBack()
-            }
-            
-
-            
-            
+            } 
         }
         
     };
@@ -386,8 +389,8 @@ class MissionInstance extends React.Component {
         const mission = this.state.missionObject
         return(
             <div style={{display: 'flex', flexDirection: 'column', padding: `0rem 2rem`, alignItems: 'center', minHeight:`calc(100vh - (${this.state.fullHeightCorrection}px)`}}>
-            {this.state.showVerificationPage ? (
-                <VerificationPage 
+            {this.state.showAwards ? (
+                <MissionAwards 
                     missionExperience={this.state.missionObject.experience} 
                     missionAwards={this.state.missionAwards} 
                     userPerks={this.props.auth.profile.userPerks}
@@ -559,7 +562,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        authCheck: () => {dispatch(authCheck())}
+        authCheck: () => dispatch(authCheck()),
+        finishInstance: (partyId) => dispatch(finishInstance(partyId)),
+        setActiveInstance: (id, imgSrc) => dispatch(setActiveInstance(id, imgSrc))
     }
 }
 

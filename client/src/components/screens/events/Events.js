@@ -1,6 +1,5 @@
 import React, {useState}  from 'react'
-import moment from 'moment'
-import { Redirect, useHistory} from 'react-router-dom'
+import { useHistory} from 'react-router-dom'
 import { connect } from 'react-redux'
 import VisibilitySensor from 'react-visibility-sensor'
 import MissionDetails from './mission/MissionDetails'
@@ -48,7 +47,7 @@ const Events = (props) => {
     }
 
     const fetchRally = async () => {
-         await props.getFirstRally() //return Object or 'undefined'
+         await props.getRally() //return Object or 'null'
     }
 
     //https://reactjs.org/docs/hooks-faq.html#how-can-i-measure-a-dom-node

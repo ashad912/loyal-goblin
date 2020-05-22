@@ -7,9 +7,10 @@ export const getFirstRally = () => {
             try {
                 
                 const res = await axios.get('/rally/first')
-                //console.log(res.data)
-                dispatch({type: 'UPDATE_RALLY', rally: res.data ? res.data : null})
-                resolve(res.data ? res.data : null)
+                const rally = res.data ? res.data : null
+                
+                dispatch({type: 'UPDATE_RALLY', rally})
+                resolve(rally)
             }catch (e) {
                 reject(e)     
             } 
