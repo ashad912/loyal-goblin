@@ -89,3 +89,12 @@ export const classThemes = {
     rogue: '#c4c4c4',
     cleric: '#c8a612'
 }
+
+
+
+export const warningActionSources = {
+    mission: 'mission',
+    order: 'order',
+    party: 'party'
+}
+

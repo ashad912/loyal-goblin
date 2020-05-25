@@ -200,7 +200,7 @@ class MissionInstance extends React.Component {
         try{
             const user = {_id: this.props.auth.uid, inMission: true}
             const leader = !this.props.party.leader || (this.props.party.leader._id === this.props.auth.uid)
-            const response = await togglePresenceInInstance(user, this.props.party._id, socketConnectionStatus)
+            const response = await togglePresenceInInstance(user, this.props.party._id,  socketConnectionStatus)
             const missionInstance = response.missionInstance
             const amulets = response.amulets
            
@@ -272,7 +272,7 @@ class MissionInstance extends React.Component {
             try{
                 const user = {_id: this.props.auth.uid, readyStatus: !this.state.userReadyStatus}
                 await toggleUserReady(user, this.props.party._id)
-                const awards = await this.props.finishInstance(this.props.party._id)
+                const awards = await this.props.finishInstance()
                 console.log(awards)
                 this.setState({ 
                     missionAwards: awards

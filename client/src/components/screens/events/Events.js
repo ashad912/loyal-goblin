@@ -20,6 +20,8 @@ import { authCheck } from "../../../store/actions/authActions";
 
 import IconButton from '@material-ui/core/IconButton';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import { warningActionSources } from 'utils/definitions'
+import { setCheckWarning } from 'store/actions/communicationActions'
 
 
 const itemLabelHeight = 451.6 //REFACTOR: need to be changed to 'dimensionLabel'
@@ -81,9 +83,10 @@ const Events = (props) => {
     const handleMissionClick = async (id) => {
         if(!props.activeMissionId){
             
-            props.handleWarning(
+            props.setCheckWarning(
                 () => handleMissionCreate(id),
-                "Rozpoczęcie misji"
+                "Rozpoczęcie misji",
+                warningActionSources.mission
                 )
             
             
@@ -215,7 +218,8 @@ const mapDispatchToProps = dispatch => {
         getMissionList : () => dispatch(getMissionList()),
         getRally: () => dispatch(getFirstRally()),
         createInstance: (id, partyId) => dispatch(createInstance(id, partyId)),
-        deleteInstance: (partyId) => dispatch(deleteInstance(partyId))
+        deleteInstance: (partyId) => dispatch(deleteInstance(partyId)),
+        setCheckWarning: (action, text, actionType) => dispatch(setCheckWarning(action, text, actionType))
     };
 };
   

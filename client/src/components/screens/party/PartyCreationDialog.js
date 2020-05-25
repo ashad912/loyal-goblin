@@ -27,11 +27,11 @@ import {
 import QRreaderView from "./QRreaderView";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 
-import { uiPaths, palette, usersPath } from "../../../utils/definitions";
+import { uiPaths, palette, usersPath, warningActionSources } from "../../../utils/definitions";
 import { PintoTypography, PintoSerifTypography } from "../../../utils/fonts";
 import { ListItemAvatar, Avatar } from "@material-ui/core";
 import { createAvatarPlaceholder } from "../../../utils/methods";
-import {setWarning} from 'store/actions/communicationActions'
+import {setCheckWarning} from 'store/actions/communicationActions'
 
 
 
@@ -227,7 +227,7 @@ const PartyCreationDialog = props => {
                 <Button
                   variant="contained"
 
-                  onClick={()=> props.handleWarning(handleQRscanStart, "Zmiana liczebności drużyny")}
+                  onClick={()=> props.setCheckWarning(handleQRscanStart, "Zmiana liczebności drużyny", warningActionSources.party)}
                 >
                   {props.party.members && props.party.members.length > 0 ? "Dodaj kolejną osobę" : 'Dodaj osobę'}
                 </Button>
@@ -244,14 +244,14 @@ const PartyCreationDialog = props => {
         onClose={handleMoreClose}
         style={{zIndex: 3000}}
       >
-        <StyledMenuItem onClick={() => props.handleWarning(handleRemoveFromParty, 'Usunięcie członka drużyny')} >
+        <StyledMenuItem onClick={() => props.setCheckWarning(handleRemoveFromParty, 'Usunięcie członka drużyny', warningActionSources.party)} >
           <ListItemIcon>
 
             <img src={uiPaths.deleteRed} style={{width: '2rem'}}/>
           </ListItemIcon>
           <ListItemText primary={<PintoTypography>Wyrzuć z drużyny</PintoTypography>} />
         </StyledMenuItem>
-        <StyledMenuItem onClick={()=> props.handleWarning(handleGiveLeader, "Przekazanie tytułu lidera")} >
+        <StyledMenuItem onClick={()=> props.setCheckWarning(handleGiveLeader, "Przekazanie tytułu lidera", warningActionSources.party)} >
           <ListItemIcon >
 
             <img src={uiPaths.transferLeader} style={{width: '2rem'}}/>
@@ -267,7 +267,7 @@ const PartyCreationDialog = props => {
           <Button
             color="secondary"
             variant="contained"
-            onClick={() => props.handleWarning(handlePartyDisband, "Czy chcesz rozwiązać drużynę? Rozwiązanie drużyny")}
+            onClick={() => props.setCheckWarning(handlePartyDisband, "Czy chcesz rozwiązać drużynę? Rozwiązanie drużyny", warningActionSources.party)}
           >
             Rozwiąż drużynę
           </Button>
@@ -301,7 +301,7 @@ const mapDispatchToProps = dispatch => {
       dispatch(removeMember(partyId, memberId)),
     onGiveLeader: (partyId, memberId) => dispatch(giveLeader(partyId, memberId)),
     setActiveInstance: (id, imgSrc) => dispatch(setActiveInstance(id, imgSrc)),
-    setWarning: (action, text, type) => dispatch(setWarning(action, text, type))
+    setCheckWarning: (action, text, actionType) => dispatch(setCheckWarning(action, text, actionType))
   };
 };
 

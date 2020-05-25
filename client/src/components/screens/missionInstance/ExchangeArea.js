@@ -274,28 +274,22 @@ export default class ExchangeArea extends React.Component {
 
     return (
       <div style={{width: '100%'}}>
-        
-        
-        
         <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.setDraggableProperty}>
-        
-             
-                <Box 
-                    targetKey={userItemsName} 
-                    items={this.state.userItems} 
-                    draggableProperty={this.state.draggableProperty}
-                    boxname={userItemsName}
-                    userName ={this.props.userName}
-                    boxIcon={this.props.avatar}/>
-                    
-            
-             
-                <Box 
-                    targetKey={missionItemsName}
-                    items={this.socketShare(this.state.missionItems)} 
-                    draggableProperty={this.state.draggableProperty}
-                    boxname={missionItemsName}
-                    boxIcon={uiPaths['chest']}/>    
+          <Box 
+            targetKey={userItemsName} 
+            items={this.state.userItems} 
+            draggableProperty={this.state.draggableProperty}
+            boxname={userItemsName}
+            userName ={this.props.userName}
+            boxIcon={this.props.avatar}
+          />
+          <Box 
+            targetKey={missionItemsName}
+            items={this.socketShare(this.state.missionItems)} 
+            draggableProperty={this.state.draggableProperty}
+            boxname={missionItemsName}
+            boxIcon={uiPaths['chest']}
+          />    
         
         </DragDropContext>
       </div>

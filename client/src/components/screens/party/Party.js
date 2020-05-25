@@ -22,11 +22,13 @@ import {
 import {
   usersPath,
   uiPaths,
-  palette
+  palette,
+  warningActionSources
 } from "utils/definitions";
 
 import { classLabels } from "utils/labels";
 import { PintoSerifTypography, PintoTypography } from "utils/fonts";
+import { setCheckWarning } from "store/actions/communicationActions";
 
 const FabIcon = styled.img`
   width: 2rem;
@@ -177,9 +179,10 @@ const Party = props => {
             alignItems="center"
             onClick={
               () =>
-                props.handleWarning(
+                props.setCheckWarning(
                   () => setIsJoiningParty(prev => !prev),
-                  "Poszukiwanie drużyny"
+                  "Poszukiwanie drużyny",
+                  warningActionSources.party
                 )  
             }
           >
@@ -197,9 +200,10 @@ const Party = props => {
             alignItems="center"
             onClick={
                () =>
-                props.handleWarning(
+                props.setCheckWarning(
                   () => setIsCreatingParty(prev => !prev),
-                  "Utworzenie drużyny"
+                  "Utworzenie drużyny",
+                  warningActionSources.party
                 )
             }
           >
@@ -243,7 +247,6 @@ const Party = props => {
         auth={props.auth}
         party={props.party}
         handleClose={() => setIsCreatingParty(prev => !prev)}
-        handleWarning={props.handleWarning}
       />
     </div>
   );
@@ -263,7 +266,8 @@ const mapDispatchToProps = dispatch => {
       dispatch(updateParty(params, socketAuthReconnect)),
     onRemoveMember: (partyId, memberId) =>
       dispatch(removeMember(partyId, memberId)),
-    onAuthCheck: () => dispatch(authCheck())
+    onAuthCheck: () => dispatch(authCheck()),
+    setCheckWarning: (action, text, actionType) => dispatch(setCheckWarning(action, text, actionType))
   };
 };
 

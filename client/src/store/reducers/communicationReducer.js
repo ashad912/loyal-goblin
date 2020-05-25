@@ -1,6 +1,6 @@
 const emptyWarning = {
     text: null,
-    type: null
+    actionType: null
 }
 
 
@@ -11,12 +11,12 @@ const initState = {
 
 const communicationReducer = (state = initState, action) => {
     switch (action.type){ 
-        case 'SET_WARNING':
+        case 'SET_CHECK_WARNING':
             return {
                 ...state,
                 warning: action.warning,  
             }
-        case 'RESET_WARNING':
+        case 'RESET_CHECK_WARNING':
             return {
                 ...state,
                 warning: {...emptyWarning},

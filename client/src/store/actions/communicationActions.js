@@ -1,8 +1,7 @@
-export const setWarning = (action, text, type) => {
-    console.log(action)
-    return {type: 'SET_WARNING', warning: {text, type}, warningRef: action}
+export const setCheckWarning = (action, text, actionType) => {
+    return {type: 'SET_CHECK_WARNING', warning: {text, actionType}, warningRef: action}
 }
 
-export const resetWarning = () => {
-    return {type: 'RESET_WARNING'}
+export const resetCheckWarning = () => {
+    return {type: 'RESET_CHECK_WARNING'}
 }

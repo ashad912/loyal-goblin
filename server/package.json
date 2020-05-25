@@ -9,7 +9,8 @@
     "dev-standalone": "env-cmd -f ./config/dev-standalone.env nodemon --exec babel-node src/index.js",
     "prod": "env-cmd -f ./config/prod.env nodemon --exec babel-node src/index.js",
     "debug": "env-cmd -f ./config/dev.env nodemon --exec babel-node --inspect src/index.js",
-    "debug-standalone": "env-cmd -f ./config/dev-standalone.env nodemon --inspect src/index.js"
+    "debug-standalone": "env-cmd -f ./config/dev-standalone.env nodemon --inspect src/index.js",
+    "build": "babel ../server --out-dir dist/ --copy-files"
   },
   "repository": {
     "type": "git",

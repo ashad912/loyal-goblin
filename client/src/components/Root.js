@@ -35,7 +35,7 @@ import { getMissionList } from "store/actions/missionActions";
 import { updateParty } from "store/actions/partyActions";
 
 import { uiPaths, palette } from "utils/definitions";
-import WithWarning from "hoc/withWarning";
+//import WithWarning from "hoc/withWarning";
 import Loading from "./layout/Loading";
 
 
@@ -96,7 +96,7 @@ function Root(props) {
  
   useEffect(() => {
     updateGlobalStore()
-    console.log(props.location)
+
     //change tab, when returing from specific event
     if (props.location.state && props.location.state.hasOwnProperty("indexRedirect")) {
       changeValue(props.location.state.indexRedirect); 
@@ -105,7 +105,6 @@ function Root(props) {
     }
 
     history.replace("", null);
-    console.log(props.location)
     document.addEventListener('scroll', trackScrolling);
 
     setLoaded(true)
@@ -144,8 +143,6 @@ function Root(props) {
     }catch(e){
       console.log(e)
     }
-    
-
   }
 
   const trackScrolling = () => {
@@ -174,6 +171,8 @@ function Root(props) {
   const handleChangeIndex = index => {
     changeValue(index);
   };
+
+  
 
 
   const appBar = document.getElementById("app-bar") ? document.getElementById("app-bar").offsetHeight : '0';
@@ -217,13 +216,13 @@ function Root(props) {
         style={{ minHeight: fullHeight }}
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
-          <WithWarning component={Profile} fullHeight={fullHeight}/>
+          <Profile fullHeight={fullHeight}/>
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-          <WithWarning component={Party} fullHeight={fullHeight}/>
+          <Party fullHeight={fullHeight}/>
         </TabPanel>
         <TabPanel value={value} index={2} dir={theme.direction}>
-          <WithWarning component={Events} fullHeight={fullHeight}/>
+          <Events fullHeight={fullHeight}/>
         </TabPanel>
         <TabPanel value={value} index={3} dir={theme.direction}>
           <Loyal fullHeight={fullHeight}/>
@@ -239,7 +238,7 @@ function Root(props) {
         hide={footerReached} 
       />
 
-      <WarningDialog/>
+      <WarningDialog />
     </div>
   );
 }
@@ -254,16 +253,12 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    //onCreateCharacter: (name, sex, charClass, attributes) => dispatch(createCharacter(name, sex, charClass, attributes)),
     onAuthCheck: () => dispatch(authCheck()),
     onPartyUpdate: (params, socketAuthReconnect) =>
       dispatch(updateParty(params, socketAuthReconnect)),
     getMissionList : () => dispatch(getMissionList()),
     getRally: () => dispatch(getFirstRally()),
     onLeaveShop: () => dispatch(leaveShop()),
-    
-    // onGetAllNames: () => dispatch(getAllNames()),
-    // onClearAllNames: ()=>dispatch(clearAllNames())
   };
 };
 

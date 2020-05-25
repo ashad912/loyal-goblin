@@ -18,7 +18,7 @@ import AwardsDialog from "./AwardsDialog";
 
 import { updateParty, removeMember } from "store/actions/partyActions";
 import { designateUserLevel, bagArrayToCategories } from "utils/methods";
-import { appearancePath, altAppearancePath, uiPaths } from "utils/definitions";
+import { appearancePath, altAppearancePath, uiPaths, warningActionSources } from "utils/definitions";
 
 import {
   toggleItem,
@@ -30,6 +30,7 @@ import {
 import { authCheck } from "store/actions/authActions";
 import maleBody from "assets/profile/male-body.svg";
 import femaleBody from "assets/profile/female-body.png";
+import { setCheckWarning } from "store/actions/communicationActions";
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -287,7 +288,6 @@ const Profile = (props) => {
   const rootPath =
     props.auth.profile.sex === "male" ? appearancePath : altAppearancePath;
 
-  console.log('profile')
   return (
     <Grid
       container
@@ -451,12 +451,12 @@ const Profile = (props) => {
                     width: "100%",
                   }}
                   onClick={
-                    () =>
-                      props.handleWarning(
+                    () => 
+                      props.setCheckWarning(
                         () => handleOpenShop(),
-                        "Otworzenie sklepu"
+                        "Otworzenie sklepu",
+                        warningActionSources.order 
                       )
-                     
                   }
                 >
                   Przygoda
@@ -566,6 +566,7 @@ const mapDispatchToProps = (dispatch) => {
     clearShopAwards: () => dispatch(clearShopAwards()),
     confirmLevel: (attribute) => dispatch(confirmLevel(attribute)),
     onAuthCheck: () => dispatch(authCheck()),
+    setCheckWarning: (action, text, actionType) => dispatch(setCheckWarning(action, text, actionType))
   };
 };
 

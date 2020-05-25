@@ -7,7 +7,7 @@ const Footer = (props) => {
         <div style={{backgroundColor: 'black', padding: '0 1rem 0 1rem', display: 'flex', alignItems:'center', height: '5vh', width: '100%', boxSizing:'border-box', position:'static', zIndex:'1000', bottom:'0',left:'0'}} id="footer">
             <Divider/>
             <Typography style={{textAlign: 'left', color: 'white', flexGrow: '6'}} variant="body1">© 2019-{new Date().getFullYear()} HHG Studio</Typography>
-            <Typography style={{textAlign: 'right', color: 'white', flexGrow: '6'}} variant="body1">v1.5.3-ALPHA</Typography>
+            <Typography style={{textAlign: 'right', color: 'white', flexGrow: '6'}} variant="body1">v1.5.4-ALPHA</Typography>
         </div>
     )
 }

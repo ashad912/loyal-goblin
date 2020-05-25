@@ -1,7 +1,7 @@
 import React , {useEffect, useState} from "react";
 import { connect } from "react-redux";
 import Snackbar from "@material-ui/core/Snackbar";
-import {setMultipleSession} from '../../store/actions/authActions'
+import {setMultipleSession} from 'store/actions/authActions'
 
 const RootSnackbar = props => {
 
