@@ -149,11 +149,23 @@ class App extends React.Component {
     if(online){
 
       const user = await this.props.authCheck();
-      const HomeComponent = user && user.name && user.class ? Root : CharacterCreation
+      const charCreated = user && user.name && user.class
+      const HomeComponent = charCreated ? Root : CharacterCreation
 
-      this.setState({
-        HomeComponent
-      }, () => {
+      this.setupComponent(HomeComponent, charCreated)
+  
+      
+    }else{
+      this.setState({online: false})
+    }
+  }
+
+  setupComponent(HomeComponent, condition){
+    this.setState({
+      HomeComponent
+    }, () => {
+      
+      if(condition){
         //Update profile data on first full hour and after next 60 minutes
         this.firstUpdate = setTimeout(() => {
           this.props.authCheck({ autoFetch: true });
@@ -170,12 +182,9 @@ class App extends React.Component {
         //   this.props.authCheck();
         //   this.props.onPartyUpdate()
         // }, 5000);
-      })
-  
+      }
       
-    }else{
-      this.setState({online: false})
-    }
+    })
   }
 
   componentWillUnmount() {
@@ -188,6 +197,10 @@ class App extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if(prevState.online !== this.state.online && this.state.online){
       window.location.reload()
+    }
+
+    if(!prevProps.userName && this.props.userName){
+      this.setupComponent(Root, true)
     }
     //USEFUL COMPONENT UPDATE DIAGNOSTICS
     // Object.entries(this.props).forEach(
@@ -284,6 +297,12 @@ class App extends React.Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+      userName: state.auth.profile.name,
+  }
+}
+
 const mapDispatchToProps = dispatch => {
   return {
     resetConnectionError: () => dispatch(resetConnectionError()),
@@ -293,4 +312,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 //redux compose to join with hoc/router
-export default connect(null, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);

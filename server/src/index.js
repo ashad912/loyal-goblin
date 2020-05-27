@@ -11,7 +11,7 @@ import * as utils from '@utils/methods'
 import rallyStore from '@store/rally.store'
 import socketController from '@controllers/socket.controller'
 
-const port = process.env.PORT || 4000;
+const port = process.env.PORT;
 
 const server = app.listen(port, () => {
   console.log(`Listening at ${port}`);

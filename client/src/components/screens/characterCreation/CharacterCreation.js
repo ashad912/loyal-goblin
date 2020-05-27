@@ -7,14 +7,13 @@ import { makeStyles } from "@material-ui/core/styles";
 import MobileStepper from "@material-ui/core/MobileStepper";
 import Container from "@material-ui/core/Container";
 import Button from "@material-ui/core/Button";
-import { Typography, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@material-ui/core";
+import { Typography, Dialog } from "@material-ui/core";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
 import Step3 from "./Step3";
 import Step4 from "./Step4";
 import Step5 from "./Step5";
 import { createCharacter, getAllNames, clearAllNames } from "store/actions/profileActions";
-import { authCheck } from "store/actions/authActions";
 
 
 
@@ -61,9 +60,13 @@ const CharacterCreation = props => {
   });
 
   const stepperRef = React.useRef()
+  const isMountedRef = React.useRef()
 
   React.useEffect(() => {
-    props.onGetAllNames()
+    if(props.auth.profile && !props.auth.profile.name){
+      props.onGetAllNames()
+    }
+    
   }, [])
 
   React.useEffect(() => {
@@ -90,10 +93,8 @@ const CharacterCreation = props => {
 
   const handleCharacterCreationFinish = async (name, sex, charClass, attributes) => {
     try{
-      await props.onCreateCharacter(name, sex, charClass, attributes)
       props.onClearAllNames()
-      await props.onAuthCheck()
-      
+      await props.onCreateCharacter(name, sex, charClass, attributes) 
     }catch(e){
       setCharacterCreationError(true)
       setActiveStep(0)
@@ -311,7 +312,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    authCheck: () => dispatch(authCheck()),
     onCreateCharacter: (name, sex, charClass, attributes) => dispatch(createCharacter(name, sex, charClass, attributes)),
     onGetAllNames: () => dispatch(getAllNames()),
     onClearAllNames: ()=> dispatch(clearAllNames()),
