@@ -40,7 +40,7 @@ export const refreshPartySubscribe = (data) => {
 
 export const deletePartySubscribe = (roomId) => {
     socket.on('deleteParty', roomId, () => {
-        return  roomId
+        return roomId
     })
 }
 

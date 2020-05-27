@@ -67,7 +67,7 @@ const HiddenFileInput = styled(Input)`
   user-select: none;
 `;
 
-const FileInputButton = styled(Typography)`
+const FileInputButton = styled(PintoTypography)`
   
 `;
 
@@ -349,14 +349,14 @@ const Navbar = (props) => {
                                 </ListItemIcon>
                                 <ListItemText>
                                     <FileInputButton color="primary">
-                                        <PintoTypography>{props.auth.profile.avatar ? "Zmień avatar" : "Dodaj avatar"}</PintoTypography>
+                                        {props.auth.profile.avatar ? "Zmień avatar" : "Dodaj avatar"}
                                     </FileInputButton>
                                     <HiddenFileInput
                                         type="file"
                                         accept="image/*"
                                         onChange={handleAvatarChange}
                                     />
-                                </ListItemText>
+                                    </ListItemText>
                             </StyledMenuItem>
                             {props.auth.profile.avatar && 
                                 <StyledMenuItem>

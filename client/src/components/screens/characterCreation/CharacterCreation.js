@@ -66,7 +66,6 @@ const CharacterCreation = props => {
     if(props.auth.profile && !props.auth.profile.name){
       props.onGetAllNames()
     }
-    
   }, [])
 
   React.useEffect(() => {
@@ -244,62 +243,64 @@ const CharacterCreation = props => {
     setActiveStep(prevActiveStep => prevActiveStep - 1);
   };
 
+  const navbar = document.getElementById("navbar") ? (document.getElementById("navbar").offsetHeight) : 0;
+  const footer = document.getElementById("footer") ? (document.getElementById("footer").offsetHeight) : 0;
+  const fullHeightCorrection = navbar + footer
   
-  
-
   return (
-    
+    <div style={{width: '100vw', height: `calc(100vh - ${fullHeightCorrection}px)`}}>
       <Dialog
-            fullScreen
-            open={!props.auth.profile.name || !props.auth.profile.class}
-            onClose={handleCharacterCreationFinish}
+        fullScreen
+        open={!props.auth.profile.name || !props.auth.profile.class}
+        onClose={handleCharacterCreationFinish}
       >
-    <div className={classes.root}>
-      <Container
-        className={classes.container}
-        style={{
-          minHeight: `calc(100vh - ${stepperRef.current ? stepperRef.current.clientHeight: '0'}px)`,
-        }}
-      >
-      <div className={classes.paper}>
+        <div className={classes.root}>
+          <Container
+            className={classes.container}
+            style={{
+              minHeight: `calc(100vh - ${stepperRef.current ? stepperRef.current.clientHeight: '0'}px)`,
+            }}
+          >
+          <div className={classes.paper}>
 
-        {characterCreationError && 
-          <Typography  color="secondary" style={{textAlign: 'center', marginBottom:'2rem'}}>Błąd finalizacji tworzenia postaci. Sprawdź poprawność danych i spróbuj jeszcze raz.</Typography>
-        }
-        {steps[activeStep]}
-      </div>
-      </Container>
-      <MobileStepper
-        ref={stepperRef}
-        //id="stepper"
-        steps={maxSteps}
-        position="static"
-        variant="dots"
-        activeStep={activeStep}
-        nextButton={
-          <Button
-            size="small"
-            onClick={handleNext}
-            disabled={nextDisabled}
-            variant="contained"
-            color="primary"
-          >
-            {activeStep === maxSteps - 1 ? "Stwórz postać" : "Dalej"}
-          </Button>
-        }
-        backButton={
-          <Button
-            size="small"
-            onClick={handleBack}
-            disabled={activeStep === 0}
-            style={{ opacity: activeStep === 0 ? "0" : "1" }}
-          >
-            Wróć
-          </Button>
-        }
-      />
-    </div>
+            {characterCreationError && 
+              <Typography  color="secondary" style={{textAlign: 'center', marginBottom:'2rem'}}>Błąd finalizacji tworzenia postaci. Sprawdź poprawność danych i spróbuj jeszcze raz.</Typography>
+            }
+            {steps[activeStep]}
+          </div>
+          </Container>
+          <MobileStepper
+            ref={stepperRef}
+            //id="stepper"
+            steps={maxSteps}
+            position="static"
+            variant="dots"
+            activeStep={activeStep}
+            nextButton={
+              <Button
+                size="small"
+                onClick={handleNext}
+                disabled={nextDisabled}
+                variant="contained"
+                color="primary"
+              >
+                {activeStep === maxSteps - 1 ? "Stwórz postać" : "Dalej"}
+              </Button>
+            }
+            backButton={
+              <Button
+                size="small"
+                onClick={handleBack}
+                disabled={activeStep === 0}
+                style={{ opacity: activeStep === 0 ? "0" : "1" }}
+              >
+                Wróć
+              </Button>
+            }
+          />
+        </div>
       </Dialog>
+    </div> 
     
   );
 };

@@ -16,8 +16,6 @@ class SocketConfig extends React.Component {
     });
   
     socketUnauthorizedSubscribe((err) => {
-      console.log(err)
-      console.log(err.response)
       if(err.message === "multipleSession"){
         this.props.setMultipleSession()
       }

@@ -335,7 +335,7 @@ const Profile = (props) => {
             {equippedItems && equippedItems.weaponRight && (
               <img
                 className={classes.avatarImage}
-                src={`${appearancePath}${equippedItems.weaponRight}`}
+                src={`${altAppearancePath}${equippedItems.weaponRight}`}
               />
             )}
 
@@ -380,7 +380,7 @@ const Profile = (props) => {
             {equippedItems && equippedItems.weaponLeft && (
               <img
                 className={classes.avatarImage}
-                src={`${altAppearancePath}${equippedItems.weaponLeft}`}
+                src={`${appearancePath}${equippedItems.weaponLeft}`}
               />
             )}
             {/* hands */}

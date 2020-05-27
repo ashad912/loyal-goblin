@@ -75,7 +75,12 @@ class SignIn extends Component {
         this.setState({fullHeightCorrection: navbar+footer})
     }
     
-
+    // componentWillUnmount(){
+    //     if(this.recaptcha){
+    //         this.recaptcha.reset();
+    //     }
+        
+    // }
     // componentDidUpdate(prevProps, prevState){
     //     const targets = ['email', 'password']
         

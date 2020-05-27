@@ -92,9 +92,26 @@ function Root(props) {
   const classes = useStyles();
   const theme = useTheme();
 
-  
+  // function useTraceUpdate(props) {
+  //   const prev = React.useRef(props);
+  //   useEffect(() => {
+  //     const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
+  //       if (prev.current[k] !== v) {
+  //         ps[k] = [prev.current[k], v];
+  //       }
+  //       return ps;
+  //     }, {});
+  //     if (Object.keys(changedProps).length > 0) {
+  //       console.log('Changed props:', changedProps);
+  //     }
+  //     prev.current = props;
+  //   });
+  // }
+
+  // useTraceUpdate(props);
  
   useEffect(() => {
+    
     updateGlobalStore()
 
     //change tab, when returing from specific event
@@ -108,6 +125,8 @@ function Root(props) {
     document.addEventListener('scroll', trackScrolling);
 
     setLoaded(true)
+    
+    
     return () => {
       document.removeEventListener('scroll', trackScrolling);
     }
@@ -121,7 +140,7 @@ function Root(props) {
 
 
   const updateGlobalStore = async () => {
-
+    
     try{
       if (
         props.location.state &&

@@ -71,12 +71,11 @@ class App extends React.Component {
 
   constructor(props){
     super(props);
-    this.handleOnlineState = this.handleOnlineState.bind(this); 
-    this.handleOfflineState = this.handleOfflineState.bind(this); 
   }
 
   state = {
     online: true,
+    loaded: false,
     HomeComponent: Loading
   }
 
@@ -151,8 +150,11 @@ class App extends React.Component {
       const user = await this.props.authCheck();
       const charCreated = user && user.name && user.class
       const HomeComponent = charCreated ? Root : CharacterCreation
-
+      
+      
       this.setupComponent(HomeComponent, charCreated)
+      
+      
   
       
     }else{
@@ -162,7 +164,8 @@ class App extends React.Component {
 
   setupComponent(HomeComponent, condition){
     this.setState({
-      HomeComponent
+      HomeComponent,
+      loaded: true
     }, () => {
       
       if(condition){
@@ -187,9 +190,13 @@ class App extends React.Component {
     })
   }
 
-  componentWillUnmount() {
+  unmountTimers(){
     clearTimeout(this.firstUpdate);
     clearInterval(this.nextUpdates);
+  }
+
+  componentWillUnmount() {
+    this.unmountTimers()
     window.removeEventListener('online', this.handleOnlineState, false);
     window.removeEventListener('offline', this.handleOfflineState, false);
   }
@@ -199,8 +206,13 @@ class App extends React.Component {
       window.location.reload()
     }
 
-    if(!prevProps.userName && this.props.userName){
+    if(this.state.loaded && (!prevProps.userName && this.props.userName)){
       this.setupComponent(Root, true)
+    }
+
+    if(this.state.loaded && (prevProps.userName && !this.props.userName)){
+      this.unmountTimers()
+      this.setupComponent(CharacterCreation, true)
     }
     //USEFUL COMPONENT UPDATE DIAGNOSTICS
     // Object.entries(this.props).forEach(

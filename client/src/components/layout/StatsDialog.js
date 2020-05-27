@@ -63,7 +63,7 @@ const StatsDialog = props => {
                     container 
                     direction='column'
                     justify='center'
-                    alignItems='center'
+                    align='center'
                     style={{padding: '2rem 0 2rem 0'}}
                 >
                     <Grid item>
@@ -87,7 +87,7 @@ const StatsDialog = props => {
             </Background>
             </DialogContent>
             <DialogContent style={{padding: '0'}}>
-            <List style={{padding: '0', maxHeight: '172px' }} alignItems="flex-start">
+            <List style={{padding: '0', maxHeight: '172px' }} align="flex-start">
                 <ListItem style={{paddingTop: '0.75rem', paddingBottom: '0.75rem'}}>
                     <Grid container style={{alignItems: 'center'}}>
                         <Grid item xs={11}>
