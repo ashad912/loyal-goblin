@@ -20,7 +20,7 @@
     "debug-standalone": "env-cmd -f ./config/dev-standalone.env npm run inspect",
     "clean": "rimraf dist",
     "build": "npm run clean && babel src/ --out-dir dist/ --copy-files",
-    "prod": "env-cmd -f ./config/dev-standalone.env node dist/index.js",
+    "prod": "env-cmd -f ./config/prod.env node dist/index.js",
     "prod:depracated": "env-cmd -f ./config/prod.env npm start"
   },
   "repository": {
