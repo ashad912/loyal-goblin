@@ -1,5 +1,8 @@
 import React from 'react'
+import { connect } from 'react-redux';
+import { useHistory } from "react-router";
 import styled from 'styled-components'
+
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -8,8 +11,6 @@ import Drawer from '@material-ui/core/Drawer'
 import Avatar from '@material-ui/core/Avatar';
 import Input from '@material-ui/core/Input';
 import Menu from "@material-ui/core/Menu";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
 import MenuItem from "@material-ui/core/MenuItem";
 import Snackbar from '@material-ui/core/Snackbar';
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
@@ -20,18 +21,23 @@ import KeyboardArrowLeftIcon from "@material-ui/icons/KeyboardArrowLeft";
 import LockIcon from '@material-ui/icons/Lock';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import { Badge } from '@material-ui/core';
-import { connect } from 'react-redux';
-import { useHistory } from "react-router";
 import { Link } from '@material-ui/core';
-import {updateAvatar} from '../../store/actions/profileActions'
-import {signOut} from '../../store/actions/authActions'
-import {togglePresenceInInstance} from '../../store/actions/missionActions'
-import {leaveShop} from '../../store/actions/shopActions'
-import ChangePasswordModal from '../auth/ChangePasswordModal';
+
+import ChangePasswordModal from 'components/auth/ChangePasswordModal';
 import RankDialog from "./RankDialog";
 import StatsDialog from "./StatsDialog";
-import { uiPaths, usersPath } from '../../utils/definitions';
-import { PintoTypography } from '../../utils/fonts';
+
+import NavbarMenu from './NavbarMenu';
+import NavbarMenuItem from './NavbarMenuItem';
+
+import {updateAvatar} from 'store/actions/profileActions'
+import {signOut} from 'store/actions/authActions'
+import {togglePresenceInInstance} from 'store/actions/missionActions'
+import {leaveShop} from 'store/actions/shopActions'
+
+import { uiPaths, usersPath } from 'utils/definitions';
+import { PintoTypography } from 'utils/fonts';
+import AvatarWithPlaceholder from 'components/AvatarWithPlaceholder';
 
 
 const StyledMenu = styled(Menu)`
@@ -245,7 +251,9 @@ const Navbar = (props) => {
             case '/mission':
                 if(props.activeMission){
                     const user = {_id: props.auth.uid, inMission: false, readyStatus: false}
-                    await togglePresenceInInstance(user, props.party._id)   
+                    try{
+                        await togglePresenceInInstance(user, props.party._id)  
+                    }catch(e){}
                     state.indexRedirect = 2 
                 }else{
                     state.authCheck = true
@@ -254,9 +262,7 @@ const Navbar = (props) => {
                 
                 break;
             case '/shop':
-                if(props.party && props.party.length){
-                    await this.props.onLeaveShop();
-                }
+                state.indexRedirect = 0  
             default:
                 break;
         }
@@ -300,16 +306,17 @@ const Navbar = (props) => {
                             />  
                         </Button>
                     )}
-                    <Badge
-                        style={{height: '2rem', width: '2rem'}}
-                        overlap="circle"
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right',
+                    
+                    <AvatarWithPlaceholder 
+                        avatar={props.auth.profile.avatar}
+                        width="30px"
+                        height="30px"
+                        placeholder={{
+                            text: props.auth.profile.name,    
                         }}
-                    >
-                        {props.auth.profile.avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={usersPath + props.auth.profile.avatar} /> : <Avatar style={{height: 30, width: 30}}>{createAvatarPlaceholder(props.auth.profile.name)}</Avatar>}
-                    </Badge>
+                    />
+                    
+                    
                     <Typography variant="h6" style={{flexGrow: 1, textAlign: 'left', marginLeft: '1rem'}}>
                         {props.auth.profile.name}
                     </Typography>
@@ -320,97 +327,88 @@ const Navbar = (props) => {
                     >
                             <MenuIcon style={{margin: "0", color: 'white'}} />
                     </Button>
-                    <Drawer anchor="right" open={Boolean(showDrawer)} onClose={handleClose} disableBackdropTransition={true} >
-                        <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '45vw', height: '100%', padding: '1rem 0.5rem'}}>
-                            <StyledMenuItem>
-                                <ListItemIcon>
+                    <Drawer anchor="right" open={Boolean(showDrawer)} onClose={handleClose} >
+                        <NavbarMenu>
+                            <NavbarMenuItem
+                                icon={
                                     <img src={uiPaths.statistics} style={{width: '1.2rem', height: '1.2rem', paddingLeft: '0.2rem'}}/>
-                                </ListItemIcon>
-                                <ListItemText>
+                                }
+                                action={
                                     <Link onClick={toggleStatsDialog} underline='none' color="primary">
                                         <PintoTypography>Statystyki</PintoTypography>  
                                     </Link>
-                                </ListItemText>
-                            </StyledMenuItem>
-                            <StyledMenuItem>
-                                <ListItemIcon>
+                                }
+                            />
+                            <NavbarMenuItem
+                                icon={
                                     <img src={uiPaths.ranking} style={{width: '1.2rem', height: '1.2rem', paddingLeft: '0.2rem'}}/>
-                                </ListItemIcon>
-                                <ListItemText>
+                                }
+                                action={
                                     <Link onClick={toggleRankDialog} underline='none' color="primary">
                                         <PintoTypography>Ranking</PintoTypography>  
                                     </Link>
-                                </ListItemText>
-                            </StyledMenuItem>
-                            <StyledMenuItem>
-                                <ListItemIcon>
-                                    
+                                }
+                            />
+                            <NavbarMenuItem
+                                icon={
                                     <AccountBoxIcon />
-                                </ListItemIcon>
-                                <ListItemText>
-                                    <FileInputButton color="primary">
-                                        {props.auth.profile.avatar ? "Zmień avatar" : "Dodaj avatar"}
-                                    </FileInputButton>
-                                    <HiddenFileInput
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleAvatarChange}
-                                    />
-                                    </ListItemText>
-                            </StyledMenuItem>
+                                }
+                                action={
+                                    <React.Fragment>
+                                        <FileInputButton color="primary">
+                                            {props.auth.profile.avatar ? "Zmień avatar" : "Dodaj avatar"}
+                                        </FileInputButton>
+                                        <HiddenFileInput
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleAvatarChange}
+                                        />
+                                    </React.Fragment>
+                                }
+                            />
                             {props.auth.profile.avatar && 
-                                <StyledMenuItem>
-                                    
-                                    <ListItemIcon>
+                                <NavbarMenuItem
+                                    icon={
                                         <DeleteForeverIcon />
-                                    </ListItemIcon>
-                                    
-                                    
-                                    <ListItemText>
-                                    <Link onClick={handleAvatarDelete} underline='none' color="primary">
-                                        <PintoTypography>Usuń avatar</PintoTypography>  
-                                    </Link>
-                                    </ListItemText>
-                                </StyledMenuItem>
+                                    }
+                                    action={
+                                        <Link onClick={handleAvatarDelete} underline='none' color="primary">
+                                            <PintoTypography>Usuń avatar</PintoTypography>  
+                                        </Link>
+                                    }
+                                />
                             }
-                            <StyledMenuItem>
-                                <ListItemIcon>
+                            <NavbarMenuItem
+                                icon={
                                     <LockIcon/>
-                                </ListItemIcon>
-                                <ListItemText>
+                                }
+                                action={
                                     <Link onClick={togglePasswordChangeModal} underline="none" color="primary">
                                         <PintoTypography>Zmień hasło</PintoTypography>
                                     </Link>
-                                </ListItemText>
-                            </StyledMenuItem>
-                            <StyledMenuItem>
-                                    
-                                    <ListItemIcon>
-                                        <RefreshIcon />
-                                    </ListItemIcon>
-                                    
-                                    
-                                    <ListItemText>
+                                }
+                            />
+                            <NavbarMenuItem
+                                icon={
+                                    <RefreshIcon />
+                                }
+                                action={
                                     <Link onClick={()=>window.location.reload(true)} underline='none' color="primary">
                                         <PintoTypography>Odśwież</PintoTypography>
                                     </Link>
-                                    </ListItemText>
-                                </StyledMenuItem>
-                            <StyledMenuItem>
-                                    
-                                <ListItemIcon>
+                                }
+                            />
+                            <NavbarMenuItem
+                                icon={
                                     <ExitToAppIcon />
-                                </ListItemIcon>
-                                
-                                
-                                <ListItemText>
-                                <Link onClick={handleLogout} underline='none' color="primary">
-                                    <PintoTypography>Wyloguj</PintoTypography>
-                                </Link>
-                                </ListItemText>
-                            </StyledMenuItem>
-                        </div>
-       
+                                }
+                                action={
+                                    <Link onClick={handleLogout} underline='none' color="primary">
+                                        <PintoTypography>Wyloguj</PintoTypography>
+                                    </Link>
+                                }
+                            />
+                        </NavbarMenu>
                     </Drawer>
                     
                     {showRankDialog && (

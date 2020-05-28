@@ -10,11 +10,11 @@ import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import MenuItem from "@material-ui/core/MenuItem";
-import { getTarget, getValue } from "../../../utils/methods";
-import { perkLabels, dayLabels } from "../../../utils/labels";
-import {itemsPath, palette} from '../../../utils/definitions'
-import PerkBoxItem from "../profile/PerkBoxItem";
-import { PintoSerifTypography,PintoTypography } from "../../../utils/fonts";
+import { getTarget, getValue } from "../../utils/methods";
+import { perkLabels, dayLabels } from "../../utils/labels";
+import {itemsPath, palette} from '../../utils/definitions'
+import PerkBoxItem from "../screens/profile/PerkBoxItem";
+import { PintoSerifTypography,PintoTypography } from "../../utils/fonts";
 
 const StyledMenu = withStyles({
   paper: {

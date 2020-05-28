@@ -16,7 +16,7 @@ import { PintoTypography} from 'utils/fonts'
 
 import MissionAwardsHeader from './MissionAwardsHeader'
 import MissionRequirements from './MissionRequirements';
-import MissionBasicInfo from 'components/screens/missionInstance/MissionBasicInfo'
+import MissionBasicInfo from 'components/missionInstance/MissionBasicInfo'
 
 
 const StyledBox = styled(Box)`

@@ -5,9 +5,13 @@ import Box from './Box';
 
 import uuid from 'uuid/v1'
 import {addItemSubscribe, deleteItemSubscribe} from 'socket'
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext } from 'react-beautiful-dnd';
+import Avatar from '@material-ui/core/Avatar';
 import { sendItemToMission, sendItemToUser } from 'store/actions/missionActions';
-import { uiPaths } from 'utils/definitions';
+import { uiPaths, usersPath } from 'utils/definitions';
+
+import {createAvatarPlaceholder} from 'utils/methods'
+import AvatarWithPlaceholder from 'components/AvatarWithPlaceholder'
 
 
 
@@ -132,10 +136,6 @@ export default class ExchangeArea extends React.Component {
     [missionItemsName]: this.props.initMissionItems,
   }
   
-  
-
-  
- 
   componentDidMount() {
 
     this.setState({
@@ -277,20 +277,33 @@ export default class ExchangeArea extends React.Component {
         <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.setDraggableProperty}>
           <Box 
             targetKey={userItemsName} 
+            image={
+              <React.Fragment>
+                <AvatarWithPlaceholder 
+                  avatar={this.props.avatar}
+                  width="4rem"
+                  height="4rem"
+                  center
+                  placeholder={{
+                      text: this.props.userName,
+                      fontSize: '2.2rem'
+                  }}
+                />
+              </React.Fragment>
+            }
             items={this.state.userItems} 
             draggableProperty={this.state.draggableProperty}
             boxname={userItemsName}
-            userName ={this.props.userName}
-            boxIcon={this.props.avatar}
           />
           <Box 
             targetKey={missionItemsName}
+            image={
+              <img style={{height: '4rem', width: '4rem'}} alt="avatar" src={uiPaths['chest']} />
+            }
             items={this.socketShare(this.state.missionItems)} 
             draggableProperty={this.state.draggableProperty}
             boxname={missionItemsName}
-            boxIcon={uiPaths['chest']}
           />    
-        
         </DragDropContext>
       </div>
     )

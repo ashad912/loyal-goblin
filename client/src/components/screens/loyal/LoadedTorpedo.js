@@ -1,12 +1,15 @@
 import React from "react";
+import PropTypes from 'prop-types'
+import styled, {keyframes} from 'styled-components'
+
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Button from "@material-ui/core/Button";
-import styled, {keyframes} from 'styled-components'
-import {itemsPath, palette} from '../../../utils/definitions'
-import { PintoTypography, PintoSerifTypography } from "../../../utils/fonts";
+
+import {itemsPath, palette} from 'utils/definitions'
+import { PintoTypography, PintoSerifTypography } from "utils/fonts";
 
 const glowReady = keyframes`
   0%{
@@ -40,7 +43,7 @@ const LoadedTorpedoContainer = styled.div`
     align-items: center;
     justify-content: center;
     display: flex;
-    margin: auto;
+    margin: auto 0;
     min-height: 74px;
 `
 
@@ -52,7 +55,7 @@ const LoadedTorpedo = (props) => {
     
     const torpedo = props.torpedo;
   
-    const torpedoField = props.loadedTorpedo && props.fields.find(field=>{
+    const torpedoField = props.torpedo && props.fields.find(field=>{
       return field.name === torpedo.itemModel.name
     })
     //console.log(torpedo)
@@ -60,7 +63,7 @@ const LoadedTorpedo = (props) => {
   
     return (
       <LoadedTorpedoContainer>
-        {props.loadedTorpedo ? (
+        {torpedo ? (
           <StyledListItem
             button
             alignItems="flex-start"
@@ -91,6 +94,24 @@ const LoadedTorpedo = (props) => {
       </LoadedTorpedoContainer>
     );
 
+}
+
+LoadedTorpedo.propTypes = {
+  torpedo: PropTypes.shape({
+    itemModel: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      imgSrc: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+    })
+  }),
+  handleShoot: PropTypes.func.isRequired,
+  inProgress: PropTypes.bool.isRequired,
+  fields: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      pressed: PropTypes.bool.isRequired
+    })
+  )
 }
 
 export default LoadedTorpedo

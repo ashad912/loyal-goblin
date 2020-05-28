@@ -1,8 +1,8 @@
 import React, {useState} from 'react'
+
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
-
 import Typography from "@material-ui/core/Typography";
 import styled from 'styled-components'
 import CheckIcon from "@material-ui/icons/Check";
@@ -15,18 +15,11 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 
 import Badge from '@material-ui/core/Badge';
 import Avatar from '@material-ui/core/Avatar';
-import bagImg from 'assets/mission/bag.png'
 
+import AvatarWithPlaceholder from 'components/AvatarWithPlaceholder';
 
 import {createAvatarPlaceholder} from 'utils/methods'
-import {palette, itemsPath, usersPath} from 'utils/definitions'
-
-const StyledGrid = styled(Grid)`
-    &&{
-        margin: 0 0 0 1rem;
-    }
-    
-`
+import {palette, itemsPath, usersPath, uiPaths} from 'utils/definitions'
 
 
 const StyledImage = styled.img`
@@ -207,9 +200,20 @@ const PartyList = (props) => {
                     vertical: 'bottom',
                     horizontal: 'right',
                 }}
-                badgeContent={<SmallAvatar alt="bag avatar" src={bagImg} />}
+                badgeContent={<SmallAvatar alt="bag avatar" src={uiPaths['chest']} />}
             >
-                {user.avatar ? <Avatar style={{height: 30, width:30}} alt="avatar" src={usersPath + user.avatar} /> : <Avatar style={{height: 30, width:30, backgroundColor: palette.primary.main}}>{createAvatarPlaceholder(user.name)}</Avatar>}
+                <AvatarWithPlaceholder 
+                    avatar={user.avatar}
+                    width="30px"
+                    height="30px"
+                    placeholder={{
+                        text: user.name,
+                    }}
+                    style={{
+                        backgroundColor: palette.primary.main
+                    }}
+                />
+               
             </Badge>
         )
         //return <img style={{height: 30, width:30}} src={user.avatar} alt='avatar'/>
@@ -277,62 +281,48 @@ const PartyList = (props) => {
                     
                         <StyledBox key={member._id} border={0} borderColor="primary.main" style={{background: palette.background.standard}}>
                             <ListItem style={{paddingRight: '0.5rem'}}>
-                            {member.inMission ? (
-                                <ListItemAvatar style={{minWidth: 32}}>
-                                    {altAvatar(member.profile)}
-                                </ListItemAvatar>
-                            ) :(  
-                                <ListItemAvatar style={{minWidth: 32}}>
-                                    <CircularProgress style={{height: 30, width: 30}}/>
-                                </ListItemAvatar>
-                            )}       
-                                    <Grid item xs={10}>
-                                        
-                                            <StyledGrid
-                                                container
-                                                direction="row"
-                                                justify="flex-start"
-                                                alignItems="flex-start"
-                                                spacing={1}
-                                            >
-                                            {instanceItems.map((item) => {
-                                                
-                                                return(
-                                                    <React.Fragment key={item._id}>
-                                                        {item.owner === member.profile._id ? (
-                                                            <StyledImage  src={`${itemsPath}${item.itemModel.imgSrc}`} alt='icon'/>
-                                                        ) : (
-                                                            null
-                                                        )}
-                                                    </React.Fragment>
-                                                )
-                                                
-                                                    
-                                                    /*<img style={{height: 40, width:40}} src={require(`../../../../assets/icons/items/${item.model.imgSrc}`)} alt='icon'/>*/
-                                                
-                                            })}
-                                            </StyledGrid>
+                                <Grid item style={{flexBasis: '18%'}}>
+                             
+                                    <ListItemAvatar style={{minWidth: 32}}>
+                                        {member.inMission ? (
+                                            <React.Fragment>
+                                                {altAvatar(member.profile)}
+                                            </React.Fragment>
+                                        ) : (
+                                            <CircularProgress style={{height: 30, width: 30}}/>
+                                        )}
+                                    </ListItemAvatar>
+                                </Grid>
+                                   
+                                <Grid item style={{flexBasis: '67%'}}>
+                                    
+                                    <Grid
+                                        container
+                                        direction="row"
+                                        justify="flex-start"
+                                        alignItems="flex-start"
+                                        spacing={1}
+                                    >
+                                        {instanceItems.map((item) => {  
+                                            return(
+                                                <React.Fragment key={item._id}>
+                                                    {item.owner === member.profile._id ? (
+                                                        <StyledImage  src={`${itemsPath}${item.itemModel.imgSrc}`} alt='icon'/>
+                                                    ) : (
+                                                        null
+                                                    )}
+                                                </React.Fragment>
+                                            )
+                                        })}
+                                    </Grid>
                                         
                                 </Grid>
-                            
-                                <ListItemIcon style={{minWidth: 32}}>
-                                        {props.party.leader && (member.profile._id === props.party.leader._id) ? (leaderIcon()) : (statusIcon(member.readyStatus))}
-                                </ListItemIcon>
-                            </ListItem>
-                        
-                                
-                            
-                                {/* <ListItem>
-                                    <ListItemAvatar style={{minWidth: 32}}>
-                                            <CircularProgress style={{height: 50, width: 50}}/>
-                                    </ListItemAvatar>
-                                    <Grid item xs={10}></Grid>
+                                <Grid style={{flexBasis: '15%', textAlign: 'end'}}>
                                     <ListItemIcon style={{minWidth: 32}}>
-                                        {props.party.leader && (member.profile._id === props.party.leader._id) ? (leaderIcon()) : (statusIcon(member.readyStatus))}
+                                            {props.party.leader && (member.profile._id === props.party.leader._id) ? (leaderIcon()) : (statusIcon(member.readyStatus))}
                                     </ListItemIcon>
-                                </ListItem> */}
-                            
-                            
+                                </Grid>
+                            </ListItem>                            
                         </StyledBox>
                     )
                 })}

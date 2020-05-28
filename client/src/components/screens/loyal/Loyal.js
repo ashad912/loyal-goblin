@@ -453,7 +453,12 @@ class Loyal extends Component {
             <GlobalStyle/>
                 {this.state.loading && <Loading/>}
                 
-                <LoadedTorpedo torpedo={this.state.loadedTorpedo} handleShoot={this.handleShoot} inProgress={this.state.seconds > 0} fields={this.state.serverFields}/>
+                <LoadedTorpedo 
+                    torpedo={this.state.loadedTorpedo} 
+                    handleShoot={this.handleShoot} 
+                    inProgress={this.state.seconds > 0} 
+                    fields={this.state.serverFields}
+                />
                     
                 
                 <object 

@@ -13,8 +13,8 @@ import Typography from "@material-ui/core/Typography";
 import ListItem from "@material-ui/core/ListItem";
 import Divider from "@material-ui/core/Divider";
 
-import {createAvatarPlaceholder} from "../../utils/methods";
-import {palette, itemsPath, usersPath} from '../../utils/definitions'
+import {createAvatarPlaceholder} from "../../../utils/methods";
+import {palette, itemsPath, usersPath} from '../../../utils/definitions'
 
 const Background = styled.div`
     background-color: ${props => props.color};

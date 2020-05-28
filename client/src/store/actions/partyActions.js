@@ -18,13 +18,13 @@ export const updateParty = (params) => {
                         dispatch({type: "UPDATE_PROFILE_BAG", bag: res.data.bag})
                     }
                     
-                    
                     if(!socket.connected){
                         //console.log('connect from updateParty')
                         socket.open()
                         socketAuthenticateEmit()
                     }
-                    
+
+                    return true
                 }else{
                     dispatch({type: "DELETE_PARTY"})
                 }

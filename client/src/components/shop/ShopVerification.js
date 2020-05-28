@@ -10,10 +10,6 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import Divider from "@material-ui/core/Divider";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import Dialog from '@material-ui/core/Dialog';
@@ -22,11 +18,13 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import { PintoSerifTypography, PintoTypography } from "../../../utils/fonts";
-import { cancelOrder, leaveShop } from "../../../store/actions/shopActions";
-import {itemsPath, usersPath, palette} from '../../../utils/definitions'
-import {createAvatarPlaceholder} from '../../../utils/methods'
-import AwardListItem from "../AwardListItem";
+import { PintoSerifTypography, PintoTypography } from "../../utils/fonts";
+import { cancelOrder, leaveShop } from "../../store/actions/shopActions";
+import {itemsPath, usersPath, palette} from '../../utils/definitions'
+import {createAvatarPlaceholder} from '../../utils/methods'
+import AwardListItem from "components/AwardListItem";
+import AvatarWithPlaceholder from "components/AvatarWithPlaceholder";
+
 
 const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_URL
@@ -154,10 +152,16 @@ const handleCancelOrder = async () => {
                       <Grid container>
                         <Grid container style={{padding: '0 24px'}}>
                           <Grid item xs={4}>
-                            {basket.profile.avatar ? <img src={usersPath + basket.profile.avatar} style={{width: '5rem', height: '5rem'}}/>
-                             : 
-                            <Avatar style={{width: '5rem', height: '5rem', fontSize: '2.2rem'}}>{createAvatarPlaceholder(basket.profile.name)}</Avatar>
-                            }
+                          <AvatarWithPlaceholder 
+                            avatar={basket.profile.avatar}
+                            width="5rem"
+                            height="5rem"
+                            placeholder={{
+                                text: basket.profile.name,
+                                fontSize: '2.2rem'
+                            }}
+                          />
+                           
                           </Grid>
                           <Grid item xs={8} container direction="column" alignItems="flex-start" style={{paddingLeft: '10%'}}>
                             <Grid item>

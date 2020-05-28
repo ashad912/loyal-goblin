@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { modifyUserStatusEmit, refreshMissionsEmit, addItemEmit, deleteItemEmit, finishMissionEmit} from '../../socket'
+import { authCheck } from './authActions';
 
 const axiosInstance = axios.create({}); //to avoid interceptors "index.js"
 
@@ -69,7 +70,9 @@ export const deleteInstance = () => {
             try {
                 await axios.delete('/mission/deleteInstance')
     
+                dispatch(authCheck())
                 dispatch(getMissionList()) 
+                
                 refreshMissionsEmit(getState().party._id)
                 resolve()
             }catch (e) {

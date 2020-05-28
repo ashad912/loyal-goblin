@@ -6,7 +6,7 @@ import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import BasketListItem from "./BasketListItem";
-import { PintoSerifTypography,PintoTypography } from "../../../utils/fonts";
+import { PintoSerifTypography,PintoTypography } from "../../utils/fonts";
 
 const DrawerContents = styled.div`
   padding: 1rem;

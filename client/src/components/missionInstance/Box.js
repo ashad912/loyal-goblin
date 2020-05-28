@@ -1,13 +1,12 @@
 import React from 'react';
-import { Droppable, Draggable } from 'react-beautiful-dnd'; 
-import Grid from '@material-ui/core/Grid';
 import styled from 'styled-components'
+import { Droppable, Draggable } from 'react-beautiful-dnd'; 
+
+import Grid from '@material-ui/core/Grid';
 import { Paper } from '@material-ui/core';
-import Avatar from '@material-ui/core/Avatar';
-import Typography from '@material-ui/core/Typography';
-import {createAvatarPlaceholder} from '../../../utils/methods'
-import {palette, itemsPath, usersPath} from '../../../utils/definitions'
-import {PintoTypography} from '../../../utils/fonts'
+
+import {palette, itemsPath} from 'utils/definitions'
+import {PintoTypography} from 'utils/fonts'
 
 
 const RootDiv = styled.div`
@@ -87,12 +86,6 @@ const convertToStack = (itemsToConvert) => {
 
 const Box = (props) => {
 
-  
-
-  
-
-    
-    //convert client items to stack view
     const items = convertToStack(props.items) //from backend
     
     return (
@@ -105,14 +98,7 @@ const Box = (props) => {
           spacing={1}
         >
           <Grid item xs={3}>
-            {props.boxname === "userItems" ? (
-              <React.Fragment>
-                {props.boxIcon ? <Avatar style={{height: '4rem', width: '4rem'}} alt="avatar" src={usersPath + props.boxIcon} /> : <Avatar style={{height: 70, width: 70, fontSize: '2.5rem'}}>{createAvatarPlaceholder(props.userName)}</Avatar>}
-              </React.Fragment>
-            ) : (
-              <img style={{height: '4rem', width: '4rem'}} alt="avatar" src={props.boxIcon} />
-            )}
-            
+            {props.image}
           </Grid>
 
           <Grid item xs={9}>
@@ -162,7 +148,7 @@ const Box = (props) => {
 
                                   {snapshot.isDragging && (
                                     <Clone>
-                                      <img style={{height: '2rem', width: '2rem'}} src={`${itemsPath}/${item.model.imgSrc}`} alt='icon'/>
+                                      <img style={{height: '2rem', width: '2rem'}} src={`${itemsPath}${item.model.imgSrc}`} alt='icon'/>
                                       <span><PintoTypography display="inline">{item.instancesIds.length - 1}</PintoTypography></span>
                                     </Clone>
                                   )}

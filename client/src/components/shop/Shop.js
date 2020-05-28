@@ -25,11 +25,11 @@ import {
   getShop,
   activateOrder,
   leaveShop
-} from "../../../store/actions/shopActions";
-import { toggleItem } from "../../../store/actions/profileActions";
-import { uiPaths } from "../../../utils/definitions";
-import {PintoTypography} from '../../../utils/fonts'
-import {socket} from '../../../socket'
+} from "../../store/actions/shopActions";
+import { toggleItem } from "../../store/actions/profileActions";
+import { uiPaths } from "../../utils/definitions";
+import {PintoTypography} from '../../utils/fonts'
+import {socket} from '../../socket'
 
 const Menu = styled(Paper)`
   flex-grow: 1;

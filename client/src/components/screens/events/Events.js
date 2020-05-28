@@ -43,15 +43,6 @@ const Events = (props) => {
 
     const history = useHistory()
 
-    const fetchMissions = async () => {
-        
-        await props.getMissionList()
-    }
-
-    const fetchRally = async () => {
-         await props.getRally() //return Object or 'null'
-    }
-
     //https://reactjs.org/docs/hooks-faq.html#how-can-i-measure-a-dom-node
     // const itemRef = React.useCallback(node => {
     //     console.log(node)
@@ -59,13 +50,6 @@ const Events = (props) => {
     //         setItemHeight(node.clientHeight)
     //     }
     // }, [])
-
-
-
-    const openInstance = (id) => {
-        history.push("/mission", { id });
-    }
-
 
     const handleMissionCreate = async (id) => {
         try{
@@ -87,7 +71,7 @@ const Events = (props) => {
                 () => handleMissionCreate(id),
                 "Rozpoczęcie misji",
                 warningActionSources.mission
-                )
+            )
             
             
         }else{
@@ -95,9 +79,22 @@ const Events = (props) => {
         }  
     }
 
+    const openInstance = (id) => {
+        history.push("/mission", { id });
+    }
+
     const handleRefresh = () => {
         fetchMissions()
         fetchRally()
+    }
+
+    const fetchMissions = async () => {
+        
+        await props.getMissionList()
+    }
+
+    const fetchRally = async () => {
+         await props.getRally() //return Object or 'null'
     }
 
     const handleMissionLeave = async () => {
@@ -108,8 +105,10 @@ const Events = (props) => {
         setActiveMissionDetails(props.missionListData[index])
     }
 
-    const handleMissionDetailsClose = () => {
+    const handleMissionDetailsClose = (callback) => {
         setActiveMissionDetails(null)
+        callback()
+        
     }
 
     const handleRallyDetailsOpen = () => {
@@ -184,7 +183,7 @@ const Events = (props) => {
                     activeMissionId = {props.activeMissionId}
                     handleClose={handleMissionDetailsClose}
                     handleMissionClick={handleMissionClick}
-                    handleMissionLeave={handleMissionLeave}
+                    handleMissionLeave={() => handleMissionDetailsClose(handleMissionLeave)}
                     multipleSession={props.multipleSession}
                 />
             }

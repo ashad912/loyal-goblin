@@ -1,5 +1,4 @@
 import React from "react";
-import {compose} from 'redux'
 import { BrowserRouter, Route, Switch, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import {Workbox, messageSW} from 'workbox-window';
@@ -15,14 +14,14 @@ import ConnectionSpinnerDialog from "./components/layout/ConnectionSpinnerDialog
 import ConnectionSnackbar from "./components/layout/ConnectionSnackbar";
 import ResetPassword from "./components/auth/ResetPassword";
 import PageNotFound from "./components/layout/PageNotFound";
-import Navbar from "./components/layout/Navbar";
+import Navbar from "./components/layout/navbar/Navbar";
 import Footer from "./components/layout/Footer";
-import Root from "./components/Root";
-import Shop from "./components/screens/shop/Shop";
+import Root from "./components/screens/Root";
+import Shop from "./components/shop/Shop";
 import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
 import ForgotPassword from "./components/auth/ForgotPassword";
-import MissionInstance from "./components/screens/missionInstance/MissionInstance";
+import MissionInstance from "./components/missionInstance/MissionInstance";
 import Loading from "components/layout/Loading";
 
 
@@ -32,7 +31,7 @@ import { authCheck } from "./store/actions/authActions";
 import { resetConnectionError } from "./store/actions/connectionActions";
 import { updateParty } from "./store/actions/partyActions";
 import OfflineModal from "./components/auth/OfflineModal";
-import CharacterCreation from "components/screens/characterCreation/CharacterCreation";
+import CharacterCreation from "components/characterCreation/CharacterCreation";
 
 const goblinTheme = createMuiTheme({
   palette: {
@@ -227,10 +226,6 @@ class App extends React.Component {
     // }
   }
 
-  closeToast = () => {
-    document.getElementById("toast").style.display = "none";
-  };
-
   handleOnlineState = () => {
     this.setState({online: true})
   }
@@ -241,7 +236,6 @@ class App extends React.Component {
 
   render() {
     
-
     if(!this.state.online){
       return(   
         <StylesProvider injectFirst>
@@ -250,6 +244,10 @@ class App extends React.Component {
           </ThemeProvider>
         </StylesProvider>
       )
+    }
+
+    if(!this.state.loaded){
+      return null
     }
 
 
@@ -289,18 +287,6 @@ class App extends React.Component {
             />
             <ConnectionSpinnerDialog />
             <SocketConfig />
-            {/* <Toast id="toast" onClick={this.closeToast}>
-              Dostępna aktualizacja!
-              <p
-                style={{
-                  fontSize: "1.2rem",
-                  fontWeight: "lighter",
-                  color: "rgba(220, 220, 220, 1)"
-                }}
-              >
-                Zamknij aplikację i uruchom ją ponownie.
-              </p>
-            </Toast> */}
             <OfflineModal open={!this.state.online}/>
           </ThemeProvider>
         </StylesProvider>

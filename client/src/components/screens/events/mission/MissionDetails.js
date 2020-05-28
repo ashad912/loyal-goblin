@@ -1,9 +1,4 @@
 import React from 'react'
-import Dialog from "@material-ui/core/Dialog";
-import Collapse from "@material-ui/core/Collapse";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import ListItem from "@material-ui/core/ListItem";
 import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
 import Grid from '@material-ui/core/Grid';
@@ -11,7 +6,6 @@ import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
-import AwardListItem from '../../AwardListItem'
 import { classLabelsAny } from '../../../../utils/labels';
 import {palette, uiPaths,  missionsPath} from '../../../../utils/definitions'
 import {PintoTypography} from '../../../../utils/fonts'

@@ -6,6 +6,10 @@ import Loading from "components/layout/Loading";
 
 const withAuth = WrappedComponent => {
   return class extends React.Component {
+
+    passProps = () => {
+      
+    }
     
     render() {
 
@@ -17,9 +21,12 @@ const withAuth = WrappedComponent => {
         return <Redirect to="/signin" />;
       }
 
+      const propsToPass = {...this.props}
+      delete propsToPass.init 
+
       return (
         <React.Fragment>
-          <WrappedComponent {...this.props} />
+          <WrappedComponent {...propsToPass} />
         </React.Fragment>
       );
     }

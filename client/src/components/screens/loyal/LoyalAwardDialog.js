@@ -7,7 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
 import List from '@material-ui/core/List';
-import AwardListItem from '../AwardListItem'
+import AwardListItem from 'components/AwardListItem'
 
 
 const LoyalAwardsDialog = props => {

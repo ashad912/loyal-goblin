@@ -7,8 +7,8 @@ import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 
-import AwardsHeader from "../AwardsHeader";
-import AwardsList from "../AwardsList";
+import AwardsHeader from "../screens/AwardsHeader";
+import AwardsList from "../screens/AwardsList";
 
 
 
@@ -50,7 +50,6 @@ const MissionAwards = props => {
   }
 
   const handleBackToMainScreen = async () => {
-    //await props.authCheck()
     history.push({
       pathname: '/',
       state: {indexRedirect: 0, authCheck: true}

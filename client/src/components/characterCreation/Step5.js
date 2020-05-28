@@ -2,9 +2,9 @@ import React from "react";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
-import {uiPaths} from '../../../utils/definitions'
+import {uiPaths} from '../../utils/definitions'
 import Divider from '@material-ui/core/Divider'
-import { PintoSerifTypography, PintoTypography } from "../../../utils/fonts";
+import { PintoSerifTypography, PintoTypography } from "../../utils/fonts";
 
 const Step5 = props => {
   let characterClass = props.characterClass;

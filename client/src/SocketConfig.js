@@ -12,7 +12,7 @@ class SocketConfig extends React.Component {
     
     socketAuthenticatedSubscribe(() => {
       joinPartyEmit(this.props.party._id)
-      this.props.missionsUpdate()
+      //this.props.missionsUpdate()
     });
   
     socketUnauthorizedSubscribe((err) => {
@@ -47,6 +47,7 @@ class SocketConfig extends React.Component {
       console.log('deleteRoom')
       this.props.partyUpdate()
       this.props.missionsUpdate()
+      this.props.authCheck()
     })
 
     refreshMissionsSubscribe((roomId) => {

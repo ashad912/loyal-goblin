@@ -1,26 +1,19 @@
 import React from "react";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import Button from "@material-ui/core/Button";
-import Menu from "@material-ui/core/Menu";
 import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import MenuItem from "@material-ui/core/MenuItem";
 import Badge from '@material-ui/core/Badge';
-import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
-import TouchAppIcon from '@material-ui/icons/TouchApp';
-import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import Divider from '@material-ui/core/Divider';
-import { dayLabels, categoryLabels, roomLabels, perkLabels } from "../../utils/labels";
-import {itemsPath, palette} from '../../utils/definitions'
-import { getValue, getTarget } from "../../utils/methods";
-import { PintoTypography } from "../../utils/fonts";
-import PerkBoxItem from "./profile/PerkBoxItem";
+
+import PerkBoxItem from "./screens/profile/PerkBoxItem";
+
+import { dayLabels, categoryLabels, roomLabels, perkLabels } from "utils/labels";
+import {itemsPath, palette} from 'utils/definitions'
+import { getValue, getTarget } from "utils/methods";
+import { PintoTypography } from "utils/fonts";
 
 
 const AwardListItem = props => {

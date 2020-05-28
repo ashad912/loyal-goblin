@@ -48,10 +48,10 @@ const ActionBar = styled.div`
     margin-top: 2rem;
 `
 const StyledLink = styled(Link)`
-color: white;
-&:visited {
-  color: white;
-}
+    color: white;
+    &:visited {
+        color: white;
+    }
 `
 
 class SignIn extends Component {

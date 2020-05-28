@@ -127,8 +127,26 @@ class MissionInstance extends React.Component {
     }
 
 
-    backToEvents = (history) => {
+    
+
+    handleBack = async (withStack) => {
         
+        try{
+            const thisUser = this.instanceUsers.find((user) => user.profile._id === this.props.uid)
+            if(thisUser.inMission){
+                const user = {_id: this.props.uid, inMission: false, readyStatus: false}
+                await togglePresenceInInstance(user, this.props.party._id)
+            }
+        }catch(e){}
+
+        if(withStack){
+            this.pushToEvents(this.props.history)
+        }else{
+            this.backToEvents(this.props.history);
+        }
+    }
+
+    backToEvents = (history) => {
         history.replace({
           pathname: '/',
           state: {indexRedirect: 2, authCheck: true}
@@ -143,48 +161,7 @@ class MissionInstance extends React.Component {
         });
     }
 
-    handleBack = async (withStack) => {
-        const user = {_id: this.props.auth.uid, inMission: false, readyStatus: false}
-        try{
-            await togglePresenceInInstance(user, this.props.party._id)
-            await this.props.authCheck()
-
-            if(withStack){
-                this.pushToEvents(this.props.history)
-            }else{
-                this.backToEvents(this.props.history);
-            }
-        }catch(e){}
-
-        if(withStack){
-            this.pushToEvents(this.props.history)
-        }else{
-            this.backToEvents(this.props.history);
-        }
-    }
-
-    modifyUserStatus = (user, users) => {
-        //console.log(user)
-        
-        //console.log(users)
-        const modifyUserArrayIndex = users.findIndex(
-            specificUser => {
-                //console.log(specificUser.profile._id, user._id)
-                return specificUser.profile._id === user._id;
-            }
-        );
-
-        //console.log(modifyUserArrayIndex)
-        if(user.hasOwnProperty('readyStatus')){
-            users[modifyUserArrayIndex].readyStatus = user.readyStatus;
-        }
-        if(user.hasOwnProperty('inMission')){
-            users[modifyUserArrayIndex].inMission = user.inMission;
-        }
     
-    
-        return users
-    }
 
     async componentDidMount() {
 
@@ -198,19 +175,21 @@ class MissionInstance extends React.Component {
         const socketConnectionStatus = socket.connected
 
         try{
-            const user = {_id: this.props.auth.uid, inMission: true}
-            const leader = !this.props.party.leader || (this.props.party.leader._id === this.props.auth.uid)
+            const user = {_id: this.props.uid, inMission: true}
+            console.log(this.props)
             const response = await togglePresenceInInstance(user, this.props.party._id,  socketConnectionStatus)
+            
             const missionInstance = response.missionInstance
             const amulets = response.amulets
            
             const instanceUsers = this.modifyUserStatus(user, missionInstance.party)
-            
+            const leader = !this.props.party.leader || (this.props.party.leader._id === this.props.uid)
+
             this.setState({
                 instanceUsers: [...instanceUsers],
                 instanceItems: [...missionInstance.items],  
                 userItems: [...amulets],
-                missionObject: missionInstance.mission,//this.props.location.state.id,
+                missionObject: missionInstance.mission,
                 leader: leader,
                 loading: false,
                 
@@ -250,7 +229,47 @@ class MissionInstance extends React.Component {
 
     }
 
+    modifyUserStatus = (user, users) => {
+        //console.log(user)
+        
+        //console.log(users)
+        const modifyUserArrayIndex = users.findIndex(
+            specificUser => {
+                //console.log(specificUser.profile._id, user._id)
+                return specificUser.profile._id === user._id;
+            }
+        );
+
+
+        if(modifyUserArrayIndex < 0){
+            console.log(users)
+            console.log(user)
+        }
+
+        //console.log(modifyUserArrayIndex)
+        if(user.hasOwnProperty('readyStatus')){
+            users[modifyUserArrayIndex].readyStatus = user.readyStatus;
+        }
+        if(user.hasOwnProperty('inMission')){
+            users[modifyUserArrayIndex].inMission = user.inMission;
+        }
+    
+    
+        return users
+    }
+
     componentDidUpdate = (prevProps, prevState) => {
+        //USEFUL COMPONENT UPDATE DIAGNOSTICS
+        Object.entries(this.props).forEach(
+            ([key, val]) =>
+            prevProps[key] !== val && console.log(`Prop '${key}' changed`)
+        );
+        if (this.state) {
+            Object.entries(this.state).forEach(
+            ([key, val]) =>
+                prevState[key] !== val && console.log(`State '${key}' changed`)
+            );
+        }
         if((!prevProps.party.hasOwnProperty('leader') && this.props.party.hasOwnProperty('leader')) && !socket.connected){
             this.handleBack()
         }
@@ -270,7 +289,7 @@ class MissionInstance extends React.Component {
     handleReadyButton = async () => {
         if(this.state.leader) {
             try{
-                const user = {_id: this.props.auth.uid, readyStatus: !this.state.userReadyStatus}
+                const user = {_id: this.props.uid, readyStatus: !this.state.userReadyStatus}
                 await toggleUserReady(user, this.props.party._id)
                 const awards = await this.props.finishInstance()
                 console.log(awards)
@@ -288,7 +307,7 @@ class MissionInstance extends React.Component {
         }else{
             
             try{
-                const user = {_id: this.props.auth.uid, readyStatus: !this.state.userReadyStatus}
+                const user = {_id: this.props.uid, readyStatus: !this.state.userReadyStatus}
                 await toggleUserReady(user, this.props.party._id)
 
                 const instanceUsers = this.modifyUserStatus(user, this.state.instanceUsers)
@@ -338,7 +357,7 @@ class MissionInstance extends React.Component {
         //console.log(this.state.instanceUsers)
         let partyCondition = true
         this.state.instanceUsers.forEach((member) => {
-            if((member.profile._id !== this.props.auth.uid) && !member.readyStatus){
+            if((member.profile._id !== this.props.uid) && !member.readyStatus){
                 partyCondition = false
             }
         })
@@ -393,71 +412,19 @@ class MissionInstance extends React.Component {
                 <MissionAwards 
                     missionExperience={this.state.missionObject.experience} 
                     missionAwards={this.state.missionAwards} 
-                    userPerks={this.props.auth.profile.userPerks}
-                    userClass={this.props.auth.profile.class} 
+                    userPerks={this.props.profile.userPerks}
+                    userClass={this.props.profile.class} 
                     authCheck={() => this.props.authCheck()}
                     fullHeightCorrection={this.state.fullHeightCorrection}
                    
                 />
             ) : (
                 <React.Fragment >
-                    
-                    {/* <TitleBar>
-                        <StyledImg src={`${missionsPath}${this.state.missionObject.imgSrc}`}/>
-                        <Typography style={{display: 'inline'}} variant="h6">{this.state.missionObject.title}</Typography>
-                        {statusIcon(isRequiredItemsCollected)}
-                    </TitleBar>   
-                     */}
                      <Grid
                         container
                         direction="column"
                         style={{ padding: "1rem 0 1.5rem 0", textAlign: "left" }}
                     >
-                        {/* <Grid container direction="row">
-                            <Grid item xs={9}>
-                                <Grid container direction="column">
-                                    <Grid
-                                    item
-                                    style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        marginBottom: "0.5rem"
-                                    }}
-                                    >
-                                    <Typography component="span" variant="h6" color="textPrimary">
-                                        {mission.title}
-                                    </Typography>
-                                    {mission.unique && (
-                                        <StarBorderIcon style={{ marginLeft: "1rem" }} />
-                                    )}
-                                    </Grid>
-                                    <Grid item>
-                                    <ShortDescription
-                                        component="span"
-                                        variant="body2"
-                                        color="textSecondary"
-                                    >
-                                        {mission.description}
-                                    </ShortDescription>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                                <Grid item xs={3}>
-                                <Grid container direction="column">
-                                    <Grid
-                                    item
-                                    style={{ display: "flex", justifyContent: "flex-end" }}
-                                    >
-                                    <Avatar
-                                        alt="avatar"
-                                        style={{ width: "5rem", height: "5rem", borderRadius: "0" }}
-                                        variant="square"
-                                        src={`${missionsPath}${mission.imgSrc}`}
-                                    />
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Grid> */}
                         <MissionBasicInfo mission={mission}/>
                     </Grid>
                     
@@ -488,61 +455,57 @@ class MissionInstance extends React.Component {
                     </Grid>
                    
                     
-                    <ExchangeArea userId={this.props.auth.uid} avatar={this.props.auth.profile.avatar} userName={this.props.auth.profile.name} locationId={this.props.party._id} instanceItems={this.updateInstanceItems} initUserItems={this.state.userItems} initMissionItems={this.state.instanceItems} userReadyStatus={this.state.userReadyStatus} handleBack={this.handleBack}/>
-                    <PartyList userId={this.props.auth.uid} instanceUsers={this.state.instanceUsers} instanceItems={this.state.instanceItems} party={this.props.party} userReadyStatus={this.state.userReadyStatus} />
+                    <ExchangeArea 
+                        userId={this.props.uid} 
+                        avatar={this.props.profile.avatar} 
+                        userName={this.props.profile.name} 
+                        locationId={this.props.party._id} 
+                        instanceItems={this.updateInstanceItems} 
+                        initUserItems={this.state.userItems}
+                        initMissionItems={this.state.instanceItems} 
+                        userReadyStatus={this.state.userReadyStatus} 
+                        handleBack={this.handleBack}
+                    />
+                    <PartyList 
+                        userId={this.props.uid} 
+                        instanceUsers={this.state.instanceUsers} 
+                        instanceItems={this.state.instanceItems} 
+                        party={this.props.party} 
+                        userReadyStatus={this.state.userReadyStatus}
+                    />
                         
                     
-                        <ButtonBar>
-                            {/* <Button 
-                            
-                                style={{flexBasis: '35%', marginRight: '0.5rem'}} 
-                                onClick={() => this.handleBack(true)} 
-                                variant="contained" 
-                                color="primary" >
-                                <KeyboardArrowLeftIcon
-                                    style={{
-                                        fontSize: "2rem",
-                                        transition: "transform 500ms ease-out",
-                                        transform: this.state.backButtonMouseOver ? "rotate(540deg)" : "rotate(0deg)"
-                                    }}
-                                />
-                                <PintoTypography>Wyjdź</PintoTypography>
-                                
-                            </Button> */}
-                            <Button 
+                    <ButtonBar>
+                        <Button 
+                            style={{
+                                display: 'flex',
+                                flexFlow: 'row nowrap',
+                                margin: '1rem 2rem',
+                                width: 'calc(100% - 4rem)',
+                                position: 'absolute',
+                                bottom: document.getElementById("footer").offsetHeight,
+                                left: 0,
+                                borderRadius: 0,
+                            }} 
+                            onClick={this.handleReadyButton} 
+                            disabled={this.state.leader && (!isRequiredItemsCollected || !isAllPartyReady)} 
+                            variant="contained" 
+                            color="primary"
+                        >
+                            <PintoTypography style={{flexBasis: '80%'}}>{buttonReadyLabel}</PintoTypography>
+                            <ColorizeIcon
                                 style={{
-                                    display: 'flex',
-                                    flexFlow: 'row nowrap',
-                                    margin: '1rem 2rem',
-                                    width: 'calc(100% - 4rem)',
-                                    position: 'absolute',
-                                    bottom: document.getElementById("footer").offsetHeight,
-                                    left: 0,
-                                    borderRadius: 0,
-                                }} 
-                                onClick={this.handleReadyButton} 
-                                disabled={this.state.leader && (!isRequiredItemsCollected || !isAllPartyReady)} 
-                                variant="contained" 
-                                color="primary"
-                            >
-                                <PintoTypography style={{flexBasis: '80%'}}>{buttonReadyLabel}</PintoTypography>
-                                <ColorizeIcon
-                                    style={{
-                                        flexBasis: '10%',
-                                        margin: '0 0 0 0.2rem',
-                                        fontSize: "2rem",
-                                        transition: "transform 500ms ease-out",
-                                        transform: this.state.userReadyStatus ? "rotate(540deg)" : "rotate(0deg)"
-                                        
-                                    }}
-                                />
-                                {!this.state.leader ? statusIcon(this.state.userReadyStatus) : statusIcon(isRequiredItemsCollected && isAllPartyReady)}
-                            </Button>
-                            
-                            
-                            
-                            
-                        </ButtonBar>
+                                    flexBasis: '10%',
+                                    margin: '0 0 0 0.2rem',
+                                    fontSize: "2rem",
+                                    transition: "transform 500ms ease-out",
+                                    transform: this.state.userReadyStatus ? "rotate(540deg)" : "rotate(0deg)"
+                                    
+                                }}
+                            />
+                            {!this.state.leader ? statusIcon(this.state.userReadyStatus) : statusIcon(isRequiredItemsCollected && isAllPartyReady)}
+                        </Button>
+                    </ButtonBar>
                 </React.Fragment>
                 )}
             </div>
@@ -555,7 +518,7 @@ class MissionInstance extends React.Component {
 
 const mapStateToProps = state => {
     return {
-      auth: state.auth,
+      profile: state.auth.profile,
       party: state.party
     };
   };

@@ -7,8 +7,8 @@ import Collapse from "@material-ui/core/Collapse";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import { uiPaths, palette, itemsPath } from "../../../utils/definitions";
-import { PintoSerifTypography,PintoTypography } from "../../../utils/fonts";
+import { uiPaths, palette, itemsPath } from "../../utils/definitions";
+import { PintoSerifTypography,PintoTypography } from "../../utils/fonts";
 import { ListItemAvatar } from "@material-ui/core";
 
 const BasketListItem = ({activeUsersBasket, name, summedPrice, basket, handleRemoveItem, noParty}) => {

@@ -13,6 +13,8 @@ import Avatar from "@material-ui/core/Avatar";
 import PartyCreationDialog from "./PartyCreationDialog";
 import PartyJoiningDialog from "./PartyJoiningDialog";
 
+
+import AvatarWithPlaceholder from "components/AvatarWithPlaceholder";
 import { updateParty, removeMember } from "store/actions/partyActions";
 import { authCheck } from "store/actions/authActions";
 import {
@@ -29,6 +31,8 @@ import {
 import { classLabels } from "utils/labels";
 import { PintoSerifTypography, PintoTypography } from "utils/fonts";
 import { setCheckWarning } from "store/actions/communicationActions";
+import { getMissionList } from "store/actions/missionActions";
+
 
 const FabIcon = styled.img`
   width: 2rem;
@@ -42,6 +46,11 @@ const Party = props => {
   const handleLeaveParty = () => {
     props.onRemoveMember(props.party._id, props.auth.uid);
   };
+
+  const handlePartyUpdate = async () => {
+    const isParty = await props.onPartyUpdate(null)
+    if (isParty) await props.missionsUpdate()
+  }
 
   const partyExists =
     props.party && props.party.leader && props.party.leader._id;
@@ -94,7 +103,7 @@ const Party = props => {
         </Grid>
       )}
 
-      {props.party && props.party.leader && props.party.leader._id ? (
+      {partyExists ? (
         <div
           style={{ width: "100%", marginTop: "2rem", marginBottom: "10rem" }}
         >
@@ -106,13 +115,16 @@ const Party = props => {
                     src={uiPaths.leader}
                     style={{ position: "absolute", top: "-30px", left: "1rem", width:'2rem' }}
                   />
-                  {props.party.leader.avatar ? (
-                    <Avatar src={usersPath + props.party.leader.avatar} style={{width:'4rem', height:'4rem'}}/>
-                  ) : (
-                    <Avatar style={{width:'4rem', height:'4rem', fontSize:'1.4rem'}}>
-                      {createAvatarPlaceholder(props.party.leader.name)}
-                    </Avatar>
-                  )}
+                  <AvatarWithPlaceholder 
+                      avatar={props.party.leader.avatar}
+                      width="4rem"
+                      height="4rem"
+                      placeholder={{
+                          text: props.party.leader.name,
+                          fontSize: '2.4rem'
+                      }}
+                  />
+                  
                 </React.Fragment>
               </ListItemAvatar>
               <Grid container direction="column" style={{ textAlign: "right" }}>
@@ -136,29 +148,30 @@ const Party = props => {
                 return (
                   <ListItem key={partyMember._id} style={{paddingRight:0, paddingLeft:0}}>
                     <ListItemAvatar>
-                      {partyMember.avatar ? (
-                        <Avatar src={usersPath + partyMember.avatar} style={{width:'4rem', height:'4rem'}}/>
-                        
-                      ) : (
-                        <Avatar style={{width:'4rem', height:'4rem', fontSize:'1.4rem'}}>
-                          {createAvatarPlaceholder(partyMember.name)}
-                        </Avatar>
-                      )}
+                      <AvatarWithPlaceholder 
+                        avatar={partyMember.avatar}
+                        width="4rem"
+                        height="4rem"
+                        placeholder={{
+                            text: partyMember.name,
+                            fontSize: '2.4rem'
+                        }}
+                      />
                     </ListItemAvatar>
                     <Grid container direction="column" style={{ textAlign: "right" }}>
-                <Grid item>
-                  <PintoTypography style={{ fontSize: "2rem" }}>
-                    {partyMember.name}
-                  </PintoTypography>
-                </Grid>
-                <Grid item>
-                  <PintoSerifTypography>
-                    Poz.{" "}
-                    {designateUserLevel(partyMember.experience, false)},{" "}
-                    {classLabels[partyMember.class]}
-                  </PintoSerifTypography>
-                </Grid>
-              </Grid>
+                    <Grid item>
+                      <PintoTypography style={{ fontSize: "2rem" }}>
+                        {partyMember.name}
+                      </PintoTypography>
+                    </Grid>
+                    <Grid item>
+                      <PintoSerifTypography>
+                        Poz.{" "}
+                        {designateUserLevel(partyMember.experience, false)},{" "}
+                        {classLabels[partyMember.class]}
+                      </PintoSerifTypography>
+                    </Grid>
+                  </Grid>
                   </ListItem>
                 );
               })}
@@ -224,7 +237,7 @@ const Party = props => {
                 color: palette.background.darkGrey
               }}
             >
-              Znajdź lub stwórz nową drużynę, by razem wypełniać misje!
+              Znajdź lub utwórz nową drużynę, by razem wypełniać misje!
             </PintoTypography>
           </Grid>
         </Grid>
@@ -232,7 +245,7 @@ const Party = props => {
       <PartyJoiningDialog
         open={isJoiningParty}
         userId={props.auth.uid}
-        forcePartyUpdate={() => props.onPartyUpdate(null, true)}
+        forcePartyUpdate={handlePartyUpdate}
         handleClose={() => setIsJoiningParty(prev => !prev)}
       />
 
@@ -262,12 +275,13 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onPartyUpdate: (params, socketAuthReconnect) =>
-      dispatch(updateParty(params, socketAuthReconnect)),
+    onPartyUpdate: (params) =>
+      dispatch(updateParty(params)),
     onRemoveMember: (partyId, memberId) =>
       dispatch(removeMember(partyId, memberId)),
     onAuthCheck: () => dispatch(authCheck()),
-    setCheckWarning: (action, text, actionType) => dispatch(setCheckWarning(action, text, actionType))
+    setCheckWarning: (action, text, actionType) => dispatch(setCheckWarning(action, text, actionType)),
+    missionsUpdate: () => dispatch(getMissionList()),
   };
 };
 

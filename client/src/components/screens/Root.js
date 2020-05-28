@@ -14,18 +14,18 @@ import Box from "@material-ui/core/Box";
 import Dialog from "@material-ui/core/Dialog";
 
 import withWarning from "hoc/withWarning";
-import Profile from "./screens/profile/Profile";
-import Party from "./screens/party/Party";
-import Events from "./screens/events/Events";
-import Loyal from "./screens/loyal/Loyal";
+import Profile from "./profile/Profile";
+import Party from "./party/Party";
+import Events from "./events/Events";
+import Loyal from "./loyal/Loyal";
 //import CharacterCreation from "./screens/characterCreation/CharacterCreation";
-import Booking from "./screens/booking/Booking";
+import Booking from "./booking/Booking";
 
-import RootSnackbar from "./layout/RootSnackbar";
-import WarningDialog from "./screens/WarningDialog";
+import RootSnackbar from "./RootSnackbar";
+import WarningDialog from "./WarningDialog";
 
 
-import {socket} from '../socket'
+import {socket} from '../../socket'
 
 import { authCheck } from "store/actions/authActions";
 import { leaveShop } from "store/actions/shopActions";
@@ -36,7 +36,7 @@ import { updateParty } from "store/actions/partyActions";
 
 import { uiPaths, palette } from "utils/definitions";
 //import WithWarning from "hoc/withWarning";
-import Loading from "./layout/Loading";
+import Loading from "../layout/Loading";
 
 
 
@@ -140,25 +140,20 @@ function Root(props) {
 
 
   const updateGlobalStore = async () => {
+    let requests = [
+      props.onPartyUpdate(),
+      props.getMissionList(),
+      props.getRally()
+    ]
     
     try{
       if (
         props.location.state &&
         props.location.state.hasOwnProperty("authCheck")
       ) {
-        await Promise.all([
-          props.onAuthCheck(),
-          props.onPartyUpdate(),
-          props.getMissionList(),
-          props.getRally()
-        ])
-      }else{
-        await Promise.all([
-          props.onPartyUpdate(),
-          props.getMissionList(),
-          props.getRally()
-        ])
+        requests = [props.onAuthCheck(), ...requests]
       }
+      await Promise.all(requests)
     }catch(e){
       console.log(e)
     }
@@ -198,10 +193,6 @@ function Root(props) {
   const navbar = document.getElementById("navbar") ? document.getElementById("navbar").offsetHeight : '0'
   const footer = document.getElementById("footer") ? document.getElementById("footer").offsetHeight : '0'
   const fullHeight = `calc(100vh - ${appBar + navbar + footer}px)`
-
-  // const ProfileWithWarning = withWarning(Profile)
-  // const PartyWithWarning = withWarning(Party)
-  // const EventsWithWarning = withWarning(Events)
   
   if(!loaded){
     return <Loading/>
