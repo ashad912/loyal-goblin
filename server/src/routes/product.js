@@ -13,7 +13,6 @@ import {
 import { Rally } from "../models/rally";
 import { User } from "../models/user";
 import { OrderExpiredEvent } from "../models/orderExpiredEvent";
-import { Party } from "../models/party";
 import { Item } from "../models/item";
 import { ArchiveOrder } from "../models/archiveOrder";
 import { MissionInstance } from '@models/missionInstance'
@@ -52,10 +51,6 @@ router.get("/products", adminAuth, async (req, res) => {
 //OK
 router.post("/create", adminAuth, async (req, res) => {
   const product = new Product(req.body);
-
-  // let icon = req.files.icon.data
-  // const imgSrc = await saveImage(icon, product._id, uploadPath, null)
-  // product.imgSrc = imgSrc
 
   try {
     await product.save();
@@ -268,37 +263,10 @@ router.get("/shop", auth, async (req, res) => {
 
     if (user.activeOrder.length) {
       await user.orderPopulate()
-      // await user
-      //   .populate({
-      //     path: "activeOrder.profile",
-      //     select: "_id name avatar bag equipped userPerks attributes"
-      //   })
-      //   .populate({
-      //     path: "activeOrder.awards.itemModel",
-      //     select: "name imgSrc"
-      //   })
-      //   .execPopulate();
     }
 
     if (user.party) {
       await user
-        // .populate({
-        //   path: "party",
-        //   populate: {
-        //     path: "leader members",
-        //     select: "bag equipped name _id avatar attributes userPerks",
-        //     populate: {
-        //       path: "bag",
-        //       populate: {
-        //         path: "itemModel",
-        //         populate: {
-        //           path: "perks.target.disc-product",
-        //           select: "_id name"
-        //         }
-        //       }
-        //     }
-        //   }
-        // })
         .partyPopulate()
         .execPopulate();
 
@@ -378,10 +346,6 @@ router.patch("/leave", auth, async (req, res) => {
 router.patch("/activate", auth, async (req, res) => {
   const order = req.body.order;
   const user = req.user;
-
-  // const secretKey = process.env.SECRET_RECAPTCHA_KEY;
-  // const recaptchaToken = req.body.token;
-  // const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
 
   try {
     await verifyCaptcha(req.body.token);
@@ -484,8 +448,6 @@ router.patch("/cancel", auth, async (req, res) => {
 
     await user.clearActiveOrder()
 
-    //user.activeOrder = [];
-    //await user.save();
     res.sendStatus(200);
   } catch (e) {
     res.status(400).send(e.message);
@@ -533,7 +495,7 @@ router.post("/finalize", barmanAuth, async (req, res) => {
     });
   
     if(!user){
-      throw new Error('Użytkownik anulował zamówienie!')
+      throw new Error('User has canceled the order')
     }
   
     const frontEndOrder = req.body.currentOrder
@@ -541,22 +503,20 @@ router.post("/finalize", barmanAuth, async (req, res) => {
 
 
     if(user.activeOrder.length <= 0){
-      throw new Error("Brak aktywnego zamówienia dla tego użytkownika!")
+      throw new Error("No active order")
     }
 
     user.activeOrder.forEach((basket, index) => {
       if((basket._id.toString() !== frontEndOrder[index]._id) || basket.price !== frontEndOrder[index].price){
-        throw new Error(`Koszyk numer ${index+1} nieprawidłowy!`)
+        throw new Error(`No. ${index+1} basket is invalid`)
       }
     })
-
-
 
     const orderPartyIds = user.activeOrder.map(basket => basket.profile.toString())
     
     if(!user.party){
       if(orderPartyIds.length > 1){
-        throw new Error("Wielokrotne koszyki dla pojedynczego użytkownika!")
+        throw new Error("Multiple baskets for user")
       }
 
     }else{
@@ -565,11 +525,11 @@ router.post("/finalize", barmanAuth, async (req, res) => {
       party.members = [party.leader, ...party.members]
 
       if(party.leader.toString() !== orderPartyIds[0] ){
-        throw new Error("Błąd weryfikacji lidera drużyny!")
+        throw new Error("Leader verifcation error")
       }
       party.members.forEach((member, index) => {
         if(member.toString() !== orderPartyIds[index]){
-          throw new Error(`Niezgodność członka drużyny z koszykiem o numerze ${index+1}!`)
+          throw new Error(`Basket no. ${index+1} does not match to member - ${member.toString()}`)
         }
       })
       await user.populate({path: 'party'}).execPopulate()
@@ -665,9 +625,6 @@ router.post("/finalize", barmanAuth, async (req, res) => {
 
     const newArchiveOrder = new ArchiveOrder(archive)
     await newArchiveOrder.save()
-   // user.activeOrder = []
-    //await user.save()
-
 
     res.send();
   } catch (e) {
