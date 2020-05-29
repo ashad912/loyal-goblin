@@ -1,22 +1,21 @@
 import React from "react";
+import styled from "styled-components";
 
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
-
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
-
 import Typography from "@material-ui/core/Typography";
-import Badge from "@material-ui/core/Badge";
-
-import styled from "styled-components";
-import { classLabelsAny } from "utils/labels";
-import { palette, itemsPath, uiPaths } from "utils/definitions";
-import { PintoTypography} from 'utils/fonts'
 
 import MissionAwardsHeader from './MissionAwardsHeader'
 import MissionRequirements from './MissionRequirements';
 import MissionBasicInfo from 'components/missionInstance/MissionBasicInfo'
+
+import { classLabelsAny } from "utils/labels";
+import { palette, itemsPath } from "utils/definitions";
+import { PintoTypography} from 'utils/fonts'
+
+
 
 
 const StyledBox = styled(Box)`
@@ -27,9 +26,6 @@ const StyledBox = styled(Box)`
       : palette.background.standard};
 `;
 
-const StyledBadge = styled(Badge)`
-    margin-right: ${props => props.invisible ? '0rem' : '1rem'};
-`
 
 const MissionListItem = props => {
   const mission = props.mission;

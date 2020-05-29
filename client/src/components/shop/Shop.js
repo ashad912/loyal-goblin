@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import Recaptcha from "react-google-invisible-recaptcha";
 import { ScrollingProvider, Section, SectionLink } from "react-scroll-section";
+
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
@@ -12,6 +13,8 @@ import Badge from "@material-ui/core/Badge";
 import Snackbar from "@material-ui/core/Snackbar";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+
+import {socket} from 'socket'
 
 import MenuGridItem from "./MenuGridItem";
 import ShopList from "./ShopList";
@@ -25,11 +28,11 @@ import {
   getShop,
   activateOrder,
   leaveShop
-} from "../../store/actions/shopActions";
-import { toggleItem } from "../../store/actions/profileActions";
-import { uiPaths } from "../../utils/definitions";
-import {PintoTypography} from '../../utils/fonts'
-import {socket} from '../../socket'
+} from "store/actions/shopActions";
+import { toggleItem } from "store/actions/profileActions";
+
+import { uiPaths } from "utils/definitions";
+
 
 const Menu = styled(Paper)`
   flex-grow: 1;

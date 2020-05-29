@@ -1,22 +1,23 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { signIn } from '../../store/actions/authActions'
-import { Redirect, Link } from 'react-router-dom'
+import Recaptcha from 'react-google-invisible-recaptcha';
+import styled from 'styled-components'
+
+import { Link } from 'react-router-dom'
 import Container from '@material-ui/core/Container';
 import { Typography } from '@material-ui/core';
-import { TextField } from '@material-ui/core';
 import { Button } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
-import styled from 'styled-components'
 import { FormControl } from '@material-ui/core';
 import { FormHelperText } from '@material-ui/core';
 import { Input } from '@material-ui/core';
-import { InputLabel } from '@material-ui/core';
-import { Divider } from '@material-ui/core';
 import ErrorIcon from '@material-ui/icons/Error';
-import {asyncForEach} from '../../utils/methods'
-import { palette, uiPaths } from '../../utils/definitions';
-import Recaptcha from 'react-google-invisible-recaptcha';
+
+import { signIn } from 'store/actions/authActions'
+
+import {asyncForEach} from 'utils/functions'
+import { palette, uiPaths } from 'utils/definitions';
+
 
 //import {labels} from '../strings/labels'
 

@@ -1,130 +1,127 @@
 
 
 import React from 'react';
-import Box from './Box';
-
-import uuid from 'uuid/v1'
-import {addItemSubscribe, deleteItemSubscribe} from 'socket'
 import { DragDropContext } from 'react-beautiful-dnd';
-import Avatar from '@material-ui/core/Avatar';
-import { sendItemToMission, sendItemToUser } from 'store/actions/missionActions';
-import { uiPaths, usersPath } from 'utils/definitions';
 
-import {createAvatarPlaceholder} from 'utils/methods'
+import Avatar from '@material-ui/core/Avatar';
+
+import {addItemSubscribe, deleteItemSubscribe} from 'socket'
+import Box from './Box';
 import AvatarWithPlaceholder from 'components/AvatarWithPlaceholder'
 
-
+import { sendItemToMission, sendItemToUser } from 'store/actions/missionActions';
+import { uiPaths, usersPath } from 'utils/definitions';
 
 const userItemsName = 'userItems'
 const missionItemsName = 'missionItems'
 
 
 
-const createTempItemListUser = (userId) => {
-  return [
-      {
-        _id: uuid(),
-        model: {
-          _id: 101,
-          type: {
-              id: 201,
-              type: 'amulet'
-          },
-          name: 'diamond',
-          imgSrc: 'diamond-amulet.png'
-        },
-        owner: userId
-      },
-      {
-        _id: uuid(),
-        model: {
-          _id: 102,
-          type: {
-              id: 201,
-              type: 'amulet'
-          },
-          name: 'pearl',
-          imgSrc: 'pearl-amulet.png'
-        },
-        owner: userId
-      },
-      {
-        _id: uuid(),
-        model: {
-          _id: 103,
-          type: {
-              id: 201,
-              type: 'amulet'
-          },
-          name: 'sapphire',
-          imgSrc: 'sapphire-amulet.png'
-        },
-        owner: userId
-      },
-      {
-        _id: uuid(),
-        model: {
-          _id: 101,
-          type: {
-              id: 201,
-              type: 'amulet'
-          },
-          name: 'diamond',
-          imgSrc: 'diamond-amulet.png'
-        },
-        owner: userId
-      },
-      {
-        _id: uuid(),
-        model: {
-          _id: 103,
-          type: {
-              id: 201,
-              type: 'amulet'
-          },
-          name: 'sapphire',
-          imgSrc: 'sapphire-amulet.png'
-        },
-        owner: userId
-      },
-      // {
-      //   _id: uuid(),
-      //   model: {
-      //     _id: 104,
-      //     type: {
-      //         id: 204,
-      //         type: 'amulet'
-      //     },
-      //     name: 'emerald',
-      //     imgSrc: 'emerald-amulet.png'
-      //   },
-      //   owner: userId
-      // },
+// const createTempItemListUser = (userId) => {
+//   return [
+//       {
+//         _id: uuid(),
+//         model: {
+//           _id: 101,
+//           type: {
+//               id: 201,
+//               type: 'amulet'
+//           },
+//           name: 'diamond',
+//           imgSrc: 'diamond-amulet.png'
+//         },
+//         owner: userId
+//       },
+//       {
+//         _id: uuid(),
+//         model: {
+//           _id: 102,
+//           type: {
+//               id: 201,
+//               type: 'amulet'
+//           },
+//           name: 'pearl',
+//           imgSrc: 'pearl-amulet.png'
+//         },
+//         owner: userId
+//       },
+//       {
+//         _id: uuid(),
+//         model: {
+//           _id: 103,
+//           type: {
+//               id: 201,
+//               type: 'amulet'
+//           },
+//           name: 'sapphire',
+//           imgSrc: 'sapphire-amulet.png'
+//         },
+//         owner: userId
+//       },
+//       {
+//         _id: uuid(),
+//         model: {
+//           _id: 101,
+//           type: {
+//               id: 201,
+//               type: 'amulet'
+//           },
+//           name: 'diamond',
+//           imgSrc: 'diamond-amulet.png'
+//         },
+//         owner: userId
+//       },
+//       {
+//         _id: uuid(),
+//         model: {
+//           _id: 103,
+//           type: {
+//               id: 201,
+//               type: 'amulet'
+//           },
+//           name: 'sapphire',
+//           imgSrc: 'sapphire-amulet.png'
+//         },
+//         owner: userId
+//       },
+//       // {
+//       //   _id: uuid(),
+//       //   model: {
+//       //     _id: 104,
+//       //     type: {
+//       //         id: 204,
+//       //         type: 'amulet'
+//       //     },
+//       //     name: 'emerald',
+//       //     imgSrc: 'emerald-amulet.png'
+//       //   },
+//       //   owner: userId
+//       // },
       
       
 
-  ]
-}
+//   ]
+// }
 
-const createTempItemListMission = (userId) => {
-  return [
+// const createTempItemListMission = (userId) => {
+//   return [
     
-      /*{
-        _id: uuid(),
-        model: {
-          id: 103,
-          type: {
-              id: 201,
-              type: 'amulet'
-          },
-          name: 'sapphire',
-          imgSrc: 'sapphire-amulet.png'
-      },
-        owner: userId
-      },*/
+//       /*{
+//         _id: uuid(),
+//         model: {
+//           id: 103,
+//           type: {
+//               id: 201,
+//               type: 'amulet'
+//           },
+//           name: 'sapphire',
+//           imgSrc: 'sapphire-amulet.png'
+//       },
+//         owner: userId
+//       },*/
 
-  ]
-}
+//   ]
+// }
 
 
 

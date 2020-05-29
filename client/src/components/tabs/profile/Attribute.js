@@ -1,9 +1,11 @@
 import React from "react";
+
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import { PintoTypography } from "../../../utils/fonts";
-import { palette } from "../../../utils/definitions";
+
+import { PintoTypography } from "utils/fonts";
+import { palette } from "utils/definitions";
 
 
 const Attribute = props => {
@@ -21,6 +23,7 @@ const Attribute = props => {
           <Grid item style={{width:'100%', textAlign:'center'}}>
             <img
               src={props.attributeIcon}
+              alt="attr"
               style={{ width: "2rem", paddingTop: "0.4rem" }}
             />
           </Grid>

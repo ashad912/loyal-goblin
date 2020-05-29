@@ -11,21 +11,19 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import Dialog from "@material-ui/core/Dialog";
 
-import withWarning from "hoc/withWarning";
 import Profile from "./profile/Profile";
 import Party from "./party/Party";
 import Events from "./events/Events";
 import Loyal from "./loyal/Loyal";
-//import CharacterCreation from "./screens/characterCreation/CharacterCreation";
 import Booking from "./booking/Booking";
+import Loading from "components/layout/Loading";
 
-import RootSnackbar from "./RootSnackbar";
+import TabsSnackbar from "./TabsSnackbar";
 import WarningDialog from "./WarningDialog";
 
 
-import {socket} from '../../socket'
+import {socket} from 'socket'
 
 import { authCheck } from "store/actions/authActions";
 import { leaveShop } from "store/actions/shopActions";
@@ -34,9 +32,9 @@ import { getFirstRally } from "store/actions/rallyActions";
 import { getMissionList } from "store/actions/missionActions";
 import { updateParty } from "store/actions/partyActions";
 
-import { uiPaths, palette } from "utils/definitions";
-//import WithWarning from "hoc/withWarning";
-import Loading from "../layout/Loading";
+import { palette } from "utils/definitions";
+
+
 
 
 
@@ -82,7 +80,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function Root(props) {
+function TabsRoot(props) {
 
   const [loaded, setLoaded] = React.useState(false)
   const [footerReached, setFooterReached] = React.useState(false)
@@ -242,7 +240,7 @@ function Root(props) {
         </TabPanel>
       </SwipeableViews>
     
-      <RootSnackbar 
+      <TabsSnackbar 
         socket={socket} 
         screen={value} 
         hide={footerReached} 
@@ -272,4 +270,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Root);
+export default connect(mapStateToProps, mapDispatchToProps)(TabsRoot);

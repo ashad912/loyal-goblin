@@ -7,6 +7,7 @@ import { Paper } from '@material-ui/core';
 
 import {palette, itemsPath} from 'utils/definitions'
 import {PintoTypography} from 'utils/fonts'
+import {convertToStack} from 'utils/functions'
 
 
 const RootDiv = styled.div`
@@ -59,30 +60,6 @@ const PlaceholderText = styled.div`
   width: 100%;
   height: auto;
 `
-const convertToStack = (itemsToConvert) => {
-  let itemModels = []
-  
-  itemsToConvert.forEach((itemToConvert) => {
-    //NOTE: filter returns new array - if for itemModels gets zero length, it is new name
-    if(itemModels.filter(itemModel => itemModel.name === itemToConvert.itemModel.name).length === 0){
-      itemModels = [...itemModels, itemToConvert.itemModel]
-    }
-  })
-
-  let itemObjects = []
-  itemModels.forEach((itemModel) => {
-    let instanceItemsIds = []
-    itemsToConvert.forEach((itemToConvert) => {
-      if(itemModel.name === itemToConvert.itemModel.name){
-        instanceItemsIds = [...instanceItemsIds, itemToConvert._id]
-      }
-    })
-    const itemObject = {model: itemModel, instancesIds: instanceItemsIds}
-    itemObjects = [...itemObjects, itemObject]
-  })
-  return itemObjects
-}
-
 
 const Box = (props) => {
 

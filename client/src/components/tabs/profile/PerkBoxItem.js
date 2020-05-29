@@ -4,13 +4,10 @@ import ListItem from "@material-ui/core/ListItem";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 
-import { perkLabels, dayLabels } from "../../../utils/labels";
-import { getValue, getTarget } from "../../../utils/methods";
-import { palette } from "../../../utils/definitions";
-import { PintoTypography, PintoSerifTypography } from "../../../utils/fonts";
-
-
-
+import { perkLabels, dayLabels } from "utils/labels";
+import { getValue, getTarget } from "utils/functions";
+import { palette } from "utils/definitions";
+import { PintoTypography } from "utils/fonts";
 
 
 const PerkBoxItem = ({ perk, isFirst, isEquipment, equipped }) => {

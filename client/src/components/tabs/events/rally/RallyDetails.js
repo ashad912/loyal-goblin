@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+
 import { Typography } from '@material-ui/core'
 import { ListItemText } from '@material-ui/core'
 import { ListItem } from '@material-ui/core'
@@ -7,14 +8,13 @@ import { Button } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 
-
-
-
-import { ralliesPath, palette, uiPaths } from '../../../../utils/definitions'
-import {PintoTypography} from '../../../../utils/fonts'
 import DetailsSchema from '../DetailsSchema'
 import DetailsHeader from '../DetailsHeader'
 import AwardsSections from '../AwardsSections'
+
+import { ralliesPath, palette } from 'utils/definitions'
+import {PintoTypography} from 'utils/fonts'
+
 
 
 const AwardsLevelButton = styled(({...otherProps})=> (

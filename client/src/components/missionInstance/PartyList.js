@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React from 'react'
 
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -18,8 +18,7 @@ import Avatar from '@material-ui/core/Avatar';
 
 import AvatarWithPlaceholder from 'components/AvatarWithPlaceholder';
 
-import {createAvatarPlaceholder} from 'utils/methods'
-import {palette, itemsPath, usersPath, uiPaths} from 'utils/definitions'
+import {palette, itemsPath, uiPaths} from 'utils/definitions'
 
 
 const StyledImage = styled.img`
@@ -64,129 +63,126 @@ const SmallAvatar = styled(Avatar)`
 // && {
 //     margin: 0.5rem 2rem 0.5rem 2rem;
 // }
-const createTempPartyList = () => {
-    return [
-        {
-            inRoom: false,
-            readyStatus: false,
-            profile: {
-                _id: 1,
-                name: 'user1',
-                avatar: undefined,
-                party: {
-                    leader: {
-                        _id: 1
-                    }
-                }
-            }
-        },
-        {
-            inRoom: false,
-            readyStatus: false,
-            profile: {
-                _id: 2,
-                name: 'user2',
-                avatar: undefined,
-                party: {
-                    leader: {
-                        _id: 1
-                    }
-                }
-            }
-        },
-        {
-            inRoom: false,
-            readyStatus: false,
-            profile: {
-                _id: 3,
-                name: 'user3 halo',
-                avatar: undefined,
-                party: {
-                    leader: {
-                        _id: 1
-                    }
-                }
-            }
-        },
-        {
-            inRoom: false,
-            readyStatus: false,
-            profile: {
-                _id: 4,
-                name: 'user4 halo',
-                avatar: undefined,
-                party: {
-                    leader: {
-                        _id: 1
-                    }
-                }
-            }
-        },
-        {
-            inRoom: false,
-            readyStatus: false,
-            profile: {
-                _id: 5,
-                name: 'user5',
-                avatar: undefined,
-                party: {
-                    leader: {
-                        _id: 1
-                    }
-                }
-            }
-        },
-        {
-            inRoom: true,
-            readyStatus: false,
-            profile: {
-                _id: 6,
-                name: 'user6',
-                avatar: undefined,
-                party: {
-                    leader: {
-                        _id: 1
-                    }
-                }
-            }
-        },
-        {
-            inRoom: true,
-            readyStatus: false,
-            profile: {
-                _id: 8,
-                name: 'user8',
-                avatar: undefined,
-                party: {
-                    leader: {
-                        _id: 1
-                    }
-                }
-            }
-        },
-        {
-            inRoom: true,
-            readyStatus: false,
-            profile: {
-                _id: 7,
-                name: 'user7',
-                avatar: undefined,
-                party: {
-                    leader: {
-                        _id: 1
-                    }
-                }
-            }
-        },
-    ]
-}
+// const createTempPartyList = () => {
+//     return [
+//         {
+//             inRoom: false,
+//             readyStatus: false,
+//             profile: {
+//                 _id: 1,
+//                 name: 'user1',
+//                 avatar: undefined,
+//                 party: {
+//                     leader: {
+//                         _id: 1
+//                     }
+//                 }
+//             }
+//         },
+//         {
+//             inRoom: false,
+//             readyStatus: false,
+//             profile: {
+//                 _id: 2,
+//                 name: 'user2',
+//                 avatar: undefined,
+//                 party: {
+//                     leader: {
+//                         _id: 1
+//                     }
+//                 }
+//             }
+//         },
+//         {
+//             inRoom: false,
+//             readyStatus: false,
+//             profile: {
+//                 _id: 3,
+//                 name: 'user3 halo',
+//                 avatar: undefined,
+//                 party: {
+//                     leader: {
+//                         _id: 1
+//                     }
+//                 }
+//             }
+//         },
+//         {
+//             inRoom: false,
+//             readyStatus: false,
+//             profile: {
+//                 _id: 4,
+//                 name: 'user4 halo',
+//                 avatar: undefined,
+//                 party: {
+//                     leader: {
+//                         _id: 1
+//                     }
+//                 }
+//             }
+//         },
+//         {
+//             inRoom: false,
+//             readyStatus: false,
+//             profile: {
+//                 _id: 5,
+//                 name: 'user5',
+//                 avatar: undefined,
+//                 party: {
+//                     leader: {
+//                         _id: 1
+//                     }
+//                 }
+//             }
+//         },
+//         {
+//             inRoom: true,
+//             readyStatus: false,
+//             profile: {
+//                 _id: 6,
+//                 name: 'user6',
+//                 avatar: undefined,
+//                 party: {
+//                     leader: {
+//                         _id: 1
+//                     }
+//                 }
+//             }
+//         },
+//         {
+//             inRoom: true,
+//             readyStatus: false,
+//             profile: {
+//                 _id: 8,
+//                 name: 'user8',
+//                 avatar: undefined,
+//                 party: {
+//                     leader: {
+//                         _id: 1
+//                     }
+//                 }
+//             }
+//         },
+//         {
+//             inRoom: true,
+//             readyStatus: false,
+//             profile: {
+//                 _id: 7,
+//                 name: 'user7',
+//                 avatar: undefined,
+//                 party: {
+//                     leader: {
+//                         _id: 1
+//                     }
+//                 }
+//             }
+//         },
+//     ]
+// }
 
 
 
 const PartyList = (props) => {
-
-    const [partyList, setPartyList] = useState([...props.instanceUsers])
-
 
     const altAvatar = (user) => {
 
@@ -249,7 +245,7 @@ const PartyList = (props) => {
     //const partyList from props.partyList from socket.io methods
 
     //show only rest of the party
-    const party = partyList.filter((user) => {
+    const party = props.instanceUsers.filter((user) => {
         return user.profile._id !== props.userId
     })
 

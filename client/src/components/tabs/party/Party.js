@@ -8,21 +8,17 @@ import Fab from "@material-ui/core/Fab";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import Avatar from "@material-ui/core/Avatar";
 
 import PartyCreationDialog from "./PartyCreationDialog";
 import PartyJoiningDialog from "./PartyJoiningDialog";
-
 
 import AvatarWithPlaceholder from "components/AvatarWithPlaceholder";
 import { updateParty, removeMember } from "store/actions/partyActions";
 import { authCheck } from "store/actions/authActions";
 import {
-  createAvatarPlaceholder,
-  designateUserLevel,
-} from "utils/methods";
+  getUserLevel,
+} from "utils/functions";
 import {
-  usersPath,
   uiPaths,
   palette,
   warningActionSources
@@ -112,6 +108,7 @@ const Party = props => {
               <ListItemAvatar style={{ position: "relative" }}>
                 <React.Fragment>
                   <img
+                    alt="leader"
                     src={uiPaths.leader}
                     style={{ position: "absolute", top: "-30px", left: "1rem", width:'2rem' }}
                   />
@@ -136,7 +133,7 @@ const Party = props => {
                 <Grid item>
                   <PintoSerifTypography>
                     Poz.{" "}
-                    {designateUserLevel(props.party.leader.experience, false)},{" "}
+                    {getUserLevel(props.party.leader.experience, false)},{" "}
                     {classLabels[props.party.leader.class]}
                   </PintoSerifTypography>
                 </Grid>
@@ -167,7 +164,7 @@ const Party = props => {
                     <Grid item>
                       <PintoSerifTypography>
                         Poz.{" "}
-                        {designateUserLevel(partyMember.experience, false)},{" "}
+                        {getUserLevel(partyMember.experience, false)},{" "}
                         {classLabels[partyMember.class]}
                       </PintoSerifTypography>
                     </Grid>

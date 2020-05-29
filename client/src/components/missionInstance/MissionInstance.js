@@ -6,7 +6,6 @@ import Button from "@material-ui/core/Button";
 import ColorizeIcon from "@material-ui/icons/Colorize";
 import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
-import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 

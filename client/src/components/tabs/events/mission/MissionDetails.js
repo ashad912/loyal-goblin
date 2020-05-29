@@ -1,19 +1,15 @@
 import React from 'react'
 import Button from "@material-ui/core/Button";
-import List from "@material-ui/core/List";
-import Grid from '@material-ui/core/Grid';
-import Divider from '@material-ui/core/Divider';
-import Typography from '@material-ui/core/Typography';
-import ExpandLess from "@material-ui/icons/ExpandLess";
-import ExpandMore from "@material-ui/icons/ExpandMore";
-import { classLabelsAny } from '../../../../utils/labels';
-import {palette, uiPaths,  missionsPath} from '../../../../utils/definitions'
-import {PintoTypography} from '../../../../utils/fonts'
+
 import DetailsHeader from '../DetailsHeader'
 import MissionAwardsHeader from './MissionAwardsHeader'
 import MissionRequirements from './MissionRequirements';
 import AwardsSections from '../AwardsSections';
 import DetailsSchema from '../DetailsSchema'
+
+
+import {missionsPath} from 'utils/definitions'
+import {PintoTypography} from 'utils/fonts'
 
 
 const MissionDetails = (props) => {

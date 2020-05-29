@@ -1,39 +1,25 @@
 import React from "react";
-import styled from 'styled-components'
+
 import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-
 import ListItemText from "@material-ui/core/ListItemText";
-
-import Paper from "@material-ui/core/Paper";
-
 import Button from "@material-ui/core/Button";
 
-import ExpandMore from "@material-ui/icons/ExpandMore";
-
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import TorpedoListItem from './TorpedoListItem'
-import { PintoTypography } from "../../../utils/fonts";
+import OperationDialog from "components/OperationDialog";
 
+import { PintoTypography } from "utils/fonts";
+import {convertToStack} from 'utils/functions'
 
-const DrawerActions = styled(DialogActions)`
-
-`
 
 const TorpedoDrawer = props => {
-    const [openList, setOpenList] = React.useState("");
     const [deleteDialog, setDeleteDialog] = React.useState(false)
     const [itemToDelete, setItemToDelete] = React.useState({id: '', name: '', category: ''})
-    const [activeTorpedo, setActiveTorpedo] = React.useState(undefined)
+    const [activeTorpedo, setActiveTorpedo] = React.useState(null)
 
  
     const handleShowDeleteDialog = (id, name) => {
-    // console.log(parentDialog)
         setItemToDelete({id, name})
         setDeleteDialog(true)
 
@@ -57,9 +43,9 @@ const TorpedoDrawer = props => {
         //     loadedTorpedo: torpedo
         // })
         if(activeTorpedo !== id){
-        setActiveTorpedo(id)
+            setActiveTorpedo(id)
         }else{
-        setActiveTorpedo(undefined)
+            setActiveTorpedo(null)
         }
         
     }
@@ -71,29 +57,6 @@ const TorpedoDrawer = props => {
     const handleSave = () => {
         props.handleTorpedoToggle(activeTorpedo)
         handleClose()
-    }
-    const convertToStack = (itemsToConvert) => {
-        let itemModels = []
-        itemsToConvert.forEach((itemToConvert) => {
-        //NOTE: filter returns new array - if for itemModels gets zero length, it is new name
-        if(itemModels.filter(itemModel => itemModel.name === itemToConvert.itemModel.name).length === 0){
-            itemModels = [...itemModels, itemToConvert.itemModel]
-        }
-        //console.log(itemModels)
-        })
-    
-        let itemObjects = []
-        itemModels.forEach((itemModel) => {
-        let instanceItemsIds = []
-        itemsToConvert.forEach((itemToConvert) => {
-            if(itemModel.name === itemToConvert.itemModel.name){
-            instanceItemsIds = [...instanceItemsIds, itemToConvert._id]
-            }
-        })
-        const itemObject = {itemModel: itemModel, instancesIds: instanceItemsIds}
-        itemObjects = [...itemObjects, itemObject]
-        })
-        return itemObjects
     }
 
     const userTorpedos = convertToStack(props.userTorpedos)
@@ -160,25 +123,15 @@ const TorpedoDrawer = props => {
                         </Button>
                     }
                 </div>
-                <Dialog
+                <OperationDialog 
                     open={deleteDialog}
                     onClose={handleDeleteDialogClose}
-                >
-                    <DialogTitle >Wyrzucanie przedmiotu</DialogTitle>
-                    <DialogContent>
-                    <DialogContentText >
-                    Czy na pewno chcesz wyrzucić przedmiot {itemToDelete.name}?
-                    </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                    <Button onClick={handleDeleteDialogClose} color="secondary">
-                        Anuluj
-                    </Button>
-                    <Button onClick={handleTorpedoDelete} color="primary" autoFocus>
-                        Potwierdź
-                    </Button>
-                    </DialogActions>
-                </Dialog>
+                    handleAction={handleTorpedoDelete}
+                    title="Wyrzucanie przedmiotu"
+                    desc={`Czy na pewno chcesz wyrzucić przedmiot ${itemToDelete.name}?`}
+                    cancelText="Anuluj"
+                    confirmText="Potwierdź"
+                />
                 
             
             </div>

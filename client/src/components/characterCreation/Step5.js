@@ -1,10 +1,12 @@
 import React from "react";
+
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
-import {uiPaths} from '../../utils/definitions'
 import Divider from '@material-ui/core/Divider'
-import { PintoSerifTypography, PintoTypography } from "../../utils/fonts";
+
+import {uiPaths} from 'utils/definitions'
+import { PintoSerifTypography } from "utils/fonts";
 
 const Step5 = props => {
   let characterClass = props.characterClass;
@@ -35,14 +37,14 @@ const Step5 = props => {
       <Typography variant="h6">
         {props.name}{" "}
         {props.sex === "female" ? (
-          <img src={uiPaths.female} style={{height: '2rem', verticalAlign: 'bottom'}}/>
+          <img alt="sex" src={uiPaths.female} style={{height: '2rem', verticalAlign: 'bottom'}}/>
         ) : (
-          <img src={uiPaths.male} style={{height: '2rem', verticalAlign: 'bottom'}}/>
+          <img alt="sex" src={uiPaths.male} style={{height: '2rem', verticalAlign: 'bottom'}}/>
         )}
       </Typography>
 
       <Typography variant="h6">{characterClass} {"  "}
-      <img src={uiPaths[props.characterClass]} style={{height: '2rem', verticalAlign: 'bottom'}}/>
+      <img alt="class" src={uiPaths[props.characterClass]} style={{height: '2rem', verticalAlign: 'bottom'}}/>
       </Typography>
       <Grid
       style={{marginTop:'2rem'}}
@@ -89,7 +91,7 @@ const Step5 = props => {
           </Grid>
         </Grid>
       </Grid>
-      <img src={uiPaths[props.characterClass+'Bg']} style={{width: '100%', position: 'absolute', bottom: '0', left: '0', opacity: '0.4'}}/>
+      <img alt="classBg" src={uiPaths[props.characterClass+'Bg']} style={{width: '100%', position: 'absolute', bottom: '0', left: '0', opacity: '0.4'}}/>
     </React.Fragment>
   );
 };

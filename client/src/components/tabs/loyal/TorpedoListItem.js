@@ -1,4 +1,5 @@
 import React from "react";
+
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -9,9 +10,9 @@ import Menu from "@material-ui/core/Menu";
 import Badge from "@material-ui/core/Badge";
 import MenuItem from "@material-ui/core/MenuItem";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
-import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import { palette, itemsPath, uiPaths } from "../../../utils/definitions";
-import { PintoTypography, PintoSerifTypography } from "../../../utils/fonts";
+
+import { palette, itemsPath, uiPaths } from "utils/definitions";
+import { PintoTypography, PintoSerifTypography } from "utils/fonts";
 const StyledMenu = withStyles({
   paper: {
     border: "1px solid #d3d4d5"
@@ -125,7 +126,7 @@ const TorpedoListItem = props => {
       >
         <StyledMenuItem onClick={handleDelete}>
           <ListItemIcon>
-            <img src={uiPaths.trash} style={{width: '1.5rem', height: '1.5rem'}}/>
+            <img src={uiPaths.trash} alt="trash" style={{width: '1.5rem', height: '1.5rem'}}/>
           </ListItemIcon>
           <ListItemText><PintoTypography>Wyrzuć</PintoTypography></ListItemText>
         </StyledMenuItem>

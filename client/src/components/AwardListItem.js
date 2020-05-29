@@ -8,11 +8,9 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Grid from "@material-ui/core/Grid";
 import Badge from '@material-ui/core/Badge';
 
-import PerkBoxItem from "./screens/profile/PerkBoxItem";
+import PerkBoxItem from "./tabs/profile/PerkBoxItem";
 
-import { dayLabels, categoryLabels, roomLabels, perkLabels } from "utils/labels";
 import {itemsPath, palette} from 'utils/definitions'
-import { getValue, getTarget } from "utils/methods";
 import { PintoTypography } from "utils/fonts";
 
 

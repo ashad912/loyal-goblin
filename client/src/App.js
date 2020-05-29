@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Switch, withRouter } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import {Workbox, messageSW} from 'workbox-window';
 import { StylesProvider, ThemeProvider } from "@material-ui/styles";
@@ -16,13 +16,15 @@ import ResetPassword from "./components/auth/ResetPassword";
 import PageNotFound from "./components/layout/PageNotFound";
 import Navbar from "./components/layout/navbar/Navbar";
 import Footer from "./components/layout/Footer";
-import Root from "./components/screens/Root";
+import TabsRoot from "./components/tabs/TabsRoot";
 import Shop from "./components/shop/Shop";
 import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import MissionInstance from "./components/missionInstance/MissionInstance";
 import Loading from "components/layout/Loading";
+import OfflineModal from "./components/auth/OfflineModal";
+import CharacterCreation from "components/characterCreation/CharacterCreation";
 
 
 import { palette } from "./utils/definitions";
@@ -30,8 +32,7 @@ import { palette } from "./utils/definitions";
 import { authCheck } from "./store/actions/authActions";
 import { resetConnectionError } from "./store/actions/connectionActions";
 import { updateParty } from "./store/actions/partyActions";
-import OfflineModal from "./components/auth/OfflineModal";
-import CharacterCreation from "components/characterCreation/CharacterCreation";
+
 
 const goblinTheme = createMuiTheme({
   palette: {
@@ -148,7 +149,7 @@ class App extends React.Component {
 
       const user = await this.props.authCheck();
       const charCreated = user && user.name && user.class
-      const HomeComponent = charCreated ? Root : CharacterCreation
+      const HomeComponent = charCreated ? TabsRoot : CharacterCreation
       
       
       this.setupComponent(HomeComponent, charCreated)
@@ -206,7 +207,7 @@ class App extends React.Component {
     }
 
     if(this.state.loaded && (!prevProps.userName && this.props.userName)){
-      this.setupComponent(Root, true)
+      this.setupComponent(TabsRoot, true)
     }
 
     if(this.state.loaded && (prevProps.userName && !this.props.userName)){

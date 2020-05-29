@@ -9,16 +9,14 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
 import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
+
 import MenuItem from "@material-ui/core/MenuItem";
 import Badge from "@material-ui/core/Badge";
-import Divider from "@material-ui/core/Divider";
+
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
-import TouchAppIcon from "@material-ui/icons/TouchApp";
-import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import { dayLabels, perkLabels } from "../../../utils/labels";
+
 import { palette, itemsPath, uiPaths } from "../../../utils/definitions";
-import { getValue, getTarget } from "../../../utils/methods";
+
 import { PintoTypography, PintoSerifTypography } from "../../../utils/fonts";
 import PerkBoxItem from "./PerkBoxItem";
 
@@ -206,7 +204,7 @@ const EquipmentListItem = props => {
       >
         <StyledMenuItem onClick={handleDelete}>
           <ListItemIcon>
-            <img src={uiPaths.trash} style={{width: '1.5rem', height: '1.5rem'}}/>
+            <img alt="trash" src={uiPaths.trash} style={{width: '1.5rem', height: '1.5rem'}}/>
           </ListItemIcon>
           <ListItemText><PintoTypography>Wyrzuć</PintoTypography></ListItemText>
         </StyledMenuItem>

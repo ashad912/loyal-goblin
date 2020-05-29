@@ -8,10 +8,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer'
-import Avatar from '@material-ui/core/Avatar';
 import Input from '@material-ui/core/Input';
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
 import Snackbar from '@material-ui/core/Snackbar';
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import AccountBoxIcon from "@material-ui/icons/AccountBox";
@@ -20,7 +17,6 @@ import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import KeyboardArrowLeftIcon from "@material-ui/icons/KeyboardArrowLeft";
 import LockIcon from '@material-ui/icons/Lock';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import { Badge } from '@material-ui/core';
 import { Link } from '@material-ui/core';
 
 import ChangePasswordModal from 'components/auth/ChangePasswordModal';
@@ -35,47 +31,28 @@ import {signOut} from 'store/actions/authActions'
 import {togglePresenceInInstance} from 'store/actions/missionActions'
 import {leaveShop} from 'store/actions/shopActions'
 
-import { uiPaths, usersPath } from 'utils/definitions';
+import { uiPaths } from 'utils/definitions';
 import { PintoTypography } from 'utils/fonts';
 import AvatarWithPlaceholder from 'components/AvatarWithPlaceholder';
 
-
-const StyledMenu = styled(Menu)`
-    border: "1px solid #d3d4d5";
-`
-  
-const StyledMenuItem = styled(MenuItem)`
-
-`
   
 const StyledAppBar = styled(AppBar)`
     display: ${props => props.none && 'none'};
     position: ${props => props.sticky ? 'sticky' : 'static'};
     top: 0;
     transform: ${props => props.show ? 'translate3d(0, 0, 0)' : 'translate3d(0, -100%, 0)'};
-    transition: transform 0.4s linear;
-
-    
+    transition: transform 0.4s linear;    
 `
 
-const FileInputWrapper = styled.div`
-  position: relative;
-  background: red;
-`;
-
 const HiddenFileInput = styled(Input)`
-  position: absolute;
-  top: 0;
-  left: 0;
-  opacity: 0;
-  height: 100%;
-  width: 100%;
-  user-select: none;
-`;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    height: 100%;
+    width: 100%;
+    user-select: none;`;
 
-const FileInputButton = styled(PintoTypography)`
-  
-`;
 
 
 const Navbar = (props) => {
@@ -207,19 +184,6 @@ const Navbar = (props) => {
         setShowDrawer(null);
         await props.signOut() 
     }
-    const createAvatarPlaceholder = (name) => {
-
-        if (!(/\s/.test(name))) {
-            return name.charAt(0).toUpperCase()
-        }
-        
-        const initials = name.split(" ").map(word => {
-            return word.charAt(0)
-        }).join('').toUpperCase()
-
-        return initials
-    }
-
 
     const togglePasswordChangeModal = () => {
         setShowPasswordChangeModal(prev => !prev)
@@ -263,6 +227,7 @@ const Navbar = (props) => {
                 break;
             case '/shop':
                 state.indexRedirect = 0  
+                break;
             default:
                 break;
         }
@@ -331,7 +296,7 @@ const Navbar = (props) => {
                         <NavbarMenu>
                             <NavbarMenuItem
                                 icon={
-                                    <img src={uiPaths.statistics} style={{width: '1.2rem', height: '1.2rem', paddingLeft: '0.2rem'}}/>
+                                    <img src={uiPaths.statistics} alt="stats" style={{width: '1.2rem', height: '1.2rem', paddingLeft: '0.2rem'}}/>
                                 }
                                 action={
                                     <Link onClick={toggleStatsDialog} underline='none' color="primary">
@@ -341,7 +306,7 @@ const Navbar = (props) => {
                             />
                             <NavbarMenuItem
                                 icon={
-                                    <img src={uiPaths.ranking} style={{width: '1.2rem', height: '1.2rem', paddingLeft: '0.2rem'}}/>
+                                    <img src={uiPaths.ranking} alt="ranking" style={{width: '1.2rem', height: '1.2rem', paddingLeft: '0.2rem'}}/>
                                 }
                                 action={
                                     <Link onClick={toggleRankDialog} underline='none' color="primary">
@@ -355,9 +320,9 @@ const Navbar = (props) => {
                                 }
                                 action={
                                     <React.Fragment>
-                                        <FileInputButton color="primary">
+                                        <PintoTypography color="primary">
                                             {props.auth.profile.avatar ? "Zmień avatar" : "Dodaj avatar"}
-                                        </FileInputButton>
+                                        </PintoTypography>
                                         <HiddenFileInput
                                             type="file"
                                             accept="image/*"

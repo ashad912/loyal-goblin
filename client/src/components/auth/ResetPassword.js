@@ -1,32 +1,30 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import {
-  resetPassword,
-} from "../../store/actions/authActions";
-import {
-setConnectionError
-  } from "../../store/actions/connectionActions";
-  import axios from 'axios'
-import { Redirect, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Recaptcha from 'react-google-invisible-recaptcha';
+import styled from "styled-components";
+
 import Container from "@material-ui/core/Container";
 import { Typography } from "@material-ui/core";
-import { TextField } from "@material-ui/core";
 import { Button } from "@material-ui/core";
 import { Paper } from "@material-ui/core";
-import styled from "styled-components";
 import { FormControl } from "@material-ui/core";
 import { FormHelperText } from "@material-ui/core";
 import { Input } from "@material-ui/core";
-import { InputLabel } from "@material-ui/core";
-import { Divider } from "@material-ui/core";
+
 import ErrorIcon from "@material-ui/icons/Error";
-import { asyncForEach } from "../../utils/methods";
 
-//import {labels} from '../strings/labels'
+import {
+  resetPassword,
+} from "store/actions/authActions";
+import {
+setConnectionError
+  } from "store/actions/connectionActions";
 
-import {validatePasswordChangeToken} from "../../store/actions/authActions";
-import { uiPaths, palette } from "../../utils/definitions";
+import {validatePasswordChangeToken} from "store/actions/authActions";
+
+import { asyncForEach } from "utils/functions";
+import { uiPaths, palette } from "utils/definitions";
 
 const FormContainer = styled(Container)`
   display: flex;
@@ -34,8 +32,6 @@ const FormContainer = styled(Container)`
   flex-direction: column;
   margin: 3rem 0 3rem 0;
 `;
-
-
 
 const ErrorPaper = styled(Paper)`
   display: flex;
@@ -45,24 +41,6 @@ const ErrorPaper = styled(Paper)`
   text-align: left;
 `;
 
-const SentPaper = styled(Paper)`
-  display: flex;
-  margin: 1rem 0 2rem 0;
-  padding: 1rem;
-  background-color: #d6ffd3;
-  text-align: left;
-`;
-
-const ActionBar = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-const StyledLink = styled(Link)`
-  color: #249123;
-  &:visited {
-    color: #249123;
-  }
-`;
 
 class ResetPassword extends Component {
   state = {

@@ -1,22 +1,25 @@
 import React, { Component } from 'react';
-import Parser from 'html-react-parser'
-import boardsvg from 'assets/board/statki-goblin.svg'
-import Loading from 'components/layout/Loading';
+import { connect } from 'react-redux';
+//import Parser from 'html-react-parser'
+//import styled, {css, keyframes, createGlobalStyle} from 'styled-components'
+
+import Button from "@material-ui/core/Button";
+
 import TorpedoDrawer from './TorpedoDrawer'
 import LoadedTorpedo from './LoadedTorpedo'
 import LoyalAwardDialog from './LoyalAwardDialog'
-import Button from "@material-ui/core/Button";
-import { Typography } from '@material-ui/core';
-import styled, {css, keyframes, createGlobalStyle} from 'styled-components'
-import { connect } from 'react-redux';
+
+import boardsvg from 'assets/board/statki-goblin.svg'
+import Loading from 'components/layout/Loading';
+
 import {shootShip} from 'store/actions/profileActions'
 import { palette } from 'utils/definitions';
 import { PintoTypography } from 'utils/fonts';
 
 
-const GlobalStyle = createGlobalStyle`
+// const GlobalStyle = createGlobalStyle`
  
-`
+// `
 
 // const pulse = keyframes`
 //     from{
@@ -337,7 +340,7 @@ class Loyal extends Component {
           seconds: seconds,
         });
     
-        if (seconds == 0) { 
+        if (seconds === 0) { 
           clearInterval(this.timer);
           this.endAnimation()
         }
@@ -450,7 +453,7 @@ class Loyal extends Component {
             <React.Fragment>
             
             <div style={{display: 'flex', flexDirection: 'column', minHeight: this.props.fullHeight}}>
-            <GlobalStyle/>
+            
                 {this.state.loading && <Loading/>}
                 
                 <LoadedTorpedo 

@@ -3,8 +3,23 @@ import PropTypes from 'prop-types'
 
 import { Avatar } from '@material-ui/core'
 
-import { createAvatarPlaceholder } from 'utils/methods'
 import { usersPath } from 'utils/definitions'
+
+const createAvatarPlaceholder = (name) => {
+
+    if (!name || !name.length) return ''
+  
+    
+    if (!(/\s/.test(name))) {
+        return name.charAt(0).toUpperCase()
+    }
+    
+    const initials = name.split(" ").map(word => {
+        return word.charAt(0)
+    }).join('').toUpperCase()
+  
+    return initials.substring(0,2)
+}
 
 
 const AvatarWithPlaceholder = (props) => {
@@ -17,6 +32,7 @@ const AvatarWithPlaceholder = (props) => {
     if(!props.avatar){
         return(
            <Avatar 
+                alt="avatar"
                 style={{
                     ...style, 
                     fontSize: props.placeholder.fontSize,

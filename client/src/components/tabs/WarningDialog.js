@@ -2,16 +2,12 @@ import React from "react";
 import moment from 'moment'
 import {connect} from 'react-redux'
 
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import OperationDialog from "components/OperationDialog";
 
 import {resetCheckWarning} from 'store/actions/communicationActions'
 import refStore from 'store/enhancers/refEnhancer'
-import { palette, warningActionSources } from "utils/definitions";
-import { PintoTypography} from "utils/fonts";
+import { warningActionSources } from "utils/definitions";
+
 
 
 const WarningDialog = (props) => {
@@ -87,25 +83,15 @@ const WarningDialog = (props) => {
   }
 
   return (
-    <Dialog open={Boolean(warning)} onClose={handleClose} style={{zIndex: 4000}}>
-      <DialogTitle style={{textAlign:'center'}}>Potwierdź wykonanie akcji</DialogTitle>
-      <DialogContent> 
-        <PintoTypography style={{color: palette.background.darkGrey}}>
-          {props.warning.text} {endTexts[warning]}
-        </PintoTypography> 
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose}>Anuluj</Button>
-        <Button
-          onClick={handleModalAction}
-          color="secondary"
-          variant="contained"
-          autoFocus
-        >
-          Zatwierdź
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <OperationDialog 
+      open={Boolean(warning)}
+      onClose={handleClose}
+      handleAction={handleModalAction}
+      title="Potwierdź wykonanie akcji"
+      desc={`${props.warning.text} ${endTexts[warning]}`}
+      cancelText="Anuluj"
+      confirmText="Potwierdź"
+    />
   );
 };
 

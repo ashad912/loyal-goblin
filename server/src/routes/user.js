@@ -770,12 +770,14 @@ router.delete("/items/remove", auth, async (req, res) => {
     const item = await Item.findById({ _id: req.body.itemId });
     await item.remove();
 
-    
-    await user.standardPopulate();
-    res.status(200).send(user);
-  } catch (error) {
-    console.log(error);
-    res.status(403).send(error);
+    //Fetch updated user - bag and equipped changed
+    const updatedUser = await User.findById(user._id)
+    await updatedUser.standardPopulate();
+
+    res.status(200).send(updatedUser);
+  } catch (e) {
+    console.log(e);
+    res.status(403).send();
   }
 });
 

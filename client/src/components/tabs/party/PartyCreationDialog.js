@@ -1,6 +1,7 @@
 import React from "react";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
+
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -14,25 +15,26 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Menu from "@material-ui/core/Menu";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import MenuItem from "@material-ui/core/MenuItem";
+import { ListItemAvatar } from "@material-ui/core";
+import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
+
+import QRreaderView from "./QRreaderView";
+import AvatarWithPlaceholder from 'components/AvatarWithPlaceholder'
+
 import {
   createParty,
   deleteParty,
   addMember,
   removeMember,
   giveLeader
-} from "../../../store/actions/partyActions";
+} from "store/actions/partyActions";
 import {
   setActiveInstance
-} from "../../../store/actions/missionActions";
-import QRreaderView from "./QRreaderView";
-import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
-
-import { uiPaths, palette, usersPath, warningActionSources } from "../../../utils/definitions";
-import { PintoTypography, PintoSerifTypography } from "../../../utils/fonts";
-import { ListItemAvatar, Avatar } from "@material-ui/core";
-import { createAvatarPlaceholder } from "../../../utils/methods";
+} from "store/actions/missionActions";
 import {setCheckWarning} from 'store/actions/communicationActions'
 
+import { uiPaths, palette, warningActionSources } from "utils/definitions";
+import { PintoTypography, PintoSerifTypography } from "utils/fonts";
 
 
 const StyledMenu = withStyles({
@@ -189,13 +191,14 @@ const PartyCreationDialog = props => {
                 return (
                   <ListItem key={partyMember._id} >
                     <ListItemAvatar>
-                    {partyMember.avatar ? (
-                        <img src={usersPath + partyMember.avatar} width="32" />
-                      ) : (
-                        <Avatar>
-                          {createAvatarPlaceholder(partyMember.name)}
-                        </Avatar>
-                      )}
+                      <AvatarWithPlaceholder
+                        avatar={partyMember.avatar}
+                        width="32px"
+                        height="32px"
+                        placeholder={{
+                          text: partyMember.name,
+                        }}
+                      />
                     </ListItemAvatar>
                     <ListItemText primary={<PintoTypography style={{fontSize:'1.4rem'}}>{partyMember.name}</PintoTypography>} />
                 
@@ -247,14 +250,14 @@ const PartyCreationDialog = props => {
         <StyledMenuItem onClick={() => props.setCheckWarning(handleRemoveFromParty, 'Usunięcie członka drużyny', warningActionSources.party)} >
           <ListItemIcon>
 
-            <img src={uiPaths.deleteRed} style={{width: '2rem'}}/>
+            <img alt="delete" src={uiPaths.deleteRed} style={{width: '2rem'}}/>
           </ListItemIcon>
           <ListItemText primary={<PintoTypography>Wyrzuć z drużyny</PintoTypography>} />
         </StyledMenuItem>
         <StyledMenuItem onClick={()=> props.setCheckWarning(handleGiveLeader, "Przekazanie tytułu lidera", warningActionSources.party)} >
           <ListItemIcon >
 
-            <img src={uiPaths.transferLeader} style={{width: '2rem'}}/>
+            <img alt="leader" src={uiPaths.transferLeader} style={{width: '2rem'}}/>
           </ListItemIcon>
           <ListItemText primary={<PintoTypography>Przekaż stanowisko lidera</PintoTypography>} />
         </StyledMenuItem>

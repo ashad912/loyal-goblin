@@ -1,9 +1,11 @@
 import React , {useEffect, useState} from "react";
 import { connect } from "react-redux";
+
 import Snackbar from "@material-ui/core/Snackbar";
+
 import {setMultipleSession} from 'store/actions/authActions'
 
-const RootSnackbar = props => {
+const TabsSnackbar = props => {
 
     const [delay, setDelay] = useState(false)
     
@@ -71,4 +73,4 @@ const mapStateToProps = state => {
     };
   };
 
-export default connect(mapStateToProps, mapDispatchToProps)(RootSnackbar);
+export default connect(mapStateToProps, mapDispatchToProps)(TabsSnackbar);

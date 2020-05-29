@@ -17,8 +17,8 @@ import PerkBox from "./PerkBox";
 import AwardsDialog from "./AwardsDialog";
 
 import { updateParty, removeMember } from "store/actions/partyActions";
-import { designateUserLevel, bagArrayToCategories } from "utils/methods";
-import { appearancePath, altAppearancePath, uiPaths, warningActionSources } from "utils/definitions";
+import { getUserLevel, bagArrayToCategories } from "utils/functions";
+import { uiPaths, warningActionSources } from "utils/definitions";
 
 import {
   toggleItem,
@@ -28,25 +28,13 @@ import {
   confirmLevel,
 } from "store/actions/profileActions";
 import { authCheck } from "store/actions/authActions";
-import maleBody from "assets/profile/male-body.svg";
-import femaleBody from "assets/profile/female-body.png";
 import { setCheckWarning } from "store/actions/communicationActions";
+import AvatarCard from "./AvatarCard";
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
     flexGrow: 1,
     position: "relative",
-  },
-  avatarCard: {
-    alignSelf: "stretch",
-    marginBottom: "1rem",
-    display: "grid",
-    grid: "100% 100% ",
-  },
-  avatarImage: {
-    width: "100%",
-    gridColumn: 1,
-    gridRow: 1,
   },
   expBar: {
     width: "100%",
@@ -66,107 +54,27 @@ const Profile = (props) => {
   const [bag, setBag] = React.useState(
     bagArrayToCategories(props.auth.profile.bag)
   );
-  const [equippedItems, setEquippedItems] = React.useState(null);
-
   const [activePerks, setActivePerks] = React.useState([]);
-
   const [userLevel, setUserLevel] = React.useState(1);
   const [relativeExp, setRelativeExp] = React.useState(0);
   const [relativeThreshold, setRelativeThreshold] = React.useState(0);
 
-  // const authUpdate = async () => {
-  //   await props.onAuthCheck();
-  // };
-
-  React.useEffect(() => {
-    updateEquippedItems();
-  }, []);
 
   React.useEffect(() => {
     
     setBag(bagArrayToCategories(props.auth.profile.bag));
   }, [props.auth.profile.bag]);
 
-  React.useEffect(() => {
-    
-    updateEquippedItems(props.auth.profile);
-  }, [props.auth.profile.equipped]);
 
- 
 
   React.useEffect(() => {
-    const levelData = designateUserLevel(props.auth.profile.experience, true);
+    const levelData = getUserLevel(props.auth.profile.experience, true);
     setUserLevel(levelData.level);
     setRelativeExp(levelData.relativeExp);
     setRelativeThreshold(levelData.relativeThreshold);
   }, [props.auth.profile.experience]);
 
-  const updateEquippedItems = (param) => {
-    const equipment = {
-      head: null,
-      chest: null,
-      hands: null,
-      legs: null,
-      feet: null,
-      weaponRight: null,
-      weaponLeft: null,
-      ringRight: null,
-      ringLeft: null,
-      scroll: null,
-    };
-    const perks = [];
-
-    const profile = param ? param : props.auth.profile;
-
-    Object.keys(profile.equipped).forEach((category) => {
-      let loadedEquippedItem;
-      if (category.startsWith("weapon")) {
-        loadedEquippedItem =
-          bag.weapon &&
-          bag.weapon.find((item) => item._id === profile.equipped[category]);
-      } else if (category.startsWith("ring")) {
-        loadedEquippedItem =
-          bag.ring &&
-          bag.ring.find((item) => item._id === profile.equipped[category]);
-      } else {
-        loadedEquippedItem =
-          bag[category] &&
-          bag[category].find((item) => item._id === profile.equipped[category]);
-      }
-
-      if (loadedEquippedItem) {
-        if (loadedEquippedItem.itemModel.type === "weapon") {
-          if (
-            category === "weaponLeft" ||
-            loadedEquippedItem.itemModel.twoHanded
-          ) {
-            equipment[category] = loadedEquippedItem.itemModel.appearanceSrc;
-          } else if (category === "weaponRight") {
-            equipment[category] = loadedEquippedItem.itemModel.altAppearanceSrc;
-          }
-        } else {
-          if (profile.sex === "male") {
-            equipment[category] = loadedEquippedItem.itemModel.appearanceSrc;
-          } else {
-            equipment[category] = loadedEquippedItem.itemModel.altAppearanceSrc;
-          }
-        }
-
-        if (
-          loadedEquippedItem.itemModel.hasOwnProperty("perks") &&
-          loadedEquippedItem.itemModel.perks.length > 0
-        ) {
-          loadedEquippedItem.itemModel.perks.forEach((perk) => {
-            perks.push(perk);
-          });
-        }
-      }
-    });
-
-    setEquippedItems({ ...equipment });
-    setActivePerks([...perks]);
-  };
-
+  
   const handleItemToggle = (id, isEquipped, category, twoHanded) => {
     const tempPlayer = { ...props.auth.profile };
     if (props.party && props.party.inShop) {
@@ -273,7 +181,6 @@ const Profile = (props) => {
       return;
     } else {
       props.onItemDelete(id);
-      updateEquippedItems();
     }
   };
 
@@ -285,8 +192,6 @@ const Profile = (props) => {
   const handleToggleEquipment = (isOpen) => {
     setEquipmentOpen(isOpen);
   };
-  const rootPath =
-    props.auth.profile.sex === "male" ? appearancePath : altAppearancePath;
 
   return (
     <Grid
@@ -304,6 +209,7 @@ const Profile = (props) => {
         Poziom {userLevel}
         <img
           src={uiPaths[props.auth.profile.class]}
+          alt="class"
           width={42}
           style={{ position: "absolute", right: 0 }}
         />
@@ -316,7 +222,7 @@ const Profile = (props) => {
         value={(relativeExp * 100) / relativeThreshold}
         className={classes.expBar}
       />
-
+      
       <Grid
         item
         container
@@ -325,73 +231,12 @@ const Profile = (props) => {
         alignItems="stretch"
         style={{ padding: "0.4rem 0" }}
       >
-        <Grid item xs={8} style={{ padding: 0 }}>
-          <div
-            style={{ width: "100%", height: "100%" }}
-            className={classes.avatarCard}
-          >
-            {/* Main-hand weapon */}
-
-            {equippedItems && equippedItems.weaponRight && (
-              <img
-                className={classes.avatarImage}
-                src={`${altAppearancePath}${equippedItems.weaponRight}`}
-              />
-            )}
-
-            {/* body */}
-            <img
-              src={props.auth.profile.sex === "female" ? femaleBody : maleBody}
-              className={classes.avatarImage}
-            />
-            {/* legs */}
-            {equippedItems && equippedItems.legs && (
-              <img
-                className={classes.avatarImage}
-                src={`${rootPath}${equippedItems.legs}`}
-              />
-            )}
-            {/* feet */}
-            {equippedItems && equippedItems.feet && (
-              <img
-                className={classes.avatarImage}
-                src={`${rootPath}${equippedItems.feet}`}
-              />
-            )}
-            {/* chest */}
-            {equippedItems && equippedItems.chest && (
-              <img
-                className={classes.avatarImage}
-                src={`${rootPath}${equippedItems.chest}`}
-              />
-            )}
-
-            {/* head */}
-            {equippedItems &&
-              equippedItems.head &&
-              equippedItems.head.includes(".") && (
-                <img
-                  className={classes.avatarImage}
-                  src={`${rootPath}${equippedItems.head}`}
-                />
-              )}
-
-            {/* Off-hand weapon */}
-            {equippedItems && equippedItems.weaponLeft && (
-              <img
-                className={classes.avatarImage}
-                src={`${appearancePath}${equippedItems.weaponLeft}`}
-              />
-            )}
-            {/* hands */}
-            {equippedItems && equippedItems.hands && (
-              <img
-                className={classes.avatarImage}
-                src={`${rootPath}${equippedItems.hands}`}
-              />
-            )}
-          </div>
-        </Grid>
+        <AvatarCard
+          bag={bag}
+          profile={props.auth.profile}
+          updatePerks={(perks) => setActivePerks(perks)}
+        />
+       
 
         <Grid
           container

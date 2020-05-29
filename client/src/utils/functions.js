@@ -7,7 +7,38 @@ export async function asyncForEach(array, callback) {
     }
 }
 
-export const designateUserLevel = (points, getRelatives) => {
+export const convertToStack = itemsToConvert => {
+  let itemModels = [];
+  itemsToConvert.forEach(itemToConvert => {
+    //NOTE: filter returns new array - if for itemModels gets zero length, it is new name
+    if (
+      itemModels.filter(
+        itemModel => itemModel.name === itemToConvert.itemModel.name
+      ).length === 0
+    ) {
+      itemModels = [...itemModels, itemToConvert.itemModel];
+    }
+    //console.log(itemModels)
+  });
+
+  let itemObjects = [];
+  itemModels.forEach(itemModel => {
+    let instanceItemsIds = [];
+    itemsToConvert.forEach(itemToConvert => {
+      if (itemModel.name === itemToConvert.itemModel.name) {
+        instanceItemsIds = [...instanceItemsIds, itemToConvert._id];
+      }
+    });
+    const itemObject = {
+      itemModel: itemModel,
+      instancesIds: instanceItemsIds
+    };
+    itemObjects = [...itemObjects, itemObject];
+  });
+  return itemObjects;
+};
+
+export const getUserLevel = (points, getRelatives) => {
   const a = levelingEquation.a;
   const b = levelingEquation.b;
   const pow = levelingEquation.pow;
@@ -40,23 +71,6 @@ export const bagArrayToCategories = (bag) => {
   });
   return categorisedBag
   
-}
-
-
-export const createAvatarPlaceholder = (name) => {
-
-  if (!name || !name.length) return ''
-
-  
-  if (!(/\s/.test(name))) {
-      return name.charAt(0).toUpperCase()
-  }
-  
-  const initials = name.split(" ").map(word => {
-      return word.charAt(0)
-  }).join('').toUpperCase()
-
-  return initials.substring(0,2)
 }
 
 

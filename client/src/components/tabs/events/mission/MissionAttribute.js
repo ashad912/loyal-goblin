@@ -13,7 +13,7 @@ const RequiredAttribute = styled(Typography)`
 const MissionAttribute = ({attribute, appropriate, total, required }) => {
     return(
         <Grid item xs={3} style={{display: 'flex', direction: 'column', alignItems: 'center'}}>
-            <img style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.25rem'}} src={uiPaths[attribute]}/>
+            <img alt='attr' style= {{height: '1.2rem', width: '1.2rem', marginRight: '0.25rem'}} src={uiPaths[attribute]}/>
             <RequiredAttribute variant='body1' attr={appropriate ? 1:0} >{`${total}/${required}`}</RequiredAttribute>
         </Grid>
     )

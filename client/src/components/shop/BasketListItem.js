@@ -1,4 +1,6 @@
 import React from "react";
+
+import { ListItemAvatar } from "@material-ui/core";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Grid from "@material-ui/core/Grid";
@@ -6,10 +8,10 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Collapse from "@material-ui/core/Collapse";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
-import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import { uiPaths, palette, itemsPath } from "../../utils/definitions";
-import { PintoSerifTypography,PintoTypography } from "../../utils/fonts";
-import { ListItemAvatar } from "@material-ui/core";
+
+import { uiPaths, palette } from "utils/definitions";
+import { PintoTypography } from "utils/fonts";
+
 
 const BasketListItem = ({activeUsersBasket, name, summedPrice, basket, handleRemoveItem, noParty}) => {
   const [open, setOpen] = React.useState(false);
@@ -39,7 +41,7 @@ const BasketListItem = ({activeUsersBasket, name, summedPrice, basket, handleRem
                 <ListItem key={product._id+product.firstDiscount+product.quantity} style={{ paddingLeft: "0.4rem", alignItems: 'flex-start' }}>
                   {activeUsersBasket && 
                   <ListItemAvatar>
-                    <img src={uiPaths.trash} style={{width: '2rem', height: '2rem', marginTop:'0.4rem'}} onClick={(e) => removeItem(e, product._id, product.firstDiscount)}/>
+                    <img alt="trash" src={uiPaths.trash} style={{width: '2rem', height: '2rem', marginTop:'0.4rem'}} onClick={(e) => removeItem(e, product._id, product.firstDiscount)}/>
                   </ListItemAvatar>
                   }
                   <Grid container direction="column" justify="space-between" align="flex-start">
@@ -79,7 +81,7 @@ const BasketListItem = ({activeUsersBasket, name, summedPrice, basket, handleRem
                 <ListItem key={name+product._id+product.firstDiscount+product.quantity} style={{ paddingLeft: "0.4rem", alignItems: 'flex-start' }}>
                 {activeUsersBasket && 
                 <ListItemAvatar>
-                  <img src={uiPaths.trash} style={{width: '2rem', height: '2rem', marginTop:'0.4rem'}} onClick={(e) => removeItem(e, product._id, product.firstDiscount)}/>
+                  <img alt="trash" src={uiPaths.trash} style={{width: '2rem', height: '2rem', marginTop:'0.4rem'}} onClick={(e) => removeItem(e, product._id, product.firstDiscount)}/>
                 </ListItemAvatar>
                 }
                 <Grid container direction="column" justify="space-between" align="flex-start">
