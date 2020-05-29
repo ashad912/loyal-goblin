@@ -17,6 +17,7 @@ import { forgotPassword } from "store/actions/authActions";
 
 import { asyncForEach } from "utils/functions";
 import { palette, uiPaths } from "utils/definitions";
+import {PintoTypography} from 'utils/fonts'
 
 const FormContainer = styled(Container)`
   display: flex;
@@ -69,9 +70,9 @@ class ForgotPassword extends Component {
   };
 
   componentDidMount() {
-    const navbar = document.getElementById("navbar").offsetHeight;
+    //const navbar = document.getElementById("navbar").offsetHeight;
     const footer = document.getElementById("footer").offsetHeight;
-    this.setState({ fullHeightCorrection: navbar + footer });
+    this.setState({ fullHeightCorrection: footer });
   }
 
   handleChange = e => {
@@ -217,11 +218,11 @@ class ForgotPassword extends Component {
                     </React.Fragment>
                   ) : (
                     <React.Fragment>
-                      <Typography style={{ textAlign: "left" }}>
+                      <PintoTypography style={{ textAlign: "left" }}>
                         Zapomniałaś/eś hasła? Podaj adres email przypisany do
                         konta. Otrzymasz link, który pozwoli Ci zresetować
                         hasło.
-                      </Typography>
+                      </PintoTypography>
                       <FormControl
                         fullWidth
                         style={{ marginTop: "1rem", marginBottom: "0.5rem" }}

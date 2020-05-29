@@ -70,9 +70,9 @@ class SignUp extends Component {
   };
 
   componentDidMount() {
-    const navbar = document.getElementById("navbar").offsetHeight;
+    //const navbar = document.getElementById("navbar").offsetHeight;
     const footer = document.getElementById("footer").offsetHeight;
-    this.setState({fullHeightCorrection: navbar+footer})
+    this.setState({fullHeightCorrection: footer})
 }
 
   handleChange = e => {
