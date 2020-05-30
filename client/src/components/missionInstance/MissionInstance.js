@@ -175,7 +175,7 @@ class MissionInstance extends React.Component {
 
         try{
             const user = {_id: this.props.uid, inMission: true}
-            console.log(this.props)
+            
             const response = await togglePresenceInInstance(user, this.props.party._id,  socketConnectionStatus)
             
             const missionInstance = response.missionInstance
@@ -258,17 +258,6 @@ class MissionInstance extends React.Component {
     }
 
     componentDidUpdate = (prevProps, prevState) => {
-        //USEFUL COMPONENT UPDATE DIAGNOSTICS
-        Object.entries(this.props).forEach(
-            ([key, val]) =>
-            prevProps[key] !== val && console.log(`Prop '${key}' changed`)
-        );
-        if (this.state) {
-            Object.entries(this.state).forEach(
-            ([key, val]) =>
-                prevState[key] !== val && console.log(`State '${key}' changed`)
-            );
-        }
         if((!prevProps.party.hasOwnProperty('leader') && this.props.party.hasOwnProperty('leader')) && !socket.connected){
             this.handleBack()
         }

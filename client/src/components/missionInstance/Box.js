@@ -101,7 +101,7 @@ const Box = (props) => {
                         //https://codesandbox.io/s/q3717y1jq4
                         return(
                           <Draggable
-                            key={item.model._id}
+                            key={item.itemModel._id}
                             draggableId={item.instancesIds[0]}
                             index={index}
                             shouldRespectForcePress={true}>
@@ -118,14 +118,14 @@ const Box = (props) => {
                                       isDragging = {snapshot.isDragging}
                                     >
                                     
-                                    <img style={{height: '2rem', width: '2rem'}} src={`${itemsPath}${item.model.imgSrc}`} alt='icon'/>
+                                    <img style={{height: '2rem', width: '2rem'}} src={`${itemsPath}${item.itemModel.imgSrc}`} alt='icon'/>
                                     {!snapshot.isDragging && (<span><PintoTypography display="inline">{item.instancesIds.length}</PintoTypography></span>)}
 
                                   </Item>
 
                                   {snapshot.isDragging && (
                                     <Clone>
-                                      <img style={{height: '2rem', width: '2rem'}} src={`${itemsPath}${item.model.imgSrc}`} alt='icon'/>
+                                      <img style={{height: '2rem', width: '2rem'}} src={`${itemsPath}${item.itemModel.imgSrc}`} alt='icon'/>
                                       <span><PintoTypography display="inline">{item.instancesIds.length - 1}</PintoTypography></span>
                                     </Clone>
                                   )}
