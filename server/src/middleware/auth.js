@@ -1,8 +1,10 @@
 import jwt from 'jsonwebtoken'
 import moment from 'moment'
 import cookie from "cookie";
-import { User } from '../models/user'
-import { Party } from '../models/party'
+import logger from '@logger'
+
+import { User } from '@models/user'
+import { Party } from '@models/party'
 
 const decodeTokenAndGetUser = (token, query) => {
     return new Promise(async (resolve, reject) => {
@@ -10,7 +12,11 @@ const decodeTokenAndGetUser = (token, query) => {
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
             const user = await User.findOne({_id: decoded._id, 'tokens.token': token, active: true}) //finding proper user with proper token
             if(!user) {
-                throw new Error()
+                const e = new Error('No auth - invalid token')
+                e.status = 401
+                e.type = 'warn'
+                
+                throw e
             }
             
             
@@ -31,7 +37,10 @@ const decodeTokenAndGetUser = (token, query) => {
 
             resolve(user)
         }catch(e){
-            console.log(e)
+            if(e.message = 'jwt malformed'){
+                e.type = 'warn'
+            }
+            
             reject(e)
         }
     })
@@ -46,7 +55,11 @@ export const auth = async (req, res, next) => {
         const token = req.cookies.token || (req.header('Authorization') && req.header('Authorization').replace('Bearer ', ''))
 
         if(!token){
-            throw new Error()
+            const e = new Error('No auth - no token')
+            e.status = 401
+            e.type = 'info'
+            
+            throw e
         }
         
         const user = await decodeTokenAndGetUser(token, req.query)
@@ -61,8 +74,10 @@ export const auth = async (req, res, next) => {
         next()
         //console.log(token)
     }catch(e) {
-        console.log(e.message)
-        res.status(401).send({ error: 'Please authenticate.'})
+        if(!e.status){
+            e.status = 401
+        }
+        next(e)
     }
 }
 

@@ -1,6 +1,8 @@
 import cron from 'node-cron'
 import moment from 'moment'
 import mongoose from 'mongoose'
+import logger from '@logger'
+
 import { Rally } from '@models/rally';
 import { User } from '@models/user'
 import { Item } from '@models/item';
@@ -69,7 +71,8 @@ const updateQueue = async () => {
         const hour = momentDate.hour()
         const minutes = momentDate.minutes()
         const seconds = momentDate.seconds()
-        console.log(`${seconds} ${minutes} ${hour} ${dayOfMonth} ${month} *`)
+        //console.log(`${seconds} ${minutes} ${hour} ${dayOfMonth} ${month} *`)
+        logger.info(`Rally starts at: ${dayOfMonth}/${month} ${hour}:${minutes}:${seconds} UTC`)
         return `${seconds} ${minutes} ${hour} ${dayOfMonth} ${month} *`
     }
 
@@ -86,7 +89,7 @@ const updateQueue = async () => {
         const firstToExpireArray = await Rally.find({expiryDate: { $gte: new Date() } }).sort({"expiryDate": 1 }).limit(1)
         
         if(!firstToActivateArray.length || !firstToExpireArray.length){
-            console.log('There is no rally for update criteria!')
+            logger.info('There is no rally for update criteria!')
             return null
         }
 

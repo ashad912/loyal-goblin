@@ -28,7 +28,8 @@
           "@tests": "./__tests__/",
           "@app": "./src/app",
           "@utils": "./src/utils",
-          "@store": "./src/store"
+          "@store": "./src/store",
+          "@logger": "./src/logger"
         }
       }
     ]

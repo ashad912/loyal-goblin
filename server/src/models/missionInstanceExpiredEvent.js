@@ -1,6 +1,8 @@
 import mongoose from 'mongoose'
+
+import logger from '@logger';
 import {MissionInstance} from './missionInstance'
-import {ScheduledWithinSchema} from '../schemas/ScheduledWithinSchema'
+import {ScheduledWithinSchema} from '@schemas/ScheduledWithinSchema'
 
 
 const MissionInstanceExpiredEventSchema = new mongoose.Schema({...ScheduledWithinSchema.obj}, {timestamps: true})
@@ -28,7 +30,7 @@ MissionInstanceExpiredEventSchema.statics.registerWatch = () => {
             }
         });
 
-    console.log('Mission instance watch triggered')
+    logger.info('Mission instance watch triggered')
 }
 
 

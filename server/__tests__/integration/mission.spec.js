@@ -4,11 +4,12 @@
 
 import supertest from 'supertest'
 import moment from 'moment'
-import server from '@app'
+import getApp from '@app'
 import {Mission} from '@models/mission'
 import {user, admin, setup, restore} from '@tests/utils/integration/mission'
 //import missionStore from '@store/mission.store'
 
+const server = getApp()
 const app = () => supertest(server)
 
 beforeEach(setup)

@@ -3,9 +3,11 @@
  */
 
 import supertest from 'supertest'
-import server from '@app'
+import getApp from '@app'
 import {User} from '@models/user'
 import {userOne, userTwo, userThree, setup, restore} from '@tests/utils/integration/user'
+
+const server = getApp()
 
 const app = () => supertest(server)
 

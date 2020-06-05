@@ -1,6 +1,8 @@
 import mongoose from 'mongoose'
+import logger from '@logger';
+
 import {User} from './user'
-import {ScheduledWithinSchema} from '../schemas/ScheduledWithinSchema'
+import {ScheduledWithinSchema} from '@schemas/ScheduledWithinSchema'
 
 
 const OrderExpiredEventSchema = new mongoose.Schema({...ScheduledWithinSchema.obj}, {timestamps: true})
@@ -26,7 +28,7 @@ OrderExpiredEventSchema.statics.registerWatch = () => {
                 console.log(new Date(), user._id, 'user.activeOrder auto-removed')
             }
         });
-        console.log('User active order watch triggered')
+        logger.info('User active order watch triggered')
 }
 
 export const OrderExpiredEvent = new mongoose.model('orderExpiredEvent', OrderExpiredEventSchema)
