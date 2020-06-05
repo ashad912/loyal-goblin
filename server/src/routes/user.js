@@ -302,8 +302,8 @@ router.get("/me", auth, async (req, res, next) => {
 
     res.send(user);
   } catch (e) {
-    console.log(e)
-    res.status(400).send(e.message);
+    e.status = 400
+    next(e)
   }
 });
 
@@ -315,84 +315,67 @@ router.patch("/changePassword", auth, async (req, res, next) => {
   const newPassword = req.body.password;
   const repeatedNewPassword = req.body.confirmPassword
 
-
-  
-  // const secretKey = process.env.SECRET_RECAPTCHA_KEY;
-  // const recaptchaToken = req.body.token;
-  // const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
-
-
   try{
     await verifyCaptcha(req.body.token)
   }catch(e){
-    console.log(e);
-    res.status(400).send(e);
+    e.status = 400
+    next(e)
     return
   }
 
   try {
-    // if (oldPassword === newPassword) {
-    //   throw new Error("Nowe i stare hasła nie mogą być takie same");
-    // } 
+  
     if(!oldPassword || !newPassword || !repeatedNewPassword){
-      throw new Error("Podano niekompletne dane")
+      const e = new Error(`Incomplete data - UID: ${req.user._id}`)
+      e.type = 'warn'
+      throw e
     }
     if(newPassword !== repeatedNewPassword){
-      throw new Error("Hasła nie zgadzają się")
+      const e = new Error(`Passwords do not match - UID: ${req.user._id}`)
+      e.type = 'warn'
+      throw e
     }
       const user = await req.user.updatePassword(oldPassword, newPassword);
       await user.save();
       res.send(user);
     } catch (e) {
-      console.log(e)
-      res.status(400).send(e);
+      e.status = 400
+      next(e)
     }
   });
 
-// const upload = multer({
-//   //dest: 'public/avatars',
-//   limits: {
-//     fileSize: 10485760
-//   },
-//   fileFilter(req, file, cb) {
-//     //cb means callback
 
-//     if (!file.originalname.match(/\.(jpg|jpeg|png|bmp)$/)) {
-//       return cb(new Error("Please upload an image."));
-//     }
-
-//     cb(undefined, true);
-//   }
-// });
-
-router.post("/forgotPassword", async (req, res) => {
+router.post("/forgotPassword", async (req, res, next) => {
   try {
-    // const secretKey = process.env.SECRET_RECAPTCHA_KEY;
-    // const recaptchaToken = req.body.recaptchaToken;
-    // const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
   
   
     try{
       await verifyCaptcha(req.body.recaptchaToken)
     }catch(e){
-      console.log(e);
-      res.status(400).send(e);
+      e.status = 400
+      next(e)
       return
     }
 
     const email = req.body.email
     if(!validator.isEmail(email)){
-      throw new Error("Nieprawidłowy adres email")
+      const e = new Error(`Invalid email - ${email}`)
+      e.type = 'warn'
+      throw e
     }
     const user = await User.findOne({email})
     if(!user){
-      throw new Error("Podany adres email nie widnieje w bazie")
+      const e = new Error(`There is no such email in db - ${email}`)
+      e.type = 'warn'
+      throw e
     }
 
     if(user.passwordChangeToken){
       
       if(!user.checkPasswordChangeTokenExpired(user.passwordChangeToken)){
-        throw new Error("jwt not expired")
+        const e = new Error("jwt not expired")
+        e.type = 'info'
+        throw e
       }
     }
 
@@ -400,9 +383,9 @@ router.post("/forgotPassword", async (req, res) => {
     createEmail(res, user.email, "Reset hasła", 'passwordReset',
     { locale: 'pl', token: `http://${req.headers.host}/reset/${token}`, userName: user.name })
 
-  } catch (error) {
-    console.log(error)
-    res.status(400).send(error.message)
+  } catch (e) {
+    e.status = 400
+    next(e)
   }
 })
 
@@ -415,7 +398,7 @@ router.post("/validatePasswordChangeToken", async(req, res) => {
   
     const user = await User.findByPasswordChangeToken(token)
     if(!user){
-      throw new Error("Błąd danych użytkownika")
+      throw new Error("User data error")
     }
 
     res.sendStatus(200)

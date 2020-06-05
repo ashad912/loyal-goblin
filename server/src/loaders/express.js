@@ -89,7 +89,9 @@ export default((app) => {
       const withStack = ['error', 'warn']
 
       app.use((err, req, res, next) => {
-        logger.log({level: err.type || 'info', message: withStack.includes(err.type) ? err : err.message})
-        res.status(err.status || 500).send({ error: err.message });
+        logger.log({level: err.type || 'error', message: !err.type || withStack.includes(err.type) ? err : err.message})
+
+        const message = process.env.NODE_ENV === 'dev' ? err.message : ''
+        res.status(err.status || 500).send(message);
       });
 })

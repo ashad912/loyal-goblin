@@ -21,7 +21,6 @@ const logConfiguration = {
         winston.format.colorize(),
         winston.format.timestamp(),
         winston.format.printf((info) => {
-            //console.log(info)
             if (info.stack) {
                 // print log trace 
                 return `${info.timestamp} [${info.label}] ${info.level}: ${info.stack}`;

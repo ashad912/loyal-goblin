@@ -37,7 +37,8 @@ const decodeTokenAndGetUser = (token, query) => {
 
             resolve(user)
         }catch(e){
-            if(e.message = 'jwt malformed'){
+            if(e.name === 'JsonWebTokenError'){
+                e = new Error(e.message)
                 e.type = 'warn'
             }
             
