@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { asyncForEach } from '../utils/methods'
+import { asyncForEach } from '../utils/functions'
 import { Mission } from "./mission";
 import { Rally } from '../models/rally';
 import { Product } from '../models/product';

@@ -14,9 +14,12 @@ import {
   savePNGImage,
   removeImage,
   verifyCaptcha,
-} from "../utils/methods";
+  getEndpointError
+} from "@utils/functions";
 import moment from "moment";
 import createEmail from '../emails/createEmail'
+
+import EndpointError from '@utils/EndpointError'
 
 const router = express.Router();
 
@@ -92,7 +95,7 @@ router.patch('/unban', adminAuth, async (req, res) => {
 
 ////USER-SIDE
 
-router.post("/create", async (req, res) => {
+router.post("/create", async (req, res, next) => {
   //registerKey used in biometrica, hwvr we may allow registration for ppl with key from qrcode - i left it
 
   
@@ -103,24 +106,22 @@ router.post("/create", async (req, res) => {
     );
 
     if (!isMatch) {
-      res.status(401).send({ error: "Please authenticate." });
+      const e = new Error('Please authenticate')
+      e.type = 'warn'
+      throw e
     }
   }else{
 
     if (!req.body.token) {
-      return res.status(400).send();
+      const e = new Error('No token provided')
+      e.type = 'warn'
+      throw e
     }
-    
-    // const secretKey = process.env.SECRET_RECAPTCHA_KEY;
-    // const recaptchaToken = req.body.token;
-    // const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
-
-    // //console.log(secretKey)
     try{
       await verifyCaptcha(req.body.token)
     }catch(e){
-      console.log(e);
-      res.status(400).send(e);
+      e.status = 400
+      next(e)
       return
     }
   }
@@ -133,7 +134,6 @@ router.post("/create", async (req, res) => {
       perksUpdatedAt: moment().toISOString(),
       activeOrder: [],
       loyal: {}
-  
     });
   
     const token = await user.generateAuthToken(); //on instancegenerateAuthToken
@@ -141,29 +141,31 @@ router.post("/create", async (req, res) => {
     await user.save(); //this method holds updated user!
     res.cookie("token", token, { maxAge: 2592000000, httpOnly: true }).status(201).send(user);
   } catch (e) {
-    console.log(e);
-    res.status(400).send(e);
+    e.status = 400
+    next(e)
   }
 });
 
-router.get("/allNames", auth, async(req,res) => {
+router.get("/allNames", auth, async (req, res, next) => {
   try {
     const allNames = await User.find({}, 'name')
     res.status(200).send(allNames)
-  } catch (error) {
-    console.log(error)
-    res.sendStatus(400)
+  } catch (e) {
+    e.status = 400
+    next(e)
   }
 
 })
 
 
-router.patch("/character", auth, async (req, res) => {
+router.patch("/character", auth, async (req, res, next) => {
   try {
     const user = req.user
 
     if(user.name){
-      throw new Error("User has already filled character data!")
+      const e = new Error(`User has already filled character data - UID: ${req.user._id}`)
+      e.type = 'warn'
+      throw e
     }
     
     const name = req.body.name.toLowerCase()
@@ -173,34 +175,40 @@ router.patch("/character", auth, async (req, res) => {
 
 
     if(!userClasses.includes(characterClass)){
-      throw new Error('Invalid class form data field!')
+      throw getEndpointError('warn', 'User has already filled character data', req.user._id)
     }
 
     if(!userSexes.includes(sex)){
-      throw new Error('Invalid sex form data field!')
+      throw getEndpointError('warn', 'Invalid sex form data field', req.user._id)
     }
 
     if(!name || !sex || !characterClass || !attributes){
-      throw new Error("Niepełne dane tworzenia postaci")
+      throw getEndpointError('warn', 'Missing data', req.user._id)
     }
+
     if(parseInt(attributes.strength) + parseInt(attributes.dexterity) + parseInt(attributes.magic) + parseInt(attributes.endurance) > 8){
-      throw new Error("Nieprawidłowa suma atrybutów")
+      throw getEndpointError('warn', 'Invalid sum of attributes', req.user._id)
     }
+
     if(characterClass === 'warrior' && attributes.strength <= 1){
-      throw new Error("Nieprawidłowa wartość atrybutu klasowego")
+      throw getEndpointError('warn', 'Invalid strength value', req.user._id)
     }
+
     if(characterClass === 'rogue' && attributes.dexterity <= 1){
-      throw new Error("Nieprawidłowa wartość atrybutu klasowego")
+      throw getEndpointError('warn', 'Invalid dexterity value', req.user._id)
     }
+
     if(characterClass === 'mage' && attributes.magic <= 1){
-      throw new Error("Nieprawidłowa wartość atrybutu klasowego")
+      throw getEndpointError('warn', 'Invalid mage value', req.user._id)
     }
+
     if(characterClass === 'cleric' && attributes.endurance <= 1){
-      throw new Error("Nieprawidłowa wartość atrybutu klasowego")
+      throw getEndpointError('warn', 'Invalid endurance value', req.user._id)
     }
+
     const sameNameUser = await User.findOne({name: name})
     if(sameNameUser){
-      throw new Error("Postać o podanym imieniu już istnieje")
+      throw getEndpointError('warn', 'This name has already used', req.user._id)
     }
 
 
@@ -326,14 +334,10 @@ router.patch("/changePassword", auth, async (req, res, next) => {
   try {
   
     if(!oldPassword || !newPassword || !repeatedNewPassword){
-      const e = new Error(`Incomplete data - UID: ${req.user._id}`)
-      e.type = 'warn'
-      throw e
+      throw getEndpointError('warn', 'Incomplete data', req.user._id)
     }
     if(newPassword !== repeatedNewPassword){
-      const e = new Error(`Passwords do not match - UID: ${req.user._id}`)
-      e.type = 'warn'
-      throw e
+      throw getEndpointError('warn', 'Passwords do not match', req.user._id)
     }
       const user = await req.user.updatePassword(oldPassword, newPassword);
       await user.save();
@@ -359,23 +363,17 @@ router.post("/forgotPassword", async (req, res, next) => {
 
     const email = req.body.email
     if(!validator.isEmail(email)){
-      const e = new Error(`Invalid email - ${email}`)
-      e.type = 'warn'
-      throw e
+      throw getEndpointError('warn', 'Invalid email')
     }
     const user = await User.findOne({email})
     if(!user){
-      const e = new Error(`There is no such email in db - ${email}`)
-      e.type = 'warn'
-      throw e
+      throw getEndpointError('warn', 'There is no such email in db')
     }
 
     if(user.passwordChangeToken){
       
       if(!user.checkPasswordChangeTokenExpired(user.passwordChangeToken)){
-        const e = new Error("jwt not expired")
-        e.type = 'info'
-        throw e
+        throw getEndpointError('info', 'jwt not expired')
       }
     }
 
@@ -389,54 +387,50 @@ router.post("/forgotPassword", async (req, res, next) => {
   }
 })
 
-router.post("/validatePasswordChangeToken", async(req, res) => {
+router.post("/validatePasswordChangeToken", async (req, res, next) => {
   const token = req.body.token
   try {
     if (!token) {
-        throw new Error("No token provided")
+      throw getEndpointError('warn', 'No token provided')
     }
   
     const user = await User.findByPasswordChangeToken(token)
     if(!user){
-      throw new Error("User data error")
+      throw getEndpointError('warn', 'User data error')
     }
 
     res.sendStatus(200)
     
   } catch (e) {
-    console.log(e)
-
-    res.status(401).send(e.message)
+    e.status = 400
+    next(e)
   }
   
 })
 
 
-router.patch('/reset', async (req, res) => {
+router.patch('/reset', async (req, res, next) => {
   try {
-    // const secretKey = process.env.SECRET_RECAPTCHA_KEY;
-    // const recaptchaToken = req.body.recaptchaToken;
-    // const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
-  
-  
+   
     try{
       await verifyCaptcha(req.body.recaptchaToken)
     }catch(e){
-      console.log(e);
-      res.status(400).send(e);
+      e.status = 400
+      next(e)
       return
     }
 
     const token = req.body.token
+
     if (!token) {
-        throw new Error("Brak tokena resetu hasła")
+      throw getEndpointError('warn', 'No token provided')
     }
     if(req.body.password !== req.body.confirmPassword){
-      throw new Error("Hasła się nie zgadzają")
+      throw getEndpointError('warn', 'Passwords do not match')
     }
     const user = await User.findByPasswordChangeToken(token)
     if (!user) {
-      throw new Error('Nie znaleziono użytkownika')
+      throw getEndpointError('warn', 'User data error')
     }
 
     user.passwordChangeToken = null
@@ -445,9 +439,9 @@ router.patch('/reset', async (req, res) => {
     await user.save()
 
     res.sendStatus(200)
-  } catch (error) {
-      console.log(error)
-      res.status(400).send(error)
+  } catch (e) {
+    e.status = 400
+    next(e)
   }
 })
 
@@ -469,10 +463,10 @@ router.patch('/reset', async (req, res) => {
 //   }
 // );
 
-router.post("/me/avatar", auth, async (req, res) => {
+router.post("/me/avatar", auth, async (req, res, next) => {
   try {
     if (!req.files) {
-      throw new Error("Brak pliku")
+      throw getEndpointError('warn', 'No file provided', req.user._id)
     }
     const user = req.user
     //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
@@ -486,28 +480,29 @@ router.post("/me/avatar", auth, async (req, res) => {
     res.send(user);
 
     
-  } catch (err) {
-    console.log(err)
-    res.status(500).send(err);
+  } catch (e) {
+    e.status = 400
+    next(e)
   }
 });
 
-router.delete("/me/avatar", auth, async (req, res) => {
+router.delete("/me/avatar", auth, async (req, res, next) => {
   const user = req.user
   try {
     if(!user.avatar){
-      throw new Error("User has not got avatar")
+      throw getEndpointError('warn', 'User has not got avatar', req.user._id)
     }
 
-    await removeImage(uploadPath+user.avatar)
+    await removeImage(uploadPath + user.avatar)
     user.avatar = null;
     await user.save();
     await user.standardPopulate();
     res.send(user);
 
   }
-   catch (error) {
-    res.status(400).send({ error: err.message }); //before app.use middleware with 422
+   catch (e) {
+    e.status = 400
+    next(e)
   }
 });
 

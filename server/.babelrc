@@ -29,7 +29,8 @@
           "@app": "./src/app",
           "@utils": "./src/utils",
           "@store": "./src/store",
-          "@logger": "./src/logger"
+          "@logger": "./src/logger",
+          "@loaders": "./src/loaders"
         }
       }
     ]

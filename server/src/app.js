@@ -1,7 +1,8 @@
 import express from "express";
+import getLoaders from '@loaders'
 
 export default async () => {
   const app = express();
-  await require('./loaders').default(app);
+  await getLoaders(app);
   return app
 }

@@ -183,3 +183,14 @@ export const verifyCaptcha = (token) => {
     
   })
 }
+
+export const getEndpointError = (type, message, uid = '') => {
+  const userString = uid ? ` - UID: ${uid}` : uid 
+  const e = new Error(message + userString)
+
+  if(type){
+    e.type = type 
+  }
+  
+  return e
+}
