@@ -6,17 +6,15 @@ import logger from '@logger'
 import { User } from '@models/user'
 import { Party } from '@models/party'
 
+import { getEndpointError } from '@utils/functions'
+
 const decodeTokenAndGetUser = (token, query) => {
     return new Promise(async (resolve, reject) => {
         try{
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
             const user = await User.findOne({_id: decoded._id, 'tokens.token': token, active: true}) //finding proper user with proper token
             if(!user) {
-                const e = new Error('No auth - invalid token')
-                e.status = 401
-                e.type = 'warn'
-                
-                throw e
+                throw getEndpointError('warn', 'No auth - invalid token')
             }
             
             
@@ -56,11 +54,7 @@ export const auth = async (req, res, next) => {
         const token = req.cookies.token || (req.header('Authorization') && req.header('Authorization').replace('Bearer ', ''))
 
         if(!token){
-            const e = new Error('No auth - no token')
-            e.status = 401
-            e.type = 'info'
-            
-            throw e
+            throw getEndpointError('info', 'No auth - no token')
         }
         
         const user = await decodeTokenAndGetUser(token, req.query)
@@ -73,11 +67,8 @@ export const auth = async (req, res, next) => {
         req.token = token //specified token - u can logout from specific device!
         req.user = user
         next()
-        //console.log(token)
     }catch(e) {
-        if(!e.status){
-            e.status = 401
-        }
+        e.status = 401
         next(e)
     }
 }

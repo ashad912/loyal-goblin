@@ -5,3 +5,13 @@ export const levelingEquation = { //y = a*(x*pow) + b
     b: 100,
     pow: 2,
 }
+
+const loggerStatuses = {
+    error: 'error',
+    warn: 'warn',
+    info: 'info'
+}
+
+export const ERROR = loggerStatuses.error,
+export const WARN = loggerStatuses.warn,
+export const INFO = loggerStatuses.info

@@ -9,6 +9,7 @@ import { ItemModel } from "../models/itemModel";
 import { MissionInstance } from "../models/missionInstance";
 import { auth } from "../middleware/auth";
 import { adminAuth } from '../middleware/adminAuth';
+import { ERROR, WARN, INFO } from '@uitls/definitions'
 import {
   asyncForEach,
   savePNGImage,
@@ -106,16 +107,12 @@ router.post("/create", async (req, res, next) => {
     );
 
     if (!isMatch) {
-      const e = new Error('Please authenticate')
-      e.type = 'warn'
-      throw e
+      throw getEndpointError(WARN, 'Please autheticate', req.user._id)
     }
   }else{
 
     if (!req.body.token) {
-      const e = new Error('No token provided')
-      e.type = 'warn'
-      throw e
+      throw getEndpointError(WARN, 'No token provided', req.user._id)
     }
     try{
       await verifyCaptcha(req.body.token)
@@ -163,9 +160,7 @@ router.patch("/character", auth, async (req, res, next) => {
     const user = req.user
 
     if(user.name){
-      const e = new Error(`User has already filled character data - UID: ${req.user._id}`)
-      e.type = 'warn'
-      throw e
+      throw getEndpointError(WARN, 'User has already filled character data', req.user._id)
     }
     
     const name = req.body.name.toLowerCase()
@@ -175,40 +170,40 @@ router.patch("/character", auth, async (req, res, next) => {
 
 
     if(!userClasses.includes(characterClass)){
-      throw getEndpointError('warn', 'User has already filled character data', req.user._id)
+      throw getEndpointError(WARN, 'User has already filled character data', req.user._id)
     }
 
     if(!userSexes.includes(sex)){
-      throw getEndpointError('warn', 'Invalid sex form data field', req.user._id)
+      throw getEndpointError(WARN, 'Invalid sex form data field', req.user._id)
     }
 
     if(!name || !sex || !characterClass || !attributes){
-      throw getEndpointError('warn', 'Missing data', req.user._id)
+      throw getEndpointError(WARN, 'Missing data', req.user._id)
     }
 
     if(parseInt(attributes.strength) + parseInt(attributes.dexterity) + parseInt(attributes.magic) + parseInt(attributes.endurance) > 8){
-      throw getEndpointError('warn', 'Invalid sum of attributes', req.user._id)
+      throw getEndpointError(WARN, 'Invalid sum of attributes', req.user._id)
     }
 
     if(characterClass === 'warrior' && attributes.strength <= 1){
-      throw getEndpointError('warn', 'Invalid strength value', req.user._id)
+      throw getEndpointError(WARN, 'Invalid strength value', req.user._id)
     }
 
     if(characterClass === 'rogue' && attributes.dexterity <= 1){
-      throw getEndpointError('warn', 'Invalid dexterity value', req.user._id)
+      throw getEndpointError(WARN, 'Invalid dexterity value', req.user._id)
     }
 
     if(characterClass === 'mage' && attributes.magic <= 1){
-      throw getEndpointError('warn', 'Invalid mage value', req.user._id)
+      throw getEndpointError(WARN, 'Invalid mage value', req.user._id)
     }
 
     if(characterClass === 'cleric' && attributes.endurance <= 1){
-      throw getEndpointError('warn', 'Invalid endurance value', req.user._id)
+      throw getEndpointError(WARN, 'Invalid endurance value', req.user._id)
     }
 
     const sameNameUser = await User.findOne({name: name})
     if(sameNameUser){
-      throw getEndpointError('warn', 'This name has already used', req.user._id)
+      throw getEndpointError(WARN, 'This name has already used', req.user._id)
     }
 
 
@@ -222,13 +217,13 @@ router.patch("/character", auth, async (req, res, next) => {
 
     res.status(201).send(user)
   } catch (e) {
-    console.log(e)
-    res.status(400).send(e);
+    e.status = 400
+    next(e)
   }
 });
 
 
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res, next) => {
   try {
     const user = await User.findByCredentials(req.body.email.toLowerCase(), req.body.password);
     const token = await user.generateAuthToken(); 
@@ -245,12 +240,12 @@ router.post("/login", async (req, res) => {
       .cookie("token", token, { maxAge: 2592000000, httpOnly: true })
       .send(user); //cookie lifetime: 30 days (maxAge in msc)
   } catch (e) {
-    console.log(e)
-    res.status(400).send(e);
+    e.status = 400
+    next(e)
   }
 });
 
-router.post("/logout", auth, async (req, res) => {
+router.post("/logout", auth, async (req, res, next) => {
   try {
     req.user.tokens = req.user.tokens.filter(token => {
       return token.token !== req.token;
@@ -260,17 +255,19 @@ router.post("/logout", auth, async (req, res) => {
 
     res.clearCookie("token").send();
   } catch (e) {
-    res.status(500).send();
+    e.status = 400
+    next(e)
   }
 });
 
-router.post("/logoutAll", auth, async (req, res) => {
+router.post("/logoutAll", auth, async (req, res, next) => {
   try {
     req.user.tokens = [];
     await req.user.save();
     res.send();
   } catch (e) {
-    res.status(500).send();
+    e.status = 400
+    next(e)
   }
 });
 
@@ -282,7 +279,8 @@ router.patch("/updatePerks", auth, async (req, res, next) => {
     await user.updatePerks(true)
     res.send(user.userPerks);
   } catch (e) {
-    res.status(400).send(e.message);
+    e.status = 400
+    next(e)
   }
 });
 
@@ -334,10 +332,10 @@ router.patch("/changePassword", auth, async (req, res, next) => {
   try {
   
     if(!oldPassword || !newPassword || !repeatedNewPassword){
-      throw getEndpointError('warn', 'Incomplete data', req.user._id)
+      throw getEndpointError(WARN, 'Incomplete data', req.user._id)
     }
     if(newPassword !== repeatedNewPassword){
-      throw getEndpointError('warn', 'Passwords do not match', req.user._id)
+      throw getEndpointError(WARN, 'Passwords do not match', req.user._id)
     }
       const user = await req.user.updatePassword(oldPassword, newPassword);
       await user.save();
@@ -363,17 +361,17 @@ router.post("/forgotPassword", async (req, res, next) => {
 
     const email = req.body.email
     if(!validator.isEmail(email)){
-      throw getEndpointError('warn', 'Invalid email')
+      throw getEndpointError(WARN, 'Invalid email')
     }
     const user = await User.findOne({email})
     if(!user){
-      throw getEndpointError('warn', 'There is no such email in db')
+      throw getEndpointError(WARN, 'There is no such email in db')
     }
 
     if(user.passwordChangeToken){
       
       if(!user.checkPasswordChangeTokenExpired(user.passwordChangeToken)){
-        throw getEndpointError('info', 'jwt not expired')
+        throw getEndpointError(INFO, 'jwt not expired')
       }
     }
 
@@ -391,12 +389,12 @@ router.post("/validatePasswordChangeToken", async (req, res, next) => {
   const token = req.body.token
   try {
     if (!token) {
-      throw getEndpointError('warn', 'No token provided')
+      throw getEndpointError(WARN, 'No token provided')
     }
   
     const user = await User.findByPasswordChangeToken(token)
     if(!user){
-      throw getEndpointError('warn', 'User data error')
+      throw getEndpointError(WARN, 'User data error')
     }
 
     res.sendStatus(200)
@@ -423,14 +421,14 @@ router.patch('/reset', async (req, res, next) => {
     const token = req.body.token
 
     if (!token) {
-      throw getEndpointError('warn', 'No token provided')
+      throw getEndpointError(WARN, 'No token provided')
     }
     if(req.body.password !== req.body.confirmPassword){
-      throw getEndpointError('warn', 'Passwords do not match')
+      throw getEndpointError(WARN, 'Passwords do not match')
     }
     const user = await User.findByPasswordChangeToken(token)
     if (!user) {
-      throw getEndpointError('warn', 'User data error')
+      throw getEndpointError(WARN, 'User data error')
     }
 
     user.passwordChangeToken = null
@@ -466,7 +464,7 @@ router.patch('/reset', async (req, res, next) => {
 router.post("/me/avatar", auth, async (req, res, next) => {
   try {
     if (!req.files) {
-      throw getEndpointError('warn', 'No file provided', req.user._id)
+      throw getEndpointError(WARN, 'No file provided', req.user._id)
     }
     const user = req.user
     //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
@@ -490,7 +488,7 @@ router.delete("/me/avatar", auth, async (req, res, next) => {
   const user = req.user
   try {
     if(!user.avatar){
-      throw getEndpointError('warn', 'User has not got avatar', req.user._id)
+      throw getEndpointError(WARN, 'User has not got avatar', req.user._id)
     }
 
     await removeImage(uploadPath + user.avatar)
@@ -508,38 +506,37 @@ router.delete("/me/avatar", auth, async (req, res, next) => {
 
 
 
-router.patch("/party/equip", auth, async (req, res) => {
+router.patch("/party/equip", auth, async (req, res, next) => {
   try {
 
     const leader = req.user
     const itemId = req.body.id;
 
     if(!req.body.memberId){
-      throw new Error('No memberId field!')
-      
+      throw getEndpointError(WARN, 'No memberId field', req.user._id)      
     }
     const party = await Party.findOne({_id: leader.party, inShop: true, leader: leader._id, members: {$elemMatch: {$eq: req.body.memberId}}})
 
     if(!party){
-      throw new Error('Invalid party conditions!')
+      throw getEndpointError(WARN, 'Invalid party conditions', req.user._id)  
     }
 
     if(leader.party.toString() !== party._id.toString()){
-      throw new Error('Leader party field mismatch!')
+      throw getEndpointError(WARN, 'Leader party field mismatch', req.user._id)  
     }
 
-    let user = await User.findById(req.body.memberId)
+    const member = await User.findById(req.body.memberId)
 
-    if(user.party.toString() !== party._id.toString()){
-      throw new Error('Member party field mismatch!')
+    if(member.party.toString() !== party._id.toString()){
+      throw getEndpointError(WARN, 'Member party field mismatch', member._id)  
     }
     
     const missionInstance = await MissionInstance.findOne(
-      {party: {$elemMatch: {profile: user._id}}}    
+      {party: {$elemMatch: {profile: member._id}}}    
     )
 
     if(missionInstance){
-      throw new Error('Cannot equip item during mission!')
+      throw getEndpointError(WARN, 'Cannot equip item during mission', leader._id)  
     }
 
     const item = await Item.findOne({_id: itemId, owner: req.body.memberId}).populate({
@@ -548,34 +545,34 @@ router.patch("/party/equip", auth, async (req, res) => {
     })
 
     if(!item){
-      throw new Error('Item not found or invalid owner prop!')
+      throw getEndpointError(WARN, 'Item not found or invalid owner prop', leader._id)  
     }
 
     if(item.itemModel && item.itemModel.type !== 'scroll'){
-      throw new Error('Item to equip must be a scroll!')
+      throw getEndpointError(WARN, 'Item to equip must be a scroll', leader._id) 
     }
   
-    const itemToEquip = user.bag.find(item => {
+    const itemToEquip = member.bag.find(item => {
       return item.toString() === itemId;
     });
 
     if(!itemToEquip){
-      throw new Error('Item does not exist!')
+      throw getEndpointError(WARN, 'Item does not exist', leader._id) 
     }
 
-    user.equipped.scroll = user.equipped.scroll ? null : itemId
+    member.equipped.scroll = member.equipped.scroll ? null : itemId
     
-    await user.updatePerks(true)
+    await member.updatePerks(true)
     
-    await user.save();
-    await user.standardPopulate()
+    await member.save();
+    await member.standardPopulate()
 
-    if(!user.party){
+    if(!member.party){
       res.status(204).send(null)
       return
     }
     
-    await user
+    await member
       .populate({
         path: "party",
         populate: { path: "leader members", select: "_id name avatar attributes experience userPerks bag equipped class experience", 
@@ -583,22 +580,18 @@ router.patch("/party/equip", auth, async (req, res) => {
       })
       .execPopulate();
 
-    res.send(user.party);
+    res.send(member.party);
           
-        
-      
-
-    
   } catch (e) {
-    console.log(e);
-    res.sendStatus(400);
+    e.status = 400
+    next(e)
   }
 });
 
-router.patch("/items/equip", auth, async (req, res) => {
+router.patch("/items/equip", auth, async (req, res, next) => {
   try {
 
-    let user = req.user;
+    const user = req.user;
     const itemId = req.body.id;
     const equipped = req.body.equipped;
 
@@ -608,7 +601,7 @@ router.patch("/items/equip", auth, async (req, res) => {
     )
 
     if(missionInstance){
-      throw new Error('Cannot equip item during mission!')
+      throw getEndpointError(WARN, 'Cannot equip item during mission', user._id)
     }
 
     //const party = await Party.findOne({inShop: true, members: {$elemMatch: {$eq: user._id}}})
@@ -616,7 +609,7 @@ router.patch("/items/equip", auth, async (req, res) => {
 
     //check if user is party member when party is in shop
     if(party && party.inShop && party.members.map((memberId) => memberId.toString()).includes(user._id.toString())){
-      throw new Error('Cannot equip item during shopping!')
+      throw getEndpointError(WARN, 'Cannot equip item during shopping', user._id)  
     }
       
 
@@ -626,13 +619,13 @@ router.patch("/items/equip", auth, async (req, res) => {
     })
 
     if (!item) {
-      throw new Error('Item not found or invalid owner prop!')
+      throw getEndpointError(WARN, 'Item not found or invalid owner prop', user._id)  
     }
 
     //check if party inShop leader equip scroll item type 
     if(party && party.inShop){
       if(item.itemModel && item.itemModel.type !== 'scroll'){
-        throw new Error('Item to equip must be a scroll!')
+        throw getEndpointError(WARN, 'Item to equip must be a scroll', user._id) 
       }
     }
 
@@ -641,20 +634,20 @@ router.patch("/items/equip", auth, async (req, res) => {
     });
 
     if (!itemToEquip) {
-      throw new Error('There is no such item in bag!')
+      throw getEndpointError(WARN, 'There is no such item in bag', user._id) 
     }
 
     const checkEq = differenceBy(Object.values(equipped), user.bag, (item => item && item.toString()))
     if(checkEq.some(item => typeof item === 'string')){
-      throw new Error("Equipped items do not match bag!")
+      throw getEndpointError(WARN, 'Equipped items do not match bag', user._id) 
     }
  
     if(equipped.ringLeft && equipped.ringRight && equipped.ringLeft === equipped.ringRight){
-      throw new Error("Duplicated ring want to be equipped!")
+      throw getEndpointError(WARN, 'Duplicated ring want to be equipped', user._id) 
     }
 
     if(equipped.weaponLeft && equipped.weaponRight && equipped.weaponLeft === equipped.weaponRight){
-      throw new Error("Duplicated weapon want to be equipped!")
+      throw getEndpointError(WARN, 'Duplicated weapon want to be equipped', user._id) 
     }
 
     if(equipped.weaponRight){
@@ -664,11 +657,11 @@ router.patch("/items/equip", auth, async (req, res) => {
       })
 
       if(!weapon){
-        throw new Error('Legacy weapon item id detected!')
+        throw getEndpointError(WARN, 'Legacy weapon item id detected', user._id) 
       }
     
       if(weapon.itemModel.twoHanded && equipped.weaponLeft){
-        throw new Error('Detected additional weapon on left hand when twohanded weapon is equipped!')
+        throw getEndpointError(WARN, 'Detected additional weapon on second hand when twohanded weapon is equipped', user._id) 
       }
     }
 
@@ -679,11 +672,11 @@ router.patch("/items/equip", auth, async (req, res) => {
       })
 
       if(!weapon){
-        throw new Error('Legacy weapon item id detected!')
+        throw getEndpointError(WARN, 'Legacy weapon item id detected', user._id) 
       }
     
       if(weapon.itemModel.twoHanded){
-        throw new Error('Two handed weapon cannot be equipped on the left hand!')
+        throw getEndpointError(WARN, 'Two handed weapon cannot be equipped on the second hand', user._id) 
       }
     }
 
@@ -703,8 +696,7 @@ router.patch("/items/equip", auth, async (req, res) => {
           const slotToType = slot.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').split('-')[0]  
           
           if(user.equipped[slot].itemModel.type !== slotToType){
-            
-            throw new Error("Inapprioprate itemModel type in equipped object!")
+            throw getEndpointError(WARN, 'Inapprioprate itemModel type in equipped object', user._id) 
           }
         }
 
@@ -718,23 +710,21 @@ router.patch("/items/equip", auth, async (req, res) => {
     await user.standardPopulate()
  
     
-    res.status(200).send(user);
-
-      
+    res.status(200).send(user); 
     
   } catch (e) {
-    console.log(e);
-    res.sendStatus(400);
+    e.status = 400
+    next(e)
   }
 });
 
-router.delete("/items/remove", auth, async (req, res) => {
+router.delete("/items/remove", auth, async (req, res, next) => {
   const user = req.user
   try {
     const party = await Party.findOne({_id: user.party, inShop: true})
 
     if(party){
-      throw new Error("Cannot remove item when party is in shop!")
+      throw getEndpointError(WARN, 'Cannot remove item when party is in shop', user._id) 
     }
 
     const missionInstance = await MissionInstance.findOne(
@@ -742,7 +732,7 @@ router.delete("/items/remove", auth, async (req, res) => {
     )
 
     if(missionInstance){
-      throw new Error('Cannot delete item during mission!')
+      throw getEndpointError(WARN, 'Cannot delete item during mission', user._id) 
     }
 
     const item = await Item.findById({ _id: req.body.itemId });
@@ -754,22 +744,22 @@ router.delete("/items/remove", auth, async (req, res) => {
 
     res.status(200).send(updatedUser);
   } catch (e) {
-    console.log(e);
-    res.status(403).send();
+    e.status = 403
+    next(e)
   }
 });
 
-router.patch('/confirmLevel', auth, async(req, res) => {
+router.patch('/confirmLevel', auth, async(req, res, next) => {
   const user = req.user
   const pointType = req.body.pointType
 
   try{
     if(user.levelNotifications <= 0){
-      throw new Error('Operation forbidden!')
+      throw getEndpointError(WARN, 'Operation forbidden', user._id) 
     }
 
     if(!pointType){
-      throw new Error('No point type field!')
+      throw getEndpointError(WARN, 'No point type field', user._id) 
     }
 
     switch(pointType){
@@ -786,7 +776,7 @@ router.patch('/confirmLevel', auth, async(req, res) => {
         user.attributes.endurance += 1
         break
       default:
-        throw new Error('Invalid point type field!')
+        throw getEndpointError(WARN, 'Invalid point type field', user._id) 
     }
 
     user.levelNotifications -= 1
@@ -795,18 +785,20 @@ router.patch('/confirmLevel', auth, async(req, res) => {
     await user.standardPopulate()
     res.send(user)
   }catch(e){
-    console.log(e.message)
-    res.status(400).send(e.message);
+    e.status = 400
+    next(e)
   }
 })
 
+
+
 //OK
-router.patch("/clearRallyAwards", auth, async (req, res) => {
+router.patch("/clearRallyAwards", auth, async (req, res, next) => {
   const user = req.user;
 
   try {
     if(!user.rallyNotifications.isNew){
-      throw new Error('Operation forbidden!')
+      throw getEndpointError(WARN, 'Operation forbidden', user._id) 
     }
 
     user.rallyNotifications = {isNew: false, experience: 0, awards: []};
@@ -814,16 +806,17 @@ router.patch("/clearRallyAwards", auth, async (req, res) => {
     await user.standardPopulate();
     res.send(user);
   } catch (e) {
-    res.status(400).send(e.message);
+    e.status = 400
+    next(e)
   }
 });
 
-router.patch("/clearShopAwards", auth, async (req, res) => {
+router.patch("/clearShopAwards", auth, async (req, res, next) => {
   const user = req.user;
 
   try {
     if(!user.shopNotifications.isNew){
-      throw new Error('Operation forbidden!')
+      throw getEndpointError(WARN, 'Operation forbidden', user._id) 
     }
 
     user.shopNotifications = {isNew: false, experience: 0, awards: []};
@@ -831,7 +824,8 @@ router.patch("/clearShopAwards", auth, async (req, res) => {
     await user.standardPopulate();
     res.send(user);
   } catch (e) {
-    res.status(400).send(e.message);
+    e.status = 400
+    next(e)
   }
 });
 
@@ -861,17 +855,17 @@ const verifyTorpedo = (user, fieldName) => {
       );
 
       if (!torpedo) {
-        throw new Error("Matching torpedo not found!");
+        throw getEndpointError(WARN, 'Matching torpedo not found', user._id)
       }
 
       const item = await Item.findById(torpedo._id);
 
       if (!item) {
-        throw new Error("Item does not exist!");
+        throw getEndpointError(WARN, 'Item does not exist', user._id)
       }
 
       if (item.owner.toString() !== user._id.toString()) {
-        throw new Error("Owner field conflict!");
+        throw getEndpointError(WARN, 'Owner field conflct', user._id)
       }
 
       resolve(item);
@@ -881,24 +875,24 @@ const verifyTorpedo = (user, fieldName) => {
   });
 };
 
-router.patch("/loyal", auth, async (req, res) => {
+router.patch("/loyal", auth, async (req, res, next) => {
   const user = req.user;
 
   const fieldName = req.body.field;
   try {
     if (!user.bag.length) {
-      throw new Error("Bag is empty!");
+      throw getEndpointError(WARN, 'Bag is empty', user._id)
     }
 
     const item = await verifyTorpedo(user, fieldName);
 
     const fieldValue = user.loyal[fieldName];
     if (fieldValue === null || fieldValue === undefined) {
-      throw new Error("Field not found!");
+      throw getEndpointError(WARN, 'Field not found', user._id)
     }
 
     if (fieldValue === true) {
-      throw new Error("Field already shoted!");
+      throw getEndpointError(WARN, 'Field already shoted', user._id)
     }
 
     await item.remove(); //user bag cleared by remove middleware
@@ -945,11 +939,12 @@ router.patch("/loyal", auth, async (req, res) => {
 
     res.send({ updatedUser, awardToPass });
   } catch (e) {
-    res.status(400).send(e.message);
+    e.status = 400
+    next(e)
   }
 });
 
-router.get('/users', auth, async(req, res) => {
+router.get('/users', auth, async(req, res, next) => {
   try{
     const users = await User.aggregate().match({ active: true }).sort({"experience": -1 }).project({
       '_id': 1,
@@ -965,7 +960,8 @@ router.get('/users', auth, async(req, res) => {
 
     res.send({users: slicedUsers, userIndex})
   }catch(e){
-    res.status(400).send()
+    e.status = 400
+    next(e)
   }
   
 })
