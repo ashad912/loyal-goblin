@@ -11,8 +11,8 @@ import Badge from "@material-ui/core/Badge";
 import MenuItem from "@material-ui/core/MenuItem";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 
-import { palette, itemsPath, uiPaths } from "utils/definitions";
-import { PintoTypography, PintoSerifTypography } from "utils/fonts";
+import { palette, itemsPath, uiPaths } from "utils/constants";
+import { PintoTypography, PintoSerifTypography } from "assets/fonts";
 const StyledMenu = withStyles({
   paper: {
     border: "1px solid #d3d4d5"

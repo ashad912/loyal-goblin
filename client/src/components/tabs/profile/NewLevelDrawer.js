@@ -8,8 +8,8 @@ import Drawer from '@material-ui/core/Drawer';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 
-import {PintoTypography} from 'utils/fonts'
-import {uiPaths} from 'utils/definitions'
+import {PintoTypography} from 'assets/fonts'
+import {uiPaths} from 'utils/constants'
 
 const NewLevelDrawer = props => {
 

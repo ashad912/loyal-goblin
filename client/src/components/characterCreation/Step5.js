@@ -5,8 +5,8 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Divider from '@material-ui/core/Divider'
 
-import {uiPaths} from 'utils/definitions'
-import { PintoSerifTypography } from "utils/fonts";
+import {uiPaths} from 'utils/constants'
+import { PintoSerifTypography } from "assets/fonts";
 
 const Step5 = props => {
   let characterClass = props.characterClass;

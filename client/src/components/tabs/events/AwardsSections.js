@@ -9,7 +9,7 @@ import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import AwardListItem from 'components/AwardListItem'
 import { classLabelsAny } from 'utils/labels';
-import {palette, uiPaths} from 'utils/definitions'
+import {palette, uiPaths} from 'utils/constants'
 
 const AwardsSections = ({awards, awardsAreSecret, openList, handleOpenList, alwaysShowSections}) => {
     return(

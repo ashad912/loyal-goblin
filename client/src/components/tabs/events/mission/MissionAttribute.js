@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import {uiPaths, palette} from '../../../../utils/definitions'
+import {uiPaths, palette} from '../../../../utils/constants'
 
 const RequiredAttribute = styled(Typography)`
     margin: 0 0.5rem 0 0;

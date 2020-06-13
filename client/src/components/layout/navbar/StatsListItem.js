@@ -1,7 +1,7 @@
 import React, {Fragment} from 'react'
 import PropTypes from 'prop-types'
 import { ListItem, Grid, Typography, Divider } from '@material-ui/core'
-import { itemsPath } from 'utils/definitions'
+import { itemsPath } from 'utils/constants'
 
 
 

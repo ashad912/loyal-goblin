@@ -4,8 +4,8 @@ import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 
-import { PintoTypography } from "utils/fonts";
-import { palette } from "utils/definitions";
+import { PintoTypography } from "assets/fonts";
+import { palette } from "utils/constants";
 
 
 const Attribute = props => {

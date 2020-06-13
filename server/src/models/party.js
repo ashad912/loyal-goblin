@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 import {User} from './user'
 import {MissionInstance} from './missionInstance'
 
-
+import { asyncForEach } from '@utils/functions'
 
 export const PartySchema = new mongoose.Schema({
     

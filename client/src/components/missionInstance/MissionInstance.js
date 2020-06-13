@@ -15,8 +15,8 @@ import MissionAwards from './MissionAwards'
 import MissionBasicInfo from './MissionBasicInfo';
 
 import Loading from 'components/layout/Loading';
-import {itemsPath} from 'utils/definitions'
-import { PintoTypography} from 'utils/fonts'
+import {itemsPath} from 'utils/constants'
+import { PintoTypography} from 'assets/fonts'
 
 import { authCheck } from "store/actions/authActions";
 import {togglePresenceInInstance, toggleUserReady, finishInstance, setActiveInstance} from 'store/actions/missionActions'

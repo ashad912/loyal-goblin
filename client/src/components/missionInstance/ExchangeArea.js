@@ -10,7 +10,7 @@ import Box from './Box';
 import AvatarWithPlaceholder from 'components/AvatarWithPlaceholder'
 
 import { sendItemToMission, sendItemToUser } from 'store/actions/missionActions';
-import { uiPaths, usersPath } from 'utils/definitions';
+import { uiPaths, usersPath } from 'utils/constants';
 
 const userItemsName = 'userItems'
 const missionItemsName = 'missionItems'

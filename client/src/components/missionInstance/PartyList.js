@@ -18,7 +18,7 @@ import Avatar from '@material-ui/core/Avatar';
 
 import AvatarWithPlaceholder from 'components/AvatarWithPlaceholder';
 
-import {palette, itemsPath, uiPaths} from 'utils/definitions'
+import {palette, itemsPath, uiPaths} from 'utils/constants'
 
 
 const StyledImage = styled.img`

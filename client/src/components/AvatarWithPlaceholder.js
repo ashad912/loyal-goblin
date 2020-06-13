@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import { Avatar } from '@material-ui/core'
 
-import { usersPath } from 'utils/definitions'
+import { usersPath } from 'utils/constants'
 
 const createAvatarPlaceholder = (name) => {
 

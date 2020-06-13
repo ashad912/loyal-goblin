@@ -20,7 +20,7 @@ import { authCheck } from "../../../store/actions/authActions";
 
 import IconButton from '@material-ui/core/IconButton';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import { warningActionSources } from 'utils/definitions'
+import { warningActionSources } from 'utils/constants'
 import { setCheckWarning } from 'store/actions/communicationActions'
 
 

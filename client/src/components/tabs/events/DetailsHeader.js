@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
 import { Typography } from '@material-ui/core'
-import { palette} from '../../../utils/definitions'
-import {PintoTypography} from '../../../utils/fonts'
+import { palette} from '../../../utils/constants'
+import {PintoTypography} from '../../../assets/fonts'
 import DialogContent from "@material-ui/core/DialogContent";
 
 

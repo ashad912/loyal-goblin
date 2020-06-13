@@ -6,7 +6,7 @@ import OperationDialog from "components/OperationDialog";
 
 import {resetCheckWarning} from 'store/actions/communicationActions'
 import refStore from 'store/enhancers/refEnhancer'
-import { warningActionSources } from "utils/definitions";
+import { warningActionSources } from "utils/constants";
 
 
 

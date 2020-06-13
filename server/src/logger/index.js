@@ -1,8 +1,13 @@
 import winston from 'winston'
 
 // The Logger Category (functional area)
-const CATEGORY = 'app-server';
+const CATEGORY = 'server';
 
+// Paths to logs
+const file = './logs/server.log'
+const test = './logs/test.log'
+
+const path = process.env.NODE_ENV === "test" ? test : file
 
 // Logger configuration
 const logConfiguration = {
@@ -10,7 +15,7 @@ const logConfiguration = {
         new winston.transports.Console(),
         new winston.transports.File({
             level: 'warn',
-            filename: './logs/log.log'
+            filename: path
         })
     ],
     format: winston.format.combine(

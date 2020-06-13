@@ -31,8 +31,8 @@ import {signOut} from 'store/actions/authActions'
 import {togglePresenceInInstance} from 'store/actions/missionActions'
 import {leaveShop} from 'store/actions/shopActions'
 
-import { uiPaths } from 'utils/definitions';
-import { PintoTypography } from 'utils/fonts';
+import { uiPaths } from 'utils/constants';
+import { PintoTypography } from 'assets/fonts';
 import AvatarWithPlaceholder from 'components/AvatarWithPlaceholder';
 
   

@@ -1,7 +1,7 @@
 import React from "react";
 import styled from 'styled-components'
 import { SectionLink } from "react-scroll-section";
-import { palette } from "../../utils/definitions";
+import { palette } from "../../utils/constants";
 import { Grid } from "@material-ui/core";
 
 const Item = styled.div`

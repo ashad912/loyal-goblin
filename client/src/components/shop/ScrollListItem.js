@@ -12,8 +12,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 
 import PerkBoxItem from "../tabs/profile/PerkBoxItem";
 
-import { PintoSerifTypography, PintoTypography } from "utils/fonts";
-import { itemsPath, palette } from 'utils/definitions'
+import { PintoSerifTypography, PintoTypography } from "assets/fonts";
+import { itemsPath, palette } from 'utils/constants'
 
 
 const useStyles = makeStyles(theme => ({

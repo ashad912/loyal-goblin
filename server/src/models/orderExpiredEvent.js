@@ -20,12 +20,11 @@ OrderExpiredEventSchema.statics.registerWatch = () => {
     
     OrderExpiredEvent.watch([deleteOps]).
         on('change', async data => {
-            console.log(new Date(), data.documentKey._id, 'order remove event triggered');
             const user = await User.findOne({_id: data.documentKey._id, activeOrder: { $not: { $size: 0 } } })
             if(user){
                 await user.clearActiveOrder()
                 
-                console.log(new Date(), user._id, 'user.activeOrder auto-removed')
+                logger.info(user._id, 'user.activeOrder auto-removed')
             }
         });
         logger.info('User active order watch triggered')

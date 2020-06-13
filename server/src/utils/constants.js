@@ -12,6 +12,6 @@ const loggerStatuses = {
     info: 'info'
 }
 
-export const ERROR = loggerStatuses.error,
-export const WARN = loggerStatuses.warn,
+export const ERROR = loggerStatuses.error
+export const WARN = loggerStatuses.warn
 export const INFO = loggerStatuses.info

@@ -8,8 +8,8 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Button from "@material-ui/core/Button";
 
-import {itemsPath, palette} from 'utils/definitions'
-import { PintoTypography, PintoSerifTypography } from "utils/fonts";
+import {itemsPath, palette} from 'utils/constants'
+import { PintoTypography, PintoSerifTypography } from "assets/fonts";
 
 const glowReady = keyframes`
   0%{

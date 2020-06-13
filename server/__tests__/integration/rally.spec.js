@@ -4,13 +4,12 @@
 
 import supertest from 'supertest'
 import moment from 'moment'
-import getApp from '@app'
+import server from '@app'
 import {Rally} from '@models/rally'
 import {admin, setup, restore} from '@tests/utils/integration/rally'
 import rallyStore from '@store/rally.store'
 
 
-const server = getApp()
 const app = () => supertest(server)
 
 beforeEach(setup)

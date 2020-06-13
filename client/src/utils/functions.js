@@ -1,4 +1,4 @@
-import { levelingEquation } from "./definitions";
+import { levelingEquation } from "./constants";
 import {categoryLabels, roomLabels} from './labels'
 
 export async function asyncForEach(array, callback) {

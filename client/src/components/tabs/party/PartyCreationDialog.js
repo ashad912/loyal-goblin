@@ -33,8 +33,8 @@ import {
 } from "store/actions/missionActions";
 import {setCheckWarning} from 'store/actions/communicationActions'
 
-import { uiPaths, palette, warningActionSources } from "utils/definitions";
-import { PintoTypography, PintoSerifTypography } from "utils/fonts";
+import { uiPaths, palette, warningActionSources } from "utils/constants";
+import { PintoTypography, PintoSerifTypography } from "assets/fonts";
 
 
 const StyledMenu = withStyles({

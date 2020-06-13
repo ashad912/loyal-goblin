@@ -1,4 +1,3 @@
-import getApp from '@app'
 import cron from 'node-cron'
 import socket from "socket.io";
 import socketIOAuth from 'socketio-auth'
@@ -8,7 +7,7 @@ import logger from '@logger';
 import { MissionInstanceExpiredEvent } from "@models/missionInstanceExpiredEvent";
 import { OrderExpiredEvent } from "@models/orderExpiredEvent";
 
-import * as utils from '@utils/methods' 
+import * as utils from '@utils/functions' 
 import rallyStore from '@store/rally.store'
 import socketController from '@controllers/socket.controller'
 
@@ -16,9 +15,9 @@ const port = process.env.PORT;
 
 async function startServer(){
 
-  //const app = await require('@app').default()
+  const app = await require('@app').default
 
-  const app = await getApp()
+  //const app = await getApp()
   const server = app.listen(port, () => {
     logger.info(`Listening at ${port}`);
     utils.initCleaning() 
@@ -46,8 +45,7 @@ async function startServer(){
     disconnect: function(socket){socketController.disconnect(socket)},
     timeout: 5000
   });
+
 }
-
-
 
 startServer()

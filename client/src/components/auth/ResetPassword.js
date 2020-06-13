@@ -24,7 +24,7 @@ setConnectionError
 import {validatePasswordChangeToken} from "store/actions/authActions";
 
 import { asyncForEach } from "utils/functions";
-import { uiPaths, palette } from "utils/definitions";
+import { uiPaths, palette } from "utils/constants";
 
 const FormContainer = styled(Container)`
   display: flex;
@@ -206,7 +206,7 @@ class ResetPassword extends Component {
   };
   
   onResolved = async () => {
-    await this.props.onConfirm(this.props.match.params.token,this.state.password,this.state.confirmPassword, this.recaptcha.getResponse());
+    await this.props.onConfirm(this.props.match.params.token, this.state.password, this.state.confirmPassword, this.recaptcha.getResponse());
     this.props.history.push("/");
   }
 

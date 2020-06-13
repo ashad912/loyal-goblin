@@ -16,7 +16,7 @@ import ErrorIcon from '@material-ui/icons/Error';
 import { signIn } from 'store/actions/authActions'
 
 import {asyncForEach} from 'utils/functions'
-import { palette, uiPaths } from 'utils/definitions';
+import { palette, uiPaths } from 'utils/constants';
 
 
 //import {labels} from '../strings/labels'
@@ -206,7 +206,7 @@ class SignIn extends Component {
     }
 
     onResolved = () => {
-        this.props.signIn({email: this.state.email, password: this.state.password})
+        this.props.signIn({email: this.state.email, password: this.state.password, recaptcha: this.recaptcha.getResponse()})
     }
 
 

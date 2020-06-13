@@ -12,8 +12,8 @@ import DetailsSchema from '../DetailsSchema'
 import DetailsHeader from '../DetailsHeader'
 import AwardsSections from '../AwardsSections'
 
-import { ralliesPath, palette } from 'utils/definitions'
-import {PintoTypography} from 'utils/fonts'
+import { ralliesPath, palette } from 'utils/constants'
+import {PintoTypography} from 'assets/fonts'
 
 
 

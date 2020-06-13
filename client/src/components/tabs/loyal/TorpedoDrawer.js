@@ -9,7 +9,7 @@ import Button from "@material-ui/core/Button";
 import TorpedoListItem from './TorpedoListItem'
 import OperationDialog from "components/OperationDialog";
 
-import { PintoTypography } from "utils/fonts";
+import { PintoTypography } from "assets/fonts";
 import {convertToStack} from 'utils/functions'
 
 

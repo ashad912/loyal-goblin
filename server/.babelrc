@@ -30,7 +30,8 @@
           "@utils": "./src/utils",
           "@store": "./src/store",
           "@logger": "./src/logger",
-          "@loaders": "./src/loaders"
+          "@loaders": "./src/loaders",
+          "@index": "./src/index"
         }
       }
     ]

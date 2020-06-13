@@ -7,7 +7,7 @@ import { Grid } from '@material-ui/core'
 import maleBody from "assets/profile/male-body.svg";
 import femaleBody from "assets/profile/female-body.png"
 
-import { appearancePath, altAppearancePath } from "utils/definitions";
+import { appearancePath, altAppearancePath } from "utils/constants";
 
 const AvatarImage = styled.img`
     width: 100%;

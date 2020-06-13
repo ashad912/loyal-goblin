@@ -1,7 +1,7 @@
 import React from "react";
 import TextField from "@material-ui/core/TextField";
-import { PintoSerifTypography, PintoTypography } from "../../utils/fonts";
-import { palette } from "../../utils/definitions";
+import { PintoSerifTypography, PintoTypography } from "../../assets/fonts";
+import { palette } from "../../utils/constants";
 
 
 const Step1 = props => {

@@ -15,7 +15,7 @@ import EquipmentItem from "./EquipmentItem";
 
 import { itemTypeLabels } from "utils/labels";
 import {convertToStack} from 'utils/functions'
-import { PintoTypography } from "utils/fonts";
+import { PintoTypography } from "assets/fonts";
 
 
 const useStyles = makeStyles(theme => ({

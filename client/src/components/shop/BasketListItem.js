@@ -9,8 +9,8 @@ import Collapse from "@material-ui/core/Collapse";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 
-import { uiPaths, palette } from "utils/definitions";
-import { PintoTypography } from "utils/fonts";
+import { uiPaths, palette } from "utils/constants";
+import { PintoTypography } from "assets/fonts";
 
 
 const BasketListItem = ({activeUsersBasket, name, summedPrice, basket, handleRemoveItem, noParty}) => {

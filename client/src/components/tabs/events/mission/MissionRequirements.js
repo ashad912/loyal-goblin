@@ -6,7 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import MissionAttribute from './MissionAttribute'
 import MissionAmulets from "./MissionAmulets";
 
-import { uiPaths } from "../../../../utils/definitions";
+import { uiPaths } from "../../../../utils/constants";
 
 const MissionRequirements = (props) => {
     

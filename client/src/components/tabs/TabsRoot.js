@@ -32,7 +32,7 @@ import { getFirstRally } from "store/actions/rallyActions";
 import { getMissionList } from "store/actions/missionActions";
 import { updateParty } from "store/actions/partyActions";
 
-import { palette } from "utils/definitions";
+import { palette } from "utils/constants";
 
 
 

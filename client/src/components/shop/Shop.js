@@ -31,7 +31,7 @@ import {
 } from "store/actions/shopActions";
 import { toggleItem } from "store/actions/profileActions";
 
-import { uiPaths } from "utils/definitions";
+import { uiPaths } from "utils/constants";
 
 
 const Menu = styled(Paper)`

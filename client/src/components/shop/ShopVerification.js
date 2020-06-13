@@ -18,7 +18,7 @@ import AwardListItem from "components/AwardListItem";
 import AvatarWithPlaceholder from "components/AvatarWithPlaceholder";
 
 import { cancelOrder, leaveShop } from "store/actions/shopActions";
-import { palette } from 'utils/definitions'
+import { palette } from 'utils/constants'
 
 
 const axiosInstance = axios.create({

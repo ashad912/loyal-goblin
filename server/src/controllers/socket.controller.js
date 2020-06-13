@@ -1,4 +1,4 @@
-import { socketRoomAuth, socketConnectAuth } from "@middleware/auth";
+import { socketRoomAuth, socketConnectAuth } from "@middleware/socketAuth";
 import { Party} from '@models/party'
 import { MissionInstance } from '@models/missionInstance'
 

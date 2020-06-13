@@ -22,10 +22,10 @@ import {
   uiPaths,
   palette,
   warningActionSources
-} from "utils/definitions";
+} from "utils/constants";
 
 import { classLabels } from "utils/labels";
-import { PintoSerifTypography, PintoTypography } from "utils/fonts";
+import { PintoSerifTypography, PintoTypography } from "assets/fonts";
 import { setCheckWarning } from "store/actions/communicationActions";
 import { getMissionList } from "store/actions/missionActions";
 

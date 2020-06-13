@@ -27,7 +27,7 @@ import OfflineModal from "./components/auth/OfflineModal";
 import CharacterCreation from "components/characterCreation/CharacterCreation";
 
 
-import { palette } from "./utils/definitions";
+import { palette } from "./utils/constants";
 
 import { authCheck } from "./store/actions/authActions";
 import { resetConnectionError } from "./store/actions/connectionActions";

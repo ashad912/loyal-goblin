@@ -18,6 +18,8 @@ import { productRouter } from "@routes/product";
 import { partyRouter } from "@routes/party";
 import { barmanRouter } from "@routes/barman";
 
+import {ERROR, WARN, INFO} from "@utils/constants"
+
 export default((app) => {
 
     app.use(
@@ -86,12 +88,10 @@ export default((app) => {
       })
 
 
-      const withStack = ['error', 'warn']
+      app.use((e, req, res, next) => {
+        logger.log({level: e.type || 'error', message: !e.type || [ERROR, WARN].includes(e.type) ? e : e.message})
 
-      app.use((err, req, res, next) => {
-        logger.log({level: err.type || 'error', message: !err.type || withStack.includes(err.type) ? err : err.message})
-
-        const message = process.env.NODE_ENV === 'dev' ? err.message : ''
-        res.status(err.status || 500).send(message);
+        const message = process.env.NODE_ENV === 'dev' ? e.message : ''
+        res.status(e.status || 400).send(message);
       });
 })

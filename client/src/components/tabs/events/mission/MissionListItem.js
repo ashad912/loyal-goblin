@@ -12,8 +12,8 @@ import MissionRequirements from './MissionRequirements';
 import MissionBasicInfo from 'components/missionInstance/MissionBasicInfo'
 
 import { classLabelsAny } from "utils/labels";
-import { palette, itemsPath } from "utils/definitions";
-import { PintoTypography} from 'utils/fonts'
+import { palette, itemsPath } from "utils/constants";
+import { PintoTypography} from 'assets/fonts'
 
 
 

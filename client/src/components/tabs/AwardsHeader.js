@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Typography from "@material-ui/core/Typography";
-import { PintoTypography } from "utils/fonts";
+import { PintoTypography } from "assets/fonts";
 
 const AwardsHeader = ({experience, awards, expTitle, awardsTitle}) => {
     return(

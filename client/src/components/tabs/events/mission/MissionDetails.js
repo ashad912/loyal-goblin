@@ -8,8 +8,8 @@ import AwardsSections from '../AwardsSections';
 import DetailsSchema from '../DetailsSchema'
 
 
-import {missionsPath} from 'utils/definitions'
-import {PintoTypography} from 'utils/fonts'
+import {missionsPath} from 'utils/constants'
+import {PintoTypography} from 'assets/fonts'
 
 
 const MissionDetails = (props) => {

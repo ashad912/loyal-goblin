@@ -10,8 +10,8 @@ import Badge from '@material-ui/core/Badge';
 
 import PerkBoxItem from "./tabs/profile/PerkBoxItem";
 
-import {itemsPath, palette} from 'utils/definitions'
-import { PintoTypography } from "utils/fonts";
+import {itemsPath, palette} from 'utils/constants'
+import { PintoTypography } from "assets/fonts";
 
 
 const AwardListItem = props => {

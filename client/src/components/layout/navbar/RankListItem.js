@@ -7,7 +7,7 @@ import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 
-import {palette} from 'utils/definitions'
+import {palette} from 'utils/constants'
 
 const StyledGrid = styled(Grid)`
     align-items: center;   

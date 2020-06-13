@@ -7,8 +7,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
-import { palette } from "utils/definitions";
-import { PintoTypography} from "utils/fonts";
+import { palette } from "utils/constants";
+import { PintoTypography} from "assets/fonts";
 
 const OperationDialog = ({open, onClose, handleAction, title, desc, cancelText, confirmText}) => {
     return (

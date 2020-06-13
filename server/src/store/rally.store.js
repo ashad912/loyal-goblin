@@ -6,7 +6,7 @@ import logger from '@logger'
 import { Rally } from '@models/rally';
 import { User } from '@models/user'
 import { Item } from '@models/item';
-import { asyncForEach, designateExperienceMods} from '@utils/methods'
+import { asyncForEach, designateExperienceMods} from '@utils/functions'
 
 let finishTask
 

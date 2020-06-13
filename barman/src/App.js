@@ -162,9 +162,9 @@ function App(props) {
     setConnection(conn);
   };
 
-  const handleSignIn = async (userName, password) => {
+  const handleSignIn = async (userName, password, recaptcha) => {
     try {
-      const res = await axios.post("/barman/login", { userName, password });
+      const res = await axios.post("/barman/login", { userName, password, recaptcha });
       setAuth({ uid: res.data._id, init: false });
     } catch (error) {
       console.log(error);

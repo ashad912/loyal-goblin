@@ -6,8 +6,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Divider from '@material-ui/core/Divider'
 
-import { PintoSerifTypography, PintoTypography } from "utils/fonts";
-import { uiPaths, palette } from "utils/definitions";
+import { PintoSerifTypography, PintoTypography } from "assets/fonts";
+import { uiPaths, palette } from "utils/constants";
 
 
 const Step3 = (props) => {

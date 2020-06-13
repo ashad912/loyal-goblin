@@ -15,10 +15,11 @@ import NewLevelDrawer from "./NewLevelDrawer";
 import PerkBox from "./PerkBox";
 
 import AwardsDialog from "./AwardsDialog";
+import AvatarCard from "./AvatarCard";
 
 import { updateParty, removeMember } from "store/actions/partyActions";
 import { getUserLevel, bagArrayToCategories } from "utils/functions";
-import { uiPaths, warningActionSources } from "utils/definitions";
+import { uiPaths, warningActionSources } from "utils/constants";
 
 import {
   toggleItem,
@@ -29,7 +30,7 @@ import {
 } from "store/actions/profileActions";
 import { authCheck } from "store/actions/authActions";
 import { setCheckWarning } from "store/actions/communicationActions";
-import AvatarCard from "./AvatarCard";
+
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {

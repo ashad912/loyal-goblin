@@ -6,8 +6,8 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 
-import { PintoTypography} from 'utils/fonts'
-import { itemsPath, productsPath, palette } from 'utils/definitions'
+import { PintoTypography} from 'assets/fonts'
+import { itemsPath, productsPath, palette } from 'utils/constants'
 
 const AddIcon = styled(AddCircleIcon)`
   width: 2rem;

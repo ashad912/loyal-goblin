@@ -6,8 +6,8 @@ import Grid from "@material-ui/core/Grid";
 
 import { perkLabels, dayLabels } from "utils/labels";
 import { getValue, getTarget } from "utils/functions";
-import { palette } from "utils/definitions";
-import { PintoTypography } from "utils/fonts";
+import { palette } from "utils/constants";
+import { PintoTypography } from "assets/fonts";
 
 
 const PerkBoxItem = ({ perk, isFirst, isEquipment, equipped }) => {

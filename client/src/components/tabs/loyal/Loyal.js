@@ -13,8 +13,8 @@ import boardsvg from 'assets/board/statki-goblin.svg'
 import Loading from 'components/layout/Loading';
 
 import {shootShip} from 'store/actions/profileActions'
-import { palette } from 'utils/definitions';
-import { PintoTypography } from 'utils/fonts';
+import { palette } from 'utils/constants';
+import { PintoTypography } from 'assets/fonts';
 
 
 // const GlobalStyle = createGlobalStyle`

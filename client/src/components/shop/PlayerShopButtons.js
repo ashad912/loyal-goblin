@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import PlayerShopButton from "./PlayerShopButton";
-import { palette } from "../../utils/definitions";
+import { palette } from "../../utils/constants";
 
 const Container = styled(Paper)`
   width: 95%;

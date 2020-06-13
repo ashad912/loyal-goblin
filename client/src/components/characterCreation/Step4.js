@@ -3,8 +3,8 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import AttributeBox from "./AttributeBox";
 import Divider from '@material-ui/core/Divider'
-import { PintoSerifTypography, PintoTypography } from "../../utils/fonts";
-import { palette } from "../../utils/definitions";
+import { PintoSerifTypography, PintoTypography } from "../../assets/fonts";
+import { palette } from "../../utils/constants";
 
 
 const Step4 = props => {

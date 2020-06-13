@@ -12,7 +12,7 @@ import Typography from "@material-ui/core/Typography";
 import StatsListItem from "./StatsListItem";
 import AvatarWithPlaceholder from 'components/AvatarWithPlaceholder'
 
-import { palette } from "utils/definitions"
+import { palette } from "utils/constants"
 
 
 

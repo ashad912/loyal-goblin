@@ -5,8 +5,8 @@ import { Droppable, Draggable } from 'react-beautiful-dnd';
 import Grid from '@material-ui/core/Grid';
 import { Paper } from '@material-ui/core';
 
-import {palette, itemsPath} from 'utils/definitions'
-import {PintoTypography} from 'utils/fonts'
+import {palette, itemsPath} from 'utils/constants'
+import {PintoTypography} from 'assets/fonts'
 import {convertToStack} from 'utils/functions'
 
 

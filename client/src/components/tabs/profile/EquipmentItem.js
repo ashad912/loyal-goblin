@@ -15,9 +15,9 @@ import Badge from "@material-ui/core/Badge";
 
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 
-import { palette, itemsPath, uiPaths } from "../../../utils/definitions";
+import { palette, itemsPath, uiPaths } from "../../../utils/constants";
 
-import { PintoTypography, PintoSerifTypography } from "../../../utils/fonts";
+import { PintoTypography, PintoSerifTypography } from "../../../assets/fonts";
 import PerkBoxItem from "./PerkBoxItem";
 
 const StyledMenu = withStyles({
