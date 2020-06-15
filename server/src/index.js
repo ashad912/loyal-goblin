@@ -15,7 +15,7 @@ const port = process.env.PORT;
 
 async function startServer(){
 
-  const app = await require('@app').default
+  const app = await require('@app').default()
 
   //const app = await getApp()
   const server = app.listen(port, () => {

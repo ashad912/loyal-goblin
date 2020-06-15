@@ -3,13 +3,16 @@
  */
 
 import supertest from 'supertest'
-import server from '@app'
 import {User} from '@models/user'
 import {userOne, userTwo, userThree, setup, restore} from '@tests/utils/integration/user'
 
 
-const app = () => supertest(server)
-
+// Little hack to have loaders invoked, import/export is synchronous
+let app
+beforeAll(async () => {
+    const server = await require('@app').default()
+    app = () => supertest(server)
+})
 
 beforeEach(setup)
 

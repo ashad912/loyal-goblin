@@ -4,14 +4,17 @@
 
 import supertest from 'supertest'
 import moment from 'moment'
-import server from '@app'
 import { user1, user2, user3, admin, setup, restore } from '@tests/utils/integration/mission'
-//import missionStore from '@store/mission.store'
 
-const app = () => supertest(server)
+
+// Little hack to have loaders invoked, import/export is synchronous
+let app
+beforeAll(async () => {
+    const server = await require('@app').default()
+    app = () => supertest(server)
+})
+
 beforeEach(setup)
-
-
 
 describe('Mission create endpoint', () => {
     it('should create new mission', async () => {
