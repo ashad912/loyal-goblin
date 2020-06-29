@@ -37,6 +37,7 @@ const MenuGridItem = ({ onClick, section, children }) => {
                 //onClick={link.onClick} 
                 selected={link.isSelected}
                 onClick={onClick}
+                data-testid={section}
               >
                 {children}
               </Item>

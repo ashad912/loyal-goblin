@@ -1,6 +1,6 @@
 //import {labels} from '../../components/strings/labels'
 
-const initState = {
+export const initState = {
     connectionError: null,
     loading: true,
     message: "Brak połączenia z serwerem."

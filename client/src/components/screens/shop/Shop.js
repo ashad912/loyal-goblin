@@ -153,7 +153,6 @@ class Shop extends React.Component {
     }
 
     const socketConnectionStatus = socket.connected
-
     try{
       await this.props.onGetShop(socketConnectionStatus);
     }catch(e){
@@ -162,8 +161,8 @@ class Shop extends React.Component {
       return;
     }
 
-    const navbarHeight = document.getElementById("navbar").offsetHeight;
-    const footerHeight = document.getElementById("footer").offsetHeight;
+    const navbarHeight = document.getElementById("navbar") ? document.getElementById("navbar").offsetHeight : 0;
+    const footerHeight = document.getElementById("footer") ? document.getElementById("footer").offsetHeight : 0;
 
     
     let menuTopOffset = this.menuRef.current && this.menuRef.current.offsetTop;
@@ -182,7 +181,6 @@ class Shop extends React.Component {
     }
 
     this.setState({ baskets, products: [...this.props.products] }, () => {});
-
     this.handleChangeactiveUser(
       null,
       this.props.party.length > 0 && this.props.party[0]
@@ -375,6 +373,7 @@ class Shop extends React.Component {
       }
       this.setState({ products });
     });
+    
   };
 
   handleToggleBasketDrawer = (open) => {
@@ -517,7 +516,7 @@ class Shop extends React.Component {
     // console.log(this.state.activeUser,activeUser, this.props.party)
     if (activeUser) {
       return (
-        <div style={{minHeight:`calc(100vh - (${this.state.fullHeightCorrection}px)`}}>
+        <div role="application" style={{minHeight:`calc(100vh - (${this.state.fullHeightCorrection}px)`}}>
           {this.props.activeOrder.length > 0 && this.state.activeUser ? (
             <VerificationPage user={this.props.auth} party={this.props.party} />
           ) : (
@@ -529,7 +528,7 @@ class Shop extends React.Component {
                   handleChipClick={this.handleChangeactiveUser}
                 />
               )}
-              {!activeUser.equipped.scroll && activeUser.bag.filter(item=>item.itemModel.type==="scroll").length > 0 ? (
+              {!activeUser.equipped?.scroll && activeUser.bag.filter(item=>item.itemModel.type==="scroll").length > 0 ? (
                 <Box>
                   <Button
                     style={{ margin: "1rem 0" }}
@@ -582,8 +581,8 @@ class Shop extends React.Component {
                 >
                   <MenuGridItem onClick={() => this.scrollToRef(this.shotsRef)} section="shots">Szoty</MenuGridItem>                                    
                   <MenuGridItem onClick={() => this.scrollToRef(this.drinksRef)} section="drinks">Drinki</MenuGridItem>                                    
-                  <MenuGridItem onClick={() => this.scrollToRef(this.beersRef)} section="beers">Piwa</MenuGridItem>                  
-                  <MenuGridItem onClick={() => this.scrollToRef(this.alcoFreeRef)} section="alco-free">Bez promili</MenuGridItem>
+                  <MenuGridItem onClick={() => this.scrollToRef(this.beersRef)} section="beers" >Piwa</MenuGridItem>                  
+                  <MenuGridItem onClick={() => this.scrollToRef(this.alcoFreeRef)} section="alco-free" >Bez promili</MenuGridItem>
                   <MenuGridItem onClick={() => this.scrollToRef(this.foodRef)} section="food">Jedzenie</MenuGridItem>
                   <MenuGridItem onClick={() => this.scrollToRef(this.othersRef)} section="others">Inne</MenuGridItem>
                 </Grid>
@@ -592,6 +591,7 @@ class Shop extends React.Component {
                 <StyledSection ref={this.shotsRef}>
                   <Section id="shots" >
                     <ShopList
+                      id="shots-list"
                       title="Szoty"
                       list={shotList}
                       handleAddItem={this.handleAddItemToCart}
@@ -602,6 +602,7 @@ class Shop extends React.Component {
                 <StyledSection ref={this.drinksRef}>
                   <Section id="drinks">
                     <ShopList
+                      id="drinks-list"
                       title="Driny"
                       list={drinkList}
                       handleAddItem={this.handleAddItemToCart}
@@ -612,6 +613,7 @@ class Shop extends React.Component {
                 <StyledSection ref={this.beersRef}>
                   <Section id="beers">
                     <ShopList
+                      id="beers-list"
                       title="Piwa"
                       list={beerList}
                       handleAddItem={this.handleAddItemToCart}
@@ -622,6 +624,7 @@ class Shop extends React.Component {
                 <StyledSection ref={this.alcoFreeRef}>
                   <Section id="alco-free">
                     <ShopList
+                      id="alco-free-list"
                       title="Bez promili"
                       list={alcoholFreeList}
                       handleAddItem={this.handleAddItemToCart}
@@ -632,6 +635,7 @@ class Shop extends React.Component {
                 <StyledSection ref={this.foodRef}>
                   <Section id="food">
                     <ShopList
+                      id="food-list"
                       title="Jedzenie"
                       list={foodList}
                       handleAddItem={this.handleAddItemToCart}
@@ -642,6 +646,7 @@ class Shop extends React.Component {
                 <StyledSection ref={this.othersRef}>
                   <Section id="others">
                     <ShopList
+                      id="others-list"
                       title="Inne"
                       list={othersList}
                       handleAddItem={this.handleAddItemToCart}
@@ -778,7 +783,7 @@ class Shop extends React.Component {
                   }}
                   badge={"bottomleft"}
                   ref={ref => (this.recaptcha = ref)}
-                  sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                  sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY || 'sitekey'}
                   onResolved={this.onCaptchaResolved}
                 />
               </BasketDrawer>

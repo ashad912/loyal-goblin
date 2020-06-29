@@ -3,19 +3,9 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import {createStore, applyMiddleware, compose} from 'redux' // to enable store func
-import rootReducer from './store/reducers/rootReducer'
-import { Provider} from 'react-redux' //to wire reducer to App, and choose store
-import thunk from 'redux-thunk' //for asynchronous things
 import axios from 'axios'
 import {setLoading} from './store/actions/connectionActions'
-import { BrowserRouter, Route } from 'react-router-dom';
-
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
-
-
-
-const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
+import ReduxRoot from 'ReduxRoot';
 
 const {dispatch} = store
 
@@ -43,9 +33,9 @@ if(process.env.NODE_ENV === 'production'){
 
 
 ReactDOM.render(
-  <Provider store={store}>
+  <ReduxRoot >
     <App/>
-  </Provider>,
+  </ReduxRoot>,
   document.getElementById('root'));
 
 

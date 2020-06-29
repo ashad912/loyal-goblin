@@ -5,9 +5,9 @@ import Typography from "@material-ui/core/Typography";
 import ShopListItem from "./ShopListItem";
 
 
-const ShopList = ({title, list, handleAddItem}) => {
+const ShopList = ({id, title, list, handleAddItem}) => {
   return (
-    <List >
+    <List data-testid={id}>
       <ListItem>
         <Typography variant="h5">{title}</Typography>
       </ListItem>

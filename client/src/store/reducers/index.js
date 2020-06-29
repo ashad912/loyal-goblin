@@ -7,12 +7,10 @@ import { combineReducers} from 'redux'
 
 
 
-const rootReducer = combineReducers( {
+export default combineReducers( {
     auth: authReducer,
     connection: connectionReducer,
     party: partyReducer,
     shop: shopReducer,
     mission: missionReducer
 })
-
-export default rootReducer

@@ -1,6 +1,6 @@
 //import {labels} from '../../components/strings/labels'
 
-const initState = {
+export const initState = {
   init: true,
   uid: null,
   profile: {},
