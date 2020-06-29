@@ -185,7 +185,7 @@ class SignIn extends Component {
     }
 
     onResolved = () => {
-        this.props.signIn({email: this.state.email, password: this.state.password})
+        this.props.signIn({email: this.state.email, password: this.state.password, recaptcha: this.recaptcha.getResponse()})
     }
 
     render() {

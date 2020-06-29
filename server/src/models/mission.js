@@ -4,7 +4,7 @@ import { MissionInstance } from './missionInstance';
 import arrayUniquePlugin from 'mongoose-unique-array'
 import {
     asyncForEach,
-  } from "../utils/methods";
+  } from "../utils/functions";
 export const eventStatuses = ['ready', 'active', 'archive']
 
 

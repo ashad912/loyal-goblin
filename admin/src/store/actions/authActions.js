@@ -26,8 +26,8 @@ export const authCheck =  (params) => {
 
         return new Promise( async (resolve, reject) => {
             try {
-                console.log('authCheck')
-                let query = params && params.autoFetch ? '?autoFetch=true' : ''
+                
+                const query = params && params.autoFetch ? '?autoFetch=true' : ''
                 const res = await axios('/admin/me' + query)   
                 const uid = res.data._id
                 dispatch( {type: "AUTH_SUCCESS",  uid}) //DISPATCH IS SYNCHRONOUS!!!

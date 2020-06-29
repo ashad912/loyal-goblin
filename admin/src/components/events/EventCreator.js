@@ -9,7 +9,6 @@ import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
 import Switch from "@material-ui/core/Switch";
 import Grid from "@material-ui/core/Grid";
-import Input from "@material-ui/core/Input";
 import Slider from "@material-ui/core/Slider";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -58,31 +57,6 @@ const alertAnimation = keyframes`
 
 `;
 
-const FileInputWrapper = styled.div`
-  position: relative;
-  background: red;
-  height: 2.5rem;
-  width: 14rem;
-  margin: 2rem 0;
-`;
-
-const HiddenFileInput = styled(Input)`
-  position: absolute;
-  top: 0;
-  left: 0;
-  opacity: 0;
-  height: 2.5rem;
-  width: 14rem;
-  user-select: none;
-`;
-
-const FileInputButton = styled(Button)`
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 2.5rem;
-  width: 14rem;
-`;
 
 const DateErrorMessage = styled(Typography)`
   animation: ${alertAnimation} 1s ease-out infinite alternate;

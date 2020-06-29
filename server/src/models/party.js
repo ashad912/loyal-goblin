@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 import {User} from './user'
 import {MissionInstance} from './missionInstance'
 
-
+import { asyncForEach } from '@utils/functions'
 
 export const PartySchema = new mongoose.Schema({
     
@@ -28,6 +28,13 @@ export const PartySchema = new mongoose.Schema({
 }, {
     timestamps: true
 })
+
+PartySchema.methods.selectPopulate = function(select){
+    return this.populate({
+        path: "leader members",
+        select
+    })
+}
 
 PartySchema.statics.validateInShopStatus = (userId, newStatus) => {
     return new Promise(async (resolve, reject) => {

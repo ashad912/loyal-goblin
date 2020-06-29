@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { asyncForEach } from '../utils/methods'
+import { asyncForEach } from '../utils/functions'
 import {User} from './user'
 import { MissionInstance } from './missionInstance'
 

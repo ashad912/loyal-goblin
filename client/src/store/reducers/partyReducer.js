@@ -16,9 +16,10 @@ const partyReducer = (state = initState, action) => {
     case "CREATE_PARTY":
       return {
         ...state,
-        name: action.name,
-        _id: action.partyId,
-        leader: action.leader
+        ...action.party
+        // name: action.name,
+        // _id: action.partyId,
+        // leader: action.leader
       };
     case "ADD_MEMBER":
       return {

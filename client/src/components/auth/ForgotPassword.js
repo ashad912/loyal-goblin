@@ -1,24 +1,23 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Redirect, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Recaptcha from 'react-google-invisible-recaptcha';
+
 import Container from "@material-ui/core/Container";
-import { Typography, Backdrop } from "@material-ui/core";
-import { TextField } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import { Button } from "@material-ui/core";
 import { Paper } from "@material-ui/core";
 import styled from "styled-components";
 import { FormControl } from "@material-ui/core";
 import { FormHelperText } from "@material-ui/core";
 import { Input } from "@material-ui/core";
-import { InputLabel } from "@material-ui/core";
-import { Divider } from "@material-ui/core";
 import ErrorIcon from "@material-ui/icons/Error";
-import { asyncForEach } from "../../utils/methods";
-import { forgotPassword } from "../../store/actions/authActions";
-import { palette, uiPaths } from "../../utils/definitions";
 
-//import {labels} from '../strings/labels'
+import { forgotPassword } from "store/actions/authActions";
+
+import { asyncForEach } from "utils/functions";
+import { palette, uiPaths } from "utils/constants";
+import { PintoTypography } from 'assets/fonts'
 
 const FormContainer = styled(Container)`
   display: flex;
@@ -71,9 +70,9 @@ class ForgotPassword extends Component {
   };
 
   componentDidMount() {
-    const navbar = document.getElementById("navbar").offsetHeight;
+    //const navbar = document.getElementById("navbar").offsetHeight;
     const footer = document.getElementById("footer").offsetHeight;
-    this.setState({ fullHeightCorrection: navbar + footer });
+    this.setState({ fullHeightCorrection: footer });
   }
 
   handleChange = e => {
@@ -141,18 +140,18 @@ class ForgotPassword extends Component {
 
     if (!this.state.error.email) {
       this.recaptcha.execute();
-    }else{
+    } else {
       this.recaptcha.reset();
     }
-    
+
   };
-  
+
   onResolved = async () => {
     const res = await this.props.onConfirm(this.state.email, this.recaptcha.getResponse());
     if (res === "jwt not expired") {
       this.setState({ jwtNotExpiredError: true });
       setTimeout(() => {
-          this.props.history.push('/')
+        this.props.history.push('/')
       }, 6500);
     } else {
       this.setState({
@@ -175,7 +174,7 @@ class ForgotPassword extends Component {
           background: palette.primary.main
         }}
       >
-         <img src={uiPaths.logo} style={{width: '50vw', marginBottom:"-1rem"}} alt="logo"/>
+        <img src={uiPaths.logo} style={{ width: '50vw', marginBottom: "-1rem" }} alt="logo" />
         <FormContainer maxWidth="xs">
           <form onSubmit={this.handleSubmit} className="white">
             <Typography
@@ -196,82 +195,82 @@ class ForgotPassword extends Component {
                   </Typography>
                 </React.Fragment>
               ) : (
-                <React.Fragment>
-                  {authError ? (
-                    <ErrorPaper>
-                      <ErrorIcon
-                        style={{ marginRight: "0.5rem", color: "#ff001f" }}
-                      />
-                      <Typography>{authError}</Typography>
-                    </ErrorPaper>
-                  ) : null}
+                  <React.Fragment>
+                    {authError ? (
+                      <ErrorPaper>
+                        <ErrorIcon
+                          style={{ marginRight: "0.5rem", color: "#ff001f" }}
+                        />
+                        <Typography>{authError}</Typography>
+                      </ErrorPaper>
+                    ) : null}
 
-                  {this.state.jwtNotExpiredError ? (
-                    <React.Fragment>
-                      <Typography variant="h6">
-                        Email z linkiem do resetu hasła został wysłany w ciągu
-                        ostatniej godziny. Sprawdź swoją skrzynę odbiorczą i
-                        folder SPAM, lub spróbuj ponownie za godzinę.
+                    {this.state.jwtNotExpiredError ? (
+                      <React.Fragment>
+                        <Typography variant="h6">
+                          Email z linkiem do resetu hasła został wysłany w ciągu
+                          ostatniej godziny. Sprawdź swoją skrzynę odbiorczą i
+                          folder SPAM, lub spróbuj ponownie za godzinę.
                       </Typography>
-                      <Typography variant="caption">
-                        Za chwilę nastąpi przekierowanie na stronę logowania...
+                        <Typography variant="caption">
+                          Za chwilę nastąpi przekierowanie na stronę logowania...
                       </Typography>
-                    </React.Fragment>
-                  ) : (
-                    <React.Fragment>
-                      <Typography style={{ textAlign: "left" }}>
-                        Zapomniałaś/eś hasła? Podaj adres email przypisany do
-                        konta. Otrzymasz link, który pozwoli Ci zresetować
-                        hasło.
-                      </Typography>
-                      <FormControl
-                        fullWidth
-                        style={{ marginTop: "1rem", marginBottom: "0.5rem" }}
-                      >
-                        {/* <InputLabel
+                      </React.Fragment>
+                    ) : (
+                        <React.Fragment>
+                          <PintoTypography style={{ textAlign: "left" }}>
+                            Zapomniałaś/eś hasła? Podaj adres email przypisany do
+                            konta. Otrzymasz link, który pozwoli Ci zresetować
+                            hasło.
+                      </PintoTypography>
+                          <FormControl
+                            fullWidth
+                            style={{ marginTop: "1rem", marginBottom: "0.5rem" }}
+                          >
+                            {/* <InputLabel
                           htmlFor="input-email"
                           error={this.state.error.email}
                         >
                           Email *
                         </InputLabel> */}
-                        <Input
-                          id="email"
-                          aria-describedby="email"
-                          required
-                          placeholder="Email"
-                          error={this.state.error.email}
-                          onChange={this.handleChange}
-                          inputProps={{style:{textAlign:'center', fontSize: '1.3rem', fontFamily: 'Futura'}}}
-                        />
-                        {this.state.error.email ? (
-                          <FormHelperText error id="my-helper-text">
-                            {this.state.formError.email}
-                          </FormHelperText>
-                        ) : null}
-                      </FormControl>
+                            <Input
+                              id="email"
+                              aria-describedby="email"
+                              required
+                              placeholder="Email"
+                              error={this.state.error.email}
+                              onChange={this.handleChange}
+                              inputProps={{ style: { textAlign: 'center', fontSize: '1.3rem', fontFamily: 'Futura' } }}
+                            />
+                            {this.state.error.email ? (
+                              <FormHelperText error id="my-helper-text">
+                                {this.state.formError.email}
+                              </FormHelperText>
+                            ) : null}
+                          </FormControl>
 
-                      <Button
-                        fullWidth
-                        style={{ justifyContent: 'center', marginTop: "1.5rem", background: 'black', color: 'white', fontSize: '1.2rem', padding: '0.2rem'}}
+                          <Button
+                            fullWidth
+                            style={{ justifyContent: 'center', marginTop: "1.5rem", background: 'black', color: 'white', fontSize: '1.2rem', padding: '0.2rem' }}
 
-                        
-                        onClick={this.handleSubmit}
-                        variant="contained"
-                        color="primary"
-                      >
-                        Resetuj hasło
+
+                            onClick={this.handleSubmit}
+                            variant="contained"
+                            color="primary"
+                          >
+                            Resetuj hasło
                       </Button>
-                    </React.Fragment>
-                  )}
-                </React.Fragment>
-              )}
+                        </React.Fragment>
+                      )}
+                  </React.Fragment>
+                )}
 
-             
-              <ActionBar style={{marginTop: '2rem' }}>
+
+              <ActionBar style={{ marginTop: '2rem' }}>
                 <Typography>
                   <StyledLink
                     to="/signin"
-                    style={{ textDecoration: "none", textAlign: "left"}}
+                    style={{ textDecoration: "none", textAlign: "left" }}
                   >
                     Pamiętasz hasło?
                   </StyledLink>
@@ -281,9 +280,9 @@ class ForgotPassword extends Component {
           </form>
         </FormContainer>
         <Recaptcha
-            ref={ ref => this.recaptcha = ref }
-            sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
-            onResolved={ this.onResolved }
+          ref={ref => this.recaptcha = ref}
+          sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+          onResolved={this.onResolved}
         />
       </div>
     );

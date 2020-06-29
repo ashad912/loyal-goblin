@@ -1,22 +1,23 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { signIn } from '../../store/actions/authActions'
-import { Redirect, Link } from 'react-router-dom'
+import Recaptcha from 'react-google-invisible-recaptcha';
+import styled from 'styled-components'
+
+import { Link } from 'react-router-dom'
 import Container from '@material-ui/core/Container';
 import { Typography } from '@material-ui/core';
-import { TextField } from '@material-ui/core';
 import { Button } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
-import styled from 'styled-components'
 import { FormControl } from '@material-ui/core';
 import { FormHelperText } from '@material-ui/core';
 import { Input } from '@material-ui/core';
-import { InputLabel } from '@material-ui/core';
-import { Divider } from '@material-ui/core';
 import ErrorIcon from '@material-ui/icons/Error';
-import {asyncForEach} from '../../utils/methods'
-import { palette, uiPaths } from '../../utils/definitions';
-import Recaptcha from 'react-google-invisible-recaptcha';
+
+import { signIn } from 'store/actions/authActions'
+
+import {asyncForEach} from 'utils/functions'
+import { palette, uiPaths } from 'utils/constants';
+
 
 //import {labels} from '../strings/labels'
 
@@ -48,10 +49,10 @@ const ActionBar = styled.div`
     margin-top: 2rem;
 `
 const StyledLink = styled(Link)`
-color: white;
-&:visited {
-  color: white;
-}
+    color: white;
+    &:visited {
+        color: white;
+    }
 `
 
 class SignIn extends Component {
@@ -70,12 +71,17 @@ class SignIn extends Component {
     }
 
     componentDidMount() {
-        const navbar = document.getElementById("navbar").offsetHeight;
+        //const navbar = document.getElementById("navbar").offsetHeight;
         const footer = document.getElementById("footer").offsetHeight;
-        this.setState({fullHeightCorrection: navbar+footer})
+        this.setState({fullHeightCorrection: footer})
     }
     
-
+    // componentWillUnmount(){
+    //     if(this.recaptcha){
+    //         this.recaptcha.reset();
+    //     }
+        
+    // }
     // componentDidUpdate(prevProps, prevState){
     //     const targets = ['email', 'password']
         
@@ -200,7 +206,7 @@ class SignIn extends Component {
     }
 
     onResolved = () => {
-        this.props.signIn({email: this.state.email, password: this.state.password})
+        this.props.signIn({email: this.state.email, password: this.state.password, recaptcha: this.recaptcha.getResponse()})
     }
 
 

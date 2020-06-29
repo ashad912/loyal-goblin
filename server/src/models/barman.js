@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken"
 
 const BarmanSchema = new mongoose.Schema({
     userName: {
-        type:String,
+        type: String,
         required: true
     },
     password: {

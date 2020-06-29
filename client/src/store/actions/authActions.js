@@ -109,7 +109,7 @@ export const authCheck =  (params) => {
                 delete profile._id
                 dispatch( {type: "AUTH_SUCCESS", profile, uid}) //DISPATCH IS SYNCHRONOUS!!!
 
-                resolve(uid)
+                resolve(res.data)
                 
             } catch (e) {
                 dispatch( {type: "NO_AUTH", error: e})
@@ -125,11 +125,11 @@ export const authCheck =  (params) => {
 
 
 
-export const forgotPassword = (email, recaptchaToken) => {
+export const forgotPassword = (email, recaptcha) => {
     return async dispatch => {
         try {
             if(email){
-                await axios.post('/user/forgotPassword', {email, recaptchaToken})
+                await axios.post('/user/forgotPassword', {email, recaptcha})
 
             }
 
@@ -146,12 +146,12 @@ export const forgotPassword = (email, recaptchaToken) => {
 }
             
 
-export const changePassword = (oldPassword, password, confirmPassword, token) => {
+export const changePassword = (oldPassword, password, confirmPassword, recaptcha) => {
     return async dispatch => {
         try {
             if(password === confirmPassword){
                 //console.log(oldPassword, password, confirmPassword, token)
-                const res = await axios.patch('/user/changePassword', {oldPassword, password, confirmPassword, token})
+                const res = await axios.patch('/user/changePassword', {oldPassword, password, confirmPassword, recaptcha})
                 if(res){
                     signOut()
                 }
@@ -166,11 +166,11 @@ export const changePassword = (oldPassword, password, confirmPassword, token) =>
 
 
 
-export const resetPassword = (token, password, confirmPassword, recaptchaToken) => {
+export const resetPassword = (token, password, confirmPassword, recaptcha) => {
     return async dispatch => {
         try {
             if(password === confirmPassword){
-                const res = await axios.patch('/user/reset', {token, password, confirmPassword, recaptchaToken})
+                const res = await axios.patch('/user/reset', {token, password, confirmPassword, recaptcha})
                 if(res){
                     //signOut()
                 }

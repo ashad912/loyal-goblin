@@ -2,36 +2,31 @@ import React from "react";
 import { compose } from "redux";
 import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
-import Loading from "../components/layout/Loading";
+import Loading from "components/layout/Loading";
 
 const withAuth = WrappedComponent => {
   return class extends React.Component {
-    // state = {
-    //   confirmLoaded: false
-    // }
 
-    // componentDidUpdate = (prevProps) =>  {
-    //   if(prevProps.connection.auth.uid === null &&  === false && this.state.confirmLoaded === false){
-    //     this.setState({
-    //       confirmLoaded: true
-    //     })
-    //   }
-    // }
-
-
+    passProps = () => {
+      
+    }
+    
     render() {
 
-      if ((this.props.connection.loading && !this.props.auth.uid) || this.props.auth.init) {
+      if (this.props.init) {
         return <Loading />;
       }
 
-      if (!this.props.auth.uid) {
+      if (!this.props.uid) {
         return <Redirect to="/signin" />;
       }
 
+      const propsToPass = {...this.props}
+      delete propsToPass.init 
+
       return (
         <React.Fragment>
-          <WrappedComponent {...this.props} />
+          <WrappedComponent {...propsToPass} />
         </React.Fragment>
       );
     }
@@ -39,8 +34,8 @@ const withAuth = WrappedComponent => {
 };
 const mapStateToProps = state => {
   return {
-    auth: state.auth,
-    connection: state.connection
+    uid: state.auth.uid,
+    init: state.auth.init,
   };
 };
 

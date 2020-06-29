@@ -12,8 +12,8 @@ import {ClassAwardsSchema} from '@schemas/ClassAwardsSchema'
 import {LoyalSchema} from '@schemas/LoyalSchema'
 
 import arrayUniquePlugin from 'mongoose-unique-array'
-import { asyncForEach} from '@utils/methods'
-import { levelingEquation } from "@utils/definitions";
+import { asyncForEach} from '@utils/functions'
+import { levelingEquation } from "@utils/constants";
 
 import userStore from '@store/user.store'
 
@@ -410,7 +410,21 @@ UserSchema.methods.clearActiveOrder = async function () {
 
 }
 
-
+UserSchema.methods.updateActivityDate = async function (query) {
+    const user = this
+    const autoFetch = query && query.autoFetch && ((new Date().getTime() % 3600000) < 5000) //verify autoFetch query (available to 5 seconds after start of hour)
+            
+    if(!autoFetch){
+        let sub
+        if(user.lastActivityDate){
+            sub = moment().valueOf() - moment(user.lastActivityDate).valueOf()
+        }
+        if(!user.lastActivityDate || (sub && sub >= 60 * 1000)){ //1 min db field refresh
+            user.lastActivityDate = moment().toISOString()
+            await user.save()
+        }
+    }
+}
 
 UserSchema.methods.toJSON = function () { //like a middleware from express, we can use it with everythin
     const user = this
@@ -506,7 +520,7 @@ UserSchema.methods.partyPopulate = function () {
         path: "party",
         populate: {
             path: "leader members",
-            select: "_id name avatar attributes experience userPerks equipped bag class experience",
+            select: "_id name avatar attributes experience userPerks equipped bag class experience activeOrder",
             populate: {
             path: "bag",
             populate: {

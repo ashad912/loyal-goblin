@@ -1,6 +1,5 @@
 import React from "react";
-import {compose} from 'redux'
-import { BrowserRouter, Route, Switch, withRouter } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import {Workbox, messageSW} from 'workbox-window';
 import { StylesProvider, ThemeProvider } from "@material-ui/styles";
@@ -15,21 +14,25 @@ import ConnectionSpinnerDialog from "./components/layout/ConnectionSpinnerDialog
 import ConnectionSnackbar from "./components/layout/ConnectionSnackbar";
 import ResetPassword from "./components/auth/ResetPassword";
 import PageNotFound from "./components/layout/PageNotFound";
-import Navbar from "./components/layout/Navbar";
+import Navbar from "./components/layout/navbar/Navbar";
 import Footer from "./components/layout/Footer";
-import Root from "./components/Root";
-import Shop from "./components/screens/shop/Shop";
+import TabsRoot from "./components/tabs/TabsRoot";
+import Shop from "./components/shop/Shop";
 import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
 import ForgotPassword from "./components/auth/ForgotPassword";
-import MissionInstance from "./components/screens/missionInstance/MissionInstance";
+import MissionInstance from "./components/missionInstance/MissionInstance";
+import Loading from "components/layout/Loading";
+import OfflineModal from "./components/auth/OfflineModal";
+import CharacterCreation from "components/characterCreation/CharacterCreation";
 
-import { palette } from "./utils/definitions";
+
+import { palette } from "./utils/constants";
 
 import { authCheck } from "./store/actions/authActions";
 import { resetConnectionError } from "./store/actions/connectionActions";
 import { updateParty } from "./store/actions/partyActions";
-import OfflineModal from "./components/auth/OfflineModal";
+
 
 const goblinTheme = createMuiTheme({
   palette: {
@@ -68,21 +71,29 @@ class App extends React.Component {
 
   constructor(props){
     super(props);
-    this.handleOnlineState = this.handleOnlineState.bind(this); 
-    this.handleOfflineState = this.handleOfflineState.bind(this); 
   }
 
   state = {
-    online: true
+    online: true,
+    loaded: false,
+    HomeComponent: Loading
   }
 
 
   async componentDidMount() {
     const prod = process.env.NODE_ENV === 'production'
     const online = prod ? navigator.onLine : true
-    if(process.env.NODE_ENV === 'production'){
+
+    window.addEventListener("popstate", e => {
+      // Reload after popstate (to update client)
+      window.location.reload()
+    });
+
+
+    if(prod){
       window.addEventListener('online', this.handleOnlineState, false);
       window.addEventListener('offline', this.handleOfflineState, false);
+      
     }
     
     if (prod && 'serviceWorker' in navigator) {
@@ -126,45 +137,66 @@ class App extends React.Component {
           wb.addEventListener('externalwaiting', showSkipWaitingPrompt);
         
           registration = await wb.register();
-  }
+    }
 
 
-    window.addEventListener("popstate", e => {
-      // Reload after popstate (to update client)
-      window.location.reload()
-    });
-
+    
     //HISTORY BACK PREVENT - https://medium.com/@subwaymatch/disabling-back-button-in-react-with-react-router-v5-34bb316c99d7
     //history.listen(...), history.go(...)
 
     //CHECK AUTH ON APP LOAD
     if(online){
 
-      await this.props.authCheck();
+      const user = await this.props.authCheck();
+      const charCreated = user && user.name && user.class
+      const HomeComponent = charCreated ? TabsRoot : CharacterCreation
+      
+      
+      this.setupComponent(HomeComponent, charCreated)
+      
+      
   
-      //Update profile data on first full hour and after next 60 minutes
-      this.firstUpdate = setTimeout(() => {
-        this.props.authCheck({ autoFetch: true });
-        this.props.onPartyUpdate({ autoFetch: true });
-        this.nextUpdates = setInterval(() => {
-          this.props.authCheck({ autoFetch: true });
-          this.props.onPartyUpdate({ autoFetch: true });
-        }, 3600000);
-      }, 3601000 - (new Date().getTime() % 3600000));
-  
-      //For testing
-      // setTimeout(() => {
-      //   this.props.authCheck();
-      //   this.props.onPartyUpdate()
-      // }, 5000);
+      
     }else{
       this.setState({online: false})
     }
   }
 
-  componentWillUnmount() {
+  setupComponent(HomeComponent, condition){
+    this.setState({
+      HomeComponent,
+      loaded: true
+    }, () => {
+      
+      if(condition){
+        //Update profile data on first full hour and after next 60 minutes
+        this.firstUpdate = setTimeout(() => {
+          this.props.authCheck({ autoFetch: true });
+          this.props.onPartyUpdate({ autoFetch: true });
+          this.nextUpdates = setInterval(() => {
+            this.props.authCheck({ autoFetch: true });
+            this.props.onPartyUpdate({ autoFetch: true });
+          }, 3600000);
+        }, 3601000 - (new Date().getTime() % 3600000));
+
+
+        //For testing
+        // setTimeout(() => {
+        //   this.props.authCheck();
+        //   this.props.onPartyUpdate()
+        // }, 5000);
+      }
+      
+    })
+  }
+
+  unmountTimers(){
     clearTimeout(this.firstUpdate);
     clearInterval(this.nextUpdates);
+  }
+
+  componentWillUnmount() {
+    this.unmountTimers()
     window.removeEventListener('online', this.handleOnlineState, false);
     window.removeEventListener('offline', this.handleOfflineState, false);
   }
@@ -172,6 +204,15 @@ class App extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if(prevState.online !== this.state.online && this.state.online){
       window.location.reload()
+    }
+
+    if(this.state.loaded && (!prevProps.userName && this.props.userName)){
+      this.setupComponent(TabsRoot, true)
+    }
+
+    if(this.state.loaded && (prevProps.userName && !this.props.userName)){
+      this.unmountTimers()
+      this.setupComponent(CharacterCreation, true)
     }
     //USEFUL COMPONENT UPDATE DIAGNOSTICS
     // Object.entries(this.props).forEach(
@@ -186,10 +227,6 @@ class App extends React.Component {
     // }
   }
 
-  closeToast = () => {
-    document.getElementById("toast").style.display = "none";
-  };
-
   handleOnlineState = () => {
     this.setState({online: true})
   }
@@ -199,6 +236,7 @@ class App extends React.Component {
   }
 
   render() {
+    
     if(!this.state.online){
       return(   
         <StylesProvider injectFirst>
@@ -208,6 +246,12 @@ class App extends React.Component {
         </StylesProvider>
       )
     }
+
+    if(!this.state.loaded){
+      return null
+    }
+
+
     return (
       <BrowserRouter>
         <StylesProvider injectFirst>
@@ -215,7 +259,7 @@ class App extends React.Component {
             <div className="App">
               <Navbar />
               <Switch>
-                <Route exact path="/" component={withAuth(Root)} />
+                <Route exact path="/" component={withAuth(this.state.HomeComponent)} />
                 <Route exact path="/shop" component={withAuth(Shop)} />
                 <Route
                   exact
@@ -244,23 +288,17 @@ class App extends React.Component {
             />
             <ConnectionSpinnerDialog />
             <SocketConfig />
-            {/* <Toast id="toast" onClick={this.closeToast}>
-              Dostępna aktualizacja!
-              <p
-                style={{
-                  fontSize: "1.2rem",
-                  fontWeight: "lighter",
-                  color: "rgba(220, 220, 220, 1)"
-                }}
-              >
-                Zamknij aplikację i uruchom ją ponownie.
-              </p>
-            </Toast> */}
             <OfflineModal open={!this.state.online}/>
           </ThemeProvider>
         </StylesProvider>
       </BrowserRouter>
     );
+  }
+}
+
+const mapStateToProps = (state) => {
+  return {
+      userName: state.auth.profile.name,
   }
 }
 
@@ -273,4 +311,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 //redux compose to join with hoc/router
-export default connect(null, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);

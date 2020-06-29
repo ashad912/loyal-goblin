@@ -3,11 +3,16 @@
  */
 
 import supertest from 'supertest'
-import server from '@app'
 import {User} from '@models/user'
 import {userOne, userTwo, userThree, setup, restore} from '@tests/utils/integration/user'
 
-const app = () => supertest(server)
+
+// Little hack to have loaders invoked, import/export is synchronous
+let app
+beforeAll(async () => {
+    const server = await require('@app').default()
+    app = () => supertest(server)
+})
 
 beforeEach(setup)
 
@@ -16,9 +21,10 @@ describe('Login endpoint', () => {
     beforeEach(restore)
 
     it('should login existing user', async () => {
+        
         const res = await app().post('/user/login').send({
             email: userOne.email,
-            password: userOne.password
+            password: userOne.password,
         })
     
         //console.log(res)
@@ -37,9 +43,7 @@ describe('Login endpoint', () => {
             email: userTwo.email,
             password: 'dummypassword'
         })
-    
-        //console.log(res)
-    
+        
         expect(res.status).toBe(400)
     
         const user = await User.findById(userTwo._id)

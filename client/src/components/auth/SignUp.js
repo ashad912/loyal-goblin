@@ -1,21 +1,22 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { signUp } from "../../store/actions/authActions";
-import { Redirect, Link } from "react-router-dom";
+import styled from "styled-components";
+import { Link } from "react-router-dom"
+
 import Container from "@material-ui/core/Container";
 import { Typography } from "@material-ui/core";
 import Recaptcha from 'react-google-invisible-recaptcha';
 import { Button } from "@material-ui/core";
 import { Paper } from "@material-ui/core";
-import styled from "styled-components";
 import { FormControl } from "@material-ui/core";
 import { FormHelperText } from "@material-ui/core";
 import { Input } from "@material-ui/core";
-import { InputLabel } from "@material-ui/core";
-import { Divider } from "@material-ui/core";
 import ErrorIcon from "@material-ui/icons/Error";
-import {asyncForEach} from '../../utils/methods'
-import { palette, uiPaths } from '../../utils/definitions';
+
+import { signUp } from "store/actions/authActions";
+
+import {asyncForEach} from 'utils/functions'
+import { palette, uiPaths } from 'utils/constants';
 
 //import {labels} from '../strings/labels'
 
@@ -27,10 +28,6 @@ const FormContainer = styled(Container)`
     background: ${palette.primary.main};
 `
 
-const StyledPaper = styled(Paper)`
-    padding: 1rem;
-    border: 1px solid #eeeeee;
-`
 
 const ErrorPaper = styled(Paper)`
     display: flex;
@@ -73,9 +70,9 @@ class SignUp extends Component {
   };
 
   componentDidMount() {
-    const navbar = document.getElementById("navbar").offsetHeight;
+    //const navbar = document.getElementById("navbar").offsetHeight;
     const footer = document.getElementById("footer").offsetHeight;
-    this.setState({fullHeightCorrection: navbar+footer})
+    this.setState({fullHeightCorrection: footer})
 }
 
   handleChange = e => {
@@ -232,7 +229,7 @@ class SignUp extends Component {
   }
 
   onResolved = () => {
-    this.props.signUp({email: this.state.email, password: this.state.password, token: this.recaptcha.getResponse()})
+    this.props.signUp({email: this.state.email, password: this.state.password, recaptcha: this.recaptcha.getResponse()})
   }
 
   render() {

@@ -18,13 +18,13 @@ export const updateParty = (params) => {
                         dispatch({type: "UPDATE_PROFILE_BAG", bag: res.data.bag})
                     }
                     
-                    
                     if(!socket.connected){
                         //console.log('connect from updateParty')
                         socket.open()
                         socketAuthenticateEmit()
                     }
-                    
+
+                    return true
                 }else{
                     dispatch({type: "DELETE_PARTY"})
                 }
@@ -35,12 +35,13 @@ export const updateParty = (params) => {
     }
 }
 
-export const createParty =  (name, leader) => {
+export const createParty = (name, leader) => {
     return async dispatch => {
         try {
             const res = await axios.post('/party/create', {name})
             
-            dispatch({type: "CREATE_PARTY", name, partyId: res.data.partyId, leader})
+            //dispatch({type: "CREATE_PARTY", name, partyId: res.data.partyId, leader})
+            dispatch({type: "CREATE_PARTY", party: res.data})
             
             if(!socket.connected){
                 //console.log('connect from createParty')

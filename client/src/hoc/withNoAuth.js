@@ -9,11 +9,11 @@ const withNoAuth = WrappedComponent => {
 
 
     render() {
-      if ((this.props.connection.loading && this.props.auth.uid) || this.props.auth.init) {
+      if (this.props.init) {
         return <Loading />;
       }
 
-      if (this.props.auth.uid) {
+      if (this.props.uid) {
         return <Redirect to="/" />;
       }
 
@@ -27,8 +27,8 @@ const withNoAuth = WrappedComponent => {
 };
 const mapStateToProps = state => {
   return {
-    auth: state.auth,
-    connection: state.connection
+    uid: state.auth.uid,
+    init: state.auth.init,
   };
 };
 

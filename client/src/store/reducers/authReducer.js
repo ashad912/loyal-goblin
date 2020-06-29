@@ -10,6 +10,7 @@ export const initState = {
 };
 
 const authReducer = (state = initState, action) => {
+  let profile;
   switch (
     action.type //it ll generate thing to authReducer not firebaseReducer remember!
   ) {
@@ -72,17 +73,25 @@ const authReducer = (state = initState, action) => {
         profile: action.profile,
         init: false
       };
-      case "UPDATE_PROFILE_BAG":
-        const tempProfile = {...state.profile}
-        tempProfile.bag = [...action.bag]
-        return {
-          ...state,
-          profile: tempProfile,
-          init: false
-        };
+    case "UPDATE_PROFILE_BAG":
+      profile = {...state.profile}
+      profile.bag = [...action.bag]
+      return {
+        ...state,
+        profile: profile,
+        init: false
+      };
     case "UPDATE_ACTIVE_ORDER":
-      const profile = {...state.profile}
+      profile = {...state.profile}
       profile.activeOrder = action.activeOrder
+      return {
+        ...state,
+        profile: {...profile},
+        init: false
+      };
+    case "UPDATE_PERKS":
+      profile = {...state.profile}
+      profile.userPerks = action.userPerks
       return {
         ...state,
         profile: {...profile},
@@ -93,17 +102,17 @@ const authReducer = (state = initState, action) => {
         ...state,
         multipleSession: true
       }
-      case 'GET_ALL_NAMES':
-        const allNames = action.names.map(user => user.name)
-        return{
-          ...state,
-          allNames: allNames
-        }
-        case 'CLEAR_ALL_NAMES':
-          return{
-            ...state,
-            allNames: []
-          }
+    case 'GET_ALL_NAMES':
+      const allNames = action.names.map(user => user.name)
+      return{
+        ...state,
+        allNames: allNames
+      }
+    case 'CLEAR_ALL_NAMES':
+      return{
+        ...state,
+        allNames: []
+      }
     default:
       return state;
   }

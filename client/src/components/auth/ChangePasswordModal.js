@@ -10,8 +10,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Recaptcha from 'react-google-invisible-recaptcha';
 import { Typography } from "@material-ui/core";
 import { changePassword, signOut } from "../../store/actions/authActions";
-import { PintoTypography } from "../../utils/fonts";
-import { palette } from "../../utils/definitions";
+import { PintoTypography } from "../../assets/fonts";
+import { palette } from "../../utils/constants";
 
 
 class ChangePasswordModal extends React.Component {

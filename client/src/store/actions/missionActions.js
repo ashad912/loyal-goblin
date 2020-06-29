@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { modifyUserStatusEmit, refreshMissionsEmit, addItemEmit, deleteItemEmit, finishMissionEmit} from '../../socket'
+import { authCheck } from './authActions';
 
 const axiosInstance = axios.create({}); //to avoid interceptors "index.js"
 
@@ -45,17 +46,16 @@ export const getMissionList = () => {
     
 }
 
-export const createInstance = (missionId, partyId) => {
-    return (dispatch) => {
+export const createInstance = (missionId) => {
+    return (dispatch, getState) => {
         return new Promise (async (resolve, reject) => {
             try {
                 const res = await axios.post('/mission/createInstance', {_id: missionId})
                 const missionInstance = res.data.missionInstance
                 const imgSrc = res.data.imgSrc
 
-
                 dispatch(setActiveInstance(missionInstance, imgSrc))
-                refreshMissionsEmit(partyId)
+                refreshMissionsEmit(getState().party._id)
                 resolve(missionInstance)
             }catch (e) {
                 reject(e)     
@@ -64,14 +64,16 @@ export const createInstance = (missionId, partyId) => {
     }
 }
 
-export const deleteInstance = (partyId) => {
-    return (dispatch) => {
+export const deleteInstance = () => {
+    return (dispatch, getState) => {
         return new Promise (async (resolve, reject) => {
             try {
                 await axios.delete('/mission/deleteInstance')
     
+                dispatch(authCheck())
                 dispatch(getMissionList()) 
-                refreshMissionsEmit(partyId)
+                
+                refreshMissionsEmit(getState().party._id)
                 resolve()
             }catch (e) {
                 reject(e)     
@@ -81,17 +83,21 @@ export const deleteInstance = (partyId) => {
     
 }
 
-export const finishInstance = (partyId) => {
-    return new Promise (async (resolve, reject) => {
-        try {
-            const res = await axios.delete('/mission/finishInstance')
-            
-            finishMissionEmit(res.data, partyId) // send awards to socket to broadcast it to party ? only mission id to save data
-            resolve(res.data)
-        }catch (e) {
-            reject(e)     
-        } 
-    })
+export const finishInstance = () => {
+    return (dispatch, getState) => {
+        return new Promise (async (resolve, reject) => {
+            try {
+                const res = await axios.delete('/mission/finishInstance')
+                
+                dispatch(setActiveInstance(null, null))
+                finishMissionEmit(res.data, getState().party._id) // send awards to socket to broadcast it to party ? only mission id to save data
+                resolve(res.data)
+            }catch (e) {
+                reject(e)     
+            } 
+        })
+    }
+    
 }
 
 

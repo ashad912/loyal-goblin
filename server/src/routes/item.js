@@ -1,9 +1,10 @@
 import express from 'express'
-import { savePNGImage, saveSVGImage, removeImage } from '../utils/methods'
-import { ItemModel } from '../models/itemModel';
-import { User } from '../models/user';
-import { adminAuth } from '../middleware/adminAuth';
-import { Item } from '../models/item';
+import { ItemModel } from '@models/itemModel';
+import { User } from '@models/user';
+import { adminAuth } from '@middleware/adminAuth';
+import { Item } from '@models/item';
+import { savePNGImage, saveSVGImage, removeImage, getEndpointError } from '@utils/functions'
+import {ERROR, INFO, WARN} from '@utils/constants'
 
 
 const uploadIconPath = "../static/images/items/"
@@ -12,84 +13,77 @@ const uploadAltAppearancePath = "../static/images/appearance/alt/"
 
 const router = new express.Router
 
-
-
 ////ADMIN-SIDE
 
 ///MODEL
 
 
-router.get('/itemModels', adminAuth, async(req,res) => {
-    try{
+router.get('/itemModels', adminAuth, async (req, res, next) => {
+    try {
         const itemModels = await ItemModel.find({}).populate({
             path: "perks.target.disc-product",
-            select: '_id name' 
+            select: '_id name'
         })
 
         res.status(200).send(itemModels)
-    }catch(e){
-        console.log(e.message)
-        res.status(500).send(e.message)
+    } catch (e) {
+        next(e)
     }
 })
 
 
 //OK
-router.post('/createModel', adminAuth, async (req, res) =>{
-    
+router.post('/createModel', adminAuth, async (req, res, next) => {
 
     const itemModel = new ItemModel(req.body)
-    
+
     try {
-        await itemModel.save() //this method holds updated user!
-        console.log(itemModel)
+        await itemModel.save()
         res.status(201).send(itemModel._id)
     } catch (e) {
-        console.log(e.message)
-        res.status(400).send(e.message)
+        next(e)
     }
 })
 
-router.patch('/uploadModelImages/:id', adminAuth, async (req, res) => {
-    try{
+router.patch('/uploadModelImages/:id', adminAuth, async (req, res, next) => {
+    try {
         if (!req.files) {
-            throw new Error("No file(s) provided")
+            throw getEndpointError(WARN, 'No file(s) provided')
         }
 
         const itemModel = await ItemModel.findById(req.params.id)
-        if(!itemModel){
-            throw new Error('Item model does not exist!')
+        if (!itemModel) {
+            throw getEndpointError(WARN, 'Item model does not exist', null, 404)
         }
 
         const date = Date.now()
 
-        if(req.files.icon){
+        if (req.files.icon) {
             let icon = req.files.icon.data
             const imgSrc = await savePNGImage(icon, itemModel._id, uploadIconPath, itemModel.imgSrc, date)
             itemModel.imgSrc = imgSrc
         }
-        
-        if(req.files.appearance){
+
+        if (req.files.appearance) {
             let appearance = req.files.appearance.data
             const appearanceSrc = await saveSVGImage(appearance, itemModel._id, uploadAppearancePath, itemModel.appearanceSrc, date)
             itemModel.appearanceSrc = appearanceSrc
         }
 
-        if(req.files.altAppearance){
+        if (req.files.altAppearance) {
             let altAppearance = req.files.altAppearance.data
             const altAppearanceSrc = await saveSVGImage(altAppearance, itemModel._id, uploadAltAppearancePath, itemModel.altAppearanceSrc, date)
             itemModel.altAppearanceSrc = altAppearanceSrc
         }
-        
+
 
         await itemModel.save()
 
         res.status(200).send()
-    }catch(e){
-        console.log(e.message)
-        res.status(400).send(e.message)
+    } catch (e) {
+        next(e)
     }
-  
+
 })
 
 //OK
@@ -97,70 +91,70 @@ router.patch("/updateModel", adminAuth, async (req, res, next) => {
     let updates = Object.keys(req.body);
     const id = req.body._id
 
+    try{
+        
+        updates = updates.filter((update) => {
+            return update !== '_id' || update !== "imgSrc"
+        })
 
-    updates = updates.filter((update) => {
-        return update !== '_id' || update !== "imgSrc"
-    })
+        const forbiddenUpdates = [""];
 
-    const forbiddenUpdates = [""];
-  
-    const isValidOperation = updates.every(update => {
-        return !forbiddenUpdates.includes(update);
-    });
-  
-    if (!isValidOperation) {
-        return res.status(400).send({ error: "Invalid update!" });
-    }
-  
-    try {
-      const itemModel = await ItemModel.findById(id)
+        const isValidOperation = updates.every(update => {
+            return !forbiddenUpdates.includes(update);
+        });
 
-      if(!itemModel){
-        res.status(404).send()
-      }
-  
-      updates.forEach(async (update) => {
-            itemModel[update] = req.body[update]; //rally[update] -> rally.name, rally.password itd.
-      });
-
-      const equippableItems = ['weapon', 'feet', 'hands', 'head', 'chest', 'legs', 'ring']
-
-      if(!equippableItems.includes(itemModel.type)){
-        if(itemModel.appearanceSrc){
-            await removeImage(uploadAppearancePath, itemModel.appearanceSrc)
-            itemModel.appearanceSrc = null
+        if (!isValidOperation) {
+            throw getEndpointError(WARN, 'Invalid update')
         }
-        if(itemModel.altAppearanceSrc){
-            await removeImage(uploadAltAppearancePath, itemModel.altAppearanceSrc)
-            itemModel.altAppearanceSrc = null
-        }
-      }
+    
+        const itemModel = await ItemModel.findById(id)
 
-      if(itemModel.twoHanded){
-        if(itemModel.altAppearanceSrc){
-            await removeImage(uploadAltAppearancePath, itemModel.altAppearanceSrc)
-            itemModel.altAppearanceSrc = null
+        if (!itemModel) {
+            throw getEndpointError(WARN, 'Item model does not exist', null, 404)
         }
-      }
-  
-      await itemModel.save();
 
-      res.send(itemModel._id);
+        updates.forEach(async (update) => {
+            itemModel[update] = req.body[update];
+        });
+
+        const equippableItems = ['weapon', 'feet', 'hands', 'head', 'chest', 'legs', 'ring']
+
+        if (!equippableItems.includes(itemModel.type)) {
+            if (itemModel.appearanceSrc) {
+                await removeImage(uploadAppearancePath, itemModel.appearanceSrc)
+                itemModel.appearanceSrc = null
+            }
+            if (itemModel.altAppearanceSrc) {
+                await removeImage(uploadAltAppearancePath, itemModel.altAppearanceSrc)
+                itemModel.altAppearanceSrc = null
+            }
+        }
+
+        if (itemModel.twoHanded) {
+            if (itemModel.altAppearanceSrc) {
+                await removeImage(uploadAltAppearancePath, itemModel.altAppearanceSrc)
+                itemModel.altAppearanceSrc = null
+            }
+        }
+
+        await itemModel.save();
+
+        res.send(itemModel._id);
     } catch (e) {
-      res.status(500).send(e.message);
+        next(e)
     }
-  });
+});
 
 
 
 //OK
-router.delete('/removeModel', adminAuth, async (req, res) =>{
+router.delete('/removeModel', adminAuth, async (req, res, next) => {
 
     try {
-        const itemModel = await ItemModel.findOne({_id: req.body._id})
+        const itemModel = await ItemModel.findOne({ _id: req.body._id })
 
-        if(!itemModel){
-            return res.status(404).send()
+        if (!itemModel) {
+            throw getEndpointError(WARN, 'Item model does not exist', null, 404)
         }
 
         await removeImage(uploadIconPath, itemModel.imgSrc)
@@ -169,7 +163,7 @@ router.delete('/removeModel', adminAuth, async (req, res) =>{
 
         res.send()
     } catch (e) {
-        res.status(500).send(e.message)
+        next(e)
     }
 })
 
@@ -187,7 +181,7 @@ router.delete('/removeModel', adminAuth, async (req, res) =>{
 /// TEST ADMIN -> INSTANCE
 
 //OK
-router.post('/create', adminAuth, async (req, res) =>{
+router.post('/create', adminAuth, async (req, res, next) => {
 
 
     const item = new Item(req.body)
@@ -195,42 +189,42 @@ router.post('/create', adminAuth, async (req, res) =>{
     try {
         const user = await User.findById(req.body.owner)
 
-        if(!user){
-            throw Error('Invalid owner!')
+        if (!user) {
+            throw getEndpointError(WARN, 'Invalid owner')
         }
 
         const itemModel = await ItemModel.findById(req.body.itemModel)
 
-        if(!itemModel){
-            throw Error('Invalid model!')
+        if (!itemModel) {
+            throw getEndpointError(WARN, 'Invalid model')
         }
-        
+
         await item.save()
         //console.log(item)
 
         //NOTE: without using 'post save' middleware (adding to bag) due to optimalization issues - less queries for adding awards
 
         await User.updateOne(
-            {_id: req.body.owner},
+            { _id: req.body.owner },
             { $addToSet: { bag: item._id } }
         )
         // user.bag = [...user.bag, item._id]
         // await user.save()
-        
+
         res.status(201).send(item)
     } catch (e) {
-        res.status(400).send(e.message)
+        next(e)
     }
 })
 
 
 //OK
-router.delete('/remove', adminAuth, async (req, res) =>{
+router.delete('/remove', adminAuth, async (req, res, next) => {
 
     try {
-        const item = await Item.findOne({_id: req.body._id})
+        const item = await Item.findOne({ _id: req.body._id })
 
-        if(!item){
+        if (!item) {
             res.status(404).send()
         }
 
@@ -238,7 +232,7 @@ router.delete('/remove', adminAuth, async (req, res) =>{
 
         res.send()
     } catch (e) {
-        res.status(500).send(e.message)
+        next(e)
     }
 })
 

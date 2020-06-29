@@ -4,16 +4,19 @@
 
 import supertest from 'supertest'
 import moment from 'moment'
-import server from '@app'
 import {Rally} from '@models/rally'
 import {admin, setup, restore} from '@tests/utils/integration/rally'
 import rallyStore from '@store/rally.store'
 
-const app = () => supertest(server)
+
+// Little hack to have loaders invoked, import/export is synchronous
+let app
+beforeAll(async () => {
+    const server = await require('@app').default()
+    app = () => supertest(server)
+})
 
 beforeEach(setup)
-
-
 
 describe('Rally create endpoint', () => {
 

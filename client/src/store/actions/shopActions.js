@@ -15,6 +15,7 @@ export const getShop = (socketConnectionStatus) => {
             dispatch({type: 'GET_SHOP', shop: res.data.shop})
             dispatch({type: 'UPDATE_ACTIVE_ORDER', activeOrder: res.data.activeOrder})
             dispatch({type: "UPDATE_PARTY", party: res.data.party})
+            dispatch({type: 'UPDATE_PERKS', userPerks: res.data.userPerks})
             if(res.data.party){
                 refreshPartyEmit(res.data.party._id)
             }
@@ -44,7 +45,7 @@ export const leaveShop = () => {
     }
 }
 
-export const activateOrder = (order, token) => {
+export const activateOrder = (order, recaptcha) => {
     return async dispatch => {
         try {
             const tempOrder = cloneDeep(order)
@@ -66,7 +67,7 @@ export const activateOrder = (order, token) => {
                 return {profile: user, products: tempOrder[user]}
             })
 
-            const res = await axios.patch('/product/activate', {order: arrayOrder, token})
+            const res = await axios.patch('/product/activate', {order: arrayOrder, recaptcha})
             dispatch({type: 'UPDATE_ACTIVE_ORDER', activeOrder: res.data })
 
         } catch (e) {
