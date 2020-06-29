@@ -516,7 +516,7 @@ class Shop extends React.Component {
     // console.log(this.state.activeUser,activeUser, this.props.party)
     if (activeUser) {
       return (
-        <div role="application" style={{minHeight:`calc(100vh - (${this.state.fullHeightCorrection}px)`}}>
+        <div date-testid="application" style={{minHeight:`calc(100vh - (${this.state.fullHeightCorrection}px)`}}>
           {this.props.activeOrder.length > 0 && this.state.activeUser ? (
             <VerificationPage user={this.props.auth} party={this.props.party} />
           ) : (
