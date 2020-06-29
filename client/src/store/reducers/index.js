@@ -9,7 +9,6 @@ import rallyReducer from './rallyReducer'
 import { combineReducers} from 'redux'
 
 
-
 export default combineReducers( {
     auth: authReducer,
     connection: connectionReducer,
@@ -19,5 +18,3 @@ export default combineReducers( {
     rally: rallyReducer,
     communication: communicationReducer
 })
-
-export default rootReducer
