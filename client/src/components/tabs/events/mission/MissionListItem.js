@@ -9,7 +9,7 @@ import Typography from "@material-ui/core/Typography";
 
 import MissionAwardsHeader from './MissionAwardsHeader'
 import MissionRequirements from './MissionRequirements';
-import MissionBasicInfo from 'components/missionInstance/MissionBasicInfo'
+import MissionBasicInfo from 'components/MissionInstance/MissionBasicInfo'
 
 import { classLabelsAny } from "utils/labels";
 import { palette, itemsPath } from "utils/constants";

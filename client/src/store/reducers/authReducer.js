@@ -3,10 +3,17 @@
 export const initState = {
   init: true,
   uid: null,
-  profile: {},
+  profile: {
+    bag: [],
+    equipped: {}
+  },
   authError: null,
   multipleSession: false,
-  allNames: []
+  allNames: [],
+  userPerks: {
+    products: []
+  },
+  activeOrder: []
 };
 
 const authReducer = (state = initState, action) => {

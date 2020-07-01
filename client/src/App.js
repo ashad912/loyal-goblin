@@ -21,7 +21,7 @@ import Shop from "./components/shop/Shop";
 import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
 import ForgotPassword from "./components/auth/ForgotPassword";
-import MissionInstance from "./components/missionInstance/MissionInstance";
+import MissionInstance from "./components/MissionInstance/";
 import Loading from "components/layout/Loading";
 import OfflineModal from "./components/auth/OfflineModal";
 import CharacterCreation from "components/characterCreation/CharacterCreation";

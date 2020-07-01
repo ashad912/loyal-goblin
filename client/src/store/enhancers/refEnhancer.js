@@ -12,6 +12,8 @@ export const refHandler = ({ getState }) => {
       case 'RESET_CHECK_WARNING':
         refStore.resolveWarning = null // (3)
         break;
+      default:
+        break;
     }
     return next(action)
   }

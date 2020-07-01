@@ -1,6 +1,6 @@
 import React from 'react'
-import { rest } from 'msw'
-import { setupServer } from 'msw/node'
+import moxios from 'moxios'
+
 import { render, fireEvent, waitFor, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect' // To have extra methods like: toBeInTheDocument()
 
@@ -12,20 +12,11 @@ import {initState as shopInit} from 'store/reducers/shopReducer'
 import {initState as partyInit} from 'store/reducers/partyReducer'
 
 
-const server = setupServer(
-    rest.get('*', (req, res, ctx) => { // Do not work with specific path...
-      return res(
-          ctx.json({shop: [], activeOrder: [], party: {...partyInit}, userPerks: {products: []}}),
-          ctx.status(200)
-        )
-    })
-)
+beforeEach(async (done) => {
 
+    moxios.install()
 
-// establish API mocking before all tests
-beforeAll(() => server.listen())
-
-beforeEach(async () => {
+    // Do not work with specific path...
     
     const initialState = {
         auth: {
@@ -47,14 +38,25 @@ beforeEach(async () => {
         </ReduxRoot>
     )
     
-
+   
     screen.container = container
-    await waitFor(() => screen.getByRole('application'))
+
+    moxios.wait(async () => {
+        const request = moxios.requests.at(0) //.at(0) or .mostRecent() if last
+        
+        await request.respondWith({
+          status: 200,
+          response: {shop: [], activeOrder: [], party: {...partyInit}, userPerks: { products: []}}
+        })
+        await waitFor(() => screen.getByRole('application'))
+        done()
+    })
     
 })
 
 
-it('shows all six positions in section bar', () => {
+it('shows all six positions in section bar', async () => {
+    //await waitFor(() => screen.getByTestId('application'))
     expect(screen.getByTestId('shots')).toBeInTheDocument()
     expect(screen.getByTestId('drinks')).toBeInTheDocument()
     expect(screen.getByTestId('beers')).toBeInTheDocument()
@@ -63,7 +65,8 @@ it('shows all six positions in section bar', () => {
     expect(screen.getByTestId('others')).toBeInTheDocument()
 })
 
-it('shows all six sections lists', () => {
+it('shows all six sections lists', async () => {
+    //await waitFor(() => screen.getByTestId('application'))
     expect(screen.getByTestId('shots-list')).toBeInTheDocument()
     expect(screen.getByTestId('food-list')).toBeInTheDocument()
     expect(screen.getByTestId('beers-list')).toBeInTheDocument()
@@ -72,10 +75,6 @@ it('shows all six sections lists', () => {
     expect(screen.getByTestId('others-list')).toBeInTheDocument()
 })
 
-// reset any request handlers that are declared as a part of our tests
-// (i.e. for testing one-time error scenarios)
-afterEach(() => server.resetHandlers())
-
-
-// clean up once the tests are done
-afterAll(() => server.close())
+afterEach(() => {
+    moxios.uninstall()
+})

@@ -11,7 +11,11 @@ export const getShop = (socketConnectionStatus) => {
                     socketConnectionStatus
                 }
             })
-            
+            // const res = await axios.get('/product/shop')
+            // console.log(res)
+            // let res
+            // res.data = await (await fetch('/product/shop')).json()
+            // console.log(res.data)
             dispatch({type: 'GET_SHOP', shop: res.data.shop})
             dispatch({type: 'UPDATE_ACTIVE_ORDER', activeOrder: res.data.activeOrder})
             dispatch({type: "UPDATE_PARTY", party: res.data.party})

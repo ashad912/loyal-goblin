@@ -62,7 +62,7 @@ const Profile = (props) => {
 
 
   React.useEffect(() => {
-    
+
     setBag(bagArrayToCategories(props.auth.profile.bag));
   }, [props.auth.profile.bag]);
 
@@ -75,7 +75,7 @@ const Profile = (props) => {
     setRelativeThreshold(levelData.relativeThreshold);
   }, [props.auth.profile.experience]);
 
-  
+
   const handleItemToggle = (id, isEquipped, category, twoHanded) => {
     const tempPlayer = { ...props.auth.profile };
     if (props.party && props.party.inShop) {
@@ -223,7 +223,7 @@ const Profile = (props) => {
         value={(relativeExp * 100) / relativeThreshold}
         className={classes.expBar}
       />
-      
+
       <Grid
         item
         container
@@ -237,7 +237,7 @@ const Profile = (props) => {
           profile={props.auth.profile}
           updatePerks={(perks) => setActivePerks(perks)}
         />
-       
+
 
         <Grid
           container
@@ -287,40 +287,40 @@ const Profile = (props) => {
                 props.party.leader &&
                 (props.party.leader._id === props.auth.uid ||
                   props.party.leader === props.auth.uid)) ||
-              (!props.party.leader && !props.party.members.length) ? (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  style={{
-                    marginBottom: "1rem",
-                    padding: "0.6rem 1rem",
-                    width: "100%",
-                  }}
-                  onClick={
-                    () => 
-                      props.setCheckWarning(
-                        () => handleOpenShop(),
-                        "Otworzenie sklepu",
-                        warningActionSources.order 
-                      )
-                  }
-                >
-                  Przygoda
-                </Button>
-              ) : (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  disabled
-                  style={{
-                    marginBottom: "1rem",
-                    padding: "0.6rem 1rem",
-                    width: "100%",
-                  }}
-                >
-                  Przygoda
-                </Button>
-              )}
+                (!props.party.leader && !props.party.members.length) ? (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    style={{
+                      marginBottom: "1rem",
+                      padding: "0.6rem 1rem",
+                      width: "100%",
+                    }}
+                    onClick={
+                      () =>
+                        props.setCheckWarning(
+                          () => handleOpenShop(),
+                          "Otworzenie sklepu",
+                          warningActionSources.order
+                        )
+                    }
+                  >
+                    Przygoda
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    disabled
+                    style={{
+                      marginBottom: "1rem",
+                      padding: "0.6rem 1rem",
+                      width: "100%",
+                    }}
+                  >
+                    Przygoda
+                  </Button>
+                )}
               <Button
                 variant="contained"
                 style={{
