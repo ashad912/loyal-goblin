@@ -12,6 +12,7 @@ const MissionInfo = ({mission}) => {
             container
             direction="column"
             style={{ padding: "1rem 0 1.5rem 0", textAlign: "left" }}
+            data-testid='mission-info'
         >
             <MissionBasicInfo mission={mission} />
         </Grid>

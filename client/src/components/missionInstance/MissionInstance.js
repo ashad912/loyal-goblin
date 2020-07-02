@@ -98,8 +98,8 @@ class MissionInstance extends React.Component {
                 loaded: true,
 
             }, () => {
-                const navbar = document.getElementById("navbar").offsetHeight;
-                const footer = document.getElementById("footer").offsetHeight;
+                const navbar = document.getElementById("navbar") ? document.getElementById("navbar").offsetHeight : 0;
+                const footer = document.getElementById("footer") ? document.getElementById("footer").offsetHeight : 0;
 
                 this.setState({
                     fullHeightCorrection: navbar + footer,
@@ -268,12 +268,14 @@ class MissionInstance extends React.Component {
 
         return (
             <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                padding: `0rem 2rem`,
-                alignItems: 'center',
-                minHeight: `calc(100vh - (${this.state.fullHeightCorrection}px)`
-            }}>
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: `0rem 2rem`,
+                    alignItems: 'center',
+                    minHeight: `calc(100vh - (${this.state.fullHeightCorrection}px)`
+                }}
+                role='application'
+            >
                 {this.state.showAwards ? (
                     <MissionAwards
                         missionExperience={this.state.missionObject.experience}

@@ -621,7 +621,7 @@ router.patch('/enterInstance', auth, async (req, res, next) => {
         const missionInstance = await MissionInstance.toggleUserStatus(user, { inMission: true })
 
         if (socketConnectionStatus !== undefined) {
-            if (missionInstance.party.length > 1 && !socketConnectionStatus) { //if client of multiplayer mission is not connected to socket
+            if (missionInstance.party.length > 1 && !socketC1onnectionStatus) { //if client of multiplayer mission is not connected to socket
                 throw getEndpointError(WARN, `Client is not connected to socket`, user._id)
             }
         }

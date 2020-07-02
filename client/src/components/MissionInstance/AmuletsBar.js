@@ -42,6 +42,8 @@ const AmuletsBar = (props) => {
             container
             direction="row"
             style={{ textAlign: "left" }}
+            role="section"
+            aria-label="amulets-bar"
         >
             <Grid item xs={3}></Grid>
             <Grid item xs={9}>

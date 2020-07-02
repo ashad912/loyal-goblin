@@ -46,7 +46,7 @@ export default Object.assign((props) => {
     const buttonReadyLabel = props.leader ? (`Wyrusz`) : (`Gotów`)
 
     return (
-        <ButtonBar>
+        <ButtonBar data-testid='button-bar'>
             <Button
                 style={{
                     display: 'flex',
@@ -54,7 +54,7 @@ export default Object.assign((props) => {
                     margin: '1rem 2rem',
                     width: 'calc(100% - 4rem)',
                     position: 'absolute',
-                    bottom: document.getElementById("footer").offsetHeight,
+                    bottom: document.getElementById("footer") ? document.getElementById("footer").offsetHeight : 0,
                     left: 0,
                     borderRadius: 0,
                 }}

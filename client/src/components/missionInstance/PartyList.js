@@ -266,7 +266,7 @@ const PartyList = (props) => {
     }
 
     return (
-        <StyledRoot>
+        <StyledRoot data-testid='party-list'>
             {party.length > 0 && (
                 <Paper square elevation={0} variant="outlined">
                 <StyledTypo variant="h5">Drużyna</StyledTypo>

@@ -270,7 +270,7 @@ export default class ExchangeArea extends React.Component {
 
 
     return (
-      <div style={{width: '100%'}}>
+      <div style={{width: '100%'}} data-testid='exchange-area'>
         <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.setDraggableProperty}>
           <Box 
             targetKey={userItemsName} 
