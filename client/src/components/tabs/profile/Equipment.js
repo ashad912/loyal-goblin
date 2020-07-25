@@ -155,7 +155,7 @@ const Equipment = props => {
   return (
     <Drawer anchor="right" open={props.isOpen} onClose={() => props.toggle(false)} onOpen={() => props.toggle(true)} disableBackdropTransition={true}>
 
-      <div style={{ padding: '1rem', width: '75vw' }}>
+      <div style={{ padding: '1rem', width: '75vw', maxWidth: '400px' }}>
         {content}
       </div>
       <OperationDialog 

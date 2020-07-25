@@ -184,7 +184,7 @@ class SignIn extends Component {
         await asyncForEach(targets, async (target) => {
 
             if(this.state[target].length === 0){
-                await this.setState({
+                this.setState({
                     error: {
                         ...this.state.error,
                         [target]: true,
@@ -198,7 +198,11 @@ class SignIn extends Component {
         })
 
         if(!this.state.error.email && !this.state.error.password){
-            this.recaptcha.execute();
+            try{
+                this.recaptcha.execute();
+            }catch(e){
+                console.log('Problem with recaptcha')
+            }
         }else{
             this.recaptcha.reset();
         }
@@ -215,8 +219,8 @@ class SignIn extends Component {
         
         return (
             <div style={{background: palette.primary.main,display: 'flex', flexDirection:'column', justifyContent: 'flex-end', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`, position: 'relative'}}>
-                <FormContainer  maxWidth="xs" >
-                <img src={uiPaths.logo} style={{width: '50vw', flexBasis: '20%'}} alt="logo"/>
+                <FormContainer maxWidth="xs" >
+                <img src={uiPaths.logo} style={{width: '50%', flexBasis: '20%'}} alt="logo"/>
                     <form onSubmit={this.handleSubmit} className="white">
                     
                         {/* <Typography variant="h5" style={{textAlign: 'left', marginBottom: '1rem'}}>Zaloguj</Typography> */}

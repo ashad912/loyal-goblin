@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
 import styled from 'styled-components'
 
+import Container from '@material-ui/core/Container';
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
@@ -23,7 +24,7 @@ import TabsSnackbar from "./TabsSnackbar";
 import WarningDialog from "./WarningDialog";
 
 
-import {socket} from 'socket'
+import { socket } from 'socket'
 
 import { authCheck } from "store/actions/authActions";
 import { leaveShop } from "store/actions/shopActions";
@@ -41,7 +42,12 @@ import { palette } from "utils/constants";
 const StyledTab = styled(Tab)`
   font-family: Pinto-0;
   color: ${props => props.active ? palette.primary.main : 'black'}
+  @media (min-width: 960px){
+    min-width: 0px;
+  }
 `
+
+ 
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -55,7 +61,7 @@ function TabPanel(props) {
       aria-labelledby={`full-width-tab-${index}`}
       {...other}
     >
-      <Box p={4} style={{paddingTop: (index===1 || index===3 || index===4) && '0', paddingBottom: (index===1 || index===3 || index===4) && '0' }}>{children}</Box>
+      <Box p={4} style={{ paddingTop: (index === 1 || index === 3 || index === 4) && '0', paddingBottom: (index === 1 || index === 3 || index === 4) && '0' }}>{children}</Box>
     </Typography>
   );
 }
@@ -107,15 +113,15 @@ function TabsRoot(props) {
   // }
 
   // useTraceUpdate(props);
- 
+
   useEffect(() => {
-    
+
     updateGlobalStore()
 
     //change tab, when returing from specific event
     if (props.location.state && props.location.state.hasOwnProperty("indexRedirect")) {
-      changeValue(props.location.state.indexRedirect); 
-    }else if(sessionStorage.tabIndex){
+      changeValue(props.location.state.indexRedirect);
+    } else if (sessionStorage.tabIndex) {
       changeValue(parseInt(sessionStorage.tabIndex))
     }
 
@@ -123,8 +129,8 @@ function TabsRoot(props) {
     document.addEventListener('scroll', trackScrolling);
 
     setLoaded(true)
-    
-    
+
+
     return () => {
       document.removeEventListener('scroll', trackScrolling);
     }
@@ -143,8 +149,8 @@ function TabsRoot(props) {
       props.getMissionList(),
       props.getRally()
     ]
-    
-    try{
+
+    try {
       if (
         props.location.state &&
         props.location.state.hasOwnProperty("authCheck")
@@ -152,7 +158,7 @@ function TabsRoot(props) {
         requests = [props.onAuthCheck(), ...requests]
       }
       await Promise.all(requests)
-    }catch(e){
+    } catch (e) {
       console.log(e)
     }
   }
@@ -163,10 +169,10 @@ function TabsRoot(props) {
     }
 
     const wrappedElement = document.getElementById('footer');
-    if (isTop(wrappedElement)) {  
+    if (isTop(wrappedElement)) {
       setFooterReached(true)
       //document.removeEventListener('scroll', this.trackScrolling);
-    }else{
+    } else {
       setFooterReached(false)
     }
   };
@@ -184,39 +190,42 @@ function TabsRoot(props) {
     changeValue(index);
   };
 
-  
+
 
 
   const appBar = document.getElementById("app-bar") ? document.getElementById("app-bar").offsetHeight : '0';
   const navbar = document.getElementById("navbar") ? document.getElementById("navbar").offsetHeight : '0'
   const footer = document.getElementById("footer") ? document.getElementById("footer").offsetHeight : '0'
   const fullHeight = `calc(100vh - ${appBar + navbar + footer}px)`
-  
-  if(!loaded){
-    return <Loading/>
+
+  if (!loaded) {
+    return <Loading />
   }
 
   return (
-    
+
     <div className={classes.root}>
-      
-      
+
       <AppBar position="static" color="inherit" id="app-bar">
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          indicatorColor="primary"
-          textColor="primary"
-          aria-label="full width tabs example"
-          variant="fullWidth"
-        >
-          <StyledTab active={value === 0 ? 1 : 0} label="Postać" {...a11yProps(0)}/>
-          <StyledTab active={value === 1 ? 1 : 0}  label="Drużyna" {...a11yProps(1)} />
-          <StyledTab active={value === 2 ? 1 : 0}  label="Wydarzenia" {...a11yProps(2)} />
-          <StyledTab active={value === 3 ? 1 : 0}  label="Statki" {...a11yProps(3)} />
-          <StyledTab active={value === 4 ? 1 : 0}  label="Rezerwuj" {...a11yProps(4)} />
-        </Tabs>
+        <Container maxWidth='xs' style={{ padding: 0 }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            indicatorColor="primary"
+            textColor="primary"
+            aria-label="full width tabs example"
+            variant="fullWidth"
+          >
+            <StyledTab active={value === 0 ? 1 : 0} label="Postać" {...a11yProps(0)} />
+            <StyledTab active={value === 1 ? 1 : 0} label="Drużyna" {...a11yProps(1)} />
+            <StyledTab active={value === 2 ? 1 : 0} label="Wydarzenia" {...a11yProps(2)} />
+            <StyledTab active={value === 3 ? 1 : 0} label="Statki" {...a11yProps(3)} />
+            <StyledTab active={value === 4 ? 1 : 0} label="Rezerwuj" {...a11yProps(4)} />
+          </Tabs>
+        </Container>
       </AppBar>
+      <Container maxWidth='xs' style={{ padding: 0 }}>
+
       <SwipeableViews
         axis={theme.direction === "rtl" ? "x-reverse" : "x"}
         index={value}
@@ -224,29 +233,31 @@ function TabsRoot(props) {
         style={{ minHeight: fullHeight }}
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
-          <Profile fullHeight={fullHeight}/>
+          <Profile fullHeight={fullHeight} />
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-          <Party fullHeight={fullHeight}/>
+          <Party fullHeight={fullHeight} />
         </TabPanel>
         <TabPanel value={value} index={2} dir={theme.direction}>
-          <Events fullHeight={fullHeight}/>
+          <Events fullHeight={fullHeight} />
         </TabPanel>
         <TabPanel value={value} index={3} dir={theme.direction}>
-          <Loyal fullHeight={fullHeight}/>
+          <Loyal fullHeight={fullHeight} />
         </TabPanel>
         <TabPanel value={value} index={4} dir={theme.direction}>
-          <Booking fullHeight={fullHeight}/>
+          <Booking fullHeight={fullHeight} />
         </TabPanel>
       </SwipeableViews>
-    
-      <TabsSnackbar 
-        socket={socket} 
-        screen={value} 
-        hide={footerReached} 
+
+      <TabsSnackbar
+        socket={socket}
+        screen={value}
+        hide={footerReached}
       />
 
       <WarningDialog />
+      </Container>
+
     </div>
   );
 }
@@ -264,7 +275,7 @@ const mapDispatchToProps = dispatch => {
     onAuthCheck: () => dispatch(authCheck()),
     onPartyUpdate: (params, socketAuthReconnect) =>
       dispatch(updateParty(params, socketAuthReconnect)),
-    getMissionList : () => dispatch(getMissionList()),
+    getMissionList: () => dispatch(getMissionList()),
     getRally: () => dispatch(getFirstRally()),
     onLeaveShop: () => dispatch(leaveShop()),
   };

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { useHistory } from "react-router";
 import styled from 'styled-components'
 
+import Container from '@material-ui/core/Container';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -26,16 +27,16 @@ import StatsDialog from "./StatsDialog";
 import NavbarMenu from './NavbarMenu';
 import NavbarMenuItem from './NavbarMenuItem';
 
-import {updateAvatar} from 'store/actions/profileActions'
-import {signOut} from 'store/actions/authActions'
-import {togglePresenceInInstance} from 'store/actions/missionActions'
-import {leaveShop} from 'store/actions/shopActions'
+import { updateAvatar } from 'store/actions/profileActions'
+import { signOut } from 'store/actions/authActions'
+import { togglePresenceInInstance } from 'store/actions/missionActions'
+import { leaveShop } from 'store/actions/shopActions'
 
 import { uiPaths } from 'utils/constants';
 import { PintoTypography } from 'assets/fonts';
 import AvatarWithPlaceholder from 'components/AvatarWithPlaceholder';
 
-  
+
 const StyledAppBar = styled(AppBar)`
     display: ${props => props.none && 'none'};
     position: ${props => props.sticky ? 'sticky' : 'static'};
@@ -76,10 +77,10 @@ const Navbar = (props) => {
 
     const updateNavbarSticky = (pathname) => {
         const isEnableSticky = ['/shop'].includes(pathname)
-        if(isEnableSticky){
+        if (isEnableSticky) {
             setEnableSticky(true)
             window.addEventListener("scroll", handleScrollPosition);
-        }else{
+        } else {
             setEnableSticky(false)
             setIsNavbarShow(true)
             navbarShow.current = true;
@@ -92,18 +93,18 @@ const Navbar = (props) => {
     })
 
     React.useEffect(() => {
-        
+
         const height = navbarRef.current && navbarRef.current.clientHeight
         navbarHeight.current = height
-        
+
         updateNavbarSticky(window.location.pathname)
-        
+
     }, [])
 
-    React.useEffect(()=>{
-        if(!props.auth.uid){
+    React.useEffect(() => {
+        if (!props.auth.uid) {
             setNoneNavbar(true)
-        }else{
+        } else {
             setNoneNavbar(false)
         }
     }, [props.auth.uid])
@@ -119,25 +120,25 @@ const Navbar = (props) => {
         // that's why below...
 
         // FOR (static<->sticky) change: (window.pageYOffset > navbarHeight.current ) || navbarShow.current) to prevent navbar 'drop' when we are very close to the top
-        
+
         if (window.pageYOffset < lastScroll.current) {
-            if(!navbarShow.current){
+            if (!navbarShow.current) {
                 //console.log('up')
                 navbarShow.current = true;
                 setIsNavbarShow(true)
             }
-            
-            
-        } else if(window.pageYOffset > lastScroll.current ) {
-            if(navbarShow.current){
+
+
+        } else if (window.pageYOffset > lastScroll.current) {
+            if (navbarShow.current) {
                 //console.log('down or too high')
                 navbarShow.current = false;
                 setIsNavbarShow(false)
-                
+
             }
         }
         lastScroll.current = window.pageYOffset
-        
+
     }
 
     const handleClick = event => {
@@ -154,16 +155,16 @@ const Navbar = (props) => {
         if (e.target.files.length > 0) {
             const avatar = e.target.files[0]
             const avatarSize = avatar.size / 1024 / 1024; // in MB
-            
-            if(avatarSize >= 6){
+
+            if (avatarSize >= 6) {
                 setShowDrawer(null);
                 setAlertMessage("Maksymalna wielkosć pliku to 6 MB!")
-                setShowAlertSnackbar(true)  
-            }else if(!avatar.type.includes('image/')){
+                setShowAlertSnackbar(true)
+            } else if (!avatar.type.includes('image/')) {
                 setShowDrawer(null);
                 setAlertMessage("Nieprawidłowe rozszerzenie pliku!")
-                setShowAlertSnackbar(true)   
-            }else{
+                setShowAlertSnackbar(true)
+            } else {
                 const formData = new FormData()
                 formData.append("avatar", avatar)
                 e.stopPropagation();
@@ -176,13 +177,13 @@ const Navbar = (props) => {
     const handleAvatarDelete = async e => {
         e.stopPropagation();
         setShowDrawer(null);
-        await props.updateAvatar();      
+        await props.updateAvatar();
     };
 
     const handleLogout = async e => {
         e.stopPropagation();
         setShowDrawer(null);
-        await props.signOut() 
+        await props.signOut()
     }
 
     const togglePasswordChangeModal = () => {
@@ -205,7 +206,7 @@ const Navbar = (props) => {
         setShowDrawer(null)
     }
 
-    
+
 
     const handleBack = async () => {
         window.removeEventListener("scroll", handleScrollPosition);
@@ -213,20 +214,20 @@ const Navbar = (props) => {
         let state = {}
         switch (window.location.pathname) {
             case '/mission':
-                if(props.activeMission){
-                    const user = {_id: props.auth.uid, inMission: false, readyStatus: false}
-                    try{
-                        await togglePresenceInInstance(user, props.party._id)  
-                    }catch(e){}
-                    state.indexRedirect = 2 
-                }else{
+                if (props.activeMission) {
+                    const user = { _id: props.auth.uid, inMission: false, readyStatus: false }
+                    try {
+                        await togglePresenceInInstance(user, props.party._id)
+                    } catch (e) { }
+                    state.indexRedirect = 2
+                } else {
                     state.authCheck = true
-                    state.indexRedirect = 0    
+                    state.indexRedirect = 0
                 }
-                
+
                 break;
             case '/shop':
-                state.indexRedirect = 0  
+                state.indexRedirect = 0
                 break;
             default:
                 break;
@@ -242,166 +243,167 @@ const Navbar = (props) => {
     const toolbarPaddingLeft = isBackButtonVisible ? '0px' : '16px'
 
     // <StyledAppBar></StyledAppBar> jsx element cannot read updated ref, but can read updated state
-    return(
-        <StyledAppBar 
-            ref={navbarRef} 
-            position="static" 
-            id="navbar" 
-            sticky={enableSticky ? 1 : 0} 
-            show={isNavbarShow ? 1 : 0} 
+    return (
+        <StyledAppBar
+            ref={navbarRef}
+            position="static"
+            id="navbar"
+            sticky={enableSticky ? 1 : 0}
+            show={isNavbarShow ? 1 : 0}
             none={noneNavbar ? 1 : 0}
         >
-        <Toolbar style={{paddingLeft: toolbarPaddingLeft}}>
-            
-            {props.auth.uid && props.auth.profile.name ? (
-                <React.Fragment>
-                    {isBackButtonVisible && (
-                        <Button 
-                            onClick={handleBack}
-                            style={{
-                                minWidth: '0',
-                                
-                            }} 
-                        >  
-                            <KeyboardArrowLeftIcon
-                                style={{
-                                    color: 'white',
-                                    fontSize: '2.5rem',
-                                }}
-                            />  
-                        </Button>
-                    )}
-                    
-                    <AvatarWithPlaceholder 
-                        avatar={props.auth.profile.avatar}
-                        width="30px"
-                        height="30px"
-                        placeholder={{
-                            text: props.auth.profile.name,    
-                        }}
-                    />
-                    
-                    
-                    <Typography variant="h6" style={{flexGrow: 1, textAlign: 'left', marginLeft: '1rem'}}>
-                        {props.auth.profile.name}
-                    </Typography>
-                    
-                    <Button
-                        style={{justifyContent: 'flex-end'}}
-                        onClick={handleClick}
-                    >
-                            <MenuIcon style={{margin: "0", color: 'white'}} />
-                    </Button>
-                    <Drawer anchor="right" open={Boolean(showDrawer)} onClose={handleClose} >
-                        <NavbarMenu>
-                            <NavbarMenuItem
-                                icon={
-                                    <img src={uiPaths.statistics} alt="stats" style={{width: '1.2rem', height: '1.2rem', paddingLeft: '0.2rem'}}/>
-                                }
-                                action={
-                                    <Link onClick={toggleStatsDialog} underline='none' color="primary">
-                                        <PintoTypography>Statystyki</PintoTypography>  
-                                    </Link>
-                                }
-                            />
-                            <NavbarMenuItem
-                                icon={
-                                    <img src={uiPaths.ranking} alt="ranking" style={{width: '1.2rem', height: '1.2rem', paddingLeft: '0.2rem'}}/>
-                                }
-                                action={
-                                    <Link onClick={toggleRankDialog} underline='none' color="primary">
-                                        <PintoTypography>Ranking</PintoTypography>  
-                                    </Link>
-                                }
-                            />
-                            <NavbarMenuItem
-                                icon={
-                                    <AccountBoxIcon />
-                                }
-                                action={
-                                    <React.Fragment>
-                                        <PintoTypography color="primary">
-                                            {props.auth.profile.avatar ? "Zmień avatar" : "Dodaj avatar"}
-                                        </PintoTypography>
-                                        <HiddenFileInput
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handleAvatarChange}
-                                        />
-                                    </React.Fragment>
-                                }
-                            />
-                            {props.auth.profile.avatar && 
-                                <NavbarMenuItem
-                                    icon={
-                                        <DeleteForeverIcon />
-                                    }
-                                    action={
-                                        <Link onClick={handleAvatarDelete} underline='none' color="primary">
-                                            <PintoTypography>Usuń avatar</PintoTypography>  
-                                        </Link>
-                                    }
-                                />
-                            }
-                            <NavbarMenuItem
-                                icon={
-                                    <LockIcon/>
-                                }
-                                action={
-                                    <Link onClick={togglePasswordChangeModal} underline="none" color="primary">
-                                        <PintoTypography>Zmień hasło</PintoTypography>
-                                    </Link>
-                                }
-                            />
-                            <NavbarMenuItem
-                                icon={
-                                    <RefreshIcon />
-                                }
-                                action={
-                                    <Link onClick={()=>window.location.reload(true)} underline='none' color="primary">
-                                        <PintoTypography>Odśwież</PintoTypography>
-                                    </Link>
-                                }
-                            />
-                            <NavbarMenuItem
-                                icon={
-                                    <ExitToAppIcon />
-                                }
-                                action={
-                                    <Link onClick={handleLogout} underline='none' color="primary">
-                                        <PintoTypography>Wyloguj</PintoTypography>
-                                    </Link>
-                                }
-                            />
-                        </NavbarMenu>
-                    </Drawer>
-                    
-                    {showRankDialog && (
-                        <RankDialog
-                            open={showRankDialog}
-                            profile={props.auth.profile}
-                            uid={props.auth.uid}
-                            handleClose={toggleRankDialog}
-                        />
-                    )}
+            <Container maxWidth="xs" style={{ padding: 0 }}>
+                <Toolbar style={{ paddingLeft: toolbarPaddingLeft }}>
 
-                        <StatsDialog
-                            open={showStatsDialog}
-                            profile={props.auth.profile}
-                            handleClose={toggleStatsDialog}
-                        />
-                    
-                   
-                </React.Fragment>
-            ) : (
-                
-                <React.Fragment>
-                    <Typography variant="h6" style={{flexGrow: 1, textAlign: 'left'}} >
-                        <Link href='/' to='/' underline='none' style={{color: 'white'}}>
-                            Loyal Goblin
+                    {props.auth.uid && props.auth.profile.name ? (
+                        <React.Fragment>
+                            {isBackButtonVisible && (
+                                <Button
+                                    onClick={handleBack}
+                                    style={{
+                                        minWidth: '0',
+
+                                    }}
+                                >
+                                    <KeyboardArrowLeftIcon
+                                        style={{
+                                            color: 'white',
+                                            fontSize: '2.5rem',
+                                        }}
+                                    />
+                                </Button>
+                            )}
+
+                            <AvatarWithPlaceholder
+                                avatar={props.auth.profile.avatar}
+                                width="30px"
+                                height="30px"
+                                placeholder={{
+                                    text: props.auth.profile.name,
+                                }}
+                            />
+
+
+                            <Typography variant="h6" style={{ flexGrow: 1, textAlign: 'left', marginLeft: '1rem' }}>
+                                {props.auth.profile.name}
+                            </Typography>
+
+                            <Button
+                                style={{ justifyContent: 'flex-end' }}
+                                onClick={handleClick}
+                            >
+                                <MenuIcon style={{ margin: "0", color: 'white' }} />
+                            </Button>
+                            <Drawer anchor="right" open={Boolean(showDrawer)} onClose={handleClose} >
+                                <NavbarMenu>
+                                    <NavbarMenuItem
+                                        icon={
+                                            <img src={uiPaths.statistics} alt="stats" style={{ width: '1.2rem', height: '1.2rem', paddingLeft: '0.2rem' }} />
+                                        }
+                                        action={
+                                            <Link onClick={toggleStatsDialog} underline='none' color="primary">
+                                                <PintoTypography>Statystyki</PintoTypography>
+                                            </Link>
+                                        }
+                                    />
+                                    <NavbarMenuItem
+                                        icon={
+                                            <img src={uiPaths.ranking} alt="ranking" style={{ width: '1.2rem', height: '1.2rem', paddingLeft: '0.2rem' }} />
+                                        }
+                                        action={
+                                            <Link onClick={toggleRankDialog} underline='none' color="primary">
+                                                <PintoTypography>Ranking</PintoTypography>
+                                            </Link>
+                                        }
+                                    />
+                                    <NavbarMenuItem
+                                        icon={
+                                            <AccountBoxIcon />
+                                        }
+                                        action={
+                                            <React.Fragment>
+                                                <PintoTypography color="primary">
+                                                    {props.auth.profile.avatar ? "Zmień avatar" : "Dodaj avatar"}
+                                                </PintoTypography>
+                                                <HiddenFileInput
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleAvatarChange}
+                                                />
+                                            </React.Fragment>
+                                        }
+                                    />
+                                    {props.auth.profile.avatar &&
+                                        <NavbarMenuItem
+                                            icon={
+                                                <DeleteForeverIcon />
+                                            }
+                                            action={
+                                                <Link onClick={handleAvatarDelete} underline='none' color="primary">
+                                                    <PintoTypography>Usuń avatar</PintoTypography>
+                                                </Link>
+                                            }
+                                        />
+                                    }
+                                    <NavbarMenuItem
+                                        icon={
+                                            <LockIcon />
+                                        }
+                                        action={
+                                            <Link onClick={togglePasswordChangeModal} underline="none" color="primary">
+                                                <PintoTypography>Zmień hasło</PintoTypography>
+                                            </Link>
+                                        }
+                                    />
+                                    <NavbarMenuItem
+                                        icon={
+                                            <RefreshIcon />
+                                        }
+                                        action={
+                                            <Link onClick={() => window.location.reload(true)} underline='none' color="primary">
+                                                <PintoTypography>Odśwież</PintoTypography>
+                                            </Link>
+                                        }
+                                    />
+                                    <NavbarMenuItem
+                                        icon={
+                                            <ExitToAppIcon />
+                                        }
+                                        action={
+                                            <Link onClick={handleLogout} underline='none' color="primary">
+                                                <PintoTypography>Wyloguj</PintoTypography>
+                                            </Link>
+                                        }
+                                    />
+                                </NavbarMenu>
+                            </Drawer>
+
+                            {showRankDialog && (
+                                <RankDialog
+                                    open={showRankDialog}
+                                    profile={props.auth.profile}
+                                    uid={props.auth.uid}
+                                    handleClose={toggleRankDialog}
+                                />
+                            )}
+
+                            <StatsDialog
+                                open={showStatsDialog}
+                                profile={props.auth.profile}
+                                handleClose={toggleStatsDialog}
+                            />
+
+
+                        </React.Fragment>
+                    ) : (
+
+                            <React.Fragment>
+                                <Typography variant="h6" style={{ flexGrow: 1, textAlign: 'left' }} >
+                                    <Link href='/' to='/' underline='none' style={{ color: 'white' }}>
+                                        Loyal Goblin
                         </Link>
-                    </Typography>
-                    {/* <Typography>
+                                </Typography>
+                                {/* <Typography>
                         <Link href='/signin' to='/signin'  nderline='none' style={{color: 'white', marginRight: '1rem'}}>
                             Zaloguj
                         </Link>
@@ -411,23 +413,23 @@ const Navbar = (props) => {
                             Dołącz
                         </Link>
                     </Typography> */}
-                </React.Fragment>
-            )}
-        </Toolbar>
-        <ChangePasswordModal open={showPasswordChangeModal} handleClose={togglePasswordChangeModal}/>
-            {showAlertSnackbar && <Snackbar
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                open={showAlertSnackbar}
-                autoHideDuration={6000}
-                onClose={handleCloseAlertSnackbar}
-                message={alertMessage}
-            />}
+                            </React.Fragment>
+                        )}
+                </Toolbar>
+                <ChangePasswordModal open={showPasswordChangeModal} handleClose={togglePasswordChangeModal} />
+                {showAlertSnackbar && <Snackbar
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    open={showAlertSnackbar}
+                    autoHideDuration={6000}
+                    onClose={handleCloseAlertSnackbar}
+                    message={alertMessage}
+                />}
+            </Container>
         </StyledAppBar>
-        
-       
+
     )
 }
 

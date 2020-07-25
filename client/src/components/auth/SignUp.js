@@ -20,6 +20,7 @@ import { palette, uiPaths } from 'utils/constants';
 
 //import {labels} from '../strings/labels'
 
+
 const FormContainer = styled(Container)`
     display: flex;
     justify-content: center;
@@ -45,10 +46,10 @@ const ActionBar = styled.div`
     margin-top: 1rem;
 `
 const StyledLink = styled(Link)`
-color: white;
-&:visited {
   color: white;
-}
+  &:visited {
+    color: white;
+  }
 `
 
 class SignUp extends Component {
@@ -222,7 +223,11 @@ class SignUp extends Component {
       !this.state.error.password &&
       !this.state.error.confirmPassword
     ) {
-      this.recaptcha.execute();
+      try{
+        this.recaptcha.execute();
+      }catch(e){
+        console.log('Problem with recaptcha')
+      }
     }else{
       this.recaptcha.reset();
     }
@@ -237,9 +242,17 @@ class SignUp extends Component {
     const { authError } = this.props;
 
     return (
-      <div style={{background: palette.primary.main,display: 'flex', flexDirection:'column', justifyContent: 'flex-end', minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`, position: 'relative'}}>
-      <FormContainer  maxWidth="xs" >
-      <img src={uiPaths.logo} style={{width: '50vw', flexBasis: '20%', marginBottom: '-1.2rem'}} alt="logo"/>
+      <div
+        style={{
+          background: palette.primary.main,display: 'flex', 
+          flexDirection:'column', 
+          justifyContent: 'flex-end', 
+          minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`, 
+          position: 'relative'
+        }}
+      >
+      <FormContainer maxWidth="xs" >
+      <img src={uiPaths.logo} style={{width: '50%', flexBasis: '20%', marginBottom: '-1.2rem'}} alt="logo"/>
           <form onSubmit={this.handleSubmit} className="white">
           
               {/* <Typography variant="h5" style={{textAlign: 'left', marginBottom: '1rem'}}>Zaloguj</Typography> */}
@@ -316,7 +329,7 @@ class SignUp extends Component {
               />
             </div>
           </form>
-          <img src={uiPaths.people} style={{width:'100%' }} alt=""/>
+          <img src={uiPaths.people} style={{width:'100%'}} alt=""/>
         </FormContainer>
       </div>
     );

@@ -16,6 +16,7 @@ import Loading from 'components/layout/Loading';
 import { authCheck } from "store/actions/authActions";
 import { togglePresenceInInstance, toggleUserReady, finishInstance, setActiveInstance } from 'store/actions/missionActions'
 import { socket, modifyUserStatusSubscribe, finishMissionSubscribe } from 'socket'
+import { Container } from '@material-ui/core';
 
 
 class MissionInstance extends React.Component {
@@ -267,61 +268,63 @@ class MissionInstance extends React.Component {
 
 
         return (
-            <div style={{
+            <Container maxWidth='xs' style={{ padding: 0 }}>
+                <div style={{
                     display: 'flex',
                     flexDirection: 'column',
                     padding: `0rem 2rem`,
                     alignItems: 'center',
                     minHeight: `calc(100vh - (${this.state.fullHeightCorrection}px)`
                 }}
-                role='application'
-            >
-                {this.state.showAwards ? (
-                    <MissionAwards
-                        missionExperience={this.state.missionObject.experience}
-                        missionAwards={this.state.missionAwards}
-                        userPerks={this.props.profile.userPerks}
-                        userClass={this.props.profile.class}
-                        authCheck={() => this.props.authCheck()}
-                        fullHeightCorrection={this.state.fullHeightCorrection}
+                    role='application'
+                >
+                    {this.state.showAwards ? (
+                        <MissionAwards
+                            missionExperience={this.state.missionObject.experience}
+                            missionAwards={this.state.missionAwards}
+                            userPerks={this.props.profile.userPerks}
+                            userClass={this.props.profile.class}
+                            authCheck={() => this.props.authCheck()}
+                            fullHeightCorrection={this.state.fullHeightCorrection}
 
-                    />
-                ) : (
-                        <React.Fragment >
-                            <MissionInfo
-                                mission={this.state.missionObject}
-                            />
-                            <AmuletsBar
-                                amulets={amulets}
-                            />
-                            <ExchangeArea
-                                userId={this.props.uid}
-                                avatar={this.props.profile.avatar}
-                                userName={this.props.profile.name}
-                                locationId={this.props.party._id}
-                                instanceItems={this.updateInstanceItems}
-                                initUserItems={this.state.userItems}
-                                initMissionItems={this.state.instanceItems}
-                                userReadyStatus={this.state.userReadyStatus}
-                                handleBack={this.handleBack}
-                            />
-                            <PartyList
-                                userId={this.props.uid}
-                                instanceUsers={this.state.instanceUsers}
-                                instanceItems={this.state.instanceItems}
-                                party={this.props.party}
-                                userReadyStatus={this.state.userReadyStatus}
-                            />
-                            <ButtonBar
-                                leader={this.state.leader}
-                                handleReadyButton={this.handleReadyButton}
-                                isRequiredItemsCollected={isRequiredItemsCollected}
-                                isAllPartyReady={isAllPartyReady}
-                                isUserReady={this.state.userReadyStatus}
-                            />
-                        </React.Fragment>
-                    )}
-            </div>
+                        />
+                    ) : (
+                            <React.Fragment >
+                                <MissionInfo
+                                    mission={this.state.missionObject}
+                                />
+                                <AmuletsBar
+                                    amulets={amulets}
+                                />
+                                <ExchangeArea
+                                    userId={this.props.uid}
+                                    avatar={this.props.profile.avatar}
+                                    userName={this.props.profile.name}
+                                    locationId={this.props.party._id}
+                                    instanceItems={this.updateInstanceItems}
+                                    initUserItems={this.state.userItems}
+                                    initMissionItems={this.state.instanceItems}
+                                    userReadyStatus={this.state.userReadyStatus}
+                                    handleBack={this.handleBack}
+                                />
+                                <PartyList
+                                    userId={this.props.uid}
+                                    instanceUsers={this.state.instanceUsers}
+                                    instanceItems={this.state.instanceItems}
+                                    party={this.props.party}
+                                    userReadyStatus={this.state.userReadyStatus}
+                                />
+                                <ButtonBar
+                                    leader={this.state.leader}
+                                    handleReadyButton={this.handleReadyButton}
+                                    isRequiredItemsCollected={isRequiredItemsCollected}
+                                    isAllPartyReady={isAllPartyReady}
+                                    isUserReady={this.state.userReadyStatus}
+                                />
+                            </React.Fragment>
+                        )}
+                </div>
+            </Container>
         )
     }
 }

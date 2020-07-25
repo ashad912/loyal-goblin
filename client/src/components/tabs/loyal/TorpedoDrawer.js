@@ -89,6 +89,7 @@ const TorpedoDrawer = props => {
                     disablePadding 
                     style={{
                         maxHeight: `calc(100vh - ${sub}px)`,
+                        minHeight: '60px',
                         overflowY: 'scroll',
                     }}>
                     {userTorpedos.map(item => (

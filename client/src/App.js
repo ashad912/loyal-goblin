@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
-import {Workbox, messageSW} from 'workbox-window';
+import { Workbox, messageSW } from 'workbox-window';
 import { StylesProvider, ThemeProvider } from "@material-ui/styles";
 import { createMuiTheme } from "@material-ui/core/styles";
 import styled from "styled-components";
@@ -67,9 +67,16 @@ const Toast = styled.div`
   font-size: 2rem;
 `;
 
+const AppRoot = styled.div`
+   @media (min-width: 450px) {
+    max-width: 450px;
+    margin: 0 auto;
+   }
+`
+
 class App extends React.Component {
 
-  constructor(props){
+  constructor(props) {
     super(props);
   }
 
@@ -90,85 +97,85 @@ class App extends React.Component {
     });
 
 
-    if(prod){
+    if (prod) {
       window.addEventListener('online', this.handleOnlineState, false);
       window.addEventListener('offline', this.handleOfflineState, false);
-      
+
     }
-    
+
     if (prod && 'serviceWorker' in navigator) {
       const wb = new Workbox('/sw.js');
       let registration;
-    
+
       const showSkipWaitingPrompt = (event) => {
         // `event.wasWaitingBeforeRegister` will be false if this is
         // the first time the updated service worker is waiting.
         // When `event.wasWaitingBeforeRegister` is true, a previously
         // updated service worker is still waiting.
         // You may want to customize the UI prompt accordingly.
-    
+
         // Assumes your app has some sort of prompt UI element
         // that a user can either accept or reject.
 
         alert("Aplikacja została zaktualizowana! Zatwierdź, by wczytać nową wersję.")
-  
-            // Assuming the user accepted the update, set up a listener
-            // that will reload the page as soon as the previously waiting
-            // service worker has taken control.
-            wb.addEventListener('controlling', (event) => {
-              window.location.reload();
-            });
-    
-            if (registration && registration.waiting) {
-              // Send a message to the waiting service worker,
-              // instructing it to activate.  
-              // Note: for this to work, you have to add a message
-              // listener in your service worker. See below.
-              messageSW(registration.waiting, {type: 'SKIP_WAITING'});
-            }
-          
-       
-        
+
+        // Assuming the user accepted the update, set up a listener
+        // that will reload the page as soon as the previously waiting
+        // service worker has taken control.
+        wb.addEventListener('controlling', (event) => {
+          window.location.reload();
+        });
+
+        if (registration && registration.waiting) {
+          // Send a message to the waiting service worker,
+          // instructing it to activate.  
+          // Note: for this to work, you have to add a message
+          // listener in your service worker. See below.
+          messageSW(registration.waiting, { type: 'SKIP_WAITING' });
         }
-        
-          // Add an event listener to detect when the registered
-          // service worker has installed but is waiting to activate.
-          wb.addEventListener('waiting', showSkipWaitingPrompt);
-          wb.addEventListener('externalwaiting', showSkipWaitingPrompt);
-        
-          registration = await wb.register();
+
+
+
+      }
+
+      // Add an event listener to detect when the registered
+      // service worker has installed but is waiting to activate.
+      wb.addEventListener('waiting', showSkipWaitingPrompt);
+      wb.addEventListener('externalwaiting', showSkipWaitingPrompt);
+
+      registration = await wb.register();
     }
 
 
-    
+
     //HISTORY BACK PREVENT - https://medium.com/@subwaymatch/disabling-back-button-in-react-with-react-router-v5-34bb316c99d7
     //history.listen(...), history.go(...)
 
     //CHECK AUTH ON APP LOAD
-    if(online){
+    if (online) {
 
       const user = await this.props.authCheck();
       const charCreated = user && user.name && user.class
       const HomeComponent = charCreated ? TabsRoot : CharacterCreation
-      
-      
+
+
       this.setupComponent(HomeComponent, charCreated)
-      
-      
-  
-      
-    }else{
-      this.setState({online: false})
+
+
+
+
+    } else {
+      this.setState({ online: false })
     }
   }
 
-  setupComponent(HomeComponent, condition){
+  setupComponent(HomeComponent, condition) {
     this.setState({
       HomeComponent,
       loaded: true
     }, () => {
-      
-      if(condition){
+
+      if (condition) {
         //Update profile data on first full hour and after next 60 minutes
         this.firstUpdate = setTimeout(() => {
           this.props.authCheck({ autoFetch: true });
@@ -186,11 +193,11 @@ class App extends React.Component {
         //   this.props.onPartyUpdate()
         // }, 5000);
       }
-      
+
     })
   }
 
-  unmountTimers(){
+  unmountTimers() {
     clearTimeout(this.firstUpdate);
     clearInterval(this.nextUpdates);
   }
@@ -202,15 +209,15 @@ class App extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if(prevState.online !== this.state.online && this.state.online){
+    if (prevState.online !== this.state.online && this.state.online) {
       window.location.reload()
     }
 
-    if(this.state.loaded && (!prevProps.userName && this.props.userName)){
+    if (this.state.loaded && (!prevProps.userName && this.props.userName)) {
       this.setupComponent(TabsRoot, true)
     }
 
-    if(this.state.loaded && (prevProps.userName && !this.props.userName)){
+    if (this.state.loaded && (prevProps.userName && !this.props.userName)) {
       this.unmountTimers()
       this.setupComponent(CharacterCreation, true)
     }
@@ -228,26 +235,26 @@ class App extends React.Component {
   }
 
   handleOnlineState = () => {
-    this.setState({online: true})
+    this.setState({ online: true })
   }
 
   handleOfflineState = () => {
-    this.setState({online: false})
+    this.setState({ online: false })
   }
 
   render() {
-    
-    if(!this.state.online){
-      return(   
+
+    if (!this.state.online) {
+      return (
         <StylesProvider injectFirst>
           <ThemeProvider theme={goblinTheme}>
-            <OfflineModal open={!this.state.online}/>
+            <OfflineModal open={!this.state.online} />
           </ThemeProvider>
         </StylesProvider>
       )
     }
 
-    if(!this.state.loaded){
+    if (!this.state.loaded) {
       return null
     }
 
@@ -288,7 +295,7 @@ class App extends React.Component {
             />
             <ConnectionSpinnerDialog />
             <SocketConfig />
-            <OfflineModal open={!this.state.online}/>
+            <OfflineModal open={!this.state.online} />
           </ThemeProvider>
         </StylesProvider>
       </BrowserRouter>
@@ -298,7 +305,7 @@ class App extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-      userName: state.auth.profile.name,
+    userName: state.auth.profile.name,
   }
 }
 

@@ -19,6 +19,12 @@ const ButtonBar = styled.div`
     margin: 0.5rem 0rem 1rem 0rem;
 `
 
+const StyledButton = styled(Button)`
+    @media (max-width: 444px){
+        left: 0;
+    }
+`
+
 export default Object.assign((props) => {
 
     const statusIcon = (condition) => condition ? (
@@ -47,16 +53,18 @@ export default Object.assign((props) => {
 
     return (
         <ButtonBar data-testid='button-bar'>
-            <Button
+            <StyledButton
                 style={{
                     display: 'flex',
+                    justifyContent: 'center',
                     flexFlow: 'row nowrap',
                     margin: '1rem 2rem',
                     width: 'calc(100% - 4rem)',
+                    maxWidth: '316px',
                     position: 'absolute',
                     bottom: document.getElementById("footer") ? document.getElementById("footer").offsetHeight : 0,
-                    left: 0,
                     borderRadius: 0,
+                    
                 }}
                 onClick={props.handleReadyButton}
                 disabled={props.leader && (!props.isRequiredItemsCollected || !props.isAllPartyReady)}
@@ -75,7 +83,7 @@ export default Object.assign((props) => {
                     }}
                 />
                 {!props.leader ? statusIcon(props.isUserReady) : statusIcon(props.isRequiredItemsCollected && props.isAllPartyReady)}
-            </Button>
+            </StyledButton>
         </ButtonBar>
     )
 },

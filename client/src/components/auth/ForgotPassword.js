@@ -174,7 +174,7 @@ class ForgotPassword extends Component {
           background: palette.primary.main
         }}
       >
-        <img src={uiPaths.logo} style={{ width: '50vw', marginBottom: "-1rem" }} alt="logo" />
+        <img src={uiPaths.logo} style={{ width: '50%', marginBottom: "-1rem" }} alt="logo" />
         <FormContainer maxWidth="xs">
           <form onSubmit={this.handleSubmit} className="white">
             <Typography

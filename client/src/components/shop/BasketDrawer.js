@@ -45,7 +45,7 @@ const BasketDrawer = ({ open, toggle, baskets, users, activeUser, handleRemoveIt
         <Divider />:
         <Typography style={{marginTop: '3rem', color: 'grey'}}>Brak produktów w koszyku</Typography>
         }
-        <List component="nav" style={{ width: "70vw" }}>
+        <List component="nav" style={{ width: "70vw", maxWidth: '320px' }}>
           {Object.keys(baskets).map(user => {
 
             //const userName = users.length > 0 && users[0] && user.name 
