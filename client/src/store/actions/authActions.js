@@ -1,11 +1,11 @@
 import axios from 'axios'
 
 export const validatePasswordChangeToken = (token) => {
-    return new Promise (async (resolve, reject) => {
-        try{
-            await axios.post('/user/validatePasswordChangeToken', {token: token})
+    return new Promise(async (resolve, reject) => {
+        try {
+            await axios.post('/user/validatePasswordChangeToken', { token: token })
             resolve()
-        }catch(e){
+        } catch (e) {
             reject(e)
         }
     })
@@ -13,20 +13,20 @@ export const validatePasswordChangeToken = (token) => {
 
 export const signIn = (credentials) => {
     return (dispatch, getState) => {
-        return new Promise( async (resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
 
             try {
                 const res = await axios.post('/user/login', credentials)
                 const profile = res.data
                 const uid = profile._id
-                profile.avatar = profile.avatar ? ( profile.avatar) : (undefined)
+                profile.avatar = profile.avatar ? (profile.avatar) : (undefined)
                 delete profile._id
-                dispatch( {type: "LOGIN_SUCCESS", profile, uid})
+                dispatch({ type: "LOGIN_SUCCESS", profile, uid })
 
                 resolve()
             } catch (e) {
                 const language = null
-                dispatch( {type: "LOGIN_ERROR", language})
+                dispatch({ type: "LOGIN_ERROR", language })
 
                 reject(e)
             }
@@ -37,26 +37,37 @@ export const signIn = (credentials) => {
 
 export const signUp = (credentials) => {
     return (dispatch) => {
-        return new Promise( async (resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
 
             try {
                 const res = await axios.post('/user/create', credentials)
                 const profile = res.data
                 const uid = profile._id
-                profile.avatar = profile.avatar ? ( profile.avatar) : (undefined)
+                profile.avatar = profile.avatar ? (profile.avatar) : (undefined)
                 delete profile._id
-                dispatch( {type: "LOGIN_SUCCESS", profile, uid})
+                dispatch({ type: "LOGIN_SUCCESS", profile, uid })
 
                 resolve()
             } catch (e) {
-                
+
                 console.error(e)
                 //data -> MongoError has prop: code
-                dispatch( {type: "SIGNUP_ERROR", messageCode: e.response.data.code})
+                dispatch({ type: "SIGNUP_ERROR", messageCode: e.response.data.code })
 
                 reject(e)
             }
         })
+    }
+}
+
+export const createDemoUser = (key, recaptcha) => {
+    return async (dispatch) => {
+        const res = await axios.post(`/user/demo/${key}`, {recaptcha})
+        const profile = res.data
+        const uid = profile._id
+        profile.avatar = profile.avatar ? (profile.avatar) : (undefined)
+        delete profile._id
+        dispatch({ type: "LOGIN_SUCCESS", profile, uid })
     }
 }
 
@@ -75,16 +86,16 @@ const data = res.json() //and unstrinify lol
 
 export const signOut = () => {
     return dispatch => {
-        return new Promise( async (resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
 
-            try{
+            try {
                 await axios.post('/user/logout')
-                dispatch ( {type: "DELETE_PARTY"})
-                dispatch ( {type: "LOGOUT_SUCCESS"})
-                
-                
+                dispatch({ type: "DELETE_PARTY" })
+                dispatch({ type: "LOGOUT_SUCCESS" })
+
+
             } catch (e) {
-                dispatch( {type: "NO_CONNECTION", error: e})
+                dispatch({ type: "NO_CONNECTION", error: e })
             }
 
             resolve()
@@ -92,33 +103,33 @@ export const signOut = () => {
     }
 }
 
-export const authCheck =  (params) => {
+export const authCheck = (params) => {
     return dispatch => {
 
-        return new Promise( async (resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
-               // console.log('authCheck')
+                // console.log('authCheck')
                 let query = ''
-                if(params && params.autoFetch){
-                    query ='?autoFetch=true'
+                if (params && params.autoFetch) {
+                    query = '?autoFetch=true'
                 }
                 const res = await axios('/user/me' + query)
                 const profile = res.data
-                
+
                 const uid = profile._id
                 delete profile._id
-                dispatch( {type: "AUTH_SUCCESS", profile, uid}) //DISPATCH IS SYNCHRONOUS!!!
+                dispatch({ type: "AUTH_SUCCESS", profile, uid }) //DISPATCH IS SYNCHRONOUS!!!
 
                 resolve(res.data)
-                
+
             } catch (e) {
-                dispatch( {type: "NO_AUTH", error: e})
+                dispatch({ type: "NO_AUTH", error: e })
                 signOut();
                 resolve(null)
-                
+
             }
-            
-            
+
+
         })
     }
 }
@@ -128,38 +139,38 @@ export const authCheck =  (params) => {
 export const forgotPassword = (email, recaptcha) => {
     return async dispatch => {
         try {
-            if(email){
-                await axios.post('/user/forgotPassword', {email, recaptcha})
+            if (email) {
+                await axios.post('/user/forgotPassword', { email, recaptcha })
 
             }
 
         } catch (e) {
             console.log(e)
-            
-            if(e.response.data === 'jwt not expired'){
+
+            if (e.response.data === 'jwt not expired') {
                 return e.response.data
-            }else{
-                dispatch( {type: "NO_CONNECTION", error: e})     
+            } else {
+                dispatch({ type: "NO_CONNECTION", error: e })
             }
         }
     }
 }
-            
+
 
 export const changePassword = (oldPassword, password, confirmPassword, recaptcha) => {
     return async dispatch => {
         try {
-            if(password === confirmPassword){
+            if (password === confirmPassword) {
                 //console.log(oldPassword, password, confirmPassword, token)
-                const res = await axios.patch('/user/changePassword', {oldPassword, password, confirmPassword, recaptcha})
-                if(res){
+                const res = await axios.patch('/user/changePassword', { oldPassword, password, confirmPassword, recaptcha })
+                if (res) {
                     signOut()
                 }
             }
 
         } catch (e) {
             console.log(e)
-            dispatch( {type: "NO_CONNECTION", error: e})     
+            dispatch({ type: "NO_CONNECTION", error: e })
         }
     }
 }
@@ -169,16 +180,16 @@ export const changePassword = (oldPassword, password, confirmPassword, recaptcha
 export const resetPassword = (token, password, confirmPassword, recaptcha) => {
     return async dispatch => {
         try {
-            if(password === confirmPassword){
-                const res = await axios.patch('/user/reset', {token, password, confirmPassword, recaptcha})
-                if(res){
+            if (password === confirmPassword) {
+                const res = await axios.patch('/user/reset', { token, password, confirmPassword, recaptcha })
+                if (res) {
                     //signOut()
                 }
             }
 
         } catch (e) {
             console.log(e)
-            dispatch( {type: "NO_CONNECTION", error: e})     
+            dispatch({ type: "NO_CONNECTION", error: e })
         }
     }
 }
@@ -188,10 +199,10 @@ export const resetPassword = (token, password, confirmPassword, recaptcha) => {
 
 export const setMultipleSession = () => {
     return dispatch => {
-        dispatch( {type: "MULTIPLE_SESSION"})   
+        dispatch({ type: "MULTIPLE_SESSION" })
     }
 }
-    
+
 
 
 

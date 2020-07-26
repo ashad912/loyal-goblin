@@ -24,6 +24,8 @@ import ForgotPassword from "./components/auth/ForgotPassword";
 import MissionInstance from "./components/MissionInstance/";
 import Loading from "components/layout/Loading";
 import OfflineModal from "./components/auth/OfflineModal";
+import Demo from "./components/auth/Demo";
+
 import CharacterCreation from "components/characterCreation/CharacterCreation";
 
 
@@ -284,6 +286,11 @@ class App extends React.Component {
                   exact
                   path="/reset/:token"
                   component={withNoAuth(ResetPassword)}
+                />
+                <Route
+                  exact
+                  path="/demo/:key"
+                  component={withNoAuth(Demo)}
                 />
                 <Route component={PageNotFound} />
               </Switch>

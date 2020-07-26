@@ -199,6 +199,7 @@ class SignIn extends Component {
 
         if(!this.state.error.email && !this.state.error.password){
             try{
+                console.log(this.recaptcha)
                 this.recaptcha.execute();
             }catch(e){
                 console.log('Problem with recaptcha')
@@ -210,7 +211,7 @@ class SignIn extends Component {
     }
 
     onResolved = () => {
-        this.props.signIn({email: this.state.email, password: this.state.password, recaptcha: this.recaptcha.getResponse()})
+       this.props.signIn({email: this.state.email, password: this.state.password, recaptcha: this.recaptcha.getResponse()})
     }
 
 
