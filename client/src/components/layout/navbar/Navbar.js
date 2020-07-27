@@ -35,6 +35,7 @@ import { leaveShop } from 'store/actions/shopActions'
 import { uiPaths } from 'utils/constants';
 import { PintoTypography } from 'assets/fonts';
 import AvatarWithPlaceholder from 'components/AvatarWithPlaceholder';
+import { setNavbarHeight } from 'store/actions/layoutActions';
 
 
 const StyledAppBar = styled(AppBar)`
@@ -71,7 +72,7 @@ const Navbar = (props) => {
     const lastScroll = React.useRef(0)
     const navbarRef = React.useRef()
     const navbarHeight = React.useRef(0)
-    const navbarShow = React.useRef(false)
+    const navbarShow = React.useRef(true)
     const history = useHistory()
 
 
@@ -101,6 +102,12 @@ const Navbar = (props) => {
 
     }, [])
 
+    React.useLayoutEffect(() => {
+        if (navbarRef.current) {
+            props.setNavbarHeight(navbarRef.current.offsetHeight)
+        }
+    }, []);
+
     React.useEffect(() => {
         if (!props.auth.uid) {
             setNoneNavbar(true)
@@ -117,10 +124,10 @@ const Navbar = (props) => {
         // handleScrollPosition cannot read updated state, however can update state
         // handleScrollPosition can read ref.current and update ref.current
         // <StyledAppBar></StyledAppBar> jsx element cannot read updated ref, but can read updated state
-        // that's why below...
+        // That's why below...
 
         // FOR (static<->sticky) change: (window.pageYOffset > navbarHeight.current ) || navbarShow.current) to prevent navbar 'drop' when we are very close to the top
-
+        // console.log(window.pageYOffset, lastScroll.current)
         if (window.pageYOffset < lastScroll.current) {
             if (!navbarShow.current) {
                 //console.log('up')
@@ -273,7 +280,10 @@ const Navbar = (props) => {
                                     />
                                 </Button>
                             )}
-
+                            <img src={uiPaths.logo} style={{height: '50px'}} alt="logo"/>   
+                            <PintoTypography variant="h6" style={{ flexGrow: 1, textAlign: 'right', marginRight: '1rem' }}>
+                                {props.auth.profile.name}
+                            </PintoTypography>
                             <AvatarWithPlaceholder
                                 avatar={props.auth.profile.avatar}
                                 width="30px"
@@ -281,12 +291,13 @@ const Navbar = (props) => {
                                 placeholder={{
                                     text: props.auth.profile.name,
                                 }}
+                                style={{
+                                    textAlign: 'right'
+                                }}
                             />
 
 
-                            <Typography variant="h6" style={{ flexGrow: 1, textAlign: 'left', marginLeft: '1rem' }}>
-                                {props.auth.profile.name}
-                            </Typography>
+                            
 
                             <Button
                                 style={{ justifyContent: 'flex-end' }}
@@ -297,21 +308,23 @@ const Navbar = (props) => {
                             <Drawer anchor="right" open={Boolean(showDrawer)} onClose={handleClose} >
                                 <NavbarMenu>
                                     <NavbarMenuItem
+                                        onClick={toggleStatsDialog}
                                         icon={
                                             <img src={uiPaths.statistics} alt="stats" style={{ width: '1.2rem', height: '1.2rem', paddingLeft: '0.2rem' }} />
                                         }
                                         action={
-                                            <Link onClick={toggleStatsDialog} underline='none' color="primary">
+                                            <Link underline='none' color="primary">
                                                 <PintoTypography>Statystyki</PintoTypography>
                                             </Link>
                                         }
                                     />
                                     <NavbarMenuItem
+                                        onClick={toggleRankDialog}
                                         icon={
                                             <img src={uiPaths.ranking} alt="ranking" style={{ width: '1.2rem', height: '1.2rem', paddingLeft: '0.2rem' }} />
                                         }
                                         action={
-                                            <Link onClick={toggleRankDialog} underline='none' color="primary">
+                                            <Link underline='none' color="primary">
                                                 <PintoTypography>Ranking</PintoTypography>
                                             </Link>
                                         }
@@ -335,42 +348,46 @@ const Navbar = (props) => {
                                     />
                                     {props.auth.profile.avatar &&
                                         <NavbarMenuItem
+                                            onClick={handleAvatarDelete}
                                             icon={
                                                 <DeleteForeverIcon />
                                             }
                                             action={
-                                                <Link onClick={handleAvatarDelete} underline='none' color="primary">
+                                                <Link underline='none' color="primary">
                                                     <PintoTypography>Usuń avatar</PintoTypography>
                                                 </Link>
                                             }
                                         />
                                     }
                                     <NavbarMenuItem
+                                        onClick={togglePasswordChangeModal}
                                         icon={
                                             <LockIcon />
                                         }
                                         action={
-                                            <Link onClick={togglePasswordChangeModal} underline="none" color="primary">
+                                            <Link underline="none" color="primary">
                                                 <PintoTypography>Zmień hasło</PintoTypography>
                                             </Link>
                                         }
                                     />
                                     <NavbarMenuItem
+                                        onClick={() => window.location.reload(true)}
                                         icon={
                                             <RefreshIcon />
                                         }
                                         action={
-                                            <Link onClick={() => window.location.reload(true)} underline='none' color="primary">
+                                            <Link underline='none' color="primary">
                                                 <PintoTypography>Odśwież</PintoTypography>
                                             </Link>
                                         }
                                     />
                                     <NavbarMenuItem
+                                        onClick={handleLogout}
                                         icon={
                                             <ExitToAppIcon />
                                         }
                                         action={
-                                            <Link onClick={handleLogout} underline='none' color="primary">
+                                            <Link underline='none' color="primary">
                                                 <PintoTypography>Wyloguj</PintoTypography>
                                             </Link>
                                         }
@@ -446,6 +463,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        setNavbarHeight: (navbarHeight) => dispatch(setNavbarHeight(navbarHeight)),
         updateAvatar: (avatar) => dispatch(updateAvatar(avatar)),
         signOut: () => dispatch(signOut()),
         onLeaveShop: () => dispatch(leaveShop()),

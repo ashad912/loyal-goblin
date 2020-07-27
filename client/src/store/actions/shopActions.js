@@ -23,6 +23,8 @@ export const getShop = (socketConnectionStatus) => {
             if(res.data.party){
                 refreshPartyEmit(res.data.party._id)
             }
+
+            return res.data.shop
         } catch (e) {
             console.log(e.message)
             dispatch( {type: "NO_CONNECTION", error: e})  

@@ -18,7 +18,7 @@ const Step2 = (props) => {
     <Divider style={{width: '90%', margin: '0.5rem 0'}}/>
     <FormControl component="fieldset" >
         <RadioGroup aria-label="gender" name="gender" value={props.value} onChange={props.handleChange}>
-          <FormControlLabel value="female" control={<Radio color="primary"/>} label="Kobieta" />
+          <FormControlLabel value="female" disabled control={<Radio color="primary"/>} label="Kobieta" />
           <FormControlLabel value="male" control={<Radio color="primary"/>} label="Mężczyzna" />
         </RadioGroup>
       </FormControl>

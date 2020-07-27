@@ -8,10 +8,7 @@ import PartyList from './PartyList'
 import ButtonBar from './ButtonBar'
 import MissionAwards from './MissionAwards'
 
-
-
 import Loading from 'components/layout/Loading';
-
 
 import { authCheck } from "store/actions/authActions";
 import { togglePresenceInInstance, toggleUserReady, finishInstance, setActiveInstance } from 'store/actions/missionActions'
@@ -21,18 +18,75 @@ import { Container } from '@material-ui/core';
 
 class MissionInstance extends React.Component {
 
+    constructor(props){
+        super(props)
+    }
+
     state = {
         instanceItems: [],
         instanceUsers: [],
         loaded: false,
         missionId: null,
         missionObject: null,
-        leader: null,
         userReadyStatus: false,
-        fullHeightCorrection: 0,
-        showAwards: false
+        showAwards: false,
     }
 
+
+    async componentDidMount() {
+
+        if (!this.props.location.state || (this.props.location.state.id === undefined)) {
+            this.handleBack()
+            return
+        }
+
+        const socketConnectionStatus = socket.connected
+
+        try {
+            const user = { _id: this.props.uid, inMission: true }
+
+            const response = await togglePresenceInInstance(user, this.props.party._id, socketConnectionStatus)
+
+            const missionInstance = response.missionInstance
+            const amulets = response.amulets
+
+            const instanceUsers = this.modifyUserStatus(user, missionInstance.party)
+
+            this.setState({
+                instanceUsers: [...instanceUsers],
+                instanceItems: [...missionInstance.items],
+                userItems: [...amulets],
+                missionObject: missionInstance.mission,
+                loaded: true,
+            }, () => {
+                
+                modifyUserStatusSubscribe((user) => {
+
+                    const instanceUsers = this.modifyUserStatus(user, this.state.instanceUsers)
+
+                    this.setState({
+                        instanceUsers
+                    })
+                })
+
+                finishMissionSubscribe((awards) => {
+                    //console.log('finishMission sub')
+                    this.props.setActiveInstance(null, null)
+                    this.setState({
+                        missionAwards: awards
+                    }, () => {
+                        this.setState({
+                            showAwards: true,
+                        })
+                    });
+                })
+            })
+        } catch (e) {
+            console.log(e)
+            this.handleBack()
+        }
+
+    }
 
     handleBack = async (withStack) => {
 
@@ -66,73 +120,6 @@ class MissionInstance extends React.Component {
         });
     }
 
-
-
-    async componentDidMount() {
-
-
-
-        if (!this.props.location.state || (this.props.location.state.id === undefined)) {
-            this.handleBack()
-            return
-        }
-
-        const socketConnectionStatus = socket.connected
-
-        try {
-            const user = { _id: this.props.uid, inMission: true }
-
-            const response = await togglePresenceInInstance(user, this.props.party._id, socketConnectionStatus)
-
-            const missionInstance = response.missionInstance
-            const amulets = response.amulets
-
-            const instanceUsers = this.modifyUserStatus(user, missionInstance.party)
-            const leader = !this.props.party.leader || (this.props.party.leader._id === this.props.uid)
-
-            this.setState({
-                instanceUsers: [...instanceUsers],
-                instanceItems: [...missionInstance.items],
-                userItems: [...amulets],
-                missionObject: missionInstance.mission,
-                leader: leader,
-                loaded: true,
-
-            }, () => {
-                const navbar = document.getElementById("navbar") ? document.getElementById("navbar").offsetHeight : 0;
-                const footer = document.getElementById("footer") ? document.getElementById("footer").offsetHeight : 0;
-
-                this.setState({
-                    fullHeightCorrection: navbar + footer,
-                })
-
-                modifyUserStatusSubscribe((user) => {
-
-                    const instanceUsers = this.modifyUserStatus(user, this.state.instanceUsers)
-
-                    this.setState({
-                        instanceUsers
-                    })
-                })
-
-                finishMissionSubscribe((awards) => {
-                    //console.log('finishMission sub')
-                    this.props.setActiveInstance(null, null)
-                    this.setState({
-                        missionAwards: awards
-                    }, () => {
-                        this.setState({
-                            showAwards: true,
-                        })
-                    });
-                })
-            })
-        } catch (e) {
-            console.log(e)
-            this.handleBack()
-        }
-
-    }
 
     modifyUserStatus = (user, users) => {
         //console.log(user)
@@ -185,7 +172,7 @@ class MissionInstance extends React.Component {
             const user = { _id: this.props.uid, readyStatus: !this.state.userReadyStatus }
             await toggleUserReady(user, this.props.party._id)
 
-            if (this.state.leader) {
+            if (this.props.leader) {
                 const awards = await this.props.finishInstance()
                 this.setState({
                     missionAwards: awards
@@ -264,7 +251,7 @@ class MissionInstance extends React.Component {
         }
 
         const { isRequiredItemsCollected, amulets } = this.setStatusesAndCheckItemsCondition()
-        const isAllPartyReady = this.state.leader ? this.checkPartyCondition() : true
+        const isAllPartyReady = this.props.leader ? this.checkPartyCondition() : true
 
 
         return (
@@ -274,7 +261,7 @@ class MissionInstance extends React.Component {
                     flexDirection: 'column',
                     padding: `0rem 2rem`,
                     alignItems: 'center',
-                    minHeight: `calc(100vh - (${this.state.fullHeightCorrection}px)`
+                    minHeight: `calc(100vh - (${this.props.fullHeightCorrection}px)`
                 }}
                     role='application'
                 >
@@ -315,11 +302,12 @@ class MissionInstance extends React.Component {
                                     userReadyStatus={this.state.userReadyStatus}
                                 />
                                 <ButtonBar
-                                    leader={this.state.leader}
+                                    leader={this.props.leader}
                                     handleReadyButton={this.handleReadyButton}
                                     isRequiredItemsCollected={isRequiredItemsCollected}
                                     isAllPartyReady={isAllPartyReady}
                                     isUserReady={this.state.userReadyStatus}
+                                    footerHeight={this.props.footerHeight}
                                 />
                             </React.Fragment>
                         )}
@@ -332,7 +320,11 @@ class MissionInstance extends React.Component {
 const mapStateToProps = state => {
     return {
         profile: state.auth.profile,
-        party: state.party
+        party: state.party,
+        layout: state.layout,
+        footerHeight: state.layout.footerHeight,
+        fullHeightCorrection: state.layout.navbarHeight + state.layout.footerHeight,
+        leader: !state.party.leader || (state.party.leader._id === state.auth.uid)
     };
 };
 

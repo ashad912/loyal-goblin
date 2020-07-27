@@ -77,24 +77,9 @@ const FloatingCartIcon = styled(ShoppingCartIcon)`
 
 
 
-
 class Shop extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      users: [],
-      products: [],
-      menuTopOffset: 0,
-      navbarHeight: 0,
-      menuSticky: false,
-      offsetEnable: false,
-      baskets: {},
-      snackbarOpen: false,
-      activeUser: null,
-      basketDrawerOpen: false,
-      fullHeightCorrection: 0,
-      showScrollModal: false
-    };
     this.menuRef = React.createRef();
 
     this.shotsRef = React.createRef()
@@ -104,6 +89,33 @@ class Shop extends React.Component {
     this.alcoFreeRef = React.createRef()
     this.othersRef = React.createRef()
 
+    this.state = {
+      
+      users: [],
+      products: [],
+      menuTopOffset: 0,
+      
+      menuSticky: false,
+      offsetEnable: false, 
+      snackbarOpen: false,
+      baskets: this.initBaskets(),
+      activeUser: null,
+      basketDrawerOpen: false,
+      
+      showScrollModal: false
+    }
+
+  }
+
+  initBaskets = () => {
+    const baskets = {};
+    baskets[this.props.auth.uid] = [];
+    if (this.props.party.length > 1) {
+      this.props.party.forEach(player => {
+        baskets[player._id] = [];
+      });
+    }
+    return baskets
   }
 
   backToProfile = history => {
@@ -159,38 +171,45 @@ class Shop extends React.Component {
     const socketConnectionStatus = socket.connected
     try {
       await this.props.onGetShop(socketConnectionStatus);
+
+      
+
+      //backend call for players in party
+      //await this.props.onUpdateParty();
+
+
+      // this.setState({
+      //   products: [...products],
+      // }, () => {
+      //   window.addEventListener("scroll", this.handleScrollPosition);
+      // });
+
+      this.handleChangeActiveUser(
+        null,
+        this.props.party.length > 0 && this.props.party[0]
+          ? this.props.party[0]._id
+          : this.props.auth.uid, 
+          (state) => {
+            let menuTopOffset = this.menuRef.current && this.menuRef.current.offsetTop;
+
+            this.setState({
+              ...state,
+              menuTopOffset,
+              navbarHeight: this.props.layout.navbarHeight,
+              fullHeightCorrection: this.props.layout.navbarHeight + this.props.layout.footerHeight,
+            }, () => {
+              window.addEventListener("scroll", this.handleScrollPosition);
+            })
+          }
+      );
+
     } catch (e) {
       this.handleBack()
-      //this.handleLeaveShop(); REFACTORED
       return;
     }
 
-    const navbarHeight = document.getElementById("navbar") ? document.getElementById("navbar").offsetHeight : 0;
-    const footerHeight = document.getElementById("footer") ? document.getElementById("footer").offsetHeight : 0;
 
-
-    let menuTopOffset = this.menuRef.current && this.menuRef.current.offsetTop;
-    this.setState({ menuTopOffset, navbarHeight, fullHeightCorrection: navbarHeight + footerHeight }, () => {
-      window.addEventListener("scroll", this.handleScrollPosition);
-    });
-
-    //backend call for players in party
-    //await this.props.onUpdateParty();
-    const baskets = {};
-    baskets[this.props.auth.uid] = [];
-    if (this.props.party.length > 1) {
-      this.props.party.forEach(player => {
-        baskets[player._id] = [];
-      });
-    }
-
-    this.setState({ baskets, products: [...this.props.products] }, () => { });
-    this.handleChangeactiveUser(
-      null,
-      this.props.party.length > 0 && this.props.party[0]
-        ? this.props.party[0]._id
-        : this.props.auth.uid
-    );
+    
   }
 
   async componentDidUpdate(prevProps, prevState) {
@@ -207,14 +226,14 @@ class Shop extends React.Component {
         });
         this.setState({ baskets: tempBaskets });
 
-        this.handleChangeactiveUser(
+        this.handleChangeActiveUser(
           null,
           this.props.party.length > 0 && this.props.party[0]
             ? this.props.party[0]._id
             : this.props.auth.uid
         );
       } else {
-        this.handleChangeactiveUser(null, this.state.activeUser);
+        this.handleChangeActiveUser(null, this.state.activeUser);
       }
     }
     if (prevState.activeUser !== this.state.activeUser) {
@@ -254,7 +273,7 @@ class Shop extends React.Component {
 
     this.setState({ baskets, snackbarOpen: true }, () => {
       if (firstDiscount) {
-        this.handleChangeactiveUser(null, this.state.activeUser)
+        this.handleChangeActiveUser(null, this.state.activeUser)
       }
     });
   };
@@ -276,7 +295,7 @@ class Shop extends React.Component {
       }
       this.setState({ baskets }, () => {
         if (firstDiscount || productInBasketWasFirstDiscount) {
-          this.handleChangeactiveUser(null, this.state.activeUser)
+          this.handleChangeActiveUser(null, this.state.activeUser)
         }
       });
     }
@@ -286,96 +305,102 @@ class Shop extends React.Component {
     this.setState({ snackbarOpen: false });
   };
 
-  handleChangeactiveUser = (e, id) => {
+  handleChangeActiveUser = (e, id, callback) => {
     //CALL BACKEND FOR PRODUCT MODIFIERS EACH TIME ACTIVE USER CHANGES
-    this.setState({ activeUser: id }, () => {
-      let products = [...this.props.products];
-      // console.log(products);
-      products = products.map(product => {
-        return {
-          ...product,
-          priceModified: false,
-          experienceModified: false
-        };
-      });
-      const activeUser =
-        this.props.party.length > 0
-          ? this.props.party.find(user => user._id === this.state.activeUser)
-          : this.props.auth.profile;
-      if (
-        activeUser.hasOwnProperty("userPerks") &&
-        Object.keys(activeUser.userPerks.products).length > 0
-      ) {
-        Object.keys(activeUser.userPerks.products).forEach(modifiedProduct => {
-          const modifyIndex = products.findIndex(
-            product => product._id === modifiedProduct
-          );
+    //this.setState({ activeUser: id }, () => {
+    let products = [...this.props.products];
+    // console.log(products);
+    products = products.map(product => {
+      return {
+        ...product,
+        priceModified: false,
+        experienceModified: false
+      };
+    });
+    const activeUser =
+      this.props.party.length > 0
+        ? this.props.party.find(user => user._id === id)
+        : this.props.auth.profile;
+    if (
+      activeUser.hasOwnProperty("userPerks") &&
+      Object.keys(activeUser.userPerks.products).length > 0
+    ) {
+      Object.keys(activeUser.userPerks.products).forEach(modifiedProduct => {
+        const modifyIndex = products.findIndex(
+          product => product._id === modifiedProduct
+        );
 
-          if (modifyIndex > -1) {
-            if (
-              activeUser.userPerks.products[modifiedProduct].hasOwnProperty(
-                "experienceMod"
-              )
-            ) {
-              const expMod =
-                activeUser.userPerks.products[modifiedProduct].experienceMod;
-              const exp =
-                parseInt(
-                  activeUser.userPerks.products[modifiedProduct].experienceMod
-                ) +
-                products[modifyIndex].price * 10;
-              products[modifyIndex].experience = exp;
-              if (expMod > 0) {
-                products[modifyIndex].experienceModified =
-                  expMod > 0 ? "#28a52e" : "#c10000";
-              }
-            }
-            if (
-              activeUser.userPerks.products[modifiedProduct].hasOwnProperty(
-                "priceMod"
-              )
-            ) {
-              //Show price in green color when lowered if any priceMod present
-              products[modifyIndex].priceModified = false
-              products[modifyIndex].firstDiscount = false
-
-
-              //Apply first priceMod discount from scroll
-              if (activeUser.equipped.scroll && activeUser.userPerks.products[modifiedProduct].priceMod.hasOwnProperty('first') && activeUser.userPerks.products[modifiedProduct].priceMod.first < 0) {
-                //console.log(activeUser.userPerks.products[modifiedProduct].priceMod.first)
-                if (this.state.baskets[this.state.activeUser]) {
-
-                  const productInBasket = this.state.baskets[this.state.activeUser].find(basketProduct => basketProduct._id === modifiedProduct && basketProduct.quantity > 0 && basketProduct.firstDiscount)
-                  if (!productInBasket) {
-                    products[modifyIndex].price += activeUser.userPerks.products[modifiedProduct].priceMod.first;
-                    products[modifyIndex].firstDiscount = true
-                    products[modifyIndex].priceModified = "#28a52e"
-                  } else {
-                    products[modifyIndex].priceModified = false
-                  }
-                }
-
-              }
-
-
-
-              //Apply standard priceMod discount
-              if (activeUser.userPerks.products[modifiedProduct].priceMod.hasOwnProperty('standard') && activeUser.userPerks.products[modifiedProduct].priceMod.standard < 0) {
-                products[modifyIndex].price +=
-                  activeUser.userPerks.products[modifiedProduct].priceMod.standard;
-                products[modifyIndex].priceModified = "#28a52e"
-              }
-
-              //Final check to disable negative price
-              if (products[modifyIndex].price < 0) {
-                products[modifyIndex].price = 0.0;
-              }
+        if (modifyIndex > -1) {
+          if (
+            activeUser.userPerks.products[modifiedProduct].hasOwnProperty(
+              "experienceMod"
+            )
+          ) {
+            const expMod =
+              activeUser.userPerks.products[modifiedProduct].experienceMod;
+            const exp =
+              parseInt(
+                activeUser.userPerks.products[modifiedProduct].experienceMod
+              ) +
+              products[modifyIndex].price * 10;
+            products[modifyIndex].experience = exp;
+            if (expMod > 0) {
+              products[modifyIndex].experienceModified =
+                expMod > 0 ? "#28a52e" : "#c10000";
             }
           }
-        });
-      }
-      this.setState({ products });
-    });
+          if (
+            activeUser.userPerks.products[modifiedProduct].hasOwnProperty(
+              "priceMod"
+            )
+          ) {
+            //Show price in green color when lowered if any priceMod present
+            products[modifyIndex].priceModified = false
+            products[modifyIndex].firstDiscount = false
+
+
+            //Apply first priceMod discount from scroll
+            if (activeUser.equipped.scroll && activeUser.userPerks.products[modifiedProduct].priceMod.hasOwnProperty('first') && activeUser.userPerks.products[modifiedProduct].priceMod.first < 0) {
+              //console.log(activeUser.userPerks.products[modifiedProduct].priceMod.first)
+              if (this.state.baskets[id]) {
+
+                const productInBasket = this.state.baskets[id].find(basketProduct => basketProduct._id === modifiedProduct && basketProduct.quantity > 0 && basketProduct.firstDiscount)
+                if (!productInBasket) {
+                  products[modifyIndex].price += activeUser.userPerks.products[modifiedProduct].priceMod.first;
+                  products[modifyIndex].firstDiscount = true
+                  products[modifyIndex].priceModified = "#28a52e"
+                } else {
+                  products[modifyIndex].priceModified = false
+                }
+              }
+
+            }
+
+
+
+            //Apply standard priceMod discount
+            if (activeUser.userPerks.products[modifiedProduct].priceMod.hasOwnProperty('standard') && activeUser.userPerks.products[modifiedProduct].priceMod.standard < 0) {
+              products[modifyIndex].price +=
+                activeUser.userPerks.products[modifiedProduct].priceMod.standard;
+              products[modifyIndex].priceModified = "#28a52e"
+            }
+
+            //Final check to disable negative price
+            if (products[modifyIndex].price < 0) {
+              products[modifyIndex].price = 0.0;
+            }
+          }
+        }
+      });
+    }
+
+    if(callback){
+      callback({ products, activeUser: id })
+    }else{
+      this.setState({ products, activeUser: id });
+    }
+    
+    //});
 
   };
 
@@ -440,7 +465,7 @@ class Shop extends React.Component {
         this.state.activeUser
       );
     }
-    this.handleChangeactiveUser(null, this.state.activeUser);
+    this.handleChangeActiveUser(null, this.state.activeUser);
   };
 
   scrollToRef = (ref) => {
@@ -532,7 +557,7 @@ class Shop extends React.Component {
                     <PlayerShopButtons
                       users={this.props.party}
                       activeUser={this.state.activeUser}
-                      handleChipClick={this.handleChangeactiveUser}
+                      handleChipClick={this.handleChangeActiveUser}
                     />
                   )}
                   {!activeUser.equipped?.scroll && activeUser.bag.filter(item => item.itemModel.type === "scroll").length > 0 ? (
@@ -819,6 +844,7 @@ class Shop extends React.Component {
       return (
         <div style={{ minHeight: `calc(100vh - (${this.state.fullHeightCorrection}px)` }}>
           <Container maxWidth='xs' style={{ padding: 0 }}>
+            <React.Fragment></React.Fragment>
           </Container>
         </div>
       );
@@ -834,7 +860,8 @@ const mapStateToProps = state => {
     party: state.party.leader
       ? [{ ...state.auth.profile, _id: state.auth.uid }, ...state.party.members]
       : [],
-    leader: state.auth.uid
+    leader: state.auth.uid,
+    layout: state.layout
   };
 };
 

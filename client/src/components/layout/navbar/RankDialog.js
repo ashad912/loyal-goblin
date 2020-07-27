@@ -37,7 +37,7 @@ const RankDialog = props => {
 
 
     return (
-        <Dialog maxWidth="xl" fullWidth open={props.open} onClose={props.handleClose} PaperProps={{ style: { width: '100%', margin: '1rem', maxHeight: '70vh', height: '70vh' } }}>
+        <Dialog maxWidth="xs" fullWidth open={props.open} onClose={props.handleClose} PaperProps={{ style: { width: '100%', margin: '1rem', maxHeight: '70vh', height: '70vh' } }}>
             <DialogTitle style={{ padding: '1rem 1rem 0 1rem' }}>TopGoblin</DialogTitle>
             <DialogContent style={{ padding: '1rem 1rem' }}>
 

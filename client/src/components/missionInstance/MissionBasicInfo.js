@@ -5,8 +5,8 @@ import Typography from "@material-ui/core/Typography";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
 import Grid from "@material-ui/core/Grid";
 
-import {missionsPath} from '../../utils/constants'
-import {PintoTypography} from '../../assets/fonts'
+import {missionsPath} from 'utils/constants'
+import {PintoTypography} from 'assets/fonts'
 
 const ShortDescription = styled(PintoTypography)`
   display: -webkit-box;

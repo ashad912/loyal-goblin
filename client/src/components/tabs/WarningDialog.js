@@ -91,6 +91,7 @@ const WarningDialog = (props) => {
       desc={`${props.warning.text} ${endTexts[warning]}`}
       cancelText="Anuluj"
       confirmText="Potwierdź"
+      maxWidth="xs"
     />
   );
 };

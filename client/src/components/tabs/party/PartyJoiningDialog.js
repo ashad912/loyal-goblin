@@ -40,6 +40,7 @@ const PartyJoiningDialog = props => {
       onClose={props.handleClose}
       PaperProps={{ style: { minHeight: "50vh" } }}
       fullWidth
+      maxWidth='xs'
       style={{ zIndex: 2000 }}
     >
       <DialogTitle>Szukaj drużyny</DialogTitle>
@@ -51,8 +52,8 @@ const PartyJoiningDialog = props => {
               Pokaż ten kod liderowi drużyny. On będzie wiedział, co robić!
             </Typography>
           </Grid>
-          <Grid item style={{width: '100%'}}>
-            <img src={qrCode} style={{width: '100%'}}/>
+          <Grid item style={{width: '100%', textAlign: 'center'}}>
+            <img src={qrCode} style={{width: '100%', maxWidth: '220px'}}/>
           </Grid>
         </Grid>
       </DialogContent>

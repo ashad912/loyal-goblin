@@ -51,11 +51,6 @@ class SignIn extends Component {
         fullHeightCorrection: 0
     }
 
-    componentDidMount() {
-        // const navbar = document.getElementById("navbar").offsetHeight;
-        // const footer = document.getElementById("footer").offsetHeight;
-        // this.setState({fullHeightCorrection: navbar+footer})
-    }
     
 
     // componentDidUpdate(prevProps, prevState){

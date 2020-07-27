@@ -25,7 +25,7 @@ const Background = styled.div`
 const StatsDialog = props => {
 
     return (
-        <Dialog style={{ margin: '-24px' }} fullWidth open={props.open} onClose={props.handleClose}>
+        <Dialog style={{ margin: '-24px' }} maxWidth="xs" fullWidth open={props.open} onClose={props.handleClose}>
             <DialogContent style={{ padding: '0' }}>
                 <Background color={palette.primary.main}>
                     <Grid

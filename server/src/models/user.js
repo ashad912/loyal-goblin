@@ -58,6 +58,9 @@ export const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    demo: {
+        type: Boolean
+    },
     status: {
         type: String,
     },

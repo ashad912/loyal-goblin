@@ -16,6 +16,7 @@ const AwardsDialogSchema = ({open, handleClose, title, biggerHeader, header, lis
         open={open} 
         onClose={handleClose}
         fullWidth
+        maxWidth='xs'
         style={{
             margin: '-24px', 
             textAlign: 'center'

@@ -47,6 +47,7 @@ export const createParty = (name, leader) => {
                 //console.log('connect from createParty')
                 socket.open()
                 socketAuthenticateEmit()
+                dispatch(getMissionList()) 
             }     
         }catch (e) {
             console.log(e)

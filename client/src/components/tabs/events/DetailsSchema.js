@@ -13,7 +13,7 @@ const DetailsSchema = (props) => {
             onClose={props.handleClose}
             fullWidth
             style={{margin: '-40px', zIndex: 1500}}
-            maxWidth="lg"
+            maxWidth="xs"
         >
             <div style={{backgroundColor: palette.primary.main, color: 'white'}}>
                 <DialogContent style={{padding: '2rem 1rem', maxHeight: '19vh'}}>

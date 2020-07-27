@@ -12,7 +12,7 @@ import { PintoTypography} from "assets/fonts";
 
 const OperationDialog = ({open, onClose, handleAction, title, desc, cancelText, confirmText}) => {
     return (
-        <Dialog open={open} onClose={onClose} style={{ zIndex: 4000 }}>
+        <Dialog open={open} onClose={onClose} style={{ zIndex: 4000 }} maxWidth="xs">
             <DialogTitle style={{ textAlign: 'center' }}>{title}</DialogTitle>
             <DialogContent>
                 <PintoTypography style={{ color: palette.background.darkGrey }}>

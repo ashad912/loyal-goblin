@@ -8,14 +8,10 @@ import { createDemoUser } from 'store/actions/authActions'
 class Demo extends React.Component {
 
     
-
     componentDidMount = () => {
         setTimeout(() => {
-
-            console.log(this.recaptcha)
             try {
                 this.recaptcha.execute()
-                //demoLogin()
             } catch (e) {
                 this.recaptcha.reset()
                 this.props.history.push('/signup')
@@ -23,7 +19,6 @@ class Demo extends React.Component {
 
 
         }, 500)
-
     }
 
 

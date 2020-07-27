@@ -22,6 +22,7 @@ import { PintoTypography } from 'assets/fonts'
 const FormContainer = styled(Container)`
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-direction: column;
   margin: 3rem 0 3rem 0;
 `;
@@ -65,15 +66,9 @@ class ForgotPassword extends Component {
     error: {
       email: false
     },
-    fullHeightCorrection: 0,
     jwtNotExpiredError: false
   };
 
-  componentDidMount() {
-    //const navbar = document.getElementById("navbar").offsetHeight;
-    const footer = document.getElementById("footer").offsetHeight;
-    this.setState({ fullHeightCorrection: footer });
-  }
 
   handleChange = e => {
     const id = e.target.id;
@@ -170,12 +165,12 @@ class ForgotPassword extends Component {
           justifyContent: "center",
           flexDirection: 'column',
           alignItems: 'center',
-          minHeight: `calc(100vh - ${this.state.fullHeightCorrection}px)`,
+          minHeight: `calc(100vh - ${this.props.fullHeightCorrection}px)`,
           background: palette.primary.main
         }}
       >
-        <img src={uiPaths.logo} style={{ width: '50%', marginBottom: "-1rem" }} alt="logo" />
         <FormContainer maxWidth="xs">
+        <img src={uiPaths.logo} style={{ width: '50%', flexBasis: '20%', marginBottom: '1rem' }} alt="logo" />
           <form onSubmit={this.handleSubmit} className="white">
             <Typography
               variant="h5"
@@ -292,7 +287,8 @@ class ForgotPassword extends Component {
 const mapStateToProps = state => {
   return {
     authError: state.auth.authError, // auth in rootReducer, authError in authReducer, state global Redux store
-    auth: state.auth
+    auth: state.auth,
+    fullHeightCorrection: state.layout.footerHeight
   };
 };
 

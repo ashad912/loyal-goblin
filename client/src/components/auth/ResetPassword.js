@@ -62,10 +62,7 @@ class ResetPassword extends Component {
   };
 
   async componentDidMount() {
-    const navbar = document.getElementById("navbar").offsetHeight;
-    const footer = document.getElementById("footer").offsetHeight;
-    this.setState({ fullHeightCorrection: navbar + footer });
-
+  
     //validate link token for password change
     try {
         await validatePasswordChangeToken(this.props.match.params.token) 
@@ -221,7 +218,7 @@ class ResetPassword extends Component {
           justifyContent: "center",
           flexDirection: 'column',
           alignItems: 'center',
-          minHeight: `calc(100vh - ${this.state.fullHeightCorrection}px)`,
+          minHeight: `calc(100vh - ${this.props.fullHeightCorrection}px)`,
           background: palette.primary.main
         }}
       ><img src={uiPaths.logo} style={{width: '50vw', flexBasis: '20%'}} alt="logo"/>
@@ -323,7 +320,8 @@ class ResetPassword extends Component {
 const mapStateToProps = state => {
   return {
     authError: state.auth.authError, // auth in rootReducer, authError in authReducer, state global Redux store
-    auth: state.auth
+    auth: state.auth,
+    fullHeightCorrection: state.layout.navbarHeight + state.layout.footerHeight,
   };
 };
 

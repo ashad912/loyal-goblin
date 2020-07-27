@@ -49,8 +49,8 @@ import { PintoTypography } from 'assets/fonts';
 
 class Loyal extends Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.timer = 0;
         this.wrecksIds = ["117", "103", "116", "101", "102", "110"];
         this.wrecks = [["B4", "B5", "B6", "B7"], ["I1", "I2", "I3", "I4"], ["F9", "E9", "D9", "C9", "B9"], ["D1", "C1"], ["E3", "E4", "E5"], ["H7", "G7"]]
@@ -65,6 +65,30 @@ class Loyal extends Component {
         loadedTorpedo: undefined,
         showTorpedosModal: false,
         award: false, 
+        iOS: !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform),
+        userTorpedos: this.props.bag.filter((item) => item.itemModel.type === "torpedo"),
+        serverFields: [
+            {id: 1, name: 'D1', pressed: this.props.loyal['D1']},
+            {id: 2, name: 'E3', pressed: this.props.loyal['E3']},
+            {id: 3, name: 'I1', pressed: this.props.loyal['I1']},
+            {id: 4, name: 'I2', pressed: this.props.loyal['I2']},
+            {id: 5, name: 'I3', pressed: this.props.loyal['I3']},
+            {id: 6, name: 'I4', pressed: this.props.loyal['I4']},
+            {id: 7, name: 'E4', pressed: this.props.loyal['E4']},
+            {id: 8, name: 'E5', pressed: this.props.loyal['E5']},
+            {id: 9, name: 'G7', pressed: this.props.loyal['G7']},
+            {id: 10, name: 'H7', pressed: this.props.loyal['H7']},
+            {id: 11, name: 'C1', pressed: this.props.loyal['C1']},
+            {id: 12, name: 'B9', pressed: this.props.loyal['B9']},
+            {id: 13, name: 'C9', pressed: this.props.loyal['C9']},
+            {id: 14, name: 'D9', pressed: this.props.loyal['D9']},
+            {id: 15, name: 'E9', pressed: this.props.loyal['E9']},
+            {id: 16, name: 'F9', pressed: this.props.loyal['F9']},
+            {id: 17, name: 'B4', pressed: this.props.loyal['B4']},
+            {id: 18, name: 'B5', pressed: this.props.loyal['B5']},
+            {id: 19, name: 'B6', pressed: this.props.loyal['B6']},
+            {id: 20, name: 'B7', pressed: this.props.loyal['B7']},
+        ]
     }
 
 
@@ -102,62 +126,62 @@ class Loyal extends Component {
 
     
 
-    componentDidMount = () => {
+    // componentDidMount = () => {
 
-        var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+    //     var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
         
 
         
-        this.setState({
+    //     this.setState({
 
-            iOS,
-            userTorpedos: this.props.bag.filter((item) => item.itemModel.type === "torpedo"),
-            serverFields: [
-                {id: 1, name: 'D1', pressed: this.props.loyal['D1']},
-                {id: 2, name: 'E3', pressed: this.props.loyal['E3']},
-                {id: 3, name: 'I1', pressed: this.props.loyal['I1']},
-                {id: 4, name: 'I2', pressed: this.props.loyal['I2']},
-                {id: 5, name: 'I3', pressed: this.props.loyal['I3']},
-                {id: 6, name: 'I4', pressed: this.props.loyal['I4']},
-                {id: 7, name: 'E4', pressed: this.props.loyal['E4']},
-                {id: 8, name: 'E5', pressed: this.props.loyal['E5']},
-                {id: 9, name: 'G7', pressed: this.props.loyal['G7']},
-                {id: 10, name: 'H7', pressed: this.props.loyal['H7']},
-                {id: 11, name: 'C1', pressed: this.props.loyal['C1']},
-                {id: 12, name: 'B9', pressed: this.props.loyal['B9']},
-                {id: 13, name: 'C9', pressed: this.props.loyal['C9']},
-                {id: 14, name: 'D9', pressed: this.props.loyal['D9']},
-                {id: 15, name: 'E9', pressed: this.props.loyal['E9']},
-                {id: 16, name: 'F9', pressed: this.props.loyal['F9']},
-                {id: 17, name: 'B4', pressed: this.props.loyal['B4']},
-                {id: 18, name: 'B5', pressed: this.props.loyal['B5']},
-                {id: 19, name: 'B6', pressed: this.props.loyal['B6']},
-                {id: 20, name: 'B7', pressed: this.props.loyal['B7']},
-            ]
-            // serverFields: [
-            //         {id: 1, name: 'D1', pressed: true},
-            //         {id: 2, name: 'E3', pressed: false},
-            //         {id: 3, name: 'I1', pressed: true},
-            //         {id: 4, name: 'I2', pressed: true},
-            //         {id: 5, name: 'I3', pressed: false},
-            //         {id: 6, name: 'I4', pressed: true},
-            //         {id: 7, name: 'E4', pressed: true},
-            //         {id: 8, name: 'E5', pressed: false},
-            //         {id: 9, name: 'G7', pressed: true},
-            //         {id: 10, name: 'H7', pressed: true},
-            //         {id: 11, name: 'C1', pressed: true},
-            //         {id: 12, name: 'B9', pressed: true},
-            //         {id: 13, name: 'C9', pressed: true},
-            //         {id: 14, name: 'D9', pressed: false},
-            //         {id: 15, name: 'E9', pressed: true},
-            //         {id: 16, name: 'F9', pressed: false},
-            //         {id: 17, name: 'B4', pressed: true},
-            //         {id: 18, name: 'B5', pressed: true},
-            //         {id: 19, name: 'B6', pressed: true},
-            //         {id: 20, name: 'B7', pressed: false},
-            //     ]
-        })
-    }
+    //         iOS,
+            
+    //         serverFields: [
+    //             {id: 1, name: 'D1', pressed: this.props.loyal['D1']},
+    //             {id: 2, name: 'E3', pressed: this.props.loyal['E3']},
+    //             {id: 3, name: 'I1', pressed: this.props.loyal['I1']},
+    //             {id: 4, name: 'I2', pressed: this.props.loyal['I2']},
+    //             {id: 5, name: 'I3', pressed: this.props.loyal['I3']},
+    //             {id: 6, name: 'I4', pressed: this.props.loyal['I4']},
+    //             {id: 7, name: 'E4', pressed: this.props.loyal['E4']},
+    //             {id: 8, name: 'E5', pressed: this.props.loyal['E5']},
+    //             {id: 9, name: 'G7', pressed: this.props.loyal['G7']},
+    //             {id: 10, name: 'H7', pressed: this.props.loyal['H7']},
+    //             {id: 11, name: 'C1', pressed: this.props.loyal['C1']},
+    //             {id: 12, name: 'B9', pressed: this.props.loyal['B9']},
+    //             {id: 13, name: 'C9', pressed: this.props.loyal['C9']},
+    //             {id: 14, name: 'D9', pressed: this.props.loyal['D9']},
+    //             {id: 15, name: 'E9', pressed: this.props.loyal['E9']},
+    //             {id: 16, name: 'F9', pressed: this.props.loyal['F9']},
+    //             {id: 17, name: 'B4', pressed: this.props.loyal['B4']},
+    //             {id: 18, name: 'B5', pressed: this.props.loyal['B5']},
+    //             {id: 19, name: 'B6', pressed: this.props.loyal['B6']},
+    //             {id: 20, name: 'B7', pressed: this.props.loyal['B7']},
+    //         ]
+    //         // serverFields: [
+    //         //         {id: 1, name: 'D1', pressed: true},
+    //         //         {id: 2, name: 'E3', pressed: false},
+    //         //         {id: 3, name: 'I1', pressed: true},
+    //         //         {id: 4, name: 'I2', pressed: true},
+    //         //         {id: 5, name: 'I3', pressed: false},
+    //         //         {id: 6, name: 'I4', pressed: true},
+    //         //         {id: 7, name: 'E4', pressed: true},
+    //         //         {id: 8, name: 'E5', pressed: false},
+    //         //         {id: 9, name: 'G7', pressed: true},
+    //         //         {id: 10, name: 'H7', pressed: true},
+    //         //         {id: 11, name: 'C1', pressed: true},
+    //         //         {id: 12, name: 'B9', pressed: true},
+    //         //         {id: 13, name: 'C9', pressed: true},
+    //         //         {id: 14, name: 'D9', pressed: false},
+    //         //         {id: 15, name: 'E9', pressed: true},
+    //         //         {id: 16, name: 'F9', pressed: false},
+    //         //         {id: 17, name: 'B4', pressed: true},
+    //         //         {id: 18, name: 'B5', pressed: true},
+    //         //         {id: 19, name: 'B6', pressed: true},
+    //         //         {id: 20, name: 'B7', pressed: false},
+    //         //     ]
+    //     })
+    // }
 
 
 

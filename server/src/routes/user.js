@@ -19,6 +19,7 @@ import {
 import moment from "moment";
 import createEmail from '../emails/createEmail'
 import { recaptcha } from "../middleware/recaptcha";
+import mongooseUniqueArray from "mongoose-unique-array";
 
 const router = express.Router();
 
@@ -184,7 +185,8 @@ router.patch("/character", auth, async (req, res, next) => {
     user.attributes = { ...attributes }
     await user.save()
 
-
+    await user.updatePerks(false)
+    await user.standardPopulate()
 
     res.status(201).send(user)
   } catch (e) {
@@ -214,8 +216,104 @@ router.post("/login", recaptcha, async (req, res, next) => {
   }
 });
 
+
+router.post("/demo/:id", recaptcha, async (req, res, next) => {
+
+ 
+  try {
+    if (req.params.id !== process.env.DEMO_KEY) {
+      throw getEndpointError(WARN, 'Invalid demo key')
+    }
+
+    const existingDemoUsers = await User.find({ demo: true })
+
+    const user = new User({
+      _id: new require('mongoose').Types.ObjectId(),
+      email: `demouser${existingDemoUsers.length}@goblin.demo`,
+      password: process.env.DEMO_KEY,
+      active: true,
+      demo: true,
+      perksUpdatedAt: moment().toISOString(),
+      activeOrder: [],
+      bag: [],
+      loyal: {},
+      experience: 60,
+    });
+
+    const createWeaponAndAddToBag = async (itemModel) => {
+      const item = new Item({ itemModel: itemModel._id, owner: user._id })
+      await item.save()
+      user.bag = [...user.bag, item._id]
+      return item._id
+    }
+
+    // Add one weapon
+    const weapon = await ItemModel.findOne({ type: 'weapon', demo: true })
+
+    if (weapon) {
+      const weaponId = await createWeaponAndAddToBag(weapon)
+      user.equipped.weaponLeft = weaponId
+    }
+
+    // Add one chest
+    const chest = await ItemModel.findOne({ type: 'chest', demo: true })
+
+    if (chest) {
+      const chestId = await createWeaponAndAddToBag(chest)
+      user.equipped.chest = chestId
+    }
+
+    // Add one legs
+    const legs = await ItemModel.findOne({ type: 'legs', demo: true })
+
+    if (legs) {
+      const legsId = await createWeaponAndAddToBag(legs)
+      user.equipped.legs = legsId
+    }
+
+    // Add one from each amulets...
+    const amulets = await ItemModel.find({ type: 'amulet' })
+    for (const itemModel of amulets) {
+      await createWeaponAndAddToBag(itemModel)
+    }
+
+    // Add one from each torpedos...
+    const torpedo = await ItemModel.find({ type: 'torpedo' })
+    for (const itemModel of torpedo) {
+      await createWeaponAndAddToBag(itemModel)
+    }
+
+    const token = await user.generateAuthToken();
+
+    await user.updatePerks(true)
+    await user.standardPopulate()
+
+    if (user.passwordChangeToken) {
+      user.passwordChangeToken = null
+      await user.save()
+    }
+
+    const maxAge = 1800000
+    setTimeout(async () => {
+      await user.remove()
+    }, maxAge)
+
+    res
+      .cookie("token", token, { maxAge, httpOnly: true })
+      .send(user); //cookie lifetime: 30 mins (maxAge in msc)
+  } catch (e) {
+    next(e)
+  }
+});
+
 router.post("/logout", auth, async (req, res, next) => {
   try {
+
+    if (req.user.demo) {
+      await req.user.remove()
+      return res.clearCookie('token').send()
+    }
+
     req.user.tokens = req.user.tokens.filter(token => {
       return token.token !== req.token;
     });
@@ -302,7 +400,7 @@ router.post("/forgotPassword", recaptcha, async (req, res, next) => {
   try {
 
     const email = req.body.email
-    
+
     if (!validator.isEmail(email)) {
       throw getEndpointError(WARN, 'Invalid email')
     }

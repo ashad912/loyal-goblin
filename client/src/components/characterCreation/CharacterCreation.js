@@ -243,12 +243,9 @@ const CharacterCreation = props => {
     setActiveStep(prevActiveStep => prevActiveStep - 1);
   };
 
-  const navbar = document.getElementById("navbar") ? (document.getElementById("navbar").offsetHeight) : 0;
-  const footer = document.getElementById("footer") ? (document.getElementById("footer").offsetHeight) : 0;
-  const fullHeightCorrection = navbar + footer
   
   return (
-    <div style={{width: '100vw', height: `calc(100vh - ${fullHeightCorrection}px)`}}>
+    <div style={{width: '100vw', height: `calc(100vh - ${props.fullHeightCorrection}px)`}}>
       <Dialog
         fullScreen
         open={!props.auth.profile.name || !props.auth.profile.class}
@@ -308,6 +305,7 @@ const CharacterCreation = props => {
 const mapStateToProps = state => {
   return {
     auth: state.auth,
+    fullHeightCorrection: state.layout.navbarHeight + state.layout.footerHeight,
   };
 };
 

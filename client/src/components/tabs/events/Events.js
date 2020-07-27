@@ -2,37 +2,32 @@ import React, {useState}  from 'react'
 import { useHistory} from 'react-router-dom'
 import { connect } from 'react-redux'
 import VisibilitySensor from 'react-visibility-sensor'
+import styled from 'styled-components'
+
+import List from '@material-ui/core/List';
+
+import Rally from './rally/Rally'
 import MissionDetails from './mission/MissionDetails'
 import RallyDetails from './rally/RallyDetails'
 import MissionListItem from './mission/MissionListItem'
-import withMissionItemCommon from '../../../hoc/withMissionItemCommon'
-import List from '@material-ui/core/List';
+import MissionListHeader from './mission/MissionListHeader'
+import withMissionItemCommon from 'hoc/withMissionItemCommon'
 
-
-import Typography from '@material-ui/core/Typography';
-import styled from 'styled-components'
-
-import {getMissionList, createInstance, deleteInstance} from '../../../store/actions/missionActions.js'
-
-import Rally from './rally/Rally'
-import { getFirstRally } from '../../../store/actions/rallyActions'
-import { authCheck } from "../../../store/actions/authActions";
-
-import IconButton from '@material-ui/core/IconButton';
-import RefreshIcon from '@material-ui/icons/Refresh';
-import { warningActionSources } from 'utils/constants'
+import {getMissionList, createInstance, deleteInstance} from 'store/actions/missionActions.js'
+import { getFirstRally } from 'store/actions/rallyActions'
+import { authCheck } from "store/actions/authActions";
 import { setCheckWarning } from 'store/actions/communicationActions'
+
+import { warningActionSources } from 'utils/constants'
 
 
 const itemLabelHeight = 451.6 //REFACTOR: need to be changed to 'dimensionLabel'
-
 
 
 const StyledList = styled(List)`
     width: 100%;
     margin: 0 0 1rem 0;
 `
-
 
 
 
@@ -107,7 +102,9 @@ const Events = (props) => {
 
     const handleMissionDetailsClose = (callback) => {
         setActiveMissionDetails(null)
-        callback()
+        if(callback){
+            callback()
+        }
         
     }
 
@@ -128,7 +125,7 @@ const Events = (props) => {
             return(
                 <VisibilitySensor partialVisibility key={mission._id}>
                 {({isVisible}) =>
-                    <div>{isVisible ? ( /*inVisible defined only inside div which is fucking kurwa crazy */
+                    <div>{isVisible ? ( /*inVisible defined only inside div */
                         <MissionListItemHoc
                             index={index}
                             activeMissionId = {props.activeMissionId}
@@ -158,18 +155,11 @@ const Events = (props) => {
                 <Rally rally={props.rally} handleRallyDetailsOpen={handleRallyDetailsOpen} handleRallyDetailsClose={handleRallyDetailsClose} refreshProfile={() => props.authCheck()}/>
             )}
 
-            <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                <IconButton
-                    onClick={handleRefresh}
-                    aria-label="Odśwież"
-                    style={{padding: '0.5rem'}}
-                >
-                    <RefreshIcon/>
-                </IconButton>
-                <Typography variant="h6">
-                    {missionList.length ? (props.activeMissionId ? 'Aktywna misja' : 'Dostępne misje') : 'Brak dostępnych misji!'}
-                </Typography>
-            </div>
+            <MissionListHeader 
+                missionListLength={missionList.length}
+                activeMissionId={props.activeMissionId}
+                handleRefresh={handleRefresh}
+            />
             
            
             <StyledList> 
@@ -181,7 +171,7 @@ const Events = (props) => {
                 <MissionDetailsHoc
                     open={activeMissionDetails ? true : false}
                     activeMissionId = {props.activeMissionId}
-                    handleClose={handleMissionDetailsClose}
+                    handleClose={() => handleMissionDetailsClose()}
                     handleMissionClick={handleMissionClick}
                     handleMissionLeave={() => handleMissionDetailsClose(handleMissionLeave)}
                     multipleSession={props.multipleSession}
@@ -202,7 +192,7 @@ const Events = (props) => {
 
 const mapStateToProps = state => {
     return {
-        rally: state.rally.rally,
+        rally: state.rally,
         activeOrder: state.auth.profile.activeOrder,
         missionListData: state.mission.missions,
         activeMissionId: state.mission.activeInstanceId,

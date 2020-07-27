@@ -61,9 +61,11 @@ const TorpedoDrawer = props => {
 
     const userTorpedos = convertToStack(props.userTorpedos)
     
-    const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    let vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    vw = Math.min(vw, 444)
     const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
     const sub = 520 * (vw/360)
+    
     return (
         
         <Drawer

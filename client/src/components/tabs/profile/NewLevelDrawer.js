@@ -29,7 +29,7 @@ const NewLevelDrawer = props => {
    
       
       
-    <Drawer anchor="left" open={props.open} onClose={props.handleClose} disableBackdropTransition={true} >
+    <Drawer anchor="left" open={props.open} onClose={props.handleClose} >
       <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '55vw', maxWidth: '320px', height: '100%', padding: '1rem 1.5rem'}}>
         <Typography variant="h4">Awans!</Typography>
       

@@ -5,6 +5,7 @@ import shopReducer from './shopReducer'
 import missionReducer from './missionReducer'
 import communicationReducer from './communicationReducer'
 import rallyReducer from './rallyReducer'
+import layoutReducer from './layoutReducer'
 
 import { combineReducers} from 'redux'
 
@@ -16,5 +17,6 @@ export default combineReducers( {
     shop: shopReducer,
     mission: missionReducer,
     rally: rallyReducer,
-    communication: communicationReducer
+    communication: communicationReducer,
+    layout: layoutReducer
 })

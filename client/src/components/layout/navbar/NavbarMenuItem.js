@@ -7,7 +7,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 
 const NavbarMenuItem = (props) => {
     return(
-        <MenuItem>
+        <MenuItem onClick={props.onClick}>
             <ListItemIcon>
                 {props.icon}
             </ListItemIcon>
@@ -21,6 +21,7 @@ const NavbarMenuItem = (props) => {
 NavbarMenuItem.propTypes = {
     icon: PropTypes.element.isRequired,
     action: PropTypes.element.isRequired,
+    onClick: PropTypes.func
 }
 
 export default NavbarMenuItem

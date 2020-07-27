@@ -1,15 +1,13 @@
-import React from 'react'
-import { rest } from 'msw'
-import { setupServer } from 'msw/node'
-import { render, fireEvent, waitFor, screen } from '@testing-library/react'
-import '@testing-library/jest-dom/extend-expect' // To have extra methods like: toBeInTheDocument()
+import React from 'components/missionInstance/__tests__/node_modules/react'
+import { rest } from 'components/missionInstance/__tests__/node_modules/msw'
+import { setupServer } from 'components/missionInstance/__tests__/node_modules/msw/node'
+import { render, waitFor, screen } from 'components/missionInstance/__tests__/node_modules/@testing-library/react'
+import 'components/missionInstance/__tests__/node_modules/@testing-library/jest-dom/extend-expect' // To have extra methods like: toBeInTheDocument()
 
-import ReduxRoot from 'ReduxRoot'
-import Shop from 'components/shop/Shop'
+import ReduxRoot from 'components/missionInstance/__tests__/node_modules/ReduxRoot'
 
-import {initState as authInit} from 'store/reducers/authReducer'
-import {initState as shopInit} from 'store/reducers/shopReducer'
-import {initState as partyInit} from 'store/reducers/partyReducer'
+import {initState as authInit} from 'components/missionInstance/__tests__/node_modules/store/reducers/authReducer'
+import {initState as partyInit} from 'components/missionInstance/__tests__/node_modules/store/reducers/partyReducer'
 import MissionInstance from '../MissionInstance'
 
 
@@ -51,7 +49,7 @@ const missionInstance = {
 
 
 const server = setupServer(
-    rest.patch('*', (req, res, ctx) => { // Do not work with specific path...
+    rest.patch('*', (req, res, ctx) => { // Does not work with specific path...
       return res(
           ctx.json({missionInstance, amulets}),
           ctx.status(200)

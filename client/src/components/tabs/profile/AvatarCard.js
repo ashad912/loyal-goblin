@@ -17,160 +17,177 @@ const AvatarImage = styled.img`
 
 const AvatarCard = (props) => {
 
-    const [equippedItems, setEquippedItems] = React.useState(null);
+  const [equippedItems, setEquippedItems] = React.useState(null);
 
-    React.useEffect(() => {
-        updateEquippedItems();
-    }, []);
+  React.useEffect(() => {
+    updateEquippedItems();
+  }, []);
 
-    React.useEffect(() => {
-        updateEquippedItems(props.profile, (perks) => {
-            props.updatePerks(perks)
-        });
-        
-    }, [props.profile.equipped]);
+  React.useEffect(() => {
+    updateEquippedItems(props.profile, (perks) => {
+      props.updatePerks(perks)
+    });
 
-    const updateEquippedItems = (param, callback) => {
-        const equipment = {
-          head: null,
-          chest: null,
-          hands: null,
-          legs: null,
-          feet: null,
-          weaponRight: null,
-          weaponLeft: null,
-          ringRight: null,
-          ringLeft: null,
-          scroll: null,
-        };
-        const perks = [];
-    
-        const profile = param ? param : props.profile;
-    
-        Object.keys(profile.equipped).forEach((category) => {
-          let loadedEquippedItem;
-          if (category.startsWith("weapon")) {
-            loadedEquippedItem =
-              props.bag.weapon &&
-              props.bag.weapon.find((item) => item._id === profile.equipped[category]);
-          } else if (category.startsWith("ring")) {
-            loadedEquippedItem =
-              props.bag.ring &&
-              props.bag.ring.find((item) => item._id === profile.equipped[category]);
-          } else {
-            loadedEquippedItem =
-              props.bag[category] &&
-              props.bag[category].find((item) => item._id === profile.equipped[category]);
-          }
-    
-          if (loadedEquippedItem) {
-            if (loadedEquippedItem.itemModel.type === "weapon") {
-              if (
-                category === "weaponLeft" ||
-                loadedEquippedItem.itemModel.twoHanded
-              ) {
-                equipment[category] = loadedEquippedItem.itemModel.appearanceSrc;
-              } else if (category === "weaponRight") {
-                equipment[category] = loadedEquippedItem.itemModel.altAppearanceSrc;
-              }
-            } else {
-              if (profile.sex === "male") {
-                equipment[category] = loadedEquippedItem.itemModel.appearanceSrc;
-              } else {
-                equipment[category] = loadedEquippedItem.itemModel.altAppearanceSrc;
-              }
-            }
-    
-            if (
-              loadedEquippedItem.itemModel.hasOwnProperty("perks") &&
-              loadedEquippedItem.itemModel.perks.length > 0
-            ) {
-              loadedEquippedItem.itemModel.perks.forEach((perk) => {
-                perks.push(perk);
-              });
-            }
-          }
-        });
-    
-        setEquippedItems({ ...equipment });
-        //setActivePerks([...perks]);
-        if(callback){
-            callback([...perks])
-        }
-        
+  }, [props.profile.equipped]);
+
+  const updateEquippedItems = (param, callback) => {
+    const equipment = {
+      head: null,
+      chest: null,
+      hands: null,
+      legs: null,
+      feet: null,
+      weaponRight: null,
+      weaponLeft: null,
+      ringRight: null,
+      ringLeft: null,
+      scroll: null,
     };
-    const isMale = props.profile.sex === "male" 
-    const rootPath = isMale ? appearancePath : altAppearancePath;
-    const body = isMale ? maleBody : femaleBody
+    const perks = [];
 
-    return (   
-        <Grid item xs={8} style={{ padding: 0 }}>
-            <div
-                style={{
-                    width: "100%",
-                    height: "100%",
-                    alignSelf: "stretch",
-                    marginBottom: "1rem",
-                    display: "grid",
-                    grid: "100% 100% ",
-                }}
-            >
-                {/* Main-hand weapon */}
+    const profile = param ? param : props.profile;
 
-                {equippedItems && equippedItems.weaponRight && (
-                    <AvatarImage
-                        src={`${altAppearancePath}${equippedItems.weaponRight}`}
-                    />
-                )}
+    Object.keys(profile.equipped).forEach((category) => {
+      let loadedEquippedItem;
+      if (category.startsWith("weapon")) {
+        loadedEquippedItem =
+          props.bag.weapon &&
+          props.bag.weapon.find((item) => item._id === profile.equipped[category]);
+      } else if (category.startsWith("ring")) {
+        loadedEquippedItem =
+          props.bag.ring &&
+          props.bag.ring.find((item) => item._id === profile.equipped[category]);
+      } else {
+        loadedEquippedItem =
+          props.bag[category] &&
+          props.bag[category].find((item) => item._id === profile.equipped[category]);
+      }
+      console.log(loadedEquippedItem)
+      if (loadedEquippedItem) {
+        if (loadedEquippedItem.itemModel.type === "weapon") {
+          if (
+            category === "weaponLeft" ||
+            loadedEquippedItem.itemModel.twoHanded
+          ) {
+            console.log('left')
+            equipment[category] = loadedEquippedItem.itemModel.appearanceSrc;
+          } else if (category === "weaponRight") {
+            console.log('right')
+            equipment[category] = loadedEquippedItem.itemModel.altAppearanceSrc;
+          }
+        } else {
+          if (profile.sex === "male") {
+            equipment[category] = loadedEquippedItem.itemModel.appearanceSrc;
+          } else {
+            equipment[category] = loadedEquippedItem.itemModel.altAppearanceSrc;
+          }
+        }
 
-                {/* body */}
-                <AvatarImage
-                    src={body}
-                />
+        if (
+          loadedEquippedItem.itemModel.hasOwnProperty("perks") &&
+          loadedEquippedItem.itemModel.perks.length > 0
+        ) {
+          loadedEquippedItem.itemModel.perks.forEach((perk) => {
+            perks.push(perk);
+          });
+        }
+      }
+    });
 
-                {/* legs */}
-                {equippedItems && equippedItems.legs && (
-                    <AvatarImage
-                        src={`${rootPath}${equippedItems.legs}`}
-                    />
-                )}
-                {/* feet */}
-                {equippedItems && equippedItems.feet && (
-                    <AvatarImage
-                        src={`${rootPath}${equippedItems.feet}`}
-                    />
-                )}
-                {/* chest */}
-                {equippedItems && equippedItems.chest && (
-                    <AvatarImage
-                        src={`${rootPath}${equippedItems.chest}`}
-                    />
-                )}
+    setEquippedItems({ ...equipment });
+    //setActivePerks([...perks]);
+    if (callback) {
+      callback([...perks])
+    }
 
-                {/* head */}
-                {equippedItems &&
-                    equippedItems.head &&
-                    equippedItems.head.includes(".") && (
-                        <AvatarImage 
-                            src={`${rootPath}${equippedItems.head}`}
-                        />
-                    )}
+  };
+  const isMale = props.profile.sex === "male"
+  const rootPath = isMale ? appearancePath : altAppearancePath;
+  const body = isMale ? maleBody : femaleBody
 
-                {/* Off-hand weapon */}
-                {equippedItems && equippedItems.weaponLeft && (
-                    <AvatarImage
-                        src={`${appearancePath}${equippedItems.weaponLeft}`}
-                    />
-                )}
-                {/* hands */}
-                {equippedItems && equippedItems.hands && (
-                    <AvatarImage
-                        src={`${rootPath}${equippedItems.hands}`}
-                    />
-                )}
-            </div>
-        </Grid>
-    )
+  const weaponRight =
+    props.profile?.equipped?.weaponRight &&
+    props.bag.weapon &&
+    props.bag.weapon.find((item) => props.profile?.equipped?.weaponRight === item._id);
+
+  const isWeaponTwoHanded = weaponRight && weaponRight.itemModel.twoHanded
+
+  return (
+    <Grid item xs={8} style={{ padding: 0 }}>
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          alignSelf: "stretch",
+          marginBottom: "1rem",
+          display: "grid",
+          grid: "100% 100% ",
+        }}
+      >
+        {/* Main-hand weapon */}
+
+        {equippedItems && (equippedItems.weaponRight && !isWeaponTwoHanded) && (
+          <AvatarImage
+            src={`${altAppearancePath}${equippedItems.weaponRight}`}
+          />
+        )}
+
+        {equippedItems && (equippedItems.weaponRight && isWeaponTwoHanded) && (
+          <AvatarImage
+            src={`${appearancePath}${equippedItems.weaponRight}`}
+          />
+        )}
+
+        {/* body */}
+        <AvatarImage
+          src={body}
+        />
+
+        {/* legs */}
+        {equippedItems && equippedItems.legs && (
+          <AvatarImage
+            src={`${rootPath}${equippedItems.legs}`}
+          />
+        )}
+        {/* feet */}
+        {equippedItems && equippedItems.feet && (
+          <AvatarImage
+            src={`${rootPath}${equippedItems.feet}`}
+          />
+        )}
+        {/* chest */}
+        {equippedItems && equippedItems.chest && (
+          <AvatarImage
+            src={`${rootPath}${equippedItems.chest}`}
+          />
+        )}
+
+        {/* head */}
+        {equippedItems &&
+          equippedItems.head &&
+          equippedItems.head.includes(".") && (
+            <AvatarImage
+              src={`${rootPath}${equippedItems.head}`}
+            />
+          )}
+
+        {/* Off-hand weapon */}
+        {equippedItems && (equippedItems.weaponLeft) && (
+
+          <AvatarImage
+            src={`${appearancePath}${equippedItems.weaponLeft}`}
+          />
+
+        )}
+        {/* hands */}
+        {equippedItems && equippedItems.hands && (
+          <AvatarImage
+            src={`${rootPath}${equippedItems.hands}`}
+          />
+        )}
+      </div>
+    </Grid>
+  )
 }
 
 AvatarCard.propTypes = {

@@ -54,7 +54,7 @@ export const createInstance = (missionId) => {
                 const missionInstance = res.data.missionInstance
                 const imgSrc = res.data.imgSrc
 
-                dispatch(setActiveInstance(missionInstance, imgSrc))
+                dispatch(setActiveInstance(missionInstance._id, imgSrc))
                 refreshMissionsEmit(getState().party._id)
                 resolve(missionInstance)
             }catch (e) {

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router";
 import PropTypes from "prop-types";
@@ -34,6 +34,7 @@ import { getMissionList } from "store/actions/missionActions";
 import { updateParty } from "store/actions/partyActions";
 
 import { palette } from "utils/constants";
+import { setAppBarHeight } from "store/actions/layoutActions";
 
 
 
@@ -47,7 +48,7 @@ const StyledTab = styled(Tab)`
   }
 `
 
- 
+
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -96,6 +97,8 @@ function TabsRoot(props) {
   const classes = useStyles();
   const theme = useTheme();
 
+  const appBarRef = useRef()
+
   // function useTraceUpdate(props) {
   //   const prev = React.useRef(props);
   //   useEffect(() => {
@@ -141,6 +144,12 @@ function TabsRoot(props) {
       props.onLeaveShop();
     }
   }, [props.party.inShop]);
+
+  useEffect(() => {
+    if (appBarRef.current) {
+      props.setAppBarHeight(appBarRef.current.offsetHeight)
+    }
+  }, [loaded]);
 
 
   const updateGlobalStore = async () => {
@@ -190,23 +199,17 @@ function TabsRoot(props) {
     changeValue(index);
   };
 
-
-
-
-  const appBar = document.getElementById("app-bar") ? document.getElementById("app-bar").offsetHeight : '0';
-  const navbar = document.getElementById("navbar") ? document.getElementById("navbar").offsetHeight : '0'
-  const footer = document.getElementById("footer") ? document.getElementById("footer").offsetHeight : '0'
-  const fullHeight = `calc(100vh - ${appBar + navbar + footer}px)`
-
   if (!loaded) {
     return <Loading />
   }
+
+  const fullHeight = `calc(100vh - ${props.fullHeightCorrection}px)`
 
   return (
 
     <div className={classes.root}>
 
-      <AppBar position="static" color="inherit" id="app-bar">
+      <AppBar position="static" color="inherit" id='app-bar' ref={appBarRef}>
         <Container maxWidth='xs' style={{ padding: 0 }}>
           <Tabs
             value={value}
@@ -226,36 +229,36 @@ function TabsRoot(props) {
       </AppBar>
       <Container maxWidth='xs' style={{ padding: 0 }}>
 
-      <SwipeableViews
-        axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-        index={value}
-        onChangeIndex={handleChangeIndex}
-        style={{ minHeight: fullHeight }}
-      >
-        <TabPanel value={value} index={0} dir={theme.direction}>
-          <Profile fullHeight={fullHeight} />
-        </TabPanel>
-        <TabPanel value={value} index={1} dir={theme.direction}>
-          <Party fullHeight={fullHeight} />
-        </TabPanel>
-        <TabPanel value={value} index={2} dir={theme.direction}>
-          <Events fullHeight={fullHeight} />
-        </TabPanel>
-        <TabPanel value={value} index={3} dir={theme.direction}>
-          <Loyal fullHeight={fullHeight} />
-        </TabPanel>
-        <TabPanel value={value} index={4} dir={theme.direction}>
-          <Booking fullHeight={fullHeight} />
-        </TabPanel>
-      </SwipeableViews>
+        <SwipeableViews
+          axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+          index={value}
+          onChangeIndex={handleChangeIndex}
+          style={{ minHeight: fullHeight }}
+        >
+          <TabPanel value={value} index={0} dir={theme.direction}>
+            <Profile fullHeight={fullHeight} />
+          </TabPanel>
+          <TabPanel value={value} index={1} dir={theme.direction}>
+            <Party fullHeight={fullHeight} />
+          </TabPanel>
+          <TabPanel value={value} index={2} dir={theme.direction}>
+            <Events fullHeight={fullHeight} />
+          </TabPanel>
+          <TabPanel value={value} index={3} dir={theme.direction}>
+            <Loyal fullHeight={fullHeight} />
+          </TabPanel>
+          <TabPanel value={value} index={4} dir={theme.direction}>
+            <Booking fullHeight={fullHeight} />
+          </TabPanel>
+        </SwipeableViews>
 
-      <TabsSnackbar
-        socket={socket}
-        screen={value}
-        hide={footerReached}
-      />
+        <TabsSnackbar
+          socket={socket}
+          screen={value}
+          hide={footerReached}
+        />
 
-      <WarningDialog />
+        <WarningDialog />
       </Container>
 
     </div>
@@ -266,12 +269,14 @@ function TabsRoot(props) {
 const mapStateToProps = state => {
   return {
     auth: state.auth,
-    party: state.party
+    party: state.party,
+    fullHeightCorrection: state.layout.appBarHeight + state.layout.navbarHeight + state.layout.footerHeight
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
+    setAppBarHeight: (appBarHeight) => dispatch(setAppBarHeight(appBarHeight)),
     onAuthCheck: () => dispatch(authCheck()),
     onPartyUpdate: (params, socketAuthReconnect) =>
       dispatch(updateParty(params, socketAuthReconnect)),

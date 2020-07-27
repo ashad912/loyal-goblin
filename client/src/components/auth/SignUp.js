@@ -67,14 +67,8 @@ class SignUp extends Component {
       password: false,
       confirmPassword: false
     },
-    fullHeightCorrection: 0
   };
 
-  componentDidMount() {
-    //const navbar = document.getElementById("navbar").offsetHeight;
-    const footer = document.getElementById("footer").offsetHeight;
-    this.setState({fullHeightCorrection: footer})
-}
 
   handleChange = e => {
     const id = e.target.id;
@@ -247,12 +241,12 @@ class SignUp extends Component {
           background: palette.primary.main,display: 'flex', 
           flexDirection:'column', 
           justifyContent: 'flex-end', 
-          minHeight:`calc(100vh - ${this.state.fullHeightCorrection}px)`, 
+          minHeight:`calc(100vh - ${this.props.fullHeightCorrection}px)`, 
           position: 'relative'
         }}
       >
       <FormContainer maxWidth="xs" >
-      <img src={uiPaths.logo} style={{width: '50%', flexBasis: '20%', marginBottom: '-1.2rem'}} alt="logo"/>
+      <img src={uiPaths.logo} style={{width: '50%', flexBasis: '20%', marginBottom: '-1.2rem', marginBottom: '1rem'}} alt="logo"/>
           <form onSubmit={this.handleSubmit} className="white">
           
               {/* <Typography variant="h5" style={{textAlign: 'left', marginBottom: '1rem'}}>Zaloguj</Typography> */}
@@ -339,7 +333,8 @@ class SignUp extends Component {
 const mapStateToProps = state => {
   return {
     authError: state.auth.authError,
-    auth: state.auth
+    auth: state.auth,
+    fullHeightCorrection: state.layout.footerHeight
   };
 };
 

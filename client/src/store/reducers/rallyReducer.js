@@ -1,13 +1,9 @@
-const initState = {
-    rally: null
-}
+const initState = null
 
 const rallyReducer = (state = initState, action) => {
     switch(action.type){
         case 'UPDATE_RALLY': 
-            return{
-                rally: action.rally
-            }
+            return action.rally
         default:
             return state
             

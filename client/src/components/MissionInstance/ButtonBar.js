@@ -62,7 +62,7 @@ export default Object.assign((props) => {
                     width: 'calc(100% - 4rem)',
                     maxWidth: '316px',
                     position: 'absolute',
-                    bottom: document.getElementById("footer") ? document.getElementById("footer").offsetHeight : 0,
+                    bottom: props.footerHeight,
                     borderRadius: 0,
                     
                 }}
@@ -94,6 +94,7 @@ export default Object.assign((props) => {
             isRequiredItemsCollected: PropTypes.bool.isRequired,
             isAllPartyReady: PropTypes.bool.isRequired,
             isUserReady: PropTypes.bool.isRequired,
+            footerHeight: PropTypes.number.isRequired
         }
     }
 )

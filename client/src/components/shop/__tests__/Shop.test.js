@@ -13,7 +13,7 @@ import {initState as partyInit} from 'store/reducers/partyReducer'
 
 
 const server = setupServer(
-    rest.get('*', (req, res, ctx) => { // Do not work with specific path...
+    rest.get('*', (req, res, ctx) => { // Does not work with specific path...
       return res(
           ctx.json({shop: [], activeOrder: [], party: {...partyInit}, userPerks: {products: []}}),
           ctx.status(200)
