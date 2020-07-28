@@ -2,6 +2,9 @@ import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
 import jwt from "jsonwebtoken"
 
+import { getEndpointError } from '@utils/functions'
+import { ERROR, WARN, INFO } from '@utils/constants'
+
 const BarmanSchema = new mongoose.Schema({
     userName: {
         type: String,
@@ -66,13 +69,13 @@ BarmanSchema.statics.findByCredentials = async (userName, password) => {
     
 
     if(!barman) {
-        throw new Error('Unable to login')
+        throw getEndpointError(INFO, 'Unable to login', userName)
     }
 
     const isMatch = await bcrypt.compare(password, barman.password)
 
     if(!isMatch) {
-        throw new Error('Unable to login')
+        throw getEndpointError(INFO, 'Unable to login', userName)
     }
     
 

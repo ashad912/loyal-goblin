@@ -47,9 +47,6 @@ class Rally extends Component {
         if (this.state.fullTimeInSeconds !== 0) {
             clearInterval(this.timer);
         }
-
-
-
     }
 
     initTimer = () => {
@@ -148,14 +145,14 @@ class Rally extends Component {
 
                             </ActiveRallyTypo>
                             <Badge
-                                style={{ height: height, width: width, marginRight: '0.5rem', marginTop: '0.6rem', marginBottom: '1rem' }}
+                                style={{ height, width, marginRight: '0.5rem', marginTop: '0.6rem', marginBottom: '1rem' }}
                                 overlap="circle"
                                 anchorOrigin={{
                                     vertical: 'bottom',
                                     horizontal: 'right',
                                 }}
                             >
-                                <Avatar style={{ height: height, width: width, }} alt="avatar" src={`${ralliesPath}${rally.imgSrc}`} />
+                                <Avatar style={{ height, width }} alt="avatar" src={`${ralliesPath}${rally.imgSrc}`} />
                             </Badge>
                             <Typography variant="h5">
                                 {rally.title}

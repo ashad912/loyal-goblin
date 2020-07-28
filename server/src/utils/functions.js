@@ -26,6 +26,7 @@ export const initCleaning = async () => {
 
 }
 
+// @TO-DO - Swap to "for of" in whole project...
 export async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array);
@@ -185,7 +186,7 @@ export const verifyCaptcha = (token) => {
 }
 
 export const getEndpointError = (type, message, uid, status) => {
-  const userString = uid ? ` - UID: ${uid}` : ''
+  const userString = uid ? `, ${uid}` : ''
   const e = new Error(message + userString)
 
   if (type) {

@@ -1,19 +1,39 @@
 import express from "express";
-import { Admin } from "@models/admin";
+import { body, validationResult } from 'express-validator'
+
+import adminService from "@services/admin";
 import { adminAuth } from "@middleware/adminAuth";
-import {recaptcha} from '@middleware/recaptcha'
+import { recaptcha } from '@middleware/recaptcha'
+
+import { ERROR, WARN, INFO } from '@utils/constants'
+import { getEndpointError } from "@utils/functions";
 
 const router = express.Router();
 
-router.post("/login", recaptcha, async (req, res) => {
-  try {
-    const admin = await Admin.findByCredentials(req.body.email, req.body.password);
-    const token = await admin.generateAuthToken(); //on instancegenerateAuthToken
-    res.cookie("hash", token, { maxAge: 43200000, httpOnly: true }).send(admin); //cookie lifetime: 12 hours (maxAge in msc)
-  } catch (e) {
-    next(e)
-  }
-});
+router.post("/login", [
+  body('email')
+    .isEmail()
+    .withMessage('Email must be valid'),
+  body('password')
+    .trim()
+    .isLength({ min: 15 })
+    .withMessage('Password must have at least 15 characters')
+],
+  recaptcha,
+  async (req, res, next) => {
+    try {
+      const errors = validationResult(req) // Kinda Object
+
+      if (!errors.isEmpty()) {
+        throw getEndpointError(WARN, `Validation error: ${JSON.stringify(errors.array())}`)
+      }
+
+      const { admin, token } = await adminService.login(req.body.email, req.body.password)
+      res.cookie("hash", token, { maxAge: 43200000, httpOnly: true }).send(admin); //cookie lifetime: 12 hours (maxAge in msc)
+    } catch (e) {
+      next(e)
+    }
+  });
 
 router.get("/me", adminAuth, async (req, res, next) => {
   try {
@@ -23,11 +43,9 @@ router.get("/me", adminAuth, async (req, res, next) => {
   }
 });
 
-router.post("/logout", adminAuth, async (req, res) => {
+router.post("/logout", adminAuth, async (req, res, next) => {
   try {
-    req.admin.token = null
-    await req.admin.save();
-
+    await adminService.logout(req.admin)
     res.clearCookie("hash").send();
   } catch (e) {
     next(e)
@@ -35,4 +53,4 @@ router.post("/logout", adminAuth, async (req, res) => {
 });
 
 
-export const adminRouter = router;
+export { router as adminRouter };

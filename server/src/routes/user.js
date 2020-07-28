@@ -1,14 +1,15 @@
 import express from "express";
-import bcrypt from "bcryptjs";
 import validator from 'validator'
 import { differenceBy } from 'lodash'
-import { User, userClasses, userSexes } from "../models/user";
-import { Party } from "../models/party";
-import { Item } from "../models/item";
-import { ItemModel } from "../models/itemModel";
-import { MissionInstance } from "../models/missionInstance";
-import { auth } from "../middleware/auth";
-import { adminAuth } from '../middleware/adminAuth';
+
+import userService from '@services/user'
+import { User, userClasses, userSexes } from "@models/user";
+import { Party } from "@models/party";
+import { Item } from "@models/item";
+import { ItemModel } from "@models/itemModel";
+import { MissionInstance } from "@models/missionInstance";
+import { auth } from "@middleware/auth";
+import { adminAuth } from '@middleware/adminAuth';
 import { ERROR, WARN, INFO } from '@utils/constants'
 import {
   asyncForEach,
@@ -19,7 +20,7 @@ import {
 import moment from "moment";
 import createEmail from '../emails/createEmail'
 import { recaptcha } from "../middleware/recaptcha";
-import mongooseUniqueArray from "mongoose-unique-array";
+
 
 const router = express.Router();
 
@@ -33,15 +34,7 @@ const uploadPath = "../static/images/avatars/"
 
 router.get('/adminUsers', adminAuth, async (req, res, next) => {
   try {
-    const users = await User.aggregate().match({}).sort({ "lastActivityDate": -1 }).project({
-      '_id': 1,
-      'name': 1,
-      'avatar': 1,
-      'active': 1,
-      'experience': 1,
-      'lastActivityDate': 1,
-
-    })
+    const users = await userService.getUsers()
 
     res.send(users)
   } catch (e) {
@@ -59,7 +52,6 @@ const toggleBan = async (userId, status) => {
   if (!result.n) {
     throw getEndpointError(WARN, 'User not found', userId)
   }
-  return
 }
 
 router.patch('/ban', adminAuth, async (req, res, next) => {
