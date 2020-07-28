@@ -1,7 +1,10 @@
 import mongoose from 'mongoose'
 import moment from 'moment'
-import {ClassAwardsSchema} from '@schemas/ClassAwardsSchema'
+import { ClassAwardsSchema } from '@schemas/ClassAwardsSchema'
 import arrayUniquePlugin from 'mongoose-unique-array'
+import { getEndpointError } from '@utils/functions'
+import { ERROR, WARN, INFO } from '@utils/constants'
+
 
 export const eventStatuses = ['ready', 'active', 'running', 'archive']
 
@@ -57,7 +60,7 @@ export const RallySchema = new mongoose.Schema({
                     throw new Error(`${value} is not an integer value!`)
                 }
             },
-           // unique: true,
+            // unique: true,
         },
         awards: {
             any: [ClassAwardsSchema],
@@ -65,51 +68,51 @@ export const RallySchema = new mongoose.Schema({
             rogue: [ClassAwardsSchema],
             mage: [ClassAwardsSchema],
             cleric: [ClassAwardsSchema],
-        }   
+        }
     }],
-        
-},
-{
-    timestamps: true
-})
 
-RallySchema.methods.conflictCheck = async function(){
+},
+    {
+        timestamps: true
+    })
+
+RallySchema.methods.conflictCheck = async function () {
     const rally = this
-    
+
     const newRallyActivation = moment(rally.activationDate).valueOf()
     const newRallyStart = moment(rally.startDate).valueOf()
     const newRallyExpiry = moment(rally.expiryDate).valueOf()
 
-    if(newRallyActivation > newRallyExpiry || newRallyStart > newRallyExpiry){
-        throw new Error('Invalid dates order')
+    if (newRallyActivation > newRallyExpiry || newRallyStart > newRallyExpiry) {
+        throw getEndpointError(ERROR, 'Invalid dates order')
     }
-    
+
     const rallyList = await Rally.find({})
 
     let causingRallyList = [];
-    
+
     rallyList.forEach(rallyItem => {
 
         const existingRallyActiviation = moment(rallyItem.activationDate).valueOf();
         const existingRallyEnd = moment(rallyItem.expiryDate).valueOf();
-        
+
         if (
-        !(
-            (existingRallyActiviation < newRallyActivation &&
-            existingRallyEnd < newRallyActivation) ||
-            (existingRallyEnd > newRallyExpiry &&
-            existingRallyActiviation > newRallyExpiry)
-        )
+            !(
+                (existingRallyActiviation < newRallyActivation &&
+                    existingRallyEnd < newRallyActivation) ||
+                (existingRallyEnd > newRallyExpiry &&
+                    existingRallyActiviation > newRallyExpiry)
+            )
         ) {
 
-        
-        causingRallyList = [...causingRallyList, rallyItem]; //assembling list of 'bad' rallies :<<
+
+            causingRallyList = [...causingRallyList, rallyItem]; //assembling list of 'bad' rallies :<<
         }
 
     });
 
-    if(causingRallyList.length > 0){
-        throw new Error('Colliding dates found')
+    if (causingRallyList.length > 0) {
+        throw getEndpointError(ERROR, 'Colliding dates found')
     }
 }
 

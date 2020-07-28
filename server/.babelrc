@@ -31,6 +31,7 @@
           "@store": "./src/store",
           "@logger": "./src/logger",
           "@loaders": "./src/loaders",
+          "@services": "./src/services",
           "@index": "./src/index"
         }
       }

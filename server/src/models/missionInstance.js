@@ -1,9 +1,10 @@
 import mongoose from 'mongoose'
-import { User } from './user'
-import arrayUniquePlugin from 'mongoose-unique-array'
-import { asyncForEach } from '@utils/functions'
-import { MissionInstanceExpiredEvent } from './missionInstanceExpiredEvent'
 import isEqual from 'lodash/isEqual'
+import arrayUniquePlugin from 'mongoose-unique-array'
+import { User } from './user'
+import { MissionInstanceExpiredEvent } from './missionInstanceExpiredEvent'
+
+import { asyncForEach } from '@utils/functions'
 import missionStore from '@store/mission.store.js'
 
 const MissionInstanceSchema = new mongoose.Schema({ //instance of ItemModel
@@ -41,13 +42,13 @@ MissionInstanceSchema.methods.partyCompare = function (party, userId) {
     missionParty = [...missionParty, memberId]
     if (userId) {
       if (memberId.toString() === userId.toString() && memberObject.inInstance === false) {
-        throw Error('User is not in the mission instance!')
+        throw getEndpointError(WARN, 'User is not in the mission instance!', userId)
       }
     }
   })
 
   if (!isEqual(missionParty, party)) {
-    throw Error('Invalid party!')
+    throw getEndpointError(WARN, 'Invalid party!', userId)
   }
 }
 
@@ -62,13 +63,13 @@ MissionInstanceSchema.statics.toggleUserStatus = (user, update) => {
       const missionInstance = await MissionInstance.findOne({ _id: user.activeMission, createdAt: { $gte: new Date(new Date().getTime() - missionTime) } })
 
       if (!missionInstance) {
-        throw Error('There is no such mission instance!')
+        throw getEndpointError(WARN, 'There is no such mission instance!', user._id)
       }
 
       const index = missionInstance.party.findIndex(member => member.profile.toString() === user._id.toString())
 
       if (index < 0) {
-        throw Error('You are not in this mission!')
+        throw getEndpointError(WARN, 'You are not in this mission!', user._id)
       }
 
       for (const key in update) {
@@ -133,33 +134,6 @@ MissionInstanceSchema.statics.validateInStatus = (userId, update) => {
     resolve(false);
   });
 }
-
-// MissionInstanceSchema.statics.validateInStatus = (userId, newStatus, secondNewStatus) => {
-//     return new Promise(async (resolve, reject) => {
-//         const missionInstance = await MissionInstance.findOne({
-//           party: { $elemMatch: { profile: userId } }
-//         });
-
-//         if (missionInstance) {
-//           const index = missionInstance.party.findIndex(
-//             user => user.profile.toString() === userId
-//           );
-
-//           if (index > -1) {
-//             if (missionInstance.party[index].inMission !== newStatus) {
-
-//               missionInstance.party[index].inMission = newStatus;
-//               if(secondNewStatus){
-//                 missionInstance.party[index].readyStatus = secondNewStatus
-//               }
-//               await missionInstance.save();
-//               return resolve(true);
-//             }
-//           }
-//         }
-//         resolve(false);
-//       });
-// }
 
 
 MissionInstanceSchema.statics.clear = async () => {
