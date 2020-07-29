@@ -1,4 +1,4 @@
-export default {
+module.exports = {
     nodeEnv: process.env.NODE_ENV || 'dev',
     dbPort: process.env.PORT || 4000,
     registerKey: process.env.REGISTER_KEY,
