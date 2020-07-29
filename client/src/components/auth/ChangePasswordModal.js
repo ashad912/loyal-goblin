@@ -5,13 +5,14 @@ import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Recaptcha from 'react-google-invisible-recaptcha';
 import { Typography } from "@material-ui/core";
-import { changePassword, signOut } from "../../store/actions/authActions";
-import { PintoTypography } from "../../assets/fonts";
-import { palette } from "../../utils/constants";
+
+import keys from 'keys'
+import { changePassword, signOut } from "store/actions/authActions";
+import { PintoTypography } from "assets/fonts";
+import { palette } from "utils/constants";
 
 
 class ChangePasswordModal extends React.Component {
@@ -140,7 +141,7 @@ class ChangePasswordModal extends React.Component {
       </DialogActions>
       <Recaptcha
           ref={ ref => this.recaptcha = ref }
-          sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+          sitekey={keys.recaptchaSiteKey}
           onResolved={ this.onCaptchaResolved }
           badge='bottomleft'
       />

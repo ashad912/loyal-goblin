@@ -6,6 +6,7 @@ import path from "path";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
+import keys from '@config/keys'
 import logger from '@logger'
 
 import { adminRouter } from "@routes/admin";
@@ -33,7 +34,7 @@ export default((app) => {
         })
       );
       
-      if(process.env.NODE_ENV === 'dev'){
+      if(keys.nodeEnv === 'dev'){
         app.use(cors());
       }else{
         var whitelist = ['http://goblin.hhgstudio.com', 'http://goblinbarman.hhgstudio.com', 'http://goblinadmin.hhgstudio.com']
@@ -70,8 +71,7 @@ export default((app) => {
       
 
       
-      if(process.env.NODE_ENV === 'dev'){
-        //console.log(process.env.NODE_ENV)
+      if(keys.nodeEnv === 'dev'){
         app.set('subdomain offset', 1);
       }
       
@@ -90,7 +90,7 @@ export default((app) => {
       app.use((e, req, res, next) => {
         logger.log({level: e.type || 'error', message: !e.type || [ERROR, WARN].includes(e.type) ? e : e.message})
 
-        const message = process.env.NODE_ENV === 'dev' ? e.message : ''
+        const message = keys.nodeEnv === 'dev' ? e.message : ''
         res.status(e.status || 400).send(message);
       });
 })

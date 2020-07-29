@@ -165,25 +165,6 @@ export const removeImage = (uploadPath, fileName) => {
 
 };
 
-export const verifyCaptcha = (token) => {
-
-  const secretKey = process.env.SECRET_RECAPTCHA_KEY;
-  const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`;
-
-  return new Promise(async (resolve, reject) => {
-    try {
-      const res = await axios.post(url)
-      //console.log(res.data)
-      if (!res.data.success) {
-        return reject()
-      }
-      resolve()
-    } catch (e) {
-      reject(e)
-    }
-
-  })
-}
 
 export const getEndpointError = (type, message, uid, status) => {
   const userString = uid ? `, ${uid}` : ''

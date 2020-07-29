@@ -2,6 +2,8 @@ import express from "express";
 import validator from 'validator'
 import { differenceBy } from 'lodash'
 
+import keys from '@config/keys'
+
 import userService from '@services/user'
 import { User, userClasses, userSexes } from "@models/user";
 import { Party } from "@models/party";
@@ -213,7 +215,7 @@ router.post("/demo/:id", recaptcha, async (req, res, next) => {
 
  
   try {
-    if (req.params.id !== process.env.DEMO_KEY) {
+    if (req.params.id !== keys.demoKey) {
       throw getEndpointError(WARN, 'Invalid demo key')
     }
 
@@ -222,7 +224,7 @@ router.post("/demo/:id", recaptcha, async (req, res, next) => {
     const user = new User({
       _id: new require('mongoose').Types.ObjectId(),
       email: `demouser${existingDemoUsers.length}@goblin.demo`,
-      password: process.env.DEMO_KEY,
+      password: keys.demoKey,
       active: true,
       demo: true,
       perksUpdatedAt: moment().toISOString(),

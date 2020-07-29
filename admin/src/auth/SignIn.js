@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
 import Recaptcha from 'react-google-invisible-recaptcha';
+
 import Container from '@material-ui/core/Container';
 import { Typography } from '@material-ui/core';
 import { Button } from '@material-ui/core';
@@ -12,8 +13,9 @@ import { Input } from '@material-ui/core';
 import { InputLabel } from '@material-ui/core';
 import ErrorIcon from '@material-ui/icons/Error';
 
-import { signIn } from '../store/actions/authActions'
-import {asyncForEach} from '../utils/methods'
+import keys from 'keys'
+import { signIn } from 'store/actions/authActions'
+import {asyncForEach} from 'utils/methods'
 
 
 
@@ -227,7 +229,7 @@ class SignIn extends Component {
                             </StyledPaper>
                             <Recaptcha
                                 ref={ ref => this.recaptcha = ref }
-                                sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                                sitekey={keys.recaptchaSiteKey}
                                 onResolved={ this.onResolved }
                             />              
                     </form>

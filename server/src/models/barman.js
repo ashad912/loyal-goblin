@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
 import jwt from "jsonwebtoken"
 
+import keys from '@config/keys'
 import { getEndpointError } from '@utils/functions'
 import { ERROR, WARN, INFO } from '@utils/constants'
 
@@ -36,7 +37,7 @@ BarmanSchema.methods.toJSON = function () { //like a middleware from express, we
 
 BarmanSchema.methods.generateAuthToken = async function () { //on instances
     const barman = this
-    const token = jwt.sign({_id: barman._id.toString()}, process.env.BARMAN_JWT_SECRET)
+    const token = jwt.sign({_id: barman._id.toString()}, keys.barmanJwtSecret)
 
     barman.token = token
     await barman.save()

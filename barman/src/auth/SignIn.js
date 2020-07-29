@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
 import Recaptcha from 'react-google-invisible-recaptcha';
+
 import Container from '@material-ui/core/Container';
 import { Typography } from '@material-ui/core';
 import { Button } from '@material-ui/core';
@@ -11,7 +12,8 @@ import { Input } from '@material-ui/core';
 import { InputLabel } from '@material-ui/core';
 import ErrorIcon from '@material-ui/icons/Error';
 
-import {asyncForEach} from '../utils/methods'
+import keys from 'keys'
+import {asyncForEach} from 'utils/methods'
 
 
 const FormContainer = styled(Container)`
@@ -153,7 +155,7 @@ class SignIn extends Component {
         await asyncForEach(targets, async (target) => {
 
             if(this.state[target].length === 0){
-                await this.setState({
+                this.setState({
                     error: {
                         ...this.state.error,
                         [target]: true,
@@ -221,7 +223,7 @@ class SignIn extends Component {
                             </StyledPaper> 
                             <Recaptcha
                                 ref={ ref => this.recaptcha = ref }
-                                sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                                sitekey={keys.recaptchaSiteKey}
                                 onResolved={ this.onResolved }
                             />                 
                     </form>

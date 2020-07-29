@@ -14,14 +14,15 @@ import { Input } from "@material-ui/core";
 
 import ErrorIcon from "@material-ui/icons/Error";
 
+import keys from 'keys'
 import {
   resetPassword,
 } from "store/actions/authActions";
 import {
-setConnectionError
-  } from "store/actions/connectionActions";
+  setConnectionError
+} from "store/actions/connectionActions";
 
-import {validatePasswordChangeToken} from "store/actions/authActions";
+import { validatePasswordChangeToken } from "store/actions/authActions";
 
 import { asyncForEach } from "utils/functions";
 import { uiPaths, palette } from "utils/constants";
@@ -62,21 +63,21 @@ class ResetPassword extends Component {
   };
 
   async componentDidMount() {
-  
+
     //validate link token for password change
     try {
-        await validatePasswordChangeToken(this.props.match.params.token) 
+      await validatePasswordChangeToken(this.props.match.params.token)
     } catch (error) {
-        if(error.response.data === 'jwt expired'){
-            this.setState({tokenExpired: true})
-            setTimeout(() => {
-                this.props.history.push('/')
-            }, 4000);
-        }else{
-            this.props.onConnectionErrorSet(error)
-        }
+      if (error.response.data === 'jwt expired') {
+        this.setState({ tokenExpired: true })
+        setTimeout(() => {
+          this.props.history.push('/')
+        }, 4000);
+      } else {
+        this.props.onConnectionErrorSet(error)
+      }
     }
-    this.setState({tokenChecked: true})
+    this.setState({ tokenChecked: true })
   }
 
   handleChange = e => {
@@ -195,13 +196,13 @@ class ResetPassword extends Component {
     });
 
     if (!this.state.error.password && !this.state.error.confirmPassword) {
-      
-        this.recaptcha.execute();
-      }else{
-        this.recaptcha.reset();
-      }
+
+      this.recaptcha.execute();
+    } else {
+      this.recaptcha.reset();
+    }
   };
-  
+
   onResolved = async () => {
     await this.props.onConfirm(this.props.match.params.token, this.state.password, this.state.confirmPassword, this.recaptcha.getResponse());
     this.props.history.push("/");
@@ -211,8 +212,8 @@ class ResetPassword extends Component {
     const { authError } = this.props;
 
     return (
-        this.state.tokenChecked &&
-        <div
+      this.state.tokenChecked &&
+      <div
         style={{
           display: "flex",
           justifyContent: "center",
@@ -221,97 +222,97 @@ class ResetPassword extends Component {
           minHeight: `calc(100vh - ${this.props.fullHeightCorrection}px)`,
           background: palette.primary.main
         }}
-      ><img src={uiPaths.logo} style={{width: '50vw', flexBasis: '20%'}} alt="logo"/>
-          {this.state.tokenExpired ? 
+      ><img src={uiPaths.logo} style={{ width: '50vw', flexBasis: '20%' }} alt="logo" />
+        {this.state.tokenExpired ?
           <FormContainer>
-        <div >
-            <Typography variant="h5" style={{color: 'white', marginBottom: "2rem"}}>Link umożliwiający reset hasła wygasł.</Typography>
-            <Typography variant="h6">Za chwilę nastąpi przekierowanie na stronę logowania...</Typography>
-        </div>
+            <div >
+              <Typography variant="h5" style={{ color: 'white', marginBottom: "2rem" }}>Link umożliwiający reset hasła wygasł.</Typography>
+              <Typography variant="h6">Za chwilę nastąpi przekierowanie na stronę logowania...</Typography>
+            </div>
           </FormContainer>
           :
 
-        <FormContainer maxWidth="xs">
-          <form onSubmit={this.handleSubmit} className="white">
-            <Typography
-              variant="h5"
-              style={{ textAlign: "center", marginBottom: "1rem", color: 'white' }}
-            >
-              Reset hasła
+          <FormContainer maxWidth="xs">
+            <form onSubmit={this.handleSubmit} className="white">
+              <Typography
+                variant="h5"
+                style={{ textAlign: "center", marginBottom: "1rem", color: 'white' }}
+              >
+                Reset hasła
             </Typography>
-            <div >
-              <React.Fragment>
-                {authError ? (
-                  <ErrorPaper>
-                    <ErrorIcon
-                      style={{ marginRight: "0.5rem", color: "#ff001f" }}
+              <div >
+                <React.Fragment>
+                  {authError ? (
+                    <ErrorPaper>
+                      <ErrorIcon
+                        style={{ marginRight: "0.5rem", color: "#ff001f" }}
+                      />
+                      <Typography>{authError}</Typography>
+                    </ErrorPaper>
+                  ) : null}
+
+
+                  <FormControl
+                    fullWidth
+                    style={{ marginTop: "1rem", marginBottom: "0.5rem" }}
+                  >
+
+
+                    <Input
+                      id="password"
+                      type="password"
+                      required
+                      placeholder="Nowe hasło *"
+                      error={this.state.error.password}
+                      onChange={this.handleChange}
+                      inputProps={{ style: { textAlign: 'center', fontSize: '1.3rem', fontFamily: 'Futura' } }}
                     />
-                    <Typography>{authError}</Typography>
-                  </ErrorPaper>
-                ) : null}
+                    {this.state.error.password ? (
+                      <FormHelperText error>
+                        {this.state.formError.password}
+                      </FormHelperText>
+                    ) : null}
+                  </FormControl>
+                  <FormControl
+                    fullWidth
+                    style={{ marginTop: "1rem", marginBottom: "0.5rem" }}
+                  >
 
-                
-                <FormControl
-                  fullWidth
-                  style={{ marginTop: "1rem", marginBottom: "0.5rem" }}
-                >
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      required
+                      placeholder="Powtórz nowe hasło *"
+                      error={this.state.error.confirmPassword}
+                      onChange={this.handleChange}
+                      inputProps={{ style: { textAlign: 'center', fontSize: '1.3rem', fontFamily: 'Futura' } }}
+                    />
+                    {this.state.error.confirmPassword ? (
+                      <FormHelperText error>
+                        {this.state.formError.confirmPassword}
+                      </FormHelperText>
+                    ) : null}
+                  </FormControl>
 
-
-                  <Input
-                    id="password"
-                    type="password"
-                    required
-                    placeholder="Nowe hasło *"
-                    error={this.state.error.password}
-                    onChange={this.handleChange}
-                    inputProps={{style:{textAlign:'center', fontSize: '1.3rem', fontFamily: 'Futura'}}}
-                  />
-                  {this.state.error.password ? (
-                    <FormHelperText error>
-                      {this.state.formError.password}
-                    </FormHelperText>
-                  ) : null}
-                </FormControl>
-                <FormControl
-                  fullWidth
-                  style={{ marginTop: "1rem", marginBottom: "0.5rem" }}
-                >
-
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    required
-                    placeholder="Powtórz nowe hasło *"
-                    error={this.state.error.confirmPassword}
-                    onChange={this.handleChange}
-                    inputProps={{style:{textAlign:'center', fontSize: '1.3rem', fontFamily: 'Futura'}}}
-                  />
-                  {this.state.error.confirmPassword ? (
-                    <FormHelperText error>
-                      {this.state.formError.confirmPassword}
-                    </FormHelperText>
-                  ) : null}
-                </FormControl>
-
-                <Button
-                  fullWidth
-                  style={{ justifyContent: 'center', marginTop: "1.5rem", background: 'black', color: 'white', fontSize: '1.2rem', padding: '0.2rem'}}
-                  onClick={this.handleSubmit}
-                  variant="contained"
-                  color="primary"
-                >
-                  Zatwierdź
+                  <Button
+                    fullWidth
+                    style={{ justifyContent: 'center', marginTop: "1.5rem", background: 'black', color: 'white', fontSize: '1.2rem', padding: '0.2rem' }}
+                    onClick={this.handleSubmit}
+                    variant="contained"
+                    color="primary"
+                  >
+                    Zatwierdź
                 </Button>
-              </React.Fragment>
-            </div>
-          </form>
-        </FormContainer>
+                </React.Fragment>
+              </div>
+            </form>
+          </FormContainer>
         }
-                      <Recaptcha
-                  ref={ ref => this.recaptcha = ref }
-                  sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
-                  onResolved={ this.onResolved }
-              />
+        <Recaptcha
+          ref={ref => this.recaptcha = ref}
+          sitekey={keys.recaptchaSiteKey}
+          onResolved={this.onResolved}
+        />
       </div>
     );
   }
@@ -327,9 +328,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-      onConnectionErrorSet: (error) => dispatch(setConnectionError(error)),
-      onConfirm: (token, password, confirmPassword, recaptchaToken) =>
-        dispatch(resetPassword(token, password, confirmPassword, recaptchaToken))
+    onConnectionErrorSet: (error) => dispatch(setConnectionError(error)),
+    onConfirm: (token, password, confirmPassword, recaptchaToken) =>
+      dispatch(resetPassword(token, password, confirmPassword, recaptchaToken))
   };
 };
 

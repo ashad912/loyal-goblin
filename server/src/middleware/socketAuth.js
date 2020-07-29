@@ -1,4 +1,6 @@
 import cookie from "cookie";
+
+import keys from '@config/keys'
 import { User } from '@models/user'
 import { Party } from '@models/party'
 
@@ -14,7 +16,7 @@ const socketBasicAuth = (socket) => {
                 throw new Error()
             }
            
-            const user = await decodeTokenAndGet(User, {active: true, 'tokens.token': token}, token, process.env.JWT_SECRET)
+            const user = await decodeTokenAndGet(User, {active: true, 'tokens.token': token}, token, keys.jwtSecret)
         
             const party = await Party.findOne({
                 $or: [

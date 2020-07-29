@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import keys from '@config/keys'
 
 export default async () => {
     mongoose.Promise = global.Promise;
@@ -9,10 +10,9 @@ export default async () => {
         useFindAndModify: false,
     }
 
-    options = process.env.REPLICA === "true" ? {...options, replicaSet: process.env.REPLICA_NAME} : options
+    options = keys.replica ? {...options, replicaSet: keys.replicaName} : options
 
-    mongoose.connect(process.env.MONGODB_URL, options);
 
-    const connection = await mongoose.connect(process.env.MONGODB_URL, options);
+    const connection = await mongoose.connect(keys.mongoURL, options);
     return connection.connection.db;
 };

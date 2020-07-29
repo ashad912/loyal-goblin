@@ -14,6 +14,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 
+import keys from 'keys'
 import { socket } from 'socket'
 
 import MenuGridItem from "./MenuGridItem";
@@ -822,7 +823,7 @@ class Shop extends React.Component {
                     }}
                     badge={"bottomleft"}
                     ref={ref => (this.recaptcha = ref)}
-                    sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY || 'sitekey'}
+                    sitekey={keys.recaptchaSiteKey}
                     onResolved={this.onCaptchaResolved}
                   />
                 </BasketDrawer>

@@ -3,13 +3,14 @@ import moment from 'moment'
 import mongoose from 'mongoose'
 import {Admin} from '@models/admin'
 import { Rally } from '@models/rally'
+import keys from '@config/keys'
 
 const adminId = new mongoose.Types.ObjectId()
 export const admin = {
     _id: adminId,
     email: 'admin@goblin.com',
     password: 'admingoblinadmingoblin',
-    token: jwt.sign({_id: adminId}, process.env.ADMIN_JWT_SECRET)
+    token: jwt.sign({_id: adminId}, keys.adminJwtSecret)
 }
 
 

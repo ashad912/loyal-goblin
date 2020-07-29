@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken'
 import mongoose from 'mongoose'
 import moment from 'moment'
 import {User} from '@models/user'
+import keys from '@config/keys'
 
 const userOneId = new mongoose.Types.ObjectId()
 const userTwoId = new mongoose.Types.ObjectId()
@@ -16,7 +17,7 @@ export const userOne = {
     activeOrder: [],
     loyal: {},
     tokens: [{
-        token: jwt.sign({_id: userOneId}, process.env.JWT_SECRET)
+        token: jwt.sign({_id: userOneId}, keys.jwtSecret)
     }]
 }
 
@@ -40,7 +41,7 @@ export const userThree = {
     activeOrder: [],
     loyal: {},
     tokens: [{
-        token: jwt.sign({_id: userThreeId}, process.env.JWT_SECRET)
+        token: jwt.sign({_id: userThreeId}, keys.jwtSecret)
     }],
     name: 'user3',
     sex: 'male',

@@ -1,6 +1,6 @@
 {
   "name": "loyal-goblin",
-  "version": "1.5.4-alpha",
+  "version": "1.6.0-alpha",
   "description": "",
   "main": "index.js",
   "variables": {
@@ -14,6 +14,7 @@
     "test": "env-cmd -f ./config/test.env jest --watch --runInBand",
     "start": "nodemon --exec babel-node src/index.js",
     "inspect": "nodemon --exec babel-node --inspect src/index.js",
+    "dev-noenv": "npm run start",
     "dev": "env-cmd -f ./config/dev.env npm run start",
     "dev-standalone": "env-cmd -f ./config/dev-standalone.env npm run start",
     "debug": "env-cmd -f ./config/dev.env npm run inspect",

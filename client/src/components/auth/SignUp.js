@@ -13,6 +13,7 @@ import { FormHelperText } from "@material-ui/core";
 import { Input } from "@material-ui/core";
 import ErrorIcon from "@material-ui/icons/Error";
 
+import keys from 'keys'
 import { signUp } from "store/actions/authActions";
 
 import {asyncForEach} from 'utils/functions'
@@ -318,7 +319,7 @@ class SignUp extends Component {
               </ActionBar>
               <Recaptcha
                   ref={ ref => this.recaptcha = ref }
-                  sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                  sitekey={keys.recaptchaSiteKey}
                   onResolved={ this.onResolved }
               />
             </div>

@@ -2,6 +2,8 @@ import express from "express";
 import { pick } from "lodash";
 import moment from "moment";
 
+import keys from '@config/keys'
+
 import { Product } from "@models/product";
 import { Rally } from "@models/rally";
 import { User } from "@models/user";
@@ -19,7 +21,6 @@ import {
   asyncForEach,
   removeImage,
   savePNGImage,
-  verifyCaptcha,
   getEndpointError
 } from "@utils/functions";
 
@@ -384,7 +385,7 @@ router.patch("/activate", auth, recaptcha, async (req, res, next) => {
     await user.orderPopulate()
     await user.save();
 
-    if (process.env.REPLICA === "true") {
+    if (keys.replica) {
       // Just for sure - if order expired event from previous order still exists in db
       const previousOrderEvent = await OrderExpiredEvent.findById(user._id)
 
@@ -397,7 +398,7 @@ router.patch("/activate", auth, recaptcha, async (req, res, next) => {
     }
 
     //LEGACY NOREPLICA: prevents removing valid order - TIMER IS NOT CLEANED
-    if (process.env.REPLICA === "false") {
+    if (!keys.replica) {
       setTimeout(async () => {
         try {
           const result = await User.updateOne(
@@ -585,7 +586,7 @@ router.post("/finalize", barmanAuth, async (req, res, next) => {
         }
       );
 
-      if (process.env.REPLICA === "true") {
+      if (keys.replica) {
         const orderExpiredEvent = await OrderExpiredEvent.findById(user._id)
 
         if (orderExpiredEvent) {

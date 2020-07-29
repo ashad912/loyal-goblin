@@ -1,7 +1,9 @@
-const nodemailer = require('nodemailer')
-const Email = require('email-templates')
-const path = require('path')
-var nodemailerSendgrid  = require('nodemailer-sendgrid');
+import nodemailer from 'nodemailer'
+import Email  from  'email-templates'
+import path from 'path'
+import nodemailerSendgrid from 'nodemailer-sendgrid';
+
+import keys from '@config/keys'
 
 const createEmail = (res, userEmail, subject, template, strings)=> {
     //const options =  {api_key: process.env.SENDGRID_API_KEY}
@@ -9,8 +11,8 @@ const createEmail = (res, userEmail, subject, template, strings)=> {
     const client = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: process.env.SENDER_GMAIL,
-            pass: process.env.EMAIL_PASS
+            user: keys.senderGmail,
+            pass: keys.emailPass
         }
     })
     
@@ -20,7 +22,7 @@ const createEmail = (res, userEmail, subject, template, strings)=> {
             to: userEmail,
             subject: subject
         },
-        send: process.env.NODE_ENV === 'dev' ? true : true,
+        send: keys.nodeEnv === 'dev' ? true : true,
         transport: client,
         // preview: {
         //     open: {

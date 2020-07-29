@@ -13,6 +13,7 @@ import { FormHelperText } from '@material-ui/core';
 import { Input } from '@material-ui/core';
 import ErrorIcon from '@material-ui/icons/Error';
 
+import keys from 'keys'
 import { signIn } from 'store/actions/authActions'
 
 import {asyncForEach} from 'utils/functions'
@@ -163,7 +164,6 @@ class SignIn extends Component {
 
         if(!this.state.error.email && !this.state.error.password){
             try{
-                console.log(this.recaptcha)
                 this.recaptcha.execute();
             }catch(e){
                 console.log('Problem with recaptcha')
@@ -237,7 +237,7 @@ class SignIn extends Component {
                                 </ActionBar>
                                 <Recaptcha
                                     ref={ ref => this.recaptcha = ref }
-                                    sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                                    sitekey={keys.recaptchaSiteKey}
                                     onResolved={ this.onResolved }
                                     
                                 />

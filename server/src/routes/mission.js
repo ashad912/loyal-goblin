@@ -1,6 +1,8 @@
 import express from 'express'
 import moment from 'moment'
 
+import keys from '@config/keys'
+
 import { auth } from '@middleware/auth';
 import { adminAuth } from '@middleware/adminAuth';
 
@@ -533,13 +535,13 @@ router.post('/createInstance', auth, async (req, res, next) => { //mission id pa
         const missionInstance = new MissionInstance({ mission: mission._id, party: partyObject, items: [] })
         const mI = await missionInstance.save()
 
-        if (process.env.REPLICA === "true") {
+        if (keys.replica) {
             await MissionInstanceExpiredEvent.create({ _id: mI._id })
         }
 
 
         //LEGACY NOREPLICA
-        if (process.env.REPLICA === "false") {
+        if (!keys.replica) {
             setTimeout(async () => {
                 try {
                     const instance = await MissionInstance.findById(missionInstance._id)

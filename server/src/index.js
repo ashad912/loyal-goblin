@@ -2,7 +2,7 @@ import cron from 'node-cron'
 import socket from "socket.io";
 import socketIOAuth from 'socketio-auth'
 
-
+import keys from '@config/keys'
 import logger from '@logger';
 import { MissionInstanceExpiredEvent } from "@models/missionInstanceExpiredEvent";
 import { OrderExpiredEvent } from "@models/orderExpiredEvent";
@@ -11,9 +11,9 @@ import * as utils from '@utils/functions'
 import rallyStore from '@store/rally.store'
 import socketController from '@controllers/socket.controller'
 
-const port = process.env.PORT;
+const port = keys.dbPort;
 
-async function startServer(){
+(async function (){
 
   const app = await require('@app').default()
 
@@ -23,7 +23,7 @@ async function startServer(){
     utils.initCleaning() 
     rallyStore.updateQueue();
   
-    if(process.env.REPLICA === 'true'){
+    if(keys.replica){
       MissionInstanceExpiredEvent.registerWatch()
       OrderExpiredEvent.registerWatch()
     }
@@ -46,6 +46,5 @@ async function startServer(){
     timeout: 5000
   });
 
-}
+})()
 
-startServer()

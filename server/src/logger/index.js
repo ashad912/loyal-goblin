@@ -1,5 +1,7 @@
 import winston from 'winston'
 
+import keys from '@config/keys'
+
 // The Logger Category (functional area)
 const CATEGORY = 'server';
 
@@ -7,7 +9,7 @@ const CATEGORY = 'server';
 const file = './logs/server.log'
 const test = './logs/test.log'
 
-const path = process.env.NODE_ENV === "test" ? test : file
+const path = keys.nodeEnv === "test" ? test : file
 
 // Logger configuration
 const logConfiguration = {

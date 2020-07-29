@@ -81,7 +81,7 @@ const MissionAwards = props => {
             awards={missionAwards}
             style={{
               width: "100%", 
-              maxHeight: `calc(100vh - 455px)`, 
+              maxHeight: `calc(100vh - 469px)`, 
               overflowY: 'scroll', 
               marginBottom: '1rem' 
             }}

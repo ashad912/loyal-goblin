@@ -3,6 +3,7 @@ import validator from 'validator'
 import bcrypt from 'bcryptjs'
 import jwt from "jsonwebtoken"
 
+import keys from '@config/keys'
 import { getEndpointError } from '@utils/functions'
 import { ERROR, WARN, INFO } from '@utils/constants'
 
@@ -70,7 +71,7 @@ AdminSchema.methods.toJSON = function () { //like a middleware from express, we 
 
 AdminSchema.methods.generateAuthToken = async function () { //on instances
     const admin = this
-    const token = jwt.sign({_id: admin._id.toString()}, process.env.ADMIN_JWT_SECRET)
+    const token = jwt.sign({_id: admin._id.toString()}, keys.adminJwtSecret)
 
     admin.token = token
     await admin.save()

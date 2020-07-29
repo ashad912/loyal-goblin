@@ -5,6 +5,7 @@ import { User } from '@models/user'
 import { Admin } from '@models/admin'
 import { Mission } from '@models/mission'
 import { Party } from '@models/party'
+import keys from '@config/keys'
 
 export const setup = async () => {
     await Admin.deleteMany()
@@ -39,7 +40,7 @@ export const admin = {
     _id: adminId,
     email: 'admin@goblin.com',
     password: 'admingoblinadmingoblin',
-    token: jwt.sign({ _id: adminId }, process.env.ADMIN_JWT_SECRET)
+    token: jwt.sign({ _id: adminId }, keys.adminJwtSecret)
 }
 
 export const user1 = {
@@ -51,7 +52,7 @@ export const user1 = {
     activeOrder: [],
     loyal: {},
     tokens: [{
-        token: jwt.sign({ _id: user1Id }, process.env.JWT_SECRET)
+        token: jwt.sign({ _id: user1Id }, keys.jwtSecret)
     }]
 }
 
@@ -64,7 +65,7 @@ export const user2 = {
     activeOrder: [],
     loyal: {},
     tokens: [{
-        token: jwt.sign({ _id: user2Id }, process.env.JWT_SECRET)
+        token: jwt.sign({ _id: user2Id }, keys.jwtSecret)
     }],
     party: partyId
 }
@@ -78,7 +79,7 @@ export const user3 = {
     activeOrder: [],
     loyal: {},
     tokens: [{
-        token: jwt.sign({ _id: user3Id }, process.env.JWT_SECRET)
+        token: jwt.sign({ _id: user3Id }, keys.jwtSecret)
     }],
     party: partyId
 }

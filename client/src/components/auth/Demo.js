@@ -1,6 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import Recaptcha from 'react-google-invisible-recaptcha';
+
+import keys from 'keys'
 import { createDemoUser } from 'store/actions/authActions'
 
 
@@ -40,7 +42,7 @@ class Demo extends React.Component {
             <div style={{ height: '100vh' }}>
                 <Recaptcha
                     ref={ref => this.recaptcha = ref}
-                    sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                    sitekey={keys.recaptchaSiteKey}
                     onResolved={this.onResolved}
 
                 />

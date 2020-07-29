@@ -1,4 +1,5 @@
 
+import keys from '@config/keys'
 import { User } from '@models/user'
 import { getToken, decodeTokenAndGet} from './functions'
 
@@ -6,7 +7,7 @@ export const auth = async (req, res, next) => {
     
     try{
         const token = getToken(req, 'token')
-        const user = await decodeTokenAndGet(User, {active: true, 'tokens.token': token}, token, process.env.JWT_SECRET)
+        const user = await decodeTokenAndGet(User, {active: true, 'tokens.token': token}, token, keys.jwtSecret)
         
         await user.updateActivityDate(req.query)
         

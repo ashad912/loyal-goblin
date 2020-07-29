@@ -3,15 +3,19 @@ import validator from 'validator'
 import bcrypt from 'bcryptjs'
 import jwt from "jsonwebtoken"
 import moment from 'moment'
+import arrayUniquePlugin from 'mongoose-unique-array'
+
 import { Item } from './item'
 import { Party } from './party'
 import { Rally } from './rally'
 import { OrderExpiredEvent } from './orderExpiredEvent'
+
+import keys from '@config/keys'
 import { ProductsOrderSchema } from '@schemas/ProductsOrderSchema'
 import { ClassAwardsSchema } from '@schemas/ClassAwardsSchema'
 import { LoyalSchema } from '@schemas/LoyalSchema'
 
-import arrayUniquePlugin from 'mongoose-unique-array'
+
 import { asyncForEach, getEndpointError } from '@utils/functions'
 import { ERROR, WARN, INFO, levelingEquation } from '@utils/constants'
 
@@ -361,7 +365,7 @@ UserSchema.virtual('userRallies', { //events can be reached by relations, BI REL
 
 UserSchema.methods.generateAuthToken = async function () { //on instances
     const user = this
-    const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET)
+    const token = jwt.sign({ _id: user._id.toString() }, keys.jwtSecret)
 
     user.tokens = user.tokens.concat({ token: token })
     await user.save()
@@ -371,7 +375,7 @@ UserSchema.methods.generateAuthToken = async function () { //on instances
 
 UserSchema.methods.generatePasswordResetToken = async function () { //on instances
     const user = this
-    const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: '1h' })
+    const token = jwt.sign({ _id: user._id.toString() }, keys.jwtSecret, { expiresIn: '1h' })
 
     user.passwordChangeToken = token
     await user.save()
@@ -400,7 +404,7 @@ UserSchema.methods.clearActiveOrder = async function () {
     user.activeOrder = []
     await user.save()
 
-    if (process.env.REPLICA === "true") {
+    if (keys.replica) {
         const orderExpiredEvent = await OrderExpiredEvent.findById(user._id)
 
         if (orderExpiredEvent) {
@@ -441,7 +445,7 @@ UserSchema.methods.toJSON = function () { //like a middleware from express, we c
 }
 
 UserSchema.methods.checkPasswordChangeTokenExpired = (token) => {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    const decoded = jwt.verify(token, keys.jwtSecret, (err, decoded) => {
         if (err && err.message === 'jwt expired') {
             return true
         } else {
@@ -488,34 +492,6 @@ UserSchema.methods.standardPopulate = async function () {
             populate: { path: "perks.target.disc-product", select: '_id name' },
         })
         .execPopulate()
-
-    // if(user.statistics.amuletCounters && user.statistics.amuletCounters.length){
-    //     await user
-    //     .populate({
-    //         path: "statistics.amuletCounters.amulet",
-    //         select: '_id imgSrc name'
-    //     })
-    //     .execPopulate();
-    // }
-    // // if (user.rallyNotifications.awards && user.rallyNotifications.awards.length) {
-    //     await user
-    //     .populate({
-    //         path: "rallyNotifications.awards.itemModel",
-    //         select: '_id description imgSrc name perks',
-    //         populate: { path: "perks.target.disc-product", select: '_id name' },
-    //     })
-    //     .execPopulate();
-    // // }
-    // if (user.shopNotifications.awards && user.shopNotifications.awards.length) {
-    //     await user
-    //     .populate({
-    //         path: "shopNotifications.awards.itemModel",
-    //         select: '_id description imgSrc name perks',
-    //         populate: { path: "perks.target.disc-product", select: '_id name' },
-    //     })
-    //     .execPopulate();
-    // }
-
 }
 
 UserSchema.methods.partyPopulate = function () {
@@ -723,7 +699,7 @@ UserSchema.statics.findByCredentials = async (email, password) => {
 }
 
 UserSchema.statics.findByPasswordChangeToken = async (token) => {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const decoded = jwt.verify(token, keys.jwtSecret)
     const user = await User.findOne({ _id: decoded._id, active: true, passwordChangeToken: token })
     if (!user) {
         throw getEndpointError(ERROR, 'User not found')

@@ -62,17 +62,14 @@ const AvatarCard = (props) => {
           props.bag[category] &&
           props.bag[category].find((item) => item._id === profile.equipped[category]);
       }
-      console.log(loadedEquippedItem)
       if (loadedEquippedItem) {
         if (loadedEquippedItem.itemModel.type === "weapon") {
           if (
             category === "weaponLeft" ||
             loadedEquippedItem.itemModel.twoHanded
           ) {
-            console.log('left')
             equipment[category] = loadedEquippedItem.itemModel.appearanceSrc;
           } else if (category === "weaponRight") {
-            console.log('right')
             equipment[category] = loadedEquippedItem.itemModel.altAppearanceSrc;
           }
         } else {
