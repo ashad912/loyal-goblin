@@ -5,7 +5,7 @@ import nodemailerSendgrid from 'nodemailer-sendgrid';
 
 import keys from '@config/keys'
 
-const createEmail = (res, userEmail, subject, template, strings)=> {
+export default (res, userEmail, subject, template, strings) => {
     //const options =  {api_key: process.env.SENDGRID_API_KEY}
     //const client = nodemailer.createTransport(nodemailerSendgrid (options));
     const client = nodemailer.createTransport({
@@ -52,5 +52,3 @@ const createEmail = (res, userEmail, subject, template, strings)=> {
     
     
 }
-
-export default createEmail

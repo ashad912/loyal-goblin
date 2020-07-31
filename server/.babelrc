@@ -32,6 +32,7 @@
           "@logger": "./src/logger",
           "@loaders": "./src/loaders",
           "@services": "./src/services",
+          "@emails": "./src/emails",
           "@index": "./src/index"
         }
       }

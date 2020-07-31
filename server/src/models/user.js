@@ -445,12 +445,15 @@ UserSchema.methods.toJSON = function () { //like a middleware from express, we c
 }
 
 UserSchema.methods.checkPasswordChangeTokenExpired = (token) => {
-    const decoded = jwt.verify(token, keys.jwtSecret, (err, decoded) => {
-        if (err && err.message === 'jwt expired') {
-            return true
-        } else {
-            return false
-        }
+    return new Promise((resolve, reject) => {
+        
+        jwt.verify(token, keys.jwtSecret, (err, decoded) => {
+            if (err && err.message === 'jwt expired') {
+                return resolve(true)
+            } else {
+                return resolve(false)
+            }
+        })
     })
 
 }

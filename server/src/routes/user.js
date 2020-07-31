@@ -20,8 +20,8 @@ import {
   getEndpointError
 } from "@utils/functions";
 import moment from "moment";
-import createEmail from '../emails/createEmail'
-import { recaptcha } from "../middleware/recaptcha";
+import createEmail from '@emails/createEmail'
+import { recaptcha } from "@middleware/recaptcha";
 
 
 const router = express.Router();
@@ -405,7 +405,7 @@ router.post("/forgotPassword", recaptcha, async (req, res, next) => {
 
     if (user.passwordChangeToken) {
 
-      if (!user.checkPasswordChangeTokenExpired(user.passwordChangeToken)) {
+      if (!(await user.checkPasswordChangeTokenExpired(user.passwordChangeToken))) {
         throw getEndpointError(INFO, 'jwt not expired')
       }
     }

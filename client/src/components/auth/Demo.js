@@ -9,25 +9,18 @@ import { createDemoUser } from 'store/actions/authActions'
 
 class Demo extends React.Component {
 
-    
-    componentDidMount = () => {
-        setTimeout(() => {
-            try {
-                this.recaptcha.execute()
-            } catch (e) {
-                this.recaptcha.reset()
-                this.props.history.push('/signup')
-            }
 
-
-        }, 500)
+    onLoaded = () => {
+        try {
+            this.recaptcha.execute()
+        } catch (e) {
+            this.recaptcha.reset()
+            this.props.history.push('/signup')
+        }
     }
-
-
 
     onResolved = async () => {
         try {
-            console.log(this.props)
             await this.props.createDemoUser(this.props.match.params.key, this.recaptcha.getResponse())
             //this.props.history.push('/')
         } catch (e) {
@@ -36,7 +29,6 @@ class Demo extends React.Component {
     }
 
     render() {
-        //console.log(this.state.recaptcha)
         return (
 
             <div style={{ height: '100vh' }}>
@@ -44,6 +36,7 @@ class Demo extends React.Component {
                     ref={ref => this.recaptcha = ref}
                     sitekey={keys.recaptchaSiteKey}
                     onResolved={this.onResolved}
+                    onLoaded={this.onLoaded}
 
                 />
             </div>
