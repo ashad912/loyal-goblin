@@ -6,6 +6,9 @@
 - server/src/loaders
 - client/src/components/tabs/events
 
+My 'the best written' backend project (so far): 
+- https://github.com/ashad912/bluebrick-shelf
+
 ## Run server: 
     1. Install mongoDB server
     2. Open terminal, run: 'cd server'
