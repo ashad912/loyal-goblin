@@ -1,7 +1,8 @@
 
 import axios from 'axios'
-import {refreshPartyEmit} from '../../socket'
-import {pick, cloneDeep} from 'lodash'
+import { refreshPartyEmit } from '../../socket'
+import { pick, cloneDeep } from 'lodash'
+
 
 export const getShop = (socketConnectionStatus) => {
     return async dispatch => {
@@ -16,18 +17,18 @@ export const getShop = (socketConnectionStatus) => {
             // let res
             // res.data = await (await fetch('/product/shop')).json()
             // console.log(res.data)
-            dispatch({type: 'GET_SHOP', shop: res.data.shop})
-            dispatch({type: 'UPDATE_ACTIVE_ORDER', activeOrder: res.data.activeOrder})
-            dispatch({type: "UPDATE_PARTY", party: res.data.party})
-            dispatch({type: 'UPDATE_PERKS', userPerks: res.data.userPerks})
-            if(res.data.party){
+            dispatch({ type: 'GET_SHOP', shop: res.data.shop })
+            dispatch({ type: 'UPDATE_ACTIVE_ORDER', activeOrder: res.data.activeOrder })
+            dispatch({ type: "UPDATE_PARTY", party: res.data.party })
+            dispatch({ type: 'UPDATE_PERKS', userPerks: res.data.userPerks })
+            if (res.data.party) {
                 refreshPartyEmit(res.data.party._id)
             }
 
             return res.data.shop
         } catch (e) {
             console.log(e.message)
-            dispatch( {type: "NO_CONNECTION", error: e})  
+            dispatch({ type: "NO_CONNECTION", error: e })
             throw new Error(e)
         }
     }
@@ -38,15 +39,15 @@ export const leaveShop = () => {
         try {
             const res = await axios.patch('/product/leave')
 
-            dispatch({type: 'LEAVE_SHOP'})
-            if(res.data){
+            dispatch({ type: 'LEAVE_SHOP' })
+            if (res.data) {
                 refreshPartyEmit(res.data)
             }
 
         } catch (e) {
             console.log(e)
             alert(e)
-            dispatch( {type: "NO_CONNECTION", error: e})     
+            dispatch({ type: "NO_CONNECTION", error: e })
         }
     }
 }
@@ -63,22 +64,22 @@ export const activateOrder = (order, recaptcha) => {
                 //     console.log(product)
                 //     return(product)
                 // });
-                
-                for(let i=0; i<tempOrder[user].length; i++){
+
+                for (let i = 0; i < tempOrder[user].length; i++) {
                     tempOrder[user][i].product = tempOrder[user][i]._id
                     tempOrder[user][i] = pick(tempOrder[user][i], ['product', 'quantity'])
                 }
 
-               // console.log(tempOrder[user])
-                return {profile: user, products: tempOrder[user]}
+                // console.log(tempOrder[user])
+                return { profile: user, products: tempOrder[user] }
             })
 
-            const res = await axios.patch('/product/activate', {order: arrayOrder, recaptcha})
-            dispatch({type: 'UPDATE_ACTIVE_ORDER', activeOrder: res.data })
+            const res = await axios.patch('/product/activate', { order: arrayOrder, recaptcha })
+            dispatch({ type: 'UPDATE_ACTIVE_ORDER', activeOrder: res.data })
 
         } catch (e) {
             console.log(e)
-            dispatch( {type: "NO_CONNECTION", error: e})     
+            dispatch({ type: "NO_CONNECTION", error: e })
         }
     }
 }
@@ -86,13 +87,13 @@ export const activateOrder = (order, recaptcha) => {
 export const cancelOrder = () => {
     return async dispatch => {
         try {
-            
+
             await axios.patch('/product/cancel')
-            dispatch({type: 'UPDATE_ACTIVE_ORDER', activeOrder: [] })
+            dispatch({ type: 'UPDATE_ACTIVE_ORDER', activeOrder: [] })
 
         } catch (e) {
             console.log(e)
-            dispatch( {type: "NO_CONNECTION", error: e})     
+            dispatch({ type: "NO_CONNECTION", error: e })
         }
     }
 }

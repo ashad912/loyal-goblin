@@ -2,21 +2,22 @@ import React from 'react'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 import { render, fireEvent, waitFor, screen } from '@testing-library/react'
-import '@testing-library/jest-dom/extend-expect' // To have extra methods like: toBeInTheDocument()
 
 import ReduxRoot from 'ReduxRoot'
 import Shop from 'components/shop/Shop'
 
-import {initState as authInit} from 'store/reducers/authReducer'
-import {initState as shopInit} from 'store/reducers/shopReducer'
-import {initState as partyInit} from 'store/reducers/partyReducer'
+import { initState as authInit } from 'store/reducers/authReducer'
+import { initState as shopInit } from 'store/reducers/shopReducer'
+import { initState as partyInit } from 'store/reducers/partyReducer'
 
 
 const server = setupServer(
-    rest.get('*', (req, res, ctx) => { // Does not work with specific path...
-      return res(
-          ctx.json({shop: [], activeOrder: [], party: {...partyInit}, userPerks: {products: []}}),
-          ctx.status(200)
+    // Does not work with specific path for axios 0.19.0 - need to use "*" as url
+    // Fixed for axios 0.19.2!
+    rest.get('/product/shop', (req, res, ctx) => {
+        return res(
+            ctx.json({ shop: [], activeOrder: [], party: { ...partyInit }, userPerks: { products: [] } }),
+            ctx.status(200)
         )
     })
 )
@@ -26,7 +27,7 @@ const server = setupServer(
 beforeAll(() => server.listen())
 
 beforeEach(async () => {
-    
+
     const initialState = {
         auth: {
             ...authInit,
@@ -41,16 +42,16 @@ beforeEach(async () => {
         party: partyInit,
     }
 
-    const {container} = render(
+    const { container } = render(
         <ReduxRoot initialState={initialState}>
-            <Shop location={{state: {id: 'uid'}}}/>
+            <Shop location={{ state: { id: 'uid' } }} />
         </ReduxRoot>
     )
-    
+
 
     screen.container = container
     await waitFor(() => screen.getByRole('application'))
-    
+
 })
 
 
