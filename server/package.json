@@ -63,7 +63,7 @@
     "node-cron": "^2.0.3",
     "nodemailer": "^6.4.2",
     "nodemailer-sendgrid": "^1.0.3",
-    "pug": "^2.0.4",
+    "pug": "^3.0.1",
     "rimraf": "^3.0.2",
     "sharp": "^0.25.2",
     "simple-sse": "0.0.3",
